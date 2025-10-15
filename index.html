@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransplantMatch - Find Your Best Location</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TransplantMatch</h1>
+            <p class="tagline">Optimize your transplant outcomes through data-driven location insights</p>
+        </header>
+
+        <main>
+            <section class="info-card">
+                <h2>About This Tool</h2>
+                <p>TransplantMatch analyzes regional transplant data, donor availability, wait times, and health demographics to identify cities where your specific transplant needs have the highest success probability.</p>
+            </section>
+
+            <section class="form-section">
+                <h2>Your Health Profile</h2>
+                <form id="transplantForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="organ">Needed Organ *</label>
+                            <select id="organ" required>
+                                <option value="">Select organ...</option>
+                                <option value="kidney">Kidney</option>
+                                <option value="liver">Liver</option>
+                                <option value="heart">Heart</option>
+                                <option value="lung">Lung</option>
+                                <option value="pancreas">Pancreas</option>
+                                <option value="intestine">Intestine</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bloodType">Blood Type *</label>
+                            <select id="bloodType" required>
+                                <option value="">Select blood type...</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="age">Age *</label>
+                            <input type="number" id="age" min="1" max="120" placeholder="Your age" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sex">Sex *</label>
+                            <select id="sex" required>
+                                <option value="">Select...</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="urgency">Medical Urgency *</label>
+                            <select id="urgency" required>
+                                <option value="">Select urgency level...</option>
+                                <option value="1">Critical (Status 1)</option>
+                                <option value="2">High Priority (Status 2)</option>
+                                <option value="3">Active (Status 3)</option>
+                                <option value="4">Inactive (Status 4)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="weight">Weight (lbs)</label>
+                            <input type="number" id="weight" min="20" max="800" placeholder="Optional">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="height">Height (inches)</label>
+                            <input type="number" id="height" min="20" max="100" placeholder="Optional">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="insurance">Insurance Type</label>
+                            <select id="insurance">
+                                <option value="">Select...</option>
+                                <option value="medicare">Medicare</option>
+                                <option value="medicaid">Medicaid</option>
+                                <option value="private">Private Insurance</option>
+                                <option value="none">Uninsured</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Find Best Locations</button>
+                </form>
+            </section>
+
+            <section class="methodology-section">
+                <h2>How Our Algorithm Works</h2>
+
+                <div class="methodology-intro">
+                    <p>TransplantMatch uses a sophisticated multi-factor algorithm that analyzes <strong>50+ data points</strong> across 8 major categories to calculate your personalized transplant success probability for each city. Our scoring system is weighted based on medical research and UNOS transplant data.</p>
+                </div>
+
+                <div class="methodology-grid">
+                    <div class="methodology-card">
+                        <div class="method-header">
+                            <span class="method-icon">🩺</span>
+                            <h3>Medical Compatibility</h3>
+                            <span class="method-weight">25%</span>
+                        </div>
+                        <ul class="method-factors">
+                            <li><strong>Blood type matching:</strong> AB+ (universal recipient) scores highest, O- (limited options) faces most challenges</li>
+                            <li><strong>Age-based prioritization:</strong> Pediatric patients (<18) receive priority; outcomes decline after 65</li>
+                            <li><strong>Organ size matching:</strong> Height/weight ratios critical for heart and lung transplants</li>
+                            <li><strong>Sex considerations:</strong> Males have slight advantage due to larger available organ pool</li>
+                            <li><strong>Antibody sensitivity:</strong> Previous transfusions or pregnancies may complicate matching</li>
+                        </ul>
+                    </div>
+
+                    <div class="methodology-card">
+                        <div class="method-header">
+                            <span class="method-icon">⏱️</span>
+                            <h3>Wait Time & Competition</h3>
+                            <span class="method-weight">20%</span>
+                        </div>
+                        <ul class="method-factors">
+                            <li><strong>UNOS regional wait times:</strong> Varies by region (Southwest: 3.8 yrs vs Midwest: 2.1 yrs for kidneys)</li>
+                            <li><strong>Waitlist size:</strong> Fewer competing patients = faster transplant</li>
+                            <li><strong>Medical urgency:</strong> Status 1 (critical) patients prioritized over Status 3 (stable)</li>
+                            <li><strong>Annual death rates on waitlist:</strong> Higher in regions with long waits</li>
+                            <li><strong>Transplant volume:</strong> High-volume centers process lists faster</li>
+                        </ul>
+                    </div>
+
+                    <div class="methodology-card">
+                        <div class="method-header">
+                            <span class="method-icon">🫀</span>
+                            <h3>Donor Availability</h3>
+                            <span class="method-weight">18%</span>
+                        </div>
+                        <ul class="method-factors">
+                            <li><strong>State registration rates:</strong> Montana (82%) vs Mississippi (22%)</li>
+                            <li><strong>Deceased donor events:</strong> Traffic fatalities, trauma centers correlate with deceased donor availability</li>
+                            <li><strong>Living donor programs:</strong> Strength of paired exchange and altruistic programs</li>
+                            <li><strong>Population density:</strong> Larger metro areas = larger potential donor pools</li>
+                            <li><strong>Donor demographics:</strong> Age, health status of regional population</li>
+                        </ul>
+                    </div>
+
+                    <div class="methodology-card">
+                        <div class="method-header">
+                            <span class="method-icon">🏥</span>
+                            <h3>Hospital Quality</h3>
+                            <span class="method-weight">15%</span>
+                        </div>
+                        <ul class="method-factors">
+                            <li><strong>Annual transplant volume:</strong> Volume-outcome relationship proven in research</li>
+                            <li><strong>Center reputation:</strong> UPMC, Cleveland Clinic, Mayo score highest</li>
+                            <li><strong>Organ specialization:</strong> Duke leads in lungs, Minneapolis in pancreas</li>
+                            <li><strong>Outcomes data:</strong> 1-year and 5-year survival rates</li>
+                            <li><strong>Research activity:</strong> Access to innovative techniques and clinical trials</li>
+                        </ul>
+                    </div>
+
+                    <div class="methodology-card">
+                        <div class="method-header">
+                            <span class="method-icon">🌍</span>
+                            <h3>Geographic & Logistical</h3>
+                            <span class="method-weight">10%</span>
+                        </div>
+                        <ul class="method-factors">
+                            <li><strong>Cost of living:</strong> Impacts ability to afford relocation and post-transplant care</li>
+                            <li><strong>Climate:</strong> Moderate temperatures aid recovery; extreme weather creates challenges</li>
+                            <li><strong>Air quality:</strong> Critical for lung recipients; poor air quality in LA vs excellent in Madison</li>
+                            <li><strong>Housing availability:</strong> Need to live near center for 3-6 months post-transplant</li>
+                            <li><strong>Transportation access:</strong> Proximity to center for frequent follow-ups</li>
+                        </ul>
+                    </div>
+
+                    <div class="methodology-card">
+                        <div class="method-header">
+                            <span class="method-icon">📊</span>
+                            <h3>Health Demographics</h3>
+                            <span class="method-weight">7%</span>
+                        </div>
+                        <ul class="method-factors">
+                            <li><strong>Diabetes prevalence:</strong> High rates (Miami 12.8%) damage potential donor kidneys</li>
+                            <li><strong>Obesity rates:</strong> Affects donor organ quality and surgical outcomes</li>
+                            <li><strong>Chronic kidney disease:</strong> Reduces kidney donor pool in affected regions</li>
+                            <li><strong>Hypertension:</strong> Impacts heart and kidney donor quality</li>
+                            <li><strong>Smoking rates:</strong> Tennessee (22.8%) vs California (13.5%) affects lung donors</li>
+                        </ul>
+                    </div>
+
+                    <div class="methodology-card">
+                        <div class="method-header">
+                            <span class="method-icon">⚖️</span>
+                            <h3>Policy & Legal</h3>
+                            <span class="method-weight">3%</span>
+                        </div>
+                        <ul class="method-factors">
+                            <li><strong>Donation laws:</strong> Opt-out registries (CA, OR, WA) vs opt-in states</li>
+                            <li><strong>First-person consent:</strong> Some states require family cannot override donor card</li>
+                            <li><strong>Medicaid expansion:</strong> Affects post-transplant medication coverage</li>
+                            <li><strong>Insurance mandates:</strong> State requirements for transplant coverage</li>
+                            <li><strong>DMV enrollment:</strong> Automatic registry at license renewal boosts donor rates</li>
+                        </ul>
+                    </div>
+
+                    <div class="methodology-card">
+                        <div class="method-header">
+                            <span class="method-icon">🤝</span>
+                            <h3>Socioeconomic</h3>
+                            <span class="method-weight">2%</span>
+                        </div>
+                        <ul class="method-factors">
+                            <li><strong>Support systems:</strong> Family proximity, caregiver availability</li>
+                            <li><strong>Employment opportunities:</strong> Post-transplant job market for recovery period</li>
+                            <li><strong>Community resources:</strong> Patient housing, support groups, social services</li>
+                            <li><strong>Education/health literacy:</strong> Affects medication compliance and outcomes</li>
+                            <li><strong>Financial assistance programs:</strong> Availability of help with transplant costs</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="methodology-calculation">
+                    <h3>Example Calculation</h3>
+                    <div class="calc-example">
+                        <p><strong>Patient Profile:</strong> 45-year-old female, blood type A+, needs kidney, Status 2 urgency</p>
+                        <p><strong>City:</strong> Pittsburgh, PA</p>
+
+                        <div class="calc-breakdown">
+                            <div class="calc-row">
+                                <span>Medical Compatibility (A+ blood type, age 45, female):</span>
+                                <span><strong>95/100</strong> × 25% = 23.75</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Wait Time (1.8 years, Status 2):</span>
+                                <span><strong>92/100</strong> × 20% = 18.40</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Donor Availability (PA 42% registration, trauma network):</span>
+                                <span><strong>88/100</strong> × 18% = 15.84</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Hospital Quality (UPMC, 385 kidney transplants/year):</span>
+                                <span><strong>100/100</strong> × 15% = 15.00</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Geographic (affordable COL, moderate climate):</span>
+                                <span><strong>83/100</strong> × 10% = 8.30</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Health Demographics (low diabetes, moderate obesity):</span>
+                                <span><strong>85/100</strong> × 7% = 5.95</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Policy (PA strong opt-in laws):</span>
+                                <span><strong>88/100</strong> × 3% = 2.64</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Socioeconomic (good support systems):</span>
+                                <span><strong>83/100</strong> × 2% = 1.66</span>
+                            </div>
+                            <div class="calc-total">
+                                <span><strong>TOTAL PERSONALIZED SCORE:</strong></span>
+                                <span><strong>91.54/100</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="methodology-footer">
+                    <h3>Data Sources & Validation</h3>
+                    <ul>
+                        <li>UNOS/OPTN: National transplant registry, wait times, outcomes (2023 Annual Report)</li>
+                        <li>CDC WONDER: Traffic fatality rates, chronic disease prevalence by region</li>
+                        <li>SRTR (Scientific Registry of Transplant Recipients): Center-specific outcomes</li>
+                        <li>State DMV Records: Donor registration rates by state</li>
+                        <li>CMS Hospital Compare: Quality metrics, patient safety scores</li>
+                        <li>EPA Air Quality Index: Regional environmental data</li>
+                        <li>Census Bureau: Population density, socioeconomic demographics</li>
+                        <li>State Health Departments: Disease prevalence, public health statistics</li>
+                    </ul>
+                    <p class="methodology-note"><strong>Algorithm Updates:</strong> Our scoring model is updated quarterly as new UNOS data becomes available. Regional factors are refreshed annually with CDC and state health department releases.</p>
+                </div>
+            </section>
+
+            <section id="resultsSection" class="results-section" style="display: none;">
+                <h2>Your Top Recommended Cities</h2>
+                <p class="results-intro">Based on your profile, here are cities ranked by transplant success probability:</p>
+
+                <div class="map-section">
+                    <div id="map"></div>
+                    <div class="map-controls">
+                        <h3>Map Overlays</h3>
+                        <div class="overlay-controls">
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="trafficAccidentsLayer" checked>
+                                <span>Traffic Accident Fatalities</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="donorRegistrationLayer">
+                                <span>Organ Donor Registration Rates</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="transplantCentersLayer" checked>
+                                <span>Transplant Centers</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="statePoliciesLayer">
+                                <span>State Donation Policies</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="waitTimeGridLayer">
+                                <span>Regional Wait Time Grid</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="diabetesLayer">
+                                <span>Diabetes Prevalence Heatmap</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="obesityLayer">
+                                <span>Obesity Rates</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="costOfLivingLayer">
+                                <span>Cost of Living Index</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="airQualityLayer">
+                                <span>Air Quality Index</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="insuranceCoverageLayer">
+                                <span>Insurance Acceptance Rates</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="resultsContainer" class="results-container">
+                    <!-- Results will be inserted here -->
+                </div>
+
+                <div class="data-sources">
+                    <h3>Data Sources</h3>
+                    <ul>
+                        <li>UNOS (United Network for Organ Sharing) transplant registry data</li>
+                        <li>OPTN (Organ Procurement and Transplantation Network) regional statistics</li>
+                        <li>CDC mortality and donor availability rates</li>
+                        <li>Regional health demographics and comorbidity prevalence</li>
+                        <li>Hospital transplant center performance metrics</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p><strong>Disclaimer:</strong> This tool provides informational insights only and should not replace consultation with your transplant team and healthcare providers. Actual transplant outcomes depend on many individual factors.</p>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    <script src="algorithm.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
