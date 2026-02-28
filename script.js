@@ -1890,7 +1890,19 @@ const urgencyMultipliers = {
     '4': 0.7    // Inactive
 };
 
-document.getElementById('transplantForm').addEventListener('submit', function(e) {
+// City-to-state mapping for dynamic scoring across all 21 cities
+const cityStateMap = {
+    "Pittsburgh": "Pennsylvania", "Baltimore": "Maryland", "Philadelphia": "Pennsylvania",
+    "New York": "New York", "Minneapolis": "Minnesota", "Madison": "Wisconsin",
+    "Chicago": "Illinois", "Cleveland": "Ohio", "St. Louis": "Missouri",
+    "Indianapolis": "Indiana", "Omaha": "Nebraska", "Rochester": "Minnesota",
+    "Nashville": "Tennessee", "Durham": "North Carolina", "Miami": "Florida",
+    "Dallas": "Texas", "Houston": "Texas", "Portland": "Oregon",
+    "Seattle": "Washington", "San Francisco": "California", "Los Angeles": "California",
+    "Palo Alto": "California"
+};
+
+document.getElementById('transplantForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const formData = {
@@ -1904,23 +1916,47 @@ document.getElementById('transplantForm').addEventListener('submit', function(e)
         insurance: document.getElementById('insurance').value
     };
 
+    // Load data before calculating
+    if (typeof loadAllData === 'function' && !window.TransPlanData?._loaded) {
+        await loadAllData();
+    }
+
     calculateResults(formData);
 });
 
 function calculateResults(formData) {
     const organ = formData.organ;
-    const cities = JSON.parse(JSON.stringify(cityData[organ])); // Deep copy
 
-    // Use comprehensive algorithm if available, otherwise fall back to simple multipliers
+    // Use comprehensive algorithm to dynamically score all 21 cities
     if (typeof calculateComprehensiveScore === 'function') {
-        // Calculate comprehensive scores using algorithm.js
-        cities.forEach(city => {
-            const result = calculateComprehensiveScore(formData, city.city, city.state, organ);
-            city.personalizedScore = result.total;
-            city.scoreBreakdown = result.breakdown;  // Store breakdown for potential future use
+        const cities = Object.entries(cityStateMap).map(([cityName, stateName]) => {
+            const result = calculateComprehensiveScore(formData, cityName, stateName, organ);
+            const mockEntry = cityData[organ]?.find(c => c.city === cityName);
+            return {
+                city: cityName,
+                state: stateName,
+                score: result.total,
+                personalizedScore: result.total,
+                scoreBreakdown: result.breakdown,
+                waitTime: mockEntry?.waitTime || 'N/A',
+                donorRate: mockEntry?.donorRate || 'Moderate',
+                matchRate: mockEntry?.matchRate || 'N/A',
+                centersQuality: mockEntry?.centersQuality || 'Good',
+                factors: mockEntry?.factors || [
+                    'Comprehensive transplant program',
+                    'Experienced surgical team',
+                    'Strong post-transplant support',
+                    'Regional organ sharing network',
+                    'Quality patient outcomes'
+                ]
+            };
         });
+
+        cities.sort((a, b) => b.personalizedScore - a.personalizedScore);
+        displayResults(cities, formData);
     } else {
-        // Fallback to original simple algorithm
+        // Fallback to mock data with simple multipliers
+        const cities = JSON.parse(JSON.stringify(cityData[organ]));
         const bloodMultiplier = bloodTypeMultipliers[formData.bloodType];
         const ageMultiplier = getAgeMultiplier(formData.age);
         const sexMultiplier = sexMultipliers[formData.sex];
@@ -1929,16 +1965,12 @@ function calculateResults(formData) {
         cities.forEach(city => {
             const baseScore = city.score;
             city.personalizedScore = baseScore * bloodMultiplier * ageMultiplier * sexMultiplier * urgencyMultiplier;
-            city.personalizedScore *= (0.97 + Math.random() * 0.06);
             city.personalizedScore = Math.min(100, city.personalizedScore);
         });
+
+        cities.sort((a, b) => b.personalizedScore - a.personalizedScore);
+        displayResults(cities, formData);
     }
-
-    // Sort by personalized score
-    cities.sort((a, b) => b.personalizedScore - a.personalizedScore);
-
-    // Display results
-    displayResults(cities, formData);
 }
 
 function displayResults(cities, formData) {
@@ -1966,11 +1998,19 @@ function displayResults(cities, formData) {
 
     resultsSection.style.display = 'block';
     resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Render comparison bar chart
+    setTimeout(() => {
+        if (window.TransPlanCharts) {
+            window.TransPlanCharts.createComparisonChart(cities);
+        }
+    }, 200);
 }
 
 function createCityCard(city, rank, formData) {
     const card = document.createElement('div');
     card.className = `city-card rank-${rank}`;
+    const radarId = `radar-chart-${rank}`;
 
     const scoreClass = city.personalizedScore >= 90 ? 'good' :
                        city.personalizedScore >= 80 ? 'moderate' : 'poor';
@@ -2008,6 +2048,13 @@ function createCityCard(city, rank, formData) {
             </div>
         </div>
 
+        ${city.scoreBreakdown ? `
+        <div class="radar-chart-container">
+            <h4>Score Breakdown</h4>
+            <canvas id="${radarId}"></canvas>
+        </div>
+        ` : ''}
+
         <div class="factors">
             <h4>Why This Location?</h4>
             <ul>
@@ -2015,6 +2062,15 @@ function createCityCard(city, rank, formData) {
             </ul>
         </div>
     `;
+
+    // Render radar chart after card is in DOM
+    if (city.scoreBreakdown) {
+        setTimeout(() => {
+            if (window.TransPlanCharts) {
+                window.TransPlanCharts.createRadarChart(radarId, city.scoreBreakdown, city.city);
+            }
+        }, 0);
+    }
 
     return card;
 }
