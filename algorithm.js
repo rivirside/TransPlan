@@ -312,13 +312,13 @@ function calculateDonorAvailabilityScore(city, state, organType) {
 
 /**
  * Category 4: Hospital Quality & Experience (Weight: 15%)
- * Factors: Annual volume, outcomes, specialization, research activity
+ * Factors: Annual volume, outcomes, specialization, insurance acceptance
  */
-function calculateHospitalQualityScore(city, organType) {
+function calculateHospitalQualityScore(city, organType, formData) {
     let score = 0;
     const hqData = window.TransPlanData?.hospitalQuality;
 
-    // Volume-outcome relationship (50% of category)
+    // Volume-outcome relationship (40% of category)
     const volumes = hqData?.centerVolumes || centerVolumes;
     const volume = volumes[organType]?.[city] || 50;
     const volumeThresholds = {
@@ -327,9 +327,9 @@ function calculateHospitalQualityScore(city, organType) {
     };
     const threshold = volumeThresholds[organType];
     const volumeScore = Math.min(100, (volume / threshold) * 100);
-    score += volumeScore * 0.50;
+    score += volumeScore * 0.40;
 
-    // Center reputation (30% of category)
+    // Center reputation (25% of category)
     const tierScores = hqData?.centerReputation || {
         "Pittsburgh": 100, "Cleveland": 98, "Baltimore": 97,
         "Rochester": 97, "Los Angeles": 95, "San Francisco": 94,
@@ -340,7 +340,7 @@ function calculateHospitalQualityScore(city, organType) {
         "Portland": 84, "Indianapolis": 81, "Omaha": 83,
         "New York": 92
     };
-    score += (tierScores[city] || 80) * 0.30;
+    score += (tierScores[city] || 80) * 0.25;
 
     // Specialization in specific organ (20% of category)
     const specializations = hqData?.specializations || {
@@ -353,6 +353,22 @@ function calculateHospitalQualityScore(city, organType) {
     };
     const isSpecialized = (specializations[organType] || []).includes(city);
     score += (isSpecialized ? 100 : 75) * 0.20;
+
+    // Insurance acceptance (15% of category)
+    // Centers with higher acceptance rates are more accessible to all patients.
+    // If no insurance type selected, use full acceptance score.
+    const acceptanceRates = hqData?.insuranceAcceptanceRates || insuranceAcceptanceRates;
+    const cityAcceptance = acceptanceRates[city] || 85;
+    if (formData?.insurance === 'medicaid') {
+        // Medicaid patients face more access barriers; acceptance rate matters more
+        score += (cityAcceptance * 0.85) * 0.15; // 15% discount for Medicaid access variability
+    } else if (formData?.insurance === 'none') {
+        // Uninsured patients face the most barriers
+        score += (cityAcceptance * 0.70) * 0.15;
+    } else {
+        // Medicare or private insurance — generally well-accepted
+        score += cityAcceptance * 0.15;
+    }
 
     return score;
 }
@@ -468,7 +484,7 @@ function calculateComprehensiveScore(formData, cityName, stateName, organType) {
         medicalCompatibility: calculateMedicalCompatibilityScore(formData, cityName, organType),
         waitTime: calculateWaitTimeScore(cityName, organType, formData.urgency),
         donorAvailability: calculateDonorAvailabilityScore(cityName, stateName, organType),
-        hospitalQuality: calculateHospitalQualityScore(cityName, organType),
+        hospitalQuality: calculateHospitalQualityScore(cityName, organType, formData),
         geographic: calculateGeographicScore(cityName),
         healthDemographics: calculateHealthDemographicsScore(cityName),
         policy: calculatePolicyScore(stateName),
