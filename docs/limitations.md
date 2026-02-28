@@ -40,27 +40,27 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-004: Status 1 relocation advice is clinically inapplicable
 - **Severity:** CRITICAL
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** A Status 1A heart patient has days to weeks to live. Recommending relocation to another city is not actionable and could cause distress or harmful action. The tool has no logic to detect when urgency makes relocation advice unreasonable.
 - **Fix complexity:** Low — add a warning banner when Status 1 is selected: "Status 1 patients are typically too urgent for relocation. These results are informational only."
 
 ### L-005: Sex penalty is oversimplified
 - **Severity:** HIGH
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** `algorithm.js` line 195 assigns a flat 5% penalty to all females across all organ types. True for heart/lung (body size matching matters), not meaningful for kidney/liver/pancreas. Stated in methodology as fact without nuance.
 - **File:** `algorithm.js` line 195
 - **Fix complexity:** Low — make sex modifier organ-specific (only apply to heart/lung).
 
 ### L-006: Insurance field is collected but completely ignored
 - **Severity:** HIGH
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** `insuranceAcceptanceRates` is defined in `algorithm.js` (lines 86-95) but never used in any scoring function. The form collects `formData.insurance` but it's a dead field. A Medicaid patient and privately insured patient get identical scores.
 - **File:** `algorithm.js` lines 86-95, `index.html` lines 91-98
 - **Fix complexity:** Medium — incorporate insurance rates into hospital quality score or add insurance-specific scoring.
 
 ### L-007: "Match Probability" metric is fabricated
 - **Severity:** CRITICAL
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** `script.js` displays a "Match Probability" (e.g., "74%") calculated as `Math.round(60 + (medScore + donorScore) / 200 * 35)`. This has zero clinical basis. Real match probability requires HLA typing, crossmatch, and cPRA. Displaying a made-up percentage to transplant patients as "match probability" is misleading.
 - **File:** `script.js` `deriveDisplayMetrics()` function
 - **Options:** (a) Remove the metric entirely, (b) Rename to something honest like "Relative Compatibility Index" with a note that it's a composite of algorithm scores not a clinical prediction, (c) Add tooltip explaining it's derived from algorithm scores.
@@ -91,7 +91,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-011: Florida donor registration rate is wrong
 - **Severity:** HIGH
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** Listed at 26% in `data/donor-registration.json`. Florida implemented broad DMV-based registration and actual rates are ~70%+. Off by a factor of 2-3x.
 - **File:** `data/donor-registration.json`, `algorithm.js` line 268
 - **Fix complexity:** Low — update the value.
@@ -105,7 +105,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-013: CDC fetch script only gets diabetes, will cause NaN cascade
 - **Severity:** CRITICAL
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** `fetch-health-data.js` only fetches `diabetesRate`. When loaded, `calculateHealthDemographicsScore` reads `health.obesityRate`, `health.ckdRate`, etc. — all `undefined`. Subtraction from undefined produces NaN, which propagates through the entire weighted score, turning all results to NaN.
 - **File:** `scripts/fetch-health-data.js`, `algorithm.js` lines 384-398
 - **Fix complexity:** Medium — either fetch all 5 indicators from CDC BRFSS/PLACES, or add null-safety guards in the scoring function.
@@ -140,28 +140,28 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-018: Disclaimer is inadequate
 - **Severity:** CRITICAL
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** One sentence in the footer for a tool that says "personalized transplant success probability." Given target audience (patients facing life-threatening conditions), this needs a prominent, specific disclaimer about what the tool cannot account for.
 - **File:** `index.html` line 384
 - **Fix complexity:** Low — expand disclaimer, add prominent callout box at top of results.
 
 ### L-019: "Transplant success probability" language is misleading
 - **Severity:** CRITICAL
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** The methodology section says the algorithm "calculates your personalized transplant success probability for each city." Real transplant success probability requires HLA typing, crossmatch, cPRA, disease etiology, comorbidities, and functional status — none of which are in the tool.
 - **File:** `index.html` line 110
 - **Fix complexity:** Low — change language to "location suitability score" or "city compatibility score."
 
 ### L-020: Traffic fatality framing is insensitive
 - **Severity:** HIGH
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** The traffic heatmap popup says "Higher fatality areas may have increased deceased donor availability." This frames deaths as a benefit for transplant recipients. Would be disturbing to patients and families.
 - **File:** `script.js` line 693-697
 - **Fix complexity:** Low — remove or rephrase the tooltip text.
 
 ### L-021: Opt-out registry claims are factually wrong
 - **Severity:** MEDIUM
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** `policy-tiers.json` gives CA, OR, WA scores of 100. Methodology says "Opt-out registries (CA, OR, WA)." Oregon has opt-out (2021). California's AB 2408 has a transitional period and doesn't function as simple opt-out. Washington does not have full opt-out.
 - **File:** `index.html` line 211, `data/manual/policy-tiers.json`
 - **Fix complexity:** Low — correct the claims and adjust scores.
@@ -178,7 +178,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-023: Map legend accumulation bug
 - **Severity:** MEDIUM
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** Every `createXxxLayer()` function adds a new Leaflet legend. These are never removed when layers are toggled off. Toggling layers repeatedly creates duplicate overlapping legends.
 - **File:** `script.js` — all `createXxxLayer()` functions
 
@@ -190,13 +190,13 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-025: Duplicate "Cleveland" key in livingDonorProgramStrength
 - **Severity:** LOW
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** `algorithm.js` line 76 and 83 both define "Cleveland" key. Second silently overwrites first. Value is the same (93) so behavior is correct, but the code is confusing.
 - **File:** `algorithm.js` lines 76, 83
 
 ### L-026: Comparison chart shows raw scores, not weighted contributions
 - **Severity:** MEDIUM
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** The bar chart shows Medical Compatibility (25% weight) and Socioeconomic (2% weight) as equal-height bars. Visually misleading — users can't understand why a city with a higher Socioeconomic bar scored lower overall.
 - **File:** `charts.js` `createComparisonChart`
 
@@ -214,7 +214,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-029: data-loader.js promise error handler drops source key names
 - **Severity:** LOW
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** When `Promise.allSettled` rejects, the error handler records `sourceStatuses['unknown']` instead of the actual file key. Multiple failures overwrite the same key.
 - **File:** `data-loader.js` lines 274-276
 
@@ -230,4 +230,17 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 | ID | Fixed In | Date | Notes |
 |----|----------|------|-------|
-| — | — | — | No items resolved yet |
+| L-004 | 973185c | 2026-02-28 | Added red urgency warning banner for Status 1 patients |
+| L-005 | e6f5d10 | 2026-02-28 | Sex modifier now organ-specific (heart/lung only) |
+| L-006 | 520b13a | 2026-02-28 | Insurance wired into hospital quality scoring (15% of category) |
+| L-007 | 973185c | 2026-02-28 | Renamed "Match Probability" to "Compatibility Index" |
+| L-011 | e6f5d10 | 2026-02-28 | Florida registration rate corrected 26% → 68% |
+| L-013 | 5c89140 | 2026-02-28 | Added nullish coalescing with national averages for all 5 health metrics |
+| L-018 | 973185c | 2026-02-28 | Expanded to comprehensive multi-paragraph disclaimer with specific limitations |
+| L-019 | 973185c | 2026-02-28 | Replaced "success probability" with "location suitability score" throughout |
+| L-020 | 973185c | 2026-02-28 | Replaced insensitive traffic tooltip with neutral language |
+| L-021 | 973185c + e6f5d10 | 2026-02-28 | Removed opt-out claims, lowered CA/WA policy scores |
+| L-023 | 12a001a | 2026-02-28 | Added legend registry with addLayerLegend/removeLayerLegend helpers |
+| L-025 | e6f5d10 | 2026-02-28 | Removed duplicate Cleveland key |
+| L-026 | 12a001a | 2026-02-28 | Chart now shows weighted contributions (stacked) with tooltip showing both raw and weighted |
+| L-029 | 12a001a | 2026-02-28 | Error handler now uses index to track correct source key |

@@ -100,14 +100,14 @@ TransPlan/
 
 ## Known Limitations
 
-**30 tracked issues** in `docs/limitations.md` — read it when auditing data quality, algorithm accuracy, or planning fixes. Update it when discovering new issues or resolving existing ones.
+**30 tracked issues** in `docs/limitations.md` — 14 fixed, 16 open. Read when auditing data quality, algorithm accuracy, or planning fixes.
 
-| Severity | Count | Key Examples |
-|----------|-------|-------------|
-| CRITICAL | 8 | No PRA/cPRA input, NaN cascade from CDC fetch, fabricated "Match Probability", misleading "success probability" language, inadequate disclaimer |
-| HIGH | 9 | No LAS for lungs, broken FARS normalization, CMS ratings not transplant-specific, insurance field ignored |
-| MEDIUM | 8 | State-level health data as city data, stale COL, map legend bug, no accessibility |
-| LOW | 5 | Duplicate Cleveland key, city count inconsistency, promise error handler |
+| Severity | Open | Fixed | Key Open Examples |
+|----------|------|-------|-------------------|
+| CRITICAL | 3 | 5 | No PRA/cPRA input (L-001), no MELD for liver (L-002), fake SRTR volumes (L-010) |
+| HIGH | 5 | 4 | No LAS for lungs, broken FARS normalization, CMS ratings not transplant-specific, traffic-as-donor-proxy |
+| MEDIUM | 6 | 2 | State-level health data as city data, stale COL, no accessibility, mobile responsiveness |
+| LOW | 2 | 3 | City count inconsistency (L-028), mobile overlay panel (L-030) |
 
 ## Documentation Tiers
 
