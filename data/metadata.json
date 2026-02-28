@@ -1,0 +1,56 @@
+{
+  "lastFullFetch": "2026-02-28T00:00:00Z",
+  "sources": {
+    "air-quality": {
+      "fetchedAt": "2026-02-28T00:00:00Z",
+      "status": "seed",
+      "source": "EPA AQS"
+    },
+    "traffic-fatalities": {
+      "fetchedAt": "2026-02-28T00:00:00Z",
+      "status": "seed",
+      "source": "NHTSA FARS"
+    },
+    "health-demographics": {
+      "fetchedAt": "2026-02-28T00:00:00Z",
+      "status": "seed",
+      "source": "CDC SODA API"
+    },
+    "hospital-quality": {
+      "fetchedAt": "2026-02-28T00:00:00Z",
+      "status": "seed",
+      "source": "CMS Provider Data"
+    },
+    "cost-of-living": {
+      "fetchedAt": "2026-02-28T00:00:00Z",
+      "status": "seed",
+      "source": "BLS API"
+    },
+    "donor-registration": {
+      "fetchedAt": "2026-02-28T00:00:00Z",
+      "status": "seed",
+      "source": "UNOS"
+    },
+    "srtr-reports": {
+      "fetchedAt": "2026-02-28T00:00:00Z",
+      "status": "seed",
+      "source": "SRTR Manual"
+    },
+    "climate-scores": {
+      "fetchedAt": "2026-02-28T00:00:00Z",
+      "status": "seed",
+      "source": "Manual curation"
+    },
+    "policy-tiers": {
+      "fetchedAt": "2026-02-28T00:00:00Z",
+      "status": "seed",
+      "source": "Manual curation"
+    },
+    "socioeconomic": {
+      "fetchedAt": "2026-02-28T00:00:00Z",
+      "status": "seed",
+      "source": "Manual curation"
+    }
+  },
+  "srtrReportHash": null
+}

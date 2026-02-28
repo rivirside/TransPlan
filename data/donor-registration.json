@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "fetchedAt": "2026-02-28T00:00:00Z",
+    "source": "UNOS / Hardcoded seed data"
+  },
+  "stateRegistrationRates": {
+    "Montana": 82, "Alaska": 75, "Minnesota": 68, "Oregon": 58,
+    "Washington": 56, "Wisconsin": 54, "New York": 52, "Massachusetts": 51,
+    "Pennsylvania": 42, "Ohio": 41, "Maryland": 40, "Illinois": 48,
+    "California": 45, "North Carolina": 37, "Tennessee": 31,
+    "Texas": 30, "Florida": 26, "Georgia": 28, "Indiana": 36,
+    "Nebraska": 47, "Missouri": 32, "Iowa": 50
+  },
+  "livingDonorProgramStrength": {
+    "Minneapolis": 95, "Madison": 92, "Pittsburgh": 94,
+    "Cleveland": 93, "Los Angeles": 91, "San Francisco": 90,
+    "Baltimore": 89, "Rochester": 91, "Durham": 88,
+    "Chicago": 86, "Houston": 87, "Palo Alto": 89,
+    "Nashville": 84, "Philadelphia": 85, "St. Louis": 83,
+    "Portland": 86, "Seattle": 87, "Dallas": 82,
+    "Miami": 81, "New York": 84, "Omaha": 85,
+    "Indianapolis": 80
+  },
+  "populationFactors": {
+    "New York": 100, "Los Angeles": 95, "Chicago": 90,
+    "Houston": 88, "Philadelphia": 85, "San Francisco": 82,
+    "Miami": 80, "Dallas": 85, "Baltimore": 75,
+    "Pittsburgh": 68, "Cleveland": 70, "Minneapolis": 72,
+    "Seattle": 74, "Nashville": 71, "Durham": 68,
+    "St. Louis": 67, "Rochester": 60, "Madison": 62,
+    "Portland": 70, "Palo Alto": 78, "Indianapolis": 69,
+    "Omaha": 58
+  }
+}

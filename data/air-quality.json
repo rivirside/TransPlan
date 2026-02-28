@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "fetchedAt": "2026-02-28T00:00:00Z",
+    "source": "EPA AQS / Hardcoded seed data"
+  },
+  "Pittsburgh": 68,
+  "Baltimore": 62,
+  "Philadelphia": 64,
+  "New York": 58,
+  "Minneapolis": 78,
+  "Madison": 82,
+  "Chicago": 61,
+  "Cleveland": 65,
+  "St. Louis": 66,
+  "Indianapolis": 67,
+  "Omaha": 74,
+  "Rochester": 80,
+  "Nashville": 69,
+  "Durham": 71,
+  "Miami": 65,
+  "Dallas": 63,
+  "Houston": 59,
+  "Portland": 76,
+  "Seattle": 77,
+  "San Francisco": 68,
+  "Los Angeles": 45,
+  "Palo Alto": 72
+}

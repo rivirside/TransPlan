@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "fetchedAt": "2026-02-28T00:00:00Z",
+    "source": "CDC SODA API / Hardcoded seed data"
+  },
+  "Pittsburgh": { "diabetesRate": 10.2, "obesityRate": 31.5, "ckdRate": 14.2, "hypertensionRate": 32.1, "smokingRate": 19.3 },
+  "Baltimore": { "diabetesRate": 11.8, "obesityRate": 34.2, "ckdRate": 15.8, "hypertensionRate": 35.4, "smokingRate": 17.9 },
+  "Philadelphia": { "diabetesRate": 11.4, "obesityRate": 33.8, "ckdRate": 15.2, "hypertensionRate": 34.2, "smokingRate": 18.5 },
+  "New York": { "diabetesRate": 10.9, "obesityRate": 28.5, "ckdRate": 14.5, "hypertensionRate": 31.8, "smokingRate": 14.2 },
+  "Minneapolis": { "diabetesRate": 8.1, "obesityRate": 27.3, "ckdRate": 12.4, "hypertensionRate": 28.5, "smokingRate": 15.8 },
+  "Madison": { "diabetesRate": 7.9, "obesityRate": 26.8, "ckdRate": 12.1, "hypertensionRate": 27.9, "smokingRate": 14.9 },
+  "Chicago": { "diabetesRate": 10.5, "obesityRate": 32.1, "ckdRate": 14.8, "hypertensionRate": 33.2, "smokingRate": 16.7 },
+  "Cleveland": { "diabetesRate": 11.2, "obesityRate": 33.5, "ckdRate": 15.3, "hypertensionRate": 34.8, "smokingRate": 20.1 },
+  "St. Louis": { "diabetesRate": 10.8, "obesityRate": 32.7, "ckdRate": 14.9, "hypertensionRate": 33.9, "smokingRate": 19.5 },
+  "Indianapolis": { "diabetesRate": 11.5, "obesityRate": 34.8, "ckdRate": 15.7, "hypertensionRate": 35.2, "smokingRate": 21.3 },
+  "Omaha": { "diabetesRate": 9.8, "obesityRate": 31.2, "ckdRate": 13.9, "hypertensionRate": 31.5, "smokingRate": 17.8 },
+  "Rochester": { "diabetesRate": 8.5, "obesityRate": 28.9, "ckdRate": 12.8, "hypertensionRate": 29.3, "smokingRate": 15.2 },
+  "Nashville": { "diabetesRate": 12.3, "obesityRate": 36.2, "ckdRate": 16.5, "hypertensionRate": 37.1, "smokingRate": 22.8 },
+  "Durham": { "diabetesRate": 11.1, "obesityRate": 33.1, "ckdRate": 15.1, "hypertensionRate": 34.5, "smokingRate": 18.9 },
+  "Miami": { "diabetesRate": 12.8, "obesityRate": 32.5, "ckdRate": 16.8, "hypertensionRate": 36.2, "smokingRate": 16.4 },
+  "Dallas": { "diabetesRate": 11.9, "obesityRate": 33.9, "ckdRate": 15.9, "hypertensionRate": 35.8, "smokingRate": 17.2 },
+  "Houston": { "diabetesRate": 12.5, "obesityRate": 34.7, "ckdRate": 16.3, "hypertensionRate": 36.5, "smokingRate": 16.8 },
+  "Portland": { "diabetesRate": 8.7, "obesityRate": 29.1, "ckdRate": 13.1, "hypertensionRate": 29.8, "smokingRate": 15.3 },
+  "Seattle": { "diabetesRate": 8.3, "obesityRate": 27.8, "ckdRate": 12.6, "hypertensionRate": 28.9, "smokingRate": 14.8 },
+  "San Francisco": { "diabetesRate": 8.9, "obesityRate": 26.2, "ckdRate": 13.3, "hypertensionRate": 29.1, "smokingRate": 13.5 },
+  "Los Angeles": { "diabetesRate": 10.3, "obesityRate": 30.4, "ckdRate": 14.6, "hypertensionRate": 32.4, "smokingRate": 14.9 },
+  "Palo Alto": { "diabetesRate": 7.8, "obesityRate": 24.1, "ckdRate": 11.9, "hypertensionRate": 27.2, "smokingRate": 11.8 }
+}

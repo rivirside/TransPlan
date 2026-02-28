@@ -1,0 +1,14 @@
+{
+  "_meta": {
+    "fetchedAt": "2026-02-28T00:00:00Z",
+    "source": "BLS CPI Data / Hardcoded seed data"
+  },
+  "San Francisco": 191, "Palo Alto": 204, "New York": 187,
+  "Los Angeles": 150, "Seattle": 145, "Baltimore": 89,
+  "Pittsburgh": 85, "Minneapolis": 98, "Madison": 97,
+  "Portland": 135, "Chicago": 102, "Philadelphia": 101,
+  "Dallas": 92, "Houston": 90, "Miami": 112,
+  "Nashville": 95, "Durham": 93, "Cleveland": 81,
+  "St. Louis": 83, "Rochester": 91, "Omaha": 86,
+  "Indianapolis": 87
+}

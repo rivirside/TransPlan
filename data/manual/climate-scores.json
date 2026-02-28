@@ -1,0 +1,14 @@
+{
+  "_meta": {
+    "fetchedAt": "2026-02-28T00:00:00Z",
+    "source": "Manually curated climate recovery scores (no API exists)"
+  },
+  "San Francisco": 92, "Los Angeles": 88, "Palo Alto": 91,
+  "Miami": 75, "Seattle": 82, "Portland": 83,
+  "Minneapolis": 62, "Madison": 64, "Rochester": 60,
+  "Pittsburgh": 71, "Baltimore": 73, "Philadelphia": 72,
+  "Chicago": 67, "Cleveland": 66, "St. Louis": 70,
+  "Nashville": 78, "Durham": 77, "Dallas": 72,
+  "Houston": 71, "New York": 70, "Omaha": 68,
+  "Indianapolis": 69
+}

@@ -1,0 +1,96 @@
+{
+  "_meta": {
+    "fetchedAt": "2026-02-28T00:00:00Z",
+    "source": "CMS Provider Data / Hardcoded seed data"
+  },
+  "centerVolumes": {
+    "kidney": {
+      "Pittsburgh": 385, "Minneapolis": 348, "Baltimore": 362,
+      "Cleveland": 355, "Los Angeles": 425, "San Francisco": 368,
+      "Rochester": 305, "Madison": 298, "Chicago": 398,
+      "Philadelphia": 342, "Nashville": 285, "Durham": 295,
+      "Houston": 378, "Dallas": 268, "Miami": 245,
+      "Palo Alto": 312, "Portland": 228, "Seattle": 315,
+      "St. Louis": 278, "New York": 412, "Omaha": 195,
+      "Indianapolis": 235
+    },
+    "liver": {
+      "Pittsburgh": 312, "Los Angeles": 398, "San Francisco": 352,
+      "Baltimore": 305, "Cleveland": 288, "Rochester": 285,
+      "Minneapolis": 268, "Dallas": 275, "Houston": 325,
+      "Chicago": 342, "Philadelphia": 318, "Miami": 242,
+      "Durham": 268, "Nashville": 235, "Madison": 215,
+      "Palo Alto": 285, "Seattle": 295, "Portland": 195,
+      "St. Louis": 248, "New York": 385, "Omaha": 145,
+      "Indianapolis": 198
+    },
+    "heart": {
+      "Cleveland": 175, "Nashville": 148, "Durham": 142,
+      "Houston": 155, "Palo Alto": 135, "Los Angeles": 168,
+      "Pittsburgh": 132, "Chicago": 145, "San Francisco": 128,
+      "Baltimore": 138, "Minneapolis": 125, "Philadelphia": 138,
+      "St. Louis": 105, "Rochester": 98, "Madison": 85,
+      "Dallas": 118, "Seattle": 115, "Miami": 95,
+      "Portland": 78, "New York": 148, "Omaha": 58,
+      "Indianapolis": 72
+    },
+    "lung": {
+      "Durham": 155, "Pittsburgh": 142, "St. Louis": 128,
+      "Seattle": 118, "Philadelphia": 108, "Cleveland": 132,
+      "Los Angeles": 125, "San Francisco": 115, "Nashville": 105,
+      "Chicago": 118, "Houston": 112, "Baltimore": 95,
+      "Minneapolis": 88, "Rochester": 82, "Palo Alto": 95,
+      "Madison": 68, "Dallas": 78, "Portland": 72,
+      "Miami": 65, "New York": 122, "Omaha": 45,
+      "Indianapolis": 58
+    },
+    "pancreas": {
+      "Minneapolis": 128, "Madison": 115, "Miami": 95,
+      "San Francisco": 88, "Chicago": 82, "Pittsburgh": 78,
+      "Cleveland": 72, "Los Angeles": 85, "Houston": 75,
+      "Baltimore": 68, "Philadelphia": 72, "Durham": 62,
+      "Rochester": 65, "Nashville": 55, "Dallas": 58,
+      "Palo Alto": 68, "Seattle": 62, "St. Louis": 52,
+      "Portland": 45, "New York": 78, "Omaha": 38,
+      "Indianapolis": 42
+    },
+    "intestine": {
+      "Pittsburgh": 52, "Omaha": 28, "Miami": 22,
+      "Indianapolis": 18, "Los Angeles": 15, "Baltimore": 12,
+      "Chicago": 14, "Cleveland": 11, "Minneapolis": 10,
+      "Rochester": 9, "San Francisco": 11, "Houston": 13,
+      "Philadelphia": 10, "Durham": 8, "Nashville": 7,
+      "Madison": 6, "Dallas": 8, "Seattle": 7,
+      "St. Louis": 6, "Portland": 5, "Palo Alto": 6,
+      "New York": 14
+    }
+  },
+  "centerReputation": {
+    "Pittsburgh": 100, "Cleveland": 98, "Baltimore": 97,
+    "Rochester": 97, "Los Angeles": 95, "San Francisco": 94,
+    "Minneapolis": 93, "Durham": 92, "Chicago": 90,
+    "Houston": 89, "Palo Alto": 91, "Philadelphia": 88,
+    "Nashville": 86, "Madison": 87, "Seattle": 88,
+    "St. Louis": 85, "Dallas": 83, "Miami": 82,
+    "Portland": 84, "Indianapolis": 81, "Omaha": 83,
+    "New York": 92
+  },
+  "specializations": {
+    "kidney": ["Pittsburgh", "Minneapolis", "Madison", "Baltimore"],
+    "liver": ["Pittsburgh", "Los Angeles", "San Francisco", "Baltimore"],
+    "heart": ["Cleveland", "Nashville", "Durham", "Houston", "Palo Alto"],
+    "lung": ["Durham", "Pittsburgh", "St. Louis", "Seattle"],
+    "pancreas": ["Minneapolis", "Madison", "Miami", "San Francisco"],
+    "intestine": ["Pittsburgh", "Omaha", "Miami"]
+  },
+  "insuranceAcceptanceRates": {
+    "Rochester": 99, "Cleveland": 98, "Baltimore": 97,
+    "Pittsburgh": 97, "Minneapolis": 96, "Madison": 96,
+    "Durham": 95, "Los Angeles": 94, "San Francisco": 94,
+    "Chicago": 93, "Palo Alto": 94, "Houston": 92,
+    "Nashville": 91, "Philadelphia": 93, "St. Louis": 92,
+    "Seattle": 94, "Portland": 93, "Dallas": 90,
+    "Miami": 89, "New York": 92, "Omaha": 95,
+    "Indianapolis": 91
+  }
+}

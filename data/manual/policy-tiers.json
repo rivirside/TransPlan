@@ -1,0 +1,15 @@
+{
+  "_meta": {
+    "fetchedAt": "2026-02-28T00:00:00Z",
+    "source": "State donation policy research (manually curated)"
+  },
+  "California": 100, "Oregon": 100, "Washington": 100,
+  "Minnesota": 90, "New York": 90, "Illinois": 90,
+  "Pennsylvania": 88, "Ohio": 88, "Wisconsin": 88,
+  "Massachusetts": 87, "Colorado": 86, "Maryland": 86,
+  "North Carolina": 85, "Nebraska": 84, "Iowa": 83,
+  "Michigan": 82, "New Jersey": 81, "Virginia": 80,
+  "Tennessee": 75, "Texas": 75, "Florida": 74,
+  "Indiana": 74, "Georgia": 73, "Missouri": 73,
+  "Arizona": 72
+}
