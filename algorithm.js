@@ -80,7 +80,7 @@ const livingDonorProgramStrength = {
     "Nashville": 84, "Philadelphia": 85, "St. Louis": 83,
     "Portland": 86, "Seattle": 87, "Dallas": 82,
     "Miami": 81, "New York": 84, "Omaha": 85,
-    "Indianapolis": 80, "Cleveland": 93
+    "Indianapolis": 80
 };
 
 const insuranceAcceptanceRates = {
@@ -192,7 +192,12 @@ function calculateMedicalCompatibilityScore(formData, city, organType) {
     score += ageScore * 0.25;
 
     // Sex and organ size compatibility (15% of category)
-    const sexScore = formData.sex === 'male' ? 100 : 95; // Slight advantage for males (larger organ pool)
+    // Body size matching is relevant for thoracic organs (heart, lung) where
+    // donor-recipient size match matters. Minimal factor for other organs.
+    let sexScore = 100;
+    if ((organType === 'heart' || organType === 'lung') && formData.sex === 'female') {
+        sexScore = 95; // Smaller average body size narrows matching pool for thoracic organs
+    }
     score += sexScore * 0.15;
 
     // Weight/height matching for thoracic organs (20% of category)
@@ -264,7 +269,7 @@ function calculateDonorAvailabilityScore(city, state, organType) {
         "Washington": 56, "Wisconsin": 54, "New York": 52, "Massachusetts": 51,
         "Pennsylvania": 42, "Ohio": 41, "Maryland": 40, "Illinois": 48,
         "California": 45, "North Carolina": 37, "Tennessee": 31,
-        "Texas": 30, "Florida": 26, "Georgia": 28, "Indiana": 36,
+        "Texas": 30, "Florida": 68, "Georgia": 28, "Indiana": 36,
         "Nebraska": 47, "Missouri": 32, "Iowa": 50
     };
 
