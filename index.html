@@ -232,6 +232,13 @@
                     </div>
                 </div>
 
+                <div class="methodology-weights-chart">
+                    <h3>Category Weights</h3>
+                    <div class="chart-container chart-container-small">
+                        <canvas id="weightsDonutChart"></canvas>
+                    </div>
+                </div>
+
                 <div class="methodology-calculation">
                     <h3>Example Calculation</h3>
                     <div class="calc-example">
@@ -296,6 +303,7 @@
             </section>
 
             <section id="resultsSection" class="results-section" style="display: none;">
+                <div id="data-freshness-banner"></div>
                 <h2>Your Top Recommended Cities</h2>
                 <p class="results-intro">Based on your profile, here are cities ranked by transplant success probability:</p>
 
@@ -352,6 +360,13 @@
                     <!-- Results will be inserted here -->
                 </div>
 
+                <div class="charts-section">
+                    <h3>City Comparison</h3>
+                    <div class="chart-container">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+
                 <div class="data-sources">
                     <h3>Data Sources</h3>
                     <ul>
@@ -372,7 +387,10 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="data-loader.js"></script>
     <script src="algorithm.js"></script>
     <script src="script.js"></script>
+    <script src="charts.js"></script>
 </body>
 </html>

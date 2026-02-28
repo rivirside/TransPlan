@@ -1,0 +1,243 @@
+/**
+ * TransPlan Charts Module
+ *
+ * Provides Chart.js visualizations:
+ * 1. Score Breakdown Radar Chart (per city card)
+ * 2. City Comparison Grouped Bar Chart
+ * 3. Category Weight Donut Chart (methodology section)
+ * 4. Data Freshness Indicators
+ */
+
+(function () {
+    'use strict';
+
+    const CATEGORY_LABELS = [
+        'Medical Compatibility',
+        'Wait Time',
+        'Donor Availability',
+        'Hospital Quality',
+        'Geographic',
+        'Health Demographics',
+        'Policy',
+        'Socioeconomic'
+    ];
+
+    const CATEGORY_KEYS = [
+        'medicalCompatibility',
+        'waitTime',
+        'donorAvailability',
+        'hospitalQuality',
+        'geographic',
+        'healthDemographics',
+        'policy',
+        'socioeconomic'
+    ];
+
+    const CATEGORY_WEIGHTS = [25, 20, 18, 15, 10, 7, 3, 2];
+
+    const CHART_COLORS = [
+        '#667eea', '#764ba2', '#f093fb', '#f5576c',
+        '#4facfe', '#00f2fe', '#43e97b', '#fa709a'
+    ];
+
+    const CITY_COLORS = [
+        '#667eea', '#f5576c', '#43e97b', '#fa709a', '#4facfe',
+        '#ffd700', '#ff6b6b', '#48dbfb', '#ff9ff3', '#54a0ff',
+        '#5f27cd', '#01a3a4', '#f368e0', '#ff9f43', '#ee5a24',
+        '#0abde3', '#10ac84', '#341f97', '#c44569', '#474787',
+        '#aaa69d'
+    ];
+
+    // Store chart instances for cleanup
+    const chartInstances = {};
+
+    /**
+     * Render the Category Weights Donut Chart in the methodology section.
+     */
+    function renderWeightsDonutChart() {
+        const canvas = document.getElementById('weightsDonutChart');
+        if (!canvas) return;
+
+        if (chartInstances.weightsDonut) {
+            chartInstances.weightsDonut.destroy();
+        }
+
+        chartInstances.weightsDonut = new Chart(canvas, {
+            type: 'doughnut',
+            data: {
+                labels: CATEGORY_LABELS,
+                datasets: [{
+                    data: CATEGORY_WEIGHTS,
+                    backgroundColor: CHART_COLORS,
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 12,
+                            usePointStyle: true,
+                            font: { size: 11 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `${context.label}: ${context.raw}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Create a radar chart for a city's score breakdown.
+     * Called from displayResults for each city card.
+     */
+    function createRadarChart(canvasId, breakdown, cityName) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas || !breakdown) return;
+
+        const data = CATEGORY_KEYS.map(key => breakdown[key] || 0);
+
+        if (chartInstances[canvasId]) {
+            chartInstances[canvasId].destroy();
+        }
+
+        chartInstances[canvasId] = new Chart(canvas, {
+            type: 'radar',
+            data: {
+                labels: CATEGORY_LABELS,
+                datasets: [{
+                    label: cityName,
+                    data: data,
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    borderColor: '#667eea',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#667eea',
+                    pointBorderColor: '#fff',
+                    pointRadius: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20,
+                            font: { size: 9 },
+                            backdropColor: 'transparent'
+                        },
+                        pointLabels: {
+                            font: { size: 9 }
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.08)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `${context.label}: ${context.raw.toFixed(1)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Create the city comparison grouped bar chart.
+     */
+    function createComparisonChart(cities) {
+        const canvas = document.getElementById('comparisonChart');
+        if (!canvas) return;
+
+        if (chartInstances.comparison) {
+            chartInstances.comparison.destroy();
+        }
+
+        // Take top 10 cities max for readability
+        const topCities = cities.slice(0, 10);
+        const labels = topCities.map(c => c.city);
+
+        const datasets = CATEGORY_KEYS.map((key, i) => ({
+            label: CATEGORY_LABELS[i],
+            data: topCities.map(c => c.scoreBreakdown?.[key] || 0),
+            backgroundColor: CHART_COLORS[i],
+            borderWidth: 0,
+            borderRadius: 2
+        }));
+
+        chartInstances.comparison = new Chart(canvas, {
+            type: 'bar',
+            data: { labels, datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        ticks: {
+                            font: { size: 10 },
+                            maxRotation: 45
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Score (0-100)',
+                            font: { size: 11 }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 10,
+                            usePointStyle: true,
+                            font: { size: 10 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `${context.dataset.label}: ${context.raw.toFixed(1)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Expose functions globally
+    window.TransPlanCharts = {
+        renderWeightsDonutChart,
+        createRadarChart,
+        createComparisonChart
+    };
+
+    // Render donut chart on page load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderWeightsDonutChart);
+    } else {
+        renderWeightsDonutChart();
+    }
+})();
