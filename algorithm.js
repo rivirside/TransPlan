@@ -165,7 +165,7 @@ const centerVolumes = {
  * Factors: Blood type, age, sex, organ size matching, antibody sensitivity
  */
 function calculateMedicalCompatibilityScore(formData, city, organType) {
-    let score = 100;
+    let score = 0;
 
     // Blood type compatibility (40% of category)
     const bloodTypeScores = {
@@ -178,7 +178,7 @@ function calculateMedicalCompatibilityScore(formData, city, organType) {
         'AB-': 92,  // Rare but can receive A-, B-, O-
         'AB+': 100  // Universal recipient - best compatibility
     };
-    score *= (bloodTypeScores[formData.bloodType] / 100) * 0.40;
+    score += bloodTypeScores[formData.bloodType] * 0.40;
 
     // Age-based matching (25% of category)
     const age = formData.age;
@@ -255,9 +255,11 @@ function calculateWaitTimeScore(city, organType, urgency) {
  */
 function calculateDonorAvailabilityScore(city, state, organType) {
     let score = 0;
+    const donorData = window.TransPlanData?.donorRegistration;
+    const trafficData = window.TransPlanData?.trafficFatalities;
 
     // State donor registration rate (35% of category)
-    const stateRegistrationRates = {
+    const stateRegistrationRates = donorData?.stateRegistrationRates || {
         "Montana": 82, "Alaska": 75, "Minnesota": 68, "Oregon": 58,
         "Washington": 56, "Wisconsin": 54, "New York": 52, "Massachusetts": 51,
         "Pennsylvania": 42, "Ohio": 41, "Maryland": 40, "Illinois": 48,
@@ -270,7 +272,7 @@ function calculateDonorAvailabilityScore(city, state, organType) {
     score += (regRate / 82) * 100 * 0.35; // Normalized to best state
 
     // Population density for deceased donor pool (25% of category)
-    const populationFactors = {
+    const populationFactors = donorData?.populationFactors || {
         "New York": 100, "Los Angeles": 95, "Chicago": 90,
         "Houston": 88, "Philadelphia": 85, "San Francisco": 82,
         "Miami": 80, "Dallas": 85, "Baltimore": 75,
@@ -283,11 +285,12 @@ function calculateDonorAvailabilityScore(city, state, organType) {
     score += (populationFactors[city] / 100) * 100 * 0.25;
 
     // Living donor program strength (25% of category)
-    const livingDonorScore = livingDonorProgramStrength[city] || 75;
+    const ldpData = donorData?.livingDonorProgramStrength || livingDonorProgramStrength;
+    const livingDonorScore = ldpData[city] || 75;
     score += livingDonorScore * 0.25;
 
     // Traffic fatality rate (deceased donor indicator) (15% of category)
-    const traumaScores = {
+    const traumaScores = trafficData?.traumaScores || {
         "Los Angeles": 85, "Houston": 82, "Miami": 80,
         "Dallas": 78, "Phoenix": 82, "Nashville": 72,
         "Pittsburgh": 65, "Cleveland": 68, "Baltimore": 70,
@@ -299,7 +302,7 @@ function calculateDonorAvailabilityScore(city, state, organType) {
     };
     score += (traumaScores[city] / 100) * 100 * 0.15;
 
-    return score / 100; // Normalize to 0-100
+    return score;
 }
 
 /**
@@ -308,9 +311,11 @@ function calculateDonorAvailabilityScore(city, state, organType) {
  */
 function calculateHospitalQualityScore(city, organType) {
     let score = 0;
+    const hqData = window.TransPlanData?.hospitalQuality;
 
     // Volume-outcome relationship (50% of category)
-    const volume = centerVolumes[organType][city] || 50;
+    const volumes = hqData?.centerVolumes || centerVolumes;
+    const volume = volumes[organType]?.[city] || 50;
     const volumeThresholds = {
         kidney: 300, liver: 250, heart: 120,
         lung: 100, pancreas: 80, intestine: 20
@@ -320,7 +325,7 @@ function calculateHospitalQualityScore(city, organType) {
     score += volumeScore * 0.50;
 
     // Center reputation (30% of category)
-    const tierScores = {
+    const tierScores = hqData?.centerReputation || {
         "Pittsburgh": 100, "Cleveland": 98, "Baltimore": 97,
         "Rochester": 97, "Los Angeles": 95, "San Francisco": 94,
         "Minneapolis": 93, "Durham": 92, "Chicago": 90,
@@ -330,10 +335,10 @@ function calculateHospitalQualityScore(city, organType) {
         "Portland": 84, "Indianapolis": 81, "Omaha": 83,
         "New York": 92
     };
-    score += tierScores[city] * 0.30;
+    score += (tierScores[city] || 80) * 0.30;
 
     // Specialization in specific organ (20% of category)
-    const specializations = {
+    const specializations = hqData?.specializations || {
         kidney: ["Pittsburgh", "Minneapolis", "Madison", "Baltimore"],
         liver: ["Pittsburgh", "Los Angeles", "San Francisco", "Baltimore"],
         heart: ["Cleveland", "Nashville", "Durham", "Houston", "Palo Alto"],
@@ -341,7 +346,7 @@ function calculateHospitalQualityScore(city, organType) {
         pancreas: ["Minneapolis", "Madison", "Miami", "San Francisco"],
         intestine: ["Pittsburgh", "Omaha", "Miami"]
     };
-    const isSpecialized = specializations[organType].includes(city);
+    const isSpecialized = (specializations[organType] || []).includes(city);
     score += (isSpecialized ? 100 : 75) * 0.20;
 
     return score;
@@ -355,15 +360,18 @@ function calculateGeographicScore(city) {
     let score = 0;
 
     // Cost of living (inverted - lower is better) (40% of category)
-    const col = costOfLivingIndex[city] || 100;
+    const colData = window.TransPlanData?.costOfLiving || costOfLivingIndex;
+    const col = colData[city] || 100;
     const colScore = Math.max(0, 100 - ((col - 80) / 120) * 100);
     score += Math.max(0, Math.min(100, colScore)) * 0.40;
 
     // Climate favorability for recovery (35% of category)
-    score += climateScores[city] * 0.35;
+    const climData = window.TransPlanData?.climateScores || climateScores;
+    score += (climData[city] || 70) * 0.35;
 
     // Air quality (25% of category)
-    const airQuality = regionalHealthData[city]?.airQuality || 70;
+    const aqData = window.TransPlanData?.airQuality;
+    const airQuality = aqData?.[city] || regionalHealthData[city]?.airQuality || 70;
     score += airQuality * 0.25;
 
     return score;
@@ -374,7 +382,8 @@ function calculateGeographicScore(city) {
  * Factors: Regional disease prevalence affecting donor pool quality
  */
 function calculateHealthDemographicsScore(city) {
-    const health = regionalHealthData[city];
+    const hdData = window.TransPlanData?.healthDemographics;
+    const health = hdData?.[city] || regionalHealthData[city];
     if (!health) return 70;
 
     let score = 100;
@@ -394,14 +403,14 @@ function calculateHealthDemographicsScore(city) {
  * Factors: State donation laws, insurance mandates, Medicaid expansion
  */
 function calculatePolicyScore(state) {
-    const policyTiers = {
-        "California": 100, "Oregon": 100, "Washington": 100,  // Opt-out
-        "Minnesota": 90, "New York": 90, "Illinois": 90,      // Strong opt-in
+    const policyTiers = window.TransPlanData?.policyTiers || {
+        "California": 100, "Oregon": 100, "Washington": 100,
+        "Minnesota": 90, "New York": 90, "Illinois": 90,
         "Pennsylvania": 88, "Ohio": 88, "Wisconsin": 88,
         "Massachusetts": 87, "Colorado": 86, "Maryland": 86,
         "North Carolina": 85, "Nebraska": 84, "Iowa": 83,
         "Michigan": 82, "New Jersey": 81, "Virginia": 80,
-        "Tennessee": 75, "Texas": 75, "Florida": 74,          // Standard opt-in
+        "Tennessee": 75, "Texas": 75, "Florida": 74,
         "Indiana": 74, "Georgia": 73, "Missouri": 73,
         "Arizona": 72
     };
@@ -414,7 +423,7 @@ function calculatePolicyScore(state) {
  * Factors: Support systems, employment opportunities, community resources
  */
 function calculateSocioeconomicScore(city) {
-    const socioScores = {
+    const socioScores = window.TransPlanData?.socioeconomic || {
         "San Francisco": 95, "Palo Alto": 94, "Seattle": 92,
         "Minneapolis": 91, "Madison": 90, "Rochester": 89,
         "Boston": 93, "New York": 90, "Chicago": 87,
@@ -458,9 +467,6 @@ function calculateComprehensiveScore(formData, cityName, stateName, organType) {
     for (const [category, score] of Object.entries(scores)) {
         totalScore += score * weights[category];
     }
-
-    // Add small random variation (±2%) to simulate real-world uncertainty
-    totalScore *= (0.98 + Math.random() * 0.04);
 
     return {
         total: Math.min(100, Math.max(0, totalScore)),
