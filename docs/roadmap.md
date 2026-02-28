@@ -58,6 +58,11 @@
 - [ ] Track historical data to show trends over time
 - [ ] Add confidence intervals to scores instead of point estimates
 
+### Documentation
+- [ ] User-facing "How It Works" page — explains how to use the platform, how to interpret results, what each score category means, data sources, and limitations
+- [ ] Technical implementation guide — architecture overview, scoring algorithm deep-dive, data pipeline explanation, how to contribute
+- [ ] FAQ page — common questions about transplant matching, disclaimers, data freshness
+
 ### UI/UX
 - [ ] City detail modal with full score breakdown
 - [ ] Side-by-side city comparison mode
