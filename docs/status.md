@@ -98,17 +98,29 @@ TransPlan/
 | 7 | Policy | 3% | State donation laws |
 | 8 | Socioeconomic | 2% | Support systems |
 
+## Known Limitations
+
+**30 tracked issues** in `docs/limitations.md` — read it when auditing data quality, algorithm accuracy, or planning fixes. Update it when discovering new issues or resolving existing ones.
+
+| Severity | Count | Key Examples |
+|----------|-------|-------------|
+| CRITICAL | 8 | No PRA/cPRA input, NaN cascade from CDC fetch, fabricated "Match Probability", misleading "success probability" language, inadequate disclaimer |
+| HIGH | 9 | No LAS for lungs, broken FARS normalization, CMS ratings not transplant-specific, insurance field ignored |
+| MEDIUM | 8 | State-level health data as city data, stale COL, map legend bug, no accessibility |
+| LOW | 5 | Duplicate Cleveland key, city count inconsistency, promise error handler |
+
 ## Documentation Tiers
 
 | Tier | When to Read | Files |
 |------|-------------|-------|
 | Always | Start of every session | `docs/status.md` |
-| Context | When touching that area | `docs/design.md` |
+| Context | When touching that area | `docs/design.md`, `docs/limitations.md` |
 | Grep | Only search when needed | `docs/adr-log.md`, `docs/roadmap.md`, `docs/brand-bible.md` |
 
 ## Commit & Documentation Habits
 
 - Commit after each logical unit of work with a descriptive message
 - Update `docs/status.md` when project state changes meaningfully
+- Update `docs/limitations.md` when discovering or resolving issues
 - Add an ADR entry when making a non-obvious architectural choice
 - Update roadmap when completing items or discovering new work
