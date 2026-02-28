@@ -1,0 +1,22 @@
+{
+  "name": "transplan",
+  "version": "1.0.0",
+  "description": "TransPlan - Data-driven transplant location insights",
+  "private": true,
+  "scripts": {
+    "fetch:traffic": "node scripts/fetch-traffic.js",
+    "fetch:air-quality": "node scripts/fetch-air-quality.js",
+    "fetch:hospital": "node scripts/fetch-hospital-quality.js",
+    "fetch:cost-of-living": "node scripts/fetch-cost-of-living.js",
+    "fetch:health": "node scripts/fetch-health-data.js",
+    "fetch:check-srtr": "node scripts/check-srtr-updates.js",
+    "fetch:all": "node scripts/fetch-traffic.js && node scripts/fetch-air-quality.js && node scripts/fetch-hospital-quality.js && node scripts/fetch-cost-of-living.js && node scripts/fetch-health-data.js",
+    "validate": "node scripts/validate-data.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "xml2js": "^0.6.2"
+  }
+}
