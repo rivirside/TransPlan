@@ -1,0 +1,212 @@
+name: Fetch Data
+
+on:
+  schedule:
+    # Weekly on Monday at 6am UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  fetch-traffic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: node scripts/fetch-traffic.js
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "chore: update traffic fatality data"
+          git push
+      - name: Create issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[Data Pipeline] Fetch failed: NHTSA FARS';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'data-pipeline,failure'
+            });
+            if (!issues.find(i => i.title === title)) {
+              await github.rest.issues.create({
+                ...context.repo, title,
+                body: `The NHTSA FARS traffic data fetch failed.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                labels: ['data-pipeline', 'failure']
+              });
+            }
+
+  fetch-air-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: node scripts/fetch-air-quality.js
+        env:
+          EPA_EMAIL: ${{ secrets.EPA_EMAIL }}
+          EPA_API_KEY: ${{ secrets.EPA_API_KEY }}
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "chore: update air quality data"
+          git push
+      - name: Create issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[Data Pipeline] Fetch failed: EPA AQS';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'data-pipeline,failure'
+            });
+            if (!issues.find(i => i.title === title)) {
+              await github.rest.issues.create({
+                ...context.repo, title,
+                body: `The EPA AQS air quality data fetch failed.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                labels: ['data-pipeline', 'failure']
+              });
+            }
+
+  fetch-hospital-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: node scripts/fetch-hospital-quality.js
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "chore: update hospital quality data"
+          git push
+      - name: Create issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[Data Pipeline] Fetch failed: CMS Provider Data';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'data-pipeline,failure'
+            });
+            if (!issues.find(i => i.title === title)) {
+              await github.rest.issues.create({
+                ...context.repo, title,
+                body: `The CMS hospital quality data fetch failed.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                labels: ['data-pipeline', 'failure']
+              });
+            }
+
+  fetch-cost-of-living:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: node scripts/fetch-cost-of-living.js
+        env:
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "chore: update cost of living data"
+          git push
+      - name: Create issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[Data Pipeline] Fetch failed: BLS API';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'data-pipeline,failure'
+            });
+            if (!issues.find(i => i.title === title)) {
+              await github.rest.issues.create({
+                ...context.repo, title,
+                body: `The BLS cost of living data fetch failed.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                labels: ['data-pipeline', 'failure']
+              });
+            }
+
+  fetch-health-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: node scripts/fetch-health-data.js
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "chore: update health demographics data"
+          git push
+      - name: Create issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[Data Pipeline] Fetch failed: CDC SODA API';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'data-pipeline,failure'
+            });
+            if (!issues.find(i => i.title === title)) {
+              await github.rest.issues.create({
+                ...context.repo, title,
+                body: `The CDC health demographics data fetch failed.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                labels: ['data-pipeline', 'failure']
+              });
+            }
+
+  validate:
+    needs: [fetch-traffic, fetch-air-quality, fetch-hospital-quality, fetch-cost-of-living, fetch-health-data]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: node scripts/validate-data.js
+      - name: Create issue on validation failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[Data Pipeline] Data validation failed';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'data-pipeline,failure'
+            });
+            if (!issues.find(i => i.title === title)) {
+              await github.rest.issues.create({
+                ...context.repo, title,
+                body: `Data validation failed after fetch.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                labels: ['data-pipeline', 'failure']
+              });
+            }

@@ -1,0 +1,32 @@
+name: Check SRTR Updates
+
+on:
+  schedule:
+    # 1st and 15th of each month at 12pm UTC
+    - cron: '0 12 1,15 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  check-srtr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: node scripts/check-srtr-updates.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+      - name: Commit metadata changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/metadata.json
+          git diff --staged --quiet || git commit -m "chore: update SRTR check metadata"
+          git push
