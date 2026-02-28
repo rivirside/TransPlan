@@ -13,7 +13,7 @@ const cityData = {
                 "Top-ranked transplant centers (UPMC)",
                 "High regional donor registration (42%)",
                 "Low diabetes prevalence in surrounding areas",
-                "Strong trauma network increases deceased donor availability",
+                "Strong regional donor recovery network",
                 "Moderate cost of living enables transplant care access"
             ]
         },
@@ -693,7 +693,7 @@ function createTrafficAccidentHeatmap() {
                             <strong>${stateName}</strong><br>
                             Traffic Fatality Rate: <strong style="color: #bd0026">${stateData.rate}</strong> per 100k<br>
                             Annual Fatalities: <strong>${stateData.fatalitiesPerYear}</strong><br>
-                            <em style="font-size: 0.9em">Higher fatality areas may have increased deceased donor availability</em>
+                            <em style="font-size: 0.9em">One of several factors used in regional donor availability estimates</em>
                         `);
                     }
 
@@ -1847,7 +1847,7 @@ function updateMapWithResults(cities) {
                 .bindPopup(`
                     <strong>#${rank} ${city.city}</strong><br>
                     ${city.state}<br>
-                    Match Score: <strong>${city.personalizedScore.toFixed(1)}</strong><br>
+                    Location Score: <strong>${city.personalizedScore.toFixed(1)}</strong><br>
                     Wait Time: ${city.waitTime}
                 `)
                 .addTo(cityMarkersLayer);
@@ -2084,6 +2084,21 @@ function displayResults(cities, formData) {
 
     resultsContainer.innerHTML = '';
 
+    // Show urgency warning for Status 1 (critical) patients
+    let warningEl = document.getElementById('urgency-warning');
+    if (!warningEl) {
+        warningEl = document.createElement('div');
+        warningEl.id = 'urgency-warning';
+        warningEl.className = 'urgency-warning';
+        resultsSection.insertBefore(warningEl, resultsSection.querySelector('.map-section'));
+    }
+    if (formData.urgency === '1') {
+        warningEl.innerHTML = '<strong>Important:</strong> Status 1 (critical) patients are typically too medically urgent for relocation planning. These results may not be actionable for your situation. Please discuss any decisions with your transplant team immediately.';
+        warningEl.style.display = 'block';
+    } else {
+        warningEl.style.display = 'none';
+    }
+
     // Initialize map if not already done
     if (!map) {
         resultsSection.style.display = 'block';
@@ -2130,7 +2145,7 @@ function createCityCard(city, rank, formData) {
         </div>
 
         <div class="score">
-            <div class="score-label">Personalized Match Score</div>
+            <div class="score-label">Location Suitability Score</div>
             <div class="score-value">${city.personalizedScore.toFixed(1)}/100</div>
         </div>
 
@@ -2144,7 +2159,7 @@ function createCityCard(city, rank, formData) {
                 <div class="metric-value ${getDonorClass(city.donorRate)}">${city.donorRate}</div>
             </div>
             <div class="metric">
-                <div class="metric-label">Match Probability</div>
+                <div class="metric-label">Compatibility Index</div>
                 <div class="metric-value ${getMatchClass(city.matchRate)}">${city.matchRate}</div>
             </div>
             <div class="metric">

@@ -11,13 +11,16 @@
     <div class="container">
         <header>
             <h1>TransplantMatch</h1>
-            <p class="tagline">Optimize your transplant outcomes through data-driven location insights</p>
+            <p class="tagline">Explore transplant center locations with data-driven comparison tools</p>
         </header>
 
         <main>
             <section class="info-card">
                 <h2>About This Tool</h2>
-                <p>TransplantMatch analyzes regional transplant data, donor availability, wait times, and health demographics to identify cities where your specific transplant needs have the highest success probability.</p>
+                <div class="disclaimer-banner">
+                    <strong>Important:</strong> This tool is for <strong>educational and exploratory purposes only</strong>. It does not predict actual transplant outcomes. Scores reflect regional data trends, not individual clinical assessments. Always consult your transplant team before making any decisions. See <a href="#disclaimer-full">full disclaimer</a> below.
+                </div>
+                <p>TransplantMatch compares US cities across regional transplant data, donor availability, wait times, and health demographics to help you explore which locations may align with your transplant needs.</p>
             </section>
 
             <section class="form-section">
@@ -107,7 +110,7 @@
                 <h2>How Our Algorithm Works</h2>
 
                 <div class="methodology-intro">
-                    <p>TransplantMatch uses a sophisticated multi-factor algorithm that analyzes <strong>50+ data points</strong> across 8 major categories to calculate your personalized transplant success probability for each city. Our scoring system is weighted based on medical research and UNOS transplant data.</p>
+                    <p>TransplantMatch uses a multi-factor algorithm that analyzes <strong>50+ data points</strong> across 8 major categories to generate a <strong>relative location suitability score</strong> for each city. These scores reflect regional data trends and are <em>not</em> clinical predictions. Our scoring system is weighted based on publicly available transplant research and regional statistics.</p>
                 </div>
 
                 <div class="methodology-grid">
@@ -121,7 +124,7 @@
                             <li><strong>Blood type matching:</strong> AB+ (universal recipient) scores highest, O- (limited options) faces most challenges</li>
                             <li><strong>Age-based prioritization:</strong> Pediatric patients (<18) receive priority; outcomes decline after 65</li>
                             <li><strong>Organ size matching:</strong> Height/weight ratios critical for heart and lung transplants</li>
-                            <li><strong>Sex considerations:</strong> Males have slight advantage due to larger available organ pool</li>
+                            <li><strong>Sex considerations:</strong> Body size matching relevant for heart and lung transplants; minimal factor for other organs</li>
                             <li><strong>Antibody sensitivity:</strong> Previous transfusions or pregnancies may complicate matching</li>
                         </ul>
                     </div>
@@ -208,7 +211,7 @@
                             <span class="method-weight">3%</span>
                         </div>
                         <ul class="method-factors">
-                            <li><strong>Donation laws:</strong> Opt-out registries (CA, OR, WA) vs opt-in states</li>
+                            <li><strong>Donation laws:</strong> States with strong DMV-based registration and first-person consent laws score higher</li>
                             <li><strong>First-person consent:</strong> Some states require family cannot override donor card</li>
                             <li><strong>Medicaid expansion:</strong> Affects post-transplant medication coverage</li>
                             <li><strong>Insurance mandates:</strong> State requirements for transplant coverage</li>
@@ -279,7 +282,7 @@
                                 <span><strong>83/100</strong> × 2% = 1.66</span>
                             </div>
                             <div class="calc-total">
-                                <span><strong>TOTAL PERSONALIZED SCORE:</strong></span>
+                                <span><strong>TOTAL LOCATION SUITABILITY SCORE:</strong></span>
                                 <span><strong>91.54/100</strong></span>
                             </div>
                         </div>
@@ -298,14 +301,14 @@
                         <li>Census Bureau: Population density, socioeconomic demographics</li>
                         <li>State Health Departments: Disease prevalence, public health statistics</li>
                     </ul>
-                    <p class="methodology-note"><strong>Algorithm Updates:</strong> Our scoring model is updated quarterly as new UNOS data becomes available. Regional factors are refreshed annually with CDC and state health department releases.</p>
+                    <p class="methodology-note"><strong>Data Updates:</strong> Regional data is refreshed weekly via automated pipelines where APIs are available. Some data sources (SRTR program reports, policy tiers) are manually curated and updated less frequently. Check the data freshness banner in results for current status.</p>
                 </div>
             </section>
 
             <section id="resultsSection" class="results-section" style="display: none;">
                 <div id="data-freshness-banner"></div>
                 <h2>Your Top Recommended Cities</h2>
-                <p class="results-intro">Based on your profile, here are cities ranked by transplant success probability:</p>
+                <p class="results-intro">Based on your profile, here are cities ranked by location suitability score. These scores reflect regional data trends, not individual clinical predictions.</p>
 
                 <div class="map-section">
                     <div id="map"></div>
@@ -380,8 +383,15 @@
             </section>
         </main>
 
-        <footer>
-            <p><strong>Disclaimer:</strong> This tool provides informational insights only and should not replace consultation with your transplant team and healthcare providers. Actual transplant outcomes depend on many individual factors.</p>
+        <footer id="disclaimer-full">
+            <div class="disclaimer-full">
+                <h3>Disclaimer</h3>
+                <p><strong>This tool is for educational and exploratory purposes only.</strong> TransplantMatch is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
+                <p><strong>What this tool cannot account for:</strong> HLA typing and crossmatch compatibility, Panel Reactive Antibody (PRA/cPRA) sensitization levels, MELD scores for liver allocation, Lung Allocation Scores (LAS), specific disease etiology and comorbidities, your current functional status, or your relationship with specific transplant programs.</p>
+                <p><strong>Scores are relative comparisons</strong> based on publicly available regional statistics. They are not clinical assessments. A city scoring 85/100 does not mean you have an 85% chance of a successful transplant there.</p>
+                <p><strong>Some data is estimated or manually curated</strong> and may not reflect current conditions. Wait time estimates are derived from regional averages and may not match your individual circumstances.</p>
+                <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant. Your medical team has access to your complete clinical picture, which this tool does not.</p>
+            </div>
         </footer>
     </div>
 
