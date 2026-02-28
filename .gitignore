@@ -1,3 +1,6 @@
 node_modules/
 .DS_Store
 *.log
+.claude/
+.playwright-mcp/
+browser-test-full.png
