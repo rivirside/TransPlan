@@ -52,10 +52,10 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
+      - name: Parse API keys
+        run: |
+          echo "${{ secrets.EPA_BLS_KEYS }}" >> $GITHUB_ENV
       - run: node scripts/fetch-air-quality.js
-        env:
-          EPA_EMAIL: ${{ secrets.EPA_EMAIL }}
-          EPA_API_KEY: ${{ secrets.EPA_API_KEY }}
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
@@ -121,9 +121,10 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
+      - name: Parse API keys
+        run: |
+          echo "${{ secrets.EPA_BLS_KEYS }}" >> $GITHUB_ENV
       - run: node scripts/fetch-cost-of-living.js
-        env:
-          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"

@@ -79,9 +79,16 @@ node scripts/validate-data.js
 
 ### Required Secrets (GitHub Settings > Secrets)
 
-- `EPA_EMAIL` - Free signup at [EPA AQS](https://aqs.epa.gov/aqsweb/documents/data_api.html)
-- `EPA_API_KEY` - Provided after EPA email registration
-- `BLS_API_KEY` - Free at [BLS Registration](https://data.bls.gov/registrationEngine/)
+Single secret called `EPA_BLS_KEYS` containing all API keys in `KEY=VALUE` format (one per line):
+
+```
+EPA_EMAIL=your-email@example.com
+EPA_API_KEY=your-epa-key
+BLS_API_KEY=your-bls-key
+```
+
+- EPA key: Free signup at [EPA AQS](https://aqs.epa.gov/aqsweb/documents/data_api.html)
+- BLS key: Free at [BLS Registration](https://data.bls.gov/registrationEngine/)
 
 ### Notifications
 
