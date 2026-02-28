@@ -750,7 +750,7 @@ function createTrafficAccidentHeatmap() {
         `;
         return div;
     };
-    legend.addTo(map);
+    addLayerLegend('traffic', legend);
 }
 
 // Organ donor registration rates with state boundaries
@@ -904,7 +904,7 @@ function createDonorRegistrationHeatmap() {
                 `;
                 return div;
             };
-            legend.addTo(map);
+            addLayerLegend('donorRegistration', legend);
         })
         .catch(error => {
             console.error('Error loading donor registration data:', error);
@@ -1026,7 +1026,7 @@ function createTransplantCentersLayer() {
         `;
         return div;
     };
-    legend.addTo(map);
+    addLayerLegend('transplantCenters', legend);
 }
 
 // State policies overlay with color-coded boundaries
@@ -1144,7 +1144,7 @@ function createStatePoliciesLayer() {
                 `;
                 return div;
             };
-            legend.addTo(map);
+            addLayerLegend('statePolicies', legend);
         })
         .catch(error => {
             console.error('Error loading state boundaries:', error);
@@ -1318,7 +1318,7 @@ function createWaitTimeGridLayer() {
                 `;
                 return div;
             };
-            legend.addTo(map);
+            addLayerLegend('waitTimeGrid', legend);
         })
         .catch(error => {
             console.error('Error loading UNOS regions:', error);
@@ -1396,7 +1396,7 @@ function createDiabetesLayer() {
                 `;
                 return div;
             };
-            legend.addTo(map);
+            addLayerLegend('diabetes', legend);
         });
 }
 
@@ -1469,7 +1469,7 @@ function createObesityLayer() {
                 `;
                 return div;
             };
-            legend.addTo(map);
+            addLayerLegend('obesity', legend);
         });
 }
 
@@ -1546,7 +1546,7 @@ function createCostOfLivingLayer() {
                 `;
                 return div;
             };
-            legend.addTo(map);
+            addLayerLegend('costOfLiving', legend);
         });
 }
 
@@ -1620,7 +1620,7 @@ function createAirQualityLayer() {
                 `;
                 return div;
             };
-            legend.addTo(map);
+            addLayerLegend('airQuality', legend);
         });
 }
 
@@ -1697,8 +1697,24 @@ function createInsuranceCoverageLayer() {
                 `;
                 return div;
             };
-            legend.addTo(map);
+            addLayerLegend('insurance', legend);
         });
+}
+
+// Legend management — prevents duplicate legends when toggling layers
+const layerLegends = {};
+function addLayerLegend(layerName, legend) {
+    if (layerLegends[layerName]) {
+        map.removeControl(layerLegends[layerName]);
+    }
+    layerLegends[layerName] = legend;
+    legend.addTo(map);
+}
+function removeLayerLegend(layerName) {
+    if (layerLegends[layerName]) {
+        map.removeControl(layerLegends[layerName]);
+        delete layerLegends[layerName];
+    }
 }
 
 // Setup layer toggle controls
@@ -1708,6 +1724,7 @@ function setupLayerControls() {
             trafficHeatLayer.addTo(map);
         } else {
             map.removeLayer(trafficHeatLayer);
+            removeLayerLegend('traffic');
         }
     });
 
@@ -1719,6 +1736,7 @@ function setupLayerControls() {
             donorRegistrationHeatLayer.addTo(map);
         } else {
             map.removeLayer(donorRegistrationHeatLayer);
+            removeLayerLegend('donorRegistration');
         }
     });
 
@@ -1727,6 +1745,7 @@ function setupLayerControls() {
             transplantCentersLayer.addTo(map);
         } else {
             map.removeLayer(transplantCentersLayer);
+            removeLayerLegend('transplantCenters');
         }
     });
 
@@ -1738,6 +1757,7 @@ function setupLayerControls() {
             statePoliciesLayer.addTo(map);
         } else {
             map.removeLayer(statePoliciesLayer);
+            removeLayerLegend('statePolicies');
         }
     });
 
@@ -1749,6 +1769,7 @@ function setupLayerControls() {
             waitTimeGridLayer.addTo(map);
         } else {
             map.removeLayer(waitTimeGridLayer);
+            removeLayerLegend('waitTimeGrid');
         }
     });
 
@@ -1760,6 +1781,7 @@ function setupLayerControls() {
             diabetesLayer.addTo(map);
         } else {
             map.removeLayer(diabetesLayer);
+            removeLayerLegend('diabetes');
         }
     });
 
@@ -1771,6 +1793,7 @@ function setupLayerControls() {
             obesityLayer.addTo(map);
         } else {
             map.removeLayer(obesityLayer);
+            removeLayerLegend('obesity');
         }
     });
 
@@ -1782,6 +1805,7 @@ function setupLayerControls() {
             costOfLivingLayer.addTo(map);
         } else {
             map.removeLayer(costOfLivingLayer);
+            removeLayerLegend('costOfLiving');
         }
     });
 
@@ -1793,6 +1817,7 @@ function setupLayerControls() {
             airQualityLayer.addTo(map);
         } else {
             map.removeLayer(airQualityLayer);
+            removeLayerLegend('airQuality');
         }
     });
 
@@ -1804,6 +1829,7 @@ function setupLayerControls() {
             insuranceCoverageLayer.addTo(map);
         } else {
             map.removeLayer(insuranceCoverageLayer);
+            removeLayerLegend('insurance');
         }
     });
 

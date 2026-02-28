@@ -175,9 +175,14 @@
         const topCities = cities.slice(0, 10);
         const labels = topCities.map(c => c.city);
 
+        // Show weighted contributions (score * weight/100) so bar heights
+        // reflect actual impact on the final score, not raw category scores
         const datasets = CATEGORY_KEYS.map((key, i) => ({
-            label: CATEGORY_LABELS[i],
-            data: topCities.map(c => c.scoreBreakdown?.[key] || 0),
+            label: `${CATEGORY_LABELS[i]} (${CATEGORY_WEIGHTS[i]}%)`,
+            data: topCities.map(c => {
+                const raw = c.scoreBreakdown?.[key] || 0;
+                return raw * CATEGORY_WEIGHTS[i] / 100;
+            }),
             backgroundColor: CHART_COLORS[i],
             borderWidth: 0,
             borderRadius: 2
@@ -191,17 +196,19 @@
                 maintainAspectRatio: false,
                 scales: {
                     x: {
+                        stacked: true,
                         ticks: {
                             font: { size: 10 },
                             maxRotation: 45
                         }
                     },
                     y: {
+                        stacked: true,
                         beginAtZero: true,
                         max: 100,
                         title: {
                             display: true,
-                            text: 'Score (0-100)',
+                            text: 'Weighted Score Contribution',
                             font: { size: 11 }
                         }
                     }
@@ -218,7 +225,9 @@
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                return `${context.dataset.label}: ${context.raw.toFixed(1)}`;
+                                const catIndex = context.datasetIndex;
+                                const rawScore = context.raw * 100 / CATEGORY_WEIGHTS[catIndex];
+                                return `${CATEGORY_LABELS[catIndex]}: ${rawScore.toFixed(0)}/100 (contributes ${context.raw.toFixed(1)} pts)`;
                             }
                         }
                     }

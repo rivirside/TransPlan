@@ -260,9 +260,10 @@
         const loaded = {};
         const sourceStatuses = {};
 
-        for (const result of results) {
+        results.forEach((result, index) => {
+            const [key] = entries[index];
             if (result.status === 'fulfilled' && result.value) {
-                const [key, data] = result.value;
+                const [, data] = result.value;
                 if (data) {
                     loaded[key] = stripMeta(data);
                     sourceStatuses[key] = 'loaded';
@@ -271,10 +272,11 @@
                     sourceStatuses[key] = 'fallback';
                 }
             } else {
-                // Promise rejected — use default
-                sourceStatuses['unknown'] = 'error';
+                // Promise rejected — fall back to default for this specific source
+                loaded[key] = DEFAULTS[key] || null;
+                sourceStatuses[key] = 'error';
             }
-        }
+        });
 
         // Fill in any missing keys with defaults
         for (const key of Object.keys(DEFAULTS)) {
