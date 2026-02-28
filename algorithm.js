@@ -394,11 +394,19 @@ function calculateHealthDemographicsScore(city) {
     let score = 100;
 
     // Lower disease prevalence = better donor pool
-    score -= (health.diabetesRate - 7) * 2;  // Penalty for high diabetes
-    score -= (health.obesityRate - 25) * 1.5; // Penalty for high obesity
-    score -= (health.ckdRate - 11) * 2.5;     // Penalty for high CKD
-    score -= (health.hypertensionRate - 27) * 1; // Penalty for high hypertension
-    score -= (health.smokingRate - 13) * 1.5;    // Penalty for high smoking
+    // Use null-safe access with national-average defaults to prevent NaN
+    // if fetched data only has some fields (e.g., CDC fetch only gets diabetes)
+    const diabetes = health.diabetesRate ?? 10.5;      // US avg ~10.5%
+    const obesity = health.obesityRate ?? 31.9;         // US avg ~31.9%
+    const ckd = health.ckdRate ?? 14.0;                 // US avg ~14%
+    const hypertension = health.hypertensionRate ?? 32;  // US avg ~32%
+    const smoking = health.smokingRate ?? 14.0;          // US avg ~14%
+
+    score -= (diabetes - 7) * 2;        // Penalty for high diabetes
+    score -= (obesity - 25) * 1.5;      // Penalty for high obesity
+    score -= (ckd - 11) * 2.5;          // Penalty for high CKD
+    score -= (hypertension - 27) * 1;   // Penalty for high hypertension
+    score -= (smoking - 13) * 1.5;      // Penalty for high smoking
 
     return Math.max(30, Math.min(100, score));
 }
@@ -409,7 +417,7 @@ function calculateHealthDemographicsScore(city) {
  */
 function calculatePolicyScore(state) {
     const policyTiers = window.TransPlanData?.policyTiers || {
-        "California": 100, "Oregon": 100, "Washington": 100,
+        "California": 92, "Oregon": 100, "Washington": 90,
         "Minnesota": 90, "New York": 90, "Illinois": 90,
         "Pennsylvania": 88, "Ohio": 88, "Wisconsin": 88,
         "Massachusetts": 87, "Colorado": 86, "Maryland": 86,
