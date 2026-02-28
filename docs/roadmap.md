@@ -28,23 +28,27 @@
 - [x] Documentation system (status, design, ADR, roadmap, brand bible)
 - [x] README with architecture and usage docs
 
-## Not Yet Done (from v0.2 plan)
+### v0.2.1 - Browser Testing & Derived Metrics (current session)
+- [x] Generate `package-lock.json` via `npm install`
+- [x] Browser test: open index.html, submit form, verify charts render
+- [x] Browser test: verify freshness banner appears with 10 source dots
+- [x] Browser test: verify radar charts appear in city cards (22 canvases)
+- [x] Browser test: verify comparison bar chart renders
+- [x] Browser test: verify donut chart renders in methodology
+- [x] Verify no console errors (zero errors confirmed)
+- [x] Fix N/A metrics: derive wait times, match rates, donor rates from algorithm data
+- [x] Fix N/A factors: generate city-specific factors from scoring breakdown
+- [x] Fix "1 months" pluralization bug
+- [x] All v0.2 work committed (10 commits) and pushed
+- [x] API keys configured as `EPA_BLS_KEYS` secret
+- [x] Add `.gitignore` for node_modules, .DS_Store
 
-### Immediate (before first real commit)
-- [ ] Generate `package-lock.json` via `npm install`
-- [ ] Browser test: open index.html, submit form, verify charts render
-- [ ] Browser test: verify freshness banner appears
-- [ ] Browser test: verify radar charts appear in city cards
-- [ ] Verify no console errors
-- [ ] Initial commit of all v0.2 work
+## Not Yet Done
 
 ### Short-term
-- [ ] Configure GitHub Pages deployment
-- [ ] Register for EPA API key and add as GitHub Secret
-- [ ] Register for BLS API key and add as GitHub Secret
-- [ ] Run fetch scripts locally and verify output
+- [ ] Configure GitHub Pages deployment (Settings > Pages > Source: main)
+- [ ] Run fetch scripts locally and verify output against live APIs
 - [ ] Test GitHub Actions workflow with manual trigger
-- [ ] Add `.gitignore` for node_modules, .DS_Store
 
 ## Future Ideas (not committed to)
 

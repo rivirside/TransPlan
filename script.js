@@ -1924,31 +1924,136 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
     calculateResults(formData);
 });
 
+// Derive display metrics from algorithm data instead of relying on mock entries
+function deriveDisplayMetrics(cityName, stateName, organType, urgency, breakdown) {
+    // --- Wait Time (derived from algorithm's wait time factors) ---
+    const baseWaitTimes = {
+        kidney: { min: 1.8, max: 4.2 },
+        liver: { min: 0.8, max: 2.5 },
+        heart: { min: 0.25, max: 0.8 },
+        lung: { min: 0.3, max: 0.9 },
+        pancreas: { min: 1.2, max: 3.5 },
+        intestine: { min: 0.6, max: 1.5 }
+    };
+    const cityWaitTimeFactors = {
+        "Minneapolis": 0.85, "Madison": 0.88, "Portland": 0.90,
+        "Pittsburgh": 0.87, "Baltimore": 0.95, "Cleveland": 0.92,
+        "Nashville": 0.89, "Durham": 0.91, "Rochester": 0.86,
+        "Omaha": 0.84, "Seattle": 0.93, "St. Louis": 0.90,
+        "Indianapolis": 0.91, "Chicago": 1.05, "Philadelphia": 1.08,
+        "Houston": 0.96, "Dallas": 0.94, "Miami": 0.98,
+        "Los Angeles": 1.15, "San Francisco": 1.18, "Palo Alto": 1.16,
+        "New York": 1.12
+    };
+    const urgencyFactors = { '1': 0.3, '2': 0.6, '3': 1.0, '4': 1.4 };
+    const base = baseWaitTimes[organType] || baseWaitTimes.kidney;
+    const avgWait = (base.min + base.max) / 2;
+    const factor = cityWaitTimeFactors[cityName] || 1.0;
+    const uFactor = urgencyFactors[urgency] || 1.0;
+    const waitYears = Math.round(avgWait * factor * uFactor * 10) / 10;
+    const waitMonths = Math.round(waitYears * 12);
+    const waitTime = waitYears < 1
+        ? `${Math.max(1, waitMonths)} ${waitMonths === 1 ? 'month' : 'months'}`
+        : `${waitYears} ${waitYears === 1 ? 'year' : 'years'}`;
+
+    // --- Donor Rate (from donor availability score) ---
+    const donorScore = breakdown?.donorAvailability || 50;
+    const donorRate = donorScore >= 80 ? 'Very High' :
+                      donorScore >= 65 ? 'High' :
+                      donorScore >= 50 ? 'Moderate' :
+                      donorScore >= 35 ? 'Low' : 'Very Low';
+
+    // --- Match Probability (derived from medical compatibility + donor scores) ---
+    const medScore = breakdown?.medicalCompatibility || 50;
+    const matchPct = Math.round(60 + (medScore + donorScore) / 200 * 35);
+    const matchRate = matchPct + '%';
+
+    // --- Center Quality (from hospital quality score) ---
+    const hospScore = breakdown?.hospitalQuality || 50;
+    const centersQuality = hospScore >= 90 ? 'Excellent' :
+                           hospScore >= 75 ? 'Very Good' :
+                           hospScore >= 60 ? 'Good' : 'Fair';
+
+    // --- City-specific factors (generated from scoring data) ---
+    const factors = generateCityFactors(cityName, stateName, organType, breakdown);
+
+    return { waitTime, donorRate, matchRate, centersQuality, factors };
+}
+
+// Generate meaningful per-city factors based on actual scoring data
+function generateCityFactors(cityName, stateName, organType, breakdown) {
+    const factors = [];
+
+    // Hospital quality factor
+    const hospScore = breakdown?.hospitalQuality || 0;
+    if (hospScore >= 90) {
+        factors.push(`Top-tier transplant center with high annual ${organType} volume`);
+    } else if (hospScore >= 75) {
+        factors.push(`Well-established ${organType} transplant program`);
+    } else {
+        factors.push(`Growing ${organType} transplant program`);
+    }
+
+    // Wait time factor
+    const waitScore = breakdown?.waitTime || 0;
+    if (waitScore >= 75) {
+        factors.push('Shorter than average wait times in this region');
+    } else if (waitScore >= 50) {
+        factors.push('Moderate regional wait times');
+    } else {
+        factors.push('Higher competition may extend wait times');
+    }
+
+    // Donor availability factor
+    const donorScore = breakdown?.donorAvailability || 0;
+    if (donorScore >= 70) {
+        factors.push(`Strong donor registration rates in ${stateName}`);
+    } else if (donorScore >= 50) {
+        factors.push('Moderate regional donor availability');
+    } else {
+        factors.push('Lower donor registration in this region');
+    }
+
+    // Geographic factor
+    const geoScore = breakdown?.geographic || 0;
+    if (geoScore >= 70) {
+        factors.push('Favorable cost of living and recovery climate');
+    } else if (geoScore >= 50) {
+        factors.push('Moderate cost of living in metro area');
+    } else {
+        factors.push('Higher cost of living — plan for additional expenses');
+    }
+
+    // Health demographics factor
+    const healthScore = breakdown?.healthDemographics || 0;
+    if (healthScore >= 70) {
+        factors.push('Healthy regional population supports quality donor pool');
+    } else {
+        factors.push('Regional health factors may affect donor pool quality');
+    }
+
+    return factors;
+}
+
 function calculateResults(formData) {
     const organ = formData.organ;
 
-    // Use comprehensive algorithm to dynamically score all 21 cities
+    // Use comprehensive algorithm to dynamically score all cities
     if (typeof calculateComprehensiveScore === 'function') {
         const cities = Object.entries(cityStateMap).map(([cityName, stateName]) => {
             const result = calculateComprehensiveScore(formData, cityName, stateName, organ);
-            const mockEntry = cityData[organ]?.find(c => c.city === cityName);
+            const metrics = deriveDisplayMetrics(cityName, stateName, organ, formData.urgency, result.breakdown);
             return {
                 city: cityName,
                 state: stateName,
                 score: result.total,
                 personalizedScore: result.total,
                 scoreBreakdown: result.breakdown,
-                waitTime: mockEntry?.waitTime || 'N/A',
-                donorRate: mockEntry?.donorRate || 'Moderate',
-                matchRate: mockEntry?.matchRate || 'N/A',
-                centersQuality: mockEntry?.centersQuality || 'Good',
-                factors: mockEntry?.factors || [
-                    'Comprehensive transplant program',
-                    'Experienced surgical team',
-                    'Strong post-transplant support',
-                    'Regional organ sharing network',
-                    'Quality patient outcomes'
-                ]
+                waitTime: metrics.waitTime,
+                donorRate: metrics.donorRate,
+                matchRate: metrics.matchRate,
+                centersQuality: metrics.centersQuality,
+                factors: metrics.factors
             };
         });
 

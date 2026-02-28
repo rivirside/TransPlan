@@ -6,35 +6,37 @@
 
 A static-site tool that helps transplant patients identify the best US cities for their specific organ transplant needs. It scores 21 cities across 8 weighted categories using 50+ data points, displays results on an interactive Leaflet map, and visualizes score breakdowns with Chart.js.
 
-## Current State: Post-MVP, Uncommitted
+## Current State: v0.2 Complete, Browser Tested
 
-Everything below was built in the first implementation session and is **not yet committed**. The repo has only 2 prior commits (`Initial commit` and `Created files` with the original hardcoded codebase).
+All v0.2 work has been committed (10 commits) and pushed to GitHub. API keys configured as `EPA_BLS_KEYS` secret. Browser testing completed with zero errors.
 
 ### What's Done
 
 | Area | Status | Notes |
 |------|--------|-------|
-| Algorithm bug fixes | Done | 3 bugs fixed (multiplicative scoring, /100 error, random jitter) |
-| Data directory (data/) | Done | 10 JSON seed files extracted from hardcoded data |
-| Data loader (data-loader.js) | Done | Fetches JSON, falls back to defaults, freshness banner |
-| Algorithm refactor | Done | All 8 scoring functions check `window.TransPlanData` first |
-| script.js refactor | Done | Dynamic scoring of all 21 cities, async form submit |
-| Chart.js visualizations | Done | Radar (per card), bar (comparison), donut (weights) |
-| Fetch scripts (scripts/) | Done | 6 scripts: NHTSA, EPA, CMS, BLS, CDC, SRTR checker |
-| Validation script | Done | Schema, ranges, coverage, staleness checks |
-| GitHub Actions workflows | Done | Weekly fetch + bimonthly SRTR check |
-| README | Done | Architecture, data pipeline, how to add cities |
-| Documentation system | Done | This file + design.md, adr-log.md, roadmap.md, brand-bible.md |
+| Algorithm bug fixes | ✅ Done | 3 bugs fixed (multiplicative scoring, /100 error, random jitter) |
+| Data directory (data/) | ✅ Done | 10 JSON seed files extracted from hardcoded data |
+| Data loader (data-loader.js) | ✅ Done | Fetches JSON, falls back to defaults, freshness banner |
+| Algorithm refactor | ✅ Done | All 8 scoring functions check `window.TransPlanData` first |
+| script.js refactor | ✅ Done | Dynamic scoring of all 22 cities, async form submit |
+| Derived metrics | ✅ Done | Wait times, match rates, donor rates, factors derived from algorithm data |
+| Chart.js visualizations | ✅ Done | Radar (per card), bar (comparison), donut (weights) — browser verified |
+| Fetch scripts (scripts/) | ✅ Done | 6 scripts: NHTSA, EPA, CMS, BLS, CDC, SRTR checker |
+| Validation script | ✅ Done | Schema, ranges, coverage, staleness checks |
+| GitHub Actions workflows | ✅ Done | Weekly fetch + bimonthly SRTR check, single EPA_BLS_KEYS secret |
+| README | ✅ Done | Architecture, data pipeline, how to add cities |
+| Documentation system | ✅ Done | This file + design.md, adr-log.md, roadmap.md, brand-bible.md |
+| Browser testing | ✅ Done | Form submit, 22 cities ranked, charts render, zero console errors |
+| package-lock.json | ✅ Done | Generated via npm install |
+| API keys | ✅ Done | EPA_BLS_KEYS secret configured in GitHub |
 
 ### What's NOT Done
 
-- No commits of the new work yet
-- No `npm install` / `package-lock.json` generated
-- No end-to-end browser testing (only Node.js algorithm test)
-- No GitHub Pages deployment configured
-- No API keys configured (EPA_EMAIL, EPA_API_KEY, BLS_API_KEY)
-- Charts not visually verified in browser yet
-- Data freshness banner not visually verified
+- GitHub Pages deployment not yet configured (Settings > Pages > Source: main)
+- Fetch scripts not yet run against live APIs (only seed data)
+- No unit tests (Jest/Vitest for algorithm.js)
+- No browser tests (Playwright/Cypress)
+- See `docs/roadmap.md` for future feature ideas
 
 ## File Map
 
