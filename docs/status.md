@@ -6,33 +6,32 @@
 
 A static-site tool that helps transplant patients identify the best US cities for their specific organ transplant needs. It scores 22 cities across 8 weighted categories using 50+ data points, displays results on an interactive Leaflet map, and visualizes score breakdowns with Chart.js.
 
-## Current State: v0.2 Complete, Browser Tested
+## Current State: Post-Review, 26 of 40 Limitations Fixed
 
-All v0.2 work has been committed (10 commits) and pushed to GitHub. API keys configured as `EPA_BLS_KEYS` secret. Browser testing completed with zero errors.
+Batches 1-5 of the limitation fixes are complete (L-001 through L-030). A comprehensive review was conducted on 2026-03-01 covering: full site walkthrough (all 6 organs), map overlays (all 10 layers), data pipeline audit, and methodology text accuracy. The review discovered 10 new issues (L-031 through L-040), mostly in the fetch pipeline.
 
 ### What's Done
 
 | Area | Status | Notes |
 |------|--------|-------|
-| Algorithm bug fixes | ✅ Done | 3 bugs fixed (multiplicative scoring, /100 error, random jitter) |
-| Data directory (data/) | ✅ Done | 10 JSON seed files extracted from hardcoded data |
-| Data loader (data-loader.js) | ✅ Done | Fetches JSON, falls back to defaults, freshness banner |
-| Algorithm refactor | ✅ Done | All 8 scoring functions check `window.TransPlanData` first |
-| script.js refactor | ✅ Done | Dynamic scoring of all 22 cities, async form submit |
-| Derived metrics | ✅ Done | Wait times, match rates, donor rates, factors derived from algorithm data |
-| Chart.js visualizations | ✅ Done | Radar (per card), bar (comparison), donut (weights) — browser verified |
-| Fetch scripts (scripts/) | ✅ Done | 6 scripts: NHTSA, EPA, CMS, BLS, CDC, SRTR checker |
-| Validation script | ✅ Done | Schema, ranges, coverage, staleness checks |
-| GitHub Actions workflows | ✅ Done | Weekly fetch + bimonthly SRTR check, single EPA_BLS_KEYS secret |
-| README | ✅ Done | Architecture, data pipeline, how to add cities |
-| Documentation system | ✅ Done | This file + design.md, adr-log.md, roadmap.md, brand-bible.md |
-| Browser testing | ✅ Done | Form submit, 22 cities ranked, charts render, zero console errors |
-| package-lock.json | ✅ Done | Generated via npm install |
-| API keys | ✅ Done | EPA_BLS_KEYS secret configured in GitHub |
+| Core algorithm | ✅ Done | 8 categories, organ-specific inputs (cPRA/MELD/LAS), deduped data |
+| Data directory (data/) | ✅ Done | 10 JSON seed files, real SRTR volumes, corrected policy tiers |
+| Data loader (data-loader.js) | ✅ Done | Runtime JSON loader, DEFAULTS as single source of truth |
+| Clinical inputs | ✅ Done | cPRA slider (kidney), MELD (liver), LAS (lung) — conditional fields |
+| Ethical/legal fixes | ✅ Done | Disclaimer expanded, "success probability" → "suitability score" |
+| Chart.js visualizations | ✅ Done | Stacked weighted bar chart, radar per card, donut weights |
+| Accessibility | ✅ Done | ARIA labels on map/charts/results, mobile collapse overlay controls |
+| Methodology text | ✅ Done | Accurate data sources, correct volumes, real factors listed |
+| Fetch scripts (scripts/) | ⚠️ Partial | 6 scripts exist but 2 have destructive bugs (L-031, L-032), 1 missing (L-033) |
+| GitHub Actions | ⚠️ Partial | Parallel push race condition (L-035) |
+| Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
 
 ### What's NOT Done
 
-- GitHub Pages deployment not yet configured (Settings > Pages > Source: main)
+- **2 CRITICAL pipeline bugs** — fetch-hospital-quality.js and fetch-health-data.js will destroy data when run (L-031, L-032)
+- **Pipeline gaps** — no fetch script for donor registration (L-033), SRTR data is dead path (L-034)
+- **Batch 6 items** — L-009 (OPO boundaries), L-012 (county health data), L-017 (SRTR outcomes), L-022 (socioeconomic rubric)
+- GitHub Pages deployment not yet configured
 - Fetch scripts not yet run against live APIs (only seed data)
 - No unit tests (Jest/Vitest for algorithm.js)
 - No browser tests (Playwright/Cypress)
@@ -100,14 +99,14 @@ TransPlan/
 
 ## Known Limitations
 
-**30 tracked issues** in `docs/limitations.md` — 14 fixed, 16 open. Read when auditing data quality, algorithm accuracy, or planning fixes.
+**40 tracked issues** in `docs/limitations.md` — 26 fixed, 14 open. Read when auditing data quality, algorithm accuracy, or planning fixes.
 
 | Severity | Open | Fixed | Key Open Examples |
 |----------|------|-------|-------------------|
-| CRITICAL | 3 | 5 | No PRA/cPRA input (L-001), no MELD for liver (L-002), fake SRTR volumes (L-010) |
-| HIGH | 5 | 4 | No LAS for lungs, broken FARS normalization, CMS ratings not transplant-specific, traffic-as-donor-proxy |
-| MEDIUM | 6 | 2 | State-level health data as city data, stale COL, no accessibility, mobile responsiveness |
-| LOW | 2 | 3 | City count inconsistency (L-028), mobile overlay panel (L-030) |
+| CRITICAL | 2 | 8 | Fetch scripts destroy data on run (L-031, L-032) |
+| HIGH | 3 | 6 | No donor reg fetch (L-033), OPO boundaries ignored (L-009), CMS not transplant-specific (L-017) |
+| MEDIUM | 5 | 9 | State-level health data (L-012), socioeconomic basis (L-022), CI race condition (L-035) |
+| LOW | 4 | 3 | Dead SRTR path (L-034), validate filename bug (L-036), dead code (L-037), orphan entries (L-038/39) |
 
 ## Documentation Tiers
 

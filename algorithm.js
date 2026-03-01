@@ -2,7 +2,7 @@
  * COMPREHENSIVE TRANSPLANT MATCHING ALGORITHM
  *
  * This algorithm considers 50+ factors across 8 major categories to calculate
- * a personalized transplant success probability score for each city.
+ * a relative location suitability score for each city.
  *
  * SCORING CATEGORIES (with weights):
  * 1. Medical Compatibility (25%) - Blood type, organ size, antibody sensitivity
@@ -233,21 +233,21 @@ function calculateHospitalQualityScore(city, organType, formData) {
         "Rochester": 97, "Los Angeles": 95, "San Francisco": 94,
         "Minneapolis": 93, "Durham": 92, "Chicago": 90,
         "Houston": 89, "Palo Alto": 91, "Philadelphia": 88,
-        "Nashville": 86, "Madison": 87, "Seattle": 88,
+        "Nashville": 93, "Madison": 87, "Seattle": 88,
         "St. Louis": 85, "Dallas": 83, "Miami": 82,
-        "Portland": 84, "Indianapolis": 81, "Omaha": 83,
+        "Portland": 84, "Indianapolis": 85, "Omaha": 83,
         "New York": 92
     };
     score += (tierScores[city] || 80) * 0.25;
 
     // Specialization in specific organ (20% of category)
     const specializations = hqData?.specializations || {
-        kidney: ["Pittsburgh", "Minneapolis", "Madison", "Baltimore"],
-        liver: ["Pittsburgh", "Los Angeles", "San Francisco", "Baltimore"],
-        heart: ["Cleveland", "Nashville", "Durham", "Houston", "Palo Alto"],
-        lung: ["Durham", "Pittsburgh", "St. Louis", "Seattle"],
-        pancreas: ["Minneapolis", "Madison", "Miami", "San Francisco"],
-        intestine: ["Pittsburgh", "Omaha", "Miami"]
+        kidney: ["Cleveland", "Nashville", "St. Louis", "Madison", "San Francisco", "Chicago"],
+        liver: ["Houston", "Cleveland", "San Francisco", "Pittsburgh", "Indianapolis", "Nashville"],
+        heart: ["Nashville", "Durham", "Los Angeles", "Palo Alto", "San Francisco", "New York"],
+        lung: ["Cleveland", "Durham", "Nashville", "Chicago", "San Francisco", "Pittsburgh"],
+        pancreas: ["Minneapolis", "Indianapolis", "Madison", "San Francisco"],
+        intestine: ["Pittsburgh", "Omaha", "Miami", "Cleveland"]
     };
     const isSpecialized = (specializations[organType] || []).includes(city);
     score += (isSpecialized ? 100 : 75) * 0.20;
