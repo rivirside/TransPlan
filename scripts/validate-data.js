@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Post-fetch data validation.
- * Checks: JSON syntax, expected schema, value ranges, coverage of all 21 cities, staleness.
+ * Checks: JSON syntax, expected schema, value ranges, coverage of all 22 cities, staleness.
  */
 
 const fs = require('fs');

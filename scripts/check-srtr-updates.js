@@ -96,7 +96,7 @@ The SRTR program-specific reports page has been updated. New biannual data may b
 - [ ] Update \`data/manual/srtr-reports.json\` with new volumes
 - [ ] Update \`data/hospital-quality.json\` centerReputation scores if needed
 - [ ] Update specializations list if centers have changed focus areas
-- [ ] Verify all 21 cities have current data
+- [ ] Verify all 22 cities have current data
 - [ ] Commit and push updates
 
 *This issue was automatically created by the SRTR check workflow.*`;

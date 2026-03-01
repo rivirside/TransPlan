@@ -459,6 +459,14 @@ footer {
     font-size: 1.1rem;
 }
 
+/* Mobile collapse toggle — hidden on desktop */
+.overlay-collapse-toggle {
+    display: none;
+}
+.overlay-heading-desktop {
+    display: inline;
+}
+
 .overlay-controls {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -830,5 +838,36 @@ footer {
 
     .overlay-controls {
         grid-template-columns: 1fr;
+    }
+
+    /* L-030: Collapsible map overlay controls on mobile */
+    .overlay-collapse-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        background: none;
+        border: none;
+        color: #2c3e50;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 0;
+        font-family: inherit;
+    }
+    .overlay-collapse-toggle .toggle-icon {
+        transition: transform 0.2s ease;
+        font-size: 0.8rem;
+    }
+    .overlay-collapse-toggle[aria-expanded="true"] .toggle-icon {
+        transform: rotate(180deg);
+    }
+    .overlay-heading-desktop {
+        display: none;
+    }
+
+    /* Collapsed state: hide overlay controls */
+    .overlay-controls.collapsed {
+        display: none;
     }
 }

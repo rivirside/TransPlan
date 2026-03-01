@@ -1939,7 +1939,7 @@ const urgencyMultipliers = {
     '4': 0.7    // Inactive
 };
 
-// City-to-state mapping for dynamic scoring across all 21 cities
+// City-to-state mapping for dynamic scoring across all 22 cities
 const cityStateMap = {
     "Pittsburgh": "Pennsylvania", "Baltimore": "Maryland", "Philadelphia": "Pennsylvania",
     "New York": "New York", "Minneapolis": "Minnesota", "Madison": "Wisconsin",
@@ -2189,6 +2189,7 @@ function displayResults(cities, formData) {
         warningEl = document.createElement('div');
         warningEl.id = 'urgency-warning';
         warningEl.className = 'urgency-warning';
+        warningEl.setAttribute('role', 'alert');
         resultsSection.insertBefore(warningEl, resultsSection.querySelector('.map-section'));
     }
     if (formData.urgency === '1') {

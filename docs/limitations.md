@@ -202,13 +202,13 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-027: No accessibility attributes on map, charts, or interactive elements
 - **Severity:** MEDIUM
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** No `aria-label` on map div, chart canvases, or overlay checkboxes. Screen reader users encounter map and charts as invisible content. Given target audience (people with serious medical conditions who may have disabilities), this is a significant gap.
 - **File:** `index.html`, `script.js`
 
 ### L-028: City count inconsistency (22 actual, documented as 21)
 - **Severity:** LOW
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** Palo Alto is the 22nd city. README, status.md summary line, and brand bible all say "21 cities." Actual city count across all data structures is 22.
 - **Fix complexity:** Low — update documentation to say 22.
 
@@ -220,7 +220,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-030: Mobile responsiveness of map overlays
 - **Severity:** MEDIUM
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** The 10 overlay checkboxes in a side panel are a desktop-only UX pattern. On mobile viewports, the map and controls will likely overlap or controls will be inaccessible.
 - **File:** `styles.css`, `index.html`
 
@@ -253,3 +253,6 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-010 | (batch3) | 2026-03-01 | Replaced fabricated volumes with real 2023-2024 SRTR/OPTN data across all 3 data locations; intestine reduced to 8 real centers |
 | L-015 | (batch4) | 2026-03-01 | Replaced naive `100-ppb` with EPA AQI breakpoint conversion for ozone + added PM2.5 (param 88101); composite uses dominant pollutant |
 | L-014 | (batch4) | 2026-03-01 | Fixed Nashville ratio (was 1.07x Baltimore, now 1.10x Houston); documented Census ACS basis for all 7 estimated cities |
+| L-027 | (batch5) | 2026-03-01 | Added aria-label on map, chart canvas, results container (aria-live), overlay group, urgency warning (role=alert) |
+| L-030 | (batch5) | 2026-03-01 | Collapsible "Map Overlays" toggle on mobile (<768px); controls hidden by default, expandable via button |
+| L-028 | (batch5) | 2026-03-01 | Updated "21 cities" → "22 cities" across README, status.md, adr-log.md, roadmap.md, script.js, validate-data.js, check-srtr-updates.js |

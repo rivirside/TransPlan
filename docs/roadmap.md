@@ -6,7 +6,7 @@
 
 ### v0.1 - Original Codebase
 - [x] 8-category scoring algorithm with 50+ factors
-- [x] 21 cities across 6 organ types
+- [x] 22 cities across 6 organ types
 - [x] Interactive Leaflet map with 10 overlay layers
 - [x] Health profile form (organ, blood type, age, sex, urgency, weight, height, insurance)
 - [x] Methodology section explaining the algorithm
@@ -19,7 +19,7 @@
 - [x] Extract hardcoded data into `data/` JSON files
 - [x] Create `data-loader.js` with fallback defaults
 - [x] Refactor algorithm.js to use `window.TransPlanData`
-- [x] Refactor script.js to dynamically score all 21 cities
+- [x] Refactor script.js to dynamically score all 22 cities
 - [x] Add Chart.js: radar (per city), bar (comparison), donut (weights)
 - [x] Data freshness banner
 - [x] Create 6 fetch scripts (NHTSA, EPA, CMS, BLS, CDC, SRTR)

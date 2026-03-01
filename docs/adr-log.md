@@ -67,7 +67,7 @@
 
 **Context:** Original `script.js` had hardcoded `cityData` with only 5 pre-selected cities per organ type. The algorithm existed but its results were ignored in favor of the mock data.
 
-**Decision:** `calculateResults()` now iterates all 21 cities in `cityStateMap`, calls `calculateComprehensiveScore` for each, and ranks them dynamically. Mock `cityData` is only used as fallback if the algorithm is unavailable.
+**Decision:** `calculateResults()` now iterates all 22 cities in `cityStateMap`, calls `calculateComprehensiveScore` for each, and ranks them dynamically. Mock `cityData` is only used as fallback if the algorithm is unavailable.
 
 **Rationale:** The whole point of the algorithm is to personalize results. Showing the same 5 cities regardless of patient profile defeats the purpose.
 

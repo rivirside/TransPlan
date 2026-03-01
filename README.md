@@ -19,7 +19,7 @@ Frontend loads JSON at runtime, falls back to hardcoded defaults if unavailable
 | File | Purpose |
 |------|---------|
 | `index.html` | Main page with form, methodology, results, and map |
-| `algorithm.js` | Scoring engine: 8 weighted categories, 21 cities |
+| `algorithm.js` | Scoring engine: 8 weighted categories, 22 cities |
 | `script.js` | UI logic, Leaflet map, form handling, results display |
 | `data-loader.js` | Fetches JSON data files, falls back to defaults |
 | `charts.js` | Chart.js visualizations (radar, bar, donut) |
@@ -101,7 +101,7 @@ All alerts go to GitHub Issues:
 
 1. Edit the relevant file in `data/manual/`
 2. Update `_meta.fetchedAt` to the current date
-3. Ensure all 21 cities are covered
+3. Ensure all 22 cities are covered
 4. Run `node scripts/validate-data.js` to verify
 5. Commit and push
 

@@ -333,10 +333,15 @@
                 <p class="results-intro">Based on your profile, here are cities ranked by location suitability score. These scores reflect regional data trends, not individual clinical predictions.</p>
 
                 <div class="map-section">
-                    <div id="map"></div>
+                    <div id="map" role="application" aria-label="Interactive map showing transplant center locations and data overlays across US cities"></div>
                     <div class="map-controls">
-                        <h3>Map Overlays</h3>
-                        <div class="overlay-controls">
+                        <h3 id="overlays-heading">
+                            <button class="overlay-collapse-toggle" aria-expanded="false" aria-controls="overlay-controls-panel" onclick="this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); this.closest('.map-controls').querySelector('.overlay-controls').classList.toggle('collapsed');">
+                                Map Overlays <span class="toggle-icon" aria-hidden="true">▼</span>
+                            </button>
+                            <span class="overlay-heading-desktop">Map Overlays</span>
+                        </h3>
+                        <div class="overlay-controls collapsed" id="overlay-controls-panel" role="group" aria-labelledby="overlays-heading">
                             <label class="overlay-toggle">
                                 <input type="checkbox" id="trafficAccidentsLayer" checked>
                                 <span>Traffic Accident Fatalities</span>
@@ -381,14 +386,14 @@
                     </div>
                 </div>
 
-                <div id="resultsContainer" class="results-container">
+                <div id="resultsContainer" class="results-container" aria-live="polite" aria-label="City ranking results">
                     <!-- Results will be inserted here -->
                 </div>
 
                 <div class="charts-section">
                     <h3>City Comparison</h3>
                     <div class="chart-container">
-                        <canvas id="comparisonChart"></canvas>
+                        <canvas id="comparisonChart" role="img" aria-label="Bar chart comparing scoring categories across top-ranked cities"></canvas>
                     </div>
                 </div>
 
@@ -409,7 +414,7 @@
             <div class="disclaimer-full">
                 <h3>Disclaimer</h3>
                 <p><strong>This tool is for educational and exploratory purposes only.</strong> TransplantMatch is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
-                <p><strong>What this tool cannot account for:</strong> HLA typing and crossmatch compatibility, Panel Reactive Antibody (PRA/cPRA) sensitization levels, MELD scores for liver allocation, Lung Allocation Scores (LAS), specific disease etiology and comorbidities, your current functional status, or your relationship with specific transplant programs.</p>
+                <p><strong>What this tool cannot account for:</strong> HLA typing and crossmatch compatibility, specific disease etiology and comorbidities, your current functional status, individual OPO performance, or your relationship with specific transplant programs. While optional inputs for cPRA, MELD, and LAS adjust scoring, they are rough approximations and do not replace clinical allocation models.</p>
                 <p><strong>Scores are relative comparisons</strong> based on publicly available regional statistics. They are not clinical assessments. A city scoring 85/100 does not mean you have an 85% chance of a successful transplant there.</p>
                 <p><strong>Some data is estimated or manually curated</strong> and may not reflect current conditions. Wait time estimates are derived from regional averages and may not match your individual circumstances.</p>
                 <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant. Your medical team has access to your complete clinical picture, which this tool does not.</p>

@@ -4,7 +4,7 @@
 
 ## What TransPlan Is
 
-A static-site tool that helps transplant patients identify the best US cities for their specific organ transplant needs. It scores 21 cities across 8 weighted categories using 50+ data points, displays results on an interactive Leaflet map, and visualizes score breakdowns with Chart.js.
+A static-site tool that helps transplant patients identify the best US cities for their specific organ transplant needs. It scores 22 cities across 8 weighted categories using 50+ data points, displays results on an interactive Leaflet map, and visualizes score breakdowns with Chart.js.
 
 ## Current State: v0.2 Complete, Browser Tested
 
@@ -43,7 +43,7 @@ All v0.2 work has been committed (10 commits) and pushed to GitHub. API keys con
 ```
 TransPlan/
   index.html              <- Main page
-  algorithm.js            <- Scoring engine (8 categories, 21 cities)
+  algorithm.js            <- Scoring engine (8 categories, 22 cities)
   script.js               <- UI, map, form, results display
   data-loader.js          <- Runtime JSON loader with fallbacks
   charts.js               <- Chart.js radar/bar/donut charts
