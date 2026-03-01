@@ -112,13 +112,13 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-014: Cost of living data is stale and some cities are estimated from others
 - **Severity:** MEDIUM
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** The BLS fetch script covers only 15 of 22 cities. The other 7 (Madison, Rochester, Durham, Nashville, Omaha, Indianapolis, Palo Alto) are estimated via fixed ratios from nearby cities. Nashville estimated from Baltimore * 1.07 is particularly wrong given Nashville's post-2020 cost surge.
 - **File:** `scripts/fetch-cost-of-living.js` lines 93-100
 
 ### L-015: Air quality scores conflate measurements
 - **Severity:** MEDIUM
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** Hardcoded air quality values treat AQ as a 0-100 score (higher = better) but the EPA AQI is the opposite (lower = better). The fetch script subtracts raw ozone ppb from 100, which isn't a standard AQI conversion. Also ignores PM2.5.
 - **File:** `scripts/fetch-air-quality.js` line 84, `algorithm.js` lines 22-50
 
@@ -251,3 +251,5 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-016 | (batch2) | 2026-02-28 | Fixed FARS normalization: per-capita rates with state populations instead of /500 cap |
 | L-024 | (batch3) | 2026-03-01 | Removed ~140 lines of inline constants from algorithm.js; data now flows from data-loader.js DEFAULTS → window.TransPlanData; fixed policy tier drift (CA/WA values) |
 | L-010 | (batch3) | 2026-03-01 | Replaced fabricated volumes with real 2023-2024 SRTR/OPTN data across all 3 data locations; intestine reduced to 8 real centers |
+| L-015 | (batch4) | 2026-03-01 | Replaced naive `100-ppb` with EPA AQI breakpoint conversion for ozone + added PM2.5 (param 88101); composite uses dominant pollutant |
+| L-014 | (batch4) | 2026-03-01 | Fixed Nashville ratio (was 1.07x Baltimore, now 1.10x Houston); documented Census ACS basis for all 7 estimated cities |
