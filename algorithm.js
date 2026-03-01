@@ -296,7 +296,7 @@ function calculateDonorAvailabilityScore(city, state, organType) {
     const donorData = window.TransPlanData?.donorRegistration;
     const trafficData = window.TransPlanData?.trafficFatalities;
 
-    // State donor registration rate (35% of category)
+    // State donor registration rate (39% of category — raised from 35% after L-008 traffic weight reduction)
     const stateRegistrationRates = donorData?.stateRegistrationRates || {
         "Montana": 82, "Alaska": 75, "Minnesota": 68, "Oregon": 58,
         "Washington": 56, "Wisconsin": 54, "New York": 52, "Massachusetts": 51,
@@ -307,9 +307,9 @@ function calculateDonorAvailabilityScore(city, state, organType) {
     };
 
     const regRate = stateRegistrationRates[state] || 35;
-    score += (regRate / 82) * 100 * 0.35; // Normalized to best state
+    score += (regRate / 82) * 100 * 0.39; // Normalized to best state
 
-    // Population density for deceased donor pool (25% of category)
+    // Population density for deceased donor pool (25% of category — unchanged)
     const populationFactors = donorData?.populationFactors || {
         "New York": 100, "Los Angeles": 95, "Chicago": 90,
         "Houston": 88, "Philadelphia": 85, "San Francisco": 82,
@@ -322,12 +322,14 @@ function calculateDonorAvailabilityScore(city, state, organType) {
     };
     score += (populationFactors[city] / 100) * 100 * 0.25;
 
-    // Living donor program strength (25% of category)
+    // Living donor program strength (28% of category — raised from 25% after L-008 traffic weight reduction)
     const ldpData = donorData?.livingDonorProgramStrength || livingDonorProgramStrength;
     const livingDonorScore = ldpData[city] || 75;
-    score += livingDonorScore * 0.25;
+    score += livingDonorScore * 0.28;
 
-    // Traffic fatality rate (deceased donor indicator) (15% of category)
+    // Traffic fatality rate (8% of category — reduced from 15% per L-008: only ~20-25% of
+    // modern deceased donors come from motor vehicle accidents; strokes, overdoses, and
+    // cardiac events now dominate. Weight redistributed to registration and living donor programs)
     const traumaScores = trafficData?.traumaScores || {
         "Los Angeles": 85, "Houston": 82, "Miami": 80,
         "Dallas": 78, "Phoenix": 82, "Nashville": 72,
@@ -338,7 +340,7 @@ function calculateDonorAvailabilityScore(city, state, organType) {
         "Madison": 52, "Palo Alto": 62, "Durham": 68,
         "Omaha": 65, "New York": 70
     };
-    score += (traumaScores[city] / 100) * 100 * 0.15;
+    score += (traumaScores[city] / 100) * 100 * 0.08;
 
     return score;
 }

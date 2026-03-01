@@ -67,7 +67,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-008: Traffic fatalities as donor proxy is scientifically outdated
 - **Severity:** HIGH
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** Only ~20-25% of modern deceased donors died in motor vehicle accidents. Most come from brain death due to strokes, overdoses, and cardiac events. Traffic fatality rates are a poor proxy for total deceased donor availability. The algorithm uses them as 15% of donor availability scoring.
 - **File:** `algorithm.js` `calculateDonorAvailabilityScore`, `script.js` traffic heatmap
 - **Fix complexity:** Medium — reduce weight or replace with OPO-level donor recovery statistics.
@@ -124,7 +124,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-016: FARS traffic normalization is broken
 - **Severity:** HIGH
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** `fetch-traffic.js` divides total state fatalities by 500 and caps at 2.0. All large states (CA, TX, FL) cap at the same value, making the data useless for distinguishing them. Also misreads the API response — uses `.length` of first results array instead of parsing individual fatality records.
 - **File:** `scripts/fetch-traffic.js` lines 34-35
 
@@ -247,3 +247,5 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-001 | (batch1) | 2026-02-28 | Added cPRA slider for kidney; sensitization multiplier 1.0-5.0x on wait time |
 | L-002 | (batch1) | 2026-02-28 | Added MELD input for liver; MELD-based wait scoring replaces generic urgency |
 | L-003 | (batch1) | 2026-02-28 | Added LAS input for lung; LAS-based wait scoring replaces generic urgency |
+| L-008 | (batch2) | 2026-02-28 | Reduced traffic weight 15%→8% of donor category; redistributed to registration (39%) and living donor (28%) |
+| L-016 | (batch2) | 2026-02-28 | Fixed FARS normalization: per-capita rates with state populations instead of /500 cap |
