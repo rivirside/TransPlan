@@ -40,6 +40,28 @@
                             </select>
                         </div>
 
+                        <!-- Organ-specific clinical inputs (conditional) -->
+                        <div class="form-group conditional-field" id="cpra-group" data-organ="kidney" style="display:none;">
+                            <label for="cpra">cPRA (Sensitization Level)</label>
+                            <div class="range-wrapper">
+                                <input type="range" id="cpra" min="0" max="100" value="0">
+                                <output id="cpra-output">0%</output>
+                            </div>
+                            <small class="field-help">Panel Reactive Antibody measures how sensitized your immune system is to donor tissue. Higher values mean longer expected waits. Leave at 0 if unknown.</small>
+                        </div>
+
+                        <div class="form-group conditional-field" id="meld-group" data-organ="liver" style="display:none;">
+                            <label for="meld">MELD Score</label>
+                            <input type="number" id="meld" min="6" max="40" placeholder="6-40 (optional)">
+                            <small class="field-help">Model for End-Stage Liver Disease score. Higher MELD = higher medical priority = shorter wait. Leave blank to use general urgency level.</small>
+                        </div>
+
+                        <div class="form-group conditional-field" id="las-group" data-organ="lung" style="display:none;">
+                            <label for="las">LAS (Lung Allocation Score)</label>
+                            <input type="number" id="las" min="0" max="100" placeholder="0-100 (optional)">
+                            <small class="field-help">Composite score balancing medical urgency and expected post-transplant benefit. Higher LAS = higher priority. Leave blank to use general urgency level.</small>
+                        </div>
+
                         <div class="form-group">
                             <label for="bloodType">Blood Type *</label>
                             <select id="bloodType" required>
@@ -125,7 +147,7 @@
                             <li><strong>Age-based prioritization:</strong> Pediatric patients (<18) receive priority; outcomes decline after 65</li>
                             <li><strong>Organ size matching:</strong> Height/weight ratios critical for heart and lung transplants</li>
                             <li><strong>Sex considerations:</strong> Body size matching relevant for heart and lung transplants; minimal factor for other organs</li>
-                            <li><strong>Antibody sensitivity:</strong> Previous transfusions or pregnancies may complicate matching</li>
+                            <li><strong>Antibody sensitivity (cPRA):</strong> Panel Reactive Antibody level affects kidney wait time; highly sensitized patients (cPRA &gt;80%) face significantly longer waits</li>
                         </ul>
                     </div>
 
@@ -138,7 +160,7 @@
                         <ul class="method-factors">
                             <li><strong>UNOS regional wait times:</strong> Varies by region (Southwest: 3.8 yrs vs Midwest: 2.1 yrs for kidneys)</li>
                             <li><strong>Waitlist size:</strong> Fewer competing patients = faster transplant</li>
-                            <li><strong>Medical urgency:</strong> Status 1 (critical) patients prioritized over Status 3 (stable)</li>
+                            <li><strong>Medical urgency:</strong> Status 1 (critical) patients prioritized over Status 3 (stable). Organ-specific scores (cPRA for kidney, MELD for liver, LAS for lung) replace generic urgency when provided</li>
                             <li><strong>Annual death rates on waitlist:</strong> Higher in regions with long waits</li>
                             <li><strong>Transplant volume:</strong> High-volume centers process lists faster</li>
                         </ul>

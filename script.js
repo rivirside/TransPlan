@@ -1962,7 +1962,10 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
         urgency: document.getElementById('urgency').value,
         weight: document.getElementById('weight').value,
         height: document.getElementById('height').value,
-        insurance: document.getElementById('insurance').value
+        insurance: document.getElementById('insurance').value,
+        cpra: parseInt(document.getElementById('cpra')?.value) || 0,
+        meld: parseInt(document.getElementById('meld')?.value) || 0,
+        las: parseInt(document.getElementById('las')?.value) || 0
     };
 
     // Load data before calculating
@@ -1973,8 +1976,30 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
     calculateResults(formData);
 });
 
+// --- Organ-specific conditional field visibility ---
+document.getElementById('organ').addEventListener('change', function() {
+    const selectedOrgan = this.value;
+    document.querySelectorAll('.conditional-field').forEach(field => {
+        const targetOrgan = field.getAttribute('data-organ');
+        field.style.display = (targetOrgan === selectedOrgan) ? '' : 'none';
+    });
+    // Reset hidden field values when switching organs
+    if (selectedOrgan !== 'kidney') document.getElementById('cpra').value = 0;
+    if (selectedOrgan !== 'liver') document.getElementById('meld').value = '';
+    if (selectedOrgan !== 'lung') document.getElementById('las').value = '';
+    // Update cPRA output display
+    document.getElementById('cpra-output').textContent = document.getElementById('cpra').value + '%';
+});
+
+// Live update for cPRA slider output
+document.getElementById('cpra').addEventListener('input', function() {
+    document.getElementById('cpra-output').textContent = this.value + '%';
+});
+
 // Derive display metrics from algorithm data instead of relying on mock entries
-function deriveDisplayMetrics(cityName, stateName, organType, urgency, breakdown) {
+function deriveDisplayMetrics(cityName, stateName, organType, formData, breakdown) {
+    const urgency = typeof formData === 'object' ? formData.urgency : formData;
+
     // --- Wait Time (derived from algorithm's wait time factors) ---
     const baseWaitTimes = {
         kidney: { min: 1.8, max: 4.2 },
@@ -1994,12 +2019,37 @@ function deriveDisplayMetrics(cityName, stateName, organType, urgency, breakdown
         "Los Angeles": 1.15, "San Francisco": 1.18, "Palo Alto": 1.16,
         "New York": 1.12
     };
-    const urgencyFactors = { '1': 0.3, '2': 0.6, '3': 1.0, '4': 1.4 };
     const base = baseWaitTimes[organType] || baseWaitTimes.kidney;
     const avgWait = (base.min + base.max) / 2;
-    const factor = cityWaitTimeFactors[cityName] || 1.0;
-    const uFactor = urgencyFactors[urgency] || 1.0;
-    const waitYears = Math.round(avgWait * factor * uFactor * 10) / 10;
+    const cityFactor = cityWaitTimeFactors[cityName] || 1.0;
+    const cityWait = avgWait * cityFactor;
+
+    // Organ-specific wait multiplier (mirrors algorithm.js logic)
+    let waitMultiplier;
+    if (organType === 'kidney' && typeof formData === 'object' && formData.cpra > 0) {
+        const cpra = Number(formData.cpra);
+        if (cpra <= 20) waitMultiplier = 1.0;
+        else if (cpra <= 50) waitMultiplier = 1.0 + (cpra - 20) / 30 * 0.5;
+        else if (cpra <= 80) waitMultiplier = 1.5 + (cpra - 50) / 30 * 1.0;
+        else if (cpra <= 97) waitMultiplier = 2.5 + (cpra - 80) / 17 * 0.5;
+        else waitMultiplier = 3.0 + (cpra - 97) / 3 * 2.0;
+    } else if (organType === 'liver' && typeof formData === 'object' && formData.meld) {
+        const meld = Number(formData.meld);
+        if (meld >= 35) waitMultiplier = 0.15;
+        else if (meld >= 25) waitMultiplier = 0.4;
+        else if (meld >= 15) waitMultiplier = 1.0;
+        else waitMultiplier = 2.0;
+    } else if (organType === 'lung' && typeof formData === 'object' && formData.las) {
+        const las = Number(formData.las);
+        if (las >= 50) waitMultiplier = 0.3;
+        else if (las >= 35) waitMultiplier = 0.7;
+        else waitMultiplier = 1.2;
+    } else {
+        const urgencyFactors = { '1': 0.3, '2': 0.6, '3': 1.0, '4': 1.4 };
+        waitMultiplier = urgencyFactors[urgency] || 1.0;
+    }
+
+    const waitYears = Math.round(cityWait * waitMultiplier * 10) / 10;
     const waitMonths = Math.round(waitYears * 12);
     const waitTime = waitYears < 1
         ? `${Math.max(1, waitMonths)} ${waitMonths === 1 ? 'month' : 'months'}`
@@ -2091,7 +2141,7 @@ function calculateResults(formData) {
     if (typeof calculateComprehensiveScore === 'function') {
         const cities = Object.entries(cityStateMap).map(([cityName, stateName]) => {
             const result = calculateComprehensiveScore(formData, cityName, stateName, organ);
-            const metrics = deriveDisplayMetrics(cityName, stateName, organ, formData.urgency, result.breakdown);
+            const metrics = deriveDisplayMetrics(cityName, stateName, organ, formData, result.breakdown);
             return {
                 city: cityName,
                 state: stateName,

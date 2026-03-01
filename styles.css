@@ -106,6 +106,67 @@ main {
     border-color: #667eea;
 }
 
+/* Conditional organ-specific fields */
+.conditional-field {
+    transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.conditional-field[style*="display: none"] {
+    opacity: 0;
+}
+
+.range-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.range-wrapper input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #4CAF50 0%, #FF9800 50%, #f44336 100%);
+    outline: none;
+}
+
+.range-wrapper input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.range-wrapper input[type="range"]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.range-wrapper output {
+    min-width: 42px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #667eea;
+}
+
+.field-help {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.8rem;
+    color: #777;
+    line-height: 1.4;
+}
+
 .submit-btn {
     width: 100%;
     padding: 16px;

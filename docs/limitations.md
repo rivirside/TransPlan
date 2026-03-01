@@ -20,21 +20,21 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-001: No PRA/cPRA (Panel Reactive Antibody) input
 - **Severity:** CRITICAL
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** PRA is arguably the single most important individual factor in kidney transplant wait time and compatibility. A patient with cPRA of 95% (sensitized) may wait 10+ years regardless of city. A patient with cPRA of 0% may wait 2-3 years. The algorithm has no field for this and treats all patients as if they have zero sensitization.
 - **Impact:** Kidney wait time estimates are meaningless for sensitized patients.
 - **Fix complexity:** Medium — add cPRA slider to form, multiply wait time factor by sensitization penalty.
 
 ### L-002: No MELD score for liver allocation
 - **Severity:** CRITICAL
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** Liver allocation in the US is MELD-based — sicker patients go first regardless of wait time. A patient with MELD 35 gets a liver in weeks anywhere. MELD 15 may wait years in competitive regions. Our single urgency 1-4 scale doesn't model this.
 - **Impact:** Liver wait time and ranking accuracy is poor.
 - **Fix complexity:** Medium — add conditional MELD input when organ=liver, replace urgency factor with MELD-based scoring.
 
 ### L-003: No LAS (Lung Allocation Score) for lungs
 - **Severity:** HIGH
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** Lung allocation uses the Lung Allocation Score, a composite of medical urgency and expected benefit. Our urgency 1-4 scale doesn't capture this.
 - **Fix complexity:** Medium — similar approach to L-002.
 
@@ -244,3 +244,6 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-025 | e6f5d10 | 2026-02-28 | Removed duplicate Cleveland key |
 | L-026 | 12a001a | 2026-02-28 | Chart now shows weighted contributions (stacked) with tooltip showing both raw and weighted |
 | L-029 | 12a001a | 2026-02-28 | Error handler now uses index to track correct source key |
+| L-001 | (batch1) | 2026-02-28 | Added cPRA slider for kidney; sensitization multiplier 1.0-5.0x on wait time |
+| L-002 | (batch1) | 2026-02-28 | Added MELD input for liver; MELD-based wait scoring replaces generic urgency |
+| L-003 | (batch1) | 2026-02-28 | Added LAS input for lung; LAS-based wait scoring replaces generic urgency |

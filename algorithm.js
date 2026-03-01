@@ -218,7 +218,9 @@ function calculateMedicalCompatibilityScore(formData, city, organType) {
  * Category 2: Wait Time & Competition (Weight: 20%)
  * Factors: UNOS region wait time, list size, annual transplants, deaths on waitlist
  */
-function calculateWaitTimeScore(city, organType, urgency) {
+function calculateWaitTimeScore(city, organType, formData) {
+    const urgency = typeof formData === 'object' ? formData.urgency : formData;
+
     const baseWaitTimes = {
         kidney: { min: 1.8, max: 4.2 },
         liver: { min: 0.8, max: 2.5 },
@@ -243,9 +245,40 @@ function calculateWaitTimeScore(city, organType, urgency) {
     const avgWait = (baseWaitTimes[organType].min + baseWaitTimes[organType].max) / 2;
     const cityWait = avgWait * factor;
 
-    // Urgency dramatically affects wait time
-    const urgencyFactors = { '1': 0.3, '2': 0.6, '3': 1.0, '4': 1.4 };
-    const adjustedWait = cityWait * urgencyFactors[urgency];
+    // --- Organ-specific clinical scoring ---
+    let waitMultiplier;
+
+    if (organType === 'kidney' && typeof formData === 'object' && formData.cpra > 0) {
+        // L-001: cPRA (Panel Reactive Antibody) for kidney
+        // Highly sensitized patients (cPRA > 80%) wait dramatically longer
+        const cpra = Number(formData.cpra);
+        if (cpra <= 20) waitMultiplier = 1.0;
+        else if (cpra <= 50) waitMultiplier = 1.0 + (cpra - 20) / 30 * 0.5;   // 1.0-1.5x
+        else if (cpra <= 80) waitMultiplier = 1.5 + (cpra - 50) / 30 * 1.0;   // 1.5-2.5x
+        else if (cpra <= 97) waitMultiplier = 2.5 + (cpra - 80) / 17 * 0.5;   // 2.5-3.0x
+        else waitMultiplier = 3.0 + (cpra - 97) / 3 * 2.0;                     // 3.0-5.0x
+    } else if (organType === 'liver' && typeof formData === 'object' && formData.meld) {
+        // L-002: MELD score for liver allocation
+        // Higher MELD = sicker = higher priority = shorter wait
+        const meld = Number(formData.meld);
+        if (meld >= 35) waitMultiplier = 0.15;       // Weeks — top priority
+        else if (meld >= 25) waitMultiplier = 0.4;    // 1-3 months
+        else if (meld >= 15) waitMultiplier = 1.0;    // Standard wait
+        else waitMultiplier = 2.0;                     // Low MELD, long wait
+    } else if (organType === 'lung' && typeof formData === 'object' && formData.las) {
+        // L-003: LAS (Lung Allocation Score) for lung allocation
+        // Higher LAS = higher medical urgency + expected benefit = shorter wait
+        const las = Number(formData.las);
+        if (las >= 50) waitMultiplier = 0.3;           // High urgency
+        else if (las >= 35) waitMultiplier = 0.7;      // Moderate urgency
+        else waitMultiplier = 1.2;                      // Lower priority
+    } else {
+        // Generic urgency factor (fallback for all organs when specific score not provided)
+        const urgencyFactors = { '1': 0.3, '2': 0.6, '3': 1.0, '4': 1.4 };
+        waitMultiplier = urgencyFactors[urgency] || 1.0;
+    }
+
+    const adjustedWait = cityWait * waitMultiplier;
 
     // Score inversely proportional to wait time
     const maxWait = baseWaitTimes[organType].max * 1.5;
@@ -482,7 +515,7 @@ function calculateComprehensiveScore(formData, cityName, stateName, organType) {
 
     const scores = {
         medicalCompatibility: calculateMedicalCompatibilityScore(formData, cityName, organType),
-        waitTime: calculateWaitTimeScore(cityName, organType, formData.urgency),
+        waitTime: calculateWaitTimeScore(cityName, organType, formData),
         donorAvailability: calculateDonorAvailabilityScore(cityName, stateName, organType),
         hospitalQuality: calculateHospitalQualityScore(cityName, organType, formData),
         geographic: calculateGeographicScore(cityName),
