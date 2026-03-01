@@ -11,12 +11,16 @@
     "fetch:health": "node scripts/fetch-health-data.js",
     "fetch:check-srtr": "node scripts/check-srtr-updates.js",
     "fetch:all": "node scripts/fetch-traffic.js && node scripts/fetch-air-quality.js && node scripts/fetch-hospital-quality.js && node scripts/fetch-cost-of-living.js && node scripts/fetch-health-data.js",
-    "validate": "node scripts/validate-data.js"
+    "validate": "node scripts/validate-data.js",
+    "test": "jest --verbose"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "dependencies": {
     "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0"
   }
 }
