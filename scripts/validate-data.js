@@ -79,7 +79,7 @@ console.log('Validating TransPlan data files...\n');
 // 1. Air Quality
 const airQuality = validateJSON('air-quality.json');
 if (airQuality) {
-    checkStaleness(airQuality);
+    checkStaleness(airQuality, 'air-quality.json');
     const { _meta, ...aqData } = airQuality;
     checkCityCoverage(aqData, 'air-quality.json');
     checkValueRange(aqData, 'air-quality.json', 0, 100);
@@ -88,7 +88,7 @@ if (airQuality) {
 // 2. Traffic Fatalities
 const traffic = validateJSON('traffic-fatalities.json');
 if (traffic) {
-    checkStaleness(traffic);
+    checkStaleness(traffic, 'traffic-fatalities.json');
     if (traffic.traumaScores) {
         checkCityCoverage(traffic.traumaScores, 'traffic-fatalities.json (traumaScores)');
         checkValueRange(traffic.traumaScores, 'traffic-fatalities.json (traumaScores)', 0, 100);
@@ -98,7 +98,7 @@ if (traffic) {
 // 3. Health Demographics
 const health = validateJSON('health-demographics.json');
 if (health) {
-    checkStaleness(health);
+    checkStaleness(health, 'health-demographics.json');
     const { _meta, ...hdData } = health;
     checkCityCoverage(hdData, 'health-demographics.json');
     for (const [city, metrics] of Object.entries(hdData)) {
@@ -116,7 +116,7 @@ if (health) {
 // 4. Hospital Quality
 const hospital = validateJSON('hospital-quality.json');
 if (hospital) {
-    checkStaleness(hospital);
+    checkStaleness(hospital, 'hospital-quality.json');
     if (hospital.centerReputation) {
         checkCityCoverage(hospital.centerReputation, 'hospital-quality.json (centerReputation)');
         checkValueRange(hospital.centerReputation, 'hospital-quality.json (centerReputation)', 50, 100);
@@ -133,7 +133,7 @@ if (hospital) {
 // 5. Cost of Living
 const costOfLiving = validateJSON('cost-of-living.json');
 if (costOfLiving) {
-    checkStaleness(costOfLiving);
+    checkStaleness(costOfLiving, 'cost-of-living.json');
     const { _meta, ...colData } = costOfLiving;
     checkCityCoverage(colData, 'cost-of-living.json');
     checkValueRange(colData, 'cost-of-living.json', 50, 300);
@@ -142,7 +142,7 @@ if (costOfLiving) {
 // 6. Donor Registration
 const donor = validateJSON('donor-registration.json');
 if (donor) {
-    checkStaleness(donor);
+    checkStaleness(donor, 'donor-registration.json');
     if (donor.livingDonorProgramStrength) {
         checkCityCoverage(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)');
         checkValueRange(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)', 0, 100);
@@ -153,7 +153,7 @@ if (donor) {
 for (const manualFile of ['manual/climate-scores.json', 'manual/policy-tiers.json', 'manual/socioeconomic.json']) {
     const data = validateJSON(manualFile);
     if (data) {
-        checkStaleness(data);
+        checkStaleness(data, manualFile);
     }
 }
 

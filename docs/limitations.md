@@ -258,14 +258,14 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-035: Git push race condition in parallel CI jobs
 - **Severity:** MEDIUM
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** All 5 fetch jobs (traffic, air-quality, hospital-quality, cost-of-living, health-data) run in parallel. Each independently does `git push` after committing. The second job to finish will fail because main has moved forward. The validate job checks out `ref: main` but may get stale data if pushes failed silently.
 - **File:** `.github/workflows/fetch-data.yml`
 - **Fix:** Serialize jobs (add `needs: previous-job`) or use a single final commit job that runs after all fetches, or use `git pull --rebase` before push in each job.
 
 ### L-036: validate-data.js passes undefined filename to checkStaleness
 - **Severity:** LOW
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** Lines 82, 91, etc: `checkStaleness(airQuality)` — the `filename` parameter is omitted. The function signature is `checkStaleness(data, filename)`, so warning messages will say "undefined has no _meta.fetchedAt" instead of the actual filename.
 - **File:** `scripts/validate-data.js` lines 82, 91, 101, 119, etc.
 - **Fix:** Pass filename string to each `checkStaleness()` call.
@@ -331,3 +331,5 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-040 | (review) | 2026-03-01 | Fixed stale methodology text: algorithm.js header, example volume 385→350, removed phantom factors, corrected data source list, synced fallback values |
 | L-031 | (batch7) | 2026-03-01 | Added mergeDataFile() to utils.js; fetch-hospital-quality.js now merges centerReputation into existing file instead of overwriting |
 | L-032 | (batch7) | 2026-03-01 | fetch-health-data.js now uses mergeDataFile to preserve obesityRate/ckdRate/hypertensionRate/smokingRate when updating diabetesRate |
+| L-035 | (batch8) | 2026-03-01 | Collapsed 5 parallel CI jobs into 1 sequential job with single commit+push; eliminates race condition |
+| L-036 | (batch8) | 2026-03-01 | Added filename argument to all 8 checkStaleness() calls in validate-data.js |

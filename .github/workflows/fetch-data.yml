@@ -10,8 +10,13 @@ permissions:
   contents: write
   issues: write
 
+# L-035 fix: Collapsed 5 parallel jobs into 1 sequential job.
+# Previously each job independently committed + pushed, causing race conditions
+# where the 2nd push would fail because main had moved forward.
+# Now all scripts run sequentially in one job with a single commit at the end.
+
 jobs:
-  fetch-traffic:
+  fetch-all:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,171 +24,62 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
-      - run: node scripts/fetch-traffic.js
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/
-          git diff --staged --quiet || git commit -m "chore: update traffic fatality data"
-          git push
-      - name: Create issue on failure
-        if: failure()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const title = '[Data Pipeline] Fetch failed: NHTSA FARS';
-            const { data: issues } = await github.rest.issues.listForRepo({
-              ...context.repo, state: 'open', labels: 'data-pipeline,failure'
-            });
-            if (!issues.find(i => i.title === title)) {
-              await github.rest.issues.create({
-                ...context.repo, title,
-                body: `The NHTSA FARS traffic data fetch failed.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-                labels: ['data-pipeline', 'failure']
-              });
-            }
 
-  fetch-air-quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
+      # --- Fetch scripts (each uses continue-on-error so one failure doesn't block others) ---
+
+      - name: Fetch traffic fatality data (NHTSA FARS)
+        run: node scripts/fetch-traffic.js
+        continue-on-error: true
+
       - name: Parse API keys
         run: |
           echo "${{ secrets.EPA_BLS_KEYS }}" >> $GITHUB_ENV
-      - run: node scripts/fetch-air-quality.js
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/
-          git diff --staged --quiet || git commit -m "chore: update air quality data"
-          git push
-      - name: Create issue on failure
-        if: failure()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const title = '[Data Pipeline] Fetch failed: EPA AQS';
-            const { data: issues } = await github.rest.issues.listForRepo({
-              ...context.repo, state: 'open', labels: 'data-pipeline,failure'
-            });
-            if (!issues.find(i => i.title === title)) {
-              await github.rest.issues.create({
-                ...context.repo, title,
-                body: `The EPA AQS air quality data fetch failed.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-                labels: ['data-pipeline', 'failure']
-              });
-            }
 
-  fetch-hospital-quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
-      - run: node scripts/fetch-hospital-quality.js
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/
-          git diff --staged --quiet || git commit -m "chore: update hospital quality data"
-          git push
-      - name: Create issue on failure
-        if: failure()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const title = '[Data Pipeline] Fetch failed: CMS Provider Data';
-            const { data: issues } = await github.rest.issues.listForRepo({
-              ...context.repo, state: 'open', labels: 'data-pipeline,failure'
-            });
-            if (!issues.find(i => i.title === title)) {
-              await github.rest.issues.create({
-                ...context.repo, title,
-                body: `The CMS hospital quality data fetch failed.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-                labels: ['data-pipeline', 'failure']
-              });
-            }
+      - name: Fetch air quality data (EPA AQS)
+        run: node scripts/fetch-air-quality.js
+        continue-on-error: true
 
-  fetch-cost-of-living:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
-      - name: Parse API keys
-        run: |
-          echo "${{ secrets.EPA_BLS_KEYS }}" >> $GITHUB_ENV
-      - run: node scripts/fetch-cost-of-living.js
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/
-          git diff --staged --quiet || git commit -m "chore: update cost of living data"
-          git push
-      - name: Create issue on failure
-        if: failure()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const title = '[Data Pipeline] Fetch failed: BLS API';
-            const { data: issues } = await github.rest.issues.listForRepo({
-              ...context.repo, state: 'open', labels: 'data-pipeline,failure'
-            });
-            if (!issues.find(i => i.title === title)) {
-              await github.rest.issues.create({
-                ...context.repo, title,
-                body: `The BLS cost of living data fetch failed.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-                labels: ['data-pipeline', 'failure']
-              });
-            }
+      - name: Fetch hospital quality data (CMS)
+        run: node scripts/fetch-hospital-quality.js
+        continue-on-error: true
 
-  fetch-health-data:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
-      - run: node scripts/fetch-health-data.js
-      - name: Commit changes
+      - name: Fetch cost of living data (BLS)
+        run: node scripts/fetch-cost-of-living.js
+        continue-on-error: true
+
+      - name: Fetch health demographics data (CDC)
+        run: node scripts/fetch-health-data.js
+        continue-on-error: true
+
+      # --- Single commit for all data changes ---
+
+      - name: Commit all data changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/
-          git diff --staged --quiet || git commit -m "chore: update health demographics data"
+          git diff --staged --quiet || git commit -m "chore: weekly data refresh"
           git push
+
       - name: Create issue on failure
         if: failure()
         uses: actions/github-script@v7
         with:
           script: |
-            const title = '[Data Pipeline] Fetch failed: CDC SODA API';
+            const title = '[Data Pipeline] Weekly fetch failed';
             const { data: issues } = await github.rest.issues.listForRepo({
               ...context.repo, state: 'open', labels: 'data-pipeline,failure'
             });
             if (!issues.find(i => i.title === title)) {
               await github.rest.issues.create({
                 ...context.repo, title,
-                body: `The CDC health demographics data fetch failed.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                body: `The weekly data fetch pipeline failed.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
                 labels: ['data-pipeline', 'failure']
               });
             }
 
   validate:
-    needs: [fetch-traffic, fetch-air-quality, fetch-hospital-quality, fetch-cost-of-living, fetch-health-data]
+    needs: [fetch-all]
     if: always()
     runs-on: ubuntu-latest
     steps:
