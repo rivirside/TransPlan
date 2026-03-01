@@ -6,7 +6,7 @@
  * Format: JSON
  */
 
-const { fetchWithRetry, writeDataFile, updateMetadata, reportError, CITIES, delay } = require('./utils');
+const { fetchWithRetry, mergeDataFile, updateMetadata, reportError, CITIES, delay } = require('./utils');
 
 // CMS Hospital General Information dataset
 const CMS_HOSPITALS_URL = 'https://data.cms.gov/provider-data/api/1/datastore/query/xubh-q36u/0';
@@ -52,7 +52,9 @@ async function fetchHospitalQuality() {
         }
 
         if (Object.keys(centerReputation).length > 0) {
-            writeDataFile('hospital-quality.json', { centerReputation }, 'CMS Provider Data API');
+            // L-031 fix: Use mergeDataFile to preserve existing keys (centerVolumes,
+            // specializations, insuranceAcceptanceRates) that this script doesn't fetch.
+            mergeDataFile('hospital-quality.json', { centerReputation }, 'CMS Provider Data API (centerReputation updated)');
             updateMetadata('hospital-quality', 'CMS Provider Data');
             console.log(`Fetched hospital data for ${Object.keys(centerReputation).length} cities.`);
         } else {

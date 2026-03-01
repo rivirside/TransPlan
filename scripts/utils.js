@@ -84,6 +84,53 @@ function writeDataFile(filename, data, source) {
 }
 
 /**
+ * Deep merge two objects. For nested objects (like per-city health data),
+ * merges inner keys rather than replacing the whole object.
+ */
+function deepMerge(target, source) {
+    const result = { ...target };
+    for (const [key, value] of Object.entries(source)) {
+        if (
+            value && typeof value === 'object' && !Array.isArray(value) &&
+            result[key] && typeof result[key] === 'object' && !Array.isArray(result[key])
+        ) {
+            result[key] = deepMerge(result[key], value);
+        } else {
+            result[key] = value;
+        }
+    }
+    return result;
+}
+
+/**
+ * Merge new data into an existing JSON file, preserving keys not in newData.
+ * Use this instead of writeDataFile when a fetch script only updates a subset
+ * of keys in a multi-key file (e.g., hospital-quality.json has centerReputation,
+ * centerVolumes, specializations, insuranceAcceptanceRates — fetching only
+ * updates centerReputation while preserving the rest).
+ *
+ * @param {string} filename - File name (relative to data/)
+ * @param {object} newData - New data to merge in
+ * @param {string} source - Source description for _meta
+ */
+function mergeDataFile(filename, newData, source) {
+    const filePath = path.join(DATA_DIR, filename);
+    let existing = {};
+
+    try {
+        const raw = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        delete raw._meta; // Strip old meta; writeDataFile adds fresh one
+        existing = raw;
+    } catch (e) {
+        // File doesn't exist or is invalid JSON — start fresh
+        console.log(`No existing ${filename} to merge into; creating new.`);
+    }
+
+    const merged = deepMerge(existing, newData);
+    writeDataFile(filename, merged, source);
+}
+
+/**
  * Update metadata.json with the latest fetch timestamp for a source.
  * @param {string} sourceKey - Key in metadata.sources
  * @param {string} source - Source description
@@ -125,7 +172,7 @@ function reportError(source, error) {
 }
 
 /**
- * The 21 TransPlan cities with their states and FIPS codes.
+ * The 22 TransPlan cities with their states and FIPS codes.
  */
 const CITIES = [
     { city: 'Pittsburgh', state: 'Pennsylvania', stateAbbr: 'PA', stateFips: '42' },
@@ -156,6 +203,7 @@ module.exports = {
     fetchWithRetry,
     delay,
     writeDataFile,
+    mergeDataFile,
     updateMetadata,
     reportError,
     CITIES,

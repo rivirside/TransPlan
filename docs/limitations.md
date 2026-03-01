@@ -226,6 +226,78 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ---
 
+## 5. Pipeline & Automation (discovered 2026-03-01 review)
+
+### L-031: fetch-hospital-quality.js destroys centerVolumes/specializations/insuranceAcceptanceRates
+- **Severity:** CRITICAL
+- **Status:** FIXED
+- **Details:** Line 55: `writeDataFile('hospital-quality.json', { centerReputation }, ...)` writes ONLY centerReputation. When the pipeline runs, it overwrites the entire `hospital-quality.json` (which contains 4 keys: centerVolumes, centerReputation, specializations, insuranceAcceptanceRates) with a file containing only centerReputation. This destroys the real SRTR volume data we added in L-010.
+- **File:** `scripts/fetch-hospital-quality.js` line 55
+- **Fix:** Either (a) merge fetched centerReputation into existing JSON file, or (b) split into separate files per key, or (c) restructure writeDataFile to support partial updates.
+
+### L-032: fetch-health-data.js destroys 4 of 5 health fields
+- **Severity:** CRITICAL
+- **Status:** FIXED
+- **Details:** Lines 57-59: Each city only gets `{ diabetesRate: sd.diabetesRate }`. When the pipeline runs, it overwrites `health-demographics.json` with ONLY diabetesRate per city, destroying obesityRate, ckdRate, hypertensionRate, and smokingRate. The scoring function expects all 5 fields; the L-013 fix added null-safety guards so it won't NaN, but scores will degrade to fallbacks.
+- **File:** `scripts/fetch-health-data.js` lines 57-59
+- **Fix:** Fetch all 5 indicators from CDC BRFSS/PLACES, or merge fetched data into existing JSON rather than overwriting.
+
+### L-033: No fetch script for donor-registration.json
+- **Severity:** HIGH
+- **Status:** OPEN
+- **Details:** There is no `fetch-donor-registration.js` in the scripts/ directory. The `donor-registration.json` file is permanent seed data that can never be refreshed by the automated pipeline. This file contains stateRegistrationRates, livingDonorProgramStrength, and populationFactors — three critical inputs to the Donor Availability category (18% weight).
+- **File:** Missing: `scripts/fetch-donor-registration.js`
+- **Fix:** Create a fetch script sourcing state registration rates from Donate Life America or HRSA. livingDonorProgramStrength and populationFactors may need to remain manually curated.
+
+### L-034: srtr-reports.json is loaded but never read by algorithm
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** `data-loader.js` loads `manual/srtr-reports.json` into `window.TransPlanData.srtrReports`, but no scoring function in `algorithm.js` ever reads `srtrReports`. The algorithm reads transplant volumes from `hospitalQuality.centerVolumes` instead. This is a dead data path — the file exists, is loaded at runtime, consumes bandwidth, but has zero effect on scoring.
+- **File:** `data-loader.js`, `algorithm.js`
+- **Fix:** Either (a) remove SRTR loading from data-loader.js (keep file as documentation), or (b) have algorithm.js read from srtrReports and remove centerVolumes from hospitalQuality.
+
+### L-035: Git push race condition in parallel CI jobs
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** All 5 fetch jobs (traffic, air-quality, hospital-quality, cost-of-living, health-data) run in parallel. Each independently does `git push` after committing. The second job to finish will fail because main has moved forward. The validate job checks out `ref: main` but may get stale data if pushes failed silently.
+- **File:** `.github/workflows/fetch-data.yml`
+- **Fix:** Serialize jobs (add `needs: previous-job`) or use a single final commit job that runs after all fetches, or use `git pull --rebase` before push in each job.
+
+### L-036: validate-data.js passes undefined filename to checkStaleness
+- **Severity:** LOW
+- **Status:** OPEN
+- **Details:** Lines 82, 91, etc: `checkStaleness(airQuality)` — the `filename` parameter is omitted. The function signature is `checkStaleness(data, filename)`, so warning messages will say "undefined has no _meta.fetchedAt" instead of the actual filename.
+- **File:** `scripts/validate-data.js` lines 82, 91, 101, 119, etc.
+- **Fix:** Pass filename string to each `checkStaleness()` call.
+
+### L-037: REGION_SERIES dead code in cost-of-living script
+- **Severity:** LOW
+- **Status:** OPEN
+- **Details:** Lines 41-44 of `fetch-cost-of-living.js` define `REGION_SERIES` mapping South and Midwest regions to series IDs. This constant is never referenced anywhere in the file — the estimates section uses hardcoded multipliers against specific city results instead.
+- **File:** `scripts/fetch-cost-of-living.js` lines 41-44
+- **Fix:** Remove the dead constant or refactor estimates to actually use regional series.
+
+### L-038: Orphan city entries in fallback data
+- **Severity:** LOW
+- **Status:** OPEN
+- **Details:** Several fallback data structures contain cities not in our 22-city set: Phoenix in traffic traumaScores fallback (algorithm.js), Montana/Alaska in stateRegistrationRates fallback (not cities — these are states but used as keys alongside city names), Boston/Denver in socioeconomic.json (not in our city list). These are harmless but create confusion about the canonical city list.
+- **File:** `algorithm.js` (traffic fallback), `data/manual/socioeconomic.json`
+- **Fix:** Remove non-canonical entries; add a lint rule checking all city keys against the canonical list in utils.js.
+
+### L-039: Missouri missing from donor registration data
+- **Severity:** LOW
+- **Status:** OPEN
+- **Details:** `donor-registration.json` has no entry for Missouri, but St. Louis is in Missouri. The algorithm falls back to `35` (default rate) for Missouri. St. Louis donor availability scoring is underweighted because its state registration rate hits the fallback instead of a real value.
+- **File:** `data/donor-registration.json`
+- **Fix:** Add Missouri registration rate to the JSON file and DEFAULTS.
+
+### L-040: Methodology text inaccuracies (partially fixed)
+- **Severity:** MEDIUM
+- **Status:** FIXED
+- **Details:** Multiple methodology text issues found during review: (a) algorithm.js header still said "success probability" — fixed; (b) Example calculation said "385 kidney transplants/year" but real data is 350 — fixed; (c) Hospital Quality listed "Outcomes data" and "Research activity" as factors not in the algorithm — replaced with "Insurance acceptance" which IS in algorithm; (d) Data sources listed CMS Hospital Compare and CDC WONDER instead of actual sources (SRTR, BLS, NHTSA FARS, EPA AQS) — fixed; (e) Nashville/Indianapolis centerReputation and specializations fallbacks were stale — synced.
+
+---
+
 ## Resolution Log
 
 | ID | Fixed In | Date | Notes |
@@ -256,3 +328,6 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-027 | (batch5) | 2026-03-01 | Added aria-label on map, chart canvas, results container (aria-live), overlay group, urgency warning (role=alert) |
 | L-030 | (batch5) | 2026-03-01 | Collapsible "Map Overlays" toggle on mobile (<768px); controls hidden by default, expandable via button |
 | L-028 | (batch5) | 2026-03-01 | Updated "21 cities" → "22 cities" across README, status.md, adr-log.md, roadmap.md, script.js, validate-data.js, check-srtr-updates.js |
+| L-040 | (review) | 2026-03-01 | Fixed stale methodology text: algorithm.js header, example volume 385→350, removed phantom factors, corrected data source list, synced fallback values |
+| L-031 | (batch7) | 2026-03-01 | Added mergeDataFile() to utils.js; fetch-hospital-quality.js now merges centerReputation into existing file instead of overwriting |
+| L-032 | (batch7) | 2026-03-01 | fetch-health-data.js now uses mergeDataFile to preserve obesityRate/ckdRate/hypertensionRate/smokingRate when updating diabetesRate |

@@ -7,7 +7,7 @@
  * Format: JSON
  */
 
-const { fetchWithRetry, writeDataFile, updateMetadata, reportError, CITIES, delay } = require('./utils');
+const { fetchWithRetry, mergeDataFile, updateMetadata, reportError, CITIES, delay } = require('./utils');
 
 // CDC SODA API endpoints
 // BRFSS (Behavioral Risk Factor Surveillance System) data
@@ -61,7 +61,11 @@ async function fetchHealthData() {
     }
 
     if (Object.keys(result).length > 0) {
-        writeDataFile('health-demographics.json', result, 'CDC SODA API (BRFSS)');
+        // L-032 fix: Use mergeDataFile to preserve existing health fields
+        // (obesityRate, ckdRate, hypertensionRate, smokingRate) that this script
+        // doesn't yet fetch. Deep merge updates diabetesRate per city while
+        // keeping other fields intact.
+        mergeDataFile('health-demographics.json', result, 'CDC SODA API (diabetesRate updated)');
         updateMetadata('health-demographics', 'CDC SODA API');
         console.log(`Fetched health data for ${Object.keys(result).length} cities.`);
     } else {
