@@ -37,12 +37,6 @@ const METRO_SERIES = {
 // National average series for normalization
 const NATIONAL_SERIES = 'CUSR0000SA0';
 
-// BLS regional CPI series for estimating missing cities
-const REGION_SERIES = {
-    'South': 'CUURS37ASA0',    // Use Houston metro as South proxy
-    'Midwest': 'CUURS24ASA0'   // Use Minneapolis metro as Midwest proxy
-};
-
 async function fetchCostOfLiving() {
     const apiKey = process.env.BLS_API_KEY;
 

@@ -195,8 +195,8 @@ function calculateDonorAvailabilityScore(city, state, organType) {
     // cardiac events now dominate. Weight redistributed to registration and living donor programs)
     const traumaScores = trafficData?.traumaScores || {
         "Los Angeles": 85, "Houston": 82, "Miami": 80,
-        "Dallas": 78, "Phoenix": 82, "Nashville": 72,
-        "Pittsburgh": 65, "Cleveland": 68, "Baltimore": 70,
+        "Dallas": 78, "Nashville": 72, "Pittsburgh": 65,
+        "Cleveland": 68, "Baltimore": 70,
         "Chicago": 75, "Philadelphia": 72, "Indianapolis": 70,
         "St. Louis": 72, "Minneapolis": 62, "Seattle": 58,
         "Portland": 60, "San Francisco": 65, "Rochester": 55,

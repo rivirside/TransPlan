@@ -251,7 +251,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-034: srtr-reports.json is loaded but never read by algorithm
 - **Severity:** MEDIUM
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** `data-loader.js` loads `manual/srtr-reports.json` into `window.TransPlanData.srtrReports`, but no scoring function in `algorithm.js` ever reads `srtrReports`. The algorithm reads transplant volumes from `hospitalQuality.centerVolumes` instead. This is a dead data path — the file exists, is loaded at runtime, consumes bandwidth, but has zero effect on scoring.
 - **File:** `data-loader.js`, `algorithm.js`
 - **Fix:** Either (a) remove SRTR loading from data-loader.js (keep file as documentation), or (b) have algorithm.js read from srtrReports and remove centerVolumes from hospitalQuality.
@@ -272,24 +272,22 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-037: REGION_SERIES dead code in cost-of-living script
 - **Severity:** LOW
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** Lines 41-44 of `fetch-cost-of-living.js` define `REGION_SERIES` mapping South and Midwest regions to series IDs. This constant is never referenced anywhere in the file — the estimates section uses hardcoded multipliers against specific city results instead.
 - **File:** `scripts/fetch-cost-of-living.js` lines 41-44
 - **Fix:** Remove the dead constant or refactor estimates to actually use regional series.
 
 ### L-038: Orphan city entries in fallback data
 - **Severity:** LOW
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** Several fallback data structures contain cities not in our 22-city set: Phoenix in traffic traumaScores fallback (algorithm.js), Montana/Alaska in stateRegistrationRates fallback (not cities — these are states but used as keys alongside city names), Boston/Denver in socioeconomic.json (not in our city list). These are harmless but create confusion about the canonical city list.
 - **File:** `algorithm.js` (traffic fallback), `data/manual/socioeconomic.json`
 - **Fix:** Remove non-canonical entries; add a lint rule checking all city keys against the canonical list in utils.js.
 
 ### L-039: Missouri missing from donor registration data
 - **Severity:** LOW
-- **Status:** OPEN
-- **Details:** `donor-registration.json` has no entry for Missouri, but St. Louis is in Missouri. The algorithm falls back to `35` (default rate) for Missouri. St. Louis donor availability scoring is underweighted because its state registration rate hits the fallback instead of a real value.
-- **File:** `data/donor-registration.json`
-- **Fix:** Add Missouri registration rate to the JSON file and DEFAULTS.
+- **Status:** WONT FIX
+- **Details:** Initially reported as missing, but audit was incorrect — `donor-registration.json` already has `"Missouri": 32` in stateRegistrationRates, and data-loader.js DEFAULTS has it too. No fix needed.
 
 ### L-040: Methodology text inaccuracies (partially fixed)
 - **Severity:** MEDIUM
@@ -333,3 +331,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-032 | (batch7) | 2026-03-01 | fetch-health-data.js now uses mergeDataFile to preserve obesityRate/ckdRate/hypertensionRate/smokingRate when updating diabetesRate |
 | L-035 | (batch8) | 2026-03-01 | Collapsed 5 parallel CI jobs into 1 sequential job with single commit+push; eliminates race condition |
 | L-036 | (batch8) | 2026-03-01 | Added filename argument to all 8 checkStaleness() calls in validate-data.js |
+| L-034 | (batch9) | 2026-03-01 | Removed srtrReports from DATA_FILES map in data-loader.js; file kept as documentation |
+| L-037 | (batch9) | 2026-03-01 | Removed dead REGION_SERIES constant from fetch-cost-of-living.js |
+| L-038 | (batch9) | 2026-03-01 | Removed Phoenix from traffic fallbacks (algorithm.js, data-loader.js, traffic-fatalities.json); removed Boston/Denver from socioeconomic.json + DEFAULTS; removed Milwaukee from traffic hotspots |
+| L-039 | — | 2026-03-01 | False positive — Missouri already present in donor-registration.json and DEFAULTS |

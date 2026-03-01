@@ -13,7 +13,7 @@
   },
   "traumaScores": {
     "Los Angeles": 85, "Houston": 82, "Miami": 80,
-    "Dallas": 78, "Phoenix": 82, "Nashville": 72,
+    "Dallas": 78, "Nashville": 72,
     "Pittsburgh": 65, "Cleveland": 68, "Baltimore": 70,
     "Chicago": 75, "Philadelphia": 72, "Indianapolis": 70,
     "St. Louis": 72, "Minneapolis": 62, "Seattle": 58,
@@ -43,8 +43,6 @@
     { "lat": 43.0731, "lng": -89.4012, "intensity": 0.54, "city": "Madison" },
     { "lat": 37.7749, "lng": -122.4194, "intensity": 0.62, "city": "San Francisco" },
     { "lat": 37.4419, "lng": -122.1430, "intensity": 0.58, "city": "Palo Alto" },
-    { "lat": 45.5152, "lng": -122.6784, "intensity": 0.56, "city": "Portland" },
-    { "lat": 43.0389, "lng": -87.9065, "intensity": 0.65, "city": "Milwaukee" },
-    { "lat": 33.4484, "lng": -112.0740, "intensity": 0.82, "city": "Phoenix" }
+    { "lat": 45.5152, "lng": -122.6784, "intensity": 0.56, "city": "Portland" }
   ]
 }

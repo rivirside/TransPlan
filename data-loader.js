@@ -18,7 +18,8 @@
         costOfLiving: 'data/cost-of-living.json',
         donorRegistration: 'data/donor-registration.json',
         metadata: 'data/metadata.json',
-        srtrReports: 'data/manual/srtr-reports.json',
+        // L-034: srtr-reports.json removed from runtime loading — data was never
+        // read by algorithm.js (dead path). File kept as documentation artifact.
         climateScores: 'data/manual/climate-scores.json',
         policyTiers: 'data/manual/policy-tiers.json',
         socioeconomic: 'data/manual/socioeconomic.json'
@@ -37,7 +38,7 @@
         trafficFatalities: {
             traumaScores: {
                 "Los Angeles": 85, "Houston": 82, "Miami": 80, "Dallas": 78,
-                "Phoenix": 82, "Nashville": 72, "Pittsburgh": 65, "Cleveland": 68,
+                "Nashville": 72, "Pittsburgh": 65, "Cleveland": 68,
                 "Baltimore": 70, "Chicago": 75, "Philadelphia": 72, "Indianapolis": 70,
                 "St. Louis": 72, "Minneapolis": 62, "Seattle": 58, "Portland": 60,
                 "San Francisco": 65, "Rochester": 55, "Madison": 52, "Palo Alto": 62,
@@ -167,8 +168,8 @@
         socioeconomic: {
             "San Francisco": 95, "Palo Alto": 94, "Seattle": 92,
             "Minneapolis": 91, "Madison": 90, "Rochester": 89,
-            "Boston": 93, "New York": 90, "Chicago": 87,
-            "Los Angeles": 86, "Portland": 88, "Denver": 87,
+            "New York": 90, "Chicago": 87,
+            "Los Angeles": 86, "Portland": 88,
             "Baltimore": 82, "Pittsburgh": 83, "Cleveland": 81,
             "Philadelphia": 84, "Nashville": 85, "Durham": 84,
             "Dallas": 83, "Houston": 82, "St. Louis": 80,
