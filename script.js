@@ -1713,7 +1713,12 @@ function addLayerLegend(layerName, legend) {
 function removeLayerLegend(layerName) {
     if (layerLegends[layerName]) {
         map.removeControl(layerLegends[layerName]);
-        delete layerLegends[layerName];
+        // Keep reference in registry so it can be restored on toggle-on
+    }
+}
+function showLayerLegend(layerName) {
+    if (layerLegends[layerName]) {
+        layerLegends[layerName].addTo(map);
     }
 }
 
@@ -1722,6 +1727,7 @@ function setupLayerControls() {
     document.getElementById('trafficAccidentsLayer').addEventListener('change', function() {
         if (this.checked) {
             trafficHeatLayer.addTo(map);
+            showLayerLegend('traffic');
         } else {
             map.removeLayer(trafficHeatLayer);
             removeLayerLegend('traffic');
@@ -1732,6 +1738,8 @@ function setupLayerControls() {
         if (this.checked) {
             if (!donorRegistrationHeatLayer.getLayers().length) {
                 createDonorRegistrationHeatmap();
+            } else {
+                showLayerLegend('donorRegistration');
             }
             donorRegistrationHeatLayer.addTo(map);
         } else {
@@ -1743,6 +1751,7 @@ function setupLayerControls() {
     document.getElementById('transplantCentersLayer').addEventListener('change', function() {
         if (this.checked) {
             transplantCentersLayer.addTo(map);
+            showLayerLegend('transplantCenters');
         } else {
             map.removeLayer(transplantCentersLayer);
             removeLayerLegend('transplantCenters');
@@ -1753,6 +1762,8 @@ function setupLayerControls() {
         if (this.checked) {
             if (!statePoliciesLayer.getLayers().length) {
                 createStatePoliciesLayer();
+            } else {
+                showLayerLegend('statePolicies');
             }
             statePoliciesLayer.addTo(map);
         } else {
@@ -1765,6 +1776,8 @@ function setupLayerControls() {
         if (this.checked) {
             if (!waitTimeGridLayer.getLayers().length) {
                 createWaitTimeGridLayer();
+            } else {
+                showLayerLegend('waitTimeGrid');
             }
             waitTimeGridLayer.addTo(map);
         } else {
@@ -1777,6 +1790,8 @@ function setupLayerControls() {
         if (this.checked) {
             if (!diabetesLayer.getLayers().length) {
                 createDiabetesLayer();
+            } else {
+                showLayerLegend('diabetes');
             }
             diabetesLayer.addTo(map);
         } else {
@@ -1789,6 +1804,8 @@ function setupLayerControls() {
         if (this.checked) {
             if (!obesityLayer.getLayers().length) {
                 createObesityLayer();
+            } else {
+                showLayerLegend('obesity');
             }
             obesityLayer.addTo(map);
         } else {
@@ -1801,6 +1818,8 @@ function setupLayerControls() {
         if (this.checked) {
             if (!costOfLivingLayer.getLayers().length) {
                 createCostOfLivingLayer();
+            } else {
+                showLayerLegend('costOfLiving');
             }
             costOfLivingLayer.addTo(map);
         } else {
@@ -1813,6 +1832,8 @@ function setupLayerControls() {
         if (this.checked) {
             if (!airQualityLayer.getLayers().length) {
                 createAirQualityLayer();
+            } else {
+                showLayerLegend('airQuality');
             }
             airQualityLayer.addTo(map);
         } else {
@@ -1825,6 +1846,8 @@ function setupLayerControls() {
         if (this.checked) {
             if (!insuranceCoverageLayer.getLayers().length) {
                 createInsuranceCoverageLayer();
+            } else {
+                showLayerLegend('insurance');
             }
             insuranceCoverageLayer.addTo(map);
         } else {
