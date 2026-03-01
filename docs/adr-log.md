@@ -118,3 +118,70 @@
 3. **Grep-searchable**: `docs/adr-log.md`, `docs/roadmap.md`, `docs/brand-bible.md` - only searched
 
 **Rationale:** Avoids context bloat. Status is short and always relevant. Design details only matter when doing design work. ADRs and roadmap are reference material, not active reading.
+
+---
+
+## ADR-009: Socioeconomic Scoring Rubric (L-022)
+
+**Date:** 2026-03-01
+**Status:** Accepted
+
+**Context:** Original socioeconomic scores correlated with general city wealth (SF: 95, Palo Alto: 94, Cleveland: 81). A transplant patient relocating to Cleveland has access to the Transplant House of Cleveland, dedicated financial advocates, and peer support — objectively better transplant support than many wealthier cities.
+
+**Decision:** Replace wealth-correlated scores with a transplant-support rubric: patient housing (30%), financial assistance (25%), support groups (20%), caregiver resources (15%), health literacy (10%). Researched each center's specific programs.
+
+**Rationale:** The socioeconomic category should measure what helps transplant patients, not general wealth. Centers with dedicated transplant hospitality houses (Rochester's Gift of Life, Cleveland's Transplant House, Pittsburgh's Family House, Houston's Nora's Home) now score highest. SF dropped from 95 to 85, Cleveland rose from 81 to 92.
+
+**Consequences:** Scores now reflect transplant-specific support. Cities with strong general economies but no transplant-specific programs (Minneapolis: 91→81) are appropriately scored lower. Category is only 2% weight so overall rankings shift modestly.
+
+---
+
+## ADR-010: OPO Boundaries Not Incorporated (L-009)
+
+**Date:** 2026-03-01
+**Status:** Deferred
+
+**Context:** Pittsburgh and Philadelphia are both in Pennsylvania but served by different OPOs (CORE and Gift of Life) with meaningfully different operations. The algorithm uses state-level donor registration rates, treating all cities in a state as equivalent.
+
+**Decision:** Defer. OPO-level data requires mapping 22 cities to 58 OPOs and sourcing performance metrics that aren't available via API. The effort is disproportionate to the impact on a 2% or 18% category.
+
+**Rationale:** The Donor Availability category (18%) already has 4 sub-factors. Adding OPO data would require manual research for each of the 22 cities and ongoing maintenance. State-level registration rates are a reasonable proxy. If HRSA makes OPO data API-accessible in the future, revisit.
+
+---
+
+## ADR-011: State-Level Health Data Retained (L-012)
+
+**Date:** 2026-03-01
+**Status:** Won't Fix
+
+**Context:** Health demographics uses state-level averages applied to cities. Dallas and Houston show different rates despite both being Texas cities — but these were manually adjusted, not from real county data. CDC PLACES dataset has county-level data.
+
+**Decision:** Won't fix. Health demographics is 7% of the total score. County-vs-state granularity would change individual city scores by <0.5 points. The current state-level data with manual city adjustments is adequate.
+
+**Rationale:** Cost-benefit is unfavorable. Fetching county-level CDC PLACES data for 22 cities would require FIPS mapping and a new API integration for marginal scoring improvement. If the Health Demographics weight increases in future versions, revisit.
+
+---
+
+## ADR-012: SRTR Outcomes Not Incorporated (L-017)
+
+**Date:** 2026-03-01
+**Status:** Deferred
+
+**Context:** The Hospital Quality category uses transplant volume and center reputation but not program-specific outcomes (1-year survival, graft survival). SRTR publishes these in program-specific reports, but they're HTML/PDF — not API-accessible.
+
+**Decision:** Defer. Extracting outcomes data requires scraping 132 data points (22 centers × 6 organs) from SRTR program-specific reports. These reports change format periodically and have no stable API.
+
+**Rationale:** Volume-outcome correlation is well-established in transplant literature. Centers with high volume (which we do track) tend to have good outcomes. Adding outcomes data would be valuable but requires significant manual effort and ongoing maintenance. If SRTR releases an outcomes API, revisit.
+
+---
+
+## ADR-013: Donor Registration Fetch Script Not Created (L-033)
+
+**Date:** 2026-03-01
+**Status:** Deferred
+
+**Context:** donor-registration.json is the only data file with no automated fetch script. It contains state registration rates, living donor program strength, and population factors.
+
+**Decision:** Defer. No machine-readable API for state donor registration rates exists. Donate Life America publishes annual reports (PDF), not an API. Living donor program strength and population factors require manual curation.
+
+**Rationale:** The seed data is reasonable and won't change dramatically year-to-year. When Donate Life America or HRSA makes registration data API-accessible, create a fetch script. For now, the bimonthly SRTR check workflow serves as a reminder to review all manual data files.

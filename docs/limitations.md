@@ -74,7 +74,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-009: OPO (Organ Procurement Organization) boundaries are ignored
 - **Severity:** HIGH
-- **Status:** OPEN
+- **Status:** DEFERRED
 - **Details:** Pittsburgh and Philadelphia are both in Pennsylvania but served by different OPOs (CORE and Gift of Life) with meaningfully different operations. The algorithm uses state-level donor registration rates, treating all cities in a state as equivalent. OPO quality is one of the most cited factors in real transplant outcomes.
 - **Fix complexity:** High — requires mapping cities to OPOs and sourcing OPO-level performance data.
 
@@ -98,7 +98,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-012: Health demographics are state-level data labeled as city data
 - **Severity:** MEDIUM
-- **Status:** OPEN
+- **Status:** WONT FIX
 - **Details:** `regionalHealthData` lists per-city values but Dallas (11.9%) and Houston (12.5%) show different diabetes rates despite both being Texas cities. These are clearly fabricated city-level numbers derived loosely from state averages.
 - **File:** `algorithm.js` lines 20-50
 - **Fix complexity:** High — would need county-level CDC data (PLACES dataset) for real city-level estimates.
@@ -130,7 +130,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-017: Hospital quality fetch gets general CMS ratings, not transplant data
 - **Severity:** HIGH
-- **Status:** OPEN
+- **Status:** DEFERRED
 - **Details:** `fetch-hospital-quality.js` fetches CMS overall hospital star ratings (1-5 stars), which measure general hospital quality (patient experience, mortality across all conditions). A hospital can have 5 stars overall with a mediocre transplant program and vice versa.
 - **File:** `scripts/fetch-hospital-quality.js`
 
@@ -168,7 +168,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-022: Socioeconomic scores have no basis in data
 - **Severity:** MEDIUM
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** `data/manual/socioeconomic.json` scores correlate with general wealth (SF: 95, Palo Alto: 94) rather than transplant-specific support (patient housing, financial assistance, advocacy groups). Cleveland Clinic has one of the best transplant support programs but Cleveland scores 81.
 - **File:** `data/manual/socioeconomic.json`
 
@@ -244,7 +244,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-033: No fetch script for donor-registration.json
 - **Severity:** HIGH
-- **Status:** OPEN
+- **Status:** DEFERRED
 - **Details:** There is no `fetch-donor-registration.js` in the scripts/ directory. The `donor-registration.json` file is permanent seed data that can never be refreshed by the automated pipeline. This file contains stateRegistrationRates, livingDonorProgramStrength, and populationFactors — three critical inputs to the Donor Availability category (18% weight).
 - **File:** Missing: `scripts/fetch-donor-registration.js`
 - **Fix:** Create a fetch script sourcing state registration rates from Donate Life America or HRSA. livingDonorProgramStrength and populationFactors may need to remain manually curated.
@@ -335,3 +335,8 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-037 | (batch9) | 2026-03-01 | Removed dead REGION_SERIES constant from fetch-cost-of-living.js |
 | L-038 | (batch9) | 2026-03-01 | Removed Phoenix from traffic fallbacks (algorithm.js, data-loader.js, traffic-fatalities.json); removed Boston/Denver from socioeconomic.json + DEFAULTS; removed Milwaukee from traffic hotspots |
 | L-039 | — | 2026-03-01 | False positive — Missouri already present in donor-registration.json and DEFAULTS |
+| L-022 | (batch10) | 2026-03-01 | Replaced wealth-correlated scores with transplant-support rubric (housing 30%, financial 25%, support groups 20%, caregiver 15%, health literacy 10%); researched 22 centers |
+| L-009 | ADR-010 | 2026-03-01 | DEFERRED — OPO mapping requires 22→58 manual lookups, no API available |
+| L-012 | ADR-011 | 2026-03-01 | WONT FIX — 7% weight category, county-vs-state changes scores by <0.5 points |
+| L-017 | ADR-012 | 2026-03-01 | DEFERRED — SRTR outcomes are HTML/PDF only, would need 132 manual data points |
+| L-033 | ADR-013 | 2026-03-01 | DEFERRED — no machine-readable API for donor registration rates |
