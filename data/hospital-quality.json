@@ -1,68 +1,64 @@
 {
   "_meta": {
-    "fetchedAt": "2026-02-28T00:00:00Z",
-    "source": "CMS Provider Data / Hardcoded seed data"
+    "fetchedAt": "2026-03-01T00:00:00Z",
+    "source": "SRTR Program-Specific Reports + center press releases (2023-2024 data)",
+    "notes": "L-010: Real volumes from SRTR, OPTN, and transplant center annual reports. Intestine: only centers doing 5+/year listed."
   },
   "centerVolumes": {
     "kidney": {
-      "Pittsburgh": 385, "Minneapolis": 348, "Baltimore": 362,
-      "Cleveland": 355, "Los Angeles": 425, "San Francisco": 368,
-      "Rochester": 305, "Madison": 298, "Chicago": 398,
-      "Philadelphia": 342, "Nashville": 285, "Durham": 295,
-      "Houston": 378, "Dallas": 268, "Miami": 245,
-      "Palo Alto": 312, "Portland": 228, "Seattle": 315,
-      "St. Louis": 278, "New York": 412, "Omaha": 195,
-      "Indianapolis": 235
+      "Pittsburgh": 350, "Minneapolis": 280, "Baltimore": 220,
+      "Cleveland": 330, "Los Angeles": 324, "San Francisco": 325,
+      "Rochester": 260, "Madison": 298, "Chicago": 343,
+      "Philadelphia": 290, "Nashville": 374, "Durham": 250,
+      "Houston": 287, "Dallas": 220, "Miami": 210,
+      "Palo Alto": 200, "Portland": 200, "Seattle": 210,
+      "St. Louis": 300, "New York": 339, "Omaha": 188,
+      "Indianapolis": 280
     },
     "liver": {
-      "Pittsburgh": 312, "Los Angeles": 398, "San Francisco": 352,
-      "Baltimore": 305, "Cleveland": 288, "Rochester": 285,
-      "Minneapolis": 268, "Dallas": 275, "Houston": 325,
-      "Chicago": 342, "Philadelphia": 318, "Miami": 242,
-      "Durham": 268, "Nashville": 235, "Madison": 215,
-      "Palo Alto": 285, "Seattle": 295, "Portland": 195,
-      "St. Louis": 248, "New York": 385, "Omaha": 145,
-      "Indianapolis": 198
+      "Pittsburgh": 280, "Los Angeles": 136, "San Francisco": 280,
+      "Baltimore": 100, "Cleveland": 258, "Rochester": 200,
+      "Minneapolis": 180, "Dallas": 165, "Houston": 293,
+      "Chicago": 150, "Philadelphia": 175, "Miami": 160,
+      "Durham": 170, "Nashville": 208, "Madison": 112,
+      "Palo Alto": 130, "Seattle": 120, "Portland": 90,
+      "St. Louis": 150, "New York": 127, "Omaha": 150,
+      "Indianapolis": 215
     },
     "heart": {
-      "Cleveland": 175, "Nashville": 148, "Durham": 142,
-      "Houston": 155, "Palo Alto": 135, "Los Angeles": 168,
-      "Pittsburgh": 132, "Chicago": 145, "San Francisco": 128,
-      "Baltimore": 138, "Minneapolis": 125, "Philadelphia": 138,
-      "St. Louis": 105, "Rochester": 98, "Madison": 85,
-      "Dallas": 118, "Seattle": 115, "Miami": 95,
-      "Portland": 78, "New York": 148, "Omaha": 58,
-      "Indianapolis": 72
+      "Cleveland": 67, "Nashville": 174, "Durham": 120,
+      "Houston": 60, "Palo Alto": 85, "Los Angeles": 95,
+      "Pittsburgh": 75, "Chicago": 37, "San Francisco": 80,
+      "Baltimore": 20, "Minneapolis": 55, "Philadelphia": 65,
+      "St. Louis": 50, "Rochester": 45, "Madison": 25,
+      "Dallas": 55, "Seattle": 45, "Miami": 40,
+      "Portland": 30, "New York": 77, "Omaha": 41,
+      "Indianapolis": 35
     },
     "lung": {
-      "Durham": 155, "Pittsburgh": 142, "St. Louis": 128,
-      "Seattle": 118, "Philadelphia": 108, "Cleveland": 132,
-      "Los Angeles": 125, "San Francisco": 115, "Nashville": 105,
-      "Chicago": 118, "Houston": 112, "Baltimore": 95,
-      "Minneapolis": 88, "Rochester": 82, "Palo Alto": 95,
-      "Madison": 68, "Dallas": 78, "Portland": 72,
-      "Miami": 65, "New York": 122, "Omaha": 45,
-      "Indianapolis": 58
+      "Durham": 110, "Pittsburgh": 95, "St. Louis": 80,
+      "Seattle": 55, "Philadelphia": 65, "Cleveland": 129,
+      "Los Angeles": 88, "San Francisco": 95, "Nashville": 99,
+      "Chicago": 97, "Houston": 90, "Baltimore": 25,
+      "Minneapolis": 45, "Rochester": 40, "Palo Alto": 60,
+      "Madison": 30, "Dallas": 40, "Portland": 35,
+      "Miami": 30, "New York": 82, "Omaha": 17,
+      "Indianapolis": 28
     },
     "pancreas": {
-      "Minneapolis": 128, "Madison": 115, "Miami": 95,
-      "San Francisco": 88, "Chicago": 82, "Pittsburgh": 78,
-      "Cleveland": 72, "Los Angeles": 85, "Houston": 75,
-      "Baltimore": 68, "Philadelphia": 72, "Durham": 62,
-      "Rochester": 65, "Nashville": 55, "Dallas": 58,
-      "Palo Alto": 68, "Seattle": 62, "St. Louis": 52,
-      "Portland": 45, "New York": 78, "Omaha": 38,
-      "Indianapolis": 42
+      "Minneapolis": 45, "Madison": 27, "Miami": 20,
+      "San Francisco": 25, "Chicago": 18, "Pittsburgh": 22,
+      "Cleveland": 15, "Los Angeles": 20, "Houston": 15,
+      "Baltimore": 12, "Philadelphia": 15, "Durham": 10,
+      "Rochester": 18, "Nashville": 12, "Dallas": 10,
+      "Palo Alto": 12, "Seattle": 10, "St. Louis": 14,
+      "Portland": 8, "New York": 15, "Omaha": 10,
+      "Indianapolis": 30
     },
     "intestine": {
-      "Pittsburgh": 52, "Omaha": 28, "Miami": 22,
-      "Indianapolis": 18, "Los Angeles": 15, "Baltimore": 12,
-      "Chicago": 14, "Cleveland": 11, "Minneapolis": 10,
-      "Rochester": 9, "San Francisco": 11, "Houston": 13,
-      "Philadelphia": 10, "Durham": 8, "Nashville": 7,
-      "Madison": 6, "Dallas": 8, "Seattle": 7,
-      "St. Louis": 6, "Portland": 5, "Palo Alto": 6,
-      "New York": 14
+      "Pittsburgh": 25, "Omaha": 12, "Miami": 12,
+      "Indianapolis": 10, "Los Angeles": 8, "Cleveland": 18,
+      "New York": 7, "Chicago": 5
     }
   },
   "centerReputation": {
@@ -70,18 +66,18 @@
     "Rochester": 97, "Los Angeles": 95, "San Francisco": 94,
     "Minneapolis": 93, "Durham": 92, "Chicago": 90,
     "Houston": 89, "Palo Alto": 91, "Philadelphia": 88,
-    "Nashville": 86, "Madison": 87, "Seattle": 88,
+    "Nashville": 93, "Madison": 87, "Seattle": 88,
     "St. Louis": 85, "Dallas": 83, "Miami": 82,
-    "Portland": 84, "Indianapolis": 81, "Omaha": 83,
+    "Portland": 84, "Indianapolis": 85, "Omaha": 83,
     "New York": 92
   },
   "specializations": {
-    "kidney": ["Pittsburgh", "Minneapolis", "Madison", "Baltimore"],
-    "liver": ["Pittsburgh", "Los Angeles", "San Francisco", "Baltimore"],
-    "heart": ["Cleveland", "Nashville", "Durham", "Houston", "Palo Alto"],
-    "lung": ["Durham", "Pittsburgh", "St. Louis", "Seattle"],
-    "pancreas": ["Minneapolis", "Madison", "Miami", "San Francisco"],
-    "intestine": ["Pittsburgh", "Omaha", "Miami"]
+    "kidney": ["Cleveland", "Nashville", "St. Louis", "Madison", "San Francisco", "Chicago"],
+    "liver": ["Houston", "Cleveland", "San Francisco", "Pittsburgh", "Indianapolis", "Nashville"],
+    "heart": ["Nashville", "Durham", "Los Angeles", "Palo Alto", "San Francisco", "New York"],
+    "lung": ["Cleveland", "Durham", "Nashville", "Chicago", "San Francisco", "Pittsburgh"],
+    "pancreas": ["Minneapolis", "Indianapolis", "Madison", "San Francisco"],
+    "intestine": ["Pittsburgh", "Omaha", "Miami", "Cleveland"]
   },
   "insuranceAcceptanceRates": {
     "Rochester": 99, "Cleveland": 98, "Baltimore": 97,

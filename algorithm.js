@@ -15,148 +15,11 @@
  * 8. Socioeconomic Factors (2%) - Support systems, employment, housing
  */
 
-// ==================== REGIONAL DATA REPOSITORY ====================
-
-const regionalHealthData = {
-    // Northeast
-    "Pittsburgh": { diabetesRate: 10.2, obesityRate: 31.5, ckdRate: 14.2, hypertensionRate: 32.1, smokingRate: 19.3, airQuality: 68 },
-    "Baltimore": { diabetesRate: 11.8, obesityRate: 34.2, ckdRate: 15.8, hypertensionRate: 35.4, smokingRate: 17.9, airQuality: 62 },
-    "Philadelphia": { diabetesRate: 11.4, obesityRate: 33.8, ckdRate: 15.2, hypertensionRate: 34.2, smokingRate: 18.5, airQuality: 64 },
-    "New York": { diabetesRate: 10.9, obesityRate: 28.5, ckdRate: 14.5, hypertensionRate: 31.8, smokingRate: 14.2, airQuality: 58 },
-
-    // Midwest
-    "Minneapolis": { diabetesRate: 8.1, obesityRate: 27.3, ckdRate: 12.4, hypertensionRate: 28.5, smokingRate: 15.8, airQuality: 78 },
-    "Madison": { diabetesRate: 7.9, obesityRate: 26.8, ckdRate: 12.1, hypertensionRate: 27.9, smokingRate: 14.9, airQuality: 82 },
-    "Chicago": { diabetesRate: 10.5, obesityRate: 32.1, ckdRate: 14.8, hypertensionRate: 33.2, smokingRate: 16.7, airQuality: 61 },
-    "Cleveland": { diabetesRate: 11.2, obesityRate: 33.5, ckdRate: 15.3, hypertensionRate: 34.8, smokingRate: 20.1, airQuality: 65 },
-    "St. Louis": { diabetesRate: 10.8, obesityRate: 32.7, ckdRate: 14.9, hypertensionRate: 33.9, smokingRate: 19.5, airQuality: 66 },
-    "Indianapolis": { diabetesRate: 11.5, obesityRate: 34.8, ckdRate: 15.7, hypertensionRate: 35.2, smokingRate: 21.3, airQuality: 67 },
-    "Omaha": { diabetesRate: 9.8, obesityRate: 31.2, ckdRate: 13.9, hypertensionRate: 31.5, smokingRate: 17.8, airQuality: 74 },
-    "Rochester": { diabetesRate: 8.5, obesityRate: 28.9, ckdRate: 12.8, hypertensionRate: 29.3, smokingRate: 15.2, airQuality: 80 },
-
-    // South
-    "Nashville": { diabetesRate: 12.3, obesityRate: 36.2, ckdRate: 16.5, hypertensionRate: 37.1, smokingRate: 22.8, airQuality: 69 },
-    "Durham": { diabetesRate: 11.1, obesityRate: 33.1, ckdRate: 15.1, hypertensionRate: 34.5, smokingRate: 18.9, airQuality: 71 },
-    "Miami": { diabetesRate: 12.8, obesityRate: 32.5, ckdRate: 16.8, hypertensionRate: 36.2, smokingRate: 16.4, airQuality: 65 },
-    "Dallas": { diabetesRate: 11.9, obesityRate: 33.9, ckdRate: 15.9, hypertensionRate: 35.8, smokingRate: 17.2, airQuality: 63 },
-    "Houston": { diabetesRate: 12.5, obesityRate: 34.7, ckdRate: 16.3, hypertensionRate: 36.5, smokingRate: 16.8, airQuality: 59 },
-
-    // West
-    "Portland": { diabetesRate: 8.7, obesityRate: 29.1, ckdRate: 13.1, hypertensionRate: 29.8, smokingRate: 15.3, airQuality: 76 },
-    "Seattle": { diabetesRate: 8.3, obesityRate: 27.8, ckdRate: 12.6, hypertensionRate: 28.9, smokingRate: 14.8, airQuality: 77 },
-    "San Francisco": { diabetesRate: 8.9, obesityRate: 26.2, ckdRate: 13.3, hypertensionRate: 29.1, smokingRate: 13.5, airQuality: 68 },
-    "Los Angeles": { diabetesRate: 10.3, obesityRate: 30.4, ckdRate: 14.6, hypertensionRate: 32.4, smokingRate: 14.9, airQuality: 45 },
-    "Palo Alto": { diabetesRate: 7.8, obesityRate: 24.1, ckdRate: 11.9, hypertensionRate: 27.2, smokingRate: 11.8, airQuality: 72 }
-};
-
-const costOfLivingIndex = {
-    "San Francisco": 191, "Palo Alto": 204, "New York": 187,
-    "Los Angeles": 150, "Seattle": 145, "Baltimore": 89,
-    "Pittsburgh": 85, "Minneapolis": 98, "Madison": 97,
-    "Portland": 135, "Chicago": 102, "Philadelphia": 101,
-    "Dallas": 92, "Houston": 90, "Miami": 112,
-    "Nashville": 95, "Durham": 93, "Cleveland": 81,
-    "St. Louis": 83, "Rochester": 91, "Omaha": 86,
-    "Indianapolis": 87
-};
-
-const climateScores = {
-    // Higher is better for recovery (moderate temps, low extreme weather)
-    "San Francisco": 92, "Los Angeles": 88, "Palo Alto": 91,
-    "Miami": 75, "Seattle": 82, "Portland": 83,
-    "Minneapolis": 62, "Madison": 64, "Rochester": 60,
-    "Pittsburgh": 71, "Baltimore": 73, "Philadelphia": 72,
-    "Chicago": 67, "Cleveland": 66, "St. Louis": 70,
-    "Nashville": 78, "Durham": 77, "Dallas": 72,
-    "Houston": 71, "New York": 70, "Omaha": 68,
-    "Indianapolis": 69
-};
-
-const livingDonorProgramStrength = {
-    "Minneapolis": 95, "Madison": 92, "Pittsburgh": 94,
-    "Cleveland": 93, "Los Angeles": 91, "San Francisco": 90,
-    "Baltimore": 89, "Rochester": 91, "Durham": 88,
-    "Chicago": 86, "Houston": 87, "Palo Alto": 89,
-    "Nashville": 84, "Philadelphia": 85, "St. Louis": 83,
-    "Portland": 86, "Seattle": 87, "Dallas": 82,
-    "Miami": 81, "New York": 84, "Omaha": 85,
-    "Indianapolis": 80
-};
-
-const insuranceAcceptanceRates = {
-    "Rochester": 99, "Cleveland": 98, "Baltimore": 97,
-    "Pittsburgh": 97, "Minneapolis": 96, "Madison": 96,
-    "Durham": 95, "Los Angeles": 94, "San Francisco": 94,
-    "Chicago": 93, "Palo Alto": 94, "Houston": 92,
-    "Nashville": 91, "Philadelphia": 93, "St. Louis": 92,
-    "Seattle": 94, "Portland": 93, "Dallas": 90,
-    "Miami": 89, "New York": 92, "Omaha": 95,
-    "Indianapolis": 91
-};
-
-// Transplant center annual volumes by organ
-const centerVolumes = {
-    kidney: {
-        "Pittsburgh": 385, "Minneapolis": 348, "Baltimore": 362,
-        "Cleveland": 355, "Los Angeles": 425, "San Francisco": 368,
-        "Rochester": 305, "Madison": 298, "Chicago": 398,
-        "Philadelphia": 342, "Nashville": 285, "Durham": 295,
-        "Houston": 378, "Dallas": 268, "Miami": 245,
-        "Palo Alto": 312, "Portland": 228, "Seattle": 315,
-        "St. Louis": 278, "New York": 412, "Omaha": 195,
-        "Indianapolis": 235
-    },
-    liver: {
-        "Pittsburgh": 312, "Los Angeles": 398, "San Francisco": 352,
-        "Baltimore": 305, "Cleveland": 288, "Rochester": 285,
-        "Minneapolis": 268, "Dallas": 275, "Houston": 325,
-        "Chicago": 342, "Philadelphia": 318, "Miami": 242,
-        "Durham": 268, "Nashville": 235, "Madison": 215,
-        "Palo Alto": 285, "Seattle": 295, "Portland": 195,
-        "St. Louis": 248, "New York": 385, "Omaha": 145,
-        "Indianapolis": 198
-    },
-    heart: {
-        "Cleveland": 175, "Nashville": 148, "Durham": 142,
-        "Houston": 155, "Palo Alto": 135, "Los Angeles": 168,
-        "Pittsburgh": 132, "Chicago": 145, "San Francisco": 128,
-        "Baltimore": 138, "Minneapolis": 125, "Philadelphia": 138,
-        "St. Louis": 105, "Rochester": 98, "Madison": 85,
-        "Dallas": 118, "Seattle": 115, "Miami": 95,
-        "Portland": 78, "New York": 148, "Omaha": 58,
-        "Indianapolis": 72
-    },
-    lung: {
-        "Durham": 155, "Pittsburgh": 142, "St. Louis": 128,
-        "Seattle": 118, "Philadelphia": 108, "Cleveland": 132,
-        "Los Angeles": 125, "San Francisco": 115, "Nashville": 105,
-        "Chicago": 118, "Houston": 112, "Baltimore": 95,
-        "Minneapolis": 88, "Rochester": 82, "Palo Alto": 95,
-        "Madison": 68, "Dallas": 78, "Portland": 72,
-        "Miami": 65, "New York": 122, "Omaha": 45,
-        "Indianapolis": 58
-    },
-    pancreas: {
-        "Minneapolis": 128, "Madison": 115, "Miami": 95,
-        "San Francisco": 88, "Chicago": 82, "Pittsburgh": 78,
-        "Cleveland": 72, "Los Angeles": 85, "Houston": 75,
-        "Baltimore": 68, "Philadelphia": 72, "Durham": 62,
-        "Rochester": 65, "Nashville": 55, "Dallas": 58,
-        "Palo Alto": 68, "Seattle": 62, "St. Louis": 52,
-        "Portland": 45, "New York": 78, "Omaha": 38,
-        "Indianapolis": 42
-    },
-    intestine: {
-        "Pittsburgh": 52, "Omaha": 28, "Miami": 22,
-        "Indianapolis": 18, "Los Angeles": 15, "Baltimore": 12,
-        "Chicago": 14, "Cleveland": 11, "Minneapolis": 10,
-        "Rochester": 9, "San Francisco": 11, "Houston": 13,
-        "Philadelphia": 10, "Durham": 8, "Nashville": 7,
-        "Madison": 6, "Dallas": 8, "Seattle": 7,
-        "St. Louis": 6, "Portland": 5, "Palo Alto": 6,
-        "New York": 14
-    }
-};
+// ==================== DATA ACCESS ====================
+// All city data lives in data-loader.js DEFAULTS (the single source of truth).
+// data-loader.js loads JSON files at runtime, falling back to DEFAULTS.
+// Scoring functions read from window.TransPlanData (populated by data-loader.js).
+// L-024: Removed ~140 lines of duplicate inline constants that drifted from DEFAULTS.
 
 // ==================== SCORING FUNCTIONS ====================
 
@@ -323,7 +186,7 @@ function calculateDonorAvailabilityScore(city, state, organType) {
     score += (populationFactors[city] / 100) * 100 * 0.25;
 
     // Living donor program strength (28% of category — raised from 25% after L-008 traffic weight reduction)
-    const ldpData = donorData?.livingDonorProgramStrength || livingDonorProgramStrength;
+    const ldpData = donorData?.livingDonorProgramStrength || {};
     const livingDonorScore = ldpData[city] || 75;
     score += livingDonorScore * 0.28;
 
@@ -354,7 +217,7 @@ function calculateHospitalQualityScore(city, organType, formData) {
     const hqData = window.TransPlanData?.hospitalQuality;
 
     // Volume-outcome relationship (40% of category)
-    const volumes = hqData?.centerVolumes || centerVolumes;
+    const volumes = hqData?.centerVolumes || {};
     const volume = volumes[organType]?.[city] || 50;
     const volumeThresholds = {
         kidney: 300, liver: 250, heart: 120,
@@ -392,7 +255,7 @@ function calculateHospitalQualityScore(city, organType, formData) {
     // Insurance acceptance (15% of category)
     // Centers with higher acceptance rates are more accessible to all patients.
     // If no insurance type selected, use full acceptance score.
-    const acceptanceRates = hqData?.insuranceAcceptanceRates || insuranceAcceptanceRates;
+    const acceptanceRates = hqData?.insuranceAcceptanceRates || {};
     const cityAcceptance = acceptanceRates[city] || 85;
     if (formData?.insurance === 'medicaid') {
         // Medicaid patients face more access barriers; acceptance rate matters more
@@ -416,18 +279,18 @@ function calculateGeographicScore(city) {
     let score = 0;
 
     // Cost of living (inverted - lower is better) (40% of category)
-    const colData = window.TransPlanData?.costOfLiving || costOfLivingIndex;
+    const colData = window.TransPlanData?.costOfLiving || {};
     const col = colData[city] || 100;
     const colScore = Math.max(0, 100 - ((col - 80) / 120) * 100);
     score += Math.max(0, Math.min(100, colScore)) * 0.40;
 
     // Climate favorability for recovery (35% of category)
-    const climData = window.TransPlanData?.climateScores || climateScores;
+    const climData = window.TransPlanData?.climateScores || {};
     score += (climData[city] || 70) * 0.35;
 
     // Air quality (25% of category)
     const aqData = window.TransPlanData?.airQuality;
-    const airQuality = aqData?.[city] || regionalHealthData[city]?.airQuality || 70;
+    const airQuality = aqData?.[city] || 70;
     score += airQuality * 0.25;
 
     return score;
@@ -439,7 +302,7 @@ function calculateGeographicScore(city) {
  */
 function calculateHealthDemographicsScore(city) {
     const hdData = window.TransPlanData?.healthDemographics;
-    const health = hdData?.[city] || regionalHealthData[city];
+    const health = hdData?.[city];
     if (!health) return 70;
 
     let score = 100;
@@ -541,12 +404,6 @@ function calculateComprehensiveScore(formData, cityName, stateName, organType) {
 // Export for use in main script
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        calculateComprehensiveScore,
-        regionalHealthData,
-        costOfLivingIndex,
-        climateScores,
-        livingDonorProgramStrength,
-        insuranceAcceptanceRates,
-        centerVolumes
+        calculateComprehensiveScore
     };
 }

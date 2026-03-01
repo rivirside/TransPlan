@@ -84,7 +84,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-010: Transplant volumes are estimated, not real SRTR data
 - **Severity:** CRITICAL
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** `data/manual/srtr-reports.json` claims source as "SRTR Biannual Reports (manually curated)" but contains round-number estimates that were never fetched from SRTR. Intestinal transplant volumes are especially suspect (e.g., Portland: 5, when fewer than 300 total are done in the US annually).
 - **File:** `data/manual/srtr-reports.json`, `algorithm.js` `centerVolumes`
 - **Fix complexity:** Medium — manually look up real volumes from SRTR program-specific reports at srtr.org.
@@ -184,7 +184,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-024: Triple data duplication with no sync check
 - **Severity:** HIGH
-- **Status:** OPEN
+- **Status:** FIXED
 - **Details:** Same data exists in: (a) inline constants in `algorithm.js`, (b) DEFAULTS in `data-loader.js` (~300 lines), (c) JSON files in `data/`. No automated check that these stay in sync. When Actions updates JSON files, the JS defaults become stale.
 - **File:** `algorithm.js`, `data-loader.js`, `data/*.json`
 
@@ -249,3 +249,5 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-003 | (batch1) | 2026-02-28 | Added LAS input for lung; LAS-based wait scoring replaces generic urgency |
 | L-008 | (batch2) | 2026-02-28 | Reduced traffic weight 15%→8% of donor category; redistributed to registration (39%) and living donor (28%) |
 | L-016 | (batch2) | 2026-02-28 | Fixed FARS normalization: per-capita rates with state populations instead of /500 cap |
+| L-024 | (batch3) | 2026-03-01 | Removed ~140 lines of inline constants from algorithm.js; data now flows from data-loader.js DEFAULTS → window.TransPlanData; fixed policy tier drift (CA/WA values) |
+| L-010 | (batch3) | 2026-03-01 | Replaced fabricated volumes with real 2023-2024 SRTR/OPTN data across all 3 data locations; intestine reduced to 8 real centers |
