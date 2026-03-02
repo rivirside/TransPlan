@@ -183,7 +183,7 @@ function calculateDonorAvailabilityScore(city, state, organType) {
         "Portland": 70, "Palo Alto": 78, "Indianapolis": 69,
         "Omaha": 58
     };
-    score += (populationFactors[city] / 100) * 100 * 0.25;
+    score += ((populationFactors[city] || 50) / 100) * 100 * 0.25;
 
     // Living donor program strength (28% of category — raised from 25% after L-008 traffic weight reduction)
     const ldpData = donorData?.livingDonorProgramStrength || {};
@@ -203,7 +203,7 @@ function calculateDonorAvailabilityScore(city, state, organType) {
         "Madison": 52, "Palo Alto": 62, "Durham": 68,
         "Omaha": 65, "New York": 70
     };
-    score += (traumaScores[city] / 100) * 100 * 0.08;
+    score += ((traumaScores[city] || 50) / 100) * 100 * 0.08;
 
     return score;
 }
@@ -401,9 +401,17 @@ function calculateComprehensiveScore(formData, cityName, stateName, organType) {
     };
 }
 
-// Export for use in main script
+// Export for use in main script and unit tests
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        calculateComprehensiveScore
+        calculateComprehensiveScore,
+        calculateMedicalCompatibilityScore,
+        calculateWaitTimeScore,
+        calculateDonorAvailabilityScore,
+        calculateHospitalQualityScore,
+        calculateGeographicScore,
+        calculateHealthDemographicsScore,
+        calculatePolicyScore,
+        calculateSocioeconomicScore
     };
 }

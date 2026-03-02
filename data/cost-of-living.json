@@ -1,14 +1,27 @@
 {
   "_meta": {
-    "fetchedAt": "2026-02-28T00:00:00Z",
-    "source": "BLS CPI Data / Hardcoded seed data"
+    "fetchedAt": "2026-03-02T07:03:07.733Z",
+    "source": "BLS API v2"
   },
-  "San Francisco": 191, "Palo Alto": 204, "New York": 187,
-  "Los Angeles": 150, "Seattle": 145, "Baltimore": 89,
-  "Pittsburgh": 85, "Minneapolis": 98, "Madison": 97,
-  "Portland": 135, "Chicago": 102, "Philadelphia": 101,
-  "Dallas": 92, "Houston": 90, "Miami": 112,
-  "Nashville": 95, "Durham": 93, "Cleveland": 81,
-  "St. Louis": 83, "Rochester": 91, "Omaha": 86,
-  "Indianapolis": 87
+  "New York": 107,
+  "Los Angeles": 106,
+  "Chicago": 92,
+  "Houston": 93,
+  "Dallas": 85,
+  "Philadelphia": 101,
+  "Miami": 99,
+  "San Francisco": 110,
+  "Seattle": 112,
+  "Minneapolis": 95,
+  "St. Louis": 89,
+  "Baltimore": 110,
+  "Portland": 43,
+  "Cleveland": 91,
+  "Madison": 94,
+  "Rochester": 86,
+  "Durham": 106,
+  "Nashville": 102,
+  "Omaha": 81,
+  "Indianapolis": 74,
+  "Palo Alto": 118
 }
