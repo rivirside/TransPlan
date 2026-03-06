@@ -1,31 +1,48 @@
 {
   "_meta": {
-    "fetchedAt": "2026-03-02T06:53:56.736Z",
-    "source": "NHTSA FARS CrashAPI"
+    "fetchedAt": "2026-02-28T00:00:00Z",
+    "source": "NHTSA FARS / Hardcoded seed data"
   },
-  "stateFatalityRates": {},
+  "stateFatalityRates": {
+    "Montana": 1.76, "Alaska": 1.51, "Minnesota": 0.68, "Oregon": 1.08,
+    "Washington": 0.93, "Wisconsin": 0.92, "New York": 0.58, "Massachusetts": 0.54,
+    "Pennsylvania": 1.06, "Ohio": 1.02, "Maryland": 0.92, "Illinois": 0.93,
+    "California": 1.04, "North Carolina": 1.28, "Tennessee": 1.49,
+    "Texas": 1.37, "Florida": 1.42, "Georgia": 1.35, "Indiana": 1.15,
+    "Nebraska": 0.98, "Missouri": 1.38, "Iowa": 1.11
+  },
   "traumaScores": {
-    "Pittsburgh": 48,
-    "Baltimore": 48,
-    "Philadelphia": 48,
-    "New York": 48,
-    "Minneapolis": 48,
-    "Madison": 48,
-    "Chicago": 48,
-    "Cleveland": 48,
-    "St. Louis": 48,
-    "Indianapolis": 48,
-    "Omaha": 48,
-    "Rochester": 48,
-    "Nashville": 48,
-    "Durham": 48,
-    "Miami": 48,
-    "Dallas": 48,
-    "Houston": 48,
-    "Portland": 48,
-    "Seattle": 48,
-    "San Francisco": 48,
-    "Los Angeles": 48,
-    "Palo Alto": 48
-  }
+    "Los Angeles": 85, "Houston": 82, "Miami": 80,
+    "Dallas": 78, "Nashville": 72,
+    "Pittsburgh": 65, "Cleveland": 68, "Baltimore": 70,
+    "Chicago": 75, "Philadelphia": 72, "Indianapolis": 70,
+    "St. Louis": 72, "Minneapolis": 62, "Seattle": 58,
+    "Portland": 60, "San Francisco": 65, "Rochester": 55,
+    "Madison": 52, "Palo Alto": 62, "Durham": 68,
+    "Omaha": 65, "New York": 70
+  },
+  "accidentHotspots": [
+    { "lat": 33.9425, "lng": -118.4081, "intensity": 0.9, "city": "Los Angeles" },
+    { "lat": 29.7604, "lng": -95.3698, "intensity": 0.85, "city": "Houston" },
+    { "lat": 25.7617, "lng": -80.1918, "intensity": 0.82, "city": "Miami" },
+    { "lat": 32.7767, "lng": -96.7970, "intensity": 0.8, "city": "Dallas" },
+    { "lat": 40.4406, "lng": -79.9959, "intensity": 0.65, "city": "Pittsburgh" },
+    { "lat": 39.2904, "lng": -76.6122, "intensity": 0.7, "city": "Baltimore" },
+    { "lat": 41.8781, "lng": -87.6298, "intensity": 0.78, "city": "Chicago" },
+    { "lat": 39.9526, "lng": -75.1652, "intensity": 0.72, "city": "Philadelphia" },
+    { "lat": 40.7128, "lng": -74.0060, "intensity": 0.75, "city": "New York" },
+    { "lat": 44.9778, "lng": -93.2650, "intensity": 0.6, "city": "Minneapolis" },
+    { "lat": 47.6062, "lng": -122.3321, "intensity": 0.55, "city": "Seattle" },
+    { "lat": 36.1627, "lng": -86.7816, "intensity": 0.68, "city": "Nashville" },
+    { "lat": 35.9940, "lng": -78.8986, "intensity": 0.64, "city": "Durham" },
+    { "lat": 41.4993, "lng": -81.6944, "intensity": 0.67, "city": "Cleveland" },
+    { "lat": 38.6270, "lng": -90.1994, "intensity": 0.66, "city": "St. Louis" },
+    { "lat": 39.7684, "lng": -86.1581, "intensity": 0.62, "city": "Indianapolis" },
+    { "lat": 41.2565, "lng": -95.9345, "intensity": 0.58, "city": "Omaha" },
+    { "lat": 44.0121, "lng": -92.4802, "intensity": 0.52, "city": "Rochester" },
+    { "lat": 43.0731, "lng": -89.4012, "intensity": 0.54, "city": "Madison" },
+    { "lat": 37.7749, "lng": -122.4194, "intensity": 0.62, "city": "San Francisco" },
+    { "lat": 37.4419, "lng": -122.1430, "intensity": 0.58, "city": "Palo Alto" },
+    { "lat": 45.5152, "lng": -122.6784, "intensity": 0.56, "city": "Portland" }
+  ]
 }

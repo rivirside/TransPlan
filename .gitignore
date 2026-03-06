@@ -4,3 +4,6 @@ node_modules/
 .claude/
 .playwright-mcp/
 browser-test-full.png
+
+# Auto-generated fetch metadata — timestamps cause merge conflicts across machines
+data/metadata.json

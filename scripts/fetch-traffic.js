@@ -9,7 +9,7 @@
  * dividing by 500 and capping at 2.0, which made all large states identical.
  */
 
-const { fetchWithRetry, writeDataFile, updateMetadata, reportError, CITIES } = require('./utils');
+const { fetchWithRetry, mergeDataFile, updateMetadata, reportError, CITIES } = require('./utils');
 
 const FARS_BASE = 'https://crashviewer.nhtsa.dot.gov/CrashAPI/crashes/GetCrashesByLocation';
 
@@ -72,8 +72,14 @@ async function fetchStateFatalities() {
         traumaScores[city] = score;
     }
 
-    const output = { stateFatalityRates, traumaScores };
-    writeDataFile('traffic-fatalities.json', output, 'NHTSA FARS CrashAPI');
+    // Only merge if we actually fetched some data; skip write if API was completely unreachable
+    // to avoid overwriting seed data with empty/fallback values
+    if (Object.keys(stateFatalityRates).length > 0) {
+        const output = { stateFatalityRates, traumaScores };
+        mergeDataFile('traffic-fatalities.json', output, 'NHTSA FARS CrashAPI');
+    } else {
+        console.warn('No FARS data retrieved — seed data preserved.');
+    }
     updateMetadata('traffic-fatalities', 'NHTSA FARS');
 
     console.log(`Fetched fatality data for ${Object.keys(stateFatalityRates).length} states.`);

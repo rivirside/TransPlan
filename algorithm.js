@@ -1,7 +1,7 @@
 /**
  * COMPREHENSIVE TRANSPLANT MATCHING ALGORITHM
  *
- * This algorithm considers 50+ factors across 8 major categories to calculate
+ * This algorithm considers 40+ factors across 8 major categories to calculate
  * a relative location suitability score for each city.
  *
  * SCORING CATEGORIES (with weights):
@@ -351,14 +351,14 @@ function calculatePolicyScore(state) {
  */
 function calculateSocioeconomicScore(city) {
     const socioScores = window.TransPlanData?.socioeconomic || {
-        "San Francisco": 95, "Palo Alto": 94, "Seattle": 92,
-        "Minneapolis": 91, "Madison": 90, "Rochester": 89,
-        "Boston": 93, "New York": 90, "Chicago": 87,
-        "Los Angeles": 86, "Portland": 88, "Denver": 87,
-        "Baltimore": 82, "Pittsburgh": 83, "Cleveland": 81,
-        "Philadelphia": 84, "Nashville": 85, "Durham": 84,
-        "Dallas": 83, "Houston": 82, "St. Louis": 80,
-        "Miami": 79, "Indianapolis": 78, "Omaha": 82
+        "Rochester": 95, "Cleveland": 92, "Pittsburgh": 91,
+        "Houston": 90, "Seattle": 89, "Philadelphia": 88,
+        "Madison": 87, "Durham": 86, "Dallas": 86,
+        "San Francisco": 85, "New York": 85, "Omaha": 85,
+        "Nashville": 84, "St. Louis": 84, "Los Angeles": 84,
+        "Palo Alto": 84, "Baltimore": 83, "Chicago": 82,
+        "Portland": 82, "Minneapolis": 81, "Indianapolis": 80,
+        "Miami": 78
     };
 
     return socioScores[city] || 75;

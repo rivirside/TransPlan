@@ -296,6 +296,62 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ---
 
+## 6. Post-Test Audit (discovered 2026-03-01 unit tests + live API run)
+
+### L-041: fetch-traffic.js destroys seed data when FARS API fails
+- **Severity:** CRITICAL
+- **Status:** FIXED
+- **Details:** `fetch-traffic.js` used `writeDataFile()` (not `mergeDataFile()`). When the NHTSA FARS API returned 403 Forbidden for all states, the script overwrote `traffic-fatalities.json` with empty `stateFatalityRates` and fallback `traumaScores` (all 48), destroying the curated seed data including real `accidentHotspots` coordinates. Same class of bug as L-031/L-032.
+- **File:** `scripts/fetch-traffic.js`
+- **Fix:** Changed to `mergeDataFile()` + added guard to skip write when zero states are fetched.
+
+### L-042: NaN in donor availability score for unknown cities
+- **Severity:** MEDIUM
+- **Status:** FIXED
+- **Details:** `calculateDonorAvailabilityScore()` looked up `populationFactors[city]` and `traumaScores[city]` without fallback defaults. For any city not in the lookup tables, these returned `undefined`, and `undefined / 100 * 100 * 0.25 = NaN`, which propagated through the final score. Discovered by unit tests.
+- **File:** `algorithm.js` lines 186, 206
+- **Fix:** Added `|| 50` fallback to both lookups.
+
+### L-043: Boston/Denver orphans still in algorithm.js socioeconomic fallback (L-038 incomplete)
+- **Severity:** LOW
+- **Status:** FIXED
+- **Details:** The L-038 cleanup removed Boston/Denver from `data/manual/socioeconomic.json` and `data-loader.js` DEFAULTS, but missed the inline fallback in `calculateSocioeconomicScore()` in `algorithm.js`. The fallback also had stale wealth-correlated scores instead of the transplant-support rubric values from L-022.
+- **File:** `algorithm.js` lines 353-362
+- **Fix:** Replaced with transplant-support rubric values matching socioeconomic.json; removed Boston/Denver.
+
+### L-044: Algorithm header comment says "50+ factors" but actual count is ~43
+- **Severity:** LOW
+- **Status:** FIXED
+- **Details:** Line 4 of `algorithm.js` claimed "50+ factors" but counting explicit factors across all 8 categories yields approximately 43. Updated to "40+ factors" for accuracy.
+- **File:** `algorithm.js` line 4
+- **Fix:** Changed "50+" to "40+".
+
+### L-045: NHTSA FARS API endpoint returns 403 Forbidden
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** The FARS CrashAPI at `crashviewer.nhtsa.dot.gov/CrashAPI/crashes/GetCrashesByLocation` returns HTTP 403 for all state queries. The API may have been deprecated or moved. The endpoint format, authentication requirements, or state code parameter format may have changed. The `mergeDataFile` fix (L-041) prevents data loss, but no live traffic data can be fetched until the endpoint is updated.
+- **File:** `scripts/fetch-traffic.js` line 14
+
+### L-046: CMS Provider Data API endpoint returns 400 Bad Request
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** The CMS API at `data.cms.gov/provider-data/api/1/datastore/query/xubh-q36u/0` returns HTTP 400 for all city queries. The query parameter format (`conditions[0][property]=city`) may not match the current API specification, or the dataset ID `xubh-q36u` may have changed. Since this script uses `mergeDataFile`, seed data is preserved, but no live hospital reputation data can be fetched.
+- **File:** `scripts/fetch-hospital-quality.js` line 29
+
+### L-047: No CDN fallback for Leaflet, Chart.js, or leaflet-heat
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** All visualization libraries load from CDN (`cdn.jsdelivr.net`, `unpkg.com`). If any CDN is unavailable: (a) Leaflet down → `L.map()` throws ReferenceError, map section blank; (b) Chart.js down → `new Chart()` throws, no charts render; (c) leaflet-heat down → heatmap overlay fails. No fallback messaging or graceful degradation exists.
+- **File:** `index.html` script tags
+
+### L-048: Cost-of-living normalization uses hardcoded 80-200 range
+- **Severity:** LOW
+- **Status:** OPEN
+- **Details:** `calculateGeographicScore()` uses `Math.max(0, 100 - ((col - 80) / 120) * 100)` which assumes COL values are in the 80-200 range. If a city's COL is 0 (missing data), colScore = 100 (unrealistically perfect). If COL exceeds 200, colScore goes negative and clamps to 0. The 80 and 120 constants are undocumented.
+- **File:** `algorithm.js` line 284
+
+---
+
 ## Resolution Log
 
 | ID | Fixed In | Date | Notes |
