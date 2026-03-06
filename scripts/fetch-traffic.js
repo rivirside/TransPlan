@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 /**
- * Fetch traffic fatality data from NHTSA FARS CrashAPI.
- * Source: crashviewer.nhtsa.dot.gov/CrashAPI
+ * Fetch traffic fatality data from NHTSA FARS API.
+ * Source: crashviewer.nhtsa.dot.gov
  * Auth: None required
  * Format: JSON
+ *
+ * FIXME: The original CrashAPI/crashes/GetCrashesByLocation endpoint returns 403
+ * since ~2025. Switched to GetFARSData endpoint. If this also fails, the entire
+ * NHTSA FARS API may be permanently retired. Alternative: download CSV files from
+ * nhtsa.gov/file-downloads/fars and process locally.
  *
  * L-016 fix: Uses per-capita normalization (per 100k population) instead of
  * dividing by 500 and capping at 2.0, which made all large states identical.
@@ -11,7 +16,8 @@
 
 const { fetchWithRetry, mergeDataFile, updateMetadata, reportError, CITIES } = require('./utils');
 
-const FARS_BASE = 'https://crashviewer.nhtsa.dot.gov/CrashAPI/crashes/GetCrashesByLocation';
+// FIXME: If GetFARSData also returns 403, try nhtsa.gov/file-downloads/fars CSV bulk data
+const FARS_BASE = 'https://crashviewer.nhtsa.dot.gov/FARSData/GetFARSData';
 
 // Map state abbreviations to FARS state codes
 const STATE_FIPS = {};
@@ -31,34 +37,46 @@ const UNIQUE_STATES = [...new Set(CITIES.map(c => c.stateAbbr))];
 
 async function fetchStateFatalities() {
     console.log('Fetching traffic fatality data from NHTSA FARS...');
-    const year = new Date().getFullYear() - 2; // FARS data typically 2 years behind
+    const currentYear = new Date().getFullYear();
+    // FARS data lags ~2 years; try year-2, fall back to year-3
+    const yearsToTry = [currentYear - 2, currentYear - 3];
 
     const stateFatalityRates = {};
     const traumaScores = {};
 
     for (const stateAbbr of UNIQUE_STATES) {
-        try {
-            const url = `${FARS_BASE}?fromCaseYear=${year}&toCaseYear=${year}&state=${STATE_FIPS[stateAbbr]}&format=json`;
-            const response = await fetchWithRetry(url);
-            const data = await response.json();
+        let fetched = false;
+        for (const year of yearsToTry) {
+            if (fetched) break;
+            try {
+                const url = `${FARS_BASE}?dataset=Accident&FromYear=${year}&ToYear=${year}&State=${STATE_FIPS[stateAbbr]}&format=json`;
+                const response = await fetchWithRetry(url);
+                const data = await response.json();
 
-            // L-016: Sum actual FATALS field from crash records instead of using array length
-            const crashes = data?.Results?.[0] || [];
-            let totalFatalities = 0;
-            for (const crash of crashes) {
-                totalFatalities += Number(crash.FATALS || crash.fatals || 1);
+                // GetFARSData returns { Results: [...crash records...] }
+                const crashes = Array.isArray(data?.Results) ? data.Results :
+                                Array.isArray(data?.Results?.[0]) ? data.Results[0] : [];
+
+                if (crashes.length === 0) continue; // Try next year
+
+                // L-016: Sum actual FATALS field from crash records
+                let totalFatalities = 0;
+                for (const crash of crashes) {
+                    totalFatalities += Number(crash.FATALS || crash.fatals || 1);
+                }
+
+                // Per-capita rate: fatalities per 100k population
+                const population = STATE_POPULATIONS[stateAbbr] || 5000000;
+                const ratePer100k = (totalFatalities / population) * 100000;
+
+                const fullState = CITIES.find(c => c.stateAbbr === stateAbbr)?.state;
+                if (fullState) {
+                    stateFatalityRates[fullState] = parseFloat(ratePer100k.toFixed(2));
+                }
+                fetched = true;
+            } catch (err) {
+                console.warn(`Failed to fetch FARS data for ${stateAbbr} (${year}): ${err.message}`);
             }
-
-            // Per-capita rate: fatalities per 100k population
-            const population = STATE_POPULATIONS[stateAbbr] || 5000000;
-            const ratePer100k = (totalFatalities / population) * 100000;
-
-            const fullState = CITIES.find(c => c.stateAbbr === stateAbbr)?.state;
-            if (fullState) {
-                stateFatalityRates[fullState] = parseFloat(ratePer100k.toFixed(2));
-            }
-        } catch (err) {
-            console.warn(`Failed to fetch FARS data for ${stateAbbr}: ${err.message}`);
         }
     }
 
@@ -74,15 +92,17 @@ async function fetchStateFatalities() {
 
     // Only merge if we actually fetched some data; skip write if API was completely unreachable
     // to avoid overwriting seed data with empty/fallback values
-    if (Object.keys(stateFatalityRates).length > 0) {
+    const stateCount = Object.keys(stateFatalityRates).length;
+    if (stateCount > 0) {
         const output = { stateFatalityRates, traumaScores };
-        mergeDataFile('traffic-fatalities.json', output, 'NHTSA FARS CrashAPI');
+        mergeDataFile('traffic-fatalities.json', output, 'NHTSA FARS GetFARSData');
+        updateMetadata('traffic-fatalities', 'NHTSA FARS', 'fetched');
     } else {
         console.warn('No FARS data retrieved — seed data preserved.');
+        updateMetadata('traffic-fatalities', 'NHTSA FARS', 'error');
     }
-    updateMetadata('traffic-fatalities', 'NHTSA FARS');
 
-    console.log(`Fetched fatality data for ${Object.keys(stateFatalityRates).length} states.`);
+    console.log(`Fetched fatality data for ${stateCount} states.`);
 }
 
 fetchStateFatalities().catch(err => {
