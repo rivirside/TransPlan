@@ -281,8 +281,13 @@ function calculateGeographicScore(city) {
     // Cost of living (inverted - lower is better) (40% of category)
     const colData = window.TransPlanData?.costOfLiving || {};
     const col = colData[city] || 100;
-    const colScore = Math.max(0, 100 - ((col - 80) / 120) * 100);
-    score += Math.max(0, Math.min(100, colScore)) * 0.40;
+    // Dynamic normalization from actual data range
+    const colValues = Object.values(colData).filter(v => typeof v === 'number' && v > 0);
+    const colMin = colValues.length > 0 ? Math.min(...colValues) : 80;  // FIXME: hardcoded fallback if no COL data loaded
+    const colMax = colValues.length > 0 ? Math.max(...colValues) : 200; // FIXME: hardcoded fallback if no COL data loaded
+    const colRange = colMax - colMin || 1; // prevent division by zero
+    const colScore = Math.max(0, Math.min(100, 100 - ((col - colMin) / colRange) * 100));
+    score += colScore * 0.40;
 
     // Climate favorability for recovery (35% of category)
     const climData = window.TransPlanData?.climateScores || {};

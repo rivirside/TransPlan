@@ -57,6 +57,13 @@
     function renderWeightsDonutChart() {
         const canvas = document.getElementById('weightsDonutChart');
         if (!canvas) return;
+        if (typeof Chart === 'undefined') {
+            const notice = document.createElement('p');
+            notice.className = 'cdn-fallback-notice';
+            notice.textContent = 'Chart unavailable \u2014 the charting library could not be loaded. Category weights are listed in the text above.';
+            canvas.parentElement.replaceChildren(notice);
+            return;
+        }
 
         if (chartInstances.weightsDonut) {
             chartInstances.weightsDonut.destroy();
@@ -102,6 +109,7 @@
      * Called from displayResults for each city card.
      */
     function createRadarChart(canvasId, breakdown, cityName) {
+        if (typeof Chart === 'undefined') return;
         const canvas = document.getElementById(canvasId);
         if (!canvas || !breakdown) return;
 
@@ -166,6 +174,13 @@
     function createComparisonChart(cities) {
         const canvas = document.getElementById('comparisonChart');
         if (!canvas) return;
+        if (typeof Chart === 'undefined') {
+            const notice = document.createElement('p');
+            notice.className = 'cdn-fallback-notice';
+            notice.textContent = 'Charts unavailable \u2014 the charting library could not be loaded. Score breakdowns are shown on each city card above.';
+            canvas.parentElement.replaceChildren(notice);
+            return;
+        }
 
         if (chartInstances.comparison) {
             chartInstances.comparison.destroy();

@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TransplantMatch - Find Your Best Location</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leafletCss=true;" />
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -422,9 +423,20 @@
         </footer>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leaflet=true;"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"
+            onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leafletHeat=true;"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"
+            onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.chartjs=true;"></script>
+    <script>
+        // CDN availability gate — checked by app scripts before using libraries
+        window.TransPlanCDN = {
+            leaflet: typeof L !== 'undefined' && typeof L.map === 'function',
+            leafletHeat: typeof L !== 'undefined' && typeof L.heatLayer === 'function',
+            chartjs: typeof Chart !== 'undefined'
+        };
+    </script>
     <script src="data-loader.js"></script>
     <script src="algorithm.js"></script>
     <script src="script.js"></script>

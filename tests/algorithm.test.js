@@ -513,6 +513,21 @@ describe('calculateGeographicScore', () => {
         expect(score).toBeGreaterThanOrEqual(0);
         expect(Number.isNaN(score)).toBe(false);
     });
+
+    test('COL normalization adapts to data range dynamically', () => {
+        // Set narrow COL range: all cities between 90-110
+        global.window.TransPlanData.costOfLiving = {
+            "CheapCity": 90,
+            "MidCity": 100,
+            "ExpensiveCity": 110
+        };
+        const scoreCheap = calculateGeographicScore('CheapCity');
+        const scoreExpensive = calculateGeographicScore('ExpensiveCity');
+        // Lower COL should produce higher geographic score
+        expect(scoreCheap).toBeGreaterThan(scoreExpensive);
+        expect(Number.isNaN(scoreCheap)).toBe(false);
+        expect(Number.isNaN(scoreExpensive)).toBe(false);
+    });
 });
 
 // ==================== 6. HEALTH DEMOGRAPHICS ====================

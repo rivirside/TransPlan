@@ -535,6 +535,24 @@ let cityMarkersLayer;
 
 // Initialize map
 function initializeMap() {
+    if (!window.TransPlanCDN?.leaflet) {
+        const mapEl = document.getElementById('map');
+        if (mapEl) {
+            const notice = document.createElement('div');
+            notice.className = 'cdn-fallback-notice';
+            const p = document.createElement('p');
+            const strong = document.createElement('strong');
+            strong.textContent = 'Map unavailable';
+            p.appendChild(strong);
+            p.appendChild(document.createTextNode(' \u2014 the mapping library could not be loaded. Your city rankings and scores are still displayed below.'));
+            notice.appendChild(p);
+            mapEl.replaceChildren(notice);
+            mapEl.style.height = 'auto';
+            mapEl.style.minHeight = '80px';
+        }
+        return;
+    }
+
     // Create map centered on US
     map = L.map('map').setView([39.8283, -98.5795], 4);
 
@@ -597,7 +615,11 @@ function createTrafficAccidentHeatmap() {
         [33.7490, -117.8877, 0.69]  // Riverside
     ];
 
-    // Create heatmap layer
+    // Create heatmap layer (requires leaflet-heat plugin)
+    if (!window.TransPlanCDN?.leafletHeat) {
+        console.warn('leaflet-heat unavailable; skipping heatmap overlay.');
+        return;
+    }
     const heat = L.heatLayer(accidentHotspots, {
         radius: 50,
         blur: 40,
