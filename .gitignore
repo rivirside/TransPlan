@@ -7,3 +7,10 @@ browser-test-full.png
 
 # Auto-generated fetch metadata — timestamps cause merge conflicts across machines
 data/metadata.json
+
+# Python backend
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.pytest_cache/
+*.pyc
