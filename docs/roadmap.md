@@ -80,25 +80,48 @@
 
 > **Goal:** Transform from deterministic scoring dashboard into probabilistic forecasting engine.
 > **Key deliverable:** "P(transplant within X months given your profile)" — the single feature that makes TransPlan a forecasting tool.
+> **Decision made:** Python FastAPI backend with NumPy/SciPy/Lifelines. Frontend stays vanilla JS, calls backend API.
 
-### FR-5: Monte Carlo Wait-Time Simulator
+### M1: Backend Scaffold ✅
+- [x] FastAPI project structure (`backend/`)
+- [x] Pydantic v2 schemas (PatientProfile, CityProbability, SimulationResult)
+- [x] Data loader: loads all 10 JSON data files at startup
+- [x] GET /health endpoint with data freshness metadata
+- [x] POST /simulate stub (501 until M3)
+- [x] Service stubs for distributions, monte_carlo, competing_risks
+- [x] 22 pytest tests passing (data loader + schema validation)
+
+### M2: Wait Time Distributions (next)
+- [ ] Create `data/wait-time-distributions.json` with literature-derived log-normal parameters
+- [ ] Implement `services/distributions.py`: log-normal models per organ/blood type/city
+- [ ] Move `cityWaitTimeFactors` from `algorithm.js` hardcoding to data file
+- [ ] Unit tests: known inputs → expected distribution parameters
+- [ ] Sanity checks: kidney O+ Cleveland ~ 3-4yr median; AB+ ~ 1-2yr
+
+### FR-5: Monte Carlo Wait-Time Simulator (M3)
+- [ ] Build Monte Carlo simulation engine (1,000+ iterations per scenario)
+- [ ] Implement POST /simulate endpoint
+- [ ] Probability output: P(transplant <= X months) with confidence intervals
+- [ ] Performance target: <5 seconds per simulation run (<1s expected)
+- [ ] Validate: stability test (run twice, compare within 5%)
+
+### FR-6: Competing Risks Model (M4)
+- [ ] Model: P(transplant) vs. P(mortality) vs. P(delisting)
+- [ ] Create `data/competing-risks.json` with national + city-adjusted rates
+- [ ] Integrate competing events into Monte Carlo (three competing draws)
+- [ ] Verification: outcome probabilities sum to 1.0 at all time horizons
+
+### M5: SRTR Data Pipeline
 - [ ] Download SRTR program-specific report datasets (quarterly, srtr.org)
 - [ ] Parse SRTR data: center-level wait times, volumes, survival rates by organ/blood type
-- [ ] Build Monte Carlo simulation engine (1,000+ iterations per scenario)
-  - **Decision:** JS in-browser for static deployment, or Python/FastAPI backend
-  - If Python: FastAPI server, NumPy/SciPy for distributions
-  - If JS: Web Worker for non-blocking simulation, same math
-- [ ] Probability output: P(transplant <= X months) with confidence intervals
-- [ ] Show probability curves (CDF) — D3.js or Chart.js line charts
-- [ ] Allow comparison across regions on the same curve
-- [ ] Performance target: <5 seconds per simulation run
-- [ ] Validate: retrospective testing against SRTR benchmark waitlists
+- [ ] Scripts: `parse-srtr-reports.py`, `fetch-srtr-survival.py`
 
-### FR-6: Competing Risks Model
-- [ ] Model: P(transplant) vs. P(mortality) vs. P(delisting)
-- [ ] Kaplan-Meier survival curves per center/organ
-- [ ] Library decision: Lifelines (Python) or custom JS implementation
-- [ ] Relocation variants: show how competing risks shift by geography
+### M6: Frontend Integration
+- [ ] API client in script.js, loading spinner
+- [ ] CDF curves with 95% CI shading (Chart.js)
+- [ ] Competing risks stacked area chart
+- [ ] Dual-mode results: Phase 1 scores + Phase 2 probabilities side-by-side
+- [ ] Graceful degradation if backend unreachable
 
 ### FR-7: Probability Outputs & Visualization
 - [ ] CDF curves with confidence intervals

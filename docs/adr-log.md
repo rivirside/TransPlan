@@ -185,3 +185,25 @@
 **Decision:** Defer. No machine-readable API for state donor registration rates exists. Donate Life America publishes annual reports (PDF), not an API. Living donor program strength and population factors require manual curation.
 
 **Rationale:** The seed data is reasonable and won't change dramatically year-to-year. When Donate Life America or HRSA makes registration data API-accessible, create a fetch script. For now, the bimonthly SRTR check workflow serves as a reminder to review all manual data files.
+
+---
+
+## ADR-012: Phase 2 Backend — Python FastAPI
+
+**Date:** 2026-03-06
+**Status:** Accepted
+
+**Context:** Phase 2 requires Monte Carlo simulation (1,000+ iterations × 22 cities), log-normal wait-time distributions, and competing risks modeling (Kaplan-Meier). Need to choose between in-browser JS (Web Workers) and a Python backend.
+
+**Decision:** Python FastAPI backend (`backend/` directory) with NumPy, SciPy, and Lifelines. Frontend stays vanilla JS and calls the backend API. Dual-mode results: Phase 1 deterministic scores + Phase 2 probabilistic forecasts side by side. Frontend degrades gracefully if backend is unreachable — Phase 1 scores still work standalone on GitHub Pages.
+
+**Rationale:**
+- NumPy/SciPy provide production-grade statistical distributions (log-normal, exponential) and vectorized sampling — no need to reimplement in JS.
+- Lifelines provides Kaplan-Meier and competing risks out of the box.
+- Performance: NumPy `rvs(size=1000)` per city is ~1ms, total simulation <1s.
+- Keeping the frontend vanilla avoids a premature React/Next.js migration while Phase 1 is still pre-deploy.
+- Local-only deployment for now (uvicorn or Docker Compose); cloud deploy deferred.
+
+**Alternatives Rejected:**
+- In-browser JS simulation: would work but requires reimplementing statistical distributions, harder to test, and can't use Lifelines.
+- Full stack migration (React + FastAPI): over-engineering for current needs; incremental approach keeps Phase 1 shippable.
