@@ -5,10 +5,14 @@
  * Auth: None required
  * Format: JSON
  *
- * FIXME: The original CrashAPI/crashes/GetCrashesByLocation endpoint returns 403
- * since ~2025. Switched to GetFARSData endpoint. If this also fails, the entire
- * NHTSA FARS API may be permanently retired. Alternative: download CSV files from
- * nhtsa.gov/file-downloads/fars and process locally.
+ * FIXME(L-045): NHTSA FARS API appears fully retired as of March 2026.
+ * - GetCrashesByLocation returns HTTP 403.
+ * - GetFARSData returns HTML error page (not JSON).
+ * Seed data is preserved via mergeDataFile + skip-on-empty guard.
+ * To restore live traffic data, either:
+ *   1. Download FARS CSV bulk files from nhtsa.gov/file-downloads/fars
+ *   2. Use the BTS GeoData API: geodata.bts.gov (FARS accident datasets)
+ *   3. Scrape FARS Query Tool: cdan.dot.gov/query
  *
  * L-016 fix: Uses per-capita normalization (per 100k population) instead of
  * dividing by 500 and capping at 2.0, which made all large states identical.
@@ -16,7 +20,7 @@
 
 const { fetchWithRetry, mergeDataFile, updateMetadata, reportError, CITIES } = require('./utils');
 
-// FIXME: If GetFARSData also returns 403, try nhtsa.gov/file-downloads/fars CSV bulk data
+// FIXME(L-045): Both FARS API endpoints return errors. See header comment for alternatives.
 const FARS_BASE = 'https://crashviewer.nhtsa.dot.gov/FARSData/GetFARSData';
 
 // Map state abbreviations to FARS state codes
