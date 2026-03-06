@@ -8,7 +8,7 @@ A patient-facing clinical decision support tool that helps transplant patients i
 
 ## Current State: Phase 1 MVP — Ready to Deploy
 
-48 limitations tracked (36 fixed, 4 open, 3 deferred, 2 won't fix, 1 false positive, 2 superseded). 90 unit tests passing. Data pipeline operational (3/5 APIs working). Ready for GitHub Pages deployment.
+48 limitations tracked (39 fixed/mitigated, 1 mitigated, 3 deferred, 2 won't fix, 1 false positive, 2 superseded). 91 unit tests passing. Data pipeline operational (4/5 APIs working; FARS retired). CDN fallback + dynamic COL normalization added. Ready for GitHub Pages deployment.
 
 ### What's Done
 
@@ -25,14 +25,15 @@ A patient-facing clinical decision support tool that helps transplant patients i
 | Fetch scripts (scripts/) | ✅ Done | All scripts use mergeDataFile, skip-on-empty guards added |
 | GitHub Actions | ✅ Done | Single sequential job, weekly cron + manual dispatch |
 | Socioeconomic data | ✅ Done | Transplant-support rubric replacing wealth-correlated scores |
-| Unit tests | ✅ Done | 90 tests (Jest): 67 algorithm + 23 utilities, 0 failures |
+| Unit tests | ✅ Done | 91 tests (Jest): 68 algorithm + 23 utilities, 0 failures |
+| CDN fallback | ✅ Done | Graceful degradation when Leaflet/Chart.js CDN unavailable |
+| CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
 
 ### What's NOT Done (Next Steps)
 
 - **Deploy:** Configure GitHub Pages (Settings > Pages > Source: main)
-- **Fix broken APIs:** FARS endpoint 403 (L-045), CMS endpoint 400 (L-046)
-- **CDN fallback:** Add graceful degradation when Leaflet/Chart.js CDN is down (L-047)
+- **FARS API (L-045):** MITIGATED — entire NHTSA FARS API appears retired; seed data preserved; FIXME for CSV bulk download alternative
 - **SRTR data download:** Foundation for Monte Carlo engine (Phase 2)
 - **Deferred:** OPO boundaries (L-009), SRTR outcomes (L-017), donor reg fetch (L-033)
 - See `docs/roadmap.md` for full phased plan (5 phases through FDA clearance)

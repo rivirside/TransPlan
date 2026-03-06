@@ -326,28 +326,28 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **File:** `algorithm.js` line 4
 - **Fix:** Changed "50+" to "40+".
 
-### L-045: NHTSA FARS API endpoint returns 403 Forbidden
+### L-045: NHTSA FARS API endpoint unreachable
 - **Severity:** MEDIUM
-- **Status:** OPEN
-- **Details:** The FARS CrashAPI at `crashviewer.nhtsa.dot.gov/CrashAPI/crashes/GetCrashesByLocation` returns HTTP 403 for all state queries. The API may have been deprecated or moved. The endpoint format, authentication requirements, or state code parameter format may have changed. The `mergeDataFile` fix (L-041) prevents data loss, but no live traffic data can be fetched until the endpoint is updated.
-- **File:** `scripts/fetch-traffic.js` line 14
+- **Status:** MITIGATED
+- **Details:** Both FARS endpoints (`GetCrashesByLocation`, `GetFARSData`) return non-JSON responses (HTML error pages). The entire `crashviewer.nhtsa.dot.gov` API appears retired. Script now tries multi-year fallback (year-2/year-3), correctly records `'error'` metadata status, and preserves seed data via skip-on-empty guard. FIXME comments note CSV bulk download alternative at `nhtsa.gov/file-downloads/fars`.
+- **File:** `scripts/fetch-traffic.js`
 
 ### L-046: CMS Provider Data API endpoint returns 400 Bad Request
 - **Severity:** MEDIUM
-- **Status:** OPEN
-- **Details:** The CMS API at `data.cms.gov/provider-data/api/1/datastore/query/xubh-q36u/0` returns HTTP 400 for all city queries. The query parameter format (`conditions[0][property]=city`) may not match the current API specification, or the dataset ID `xubh-q36u` may have changed. Since this script uses `mergeDataFile`, seed data is preserved, but no live hospital reputation data can be fetched.
-- **File:** `scripts/fetch-hospital-quality.js` line 29
+- **Status:** FIXED
+- **Details:** The legacy `conditions[]` query syntax was deprecated. Replaced with multi-strategy approach (SQL, filter, legacy). The `filter` strategy succeeds and fetched hospital ratings for all 22 cities. Strategy auto-locks after first success to avoid retrying dead approaches. FIXME notes dataset ID `xubh-q36u` may change.
+- **File:** `scripts/fetch-hospital-quality.js`
 
 ### L-047: No CDN fallback for Leaflet, Chart.js, or leaflet-heat
 - **Severity:** MEDIUM
-- **Status:** OPEN
-- **Details:** All visualization libraries load from CDN (`cdn.jsdelivr.net`, `unpkg.com`). If any CDN is unavailable: (a) Leaflet down → `L.map()` throws ReferenceError, map section blank; (b) Chart.js down → `new Chart()` throws, no charts render; (c) leaflet-heat down → heatmap overlay fails. No fallback messaging or graceful degradation exists.
-- **File:** `index.html` script tags
+- **Status:** FIXED
+- **Details:** Added `onerror` handlers on CDN script tags, inline gate-check script (`window.TransPlanCDN`), and guard clauses in `initializeMap()`, `createTrafficAccidentHeatmap()`, `renderWeightsDonutChart()`, `createRadarChart()`, and `createComparisonChart()`. When CDN is down, yellow warning banners appear instead of crashes. Form, algorithm, and text results still work.
+- **Files:** `index.html`, `script.js`, `charts.js`, `styles.css`
 
 ### L-048: Cost-of-living normalization uses hardcoded 80-200 range
 - **Severity:** LOW
-- **Status:** OPEN
-- **Details:** `calculateGeographicScore()` uses `Math.max(0, 100 - ((col - 80) / 120) * 100)` which assumes COL values are in the 80-200 range. If a city's COL is 0 (missing data), colScore = 100 (unrealistically perfect). If COL exceeds 200, colScore goes negative and clamps to 0. The 80 and 120 constants are undocumented.
+- **Status:** FIXED
+- **Details:** Replaced hardcoded `80-200` range with dynamic `min/max` computed from loaded COL data at runtime. FIXME fallbacks (80/200) only activate when no COL data is loaded. Score now normalizes correctly across any data range.
 - **File:** `algorithm.js` line 284
 
 ---
@@ -400,3 +400,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-042 | 909ff06 | 2026-03-05 | Added `\|\| 50` fallback to populationFactors/traumaScores lookups (found by unit tests) |
 | L-043 | 0b59fc4 | 2026-03-05 | Synced algorithm.js socioeconomic fallback with transplant-support rubric; removed orphan cities |
 | L-044 | 0b59fc4 | 2026-03-05 | Changed "50+ factors" → "40+ factors" in algorithm header |
+| L-045 | 822b778 | 2026-03-06 | MITIGATED — switched to GetFARSData + multi-year fallback; API still unreachable, seed data preserved, FIXME for CSV alternative |
+| L-046 | 822b778 | 2026-03-06 | FIXED — multi-strategy CMS API (SQL/filter/legacy); filter strategy works, 22 cities fetched |
+| L-047 | 2b4d542 | 2026-03-06 | FIXED — onerror handlers + TransPlanCDN gate + guard clauses in map/chart init; yellow fallback banners |
+| L-048 | 2b4d542 | 2026-03-06 | FIXED — dynamic min/max from loaded COL data; FIXME fallbacks for empty data |
