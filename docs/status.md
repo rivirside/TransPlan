@@ -4,11 +4,11 @@
 
 ## What TransPlan Is
 
-A static-site tool that helps transplant patients identify the best US cities for their specific organ transplant needs. It scores 22 cities across 8 weighted categories using 50+ data points, displays results on an interactive Leaflet map, and visualizes score breakdowns with Chart.js.
+A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: All Limitations Resolved (32 fixed, 3 deferred, 2 won't fix)
+## Current State: Phase 1 MVP — Ready to Deploy
 
-Batches 1-10 complete. All 40 tracked limitations have been resolved: 32 fixed, 3 deferred (no API available for OPO/SRTR outcomes/donor registration), 2 won't fix (cost > benefit), 1 false positive. Pipeline is safe to run. Comprehensive review passed on 2026-03-01.
+48 limitations tracked (36 fixed, 4 open, 3 deferred, 2 won't fix, 1 false positive, 2 superseded). 90 unit tests passing. Data pipeline operational (3/5 APIs working). Ready for GitHub Pages deployment.
 
 ### What's Done
 
@@ -22,19 +22,21 @@ Batches 1-10 complete. All 40 tracked limitations have been resolved: 32 fixed, 
 | Chart.js visualizations | ✅ Done | Stacked weighted bar chart, radar per card, donut weights |
 | Accessibility | ✅ Done | ARIA labels on map/charts/results, mobile collapse overlay controls |
 | Methodology text | ✅ Done | Accurate data sources, correct volumes, real factors listed |
-| Fetch scripts (scripts/) | ✅ Done | 6 scripts safe (mergeDataFile for partial writes), 1 deferred (donor reg) |
-| GitHub Actions | ✅ Done | Single sequential job, no race condition |
+| Fetch scripts (scripts/) | ✅ Done | All scripts use mergeDataFile, skip-on-empty guards added |
+| GitHub Actions | ✅ Done | Single sequential job, weekly cron + manual dispatch |
 | Socioeconomic data | ✅ Done | Transplant-support rubric replacing wealth-correlated scores |
+| Unit tests | ✅ Done | 90 tests (Jest): 67 algorithm + 23 utilities, 0 failures |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
 
-### What's NOT Done (Future Work)
+### What's NOT Done (Next Steps)
 
-- GitHub Pages deployment not yet configured
-- Fetch scripts not yet run against live APIs (only seed data)
-- No unit tests (Jest/Vitest for algorithm.js)
-- No browser tests (Playwright/Cypress)
-- **Deferred:** OPO boundaries (L-009), SRTR outcomes (L-017), donor reg fetch (L-033) — need API access
-- See `docs/roadmap.md` for future feature ideas
+- **Deploy:** Configure GitHub Pages (Settings > Pages > Source: main)
+- **Fix broken APIs:** FARS endpoint 403 (L-045), CMS endpoint 400 (L-046)
+- **CDN fallback:** Add graceful degradation when Leaflet/Chart.js CDN is down (L-047)
+- **SRTR data download:** Foundation for Monte Carlo engine (Phase 2)
+- **Deferred:** OPO boundaries (L-009), SRTR outcomes (L-017), donor reg fetch (L-033)
+- See `docs/roadmap.md` for full phased plan (5 phases through FDA clearance)
+- See `docs/ideas.md` for full SRS with architecture, governance, and regulatory details
 
 ## File Map
 
@@ -46,8 +48,11 @@ TransPlan/
   data-loader.js          <- Runtime JSON loader with fallbacks
   charts.js               <- Chart.js radar/bar/donut charts
   styles.css              <- All CSS
-  package.json            <- Node deps (xml2js)
+  package.json            <- Node deps (xml2js, jest)
   README.md               <- User-facing docs
+  tests/                  <- Unit tests (Jest)
+    algorithm.test.js     <- 67 tests: all 8 scoring categories + comprehensive
+    utils.test.js         <- 23 tests: deepMerge, writeDataFile, mergeDataFile, CITIES
   data/                   <- JSON data files (seed + auto-updated)
     air-quality.json
     cost-of-living.json
@@ -55,7 +60,6 @@ TransPlan/
     health-demographics.json
     hospital-quality.json
     traffic-fatalities.json
-    metadata.json
     manual/               <- Hand-curated data (no API available)
       srtr-reports.json
       climate-scores.json
@@ -75,9 +79,11 @@ TransPlan/
     check-srtr-updates.yml <- Bimonthly SRTR check
   docs/
     status.md             <- THIS FILE (read every session)
+    ideas.md              <- Full SRS: requirements, architecture, FDA pathway
     design.md             <- Read when touching UI/UX/CSS
     adr-log.md            <- Grep-searchable decision log
-    roadmap.md            <- Grep-searchable future plans
+    roadmap.md            <- Phased development plan (5 phases)
+    limitations.md        <- Issue tracker (48 items, L-001 through L-048)
     brand-bible.md        <- Grep-searchable visual identity
 ```
 
@@ -98,12 +104,13 @@ TransPlan/
 
 ## Known Limitations
 
-**40 tracked issues** in `docs/limitations.md` — all resolved. Read when auditing data quality or planning future work.
+**48 tracked issues** in `docs/limitations.md`. Read when auditing data quality or planning future work.
 
 | Status | Count | Details |
 |--------|-------|---------|
-| FIXED | 32 | All critical, most high/medium issues |
-| DEFERRED | 3 | L-009 (OPO), L-017 (SRTR outcomes), L-033 (donor reg fetch) — need API access |
+| FIXED | 36 | All critical + most high/medium issues (L-001–L-044) |
+| OPEN | 4 | L-045 (FARS API), L-046 (CMS API), L-047 (CDN fallback), L-048 (COL range) |
+| DEFERRED | 3 | L-009 (OPO), L-017 (SRTR outcomes), L-033 (donor reg fetch) |
 | WONT FIX | 2 | L-012 (county health, <0.5pt impact), L-039 (false positive) |
 
 ## Documentation Tiers

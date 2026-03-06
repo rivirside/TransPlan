@@ -396,3 +396,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-012 | ADR-011 | 2026-03-01 | WONT FIX — 7% weight category, county-vs-state changes scores by <0.5 points |
 | L-017 | ADR-012 | 2026-03-01 | DEFERRED — SRTR outcomes are HTML/PDF only, would need 132 manual data points |
 | L-033 | ADR-013 | 2026-03-01 | DEFERRED — no machine-readable API for donor registration rates |
+| L-041 | 0b59fc4 | 2026-03-05 | fetch-traffic.js switched to mergeDataFile + skip-on-empty guard |
+| L-042 | 909ff06 | 2026-03-05 | Added `\|\| 50` fallback to populationFactors/traumaScores lookups (found by unit tests) |
+| L-043 | 0b59fc4 | 2026-03-05 | Synced algorithm.js socioeconomic fallback with transplant-support rubric; removed orphan cities |
+| L-044 | 0b59fc4 | 2026-03-05 | Changed "50+ factors" → "40+ factors" in algorithm header |
