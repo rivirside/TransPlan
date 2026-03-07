@@ -6,9 +6,9 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 2 In Progress — SRTR Data Pipeline Complete (M5)
+## Current State: Phase 2 In Progress — Local Launcher Added, M6 Next
 
-Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1-M5 done. 120 pytest tests passing. Data now uses empirical SRTR center-level percentiles (Table B10 wait times, Table B7 mortality/delisting) instead of literature estimates. POST /simulate returns ranked city probabilities with competing risks, 95% CIs, in ~80ms.
+Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1-M5 done. 120 pytest tests passing. Data now uses empirical SRTR center-level percentiles (Table B10 wait times, Table B7 mortality/delisting) instead of literature estimates. POST /simulate returns ranked city probabilities with competing risks, 95% CIs, in ~80ms. Local launcher (start.command/stop.command) provides one-click startup with dynamic port discovery and in-app session management.
 
 ### What's Done
 

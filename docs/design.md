@@ -96,6 +96,19 @@ Single breakpoint at `768px`:
 - Color is not the sole indicator - text labels accompany colored values
 - Map overlay toggles use native checkboxes
 
+## Session UI (Local Only)
+
+When running locally via `start.command`, a session bar appears at the bottom of the viewport:
+
+- **Position**: Fixed bottom, full width, z-index 10000
+- **Background**: `rgba(30, 30, 40, 0.92)` with `backdrop-filter: blur(8px)`
+- **Left side**: Green dot (8px, `#4ade80`) + "Local session active" text in `#ccc`
+- **Right side**: Red "End Session" button (`#dc2626`, hover `#b91c1c`)
+- **Font size**: 0.82rem
+- **Visibility**: Only rendered when `.transplan-session.json` exists (localhost only). Invisible on GitHub Pages or any non-localhost deploy.
+- **Action**: Button calls `POST /shutdown` on backend, which triggers SIGTERM → start.command cleanup trap stops both servers.
+- **Source**: `session.js` (creates DOM elements dynamically)
+
 ## CSS Organization (styles.css)
 
 Sections in order:
@@ -112,9 +125,11 @@ Sections in order:
 11. Footer
 12. Map styling
 13. Methodology section
-14. Freshness banner (new)
-15. Chart containers (new)
+14. Freshness banner
+15. Chart containers
 16. Responsive media queries
+17. CDN fallback notice
+18. Session bar (local only)
 
 ## Things to Maintain
 

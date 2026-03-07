@@ -57,6 +57,8 @@
 > **Goal:** Ship the static site MVP. Close out remaining housekeeping.
 
 ### Deployment
+- [x] Local launcher: `start.command` / `stop.command` with dynamic port discovery (ADR-014)
+- [x] Session management: `.transplan-session.json`, `session.js`, `POST /shutdown`
 - [ ] Configure GitHub Pages deployment (Settings > Pages > Source: main)
 - [ ] Verify site loads correctly on GitHub Pages (CDN paths, data loading)
 - [ ] Set up custom domain (transplan.org) if available
