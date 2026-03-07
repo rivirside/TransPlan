@@ -44,7 +44,9 @@ Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabili
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 2 M5:** SRTR data pipeline — scraper scripts for center-level empirical data
+- **Phase 2 M5:** SRTR data pipeline — scraper scripts for center-level wait time percentiles and survival data
+- **Phase 2 M6:** Frontend integration — API client, CDF curves, competing risks chart, dual-mode results, graceful degradation
+- **Phase 2 M7:** Validation & docs — Brier score retrospective validation, sensitivity analysis (tornado charts), backend architecture docs
 - **Deploy:** Configure GitHub Pages (Settings > Pages > Source: main)
 - **FARS API (L-045):** MITIGATED — entire NHTSA FARS API appears retired; seed data preserved; FIXME for CSV bulk download alternative
 - **Deferred:** OPO boundaries (L-009), SRTR outcomes (L-017), donor reg fetch (L-033)
