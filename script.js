@@ -1990,12 +1990,32 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
         las: parseInt(document.getElementById('las')?.value) || 0
     };
 
+    // Show loading spinner
+    const spinner = document.getElementById('simulationSpinner');
+    if (spinner) spinner.style.display = 'flex';
+
     // Load data before calculating
     if (typeof loadAllData === 'function' && !window.TransPlanData?._loaded) {
         await loadAllData();
     }
 
+    // Phase 1: Calculate deterministic scores
     calculateResults(formData);
+
+    // Phase 2: Call backend for Monte Carlo simulation
+    let simResult = null;
+    if (window.TransPlanAPI) {
+        simResult = await window.TransPlanAPI.simulate(formData);
+    }
+
+    // Hide spinner
+    if (spinner) spinner.style.display = 'none';
+
+    // Render probability view (or show unavailable notice)
+    renderProbabilityView(simResult);
+
+    // Set up tab toggle state
+    initResultsTabs(simResult !== null);
 });
 
 // --- Organ-specific conditional field visibility ---
@@ -2342,4 +2362,197 @@ function getDonorClass(rate) {
 function getMatchClass(rate) {
     const value = parseInt(rate);
     return value >= 80 ? 'good' : value >= 70 ? 'moderate' : 'poor';
+}
+
+// ── Phase 2: Probability View ──────────────────────────────────────────────
+
+/**
+ * Initialize results tab toggle behavior.
+ * @param {boolean} simulationAvailable - Whether Phase 2 results exist
+ */
+function initResultsTabs(simulationAvailable) {
+    const tabScores = document.getElementById('tab-scores');
+    const tabProbs = document.getElementById('tab-probabilities');
+    const panelScores = document.getElementById('panel-scores');
+    const panelProbs = document.getElementById('panel-probabilities');
+    const unavailableBanner = document.getElementById('simulation-unavailable');
+
+    if (!tabScores || !tabProbs) return;
+
+    if (!simulationAvailable) {
+        tabProbs.disabled = true;
+        tabProbs.title = 'Backend not running';
+        if (unavailableBanner) unavailableBanner.style.display = 'block';
+    } else {
+        tabProbs.disabled = false;
+        tabProbs.title = '';
+        if (unavailableBanner) unavailableBanner.style.display = 'none';
+    }
+
+    // Remove old listeners by cloning
+    const newTabScores = tabScores.cloneNode(true);
+    const newTabProbs = tabProbs.cloneNode(true);
+    tabScores.parentNode.replaceChild(newTabScores, tabScores);
+    tabProbs.parentNode.replaceChild(newTabProbs, tabProbs);
+
+    newTabScores.addEventListener('click', function () {
+        newTabScores.classList.add('active');
+        newTabScores.setAttribute('aria-selected', 'true');
+        newTabProbs.classList.remove('active');
+        newTabProbs.setAttribute('aria-selected', 'false');
+        panelScores.style.display = '';
+        panelProbs.style.display = 'none';
+    });
+
+    newTabProbs.addEventListener('click', function () {
+        if (newTabProbs.disabled) return;
+        newTabProbs.classList.add('active');
+        newTabProbs.setAttribute('aria-selected', 'true');
+        newTabScores.classList.remove('active');
+        newTabScores.setAttribute('aria-selected', 'false');
+        panelProbs.style.display = '';
+        panelScores.style.display = 'none';
+    });
+}
+
+/**
+ * Render the probability view from simulation results.
+ * @param {Object|null} simResult - SimulationResult from backend, or null
+ */
+function renderProbabilityView(simResult) {
+    const container = document.getElementById('probabilityContainer');
+    if (!container) return;
+    container.textContent = '';
+
+    if (!simResult || !simResult.cities) return;
+
+    // Simulation metadata
+    const meta = document.createElement('div');
+    meta.className = 'simulation-meta';
+    meta.textContent = 'Monte Carlo simulation: ' + simResult.iterations.toLocaleString() +
+        ' iterations in ' + simResult.elapsed_seconds.toFixed(2) + 's';
+    container.appendChild(meta);
+
+    // Create probability cards for each city
+    simResult.cities.forEach(function (city, index) {
+        const card = createProbabilityCard(city, index + 1);
+        container.appendChild(card);
+    });
+
+    // Render charts
+    setTimeout(function () {
+        if (window.TransPlanProbCharts) {
+            window.TransPlanProbCharts.destroyAll();
+            window.TransPlanProbCharts.renderCDFChart('cdfChart', simResult.cities, 5);
+            window.TransPlanProbCharts.renderCompetingRisksChart('competingRisksChart', simResult.cities, 10);
+        }
+    }, 200);
+}
+
+/**
+ * Helper: create a text element.
+ */
+function _el(tag, className, text) {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    if (text !== undefined) el.textContent = text;
+    return el;
+}
+
+/**
+ * Create a probability city card element using safe DOM methods.
+ */
+function createProbabilityCard(city, rank) {
+    const card = _el('div', 'prob-card');
+
+    if (rank === 1) card.style.borderLeftColor = '#ffd700';
+    else if (rank === 2) card.style.borderLeftColor = '#c0c0c0';
+    else if (rank === 3) card.style.borderLeftColor = '#cd7f32';
+
+    const ci = city.confidence_interval_95 || [0, 0];
+
+    // Header
+    const header = _el('div', 'prob-card-header');
+    const info = _el('div');
+    info.appendChild(_el('h3', null, city.city));
+    info.appendChild(_el('span', 'state', city.state));
+    header.appendChild(info);
+    header.appendChild(_el('span', 'prob-card-rank', '#' + rank));
+    card.appendChild(header);
+
+    // Probability metrics grid
+    const metrics = _el('div', 'prob-metrics');
+    const timepoints = [
+        ['6 months', city.p_transplant_6mo],
+        ['12 months', city.p_transplant_12mo],
+        ['24 months', city.p_transplant_24mo],
+        ['36 months', city.p_transplant_36mo]
+    ];
+    timepoints.forEach(function (tp) {
+        const m = _el('div', 'prob-metric');
+        m.appendChild(_el('div', 'prob-metric-label', tp[0]));
+        m.appendChild(_el('div', 'prob-metric-value ' + probClass(tp[1]), formatPct(tp[1])));
+        metrics.appendChild(m);
+    });
+
+    // Median wait
+    const medianMetric = _el('div', 'prob-metric');
+    medianMetric.appendChild(_el('div', 'prob-metric-label', 'Median Wait'));
+    medianMetric.appendChild(_el('div', 'prob-metric-value', city.median_wait_months.toFixed(1) + ' mo'));
+    metrics.appendChild(medianMetric);
+
+    card.appendChild(metrics);
+
+    // CI text
+    card.appendChild(_el('div', 'prob-ci',
+        '95% CI at 24 mo: ' + formatPct(ci[0]) + ' \u2013 ' + formatPct(ci[1])));
+
+    // Competing risks bar
+    if (city.competing_risks) {
+        card.appendChild(buildRiskBar(city.competing_risks));
+    }
+
+    return card;
+}
+
+function buildRiskBar(cr) {
+    const wrapper = document.createDocumentFragment();
+    const bar = _el('div', 'prob-risks');
+    const segments = [
+        [cr.p_transplant_24mo || 0, '#27ae60'],
+        [cr.p_still_waiting_24mo || 0, '#bdc3c7'],
+        [cr.p_delisting_24mo || 0, '#f39c12'],
+        [cr.p_mortality_24mo || 0, '#e74c3c']
+    ];
+    segments.forEach(function (s) {
+        const seg = _el('div', 'prob-risk-segment');
+        seg.style.width = (s[0] * 100) + '%';
+        seg.style.background = s[1];
+        bar.appendChild(seg);
+    });
+    wrapper.appendChild(bar);
+
+    const legend = _el('div', 'prob-risk-legend');
+    const labels = [
+        ['risk-transplant', 'Transplanted', cr.p_transplant_24mo || 0],
+        ['risk-waiting', 'Waiting', cr.p_still_waiting_24mo || 0],
+        ['risk-delisted', 'Delisted', cr.p_delisting_24mo || 0],
+        ['risk-mortality', 'Mortality', cr.p_mortality_24mo || 0]
+    ];
+    labels.forEach(function (l) {
+        legend.appendChild(_el('span', l[0], l[1] + ' ' + formatPct(l[2])));
+    });
+    wrapper.appendChild(legend);
+
+    return wrapper;
+}
+
+function formatPct(v) {
+    return (v * 100).toFixed(1) + '%';
+}
+
+function probClass(v) {
+    if (v >= 0.5) return 'high';
+    if (v >= 0.2) return 'mid';
+    return 'low';
 }

@@ -1,7 +1,7 @@
 /**
  * Session management for local TransPlan instance.
- * Only activates when running on localhost via start.command.
- * Reads .transplan-session.json for backend port, shows "End Session" button.
+ * Only activates on localhost. Uses same-origin /health check
+ * to detect if backend is running. Shows "End Session" bar.
  */
 (function () {
   'use strict';
@@ -10,19 +10,14 @@
                 window.location.hostname === '127.0.0.1';
   if (!isLocal) return;
 
-  var session = null;
-
-  // Fetch session config written by start.command
-  fetch('/.transplan-session.json')
+  // Check if backend is reachable (same-origin)
+  fetch('/health')
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (data) {
-      if (!data || !data.backendPort) return;
-      session = data;
-      // Expose backend URL globally (used by M6 API client later)
-      window.TransPlanBackend = 'http://localhost:' + data.backendPort;
+      if (!data || data.status !== 'ok') return;
       createSessionUI();
     })
-    .catch(function () { /* no session file — not launched via start.command */ });
+    .catch(function () { /* no backend — static-only server */ });
 
   function createSessionUI() {
     var bar = document.createElement('div');
@@ -31,8 +26,6 @@
     var status = document.createElement('span');
     status.className = 'session-status';
     status.textContent = 'Local session active';
-    status.title = 'Backend :' + session.backendPort +
-                   ' | Frontend :' + session.frontendPort;
 
     var btn = document.createElement('button');
     btn.className = 'session-end-btn';
@@ -45,7 +38,7 @@
   }
 
   function endSession() {
-    if (!confirm('End the TransPlan session? This will stop the local servers.')) {
+    if (!confirm('End the TransPlan session? This will stop the local server.')) {
       return;
     }
 
@@ -55,21 +48,19 @@
       btn.disabled = true;
     }
 
-    fetch(window.TransPlanBackend + '/shutdown', { method: 'POST' })
+    fetch('/shutdown', { method: 'POST' })
       .then(function () {
-        var bar = document.querySelector('.transplan-session-bar');
-        if (bar) {
-          bar.querySelector('.session-status').textContent = 'Session ended';
-          bar.querySelector('.session-end-btn').textContent = 'Stopped';
-        }
+        updateStatus('Session ended', 'Stopped');
       })
       .catch(function () {
-        // Backend may already be gone — that's fine
-        var bar = document.querySelector('.transplan-session-bar');
-        if (bar) {
-          bar.querySelector('.session-status').textContent = 'Session ended';
-          bar.querySelector('.session-end-btn').textContent = 'Stopped';
-        }
+        updateStatus('Session ended', 'Stopped');
       });
+  }
+
+  function updateStatus(statusText, btnText) {
+    var statusEl = document.querySelector('.session-status');
+    var btnEl = document.querySelector('.session-end-btn');
+    if (statusEl) statusEl.textContent = statusText;
+    if (btnEl) btnEl.textContent = btnText;
   }
 })();

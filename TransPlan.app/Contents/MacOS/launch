@@ -1,0 +1,65 @@
+#!/bin/bash
+# TransPlan launcher — runs as a macOS .app (no Terminal window)
+# Starts the single-process FastAPI server in background, opens browser.
+
+# Resolve to the repo root (TransPlan.app lives inside the repo)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+
+VENV="$REPO_ROOT/backend/.venv"
+PID_FILE="$REPO_ROOT/.transplan.pid"
+LOG_FILE="/tmp/transplan.log"
+PREFERRED_PORT=8002
+
+# ── Check venv exists ────────────────────────────────────────────────────────
+if [ ! -f "$VENV/bin/python" ]; then
+  osascript -e 'display dialog "TransPlan: Python virtual environment not found.\n\nRun this first in Terminal:\n  cd backend && python3 -m venv .venv && pip install -r requirements.txt" buttons {"OK"} default button "OK" with icon stop with title "TransPlan"'
+  exit 1
+fi
+
+# ── Kill existing session if running ─────────────────────────────────────────
+if [ -f "$PID_FILE" ]; then
+  OLD_PID=$(cat "$PID_FILE")
+  if kill -0 "$OLD_PID" 2>/dev/null; then
+    kill "$OLD_PID" 2>/dev/null
+    sleep 1
+  fi
+  rm -f "$PID_FILE"
+fi
+
+# ── Find free port ───────────────────────────────────────────────────────────
+PORT=$PREFERRED_PORT
+MAX_PORT=$((PREFERRED_PORT + 20))
+while [ "$PORT" -lt "$MAX_PORT" ]; do
+  if ! lsof -i tcp:"$PORT" &>/dev/null; then
+    break
+  fi
+  PORT=$((PORT + 1))
+done
+
+if [ "$PORT" -ge "$MAX_PORT" ]; then
+  osascript -e 'display dialog "TransPlan: Cannot find a free port.\n\nClose other services using ports 8002-8022." buttons {"OK"} default button "OK" with icon stop with title "TransPlan"'
+  exit 1
+fi
+
+# ── Start server in background ───────────────────────────────────────────────
+cd "$REPO_ROOT"
+"$VENV/bin/python" -m uvicorn backend.main:app \
+  --host 127.0.0.1 \
+  --port "$PORT" \
+  --log-level warning \
+  &>"$LOG_FILE" &
+SERVER_PID=$!
+
+echo "$SERVER_PID" > "$PID_FILE"
+
+# ── Wait for server to be ready ──────────────────────────────────────────────
+for i in $(seq 1 30); do
+  if curl -s "http://127.0.0.1:$PORT/health" &>/dev/null; then
+    break
+  fi
+  sleep 0.5
+done
+
+# ── Open browser ─────────────────────────────────────────────────────────────
+open "http://localhost:$PORT"

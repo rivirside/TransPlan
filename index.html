@@ -328,10 +328,29 @@
                 </div>
             </section>
 
+            <!-- Loading spinner overlay -->
+            <div id="simulationSpinner" class="simulation-spinner" style="display: none;">
+                <div class="spinner-content">
+                    <div class="spinner-ring"></div>
+                    <p class="spinner-text">Running simulation...</p>
+                </div>
+            </div>
+
             <section id="resultsSection" class="results-section" style="display: none;">
                 <div id="data-freshness-banner"></div>
                 <h2>Your Top Recommended Cities</h2>
                 <p class="results-intro">Based on your profile, here are cities ranked by location suitability score. These scores reflect regional data trends, not individual clinical predictions.</p>
+
+                <!-- Dual-mode tab toggle -->
+                <div class="results-mode-toggle" role="tablist" aria-label="Results view mode">
+                    <button id="tab-scores" class="mode-tab active" role="tab" aria-selected="true" aria-controls="panel-scores">Location Scores</button>
+                    <button id="tab-probabilities" class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-probabilities">Simulation Probabilities</button>
+                </div>
+
+                <!-- Backend unavailable notice -->
+                <div id="simulation-unavailable" class="simulation-unavailable-banner" style="display: none;" role="alert">
+                    Monte Carlo simulation unavailable. Showing location scores only. Start the backend with <code>./start.command</code> for probability estimates.
+                </div>
 
                 <div class="map-section">
                     <div id="map" role="application" aria-label="Interactive map showing transplant center locations and data overlays across US cities"></div>
@@ -387,14 +406,38 @@
                     </div>
                 </div>
 
-                <div id="resultsContainer" class="results-container" aria-live="polite" aria-label="City ranking results">
-                    <!-- Results will be inserted here -->
+                <!-- Phase 1: Score View -->
+                <div id="panel-scores" class="results-panel active" role="tabpanel" aria-labelledby="tab-scores">
+                    <div id="resultsContainer" class="results-container" aria-live="polite" aria-label="City ranking results">
+                        <!-- Results will be inserted here -->
+                    </div>
+
+                    <div class="charts-section">
+                        <h3>City Comparison</h3>
+                        <div class="chart-container">
+                            <canvas id="comparisonChart" role="img" aria-label="Bar chart comparing scoring categories across top-ranked cities"></canvas>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="charts-section">
-                    <h3>City Comparison</h3>
-                    <div class="chart-container">
-                        <canvas id="comparisonChart" role="img" aria-label="Bar chart comparing scoring categories across top-ranked cities"></canvas>
+                <!-- Phase 2: Probability View -->
+                <div id="panel-probabilities" class="results-panel" role="tabpanel" aria-labelledby="tab-probabilities" style="display: none;">
+                    <div id="probabilityContainer" class="results-container" aria-live="polite" aria-label="Simulation probability results">
+                        <!-- Probability cards will be inserted here -->
+                    </div>
+
+                    <div class="charts-section">
+                        <h3>Transplant Probability Over Time</h3>
+                        <div class="chart-container">
+                            <canvas id="cdfChart" role="img" aria-label="Line chart showing probability of transplant over time for top cities"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="charts-section">
+                        <h3>24-Month Waitlist Outcomes</h3>
+                        <div class="chart-container">
+                            <canvas id="competingRisksChart" role="img" aria-label="Stacked bar chart showing transplant, mortality, delisting, and still-waiting outcomes"></canvas>
+                        </div>
                     </div>
                 </div>
 
@@ -439,8 +482,10 @@
     </script>
     <script src="data-loader.js"></script>
     <script src="algorithm.js"></script>
+    <script src="api-client.js"></script>
     <script src="script.js"></script>
     <script src="charts.js"></script>
+    <script src="probability-charts.js"></script>
     <script src="session.js"></script>
 </body>
 </html>

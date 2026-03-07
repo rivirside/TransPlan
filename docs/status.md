@@ -6,9 +6,9 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 2 In Progress — Local Launcher Added, M6 Next
+## Current State: Phase 2 In Progress — M6 Done, M7 Next
 
-Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1-M5 done. 120 pytest tests passing. Data now uses empirical SRTR center-level percentiles (Table B10 wait times, Table B7 mortality/delisting) instead of literature estimates. POST /simulate returns ranked city probabilities with competing risks, 95% CIs, in ~80ms. Local launcher (start.command/stop.command) provides one-click startup with dynamic port discovery and in-app session management.
+Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1-M6 done. 120 pytest tests passing. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` (macOS .app bundle, no Terminal window) or `start.command`. Frontend shows dual-mode results: Phase 1 location scores + Phase 2 Monte Carlo probabilities with CDF curves, competing risks charts, and probability cards. Graceful degradation when backend unavailable.
 
 ### What's Done
 
@@ -39,13 +39,13 @@ Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabili
 | M3: Monte Carlo engine | ✅ Done | 1000-iteration simulation, POST /simulate, 80ms perf, 25 tests |
 | M4: Competing risks | ✅ Done | Mortality/delisting model, outcomes sum to 1.0, 17 tests |
 | M5: SRTR data pipeline | ✅ Done | Excel downloader, parser, center mapping, 22 cities × 6 organs, 34 tests |
-| M6: Frontend integration | Pending | API client, CDF charts, dual-mode results |
+| M6: Frontend integration | ✅ Done | API client, CDF curves, competing risks chart, dual-mode tabs, graceful degradation |
 | M7: Validation & docs | Pending | Brier score, sensitivity analysis, documentation |
 
 ### What's NOT Done (Next Steps)
 
 - ~~**Phase 2 M5:** SRTR data pipeline~~ ✅ Done
-- **Phase 2 M6:** Frontend integration — API client, CDF curves, competing risks chart, dual-mode results, graceful degradation
+- ~~**Phase 2 M6:** Frontend integration~~ ✅ Done — API client, CDF curves, competing risks chart, dual-mode tabs, single-process architecture
 - **Phase 2 M7:** Validation & docs — Brier score retrospective validation, sensitivity analysis (tornado charts), backend architecture docs
 - **Deploy:** Configure GitHub Pages (Settings > Pages > Source: main)
 - **FARS API (L-045):** MITIGATED — entire NHTSA FARS API appears retired; seed data preserved; FIXME for CSV bulk download alternative
@@ -57,15 +57,20 @@ Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabili
 
 ```
 TransPlan/
+  TransPlan.app/          <- macOS .app bundle (double-click to launch, no Terminal)
+    Contents/Info.plist   <- App metadata, LSUIElement=true (background app)
+    Contents/MacOS/launch <- Shell script: start uvicorn, open browser
   start.command           <- Double-click to launch (macOS); auto-finds free ports
   stop.command            <- Double-click to stop a running session
-  session.js              <- Local session UI (End Session button, backend discovery)
-  index.html              <- Main page
+  session.js              <- Local session UI (End Session button, same-origin health check)
+  api-client.js           <- Backend API client (form normalization, POST /simulate, graceful fallback)
+  probability-charts.js   <- CDF curves + competing risks stacked bar charts (Chart.js)
+  index.html              <- Main page (dual-mode tabs, loading spinner, probability panel)
   algorithm.js            <- Scoring engine (8 categories, 22 cities)
-  script.js               <- UI, map, form, results display
+  script.js               <- UI, map, form, results display, probability card rendering
   data-loader.js          <- Runtime JSON loader with fallbacks
   charts.js               <- Chart.js radar/bar/donut charts
-  styles.css              <- All CSS
+  styles.css              <- All CSS (incl. spinner, tabs, probability cards)
   package.json            <- Node deps (xml2js, jest)
   README.md               <- User-facing docs
   tests/                  <- Unit tests (Jest)
@@ -102,7 +107,7 @@ TransPlan/
     fetch-data.yml        <- Weekly data fetch (Mon 6am UTC)
     check-srtr-updates.yml <- Bimonthly SRTR check
   backend/                <- Phase 2 Python FastAPI backend
-    main.py               <- FastAPI app, CORS, startup data load
+    main.py               <- FastAPI app, CORS, static file serving, startup data load
     config.py             <- DATA_DIR, SIMULATION_ITERATIONS, ALLOWED_ORIGINS
     requirements.txt      <- Python dependencies
     models/
@@ -110,7 +115,7 @@ TransPlan/
     routers/
       health.py           <- GET /health (data freshness)
       shutdown.py         <- POST /shutdown (graceful local session end)
-      simulate.py         <- POST /simulate (stub → M3)
+      simulate.py         <- POST /simulate (Monte Carlo simulation)
     services/
       data_loader.py      <- Loads data/*.json at startup
       distributions.py    <- Log-normal wait time distributions (6 organs)

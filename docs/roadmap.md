@@ -122,12 +122,16 @@
 - [x] Output: updated `wait-time-distributions.json` + `competing-risks.json` with empirical SRTR data
 - [x] 34 new tests (data validation, log-normal fitting, sanity checks) — 120 total pytest passing
 
-### M6: Frontend Integration
-- [ ] API client in script.js, loading spinner
-- [ ] CDF curves with 95% CI shading (Chart.js)
-- [ ] Competing risks stacked area chart
-- [ ] Dual-mode results: Phase 1 scores + Phase 2 probabilities side-by-side
-- [ ] Graceful degradation if backend unreachable
+### M6: Frontend Integration ✅
+- [x] Single-process architecture: FastAPI serves API + static files on one port (ADR-015)
+- [x] `api-client.js`: form normalization (camelCase→snake_case), POST /simulate, 15s timeout, graceful null return
+- [x] `probability-charts.js`: CDF curves with 95% CI shading + competing risks stacked bar (Chart.js)
+- [x] Dual-mode results: tab toggle between Location Scores and Simulation Probabilities
+- [x] Probability city cards: P(transplant) at 6/12/24/36mo, median wait, CI, competing risks bar
+- [x] Loading spinner during API call
+- [x] Graceful degradation: if backend unreachable, Phase 1 scores shown, probability tab disabled
+- [x] `TransPlan.app` macOS bundle: one-click launch with no Terminal window (LSUIElement)
+- [x] `/shutdown` endpoint cleans up PID file before SIGTERM
 
 ### FR-7: Probability Outputs & Visualization
 - [ ] CDF curves with confidence intervals

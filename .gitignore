@@ -18,5 +18,6 @@ backend/.pytest_cache/
 # SRTR raw Excel files (large binaries, re-downloadable via fetch-srtr-excel.py)
 data/srtr-raw/
 
-# Local session state (written by start.command, read by session.js)
+# Local session state (written by start.command)
+.transplan.pid
 .transplan-session.json

@@ -228,3 +228,29 @@
 - Fixed ports with "kill existing" approach: destructive if the user has other services on those ports.
 - Electron wrapper: massive overhead for a simple launcher.
 - Docker Compose: adds a Docker dependency most users don't have.
+
+**Update (ADR-015):** Superseded by single-process architecture — see ADR-015.
+
+---
+
+## ADR-015: Single-Process Architecture (FastAPI serves static files)
+
+**Date:** 2026-03-07
+**Status:** Accepted (supersedes dual-process parts of ADR-014)
+
+**Context:** The dual-process architecture (separate backend + frontend servers) required CORS configuration, port discovery for two servers, a session file to bridge them, and cross-origin API calls. This added complexity for the user and codebase.
+
+**Decision:** FastAPI serves both the API endpoints AND the static frontend files on a single port using `StaticFiles(directory=REPO_ROOT, html=True)`. API routes are mounted first so they take priority over static files. The frontend uses relative URLs (`/simulate` instead of `http://localhost:8002/simulate`), eliminating CORS entirely. Added `TransPlan.app` macOS .app bundle with `LSUIElement=true` for no-Terminal-window launch.
+
+**Rationale:**
+- Same-origin eliminates all CORS issues — no preflight requests, no headers, no regex.
+- One port instead of two — simpler port discovery, simpler PID management.
+- `session.js` can use same-origin `/health` check instead of reading a session file.
+- `api-client.js` defaults to relative URLs, falls back to explicit `window.TransPlanBackend` for dev setups.
+- macOS `.app` bundle provides true one-click launch without a Terminal window.
+- `sys.path` fix in `main.py` ensures bare imports (`from config import ...`) work whether running as `backend.main:app` from repo root or `main:app` from `backend/`.
+
+**Trade-offs:**
+- Static files now routed through Python/uvicorn instead of a dedicated HTTP server — negligible perf impact for local use.
+- Larger serving surface (entire repo root), but only localhost access so no security concern.
+- CORS middleware kept as fallback for developers running separate frontend/backend servers.
