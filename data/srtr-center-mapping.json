@@ -1,0 +1,141 @@
+{
+  "_meta": {
+    "description": "Maps SRTR center codes to TransPlan cities. Primary center is the largest adult program per city. Alternates included for volume-weighted aggregation.",
+    "source": "SRTR PSR National Center-Level Summary Data (January 2025 release)",
+    "updatedAt": "2026-03-07T00:00:00Z"
+  },
+  "cities": {
+    "Pittsburgh": {
+      "state": "PA",
+      "primary": "PAPT",
+      "alternates": ["PACH", "PAAG"],
+      "notes": "PAPT = University of Pittsburgh Medical Center (largest kidney program in US)"
+    },
+    "Baltimore": {
+      "state": "MD",
+      "primary": "MDJH",
+      "alternates": ["MDUM"],
+      "notes": "MDJH = Johns Hopkins Hospital; MDUM = University of Maryland"
+    },
+    "Philadelphia": {
+      "state": "PA",
+      "primary": "PAUP",
+      "alternates": ["PATJ", "PATU", "PAAE"],
+      "notes": "PAUP = Hospital of the University of Pennsylvania"
+    },
+    "New York": {
+      "state": "NY",
+      "primary": "NYCP",
+      "alternates": ["NYNY", "NYMS", "NYUC", "NYMA"],
+      "notes": "NYCP = NY Presbyterian/Columbia; multiple large programs in metro area"
+    },
+    "Minneapolis": {
+      "state": "MN",
+      "primary": "MNUM",
+      "alternates": ["MNAN", "MNHC"],
+      "notes": "MNUM = University of Minnesota Medical Center"
+    },
+    "Madison": {
+      "state": "WI",
+      "primary": "WIUW",
+      "alternates": [],
+      "notes": "WIUW = University of Wisconsin Hospital and Clinics"
+    },
+    "Chicago": {
+      "state": "IL",
+      "primary": "ILNM",
+      "alternates": ["ILUC", "ILLU", "ILPL", "ILUI"],
+      "notes": "ILNM = Northwestern Memorial Hospital"
+    },
+    "Cleveland": {
+      "state": "OH",
+      "primary": "OHCC",
+      "alternates": ["OHUH"],
+      "notes": "OHCC = The Cleveland Clinic Foundation"
+    },
+    "St. Louis": {
+      "state": "MO",
+      "primary": "MOBH",
+      "alternates": ["MOSL"],
+      "notes": "MOBH = Barnes-Jewish Hospital (Washington University)"
+    },
+    "Indianapolis": {
+      "state": "IN",
+      "primary": "INIM",
+      "alternates": [],
+      "notes": "INIM = Indiana University Health"
+    },
+    "Omaha": {
+      "state": "NE",
+      "primary": "NEUN",
+      "alternates": [],
+      "notes": "NEUN = The Nebraska Medical Center (University of Nebraska)"
+    },
+    "Rochester": {
+      "state": "MN",
+      "primary": "MNMC",
+      "alternates": [],
+      "notes": "MNMC = Rochester Methodist Hospital (Mayo Clinic)"
+    },
+    "Nashville": {
+      "state": "TN",
+      "primary": "TNVU",
+      "alternates": ["TNST"],
+      "notes": "TNVU = Vanderbilt University Medical Center"
+    },
+    "Durham": {
+      "state": "NC",
+      "primary": "NCDU",
+      "alternates": [],
+      "notes": "NCDU = Duke University Hospital"
+    },
+    "Miami": {
+      "state": "FL",
+      "primary": "FLJM",
+      "alternates": [],
+      "notes": "FLJM = Jackson Memorial Hospital / University of Miami"
+    },
+    "Dallas": {
+      "state": "TX",
+      "primary": "TXTX",
+      "alternates": ["TXSP", "TXHD", "TXMC"],
+      "notes": "TXTX = Baylor University Medical Center; TXSP = UT Southwestern"
+    },
+    "Houston": {
+      "state": "TX",
+      "primary": "TXMH",
+      "alternates": ["TXHH", "TXHI"],
+      "notes": "TXMH = Houston Methodist Hospital"
+    },
+    "Portland": {
+      "state": "OR",
+      "primary": "ORUO",
+      "alternates": ["ORGS"],
+      "notes": "ORUO = Oregon Health & Science University"
+    },
+    "Seattle": {
+      "state": "WA",
+      "primary": "WAUW",
+      "alternates": ["WASM"],
+      "notes": "WAUW = University of Washington Medical Center"
+    },
+    "San Francisco": {
+      "state": "CA",
+      "primary": "CASF",
+      "alternates": ["CAPM"],
+      "notes": "CASF = University of California San Francisco Medical Center"
+    },
+    "Los Angeles": {
+      "state": "CA",
+      "primary": "CAUC",
+      "alternates": ["CACS", "CAUH"],
+      "notes": "CAUC = University of California at Los Angeles Medical Center"
+    },
+    "Palo Alto": {
+      "state": "CA",
+      "primary": "CASU",
+      "alternates": ["CAPC"],
+      "notes": "CASU = Stanford Health Care"
+    }
+  }
+}

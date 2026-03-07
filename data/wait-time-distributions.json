@@ -1,23 +1,26 @@
 {
   "_meta": {
-    "source": "OPTN/SRTR 2023 Annual Data Report + published literature",
+    "source": "SRTR PSR National Center-Level Summary Data (January 2025 release)",
+    "method": "Log-normal fit from center-level P25/P50/P75 wait time percentiles (Table B10)",
     "references": [
-      "OPTN/SRTR 2023 Annual Data Report: Kidney (Am J Transplant 2025)",
-      "OPTN/SRTR 2023 Annual Data Report: Liver, Heart, Lung chapters",
-      "Northwell Health analysis of OPTN median wait times 2012-2021",
-      "SRTR Program-Specific Reports technical methods"
+      "https://www.srtr.org/reports/program-specific-reports/",
+      "SRTR PSR Technical Methods: https://www.srtr.org/about-the-data/technical-methods-for-the-program-specific-reports/"
     ],
-    "fetchedAt": "2026-03-06T00:00:00Z",
-    "notes": "Log-normal parameters derived from published median wait times and distribution shapes. Blood type multipliers reflect relative wait time ratios from OPTN data. City factors from existing algorithm.js cityWaitTimeFactors. FIXME: Replace with empirical SRTR center-level percentiles in Milestone 5."
+    "fetchedAt": "2026-03-07T14:57:48Z",
+    "notes": "Empirical center-level data from SRTR. Blood type and clinical multipliers retained from literature-derived estimates (Table B10 does not stratify by blood type)."
   },
   "kidney": {
-    "national_median_months": 46.0,
-    "log_sigma": 0.8,
+    "national_median_months": 27.4,
+    "log_sigma": 1.2,
     "blood_type_multipliers": {
-      "O+": 1.30, "O-": 1.40,
-      "A+": 0.90, "A-": 1.00,
-      "B+": 1.15, "B-": 1.25,
-      "AB+": 0.55, "AB-": 0.65
+      "O+": 1.3,
+      "O-": 1.4,
+      "A+": 0.9,
+      "A-": 1.0,
+      "B+": 1.15,
+      "B-": 1.25,
+      "AB+": 0.55,
+      "AB-": 0.65
     },
     "clinical_multipliers": {
       "cpra": {
@@ -29,13 +32,17 @@
     }
   },
   "liver": {
-    "national_median_months": 11.0,
-    "log_sigma": 0.9,
+    "national_median_months": 4.6,
+    "log_sigma": 1.2,
     "blood_type_multipliers": {
-      "O+": 1.25, "O-": 1.30,
-      "A+": 0.90, "A-": 0.95,
-      "B+": 1.10, "B-": 1.15,
-      "AB+": 0.70, "AB-": 0.75
+      "O+": 1.25,
+      "O-": 1.3,
+      "A+": 0.9,
+      "A-": 0.95,
+      "B+": 1.1,
+      "B-": 1.15,
+      "AB+": 0.7,
+      "AB-": 0.75
     },
     "clinical_multipliers": {
       "meld": {
@@ -47,24 +54,32 @@
     }
   },
   "heart": {
-    "national_median_months": 6.0,
-    "log_sigma": 0.7,
+    "national_median_months": 2.2,
+    "log_sigma": 1.2,
     "blood_type_multipliers": {
-      "O+": 1.20, "O-": 1.25,
-      "A+": 0.90, "A-": 0.95,
-      "B+": 1.05, "B-": 1.10,
-      "AB+": 0.75, "AB-": 0.80
+      "O+": 1.2,
+      "O-": 1.25,
+      "A+": 0.9,
+      "A-": 0.95,
+      "B+": 1.05,
+      "B-": 1.1,
+      "AB+": 0.75,
+      "AB-": 0.8
     },
     "clinical_multipliers": {}
   },
   "lung": {
-    "national_median_months": 3.0,
-    "log_sigma": 0.6,
+    "national_median_months": 1.4,
+    "log_sigma": 1.14,
     "blood_type_multipliers": {
-      "O+": 1.10, "O-": 1.15,
-      "A+": 0.95, "A-": 1.00,
-      "B+": 1.05, "B-": 1.08,
-      "AB+": 0.85, "AB-": 0.90
+      "O+": 1.1,
+      "O-": 1.15,
+      "A+": 0.95,
+      "A-": 1.0,
+      "B+": 1.05,
+      "B-": 1.08,
+      "AB+": 0.85,
+      "AB-": 0.9
     },
     "clinical_multipliers": {
       "las": {
@@ -76,36 +91,58 @@
     }
   },
   "pancreas": {
-    "national_median_months": 18.0,
-    "log_sigma": 0.85,
+    "national_median_months": 22.8,
+    "log_sigma": 0.8,
     "blood_type_multipliers": {
-      "O+": 1.25, "O-": 1.35,
-      "A+": 0.90, "A-": 0.95,
-      "B+": 1.10, "B-": 1.20,
-      "AB+": 0.60, "AB-": 0.70
+      "O+": 1.25,
+      "O-": 1.35,
+      "A+": 0.9,
+      "A-": 0.95,
+      "B+": 1.1,
+      "B-": 1.2,
+      "AB+": 0.6,
+      "AB-": 0.7
     },
     "clinical_multipliers": {}
   },
   "intestine": {
-    "national_median_months": 10.0,
-    "log_sigma": 1.0,
+    "national_median_months": 11.6,
+    "log_sigma": 1.2,
     "blood_type_multipliers": {
-      "O+": 1.15, "O-": 1.20,
-      "A+": 0.95, "A-": 1.00,
-      "B+": 1.05, "B-": 1.10,
-      "AB+": 0.80, "AB-": 0.85
+      "O+": 1.15,
+      "O-": 1.2,
+      "A+": 0.95,
+      "A-": 1.0,
+      "B+": 1.05,
+      "B-": 1.1,
+      "AB+": 0.8,
+      "AB-": 0.85
     },
     "clinical_multipliers": {}
   },
   "city_wait_time_factors": {
-    "_notes": "Relative to national average (1.0). <1.0 = shorter waits, >1.0 = longer. Sourced from algorithm.js cityWaitTimeFactors.",
-    "Minneapolis": 0.85, "Madison": 0.88, "Portland": 0.90,
-    "Pittsburgh": 0.87, "Baltimore": 0.95, "Cleveland": 0.92,
-    "Nashville": 0.89, "Durham": 0.91, "Rochester": 0.86,
-    "Omaha": 0.84, "Seattle": 0.93, "St. Louis": 0.90,
-    "Indianapolis": 0.91, "Chicago": 1.05, "Philadelphia": 1.08,
-    "Houston": 0.96, "Dallas": 0.94, "Miami": 0.98,
-    "Los Angeles": 1.15, "San Francisco": 1.18, "Palo Alto": 1.16,
-    "New York": 1.12
+    "_notes": "Relative to national average (1.0). Computed as average center-median / national-median across available organs. Source: SRTR Table B10.",
+    "Pittsburgh": 1.42,
+    "Baltimore": 1.49,
+    "Philadelphia": 1.74,
+    "New York": 1.07,
+    "Minneapolis": 1.14,
+    "Madison": 0.51,
+    "Chicago": 0.77,
+    "Cleveland": 1.25,
+    "St. Louis": 0.57,
+    "Indianapolis": 1.11,
+    "Omaha": 0.87,
+    "Rochester": 1.01,
+    "Nashville": 0.82,
+    "Durham": 0.78,
+    "Miami": 1.01,
+    "Dallas": 0.76,
+    "Houston": 1.53,
+    "Portland": 1.31,
+    "Seattle": 1.07,
+    "San Francisco": 2.12,
+    "Los Angeles": 1.82,
+    "Palo Alto": 1.2
   }
 }

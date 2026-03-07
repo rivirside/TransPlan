@@ -6,9 +6,9 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 2 In Progress — Competing Risks Model Complete (M4)
+## Current State: Phase 2 In Progress — SRTR Data Pipeline Complete (M5)
 
-Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1-M4 done. 86 pytest tests passing. POST /simulate returns ranked city probabilities with competing risks breakdown (P(transplant) vs P(mortality) vs P(delisting) vs P(still waiting)), 95% CIs, in ~80ms.
+Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1-M5 done. 120 pytest tests passing. Data now uses empirical SRTR center-level percentiles (Table B10 wait times, Table B7 mortality/delisting) instead of literature estimates. POST /simulate returns ranked city probabilities with competing risks, 95% CIs, in ~80ms.
 
 ### What's Done
 
@@ -38,13 +38,13 @@ Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabili
 | M2: Wait time distributions | ✅ Done | Log-normal models, 6 organs, 8 blood types, cPRA/MELD/LAS multipliers, 22 tests |
 | M3: Monte Carlo engine | ✅ Done | 1000-iteration simulation, POST /simulate, 80ms perf, 25 tests |
 | M4: Competing risks | ✅ Done | Mortality/delisting model, outcomes sum to 1.0, 17 tests |
-| M5: SRTR data pipeline | Pending | Scraper scripts, automated data refresh |
+| M5: SRTR data pipeline | ✅ Done | Excel downloader, parser, center mapping, 22 cities × 6 organs, 34 tests |
 | M6: Frontend integration | Pending | API client, CDF charts, dual-mode results |
 | M7: Validation & docs | Pending | Brier score, sensitivity analysis, documentation |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 2 M5:** SRTR data pipeline — scraper scripts for center-level wait time percentiles and survival data
+- ~~**Phase 2 M5:** SRTR data pipeline~~ ✅ Done
 - **Phase 2 M6:** Frontend integration — API client, CDF curves, competing risks chart, dual-mode results, graceful degradation
 - **Phase 2 M7:** Validation & docs — Brier score retrospective validation, sensitivity analysis (tornado charts), backend architecture docs
 - **Deploy:** Configure GitHub Pages (Settings > Pages > Source: main)
@@ -75,6 +75,10 @@ TransPlan/
     health-demographics.json
     hospital-quality.json
     traffic-fatalities.json
+    wait-time-distributions.json  <- Log-normal params from SRTR Table B10
+    competing-risks.json          <- Mortality/delisting from SRTR Table B7
+    srtr-center-mapping.json      <- SRTR center codes → 22 TransPlan cities
+    srtr-raw/                     <- Downloaded SRTR Excel files (gitignored)
     manual/               <- Hand-curated data (no API available)
       srtr-reports.json
       climate-scores.json
@@ -89,6 +93,8 @@ TransPlan/
     fetch-health-data.js      <- CDC SODA
     check-srtr-updates.js     <- SRTR website hash check
     validate-data.js          <- Post-fetch validation
+    fetch-srtr-excel.py       <- Download SRTR PSR Excel files (6 organs)
+    parse-srtr-reports.py     <- Parse Excel → wait-time-distributions.json + competing-risks.json
   .github/workflows/
     fetch-data.yml        <- Weekly data fetch (Mon 6am UTC)
     check-srtr-updates.yml <- Bimonthly SRTR check
@@ -106,7 +112,7 @@ TransPlan/
       distributions.py    <- Log-normal wait time distributions (6 organs)
       monte_carlo.py      <- Monte Carlo simulation engine (22 cities × 1000 iter)
       competing_risks.py  <- Competing risks: mortality/delisting rates (6 organs)
-    tests/                <- pytest suite (86 tests)
+    tests/                <- pytest suite (120 tests)
   docs/
     status.md             <- THIS FILE (read every session)
     ideas.md              <- Full SRS: requirements, architecture, FDA pathway

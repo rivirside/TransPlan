@@ -34,20 +34,20 @@
 
 | Data Point | Source | API/Fetch Script | Automated? | Data File | Freshness |
 |------------|--------|-----------------|------------|-----------|-----------|
-| National median wait times (per organ) | OPTN/SRTR 2023 Annual Data Report | None | No | `data/wait-time-distributions.json` | Manual; derived from literature |
-| Log-normal sigma (distribution spread) | Published transplant statistics literature | None | No | `data/wait-time-distributions.json` | Manual; calibrate against SRTR data |
-| Blood type wait time multipliers | OPTN wait time data by blood type | None | No | `data/wait-time-distributions.json` | Manual; derived from OPTN ratios |
+| National median wait times (per organ) | SRTR PSR Table B10 (Jan 2025 release) | `scripts/parse-srtr-reports.py` | Semi (run manually) | `data/wait-time-distributions.json` | Biannual SRTR releases |
+| Log-normal sigma (distribution spread) | Fitted from SRTR P10/P25 percentiles | `scripts/parse-srtr-reports.py` | Semi | `data/wait-time-distributions.json` | Biannual SRTR releases |
+| Blood type wait time multipliers | OPTN wait time data by blood type | None | No | `data/wait-time-distributions.json` | Literature-derived; Table B10 doesn't stratify by blood type |
 | cPRA wait time multipliers (kidney) | OPTN allocation data + literature | None | No | `data/wait-time-distributions.json` | Manual; based on OPTN cPRA point tiers |
 | MELD wait time multipliers (liver) | OPTN MELD allocation policy | None | No | `data/wait-time-distributions.json` | Manual; based on MELD allocation rules |
 | LAS wait time multipliers (lung) | OPTN LAS allocation policy | None | No | `data/wait-time-distributions.json` | Manual; based on LAS allocation rules |
-| City wait time factors (22 cities) | SRTR relative wait times | None | No | `data/wait-time-distributions.json` | Manual; copied from algorithm.js |
-| Waitlist annual mortality rates (per organ) | OPTN/SRTR 2023 ADR (heart 8.5, liver 12.9, lung 13.3/100 pt-yr) | None | No | `data/competing-risks.json` | Manual; from 2023 ADR |
-| Waitlist annual delisting rates (per organ) | OPTN/SRTR 2023 ADR + literature estimates | None | No | `data/competing-risks.json` | Manual; from 2023 ADR |
-| Urgency mortality multipliers | OPTN allocation status categories | None | No | `data/competing-risks.json` | Manual |
-| MELD mortality multipliers (liver) | OPTN MELD allocation policy | None | No | `data/competing-risks.json` | Manual |
-| City mortality/delisting adjustments (22 cities) | Derived from Phase 1 hospital quality tiers | None | No | `data/competing-risks.json` | Manual |
-| SRTR center-level percentiles | SRTR Program-Specific Reports (HTML) | Planned: `scripts/parse-srtr-reports.py` (M5) | Planned (M5) | Planned: `data/srtr-distributions.json` | Not yet created |
-| SRTR survival/delisting rates | SRTR public datasets | Planned: `scripts/fetch-srtr-survival.py` (M5) | Planned (M5) | Planned: `data/competing-risks.json` | Not yet created |
+| City wait time factors (22 cities) | SRTR PSR Table B10 center-level P50 / national P50 | `scripts/parse-srtr-reports.py` | Semi | `data/wait-time-distributions.json` | Biannual SRTR releases |
+| Waitlist annual mortality rates (per organ) | SRTR PSR Table B7 (12-month died-on-waitlist %) | `scripts/parse-srtr-reports.py` | Semi | `data/competing-risks.json` | Biannual SRTR releases |
+| Waitlist annual delisting rates (per organ) | SRTR PSR Table B7 (12-month removal rates) | `scripts/parse-srtr-reports.py` | Semi | `data/competing-risks.json` | Biannual SRTR releases |
+| Urgency mortality multipliers | OPTN allocation status categories | None | No | `data/competing-risks.json` | Manual; literature-derived |
+| MELD mortality multipliers (liver) | OPTN MELD allocation policy | None | No | `data/competing-risks.json` | Manual; literature-derived |
+| City mortality/delisting adjustments (22 cities) | SRTR PSR Table B7 center / national ratios | `scripts/parse-srtr-reports.py` | Semi | `data/competing-risks.json` | Biannual SRTR releases |
+| SRTR center-to-city mapping | SRTR center directory | None | No | `data/srtr-center-mapping.json` | Manual; update when centers change |
+| SRTR raw Excel files | SRTR PSR National Summary Data | `scripts/fetch-srtr-excel.py` | Semi | `data/srtr-raw/` (gitignored) | Biannual; re-downloadable |
 
 ---
 
@@ -65,7 +65,7 @@
 | Gap | Impact | Mitigation | Target Milestone |
 |-----|--------|-----------|-----------------|
 | FARS API retired | Traffic fatality data is stale | Seed data preserved; FIXME for CSV bulk download | Phase 1 (L-045) |
-| No SRTR API | Can't automate wait time distributions | Literature-derived params + manual review | M5 scraper |
+| No SRTR API | Excel download is semi-manual | `fetch-srtr-excel.py` downloads files; `parse-srtr-reports.py` extracts data | M5 ✅ (semi-automated) |
 | No Donate Life API | Donor registration data is manual | Seed data; review annually | Deferred (L-033) |
-| Competing risks use national averages | No center-level mortality/delisting data | Literature-derived rates + city adjustments | M5 (SRTR scraper) |
+| Blood type stratification missing | SRTR Table B10 doesn't stratify by blood type | Literature-derived multipliers retained | Future: use OPTN ADR figure data |
 | City factors duplicated | In both algorithm.js and wait-time-distributions.json | FIXME: single source of truth in data file | M6 (frontend integration) |

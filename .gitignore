@@ -14,3 +14,6 @@ backend/__pycache__/
 backend/**/__pycache__/
 backend/.pytest_cache/
 *.pyc
+
+# SRTR raw Excel files (large binaries, re-downloadable via fetch-srtr-excel.py)
+data/srtr-raw/

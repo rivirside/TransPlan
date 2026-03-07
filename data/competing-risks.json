@@ -1,28 +1,31 @@
 {
   "_meta": {
-    "source": "OPTN/SRTR 2023 Annual Data Report + published literature",
+    "source": "SRTR PSR National Center-Level Summary Data (January 2025 release)",
+    "method": "12-month waitlist outcomes from Table B7 \u2014 died-on-waitlist as annual mortality proxy, removals (worsened + other + refused) as delisting proxy",
     "references": [
-      "OPTN/SRTR 2023 Annual Data Report: Kidney, Liver, Heart, Lung chapters",
-      "Heart waitlist mortality: 8.5 deaths/100 patient-years (2023 ADR)",
-      "Liver waitlist mortality: 12.9 deaths/100 patient-years (2023 ADR)",
-      "Lung waitlist mortality: 13.3 deaths/100 patient-years (2023 ADR)",
-      "Kidney 2018-2020 cohort: 6.8% died while waiting (OPTN/SRTR 2023 ADR)"
+      "https://www.srtr.org/reports/program-specific-reports/"
     ],
-    "fetchedAt": "2026-03-06T00:00:00Z",
-    "notes": "Annual rates as proportions (0.06 = 6%). City adjustments reflect relative quality of supportive care. Urgency multipliers scale mortality for higher-acuity patients. FIXME (M5): replace with center-level SRTR survival data."
+    "fetchedAt": "2026-03-07T14:57:50Z",
+    "notes": "Center-level rates from SRTR Table B7. Urgency and clinical multipliers retained from literature estimates."
   },
   "kidney": {
-    "annual_mortality_rate": 0.06,
-    "annual_delisting_rate": 0.05,
+    "annual_mortality_rate": 0.0194,
+    "annual_delisting_rate": 0.0425,
     "urgency_mortality_multipliers": {
-      "1": 0.7, "2": 1.0, "3": 1.4, "4": 2.0
+      "1": 0.7,
+      "2": 1.0,
+      "3": 1.4,
+      "4": 2.0
     }
   },
   "liver": {
-    "annual_mortality_rate": 0.13,
-    "annual_delisting_rate": 0.08,
+    "annual_mortality_rate": 0.0447,
+    "annual_delisting_rate": 0.1034,
     "urgency_mortality_multipliers": {
-      "1": 0.5, "2": 1.0, "3": 1.5, "4": 2.5
+      "1": 0.5,
+      "2": 1.0,
+      "3": 1.5,
+      "4": 2.5
     },
     "meld_mortality_multipliers": {
       "6-14": 0.5,
@@ -32,56 +35,134 @@
     }
   },
   "heart": {
-    "annual_mortality_rate": 0.085,
-    "annual_delisting_rate": 0.05,
+    "annual_mortality_rate": 0.0288,
+    "annual_delisting_rate": 0.0821,
     "urgency_mortality_multipliers": {
-      "1": 0.6, "2": 1.0, "3": 1.8, "4": 3.0
+      "1": 0.6,
+      "2": 1.0,
+      "3": 1.8,
+      "4": 3.0
     }
   },
   "lung": {
-    "annual_mortality_rate": 0.133,
-    "annual_delisting_rate": 0.10,
+    "annual_mortality_rate": 0.0259,
+    "annual_delisting_rate": 0.0588,
     "urgency_mortality_multipliers": {
-      "1": 0.5, "2": 1.0, "3": 1.6, "4": 2.5
+      "1": 0.5,
+      "2": 1.0,
+      "3": 1.6,
+      "4": 2.5
     }
   },
   "pancreas": {
-    "annual_mortality_rate": 0.05,
-    "annual_delisting_rate": 0.04,
+    "annual_mortality_rate": 0.0279,
+    "annual_delisting_rate": 0.1734,
     "urgency_mortality_multipliers": {
-      "1": 0.7, "2": 1.0, "3": 1.3, "4": 1.8
+      "1": 0.7,
+      "2": 1.0,
+      "3": 1.3,
+      "4": 1.8
     }
   },
   "intestine": {
-    "annual_mortality_rate": 0.20,
-    "annual_delisting_rate": 0.08,
+    "annual_mortality_rate": 0.0296,
+    "annual_delisting_rate": 0.0741,
     "urgency_mortality_multipliers": {
-      "1": 0.6, "2": 1.0, "3": 1.5, "4": 2.5
+      "1": 0.6,
+      "2": 1.0,
+      "3": 1.5,
+      "4": 2.5
     }
   },
   "city_adjustments": {
-    "_notes": "Factors applied to mortality and delisting rates. <1.0 = better supportive care. Based on hospital quality tiers from Phase 1 data.",
-    "Pittsburgh": { "mortality_factor": 0.90, "delisting_factor": 0.88 },
-    "Cleveland": { "mortality_factor": 0.88, "delisting_factor": 0.85 },
-    "Rochester": { "mortality_factor": 0.85, "delisting_factor": 0.82 },
-    "Minneapolis": { "mortality_factor": 0.90, "delisting_factor": 0.88 },
-    "Nashville": { "mortality_factor": 0.92, "delisting_factor": 0.90 },
-    "Madison": { "mortality_factor": 0.88, "delisting_factor": 0.85 },
-    "Durham": { "mortality_factor": 0.92, "delisting_factor": 0.90 },
-    "Omaha": { "mortality_factor": 0.90, "delisting_factor": 0.88 },
-    "Baltimore": { "mortality_factor": 0.95, "delisting_factor": 0.93 },
-    "St. Louis": { "mortality_factor": 0.93, "delisting_factor": 0.90 },
-    "Indianapolis": { "mortality_factor": 0.95, "delisting_factor": 0.93 },
-    "Portland": { "mortality_factor": 0.93, "delisting_factor": 0.90 },
-    "Seattle": { "mortality_factor": 0.92, "delisting_factor": 0.90 },
-    "Chicago": { "mortality_factor": 1.00, "delisting_factor": 1.00 },
-    "Philadelphia": { "mortality_factor": 1.02, "delisting_factor": 1.00 },
-    "Houston": { "mortality_factor": 0.95, "delisting_factor": 0.93 },
-    "Dallas": { "mortality_factor": 0.95, "delisting_factor": 0.93 },
-    "Miami": { "mortality_factor": 1.00, "delisting_factor": 1.00 },
-    "San Francisco": { "mortality_factor": 0.93, "delisting_factor": 0.90 },
-    "Los Angeles": { "mortality_factor": 1.05, "delisting_factor": 1.02 },
-    "Palo Alto": { "mortality_factor": 0.90, "delisting_factor": 0.88 },
-    "New York": { "mortality_factor": 1.05, "delisting_factor": 1.02 }
+    "_notes": "Center-level mortality and delisting factors relative to national average. Averaged across available organs. Source: SRTR Table B7.",
+    "Pittsburgh": {
+      "mortality_factor": 0.62,
+      "delisting_factor": 0.81
+    },
+    "Baltimore": {
+      "mortality_factor": 0.77,
+      "delisting_factor": 0.92
+    },
+    "Philadelphia": {
+      "mortality_factor": 0.82,
+      "delisting_factor": 1.33
+    },
+    "New York": {
+      "mortality_factor": 1.67,
+      "delisting_factor": 1.09
+    },
+    "Minneapolis": {
+      "mortality_factor": 0.97,
+      "delisting_factor": 0.7
+    },
+    "Madison": {
+      "mortality_factor": 0.75,
+      "delisting_factor": 0.67
+    },
+    "Chicago": {
+      "mortality_factor": 0.47,
+      "delisting_factor": 0.81
+    },
+    "Cleveland": {
+      "mortality_factor": 1.14,
+      "delisting_factor": 1.33
+    },
+    "St. Louis": {
+      "mortality_factor": 0.82,
+      "delisting_factor": 0.69
+    },
+    "Indianapolis": {
+      "mortality_factor": 1.21,
+      "delisting_factor": 0.72
+    },
+    "Omaha": {
+      "mortality_factor": 1.64,
+      "delisting_factor": 1.11
+    },
+    "Rochester": {
+      "mortality_factor": 0.58,
+      "delisting_factor": 0.93
+    },
+    "Nashville": {
+      "mortality_factor": 0.61,
+      "delisting_factor": 0.74
+    },
+    "Durham": {
+      "mortality_factor": 0.75,
+      "delisting_factor": 1.48
+    },
+    "Miami": {
+      "mortality_factor": 1.82,
+      "delisting_factor": 1.26
+    },
+    "Dallas": {
+      "mortality_factor": 0.72,
+      "delisting_factor": 1.07
+    },
+    "Houston": {
+      "mortality_factor": 1.71,
+      "delisting_factor": 0.79
+    },
+    "Portland": {
+      "mortality_factor": 0.37,
+      "delisting_factor": 0.9
+    },
+    "Seattle": {
+      "mortality_factor": 0.74,
+      "delisting_factor": 0.5
+    },
+    "San Francisco": {
+      "mortality_factor": 0.71,
+      "delisting_factor": 0.57
+    },
+    "Los Angeles": {
+      "mortality_factor": 0.83,
+      "delisting_factor": 0.96
+    },
+    "Palo Alto": {
+      "mortality_factor": 0.58,
+      "delisting_factor": 1.19
+    }
   }
 }

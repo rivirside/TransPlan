@@ -111,10 +111,14 @@
 - [x] Integrate competing events into Monte Carlo (three independent exponential draws)
 - [x] Verification: outcome probabilities sum to 1.0 at all time horizons (17 tests)
 
-### M5: SRTR Data Pipeline
-- [ ] Download SRTR program-specific report datasets (quarterly, srtr.org)
-- [ ] Parse SRTR data: center-level wait times, volumes, survival rates by organ/blood type
-- [ ] Scripts: `parse-srtr-reports.py`, `fetch-srtr-survival.py`
+### M5: SRTR Data Pipeline ✅
+- [x] Download SRTR PSR National Center-Level Excel files (6 organs) — `fetch-srtr-excel.py`
+- [x] Create SRTR center-to-city mapping (22 cities, primary + alternates) — `srtr-center-mapping.json`
+- [x] Parse Table B10: center-level wait time percentiles (P5/P10/P25/P50/P75) → log-normal fit
+- [x] Parse Table B7: center-level waitlist outcomes (mortality, delisting) → annual rates
+- [x] Handle censored data (">72" months) with multi-strategy sigma estimation
+- [x] Output: updated `wait-time-distributions.json` + `competing-risks.json` with empirical SRTR data
+- [x] 34 new tests (data validation, log-normal fitting, sanity checks) — 120 total pytest passing
 
 ### M6: Frontend Integration
 - [ ] API client in script.js, loading spinner
