@@ -6,9 +6,9 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 2 In Progress — Monte Carlo Engine Complete (M3)
+## Current State: Phase 2 In Progress — Competing Risks Model Complete (M4)
 
-Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1 scaffold + M2 distributions + M3 simulation engine done. 69 pytest tests passing. POST /simulate returns ranked city probabilities with 95% CIs in ~80ms.
+Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1-M4 done. 86 pytest tests passing. POST /simulate returns ranked city probabilities with competing risks breakdown (P(transplant) vs P(mortality) vs P(delisting) vs P(still waiting)), 95% CIs, in ~80ms.
 
 ### What's Done
 
@@ -37,14 +37,14 @@ Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabili
 | M1: Backend scaffold | ✅ Done | FastAPI app, Pydantic schemas, data loader, /health, 22 pytest tests |
 | M2: Wait time distributions | ✅ Done | Log-normal models, 6 organs, 8 blood types, cPRA/MELD/LAS multipliers, 22 tests |
 | M3: Monte Carlo engine | ✅ Done | 1000-iteration simulation, POST /simulate, 80ms perf, 25 tests |
-| M4: Competing risks | Pending | Mortality/delisting model, Kaplan-Meier |
+| M4: Competing risks | ✅ Done | Mortality/delisting model, outcomes sum to 1.0, 17 tests |
 | M5: SRTR data pipeline | Pending | Scraper scripts, automated data refresh |
 | M6: Frontend integration | Pending | API client, CDF charts, dual-mode results |
 | M7: Validation & docs | Pending | Brier score, sensitivity analysis, documentation |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 2 M4:** Competing risks model (mortality/delisting) integrated into Monte Carlo simulation
+- **Phase 2 M5:** SRTR data pipeline — scraper scripts for center-level empirical data
 - **Deploy:** Configure GitHub Pages (Settings > Pages > Source: main)
 - **FARS API (L-045):** MITIGATED — entire NHTSA FARS API appears retired; seed data preserved; FIXME for CSV bulk download alternative
 - **Deferred:** OPO boundaries (L-009), SRTR outcomes (L-017), donor reg fetch (L-033)
@@ -103,8 +103,8 @@ TransPlan/
       data_loader.py      <- Loads data/*.json at startup
       distributions.py    <- Log-normal wait time distributions (6 organs)
       monte_carlo.py      <- Monte Carlo simulation engine (22 cities × 1000 iter)
-      competing_risks.py  <- Mortality/delisting rates (stub → M4)
-    tests/                <- pytest suite (69 tests)
+      competing_risks.py  <- Competing risks: mortality/delisting rates (6 organs)
+    tests/                <- pytest suite (86 tests)
   docs/
     status.md             <- THIS FILE (read every session)
     ideas.md              <- Full SRS: requirements, architecture, FDA pathway

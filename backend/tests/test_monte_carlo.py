@@ -38,15 +38,20 @@ def lung_high_las() -> PatientProfile:
 class TestBootstrapCI:
     def test_ci_contains_point_estimate(self):
         rng = np.random.default_rng(42)
-        samples = rng.lognormal(mean=np.log(24), sigma=0.8, size=1000)
+        n = 1000
+        samples = rng.lognormal(mean=np.log(24), sigma=0.8, size=n)
+        # Simulate: all transplant outcomes, event times = samples
+        outcomes = np.zeros(n, dtype=int)  # all transplant
         p_hat = np.mean(samples <= 24)
-        lo, hi = _bootstrap_ci(samples, threshold=24)
+        lo, hi = _bootstrap_ci(outcomes, event=0, threshold_months=samples, time_horizon=24)
         assert lo <= p_hat <= hi
 
     def test_ci_bounds_are_valid_probabilities(self):
         rng = np.random.default_rng(42)
-        samples = rng.lognormal(mean=np.log(24), sigma=0.8, size=1000)
-        lo, hi = _bootstrap_ci(samples, threshold=24)
+        n = 1000
+        samples = rng.lognormal(mean=np.log(24), sigma=0.8, size=n)
+        outcomes = np.zeros(n, dtype=int)
+        lo, hi = _bootstrap_ci(outcomes, event=0, threshold_months=samples, time_horizon=24)
         assert 0 <= lo <= 1
         assert 0 <= hi <= 1
         assert lo <= hi

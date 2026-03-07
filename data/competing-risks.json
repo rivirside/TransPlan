@@ -1,0 +1,87 @@
+{
+  "_meta": {
+    "source": "OPTN/SRTR 2023 Annual Data Report + published literature",
+    "references": [
+      "OPTN/SRTR 2023 Annual Data Report: Kidney, Liver, Heart, Lung chapters",
+      "Heart waitlist mortality: 8.5 deaths/100 patient-years (2023 ADR)",
+      "Liver waitlist mortality: 12.9 deaths/100 patient-years (2023 ADR)",
+      "Lung waitlist mortality: 13.3 deaths/100 patient-years (2023 ADR)",
+      "Kidney 2018-2020 cohort: 6.8% died while waiting (OPTN/SRTR 2023 ADR)"
+    ],
+    "fetchedAt": "2026-03-06T00:00:00Z",
+    "notes": "Annual rates as proportions (0.06 = 6%). City adjustments reflect relative quality of supportive care. Urgency multipliers scale mortality for higher-acuity patients. FIXME (M5): replace with center-level SRTR survival data."
+  },
+  "kidney": {
+    "annual_mortality_rate": 0.06,
+    "annual_delisting_rate": 0.05,
+    "urgency_mortality_multipliers": {
+      "1": 0.7, "2": 1.0, "3": 1.4, "4": 2.0
+    }
+  },
+  "liver": {
+    "annual_mortality_rate": 0.13,
+    "annual_delisting_rate": 0.08,
+    "urgency_mortality_multipliers": {
+      "1": 0.5, "2": 1.0, "3": 1.5, "4": 2.5
+    },
+    "meld_mortality_multipliers": {
+      "6-14": 0.5,
+      "15-25": 1.0,
+      "26-35": 2.0,
+      "36-40": 3.5
+    }
+  },
+  "heart": {
+    "annual_mortality_rate": 0.085,
+    "annual_delisting_rate": 0.05,
+    "urgency_mortality_multipliers": {
+      "1": 0.6, "2": 1.0, "3": 1.8, "4": 3.0
+    }
+  },
+  "lung": {
+    "annual_mortality_rate": 0.133,
+    "annual_delisting_rate": 0.10,
+    "urgency_mortality_multipliers": {
+      "1": 0.5, "2": 1.0, "3": 1.6, "4": 2.5
+    }
+  },
+  "pancreas": {
+    "annual_mortality_rate": 0.05,
+    "annual_delisting_rate": 0.04,
+    "urgency_mortality_multipliers": {
+      "1": 0.7, "2": 1.0, "3": 1.3, "4": 1.8
+    }
+  },
+  "intestine": {
+    "annual_mortality_rate": 0.20,
+    "annual_delisting_rate": 0.08,
+    "urgency_mortality_multipliers": {
+      "1": 0.6, "2": 1.0, "3": 1.5, "4": 2.5
+    }
+  },
+  "city_adjustments": {
+    "_notes": "Factors applied to mortality and delisting rates. <1.0 = better supportive care. Based on hospital quality tiers from Phase 1 data.",
+    "Pittsburgh": { "mortality_factor": 0.90, "delisting_factor": 0.88 },
+    "Cleveland": { "mortality_factor": 0.88, "delisting_factor": 0.85 },
+    "Rochester": { "mortality_factor": 0.85, "delisting_factor": 0.82 },
+    "Minneapolis": { "mortality_factor": 0.90, "delisting_factor": 0.88 },
+    "Nashville": { "mortality_factor": 0.92, "delisting_factor": 0.90 },
+    "Madison": { "mortality_factor": 0.88, "delisting_factor": 0.85 },
+    "Durham": { "mortality_factor": 0.92, "delisting_factor": 0.90 },
+    "Omaha": { "mortality_factor": 0.90, "delisting_factor": 0.88 },
+    "Baltimore": { "mortality_factor": 0.95, "delisting_factor": 0.93 },
+    "St. Louis": { "mortality_factor": 0.93, "delisting_factor": 0.90 },
+    "Indianapolis": { "mortality_factor": 0.95, "delisting_factor": 0.93 },
+    "Portland": { "mortality_factor": 0.93, "delisting_factor": 0.90 },
+    "Seattle": { "mortality_factor": 0.92, "delisting_factor": 0.90 },
+    "Chicago": { "mortality_factor": 1.00, "delisting_factor": 1.00 },
+    "Philadelphia": { "mortality_factor": 1.02, "delisting_factor": 1.00 },
+    "Houston": { "mortality_factor": 0.95, "delisting_factor": 0.93 },
+    "Dallas": { "mortality_factor": 0.95, "delisting_factor": 0.93 },
+    "Miami": { "mortality_factor": 1.00, "delisting_factor": 1.00 },
+    "San Francisco": { "mortality_factor": 0.93, "delisting_factor": 0.90 },
+    "Los Angeles": { "mortality_factor": 1.05, "delisting_factor": 1.02 },
+    "Palo Alto": { "mortality_factor": 0.90, "delisting_factor": 0.88 },
+    "New York": { "mortality_factor": 1.05, "delisting_factor": 1.02 }
+  }
+}

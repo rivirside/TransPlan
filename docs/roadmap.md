@@ -105,11 +105,11 @@
 - [x] Performance: ~80ms for 22 cities × 1000 iterations (60x under 5s target)
 - [x] Stability test: two runs with 2000 iterations agree within 15% relative / 0.03 absolute
 
-### FR-6: Competing Risks Model (M4)
-- [ ] Model: P(transplant) vs. P(mortality) vs. P(delisting)
-- [ ] Create `data/competing-risks.json` with national + city-adjusted rates
-- [ ] Integrate competing events into Monte Carlo (three competing draws)
-- [ ] Verification: outcome probabilities sum to 1.0 at all time horizons
+### FR-6: Competing Risks Model (M4) ✅
+- [x] Model: P(transplant) vs. P(mortality) vs. P(delisting) vs. P(still waiting)
+- [x] Create `data/competing-risks.json` with national + city-adjusted rates (OPTN/SRTR 2023 ADR)
+- [x] Integrate competing events into Monte Carlo (three independent exponential draws)
+- [x] Verification: outcome probabilities sum to 1.0 at all time horizons (17 tests)
 
 ### M5: SRTR Data Pipeline
 - [ ] Download SRTR program-specific report datasets (quarterly, srtr.org)
