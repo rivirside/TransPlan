@@ -1,14 +1,15 @@
-"""POST /simulate — Monte Carlo simulation endpoint (Milestone 3)."""
-from fastapi import APIRouter, HTTPException
+"""POST /simulate — Monte Carlo simulation endpoint."""
+from fastapi import APIRouter, Query
+
 from models.schemas import PatientProfile, SimulationResult
+from services.monte_carlo import simulate
 
 router = APIRouter()
 
 
 @router.post("/simulate", response_model=SimulationResult)
-def simulate(patient: PatientProfile) -> SimulationResult:
-    # FIXME (Milestone 3): Replace stub with full Monte Carlo engine.
-    raise HTTPException(
-        status_code=501,
-        detail="Simulation engine not yet implemented — coming in Milestone 3.",
-    )
+def run_simulation(
+    patient: PatientProfile,
+    iterations: int = Query(default=None, ge=100, le=10000, description="Override default iteration count"),
+) -> SimulationResult:
+    return simulate(patient, n_iterations=iterations)

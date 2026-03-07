@@ -6,9 +6,9 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 2 In Progress — Backend Scaffold Complete (M1)
+## Current State: Phase 2 In Progress — Monte Carlo Engine Complete (M3)
 
-Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine underway: Python FastAPI backend scaffold built (Milestone 1 of 7). 22 pytest tests passing. Server starts, loads all 10 data files, serves GET /health with freshness metadata.
+Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1 scaffold + M2 distributions + M3 simulation engine done. 69 pytest tests passing. POST /simulate returns ranked city probabilities with 95% CIs in ~80ms.
 
 ### What's Done
 
@@ -35,8 +35,8 @@ Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabili
 | Milestone | Status | Notes |
 |-----------|--------|-------|
 | M1: Backend scaffold | ✅ Done | FastAPI app, Pydantic schemas, data loader, /health, 22 pytest tests |
-| M2: Wait time distributions | Next | Log-normal models per organ/blood type, data file, unit tests |
-| M3: Monte Carlo engine | Pending | Simulation engine, POST /simulate, perf tests |
+| M2: Wait time distributions | ✅ Done | Log-normal models, 6 organs, 8 blood types, cPRA/MELD/LAS multipliers, 22 tests |
+| M3: Monte Carlo engine | ✅ Done | 1000-iteration simulation, POST /simulate, 80ms perf, 25 tests |
 | M4: Competing risks | Pending | Mortality/delisting model, Kaplan-Meier |
 | M5: SRTR data pipeline | Pending | Scraper scripts, automated data refresh |
 | M6: Frontend integration | Pending | API client, CDF charts, dual-mode results |
@@ -44,7 +44,7 @@ Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabili
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 2 M2:** Create `data/wait-time-distributions.json` with literature-derived log-normal parameters, implement `services/distributions.py`
+- **Phase 2 M4:** Competing risks model (mortality/delisting) integrated into Monte Carlo simulation
 - **Deploy:** Configure GitHub Pages (Settings > Pages > Source: main)
 - **FARS API (L-045):** MITIGATED — entire NHTSA FARS API appears retired; seed data preserved; FIXME for CSV bulk download alternative
 - **Deferred:** OPO boundaries (L-009), SRTR outcomes (L-017), donor reg fetch (L-033)
@@ -101,10 +101,10 @@ TransPlan/
       simulate.py         <- POST /simulate (stub → M3)
     services/
       data_loader.py      <- Loads data/*.json at startup
-      distributions.py    <- Wait time distributions (stub → M2)
-      monte_carlo.py      <- Simulation engine (stub → M3)
+      distributions.py    <- Log-normal wait time distributions (6 organs)
+      monte_carlo.py      <- Monte Carlo simulation engine (22 cities × 1000 iter)
       competing_risks.py  <- Mortality/delisting rates (stub → M4)
-    tests/                <- pytest suite (22 tests)
+    tests/                <- pytest suite (69 tests)
   docs/
     status.md             <- THIS FILE (read every session)
     ideas.md              <- Full SRS: requirements, architecture, FDA pathway
