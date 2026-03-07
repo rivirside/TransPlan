@@ -882,3 +882,56 @@ footer {
     text-align: center;
     margin: 10px 0;
 }
+
+/* Session bar — only visible when running locally via start.command */
+.transplan-session-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(30, 30, 40, 0.92);
+    backdrop-filter: blur(8px);
+    color: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 20px;
+    font-size: 0.82rem;
+    z-index: 10000;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.session-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.session-status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #4ade80;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.session-end-btn {
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.session-end-btn:hover {
+    background: #b91c1c;
+}
+
+.session-end-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+}

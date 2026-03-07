@@ -57,6 +57,9 @@ Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabili
 
 ```
 TransPlan/
+  start.command           <- Double-click to launch (macOS); auto-finds free ports
+  stop.command            <- Double-click to stop a running session
+  session.js              <- Local session UI (End Session button, backend discovery)
   index.html              <- Main page
   algorithm.js            <- Scoring engine (8 categories, 22 cities)
   script.js               <- UI, map, form, results display
@@ -106,6 +109,7 @@ TransPlan/
       schemas.py          <- Pydantic: PatientProfile, SimulationResult, etc.
     routers/
       health.py           <- GET /health (data freshness)
+      shutdown.py         <- POST /shutdown (graceful local session end)
       simulate.py         <- POST /simulate (stub → M3)
     services/
       data_loader.py      <- Loads data/*.json at startup

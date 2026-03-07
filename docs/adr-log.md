@@ -207,3 +207,24 @@
 **Alternatives Rejected:**
 - In-browser JS simulation: would work but requires reimplementing statistical distributions, harder to test, and can't use Lifelines.
 - Full stack migration (React + FastAPI): over-engineering for current needs; incremental approach keeps Phase 1 shippable.
+
+## ADR-014: Local Launcher with Dynamic Port Discovery
+
+**Date:** 2026-03-07
+**Status:** Accepted
+
+**Context:** TransPlan has a static frontend and a Python backend that must both run for full functionality. Users need a one-click way to start everything locally, and a clean way to stop it. Ports 8002/8080 may not always be available.
+
+**Decision:** `start.command` (macOS double-clickable) auto-discovers free ports by scanning from preferred ports (8002, 8080) upward. Writes `.transplan-session.json` with active ports and PIDs. Frontend reads this file to discover the backend URL. `POST /shutdown` endpoint lets the frontend trigger graceful shutdown. `stop.command` reads the session file for external shutdown. CORS uses `allow_origin_regex` to accept any localhost origin (safe for local-only use).
+
+**Rationale:**
+- Dynamic ports prevent "port in use" errors that frustrate users.
+- Session file bridges frontend↔backend port discovery without hardcoding.
+- `/shutdown` endpoint enables the "End Session" UI button, which is cleaner than asking users to find a terminal.
+- `session.js` only activates on localhost — no UI pollution when deployed to GitHub Pages.
+- Cleanup trap in start.command ensures both servers stop together.
+
+**Alternatives Rejected:**
+- Fixed ports with "kill existing" approach: destructive if the user has other services on those ports.
+- Electron wrapper: massive overhead for a simple launcher.
+- Docker Compose: adds a Docker dependency most users don't have.

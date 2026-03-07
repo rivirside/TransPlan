@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import ALLOWED_ORIGINS, VERSION
-from routers import health, simulate
+from routers import health, shutdown, simulate
 from services.data_loader import load_all
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
@@ -22,12 +22,14 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_origins=ALLOWED_ORIGINS,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
 )
 
 app.include_router(health.router, tags=["ops"])
+app.include_router(shutdown.router, tags=["ops"])
 app.include_router(simulate.router, tags=["simulation"])
 
 
