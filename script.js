@@ -2012,7 +2012,7 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
     if (spinner) spinner.style.display = 'none';
 
     // Render probability view (or show unavailable notice)
-    renderProbabilityView(simResult);
+    renderProbabilityView(simResult, formData);
 
     // Set up tab toggle state
     initResultsTabs(simResult !== null);
@@ -2418,11 +2418,16 @@ function initResultsTabs(simulationAvailable) {
 /**
  * Render the probability view from simulation results.
  * @param {Object|null} simResult - SimulationResult from backend, or null
+ * @param {Object} [formData] - Form data for sensitivity analysis
  */
-function renderProbabilityView(simResult) {
+function renderProbabilityView(simResult, formData) {
     const container = document.getElementById('probabilityContainer');
     if (!container) return;
     container.textContent = '';
+
+    // Hide tornado chart until sensitivity results arrive
+    var tornadoSectionEl = document.getElementById('tornadoSection');
+    if (tornadoSectionEl) tornadoSectionEl.style.display = 'none';
 
     if (!simResult || !simResult.cities) return;
 
@@ -2445,6 +2450,24 @@ function renderProbabilityView(simResult) {
             window.TransPlanProbCharts.destroyAll();
             window.TransPlanProbCharts.renderCDFChart('cdfChart', simResult.cities, 5);
             window.TransPlanProbCharts.renderCompetingRisksChart('competingRisksChart', simResult.cities, 10);
+        }
+
+        // Sensitivity analysis — async, uses top-ranked city, shown when ready
+        var tornadoSection = document.getElementById('tornadoSection');
+        if (window.TransPlanAPI && window.TransPlanAPI.sensitivity && formData && tornadoSection) {
+            var topCity = (simResult.cities[0] && simResult.cities[0].city) || 'Nashville';
+            window.TransPlanAPI.sensitivity(formData, topCity, 300).then(function (sensitivityResult) {
+                if (sensitivityResult && window.TransPlanProbCharts) {
+                    tornadoSection.style.display = '';
+                    // Adjust canvas height based on number of parameters
+                    var container = document.querySelector('.chart-container--tornado');
+                    if (container) {
+                        var nParams = (sensitivityResult.impacts || []).length;
+                        container.style.height = Math.max(160, nParams * 60 + 80) + 'px';
+                    }
+                    window.TransPlanProbCharts.renderTornadoChart('tornadoChart', sensitivityResult);
+                }
+            });
         }
     }, 200);
 }

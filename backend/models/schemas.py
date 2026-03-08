@@ -50,6 +50,25 @@ class SimulationResult(BaseModel):
     )
 
 
+class ParameterImpact(BaseModel):
+    parameter: str = Field(description="Parameter key: 'cpra', 'meld', 'las', 'urgency'")
+    label: str = Field(description="Human-readable parameter name")
+    baseline_value: float = Field(description="Patient's current value")
+    low_value: float = Field(description="Most favorable extreme tested")
+    high_value: float = Field(description="Least favorable extreme tested")
+    p24_baseline: float = Field(..., ge=0, le=1, description="p_transplant_24mo at patient's actual value")
+    p24_at_low: float = Field(..., ge=0, le=1, description="p_transplant_24mo at low_value")
+    p24_at_high: float = Field(..., ge=0, le=1, description="p_transplant_24mo at high_value")
+
+
+class SensitivityResult(BaseModel):
+    patient: PatientProfile
+    city: str = Field(description="City used for sensitivity analysis")
+    impacts: list[ParameterImpact] = Field(description="Sorted by magnitude of impact (largest first)")
+    iterations: int
+    elapsed_seconds: float
+
+
 class HealthResponse(BaseModel):
     status: Literal["ok", "degraded"]
     version: str

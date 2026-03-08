@@ -4,6 +4,7 @@
  * Provides Chart.js visualizations for Monte Carlo simulation results:
  * 1. CDF Curves — P(transplant) over time with 95% CI shading (top 5 cities)
  * 2. Competing Risks Stacked Bar — outcome breakdown at 24 months (top 10 cities)
+ * 3. Tornado Chart — input sensitivity analysis (parameter impact on p_transplant_24mo)
  */
 (function () {
   'use strict';
@@ -267,6 +268,108 @@
   }
 
   /**
+   * Render tornado chart for input sensitivity analysis.
+   * Shows p_transplant_24mo range across each parameter's extreme values.
+   *
+   * @param {string} canvasId - Canvas element ID
+   * @param {Object} sensitivityResult - SensitivityResult from /sensitivity endpoint
+   */
+  function renderTornadoChart(canvasId, sensitivityResult) {
+    var canvas = document.getElementById(canvasId);
+    if (!canvas || typeof Chart === 'undefined') return;
+    if (!sensitivityResult || !sensitivityResult.impacts || !sensitivityResult.impacts.length) return;
+
+    destroyChart(canvasId);
+
+    var impacts = sensitivityResult.impacts; // already sorted by magnitude, largest first
+    var baseline = impacts[0].p24_baseline;
+    var labels = impacts.map(function (imp) { return imp.label; });
+
+    // Floating bars: [low_p24, high_p24] for each parameter
+    var rangeData = impacts.map(function (imp) {
+      return [
+        Math.min(imp.p24_at_low, imp.p24_at_high),
+        Math.max(imp.p24_at_low, imp.p24_at_high)
+      ];
+    });
+
+    // Color by impact magnitude
+    var barColors = impacts.map(function (imp) {
+      var swing = Math.abs(imp.p24_at_high - imp.p24_at_low);
+      if (swing > 0.15) return 'rgba(91, 111, 230, 0.75)';   // strong: primary indigo
+      if (swing > 0.06) return 'rgba(107, 82, 174, 0.70)';   // moderate: purple
+      return 'rgba(148, 163, 184, 0.65)';                     // weak: slate
+    });
+
+    instances[canvasId] = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Probability range',
+            data: rangeData,
+            backgroundColor: barColors,
+            borderColor: barColors.map(function (c) { return c.replace(/[\d.]+\)$/, '1)'); }),
+            borderWidth: 1,
+            borderRadius: 3,
+            borderSkipped: false
+          }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: function (items) {
+                return impacts[items[0].dataIndex].label;
+              },
+              label: function (context) {
+                var imp = impacts[context.dataIndex];
+                var lo = Math.min(imp.p24_at_low, imp.p24_at_high);
+                var hi = Math.max(imp.p24_at_low, imp.p24_at_high);
+                return [
+                  'Range: ' + pct(lo) + ' \u2014 ' + pct(hi),
+                  'Your estimate: ' + pct(imp.p24_baseline),
+                  'Swing: ' + pct(hi - lo)
+                ];
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            min: 0,
+            max: 1,
+            ticks: {
+              callback: function (val) { return (val * 100).toFixed(0) + '%'; },
+              font: { size: 11 }
+            },
+            title: {
+              display: true,
+              text: '24-Month Transplant Probability (city: ' + sensitivityResult.city + ')',
+              font: { size: 11 }
+            },
+            grid: { color: 'rgba(0,0,0,0.06)' }
+          },
+          y: {
+            ticks: { font: { size: 12 } },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  }
+
+  function pct(val) {
+    return (val * 100).toFixed(1) + '%';
+  }
+
+  /**
    * Destroy all probability chart instances (called before re-render).
    */
   function destroyAll() {
@@ -286,6 +389,7 @@
   window.TransPlanProbCharts = {
     renderCDFChart: renderCDFChart,
     renderCompetingRisksChart: renderCompetingRisksChart,
+    renderTornadoChart: renderTornadoChart,
     destroyAll: destroyAll
   };
 })();

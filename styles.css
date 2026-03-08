@@ -1513,6 +1513,17 @@ main {
   margin: 0 auto;
 }
 
+.chart-container--tornado {
+  height: 220px;
+}
+
+.chart-description {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  margin-bottom: var(--space-4);
+  line-height: 1.5;
+}
+
 /* --- Data Sources --- */
 .data-sources {
   margin-top: var(--space-8);

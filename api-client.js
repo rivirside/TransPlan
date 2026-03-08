@@ -94,6 +94,48 @@
   }
 
   /**
+   * Call POST /sensitivity on the backend.
+   * @param {Object} formData - Raw form data from the frontend
+   * @param {string} city - City to analyze (use top-ranked city from simulate result)
+   * @param {number} [iterations] - Number of Monte Carlo iterations (default 300)
+   * @returns {Promise<Object|null>} SensitivityResult or null on failure
+   */
+  async function sensitivity(formData, city, iterations) {
+    var base = getBaseUrl();
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
+
+    try {
+      var body = {
+        patient: normalizeFormData(formData),
+        city: city || 'Nashville',
+        iterations: iterations || 300
+      };
+      var response = await fetch(base + '/sensitivity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        console.warn('TransPlan Sensitivity API error:', response.status, response.statusText);
+        return null;
+      }
+
+      return await response.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        console.warn('TransPlan Sensitivity API timeout after', API_TIMEOUT_MS, 'ms');
+      }
+      return null;
+    }
+  }
+
+  /**
    * Check if the backend is reachable (GET /health).
    * @returns {Promise<boolean>}
    */
@@ -113,6 +155,7 @@
   // Expose globally
   window.TransPlanAPI = {
     simulate: simulate,
+    sensitivity: sensitivity,
     isBackendAvailable: isBackendAvailable,
     normalizeFormData: normalizeFormData
   };
