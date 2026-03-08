@@ -6,9 +6,11 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 2 In Progress — M6 Done, M7 Next
+## Current State: Phase 2 In Progress — M6 Done + UI Redesign, M7 Next
 
 Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1-M6 done. 120 pytest tests passing. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` (macOS .app bundle, no Terminal window) or `start.command`. Frontend shows dual-mode results: Phase 1 location scores + Phase 2 Monte Carlo probabilities with CDF curves, competing risks charts, and probability cards. Graceful degradation when backend unavailable.
+
+**UI/UX Redesign (March 2026):** Full professional redesign completed. Design token system in CSS custom properties. Header with gradient + curved bottom edge. Methodology section rebuilt as compact accordion (native `<details>/<summary>`) with inline SVG icons. Form grouped into fieldset sections. Two responsive breakpoints (768px tablet, 480px mobile). All JS functionality preserved — zero breaking changes.
 
 ### What's Done
 
@@ -29,6 +31,7 @@ Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabili
 | CDN fallback | ✅ Done | Graceful degradation when Leaflet/Chart.js CDN unavailable |
 | CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
+| UI/UX redesign | ✅ Done | Design tokens, header curve, methodology accordion, SVG icons, responsive breakpoints |
 
 ### Phase 2 Progress
 
@@ -70,7 +73,7 @@ TransPlan/
   script.js               <- UI, map, form, results display, probability card rendering
   data-loader.js          <- Runtime JSON loader with fallbacks
   charts.js               <- Chart.js radar/bar/donut charts
-  styles.css              <- All CSS (incl. spinner, tabs, probability cards)
+  styles.css              <- All CSS: design tokens, accordion, responsive (768px + 480px)
   package.json            <- Node deps (xml2js, jest)
   README.md               <- User-facing docs
   tests/                  <- Unit tests (Jest)
