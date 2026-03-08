@@ -2465,9 +2465,7 @@ function _el(tag, className, text) {
 function createProbabilityCard(city, rank) {
     const card = _el('div', 'prob-card');
 
-    if (rank === 1) card.style.borderLeftColor = '#ffd700';
-    else if (rank === 2) card.style.borderLeftColor = '#c0c0c0';
-    else if (rank === 3) card.style.borderLeftColor = '#cd7f32';
+    if (rank <= 3) card.classList.add('rank-' + rank);
 
     const ci = city.confidence_interval_95 || [0, 0];
 
