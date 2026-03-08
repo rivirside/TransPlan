@@ -27,103 +27,111 @@
             <section class="form-section">
                 <h2>Your Health Profile</h2>
                 <form id="transplantForm">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="organ">Needed Organ *</label>
-                            <select id="organ" required>
-                                <option value="">Select organ...</option>
-                                <option value="kidney">Kidney</option>
-                                <option value="liver">Liver</option>
-                                <option value="heart">Heart</option>
-                                <option value="lung">Lung</option>
-                                <option value="pancreas">Pancreas</option>
-                                <option value="intestine">Intestine</option>
-                            </select>
-                        </div>
-
-                        <!-- Organ-specific clinical inputs (conditional) -->
-                        <div class="form-group conditional-field" id="cpra-group" data-organ="kidney" style="display:none;">
-                            <label for="cpra">cPRA (Sensitization Level)</label>
-                            <div class="range-wrapper">
-                                <input type="range" id="cpra" min="0" max="100" value="0">
-                                <output id="cpra-output">0%</output>
+                    <fieldset>
+                        <legend>Required Information</legend>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="organ">Needed Organ *</label>
+                                <select id="organ" required>
+                                    <option value="">Select organ...</option>
+                                    <option value="kidney">Kidney</option>
+                                    <option value="liver">Liver</option>
+                                    <option value="heart">Heart</option>
+                                    <option value="lung">Lung</option>
+                                    <option value="pancreas">Pancreas</option>
+                                    <option value="intestine">Intestine</option>
+                                </select>
                             </div>
-                            <small class="field-help">Panel Reactive Antibody measures how sensitized your immune system is to donor tissue. Higher values mean longer expected waits. Leave at 0 if unknown.</small>
-                        </div>
 
-                        <div class="form-group conditional-field" id="meld-group" data-organ="liver" style="display:none;">
-                            <label for="meld">MELD Score</label>
-                            <input type="number" id="meld" min="6" max="40" placeholder="6-40 (optional)">
-                            <small class="field-help">Model for End-Stage Liver Disease score. Higher MELD = higher medical priority = shorter wait. Leave blank to use general urgency level.</small>
-                        </div>
+                            <!-- Organ-specific clinical inputs (conditional) -->
+                            <div class="form-group conditional-field" id="cpra-group" data-organ="kidney" style="display:none;">
+                                <label for="cpra">cPRA (Sensitization Level)</label>
+                                <div class="range-wrapper">
+                                    <input type="range" id="cpra" min="0" max="100" value="0">
+                                    <output id="cpra-output">0%</output>
+                                </div>
+                                <small class="field-help">Panel Reactive Antibody measures how sensitized your immune system is to donor tissue. Higher values mean longer expected waits. Leave at 0 if unknown.</small>
+                            </div>
 
-                        <div class="form-group conditional-field" id="las-group" data-organ="lung" style="display:none;">
-                            <label for="las">LAS (Lung Allocation Score)</label>
-                            <input type="number" id="las" min="0" max="100" placeholder="0-100 (optional)">
-                            <small class="field-help">Composite score balancing medical urgency and expected post-transplant benefit. Higher LAS = higher priority. Leave blank to use general urgency level.</small>
-                        </div>
+                            <div class="form-group conditional-field" id="meld-group" data-organ="liver" style="display:none;">
+                                <label for="meld">MELD Score</label>
+                                <input type="number" id="meld" min="6" max="40" placeholder="6-40 (optional)">
+                                <small class="field-help">Model for End-Stage Liver Disease score. Higher MELD = higher medical priority = shorter wait. Leave blank to use general urgency level.</small>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="bloodType">Blood Type *</label>
-                            <select id="bloodType" required>
-                                <option value="">Select blood type...</option>
-                                <option value="O+">O+</option>
-                                <option value="O-">O-</option>
-                                <option value="A+">A+</option>
-                                <option value="A-">A-</option>
-                                <option value="B+">B+</option>
-                                <option value="B-">B-</option>
-                                <option value="AB+">AB+</option>
-                                <option value="AB-">AB-</option>
-                            </select>
-                        </div>
+                            <div class="form-group conditional-field" id="las-group" data-organ="lung" style="display:none;">
+                                <label for="las">LAS (Lung Allocation Score)</label>
+                                <input type="number" id="las" min="0" max="100" placeholder="0-100 (optional)">
+                                <small class="field-help">Composite score balancing medical urgency and expected post-transplant benefit. Higher LAS = higher priority. Leave blank to use general urgency level.</small>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="age">Age *</label>
-                            <input type="number" id="age" min="1" max="120" placeholder="Your age" required>
-                        </div>
+                            <div class="form-group">
+                                <label for="bloodType">Blood Type *</label>
+                                <select id="bloodType" required>
+                                    <option value="">Select blood type...</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="sex">Sex *</label>
-                            <select id="sex" required>
-                                <option value="">Select...</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
-                        </div>
+                            <div class="form-group">
+                                <label for="age">Age *</label>
+                                <input type="number" id="age" min="1" max="120" placeholder="Your age" required>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="urgency">Medical Urgency *</label>
-                            <select id="urgency" required>
-                                <option value="">Select urgency level...</option>
-                                <option value="1">Critical (Status 1)</option>
-                                <option value="2">High Priority (Status 2)</option>
-                                <option value="3">Active (Status 3)</option>
-                                <option value="4">Inactive (Status 4)</option>
-                            </select>
-                        </div>
+                            <div class="form-group">
+                                <label for="sex">Sex *</label>
+                                <select id="sex" required>
+                                    <option value="">Select...</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="weight">Weight (lbs)</label>
-                            <input type="number" id="weight" min="20" max="800" placeholder="Optional">
+                            <div class="form-group">
+                                <label for="urgency">Medical Urgency *</label>
+                                <select id="urgency" required>
+                                    <option value="">Select urgency level...</option>
+                                    <option value="1">Critical (Status 1)</option>
+                                    <option value="2">High Priority (Status 2)</option>
+                                    <option value="3">Active (Status 3)</option>
+                                    <option value="4">Inactive (Status 4)</option>
+                                </select>
+                            </div>
                         </div>
+                    </fieldset>
 
-                        <div class="form-group">
-                            <label for="height">Height (inches)</label>
-                            <input type="number" id="height" min="20" max="100" placeholder="Optional">
-                        </div>
+                    <fieldset>
+                        <legend>Optional Details</legend>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="weight">Weight (lbs)</label>
+                                <input type="number" id="weight" min="20" max="800" placeholder="Optional">
+                            </div>
 
-                        <div class="form-group">
-                            <label for="insurance">Insurance Type</label>
-                            <select id="insurance">
-                                <option value="">Select...</option>
-                                <option value="medicare">Medicare</option>
-                                <option value="medicaid">Medicaid</option>
-                                <option value="private">Private Insurance</option>
-                                <option value="none">Uninsured</option>
-                            </select>
+                            <div class="form-group">
+                                <label for="height">Height (inches)</label>
+                                <input type="number" id="height" min="20" max="100" placeholder="Optional">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="insurance">Insurance Type</label>
+                                <select id="insurance">
+                                    <option value="">Select...</option>
+                                    <option value="medicare">Medicare</option>
+                                    <option value="medicaid">Medicaid</option>
+                                    <option value="private">Private Insurance</option>
+                                    <option value="none">Uninsured</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
+                    </fieldset>
 
                     <button type="submit" class="submit-btn">Find Best Locations</button>
                 </form>
@@ -136,126 +144,158 @@
                     <p>TransplantMatch uses a multi-factor algorithm that analyzes <strong>40+ data points</strong> across 8 major categories to generate a <strong>relative location suitability score</strong> for each city. These scores reflect regional data trends and are <em>not</em> clinical predictions. Our scoring system is weighted based on publicly available transplant research and regional statistics.</p>
                 </div>
 
-                <div class="methodology-grid">
-                    <div class="methodology-card">
-                        <div class="method-header">
-                            <span class="method-icon">🩺</span>
-                            <h3>Medical Compatibility</h3>
-                            <span class="method-weight">25%</span>
+                <div class="methodology-list">
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><path d="M22 10a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/></svg></span>
+                            <span class="method-title">Medical Compatibility</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:100%"></span></span>
+                            <span class="method-pct">25%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Blood type matching:</strong> AB+ (universal recipient) scores highest, O- (limited options) faces most challenges</li>
+                                <li><strong>Age-based prioritization:</strong> Pediatric patients (&lt;18) receive priority; outcomes decline after 65</li>
+                                <li><strong>Organ size matching:</strong> Height/weight ratios critical for heart and lung transplants</li>
+                                <li><strong>Sex considerations:</strong> Body size matching relevant for heart and lung transplants; minimal factor for other organs</li>
+                                <li><strong>Antibody sensitivity (cPRA):</strong> Panel Reactive Antibody level affects kidney wait time; highly sensitized patients (cPRA &gt;80%) face significantly longer waits</li>
+                            </ul>
                         </div>
-                        <ul class="method-factors">
-                            <li><strong>Blood type matching:</strong> AB+ (universal recipient) scores highest, O- (limited options) faces most challenges</li>
-                            <li><strong>Age-based prioritization:</strong> Pediatric patients (<18) receive priority; outcomes decline after 65</li>
-                            <li><strong>Organ size matching:</strong> Height/weight ratios critical for heart and lung transplants</li>
-                            <li><strong>Sex considerations:</strong> Body size matching relevant for heart and lung transplants; minimal factor for other organs</li>
-                            <li><strong>Antibody sensitivity (cPRA):</strong> Panel Reactive Antibody level affects kidney wait time; highly sensitized patients (cPRA &gt;80%) face significantly longer waits</li>
-                        </ul>
-                    </div>
+                    </details>
 
-                    <div class="methodology-card">
-                        <div class="method-header">
-                            <span class="method-icon">⏱️</span>
-                            <h3>Wait Time & Competition</h3>
-                            <span class="method-weight">20%</span>
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+                            <span class="method-title">Wait Time &amp; Competition</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:80%"></span></span>
+                            <span class="method-pct">20%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>UNOS regional wait times:</strong> Varies by region (Southwest: 3.8 yrs vs Midwest: 2.1 yrs for kidneys)</li>
+                                <li><strong>Waitlist size:</strong> Fewer competing patients = faster transplant</li>
+                                <li><strong>Medical urgency:</strong> Status 1 (critical) patients prioritized over Status 3 (stable). Organ-specific scores (cPRA for kidney, MELD for liver, LAS for lung) replace generic urgency when provided</li>
+                                <li><strong>Annual death rates on waitlist:</strong> Higher in regions with long waits</li>
+                                <li><strong>Transplant volume:</strong> High-volume centers process lists faster</li>
+                            </ul>
                         </div>
-                        <ul class="method-factors">
-                            <li><strong>UNOS regional wait times:</strong> Varies by region (Southwest: 3.8 yrs vs Midwest: 2.1 yrs for kidneys)</li>
-                            <li><strong>Waitlist size:</strong> Fewer competing patients = faster transplant</li>
-                            <li><strong>Medical urgency:</strong> Status 1 (critical) patients prioritized over Status 3 (stable). Organ-specific scores (cPRA for kidney, MELD for liver, LAS for lung) replace generic urgency when provided</li>
-                            <li><strong>Annual death rates on waitlist:</strong> Higher in regions with long waits</li>
-                            <li><strong>Transplant volume:</strong> High-volume centers process lists faster</li>
-                        </ul>
-                    </div>
+                    </details>
 
-                    <div class="methodology-card">
-                        <div class="method-header">
-                            <span class="method-icon">🫀</span>
-                            <h3>Donor Availability</h3>
-                            <span class="method-weight">18%</span>
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></span>
+                            <span class="method-title">Donor Availability</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:72%"></span></span>
+                            <span class="method-pct">18%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>State registration rates:</strong> Montana (82%) vs Mississippi (22%)</li>
+                                <li><strong>Deceased donor events:</strong> Traffic fatality rates are one proxy among several for regional donor availability (only ~20-25% of modern donors come from motor vehicle accidents)</li>
+                                <li><strong>Living donor programs:</strong> Strength of paired exchange and altruistic programs</li>
+                                <li><strong>Population density:</strong> Larger metro areas = larger potential donor pools</li>
+                                <li><strong>Donor demographics:</strong> Age, health status of regional population</li>
+                            </ul>
                         </div>
-                        <ul class="method-factors">
-                            <li><strong>State registration rates:</strong> Montana (82%) vs Mississippi (22%)</li>
-                            <li><strong>Deceased donor events:</strong> Traffic fatality rates are one proxy among several for regional donor availability (only ~20-25% of modern donors come from motor vehicle accidents)</li>
-                            <li><strong>Living donor programs:</strong> Strength of paired exchange and altruistic programs</li>
-                            <li><strong>Population density:</strong> Larger metro areas = larger potential donor pools</li>
-                            <li><strong>Donor demographics:</strong> Age, health status of regional population</li>
-                        </ul>
-                    </div>
+                    </details>
 
-                    <div class="methodology-card">
-                        <div class="method-header">
-                            <span class="method-icon">🏥</span>
-                            <h3>Hospital Quality</h3>
-                            <span class="method-weight">15%</span>
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+                            <span class="method-title">Hospital Quality</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:60%"></span></span>
+                            <span class="method-pct">15%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Annual transplant volume:</strong> Volume-outcome relationship proven in research (data from SRTR program-specific reports)</li>
+                                <li><strong>Center reputation:</strong> UPMC, Cleveland Clinic, Mayo score highest</li>
+                                <li><strong>Organ specialization:</strong> Duke leads in lungs, Minneapolis in pancreas</li>
+                                <li><strong>Insurance acceptance:</strong> Medicaid and uninsured patients face access barriers that vary by center</li>
+                            </ul>
                         </div>
-                        <ul class="method-factors">
-                            <li><strong>Annual transplant volume:</strong> Volume-outcome relationship proven in research (data from SRTR program-specific reports)</li>
-                            <li><strong>Center reputation:</strong> UPMC, Cleveland Clinic, Mayo score highest</li>
-                            <li><strong>Organ specialization:</strong> Duke leads in lungs, Minneapolis in pancreas</li>
-                            <li><strong>Insurance acceptance:</strong> Medicaid and uninsured patients face access barriers that vary by center</li>
-                        </ul>
-                    </div>
+                    </details>
 
-                    <div class="methodology-card">
-                        <div class="method-header">
-                            <span class="method-icon">🌍</span>
-                            <h3>Geographic & Logistical</h3>
-                            <span class="method-weight">10%</span>
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+                            <span class="method-title">Geographic &amp; Logistical</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:40%"></span></span>
+                            <span class="method-pct">10%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Cost of living:</strong> Impacts ability to afford relocation and post-transplant care</li>
+                                <li><strong>Climate:</strong> Moderate temperatures aid recovery; extreme weather creates challenges</li>
+                                <li><strong>Air quality:</strong> Critical for lung recipients; poor air quality in LA vs excellent in Madison</li>
+                                <li><strong>Housing availability:</strong> Need to live near center for 3-6 months post-transplant</li>
+                                <li><strong>Transportation access:</strong> Proximity to center for frequent follow-ups</li>
+                            </ul>
                         </div>
-                        <ul class="method-factors">
-                            <li><strong>Cost of living:</strong> Impacts ability to afford relocation and post-transplant care</li>
-                            <li><strong>Climate:</strong> Moderate temperatures aid recovery; extreme weather creates challenges</li>
-                            <li><strong>Air quality:</strong> Critical for lung recipients; poor air quality in LA vs excellent in Madison</li>
-                            <li><strong>Housing availability:</strong> Need to live near center for 3-6 months post-transplant</li>
-                            <li><strong>Transportation access:</strong> Proximity to center for frequent follow-ups</li>
-                        </ul>
-                    </div>
+                    </details>
 
-                    <div class="methodology-card">
-                        <div class="method-header">
-                            <span class="method-icon">📊</span>
-                            <h3>Health Demographics</h3>
-                            <span class="method-weight">7%</span>
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+                            <span class="method-title">Health Demographics</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:28%"></span></span>
+                            <span class="method-pct">7%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Diabetes prevalence:</strong> High rates (Miami 12.8%) damage potential donor kidneys</li>
+                                <li><strong>Obesity rates:</strong> Affects donor organ quality and surgical outcomes</li>
+                                <li><strong>Chronic kidney disease:</strong> Reduces kidney donor pool in affected regions</li>
+                                <li><strong>Hypertension:</strong> Impacts heart and kidney donor quality</li>
+                                <li><strong>Smoking rates:</strong> Tennessee (22.8%) vs California (13.5%) affects lung donors</li>
+                                <li class="method-note"><em>Note: Uses state-level CDC BRFSS data with city-level adjustments. County-level granularity (CDC PLACES) would change scores by &lt;0.5 points given this category's 7% weight.</em></li>
+                            </ul>
                         </div>
-                        <ul class="method-factors">
-                            <li><strong>Diabetes prevalence:</strong> High rates (Miami 12.8%) damage potential donor kidneys</li>
-                            <li><strong>Obesity rates:</strong> Affects donor organ quality and surgical outcomes</li>
-                            <li><strong>Chronic kidney disease:</strong> Reduces kidney donor pool in affected regions</li>
-                            <li><strong>Hypertension:</strong> Impacts heart and kidney donor quality</li>
-                            <li><strong>Smoking rates:</strong> Tennessee (22.8%) vs California (13.5%) affects lung donors</li>
-                            <li class="method-note"><em>Note: Uses state-level CDC BRFSS data with city-level adjustments. County-level granularity (CDC PLACES) would change scores by &lt;0.5 points given this category's 7% weight.</em></li>
-                        </ul>
-                    </div>
+                    </details>
 
-                    <div class="methodology-card">
-                        <div class="method-header">
-                            <span class="method-icon">⚖️</span>
-                            <h3>Policy & Legal</h3>
-                            <span class="method-weight">3%</span>
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+                            <span class="method-title">Policy &amp; Legal</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:12%"></span></span>
+                            <span class="method-pct">3%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Donation laws:</strong> States with strong DMV-based registration and first-person consent laws score higher</li>
+                                <li><strong>First-person consent:</strong> Some states require family cannot override donor card</li>
+                                <li><strong>Medicaid expansion:</strong> Affects post-transplant medication coverage</li>
+                                <li><strong>Insurance mandates:</strong> State requirements for transplant coverage</li>
+                                <li><strong>DMV enrollment:</strong> Automatic registry at license renewal boosts donor rates</li>
+                            </ul>
                         </div>
-                        <ul class="method-factors">
-                            <li><strong>Donation laws:</strong> States with strong DMV-based registration and first-person consent laws score higher</li>
-                            <li><strong>First-person consent:</strong> Some states require family cannot override donor card</li>
-                            <li><strong>Medicaid expansion:</strong> Affects post-transplant medication coverage</li>
-                            <li><strong>Insurance mandates:</strong> State requirements for transplant coverage</li>
-                            <li><strong>DMV enrollment:</strong> Automatic registry at license renewal boosts donor rates</li>
-                        </ul>
-                    </div>
+                    </details>
 
-                    <div class="methodology-card">
-                        <div class="method-header">
-                            <span class="method-icon">🤝</span>
-                            <h3>Socioeconomic</h3>
-                            <span class="method-weight">2%</span>
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                            <span class="method-title">Socioeconomic</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:8%"></span></span>
+                            <span class="method-pct">2%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Patient housing (30%):</strong> Dedicated transplant hospitality houses, on-site temporary housing (e.g., Gift of Life Transplant House, Transplant House of Cleveland)</li>
+                                <li><strong>Financial assistance (25%):</strong> Transplant financial counselors, charity care, fundraising support programs</li>
+                                <li><strong>Support groups (20%):</strong> Peer mentorship, survivor support groups, transplant-specific community programs</li>
+                                <li><strong>Caregiver resources (15%):</strong> Caregiver housing, training programs (e.g., Nebraska Medicine's cooperative care model), respite support</li>
+                                <li><strong>Health literacy (10%):</strong> Patient education programs, multilingual services, transplant coordinator counseling</li>
+                            </ul>
                         </div>
-                        <ul class="method-factors">
-                            <li><strong>Patient housing (30%):</strong> Dedicated transplant hospitality houses, on-site temporary housing (e.g., Gift of Life Transplant House, Transplant House of Cleveland)</li>
-                            <li><strong>Financial assistance (25%):</strong> Transplant financial counselors, charity care, fundraising support programs</li>
-                            <li><strong>Support groups (20%):</strong> Peer mentorship, survivor support groups, transplant-specific community programs</li>
-                            <li><strong>Caregiver resources (15%):</strong> Caregiver housing, training programs (e.g., Nebraska Medicine's cooperative care model), respite support</li>
-                            <li><strong>Health literacy (10%):</strong> Patient education programs, multilingual services, transplant coordinator counseling</li>
-                        </ul>
-                    </div>
+                    </details>
                 </div>
 
                 <div class="methodology-weights-chart">

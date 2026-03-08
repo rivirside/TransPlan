@@ -8,7 +8,7 @@
 **TransPlan** (also referred to as **TransplantMatch** in the HTML title and header). The canonical project name is TransPlan. The user-facing display name is "TransplantMatch."
 
 ### Tagline
-"Optimize your transplant outcomes through data-driven location insights"
+"Explore transplant center locations with data-driven comparison tools"
 
 ### Voice & Tone
 - **Authoritative but not clinical** - we explain complex medical data in plain language
@@ -22,32 +22,53 @@ Always present in footer: "This tool provides informational insights only and sh
 
 ## Color System
 
-### Primary Palette
-| Name | Hex | RGB | Usage |
-|------|-----|-----|-------|
-| Indigo | `#667eea` | 102, 126, 234 | Primary accent, buttons, links, chart color 1 |
-| Purple | `#764ba2` | 118, 75, 162 | Gradient end, chart color 2 |
+All colors are defined as CSS custom properties in `:root`. Use tokens, not hex values.
 
-### Background Gradient
+### Primary Palette
+| Name | Hex | Token | Usage |
+|------|-----|-------|-------|
+| Primary | `#5B6FE6` | `--color-primary` | Buttons, accents, active states |
+| Primary dark | `#4A5BC7` | `--color-primary-dark` | Hover states |
+| Primary light | `#E8ECFB` | `--color-primary-light` | Tinted backgrounds |
+| Accent | `#6B52AE` | `--color-accent` | Gradient end (header, submit) |
+
+### Gradient
 ```css
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
 ```
-Used on: body, submit button, info card
+Used on: header only (+ submit button). Body uses flat `--bg` (#F4F5F9).
+
+### Text Colors
+| Name | Hex | Token | Contrast | Usage |
+|------|-----|-------|----------|-------|
+| Primary | `#1A1D2E` | `--text-1` | 15.5:1 | Headings |
+| Secondary | `#4A4F65` | `--text-2` | 7.8:1 | Body text |
+| Tertiary | `#6B7185` | `--text-3` | 4.8:1 | Labels, captions |
+| Muted | `#9CA3B5` | `--text-muted` | — | Placeholders, disabled |
+
+### Surface Colors
+| Name | Hex | Token | Usage |
+|------|-----|-------|-------|
+| Surface | `#FFFFFF` | `--surface` | Cards, main content |
+| Raised | `#F7F8FB` | `--surface-raised` | Metrics tiles, results bg |
+| Sunken | `#F0F2F7` | `--surface-sunken` | Methodology section bg |
+| Page bg | `#F4F5F9` | `--bg` | Body background |
+| Border | `#E2E5ED` | `--border` | Dividers, input borders |
 
 ### Semantic Colors
-| Name | Hex | Meaning |
-|------|-----|---------|
-| Green | `#27ae60` | Good score (>=90), fresh data (<30 days), positive metric |
-| Amber | `#f39c12` | Moderate score (80-89), stale data (30-90 days) |
-| Red | `#e74c3c` | Poor score (<80), expired data (>90 days) |
+| Name | Hex | Token | Meaning |
+|------|-----|-------|---------|
+| Success | `#1D9E5C` | `--success` | Good score (>=90), fresh data |
+| Warning | `#D4860A` | `--warning` | Moderate score (80-89), stale data |
+| Danger | `#D93B3B` | `--danger` | Poor score (<80), errors |
 
 ### Rank Colors
 | Rank | Color | Hex |
 |------|-------|-----|
-| #1 | Gold | `#ffd700` |
-| #2 | Silver | `#c0c0c0` |
-| #3 | Bronze | `#cd7f32` |
-| #4+ | Indigo | `#667eea` |
+| #1 | Gold | `#E8B931` |
+| #2 | Silver | `#A0A4AB` |
+| #3 | Bronze | `#C08B5C` |
+| #4+ | Primary | `#5B6FE6` |
 
 ### Chart Colors (8-color palette for scoring categories)
 ```javascript
@@ -55,15 +76,6 @@ Used on: body, submit button, info card
  '#4facfe', '#00f2fe', '#43e97b', '#fa709a']
 ```
 These map 1:1 to the 8 scoring categories in order.
-
-### Neutrals
-| Name | Hex | Usage |
-|------|-----|-------|
-| Near-black | `#333` | Primary text |
-| Dark gray | `#555` | Secondary text, labels |
-| Light gray | `#f8f9fa` | Results section background |
-| White | `#fff` | Content areas, card backgrounds |
-| Border | `#eee` | Subtle dividers |
 
 ## Typography
 
@@ -73,61 +85,77 @@ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubun
 ```
 System fonts only. No external font dependencies. No Google Fonts.
 
-### Scale
-| Element | Size | Weight |
-|---------|------|--------|
-| Page title (h1) | 3rem (2rem mobile) | Bold |
-| Section headings (h2) | ~1.5rem | Bold |
-| Card headings (h3) | ~1.17rem | Bold |
-| Sub-headings (h4) | ~1rem | Semi-bold |
-| Body text | 1rem (16px) | Normal |
-| Small text / notes | 0.9rem | Normal |
-| Micro text (dots, labels) | 0.75rem | Normal |
+### Scale (~1.25 ratio)
+| Token | Size | Usage |
+|-------|------|-------|
+| `--fs-xs` | 0.75rem | Micro labels, dots |
+| `--fs-sm` | 0.8125rem | Small text, legends |
+| `--fs-base` | 0.9375rem | Body text |
+| `--fs-md` | 1rem | Inputs, tagline |
+| `--fs-lg` | 1.125rem | Chart headings |
+| `--fs-xl` | 1.375rem | Section headings, card titles |
+| `--fs-2xl` | 1.75rem | Page section h2 |
+| `--fs-3xl` | 2.25rem | Page title h1 |
 
 ## Spacing & Layout
 
+### Spacing Scale (8px base)
+```
+--space-1: 4px    --space-6: 24px
+--space-2: 8px    --space-7: 32px
+--space-3: 12px   --space-8: 40px
+--space-4: 16px   --space-9: 48px
+--space-5: 20px   --space-10: 64px
+```
+
+### Shadows
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--shadow-sm` | `0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)` | Cards, inputs |
+| `--shadow-md` | `0 4px 12px rgba(0,0,0,0.08)` | Hover states, map legend |
+| `--shadow-lg` | `0 8px 24px rgba(0,0,0,0.10)` | Main card |
+
+### Border Radius
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--radius-sm` | 6px | Inputs, metrics, banners |
+| `--radius-md` | 10px | Cards, map section |
+| `--radius-lg` | 16px | Main card, header curve |
+| `--radius-full` | 9999px | Badges, pills |
+
 ### Container
 - Max width: 1200px
-- Padding: 20px
+- Padding: `--space-5` (20px)
 - Centered with `margin: 0 auto`
 
-### Cards
-- Padding: 25px
-- Border-radius: 12px
-- Box-shadow: `0 4px 15px rgba(0,0,0,0.1)`
-- Hover: `translateX(5px)` + enhanced shadow
-
-### Grid
-- Form grid: `repeat(auto-fit, minmax(250px, 1fr))`
-- Methodology grid: `repeat(auto-fit, minmax(300px, 1fr))`
-- Metrics grid: `repeat(auto-fit, minmax(150px, 1fr))`
-
 ### Responsive
-- Single breakpoint: `768px`
-- Below 768px: single-column layouts, smaller headings, shorter map
+- Two breakpoints: `768px` (tablet) and `480px` (mobile)
+- Below 768px: single-column, smaller headings, shorter map
+- Below 480px: tighter padding, stacked metrics, full-width tabs
 
 ## Iconography
 
-Methodology cards use emoji as section icons:
-| Category | Emoji |
-|----------|-------|
-| Medical Compatibility | :stethoscope: |
-| Wait Time | :stopwatch: |
-| Donor Availability | :anatomical_heart: |
-| Hospital Quality | :hospital: |
-| Geographic | :globe_showing_Europe-Africa: |
-| Health Demographics | :bar_chart: |
-| Policy & Legal | :balance_scale: |
-| Socioeconomic | :handshake: |
+Methodology section uses inline SVG icons (Lucide-style, `stroke="currentColor"`):
 
-No icon library is used. If icons are needed beyond methodology, prefer emoji or inline SVG.
+| Category | Icon |
+|----------|------|
+| Medical Compatibility | Stethoscope |
+| Wait Time | Clock |
+| Donor Availability | Heart |
+| Hospital Quality | Building/Home |
+| Geographic | Globe |
+| Health Demographics | Activity/Pulse |
+| Policy & Legal | Shield/Check |
+| Socioeconomic | Users |
+
+No icon library is used. Icons are inline SVGs for zero external dependencies.
 
 ## Map Styling
 
 - Provider: OpenStreetMap tiles
-- Default zoom: 4 (shows continental US)
-- Center: 39.8283, -98.5795 (geographic center of US)
-- Height: 600px desktop, 400px mobile
+- Default zoom: 4 (continental US)
+- Center: 39.8283, -98.5795
+- Height: 500px desktop, 400px tablet, 300px mobile
 - Heatmap plugin: `leaflet.heat`
 
 ## Copy Guidelines
