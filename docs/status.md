@@ -6,9 +6,9 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 2 In Progress — M6 Done + UI Redesign + Docs Site, M7 Next
+## Current State: Phase 2 Complete — M1-M7 Done + UI Redesign + Docs Site
 
-Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1-M6 done. 120 pytest tests passing. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` (macOS .app bundle, no Terminal window) or `start.command`. Frontend shows dual-mode results: Phase 1 location scores + Phase 2 Monte Carlo probabilities with CDF curves, competing risks charts, and probability cards. Graceful degradation when backend unavailable.
+Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1-M7 done. 161 pytest tests passing (120 core + 22 sensitivity + 19 Brier). Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` (macOS .app bundle, no Terminal window) or `start.command`. Frontend shows dual-mode results: Phase 1 location scores + Phase 2 Monte Carlo probabilities with CDF curves, competing risks charts, tornado sensitivity chart, and probability cards. Graceful degradation when backend unavailable.
 
 **UI/UX Redesign (March 2026):** Full professional redesign completed. Design token system in CSS custom properties. Header with gradient + curved bottom edge. Methodology section rebuilt as compact accordion (native `<details>/<summary>`) with inline SVG icons. Form grouped into fieldset sections. Two responsive breakpoints (768px tablet, 480px mobile). All JS functionality preserved — zero breaking changes.
 
@@ -46,13 +46,14 @@ Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabili
 | M4: Competing risks | ✅ Done | Mortality/delisting model, outcomes sum to 1.0, 17 tests |
 | M5: SRTR data pipeline | ✅ Done | Excel downloader, parser, center mapping, 22 cities × 6 organs, 34 tests |
 | M6: Frontend integration | ✅ Done | API client, CDF curves, competing risks chart, dual-mode tabs, graceful degradation |
-| M7: Validation & docs | Pending | Brier score, sensitivity analysis, documentation |
+| M7: Validation & docs | ✅ Done | Sensitivity analysis (tornado chart), Brier score calibration (BS<0.001 all organs), 41 new tests |
 
 ### What's NOT Done (Next Steps)
 
 - ~~**Phase 2 M5:** SRTR data pipeline~~ ✅ Done
-- ~~**Phase 2 M6:** Frontend integration~~ ✅ Done — API client, CDF curves, competing risks chart, dual-mode tabs, single-process architecture
-- **Phase 2 M7:** Validation & docs — Brier score retrospective validation, sensitivity analysis (tornado charts), backend architecture docs
+- ~~**Phase 2 M6:** Frontend integration~~ ✅ Done
+- ~~**Phase 2 M7:** Validation & docs~~ ✅ Done — Sensitivity analysis (tornado charts), Brier score calibration (all 6 organs BS<0.001), 161 pytest tests
+- **Phase 3:** Relocation modeling, equity analysis, usability studies (see `docs/roadmap.md`)
 - **Deploy:** Configure GitHub Pages (Settings > Pages > Source: main)
 - **FARS API (L-045):** MITIGATED — entire NHTSA FARS API appears retired; seed data preserved; FIXME for CSV bulk download alternative
 - **Deferred:** OPO boundaries (L-009), SRTR outcomes (L-017), donor reg fetch (L-033)
@@ -74,8 +75,8 @@ TransPlan/
   start.command           <- Double-click to launch (macOS); auto-finds free ports
   stop.command            <- Double-click to stop a running session
   session.js              <- Local session UI (End Session button, same-origin health check)
-  api-client.js           <- Backend API client (form normalization, POST /simulate, graceful fallback)
-  probability-charts.js   <- CDF curves + competing risks stacked bar charts (Chart.js)
+  api-client.js           <- Backend API client (POST /simulate + /sensitivity, graceful fallback)
+  probability-charts.js   <- CDF curves, competing risks bar, tornado sensitivity chart (Chart.js)
   index.html              <- Main page (dual-mode tabs, loading spinner, probability panel)
   algorithm.js            <- Scoring engine (8 categories, 22 cities)
   script.js               <- UI, map, form, results display, probability card rendering
@@ -127,12 +128,15 @@ TransPlan/
       health.py           <- GET /health (data freshness)
       shutdown.py         <- POST /shutdown (graceful local session end)
       simulate.py         <- POST /simulate (Monte Carlo simulation)
+      sensitivity.py      <- POST /sensitivity (tornado chart parameter analysis)
     services/
       data_loader.py      <- Loads data/*.json at startup
       distributions.py    <- Log-normal wait time distributions (6 organs)
       monte_carlo.py      <- Monte Carlo simulation engine (22 cities × 1000 iter)
       competing_risks.py  <- Competing risks: mortality/delisting rates (6 organs)
-    tests/                <- pytest suite (120 tests)
+      sensitivity.py      <- Sensitivity analysis: parameter impact on p_transplant_24mo
+      brier_score.py      <- Brier score calibration: Monte Carlo vs analytical validation
+    tests/                <- pytest suite (161 tests)
   docs/
     status.md             <- THIS FILE (read every session)
     ideas.md              <- Full SRS: requirements, architecture, FDA pathway

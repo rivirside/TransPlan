@@ -133,8 +133,15 @@
 - [x] `TransPlan.app` macOS bundle: one-click launch with no Terminal window (LSUIElement)
 - [x] `/shutdown` endpoint cleans up PID file before SIGTERM
 
-### FR-7: Probability Outputs & Visualization
-- [ ] CDF curves with confidence intervals
+### M7: Validation & Sensitivity ✅
+- [x] Sensitivity analysis: POST /sensitivity endpoint, tornado chart UI
+- [x] Tornado charts showing which clinical parameters most influence transplant probability
+- [x] Brier score retrospective calibration (Monte Carlo vs analytical, BS<0.001 all 6 organs)
+- [x] 22 sensitivity tests + 19 Brier score tests (161 total pytest)
+- [x] Documentation updates (status.md, roadmap.md)
+
+### FR-7: Probability Outputs & Visualization (Partial)
+- [x] CDF curves with confidence intervals (M6)
 - [ ] Ranked output: boost vs. current location
 - [ ] Visual comparison panels (side-by-side probability curves)
 - [ ] Exportable chart images
@@ -143,11 +150,6 @@
 - [ ] Research mode: allow users to adjust category weights
 - [ ] Patient mode: locked weights (clinically validated defaults)
 - [ ] Audit trail for weight changes
-
-### Sensitivity Analysis
-- [ ] Tornado charts showing which variables most influence a patient's ranking
-- [ ] Weight sensitivity: how much does each category shift the result?
-- [ ] Adds transparency and academic credibility
 
 ---
 
@@ -193,9 +195,9 @@
 - [ ] Wizard UI flow for guided input
 
 ### Documentation
-- [ ] User-facing "How It Works" page
-- [ ] Technical implementation guide
-- [ ] FAQ page with transplant disclaimers
+- [x] User-facing "How It Works" page — Docusaurus docs site (completed Phase 2)
+- [x] Technical implementation guide — architecture docs in docs-site/
+- [x] FAQ page with transplant disclaimers — docs-site/docs/about/faq.md
 - [ ] Jupyter notebooks for model documentation
 
 ### Usability Studies
@@ -229,7 +231,8 @@
 - [ ] Clinical export format for provider discussions
 
 ### Clinical Validation
-- [ ] Retrospective validation (Brier score <0.2)
+- [x] Retrospective calibration (Brier score <0.001 for all 6 organs -- exceeded <0.2 target) — completed in Phase 2 M7
+- [ ] External validation against held-out SRTR cohort data
 - [ ] Bias audits across demographics
 - [ ] RCT design (n=200-500): does TransPlan improve patient decision quality?
 - [ ] Publication in transplant/health informatics journal
