@@ -6,11 +6,13 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 2 In Progress — M6 Done + UI Redesign, M7 Next
+## Current State: Phase 2 In Progress — M6 Done + UI Redesign + Docs Site, M7 Next
 
 Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1-M6 done. 120 pytest tests passing. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` (macOS .app bundle, no Terminal window) or `start.command`. Frontend shows dual-mode results: Phase 1 location scores + Phase 2 Monte Carlo probabilities with CDF curves, competing risks charts, and probability cards. Graceful degradation when backend unavailable.
 
 **UI/UX Redesign (March 2026):** Full professional redesign completed. Design token system in CSS custom properties. Header with gradient + curved bottom edge. Methodology section rebuilt as compact accordion (native `<details>/<summary>`) with inline SVG icons. Form grouped into fieldset sections. Two responsive breakpoints (768px tablet, 480px mobile). All JS functionality preserved — zero breaking changes.
+
+**Docusaurus Docs Site (March 2026):** Full documentation site in `docs-site/`. Covers: Introduction, Getting Started (Quick Start + Local Setup), Theory (Scoring Methodology, Monte Carlo, Competing Risks, Wait Time Distributions), Architecture (Overview, Data Pipeline, Backend API, Frontend), API Reference (POST /simulate, GET /health, Schemas), Contributing (Dev Guide, Data Curation, Testing), About (FAQ, Limitations, Roadmap). TransPlan brand theme (Inter font, indigo color tokens). GitHub Actions deploy workflow. Builds cleanly (`npm run build` in `docs-site/`).
 
 ### What's Done
 
@@ -32,6 +34,7 @@ Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabili
 | CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
 | UI/UX redesign | ✅ Done | Design tokens, header curve, methodology accordion, SVG icons, responsive breakpoints |
+| Docusaurus docs site | ✅ Done | 20 pages, 7 sections, TransPlan brand theme, GitHub Pages deploy workflow |
 
 ### Phase 2 Progress
 
@@ -60,6 +63,11 @@ Phase 1 MVP complete (91 Jest tests, 48 limitations resolved). Phase 2 probabili
 
 ```
 TransPlan/
+  docs-site/              <- Docusaurus documentation site
+    docs/                 <- 20 markdown pages (intro, getting-started/, theory/, architecture/, api-reference/, contributing/, about/)
+    src/css/custom.css    <- TransPlan brand theme
+    docusaurus.config.ts  <- Site config (baseUrl /TransPlan/docs/, blog disabled)
+    sidebars.ts           <- 7-section sidebar navigation
   TransPlan.app/          <- macOS .app bundle (double-click to launch, no Terminal)
     Contents/Info.plist   <- App metadata, LSUIElement=true (background app)
     Contents/MacOS/launch <- Shell script: start uvicorn, open browser
