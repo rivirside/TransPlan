@@ -78,6 +78,17 @@ class TestPatientProfileValidation:
         p = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male", urgency=2)
         assert p.home_center is None
 
+    def test_adjust_for_cause_of_death_defaults_false(self):
+        p = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male", urgency=2)
+        assert p.adjust_for_cause_of_death is False
+
+    def test_adjust_for_cause_of_death_accepted(self):
+        p = PatientProfile(
+            organ="heart", blood_type="A+", age=50, sex="male", urgency=1,
+            adjust_for_cause_of_death=True
+        )
+        assert p.adjust_for_cause_of_death is True
+
 
 class TestCityProbabilityValidation:
     def test_valid_city_probability(self):

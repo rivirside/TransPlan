@@ -167,13 +167,16 @@
 - [x] Graceful degradation: no visual changes when home center not selected
 - [x] 2 new schema tests (163 total pytest)
 
-### M2: Organ-Specific Donor Availability Model (toggleable)
-- [ ] Data curation: `data/cause-of-death-by-region.json` from OPTN View Data Reports + CDC WONDER
-- [ ] Organ recovery conversion matrix from published literature (PMC10329409)
-- [ ] Refactor `calculateDonorAvailabilityScore()` to use `organType` parameter (currently ignored)
-- [ ] Backend: integrate cause-of-death donor supply multiplier into Monte Carlo per city/organ
-- [ ] Frontend: "Adjust for regional cause-of-death patterns" toggle in Simulation Settings
-- [ ] Replace dead FARS traffic data with real cause-of-death data
+### M2: Organ-Specific Donor Availability Model (toggleable) ✅
+- [x] Data curation: `data/cause-of-death-by-region.json` — organ recovery rates (PMC10329409) + 17-state CDC WONDER proportions
+- [x] Organ recovery conversion matrix from published literature (PMC10329409 Table 2)
+- [x] `_computeCodMultiplier()` in algorithm.js + `_get_cod_multiplier()` in monte_carlo.py
+- [x] Backend: COD multiplier divides Monte Carlo wait times (more donors → shorter waits)
+- [x] Frontend: "Adjust for regional cause-of-death patterns" toggle in Simulation Settings
+- [x] `data-loader.js` extended with causeOfDeath entry + full fallback defaults
+- [x] 7 new frontend tests (toggle on/off, organ differentiation, bounds, backward compat)
+- [x] 2 new backend schema tests (default False, accepted True) — 165 total pytest
+- [x] ADR-017 documenting multiplier approach and rationale
 
 ### M3: City Detail & Comparison UI
 - [ ] City detail modal: full score breakdown (Phase 1 + Phase 2 + competing risks)

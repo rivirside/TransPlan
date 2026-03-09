@@ -275,3 +275,41 @@
 **Trade-offs:**
 - If the backend ever needs to optimize (e.g., only simulate a subset of cities), the comparison logic would need to ensure the home center city is always included.
 - "Home Center" terminology chosen over "Current City" because patients often live hours from their listing center.
+
+---
+
+## ADR-017: Organ-Specific Donor Availability via Cause-of-Death Multiplier
+
+**Date:** 2026-03-08
+**Status:** Accepted
+
+**Context:** `calculateDonorAvailabilityScore()` in `algorithm.js` ignores the `organType` parameter — a kidney patient and a heart patient get identical donor availability scores for the same city. In reality, organ recovery rates vary 3–5× by cause of death (PMC10329409 Table 2). States with many trauma deaths are better for hearts (48.8% recovery) than ones dominated by cardiovascular deaths (15.1%), while kidneys are relatively insensitive (89.6% vs 68.6%).
+
+**Decision:** Implement a **normalized multiplier** centered at 1.0 that adjusts the existing 0–100 donor availability score based on regional cause-of-death patterns × organ-specific recovery rates.
+
+```
+organScore(state, organ) = Σ stateProportions[cause] × recoveryRates[organ][cause]
+nationalAvg(organ) = mean(organScore(s, organ)) for all states
+multiplier = organScore(state, organ) / nationalAvg(organ)
+adjustedScore = baseScore × multiplier   (clamped 0–100)
+```
+
+The multiplier is **toggleable** (default OFF) via a checkbox in the Simulation Settings fieldset. Both frontend (Phase 1 scoring) and backend (Monte Carlo wait times) apply the same multiplier when enabled.
+
+**Rationale:**
+- **Normalized to national average** → multiplier centered at 1.0, preserving existing scores as baseline rather than systematically inflating/deflating.
+- **Default OFF** → preserves backward compatibility; existing test results unchanged unless user opts in.
+- **Same math frontend and backend** → consistent behavior whether patient uses Phase 1 scores or Phase 2 probabilities.
+- **Four cause-of-death categories** (trauma, cardiovascular, drug intoxication, stroke) map well to CDC WONDER ICD-10 codes and PMC10329409 recovery rate data.
+
+**Expected multiplier ranges:**
+- Kidney: ~0.97–1.03 (tight — kidneys recovered at high rates from all causes)
+- Liver: ~0.98–1.02 (also tight)
+- Heart: ~0.92–1.08 (moderate — trauma vs cardiovascular gap is wide)
+- Pancreas: ~0.85–1.20 (widest — 0.246 trauma vs 0.048 cardiovascular)
+
+**Trade-offs:**
+- State-level granularity misses intra-state variation (e.g., rural vs urban within Texas).
+- Intestine uses pancreas rates as proxy — PMC10329409 has no intestine-specific data.
+- Seed data is manually curated from CDC WONDER; FIXME for automated fetch script.
+- Backend divides Monte Carlo wait times by multiplier (more donors → shorter waits), which is a simplification of the true supply-demand dynamics.

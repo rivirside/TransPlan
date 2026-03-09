@@ -90,6 +90,25 @@ const MOCK_TRANSPLANT_DATA = {
     socioeconomic: {
         "Rochester": 95, "Cleveland": 92, "Pittsburgh": 91,
         "Houston": 90, "Minneapolis": 81, "Miami": 78, "New York": 85
+    },
+    causeOfDeath: {
+        organRecoveryRates: {
+            heart:     { trauma: 0.488, cardiovascular: 0.151, drug_intox: 0.369, stroke: 0.157 },
+            lung:      { trauma: 0.280, cardiovascular: 0.094, drug_intox: 0.204, stroke: 0.190 },
+            liver:     { trauma: 0.797, cardiovascular: 0.654, drug_intox: 0.780, stroke: 0.737 },
+            kidney:    { trauma: 0.896, cardiovascular: 0.686, drug_intox: 0.824, stroke: 0.668 },
+            pancreas:  { trauma: 0.246, cardiovascular: 0.048, drug_intox: 0.095, stroke: 0.053 },
+            intestine: { trauma: 0.246, cardiovascular: 0.048, drug_intox: 0.095, stroke: 0.053 }
+        },
+        stateCauseOfDeathProportions: {
+            // High trauma state — better for heart/pancreas
+            "Minnesota":      { trauma: 0.35, cardiovascular: 0.25, drug_intox: 0.15, stroke: 0.25 },
+            // High cardiovascular state — worse for heart/pancreas
+            "Ohio":           { trauma: 0.20, cardiovascular: 0.35, drug_intox: 0.20, stroke: 0.25 },
+            "Texas":          { trauma: 0.30, cardiovascular: 0.30, drug_intox: 0.15, stroke: 0.25 },
+            "New York":       { trauma: 0.22, cardiovascular: 0.28, drug_intox: 0.25, stroke: 0.25 },
+            "Florida":        { trauma: 0.25, cardiovascular: 0.30, drug_intox: 0.20, stroke: 0.25 }
+        }
     }
 };
 
@@ -396,6 +415,75 @@ describe('calculateDonorAvailabilityScore', () => {
         // NY has higher pop factor but lower registration rate — test they both produce valid scores
         expect(ny).toBeGreaterThanOrEqual(0);
         expect(roch).toBeGreaterThanOrEqual(0);
+    });
+
+    // --- M2: Organ-specific cause-of-death adjustment ---
+
+    test('toggle OFF: same score for heart vs kidney (backward compat)', () => {
+        const formOff = makeFormData({ adjustForCauseOfDeath: false });
+        const heart = calculateDonorAvailabilityScore('Minneapolis', 'Minnesota', 'heart', formOff);
+        const kidney = calculateDonorAvailabilityScore('Minneapolis', 'Minnesota', 'kidney', formOff);
+        // Without COD adjustment, organ doesn't affect donor availability score
+        expect(heart).toBe(kidney);
+    });
+
+    test('toggle ON: different scores for heart vs kidney in same city', () => {
+        const formOn = makeFormData({ adjustForCauseOfDeath: true });
+        const heart = calculateDonorAvailabilityScore('Minneapolis', 'Minnesota', 'heart', formOn);
+        const kidney = calculateDonorAvailabilityScore('Minneapolis', 'Minnesota', 'kidney', formOn);
+        // Recovery rates differ → scores should diverge
+        expect(heart).not.toBe(kidney);
+    });
+
+    test('toggle ON: pancreas varies more than kidney across states', () => {
+        const formOn = makeFormData({ adjustForCauseOfDeath: true });
+        // Minnesota (high trauma) vs Ohio (high cardiovascular)
+        const panc_mn = calculateDonorAvailabilityScore('Minneapolis', 'Minnesota', 'pancreas', formOn);
+        const panc_oh = calculateDonorAvailabilityScore('Cleveland', 'Ohio', 'pancreas', formOn);
+        const kid_mn = calculateDonorAvailabilityScore('Minneapolis', 'Minnesota', 'kidney', formOn);
+        const kid_oh = calculateDonorAvailabilityScore('Cleveland', 'Ohio', 'kidney', formOn);
+        // Pancreas spread should be larger than kidney spread (wider recovery rate range)
+        const pancSpread = Math.abs(panc_mn - panc_oh);
+        const kidSpread = Math.abs(kid_mn - kid_oh);
+        expect(pancSpread).toBeGreaterThan(kidSpread);
+    });
+
+    test('toggle ON: all 6 organs stay in 0-100 range', () => {
+        const formOn = makeFormData({ adjustForCauseOfDeath: true });
+        const organs = ['kidney', 'liver', 'heart', 'lung', 'pancreas', 'intestine'];
+        for (const organ of organs) {
+            const score = calculateDonorAvailabilityScore('Houston', 'Texas', organ, formOn);
+            expect(score).toBeGreaterThanOrEqual(0);
+            expect(score).toBeLessThanOrEqual(100);
+            expect(Number.isNaN(score)).toBe(false);
+        }
+    });
+
+    test('toggle ON with missing COD data: falls back to base score', () => {
+        // Remove COD data from window
+        delete global.window.TransPlanData.causeOfDeath;
+        const formOn = makeFormData({ adjustForCauseOfDeath: true });
+        const score = calculateDonorAvailabilityScore('Minneapolis', 'Minnesota', 'kidney', formOn);
+        // Should still produce a valid score (no multiplier applied)
+        expect(score).toBeGreaterThanOrEqual(0);
+        expect(score).toBeLessThanOrEqual(100);
+        expect(Number.isNaN(score)).toBe(false);
+    });
+
+    test('toggle ON with unknown state: returns base score', () => {
+        const formOn = makeFormData({ adjustForCauseOfDeath: true });
+        const baseScore = calculateDonorAvailabilityScore('Minneapolis', 'UnknownState', 'kidney');
+        const adjustedScore = calculateDonorAvailabilityScore('Minneapolis', 'UnknownState', 'kidney', formOn);
+        // Unknown state has no COD proportions → multiplier is null → base score unchanged
+        expect(adjustedScore).toBe(baseScore);
+    });
+
+    test('no 4th arg: backward compatible with existing 3-arg callers', () => {
+        // Existing tests call with 3 args — ensure they still work
+        const score3arg = calculateDonorAvailabilityScore('Houston', 'Texas', 'kidney');
+        const score4arg = calculateDonorAvailabilityScore('Houston', 'Texas', 'kidney', undefined);
+        expect(score3arg).toBe(score4arg);
+        expect(Number.isNaN(score3arg)).toBe(false);
     });
 });
 
