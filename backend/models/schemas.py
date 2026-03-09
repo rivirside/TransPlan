@@ -76,6 +76,35 @@ class SensitivityResult(BaseModel):
     elapsed_seconds: float
 
 
+class DemographicGroup(BaseModel):
+    """A specific demographic dimension + value used in equity analysis."""
+    dimension: str = Field(description="e.g., 'blood_type', 'age_bracket', 'sex'")
+    value: str = Field(description="e.g., 'O+', '18-34', 'female'")
+
+
+class CityEquity(BaseModel):
+    """Equity metrics for a single city across demographic profiles."""
+    city: str
+    state: str
+    gini_coefficient: float = Field(ge=0, le=1, description="0=equality, 1=total inequality")
+    p24_range: tuple[float, float] = Field(description="(min, max) of p_transplant_24mo across profiles")
+    median_wait_range: tuple[float, float] = Field(description="(min, max) median wait months across profiles")
+    dimension_disparities: dict[str, list[dict]] = Field(
+        description="Per-dimension averages: { 'blood_type': [{value, p24, median_wait}, ...], ... }"
+    )
+
+
+class EquityAnalysisResult(BaseModel):
+    """Full equity analysis response across demographic profiles and cities."""
+    organ: str
+    cities: list[CityEquity] = Field(description="Per-city equity metrics, sorted by gini ascending")
+    overall_gini: float = Field(ge=0, le=1, description="Gini across all profiles x all cities")
+    profiles_simulated: int = Field(description="Total demographic profiles in matrix")
+    iterations_per_profile: int
+    elapsed_seconds: float
+    disclaimers: list[str] = Field(description="Mandatory limitation disclaimers")
+
+
 class HealthResponse(BaseModel):
     status: Literal["ok", "degraded"]
     version: str
