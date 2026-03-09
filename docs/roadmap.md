@@ -228,22 +228,29 @@
 - [x] Side-by-side comparison: pick 2-3 centers, see all metrics compared
 - [x] Print-friendly results view for sharing with care team
 
-### M4: Policy Toggle Simulator (FR-9)
-- [ ] Backend: parameterize donor rates, sharing policies, organ supply growth
-- [ ] Frontend: toggle controls panel with side-by-side scenario comparison
-- [ ] Scenarios: donor registration increase, regional sharing expansion
+### ~~M4: Policy Toggle Simulator~~ → Deferred (see note)
 
-### M5: Equity Analysis (FR-10/FR-11)
+> **Decision (2026-03-09):** M4 as originally spec'd is partially redundant with M2's
+> cause-of-death multiplier, which already adjusts organ-specific donor availability
+> based on regional injury/death prevalence patterns (trauma, cardiovascular, drug,
+> stroke). The remaining useful piece — sensitivity sliders letting users see how
+> results change when assumptions shift — is folded into M5 (formerly M6). A proper
+> causal policy model (researching real elasticities from transplant literature,
+> modeling how supply changes propagate to wait times) is added to Phase 4 as a
+> future milestone.
+
+### M4: Equity Analysis (FR-10/FR-11) ← was M5
 - [ ] Backend: simulation matrix across demographic profiles (age/sex/blood type/insurance)
 - [ ] Gini/Theil inequality indices for transplant access
 - [ ] Frontend: disparity visualizations, equity alerts
 
-### M6: UX Polish & Export (FR-19/FR-20)
+### M5: UX Polish & Export (FR-19/FR-20) ← was M6
 - [ ] Dark mode (CSS custom properties)
 - [ ] Save/share results via URL parameters
 - [ ] PDF report generation with disclaimers
 - [ ] CSV/JSON data export
 - [ ] Exportable chart images
+- [ ] Sensitivity sliders (donor rate ±20%, wait time ±30%) — rolled in from old M4
 
 ### Documentation
 - [x] User-facing "How It Works" page — Docusaurus docs site (completed Phase 2)
@@ -263,6 +270,7 @@
 > **Goal:** Publication-grade modeling, RCT, and FDA pathway preparation.
 
 ### Advanced Modeling
+- [ ] **Causal Policy Simulator (FR-9)** — research real elasticities from transplant literature (how donor supply changes propagate to wait times), build proper causal model in backend, support predefined UNOS policy scenarios (2021 kidney 250nm circles, 2023 continuous distribution) and user-defined parameter sweeps. Requires literature review + validated causal DAG before implementation.
 - [ ] Bayesian Belief Network layer (conditional probability graph for wait time)
 - [ ] Agent-based simulation (patient agents, donor pool, regional allocation)
 - [ ] Post-transplant survival estimator (1-year, 5-year graft survival)

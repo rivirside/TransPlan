@@ -55,13 +55,13 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | M1: Home Center Comparison | ✅ Done | Home Center dropdown, comparison badges (score + probability), green map marker, CDF reference line, 2 new tests |
 | M2: Organ-Specific Donor Model | ✅ Done | COD multiplier (PMC10329409 × CDC WONDER), toggleable, frontend + backend, 7+2 new tests (ADR-017) |
 | M3: City Detail & Comparison UI | ✅ Done | Detail modal (8-cat breakdown + radar + probs), 3-city comparison table, print view (ADR-018) |
-| M4: Policy Toggle Simulator | Pending | Parameterized donor rates, sharing policies, scenario comparison |
-| M5: Equity Analysis | Pending | Demographic simulation matrix, Gini/Theil indices, disparity visualizations |
-| M6: UX Polish & Export | Pending | Dark mode, URL sharing, PDF reports, CSV/JSON export |
+| ~~M4: Policy Toggle Simulator~~ | Deferred | Partially redundant with M2 COD multiplier; sensitivity sliders → M5; causal model → Phase 4 |
+| M4: Equity Analysis | Pending | Demographic simulation matrix, Gini/Theil indices, disparity visualizations |
+| M5: UX Polish & Export | Pending | Dark mode, URL sharing, PDF reports, CSV/JSON export, sensitivity sliders |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 3 M4-M6:** See roadmap for full milestone breakdown
+- **Phase 3 M4-M5:** See roadmap for full milestone breakdown
 - **Deploy:** Configure GitHub Pages (Settings > Pages > Source: main)
 - **FARS API (L-045):** MITIGATED — entire NHTSA FARS API appears retired; seed data preserved; FIXME for CSV bulk download alternative
 - **Deferred:** OPO boundaries (L-009), SRTR outcomes (L-017), donor reg fetch (L-033)
