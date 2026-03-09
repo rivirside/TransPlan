@@ -178,6 +178,51 @@
 - [x] 2 new backend schema tests (default False, accepted True) — 165 total pytest
 - [x] ADR-017 documenting multiplier approach and rationale
 
+### M2b: COD Model Data Quality Improvements (L-049 through L-056)
+
+> **Goal:** Upgrade the M2 cause-of-death multiplier from static single-paper seed data to a multi-source, automatable, stochastic model. Can be worked independently of M3–M6.
+
+#### Tier 1: SRTR OPO-Level Upgrade (L-050, L-055) — highest impact
+- [ ] Download SRTR OPO-specific reports (Excel) for all 56 OPOs — extend `scripts/fetch-srtr-excel.py`
+- [ ] Parse OPO reports: extract donor counts by cause-of-death per OPO — new `scripts/parse-opo-cod.py`
+- [ ] Create `data/opo-donor-cause-of-death.json` with OPO-level COD proportions
+- [ ] Map 22 cities → primary OPO using existing `data/srtr-center-mapping.json`
+- [ ] Update `_computeCodMultiplier()` / `_get_cod_multiplier()` to prefer OPO-level data, fall back to state-level
+- [ ] Expand coverage to all 50 states + DC (national average becomes truly national)
+
+#### Tier 2: Automated CDC SODA Fetch (L-051)
+- [ ] New `scripts/fetch-cause-of-death.js` using data.cdc.gov SODA API
+- [ ] Endpoint: NCHS Leading Causes of Death (`bi63-dtpu`) — state-level, annual
+- [ ] Map SODA categories to our 4+ categories (note: "Unintentional injuries" lumps trauma + drug OD)
+- [ ] Supplement with Provisional Drug Overdose Death dataset for separate drug_intox signal
+- [ ] Add to GitHub Actions weekly fetch job
+- [ ] FIXME: CDC WONDER programmatic API blocks state filtering by policy — web-only for ICD-10 granularity
+
+#### Tier 3: Stochastic Multiplier (L-053)
+- [ ] Extract sample sizes from PMC10329409 for each recovery rate cell
+- [ ] Model recovery rates as Beta(α, β) distributions using study counts as priors
+- [ ] Backend: sample multiplier per-iteration in Monte Carlo loop instead of fixed ratio
+- [ ] Frontend: show COD adjustment as confidence range on score cards (e.g., "±2.3 pts")
+- [ ] Update sensitivity analysis to include COD uncertainty as a tornado parameter
+
+#### Tier 4: Expanded Categories & Cross-Validation (L-049, L-052)
+- [ ] Add anoxia and other cause-of-death categories (6 total, matching PMC10329409)
+- [ ] Source anoxia-specific ICD-10 codes (W65-W74 drowning, T71 asphyxiation) from CDC WONDER
+- [ ] Cross-validate PMC10329409 recovery rates against OPTN annual data reports (2020–2024)
+- [ ] Document post-2019 changes: DCD expansion, ex-vivo perfusion impact, HCV+ donor acceptance
+- [ ] Consider sub-linear supply→wait scaling (L-056): calibrate elasticity against SRTR historical wait times
+
+#### API Landscape (as of March 2026)
+
+| Source | Type | Granularity | Automatable | Notes |
+|--------|------|-------------|-------------|-------|
+| CDC WONDER API | XML POST | National only | Yes | State filtering blocked by policy |
+| data.cdc.gov SODA | REST/JSON | State | Yes | Broad categories; drug OD available separately |
+| NVSS Public Files | CSV download | National only | Partial | State codes stripped since 2005 |
+| OPTN Build Advanced | Web form → CSV | State/OPO | No (manual) | Best donor-specific data |
+| SRTR OPO Reports | Excel download | OPO | Parseable | Already proven in M5 pipeline |
+| HRSA OPTN Modernization | TBD | TBD | TBD | New system targeted fall 2026 |
+
 ### M3: City Detail & Comparison UI
 - [ ] City detail modal: full score breakdown (Phase 1 + Phase 2 + competing risks)
 - [ ] Side-by-side comparison: pick 2-3 centers, see all metrics compared

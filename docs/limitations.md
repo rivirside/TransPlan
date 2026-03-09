@@ -352,6 +352,66 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ---
 
+## 7. M2 Cause-of-Death Model (discovered 2026-03-08)
+
+### L-049: Organ recovery rates from single study (PMC10329409)
+- **Severity:** HIGH
+- **Status:** OPEN
+- **Details:** The 6×4 organ recovery rate matrix comes entirely from one study (PMC10329409, 2023) analyzing OPTN data from 2005–2019. This 15-year window predates significant changes in donor utilization practices including expanded DCD (donation after circulatory death) donors, ex-vivo perfusion technology, and hepatitis C-positive donor acceptance. Recovery rates for hearts and lungs in particular have improved substantially since 2019.
+- **File:** `data/cause-of-death-by-region.json` → `organRecoveryRates`
+- **Fix:** Cross-validate with OPTN annual data reports or SRTR OPO-specific reports (Excel download). Consider modeling rates as Beta distributions with PMC10329409 counts as priors rather than fixed point estimates.
+
+### L-050: State-level granularity instead of OPO/DSA boundaries
+- **Severity:** HIGH
+- **Status:** OPEN
+- **Details:** Organ procurement operates at the OPO (Organ Procurement Organization) / DSA (Donor Service Area) level — 56 OPOs in the US — but our cause-of-death data is aggregated at state level. OPO boundaries do not align with state lines. Pittsburgh (CORE) and Philadelphia (Gift of Life) are both in Pennsylvania but have very different donor pools and operational characteristics. This is the same granularity gap identified in L-009.
+- **File:** `data/cause-of-death-by-region.json` → `stateCauseOfDeathProportions`
+- **Fix:** SRTR OPO-specific reports contain donor counts by OPO; could replace state-level with OPO-level data using the existing SRTR Excel parsing infrastructure (Phase 2 M5).
+
+### L-051: Static cause-of-death proportions with no automated refresh
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** State-level cause-of-death proportions are a one-time snapshot manually curated from CDC WONDER's web interface. The opioid crisis has dramatically shifted drug intoxication proportions in many states year over year (e.g., West Virginia's drug OD rate tripled 2010–2020). No automated fetch script exists. The `_meta.notes` field contains a FIXME.
+- **File:** `data/cause-of-death-by-region.json`
+- **Fix:** CDC WONDER's programmatic API does NOT support state filtering (policy restriction). Two alternatives: (1) data.cdc.gov SODA API has partial state-level mortality data (broad categories only), (2) OPTN "Build Advanced Report" generates CSVs with donor cause-of-death by state but requires manual web download.
+
+### L-052: Only 4 of 6 cause-of-death categories modeled
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** PMC10329409 identifies 6 donor cause-of-death categories: trauma, cardiovascular, CVA/stroke, drug intoxication, **anoxia NOS**, and **other**. Our model drops anoxia and other entirely. Anoxia (drowning, asphyxiation) is a growing share of the donor pool — the paper found anoxia-related donors rose from 31.4% to 49.4% between 2013 and 2023. Our 4-category proportions are normalized to sum to 1.0, which conflates anoxia deaths into the other categories without matching their actual recovery rate profiles.
+- **File:** `data/cause-of-death-by-region.json` → `causeCategories`, `stateCauseOfDeathProportions`
+- **Fix:** Add `anoxia` and `other` categories. PMC10329409 likely has recovery rates for these. Requires re-sourcing state proportions from CDC WONDER with ICD-10 codes for anoxia (W65-W74, T71) and computing a 6-category breakdown.
+
+### L-053: COD multiplier is deterministic, not stochastic
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** The `_computeCodMultiplier()` (frontend) and `_get_cod_multiplier()` (backend) functions compute a fixed ratio (`stateScore / nationalAvg`). Given the same inputs, the multiplier is always identical. In the Monte Carlo simulation, this means the COD adjustment shifts all 1000 iterations uniformly rather than adding realistic uncertainty about donor supply variation. The recovery rates and proportions are point estimates with no confidence intervals.
+- **File:** `algorithm.js` → `_computeCodMultiplier()`, `backend/services/monte_carlo.py` → `_get_cod_multiplier()`
+- **Fix:** Model recovery rates as Beta distributions using PMC10329409 sample counts as α/β parameters. Sample a different multiplier for each Monte Carlo iteration, reflecting genuine uncertainty about local donor supply.
+
+### L-054: Intestine organ uses pancreas recovery rates as proxy
+- **Severity:** LOW
+- **Status:** OPEN
+- **Details:** PMC10329409 does not report intestine-specific recovery rates. The intestine row in `organRecoveryRates` is an exact copy of pancreas rates (0.246/0.048/0.095/0.053). Intestinal transplants are rare (~100/year in the US) so the practical impact is small, but it's technically inaccurate.
+- **File:** `data/cause-of-death-by-region.json` → `organRecoveryRates.intestine`
+- **Fix:** Search for intestine-specific recovery rate literature; if unavailable, document the proxy explicitly in the UI tooltip.
+
+### L-055: Only 17 of 50 states have COD proportions
+- **Severity:** LOW
+- **Status:** OPEN
+- **Details:** `stateCauseOfDeathProportions` covers only the 17 states containing our 22 cities. Cities added in uncovered states would receive no COD adjustment (graceful degradation — multiplier returns `null`). The limited state coverage also means the "national average" denominator is not truly national — it's the average of 17 states.
+- **File:** `data/cause-of-death-by-region.json` → `stateCauseOfDeathProportions`
+- **Fix:** Expand to all 50 states + DC. OPTN View Data Reports can provide donor cause-of-death by all donor states.
+
+### L-056: Linear supply→wait assumption in Monte Carlo backend
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** The backend divides Monte Carlo transplant wait times by the COD multiplier (`transplant_times / cod_mult`). This assumes a linear relationship: 10% more donors → 10% shorter waits. In reality, organ allocation is a complex queuing system where supply-demand dynamics are nonlinear. A 10% increase in local donors may yield anything from 0% improvement (if organs are shared regionally) to 20% improvement (if the center is below allocation thresholds).
+- **File:** `backend/services/monte_carlo.py` line ~177
+- **Fix:** Use a sub-linear scaling function (e.g., `wait_time / cod_mult^0.7`) or calibrate the elasticity against SRTR historical data.
+
+---
+
 ## Resolution Log
 
 | ID | Fixed In | Date | Notes |

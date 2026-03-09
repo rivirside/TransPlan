@@ -173,12 +173,12 @@ TransPlan/
 
 ## Known Limitations
 
-**48 tracked issues** in `docs/limitations.md`. Read when auditing data quality or planning future work.
+**56 tracked issues** in `docs/limitations.md`. Read when auditing data quality or planning future work.
 
 | Status | Count | Details |
 |--------|-------|---------|
 | FIXED | 36 | All critical + most high/medium issues (L-001–L-044) |
-| OPEN | 4 | L-045 (FARS API), L-046 (CMS API), L-047 (CDN fallback), L-048 (COL range) |
+| OPEN | 12 | L-045 (FARS), L-046–L-048 (fixed), L-049–L-056 (M2 COD model data quality) |
 | DEFERRED | 3 | L-009 (OPO), L-017 (SRTR outcomes), L-033 (donor reg fetch) |
 | WONT FIX | 2 | L-012 (county health, <0.5pt impact), L-039 (false positive) |
 
