@@ -142,6 +142,48 @@
   }
 
   /**
+   * Call POST /equity-analysis on the backend.
+   * Runs demographic stratification across 48 profiles × 22 cities.
+   * @param {Object} formData - Raw form data from the frontend
+   * @param {number} [iterationsPerProfile] - Monte Carlo iterations per profile (default 300)
+   * @returns {Promise<Object|null>} EquityAnalysisResult or null on failure
+   */
+  async function equityAnalysis(formData, iterationsPerProfile) {
+    var base = getBaseUrl();
+    var controller = new AbortController();
+    // Equity analysis is expensive (48 profiles × 22 cities) — 30s timeout
+    var timeoutId = setTimeout(function () { controller.abort(); }, 30000);
+
+    try {
+      var body = {
+        patient: normalizeFormData(formData),
+        iterations_per_profile: iterationsPerProfile || 300
+      };
+      var response = await fetch(base + '/equity-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        console.warn('TransPlan Equity API error:', response.status, response.statusText);
+        return null;
+      }
+
+      return await response.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        console.warn('TransPlan Equity API timeout after 30000ms');
+      }
+      return null;
+    }
+  }
+
+  /**
    * Check if the backend is reachable (GET /health).
    * @returns {Promise<boolean>}
    */
@@ -162,6 +204,7 @@
   window.TransPlanAPI = {
     simulate: simulate,
     sensitivity: sensitivity,
+    equityAnalysis: equityAnalysis,
     isBackendAvailable: isBackendAvailable,
     normalizeFormData: normalizeFormData
   };

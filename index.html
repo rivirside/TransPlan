@@ -409,6 +409,7 @@
                     <div class="results-mode-toggle" role="tablist" aria-label="Results view mode">
                         <button id="tab-scores" class="mode-tab active" role="tab" aria-selected="true" aria-controls="panel-scores">Location Scores</button>
                         <button id="tab-probabilities" class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-probabilities">Simulation Probabilities</button>
+                        <button id="tab-equity" class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-equity" disabled title="Backend not running">Equity Analysis</button>
                     </div>
                     <button id="printResults" class="btn-print" onclick="window.print()" title="Print results for your care team">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 1h8v3H4V1zm-1 3h10a2 2 0 012 2v4a2 2 0 01-2 2h-1v3H4v-3H3a2 2 0 01-2-2V6a2 2 0 012-2zm2 6v4h6v-4H5zm6-3a1 1 0 100-2 1 1 0 000 2z" fill="currentColor"/></svg>
@@ -525,6 +526,46 @@
                     </div>
                 </div>
 
+                <!-- Phase 3 M4: Equity Analysis View -->
+                <div id="panel-equity" class="results-panel" role="tabpanel" aria-labelledby="tab-equity" style="display: none;">
+                    <div class="equity-disclaimer" role="alert">
+                        <strong>Equity Analysis Limitations</strong>
+                        <p>This analysis varies blood type, age, and sex while holding clinical parameters fixed. It does not model race, ethnicity, socioeconomic status, or insurance type. Results reflect model behavior, not observed real-world disparities.</p>
+                    </div>
+
+                    <div id="equityContainer" aria-live="polite" aria-label="Equity analysis results">
+                        <!-- Summary card + city equity table rendered by script.js -->
+                    </div>
+
+                    <div class="charts-section">
+                        <h3>Blood Type Disparity</h3>
+                        <p class="chart-description">Average 24-month transplant probability by blood type across the selected city. Blood types compatible with fewer donors (e.g., O) typically show lower probabilities.</p>
+                        <div class="chart-container">
+                            <canvas id="equityBloodTypeChart" role="img" aria-label="Bar chart showing transplant probability disparity across blood types"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="charts-section">
+                        <h3>Age Bracket Disparity</h3>
+                        <p class="chart-description">Average 24-month transplant probability by age bracket. Age affects donor-recipient matching dynamics in the simulation model.</p>
+                        <div class="chart-container">
+                            <canvas id="equityAgeChart" role="img" aria-label="Bar chart showing transplant probability disparity across age brackets"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="charts-section">
+                        <h3>Gini Coefficient by City</h3>
+                        <p class="chart-description">Demographic inequality index for each city (0 = perfect equality, 1 = total inequality). Lower Gini means more equitable outcomes across demographic profiles.</p>
+                        <div class="chart-container chart-container--gini">
+                            <canvas id="equityGiniChart" role="img" aria-label="Horizontal bar chart showing Gini coefficient for each city"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="equityDisclaimers" class="equity-disclaimers-section">
+                        <!-- Disclaimers rendered from API response -->
+                    </div>
+                </div>
+
                 <div class="data-sources">
                     <h3>Data Sources</h3>
                     <ul>
@@ -597,6 +638,7 @@
     <script src="script.js"></script>
     <script src="charts.js"></script>
     <script src="probability-charts.js"></script>
+    <script src="equity-charts.js"></script>
     <script src="session.js"></script>
 </body>
 </html>

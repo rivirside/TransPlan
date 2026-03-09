@@ -523,6 +523,8 @@ const cityCoordinates = {
 let _currentResults = null;
 let _currentSimResult = null;
 let _currentFormData = null;
+// M4: Equity analysis result
+let _currentEquityResult = null;
 
 // Map layers
 let map;
@@ -2041,8 +2043,13 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
 
     // Phase 2: Call backend for Monte Carlo simulation
     let simResult = null;
+    let equityResult = null;
     if (window.TransPlanAPI) {
         simResult = await window.TransPlanAPI.simulate(formData);
+        // M4: Run equity analysis in parallel with the spinner still visible
+        if (simResult) {
+            equityResult = await window.TransPlanAPI.equityAnalysis(formData);
+        }
     }
 
     // Hide spinner
@@ -2051,8 +2058,11 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
     // Render probability view (or show unavailable notice)
     renderProbabilityView(simResult, formData);
 
+    // M4: Render equity view
+    renderEquityView(equityResult);
+
     // Set up tab toggle state
-    initResultsTabs(simResult !== null);
+    initResultsTabs(simResult !== null, equityResult !== null);
 });
 
 // --- Organ-specific conditional field visibility ---
@@ -2446,14 +2456,17 @@ function getMatchClass(rate) {
 // ── Phase 2: Probability View ──────────────────────────────────────────────
 
 /**
- * Initialize results tab toggle behavior.
+ * Initialize results tab toggle behavior (3 tabs: Scores, Probabilities, Equity).
  * @param {boolean} simulationAvailable - Whether Phase 2 results exist
+ * @param {boolean} equityAvailable - Whether M4 equity results exist
  */
-function initResultsTabs(simulationAvailable) {
+function initResultsTabs(simulationAvailable, equityAvailable) {
     const tabScores = document.getElementById('tab-scores');
     const tabProbs = document.getElementById('tab-probabilities');
+    const tabEquity = document.getElementById('tab-equity');
     const panelScores = document.getElementById('panel-scores');
     const panelProbs = document.getElementById('panel-probabilities');
+    const panelEquity = document.getElementById('panel-equity');
     const unavailableBanner = document.getElementById('simulation-unavailable');
 
     if (!tabScores || !tabProbs) return;
@@ -2468,30 +2481,58 @@ function initResultsTabs(simulationAvailable) {
         if (unavailableBanner) unavailableBanner.style.display = 'none';
     }
 
+    // M4: Equity tab state
+    if (tabEquity) {
+        if (!equityAvailable) {
+            tabEquity.disabled = true;
+            tabEquity.title = simulationAvailable ? 'Equity analysis unavailable' : 'Backend not running';
+        } else {
+            tabEquity.disabled = false;
+            tabEquity.title = '';
+        }
+    }
+
+    // Helper to activate a single tab
+    function activateTab(activeTab, activePanel) {
+        var allTabs = [newTabScores, newTabProbs, newTabEquity].filter(Boolean);
+        var allPanels = [panelScores, panelProbs, panelEquity].filter(Boolean);
+        allTabs.forEach(function (t) {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+        });
+        allPanels.forEach(function (p) { p.style.display = 'none'; });
+        activeTab.classList.add('active');
+        activeTab.setAttribute('aria-selected', 'true');
+        activePanel.style.display = '';
+    }
+
     // Remove old listeners by cloning
     const newTabScores = tabScores.cloneNode(true);
     const newTabProbs = tabProbs.cloneNode(true);
     tabScores.parentNode.replaceChild(newTabScores, tabScores);
     tabProbs.parentNode.replaceChild(newTabProbs, tabProbs);
 
+    var newTabEquity = null;
+    if (tabEquity) {
+        newTabEquity = tabEquity.cloneNode(true);
+        tabEquity.parentNode.replaceChild(newTabEquity, tabEquity);
+    }
+
     newTabScores.addEventListener('click', function () {
-        newTabScores.classList.add('active');
-        newTabScores.setAttribute('aria-selected', 'true');
-        newTabProbs.classList.remove('active');
-        newTabProbs.setAttribute('aria-selected', 'false');
-        panelScores.style.display = '';
-        panelProbs.style.display = 'none';
+        activateTab(newTabScores, panelScores);
     });
 
     newTabProbs.addEventListener('click', function () {
         if (newTabProbs.disabled) return;
-        newTabProbs.classList.add('active');
-        newTabProbs.setAttribute('aria-selected', 'true');
-        newTabScores.classList.remove('active');
-        newTabScores.setAttribute('aria-selected', 'false');
-        panelProbs.style.display = '';
-        panelScores.style.display = 'none';
+        activateTab(newTabProbs, panelProbs);
     });
+
+    if (newTabEquity) {
+        newTabEquity.addEventListener('click', function () {
+            if (newTabEquity.disabled) return;
+            activateTab(newTabEquity, panelEquity);
+        });
+    }
 }
 
 /**
@@ -2703,6 +2744,135 @@ function probClass(v) {
     if (v >= 0.5) return 'high';
     if (v >= 0.2) return 'mid';
     return 'low';
+}
+
+// ==================== M4: Equity Analysis View ====================
+
+/**
+ * Render the equity analysis view from backend results.
+ * @param {Object|null} equityResult - EquityAnalysisResult from backend, or null
+ */
+function renderEquityView(equityResult) {
+    _currentEquityResult = equityResult;
+
+    var container = document.getElementById('equityContainer');
+    var disclaimersEl = document.getElementById('equityDisclaimers');
+    if (!container) return;
+    container.textContent = '';
+
+    // Destroy old charts
+    if (window.TransPlanEquityCharts) {
+        window.TransPlanEquityCharts.destroyAll();
+    }
+
+    if (!equityResult || !equityResult.cities) return;
+
+    // --- Summary card ---
+    var summary = _el('div', 'equity-summary-card');
+
+    // Gini badge
+    var giniBadge = _el('div', 'equity-gini-badge');
+    var giniVal = equityResult.overall_gini;
+    var giniLevel = giniVal < 0.15 ? 'low' : giniVal < 0.30 ? 'mid' : 'high';
+    giniBadge.classList.add(giniLevel);
+    giniBadge.innerHTML = '<span class="gini-label">Overall Gini</span><span class="gini-value">' +
+        giniVal.toFixed(4) + '</span><span class="gini-level">' +
+        (giniLevel === 'low' ? 'Low Inequality' : giniLevel === 'mid' ? 'Moderate Inequality' : 'High Inequality') + '</span>';
+    summary.appendChild(giniBadge);
+
+    // Stats
+    var stats = _el('div', 'equity-stats');
+    stats.innerHTML =
+        '<div class="equity-stat"><span class="stat-value">' + equityResult.profiles_simulated + '</span><span class="stat-label">Profiles Simulated</span></div>' +
+        '<div class="equity-stat"><span class="stat-value">' + equityResult.cities.length + '</span><span class="stat-label">Cities Analyzed</span></div>' +
+        '<div class="equity-stat"><span class="stat-value">' + equityResult.iterations_per_profile + '</span><span class="stat-label">Iterations/Profile</span></div>' +
+        '<div class="equity-stat"><span class="stat-value">' + equityResult.elapsed_seconds.toFixed(1) + 's</span><span class="stat-label">Compute Time</span></div>';
+    summary.appendChild(stats);
+
+    container.appendChild(summary);
+
+    // --- City equity table ---
+    var tableSection = _el('div', 'equity-table-section');
+    var tableTitle = _el('h3', '', 'City Equity Rankings');
+    tableSection.appendChild(tableTitle);
+
+    var table = document.createElement('table');
+    table.className = 'equity-city-table';
+
+    // Header
+    var thead = document.createElement('thead');
+    thead.innerHTML = '<tr><th>Rank</th><th>City</th><th>State</th><th>Gini</th><th>Best P24</th><th>Worst P24</th><th>Range</th></tr>';
+    table.appendChild(thead);
+
+    // Body
+    var tbody = document.createElement('tbody');
+    equityResult.cities.forEach(function (city, idx) {
+        var tr = document.createElement('tr');
+        var gLevel = city.gini_coefficient < 0.15 ? 'low' : city.gini_coefficient < 0.30 ? 'mid' : 'high';
+        tr.innerHTML =
+            '<td>' + (idx + 1) + '</td>' +
+            '<td><strong>' + city.city + '</strong></td>' +
+            '<td>' + city.state + '</td>' +
+            '<td class="gini-cell ' + gLevel + '">' + city.gini_coefficient.toFixed(4) + '</td>' +
+            '<td>' + (city.p24_range[1] * 100).toFixed(1) + '%</td>' +
+            '<td>' + (city.p24_range[0] * 100).toFixed(1) + '%</td>' +
+            '<td>' + ((city.p24_range[1] - city.p24_range[0]) * 100).toFixed(1) + ' pp</td>';
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    tableSection.appendChild(table);
+    container.appendChild(tableSection);
+
+    // --- Render charts (use first city's dimension data for detail charts) ---
+    // Use overall averages across all cities for the disparity charts
+    var allBloodType = _aggregateDimension(equityResult.cities, 'blood_type');
+    var allAge = _aggregateDimension(equityResult.cities, 'age_bracket');
+
+    if (window.TransPlanEquityCharts) {
+        window.TransPlanEquityCharts.renderBloodTypeDisparityChart('equityBloodTypeChart', allBloodType);
+        window.TransPlanEquityCharts.renderAgeDisparityChart('equityAgeChart', allAge);
+        window.TransPlanEquityCharts.renderGiniByCity('equityGiniChart', equityResult.cities);
+    }
+
+    // --- Disclaimers ---
+    if (disclaimersEl && equityResult.disclaimers && equityResult.disclaimers.length) {
+        disclaimersEl.innerHTML = '<h3>Important Limitations</h3>';
+        var ul = document.createElement('ul');
+        equityResult.disclaimers.forEach(function (text) {
+            var li = document.createElement('li');
+            li.textContent = text;
+            ul.appendChild(li);
+        });
+        disclaimersEl.appendChild(ul);
+    }
+}
+
+/**
+ * Aggregate dimension disparity data across all cities (average p24 and median_wait per value).
+ */
+function _aggregateDimension(cities, dimKey) {
+    var sums = {};   // value -> { p24Sum, waitSum, count }
+    cities.forEach(function (city) {
+        var entries = city.dimension_disparities[dimKey] || [];
+        entries.forEach(function (entry) {
+            if (!sums[entry.value]) {
+                sums[entry.value] = { p24Sum: 0, waitSum: 0, count: 0 };
+            }
+            sums[entry.value].p24Sum += entry.p24;
+            sums[entry.value].waitSum += entry.median_wait;
+            sums[entry.value].count += 1;
+        });
+    });
+    var result = [];
+    Object.keys(sums).sort().forEach(function (val) {
+        var s = sums[val];
+        result.push({
+            value: val,
+            p24: s.p24Sum / s.count,
+            median_wait: s.waitSum / s.count
+        });
+    });
+    return result;
 }
 
 // ==================== M3: City Detail Modal ====================
