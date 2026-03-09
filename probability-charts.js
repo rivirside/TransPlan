@@ -39,7 +39,7 @@
    * @param {Array} cities - SimulationResult.cities (ranked)
    * @param {number} [topN=5] - Number of cities to plot
    */
-  function renderCDFChart(canvasId, cities, topN) {
+  function renderCDFChart(canvasId, cities, topN, homeCenterCity) {
     var canvas = document.getElementById(canvasId);
     if (!canvas || typeof Chart === 'undefined') return;
 
@@ -50,22 +50,33 @@
     var datasets = [];
     var topCities = cities.slice(0, topN);
 
+    // If home center is set but not already in topN, add it
+    var homeCity = null;
+    if (homeCenterCity) {
+      homeCity = cities.find(function (c) { return c.city === homeCenterCity; });
+      if (homeCity && !topCities.some(function (c) { return c.city === homeCenterCity; })) {
+        topCities.push(homeCity);
+      }
+    }
+
     topCities.forEach(function (city, i) {
-      var color = CITY_COLORS[i % CITY_COLORS.length];
+      var isHome = homeCity && city.city === homeCity.city;
+      var color = isHome ? '#1D9E5C' : CITY_COLORS[i % CITY_COLORS.length];
       var probs = [0, city.p_transplant_6mo, city.p_transplant_12mo,
                    city.p_transplant_24mo, city.p_transplant_36mo];
 
       // Main line
       datasets.push({
-        label: city.city + ', ' + city.state,
+        label: city.city + ', ' + city.state + (isHome ? ' (Home)' : ''),
         data: probs,
         borderColor: color,
         backgroundColor: 'transparent',
-        borderWidth: 2.5,
-        pointRadius: 4,
+        borderWidth: isHome ? 3 : 2.5,
+        borderDash: isHome ? [6, 3] : [],
+        pointRadius: isHome ? 5 : 4,
         pointBackgroundColor: color,
         tension: 0.3,
-        order: 1
+        order: isHome ? 0 : 1
       });
 
       // CI band (shaded area between lower and upper bounds)
@@ -130,6 +141,18 @@
             labels: {
               filter: function (item) {
                 return !item.text.startsWith('_') && !item.text.includes('95% CI');
+              },
+              // Show dashed line indicator for home center in legend
+              generateLabels: function (chart) {
+                var labels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                return labels.filter(function (l) {
+                  return !l.text.startsWith('_') && !l.text.includes('95% CI');
+                }).map(function (l) {
+                  if (l.text.includes('(Home)')) {
+                    l.lineDash = [6, 3];
+                  }
+                  return l;
+                });
               },
               font: { size: 11 }
             }

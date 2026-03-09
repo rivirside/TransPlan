@@ -20,6 +20,8 @@ class PatientProfile(BaseModel):
     cpra: Optional[int] = Field(None, ge=0, le=100, description="Kidney only: % panel reactive antibodies")
     meld: Optional[int] = Field(None, ge=6, le=40, description="Liver only: MELD score")
     las: Optional[float] = Field(None, ge=0, le=100, description="Lung only: Lung Allocation Score")
+    # Relocation comparison
+    home_center: Optional[str] = Field(None, description="Patient's current transplant listing center (city name)")
 
 
 class CityProbability(BaseModel):

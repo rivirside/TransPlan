@@ -67,6 +67,17 @@ class TestPatientProfileValidation:
             p = PatientProfile(organ=organ, blood_type="O+", age=40, sex="male", urgency=2)
             assert p.organ == organ
 
+    def test_home_center_accepted(self):
+        p = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            home_center="Nashville"
+        )
+        assert p.home_center == "Nashville"
+
+    def test_home_center_defaults_none(self):
+        p = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male", urgency=2)
+        assert p.home_center is None
+
 
 class TestCityProbabilityValidation:
     def test_valid_city_probability(self):

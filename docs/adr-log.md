@@ -254,3 +254,24 @@
 - Static files now routed through Python/uvicorn instead of a dedicated HTTP server — negligible perf impact for local use.
 - Larger serving surface (entire repo root), but only localhost access so no security concern.
 - CORS middleware kept as fallback for developers running separate frontend/backend servers.
+
+---
+
+## ADR-016: Frontend-Only Home Center Comparison
+
+**Date:** 2026-03-08
+**Status:** Accepted
+
+**Context:** Phase 3 M1 adds "Home Center" relocation comparison (FR-8). Patients select their current transplant listing center and see how other cities compare. The backend already simulates all 22 cities in every request, returning ranked probabilities for all of them.
+
+**Decision:** All comparison logic (delta computation, badge rendering, map differentiation, CDF reference line) is computed entirely in the frontend JavaScript. The backend only receives `home_center` as an optional pass-through field on `PatientProfile` — it does not alter simulation behavior.
+
+**Rationale:**
+- Zero backend changes needed beyond the schema field — the simulation already returns all 22 cities.
+- Delta math is trivial: `otherCity.score - homeCenter.score` or `otherCity.p_transplant_24mo - homeCenter.p_transplant_24mo`.
+- Graceful degradation: when no home center is selected, all comparison UI is guarded by `if (homeCenter)` checks — zero visual changes.
+- Keeps backend focused on simulation; presentation logic stays in the frontend.
+
+**Trade-offs:**
+- If the backend ever needs to optimize (e.g., only simulate a subset of cities), the comparison logic would need to ensure the home center city is always included.
+- "Home Center" terminology chosen over "Current City" because patients often live hours from their listing center.

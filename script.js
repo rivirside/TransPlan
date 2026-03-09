@@ -1884,38 +1884,44 @@ function setupLayerControls() {
 }
 
 // Update map with ranked cities
-function updateMapWithResults(cities) {
+function updateMapWithResults(cities, homeCenterCity) {
     cityMarkersLayer.clearLayers();
 
     cities.forEach((city, index) => {
         const rank = index + 1;
         const coord = cityCoordinates[city.city];
+        const isHome = homeCenterCity && city.city === homeCenterCity;
 
         if (coord) {
             const colors = ['#ffd700', '#c0c0c0', '#cd7f32', '#667eea', '#9b59b6'];
-            const color = colors[Math.min(rank - 1, 4)];
+            const color = isHome ? '#1D9E5C' : colors[Math.min(rank - 1, 4)];
+            const size = isHome ? 38 : 32;
+            const label = isHome ? 'H' : rank;
+            const border = isHome ? '3px solid #115C38' : '3px solid white';
 
             const icon = L.divIcon({
                 className: 'city-rank-marker',
                 html: `<div style="
                     background: ${color};
                     color: white;
-                    width: 32px;
-                    height: 32px;
+                    width: ${size}px;
+                    height: ${size}px;
                     border-radius: 50%;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     font-weight: bold;
-                    font-size: 14px;
-                    border: 3px solid white;
+                    font-size: ${isHome ? '16px' : '14px'};
+                    border: ${border};
                     box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-                ">${rank}</div>`,
-                iconSize: [38, 38]
+                ">${label}</div>`,
+                iconSize: [size + 6, size + 6]
             });
 
-            L.marker(coord, { icon: icon })
+            const popupPrefix = isHome ? '<strong>Your Center</strong><br>' : '';
+            L.marker(coord, { icon: icon, zIndexOffset: isHome ? 1000 : 0 })
                 .bindPopup(`
+                    ${popupPrefix}
                     <strong>#${rank} ${city.city}</strong><br>
                     ${city.state}<br>
                     Location Score: <strong>${city.personalizedScore.toFixed(1)}</strong><br>
@@ -1973,6 +1979,30 @@ const cityStateMap = {
     "Palo Alto": "California"
 };
 
+// State abbreviations for Home Center dropdown display
+const stateAbbreviations = {
+    "Pennsylvania": "PA", "Maryland": "MD", "New York": "NY",
+    "Minnesota": "MN", "Wisconsin": "WI", "Illinois": "IL",
+    "Ohio": "OH", "Missouri": "MO", "Indiana": "IN",
+    "Nebraska": "NE", "Tennessee": "TN", "North Carolina": "NC",
+    "Florida": "FL", "Texas": "TX", "Oregon": "OR",
+    "Washington": "WA", "California": "CA"
+};
+
+// Populate Home Center dropdown from cityStateMap
+(function populateHomeCenterDropdown() {
+    const select = document.getElementById('homeCenter');
+    if (!select) return;
+    Object.entries(cityStateMap)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .forEach(([city, state]) => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city + ', ' + (stateAbbreviations[state] || state);
+            select.appendChild(option);
+        });
+})();
+
 document.getElementById('transplantForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -1987,7 +2017,8 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
         insurance: document.getElementById('insurance').value,
         cpra: parseInt(document.getElementById('cpra')?.value) || 0,
         meld: parseInt(document.getElementById('meld')?.value) || 0,
-        las: parseInt(document.getElementById('las')?.value) || 0
+        las: parseInt(document.getElementById('las')?.value) || 0,
+        homeCenter: document.getElementById('homeCenter')?.value || ''
     };
 
     // Show loading spinner
@@ -2241,20 +2272,25 @@ function displayResults(cities, formData) {
         warningEl.style.display = 'none';
     }
 
+    // Find home center for comparison (null if not selected)
+    const homeCenter = formData.homeCenter
+        ? cities.find(c => c.city === formData.homeCenter)
+        : null;
+
     // Initialize map if not already done
     if (!map) {
         resultsSection.style.display = 'block';
         setTimeout(() => {
             initializeMap();
-            updateMapWithResults(cities);
+            updateMapWithResults(cities, formData.homeCenter);
         }, 100);
     } else {
-        updateMapWithResults(cities);
+        updateMapWithResults(cities, formData.homeCenter);
     }
 
     cities.forEach((city, index) => {
         const rank = index + 1;
-        const card = createCityCard(city, rank, formData);
+        const card = createCityCard(city, rank, formData, homeCenter);
         resultsContainer.appendChild(card);
     });
 
@@ -2269,21 +2305,40 @@ function displayResults(cities, formData) {
     }, 200);
 }
 
-function createCityCard(city, rank, formData) {
+function createCityCard(city, rank, formData, homeCenter) {
     const card = document.createElement('div');
     card.className = `city-card rank-${rank}`;
     const radarId = `radar-chart-${rank}`;
 
+    const isHome = homeCenter && city.city === homeCenter.city;
+    if (isHome) card.classList.add('home-center');
+
+    // Build comparison badge HTML (all values derived from internal scoring, not user input)
+    let comparisonHtml = '';
+    if (isHome) {
+        comparisonHtml = '<div class="comparison-badge comparison-home">Your Center</div>';
+    } else if (homeCenter) {
+        const delta = city.personalizedScore - homeCenter.personalizedScore;
+        const sign = delta >= 0 ? '+' : '';
+        const cls = delta >= 0 ? 'comparison-positive' : 'comparison-negative';
+        comparisonHtml = `<div class="comparison-badge ${cls}">${sign}${delta.toFixed(1)} pts</div>`;
+    }
+
     const scoreClass = city.personalizedScore >= 90 ? 'good' :
                        city.personalizedScore >= 80 ? 'moderate' : 'poor';
 
+    // Note: innerHTML values are all derived from internal algorithm data (city names,
+    // computed scores, static strings), not from user-supplied or external content.
     card.innerHTML = `
         <div class="city-header">
             <div class="city-info">
                 <h3>${city.city}</h3>
                 <p class="state">${city.state}</p>
             </div>
-            <div class="rank-badge">Rank #${rank}</div>
+            <div class="city-header-right">
+                ${comparisonHtml}
+                <div class="rank-badge">Rank #${rank}</div>
+            </div>
         </div>
 
         <div class="score">
@@ -2438,9 +2493,14 @@ function renderProbabilityView(simResult, formData) {
         ' iterations in ' + simResult.elapsed_seconds.toFixed(2) + 's';
     container.appendChild(meta);
 
+    // Find home center for comparison (null if not selected)
+    var homeCenterCity = formData && formData.homeCenter
+        ? simResult.cities.find(function (c) { return c.city === formData.homeCenter; })
+        : null;
+
     // Create probability cards for each city
     simResult.cities.forEach(function (city, index) {
-        const card = createProbabilityCard(city, index + 1);
+        const card = createProbabilityCard(city, index + 1, homeCenterCity);
         container.appendChild(card);
     });
 
@@ -2448,7 +2508,7 @@ function renderProbabilityView(simResult, formData) {
     setTimeout(function () {
         if (window.TransPlanProbCharts) {
             window.TransPlanProbCharts.destroyAll();
-            window.TransPlanProbCharts.renderCDFChart('cdfChart', simResult.cities, 5);
+            window.TransPlanProbCharts.renderCDFChart('cdfChart', simResult.cities, 5, formData && formData.homeCenter);
             window.TransPlanProbCharts.renderCompetingRisksChart('competingRisksChart', simResult.cities, 10);
         }
 
@@ -2485,10 +2545,13 @@ function _el(tag, className, text) {
 /**
  * Create a probability city card element using safe DOM methods.
  */
-function createProbabilityCard(city, rank) {
+function createProbabilityCard(city, rank, homeCenter) {
     const card = _el('div', 'prob-card');
 
     if (rank <= 3) card.classList.add('rank-' + rank);
+
+    const isHome = homeCenter && city.city === homeCenter.city;
+    if (isHome) card.classList.add('home-center');
 
     const ci = city.confidence_interval_95 || [0, 0];
 
@@ -2500,6 +2563,22 @@ function createProbabilityCard(city, rank) {
     header.appendChild(info);
     header.appendChild(_el('span', 'prob-card-rank', '#' + rank));
     card.appendChild(header);
+
+    // Comparison indicator
+    if (homeCenter) {
+        const compDiv = _el('div', 'comparison-indicator');
+        if (isHome) {
+            compDiv.classList.add('comparison-home');
+            compDiv.textContent = 'Your Center';
+        } else {
+            const delta = city.p_transplant_24mo - homeCenter.p_transplant_24mo;
+            const pctDelta = (delta * 100).toFixed(1);
+            const sign = delta >= 0 ? '+' : '';
+            compDiv.classList.add(delta >= 0 ? 'comparison-positive' : 'comparison-negative');
+            compDiv.textContent = sign + pctDelta + '% vs. home';
+        }
+        card.appendChild(compDiv);
+    }
 
     // Probability metrics grid
     const metrics = _el('div', 'prob-metrics');

@@ -52,6 +52,9 @@
       profile.las = parseFloat(formData.las);
     }
 
+    // Relocation comparison
+    if (formData.homeCenter) profile.home_center = formData.homeCenter;
+
     return profile;
   }
 

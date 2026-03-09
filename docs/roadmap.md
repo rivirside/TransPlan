@@ -157,42 +157,45 @@
 
 > **Goal:** Full relocation modeling, equity analysis, and usability studies for clinical validation.
 
-### FR-8: Relocation Modeling
-- [ ] Rank states/DSAs/centers by probability improvement
-- [ ] Integrate relocation costs: housing, travel, temporary living
-- [ ] Show barriers: insurance portability, Medicaid reciprocity
-- [ ] Relocation cost model (housing APIs, travel frequency projections)
+### M1: Home Center Relocation Comparison (FR-8 core) ✅
+- [x] "Simulation Settings" fieldset with Home Center dropdown
+- [x] Comparison badges on Phase 1 score cards (+/- pts vs. home)
+- [x] Comparison indicators on Phase 2 probability cards (+/- % vs. home)
+- [x] Map: green home center marker differentiation ("H" label, higher z-index)
+- [x] CDF chart: dashed green reference line for home center
+- [x] Backend: `home_center` field on PatientProfile (pass-through)
+- [x] Graceful degradation: no visual changes when home center not selected
+- [x] 2 new schema tests (163 total pytest)
 
-### FR-9: Policy Toggle Simulator
-- [ ] Toggle: opt-in vs opt-out donation models
-- [ ] Toggle: increased donor registration rates
-- [ ] Toggle: expanded living donor programs
-- [ ] Toggle: regional sharing policy changes
-- [ ] Side-by-side comparison of policy scenarios
-- [ ] Targets: policy students, think tanks, research groups
+### M2: Organ-Specific Donor Availability Model (toggleable)
+- [ ] Data curation: `data/cause-of-death-by-region.json` from OPTN View Data Reports + CDC WONDER
+- [ ] Organ recovery conversion matrix from published literature (PMC10329409)
+- [ ] Refactor `calculateDonorAvailabilityScore()` to use `organType` parameter (currently ignored)
+- [ ] Backend: integrate cause-of-death donor supply multiplier into Monte Carlo per city/organ
+- [ ] Frontend: "Adjust for regional cause-of-death patterns" toggle in Simulation Settings
+- [ ] Replace dead FARS traffic data with real cause-of-death data
 
-### FR-10/FR-11: Equity Analysis
-- [ ] Stratification by demographics/SES
-- [ ] Gini/Theil inequality indices for transplant access
-- [ ] Flag high-inequity scenarios in relocations
-- [ ] Equity alerts integrated into reports
-- [ ] Racial/ethnic disparity visualizations
-
-### Support Infrastructure Index
-- [ ] Caregiver availability scoring
-- [ ] Social services density per city
-- [ ] Rehabilitation access metrics
-- [ ] Patient housing programs (extends L-022 rubric)
-
-### UI/UX Improvements
-- [ ] City detail modal with full score breakdown
-- [ ] Side-by-side city comparison mode
+### M3: City Detail & Comparison UI
+- [ ] City detail modal: full score breakdown (Phase 1 + Phase 2 + competing risks)
+- [ ] Side-by-side comparison: pick 2-3 centers, see all metrics compared
 - [ ] Print-friendly results view for sharing with care team
-- [ ] Dark mode
+
+### M4: Policy Toggle Simulator (FR-9)
+- [ ] Backend: parameterize donor rates, sharing policies, organ supply growth
+- [ ] Frontend: toggle controls panel with side-by-side scenario comparison
+- [ ] Scenarios: donor registration increase, regional sharing expansion
+
+### M5: Equity Analysis (FR-10/FR-11)
+- [ ] Backend: simulation matrix across demographic profiles (age/sex/blood type/insurance)
+- [ ] Gini/Theil inequality indices for transplant access
+- [ ] Frontend: disparity visualizations, equity alerts
+
+### M6: UX Polish & Export (FR-19/FR-20)
+- [ ] Dark mode (CSS custom properties)
 - [ ] Save/share results via URL parameters
-- [ ] Form validation with inline error messages
-- [ ] Loading spinner during simulation
-- [ ] Wizard UI flow for guided input
+- [ ] PDF report generation with disclaimers
+- [ ] CSV/JSON data export
+- [ ] Exportable chart images
 
 ### Documentation
 - [x] User-facing "How It Works" page — Docusaurus docs site (completed Phase 2)
