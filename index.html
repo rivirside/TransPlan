@@ -405,9 +405,22 @@
                 <p class="results-intro">Based on your profile, here are cities ranked by location suitability score. These scores reflect regional data trends, not individual clinical predictions.</p>
 
                 <!-- Dual-mode tab toggle -->
-                <div class="results-mode-toggle" role="tablist" aria-label="Results view mode">
-                    <button id="tab-scores" class="mode-tab active" role="tab" aria-selected="true" aria-controls="panel-scores">Location Scores</button>
-                    <button id="tab-probabilities" class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-probabilities">Simulation Probabilities</button>
+                <div class="results-header-row">
+                    <div class="results-mode-toggle" role="tablist" aria-label="Results view mode">
+                        <button id="tab-scores" class="mode-tab active" role="tab" aria-selected="true" aria-controls="panel-scores">Location Scores</button>
+                        <button id="tab-probabilities" class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-probabilities">Simulation Probabilities</button>
+                    </div>
+                    <button id="printResults" class="btn-print" onclick="window.print()" title="Print results for your care team">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 1h8v3H4V1zm-1 3h10a2 2 0 012 2v4a2 2 0 01-2 2h-1v3H4v-3H3a2 2 0 01-2-2V6a2 2 0 012-2zm2 6v4h6v-4H5zm6-3a1 1 0 100-2 1 1 0 000 2z" fill="currentColor"/></svg>
+                        Print
+                    </button>
+                </div>
+
+                <!-- Compare bar (appears when 2+ cities selected) -->
+                <div id="compareBar" class="compare-bar" style="display:none">
+                    <span id="compareCount">0 selected</span>
+                    <button id="compareBtn" class="btn-compare" disabled>Compare Selected</button>
+                    <button id="compareClear" class="btn-compare-clear">Clear</button>
                 </div>
 
                 <!-- Backend unavailable notice -->
@@ -535,6 +548,33 @@
                 <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant. Your medical team has access to your complete clinical picture, which this tool does not.</p>
             </div>
         </footer>
+    </div>
+
+    <!-- City Detail Modal (M3) -->
+    <div id="cityDetailModal" class="city-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modal-city-name">
+        <div class="city-modal-backdrop"></div>
+        <div class="city-modal-content">
+            <div class="city-modal-header">
+                <div>
+                    <h2 id="modal-city-name"></h2>
+                    <span id="modal-state-name" class="state"></span>
+                </div>
+                <button class="city-modal-close" aria-label="Close detail view">&times;</button>
+            </div>
+            <div id="modal-body" class="city-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- City Comparison Modal (M3) -->
+    <div id="cityCompareModal" class="city-modal city-modal--wide" style="display:none" role="dialog" aria-modal="true" aria-labelledby="compare-modal-title">
+        <div class="city-modal-backdrop"></div>
+        <div class="city-modal-content">
+            <div class="city-modal-header">
+                <h2 id="compare-modal-title">City Comparison</h2>
+                <button class="city-modal-close" aria-label="Close comparison">&times;</button>
+            </div>
+            <div id="compare-body" class="city-modal-body"></div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
