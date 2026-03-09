@@ -313,3 +313,35 @@ The multiplier is **toggleable** (default OFF) via a checkbox in the Simulation 
 - Intestine uses pancreas rates as proxy — PMC10329409 has no intestine-specific data.
 - Seed data is manually curated from CDC WONDER; FIXME for automated fetch script.
 - Backend divides Monte Carlo wait times by multiplier (more donors → shorter waits), which is a simplification of the true supply-demand dynamics.
+
+## ADR-018: City Detail Modal & Side-by-Side Comparison UI
+
+**Date:** 2026-03-08
+**Status:** Accepted
+
+**Context:** City cards in the results list show summary data (overall score, wait time, donor availability, compatibility index, quality tier). Users need to see the full 8-category score breakdown, Phase 2 simulation probabilities, competing risks, and key factors — all in one view. Users also need to compare 2–3 cities side by side across all metrics.
+
+**Decision:** Implement three features using the existing modal overlay pattern:
+1. **City Detail Modal** — click any card to see full score breakdown table (8 categories with raw scores, weights, weighted contributions, and inline bar charts), key factors, radar chart, Phase 2 probabilities grid, and competing risks bar.
+2. **Side-by-Side Comparison** — checkboxes on cards (max 3) with a floating compare bar; comparison opens a wider modal with all metrics aligned in a table, best values highlighted green per row.
+3. **Print-Friendly View** — `@media print` rules hide form/map/modals and show both score and probability panels; disclaimer footer auto-appended.
+
+**Architecture:**
+- **Modal overlay** (same z-index 9000 / backdrop pattern as simulation spinner) — no router needed in vanilla JS, preserves scroll position.
+- **Module-scope result storage** (`_currentResults`, `_currentSimResult`, `_currentFormData`) — modals read from stored results, no new data fetching.
+- **Compare checkboxes** use `stopPropagation` on the label to prevent card click (modal) from triggering on checkbox click.
+- **3-city comparison limit** keeps the table readable; unchecked boxes disabled when 3 already selected.
+- **ESC key + backdrop click** to close both modals; body overflow locked while modal is open.
+
+**Rationale:**
+- **Modal over accordion** — accordion would clutter the 22-card list; modal shows full detail without losing scroll context.
+- **Modal over routing** — no router in the stack; adding one for a detail view would be over-engineering.
+- **Reuse existing chart functions** — `createRadarChart()` renders inside modal canvas; `buildRiskBar()` pattern reused for competing risks display.
+- **No new dependencies** — pure vanilla JS/CSS, consistent with project stack.
+- **Print view shows both panels** — physicians may want to see both Phase 1 scores and Phase 2 probabilities in one printout.
+
+**Trade-offs:**
+- Modal approach means only one city detail visible at a time (comparison table mitigates this).
+- Radar chart inside modal requires creating and destroying Chart.js instances on open/close to avoid memory leaks.
+- Compare checkboxes duplicate across score and probability panels (synced via `data-city` attribute matching).
+- Print layout is basic — no custom page breaks or headers/footers beyond the disclaimer.

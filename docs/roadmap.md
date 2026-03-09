@@ -143,7 +143,7 @@
 ### FR-7: Probability Outputs & Visualization (Partial)
 - [x] CDF curves with confidence intervals (M6)
 - [ ] Ranked output: boost vs. current location
-- [ ] Visual comparison panels (side-by-side probability curves)
+- [x] Visual comparison panels (side-by-side probability curves) — M3 comparison table
 - [ ] Exportable chart images
 
 ### FR-4: Configurable Weights
@@ -223,10 +223,10 @@
 | SRTR OPO Reports | Excel download | OPO | Parseable | Already proven in M5 pipeline |
 | HRSA OPTN Modernization | TBD | TBD | TBD | New system targeted fall 2026 |
 
-### M3: City Detail & Comparison UI
-- [ ] City detail modal: full score breakdown (Phase 1 + Phase 2 + competing risks)
-- [ ] Side-by-side comparison: pick 2-3 centers, see all metrics compared
-- [ ] Print-friendly results view for sharing with care team
+### M3: City Detail & Comparison UI ✅
+- [x] City detail modal: full score breakdown (Phase 1 + Phase 2 + competing risks)
+- [x] Side-by-side comparison: pick 2-3 centers, see all metrics compared
+- [x] Print-friendly results view for sharing with care team
 
 ### M4: Policy Toggle Simulator (FR-9)
 - [ ] Backend: parameterize donor rates, sharing policies, organ supply growth

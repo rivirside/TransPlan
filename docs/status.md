@@ -6,9 +6,9 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 3 M2 Complete — Organ-Specific Donor Availability
+## Current State: Phase 3 M3 Complete — City Detail & Comparison UI
 
-Phase 1 MVP complete (98 Jest tests, 48 limitations resolved). Phase 2 probabilistic engine: M1-M7 done. 165 pytest tests passing. Phase 3 M1: Home Center relocation comparison. Phase 3 M2: Organ-specific donor availability model — `calculateDonorAvailabilityScore()` now applies a cause-of-death multiplier based on PMC10329409 organ recovery rates × CDC WONDER state mortality proportions. Toggleable (default OFF), applies to both frontend scoring and backend Monte Carlo wait times. Expected impact: kidney ~1-3%, heart ~5-8%, pancreas ~10-15%. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` (macOS .app bundle, no Terminal window) or `start.command`. Frontend shows dual-mode results: Phase 1 location scores + Phase 2 Monte Carlo probabilities with CDF curves, competing risks charts, tornado sensitivity chart, and probability cards. Graceful degradation when backend unavailable.
+Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 165 pytest tests passing. Phase 3 M1: Home Center relocation comparison. Phase 3 M2: Organ-specific donor availability model. Phase 3 M3: City detail modal + side-by-side comparison + print-friendly view. Click any city card to see full 8-category score breakdown (raw/weight/weighted/bar), key factors, radar chart, Phase 2 probabilities grid, and competing risks bar. Select 2-3 cities via checkboxes for side-by-side comparison table with best-value highlighting. Print button generates clean printout of both panels with disclaimer footer. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` (macOS .app bundle, no Terminal window) or `start.command`. Frontend shows dual-mode results: Phase 1 location scores + Phase 2 Monte Carlo probabilities with CDF curves, competing risks charts, tornado sensitivity chart, and probability cards. Graceful degradation when backend unavailable.
 
 **UI/UX Redesign (March 2026):** Full professional redesign completed. Design token system in CSS custom properties. Header with gradient + curved bottom edge. Methodology section rebuilt as compact accordion (native `<details>/<summary>`) with inline SVG icons. Form grouped into fieldset sections. Two responsive breakpoints (768px tablet, 480px mobile). All JS functionality preserved — zero breaking changes.
 
@@ -54,14 +54,14 @@ Phase 1 MVP complete (98 Jest tests, 48 limitations resolved). Phase 2 probabili
 |-----------|--------|-------|
 | M1: Home Center Comparison | ✅ Done | Home Center dropdown, comparison badges (score + probability), green map marker, CDF reference line, 2 new tests |
 | M2: Organ-Specific Donor Model | ✅ Done | COD multiplier (PMC10329409 × CDC WONDER), toggleable, frontend + backend, 7+2 new tests (ADR-017) |
-| M3: City Detail & Comparison UI | Pending | Detail modal, side-by-side comparison, print-friendly view |
+| M3: City Detail & Comparison UI | ✅ Done | Detail modal (8-cat breakdown + radar + probs), 3-city comparison table, print view (ADR-018) |
 | M4: Policy Toggle Simulator | Pending | Parameterized donor rates, sharing policies, scenario comparison |
 | M5: Equity Analysis | Pending | Demographic simulation matrix, Gini/Theil indices, disparity visualizations |
 | M6: UX Polish & Export | Pending | Dark mode, URL sharing, PDF reports, CSV/JSON export |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 3 M3-M6:** See roadmap for full milestone breakdown
+- **Phase 3 M4-M6:** See roadmap for full milestone breakdown
 - **Deploy:** Configure GitHub Pages (Settings > Pages > Source: main)
 - **FARS API (L-045):** MITIGATED — entire NHTSA FARS API appears retired; seed data preserved; FIXME for CSV bulk download alternative
 - **Deferred:** OPO boundaries (L-009), SRTR outcomes (L-017), donor reg fetch (L-033)
@@ -152,7 +152,7 @@ TransPlan/
     design.md             <- Read when touching UI/UX/CSS
     adr-log.md            <- Grep-searchable decision log
     roadmap.md            <- Phased development plan (5 phases)
-    limitations.md        <- Issue tracker (48 items, L-001 through L-048)
+    limitations.md        <- Issue tracker (56 items, L-001 through L-056)
     brand-bible.md        <- Grep-searchable visual identity
 ```
 
