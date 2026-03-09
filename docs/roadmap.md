@@ -239,10 +239,13 @@
 > modeling how supply changes propagate to wait times) is added to Phase 4 as a
 > future milestone.
 
-### M4: Equity Analysis (FR-10/FR-11) ← was M5
-- [ ] Backend: simulation matrix across demographic profiles (age/sex/blood type/insurance)
-- [ ] Gini/Theil inequality indices for transplant access
-- [ ] Frontend: disparity visualizations, equity alerts
+### M4: Equity Analysis (FR-10/FR-11) ← was M5 ✅
+- [x] Backend: simulation matrix across 48 demographic profiles (8 blood types × 3 age brackets × 2 sexes) — `services/equity.py`
+- [x] Gini coefficient inequality index per city and overall — sorted city rankings, green/yellow/red thresholds
+- [x] Frontend: 3 Chart.js disparity charts (blood type, age bracket, Gini by city), city equity table, summary card, disclaimer banner
+- [x] Mandatory disclaimers (no race, no insurance, model-vs-reality distinction)
+- [x] 28 new pytest tests (193 total), 98 Jest tests unchanged
+- [x] ADR-019 documenting demographic simulation matrix design
 
 ### M5: UX Polish & Export (FR-19/FR-20) ← was M6
 - [ ] Dark mode (CSS custom properties)

@@ -345,3 +345,43 @@ The multiplier is **toggleable** (default OFF) via a checkbox in the Simulation 
 - Radar chart inside modal requires creating and destroying Chart.js instances on open/close to avoid memory leaks.
 - Compare checkboxes duplicate across score and probability panels (synced via `data-city` attribute matching).
 - Print layout is basic — no custom page breaks or headers/footers beyond the disclaimer.
+
+---
+
+## ADR-019: Equity Analysis — Demographic Simulation Matrix
+
+**Date:** 2026-03-09
+**Status:** Accepted
+
+**Context:** Users need to understand how transplant outcomes differ across demographic profiles. The Monte Carlo engine runs a single simulation for one patient's profile, but transplant disparities are well-documented across blood types, age groups, and sex. We need a structured way to surface these model-predicted disparities without overstepping what the model can actually claim.
+
+**Decision:** Implement a demographic stratification matrix that varies blood type (8), age bracket (3), and sex (2) = 48 profiles across all 22 cities, computing Gini coefficient as an inequality metric. Key design choices:
+
+1. **No race/ethnicity simulation** — Race is a social construct; transplant disparities attributed to race are driven by structural factors (insurance, referral patterns, geographic access, implicit bias) that our model cannot capture. We simulate the clinical drivers (blood type, age, sex) that correlate with documented disparities without conflating correlation with causation.
+
+2. **No insurance stratification** — The `insurance` field exists on `PatientProfile` but is unused by the Monte Carlo engine. Including it would produce zero variation and mislead users into thinking insurance impact was being modeled.
+
+3. **Gini coefficient over Theil index** — Gini is simpler, more widely understood, and sufficient for MVP. The [0,1] range maps naturally to green/yellow/red UI feedback. Theil decomposition added to future work.
+
+4. **Fixed seed RNG** (`np.random.default_rng(42)`) — Reproducibility across the 48×22×300 = 316,800 simulation runs.
+
+5. **Mandatory disclaimers** — Every equity response includes 4 hardcoded limitation statements covering: race/ethnicity exclusion, mortality stratification gap, insurance modeling gap, and model-vs-reality distinction.
+
+**Architecture:**
+- `backend/services/equity.py` — Generates 48 profile variants via `model_copy(update={...})`, reuses `_p24_single_city()` from sensitivity.py for efficiency.
+- `backend/routers/equity.py` — `POST /equity-analysis` with configurable iterations (100-1000, default 300).
+- Frontend: Third tab "Equity Analysis" with disclaimer banner, summary card (overall Gini badge), city equity rankings table (sorted by Gini ascending), and 3 Chart.js charts (blood type disparity, age bracket disparity, Gini by city).
+- `equity-charts.js` — IIFE module following `probability-charts.js` pattern.
+- Tab switching extended from 2 to 3 tabs via `initResultsTabs(simAvail, equityAvail)`.
+
+**Rationale:**
+- **48-profile matrix** balances computational cost (~1-5s) with meaningful stratification depth.
+- **Per-city Gini** allows users to see which regions show more equitable model outcomes.
+- **Dimension disparity charts** (blood type, age) show which factors drive the most variation.
+- **Reuse of `_p24_single_city()`** avoids code duplication and ensures consistency with sensitivity analysis.
+
+**Trade-offs:**
+- Equity analysis is sequential (not parallelized) — acceptable for MVP but could be optimized with multiprocessing.
+- Age brackets use representative ages (26, 45, 62) which are approximations of continuous age effects.
+- Gini is computed from p24 values only; could also weight by median wait time for a more holistic metric.
+- Charts show averages across all cities; per-city drill-down charts deferred to future work.
