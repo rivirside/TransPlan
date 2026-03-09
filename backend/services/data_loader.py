@@ -26,6 +26,8 @@ class TransPlanData:
     policy_tiers: dict = field(default_factory=dict)
     socioeconomic: dict = field(default_factory=dict)
     srtr_reports: dict = field(default_factory=dict)
+    # M2: Cause-of-death by region (organ-specific donor availability)
+    cause_of_death: dict = field(default_factory=dict)
     # freshness metadata keyed by logical name
     freshness: dict = field(default_factory=dict)
 
@@ -81,6 +83,7 @@ def load_all() -> TransPlanData:
     data.policy_tiers       = _load_json(DATA_DIR / "manual/policy-tiers.json",    "policy_tiers",    data)
     data.socioeconomic      = _load_json(DATA_DIR / "manual/socioeconomic.json",   "socioeconomic",   data)
     data.srtr_reports       = _load_json(DATA_DIR / "manual/srtr-reports.json",    "srtr_reports",    data)
+    data.cause_of_death     = _load_json(DATA_DIR / "cause-of-death-by-region.json", "cause_of_death", data)
 
     loaded = sum(1 for v in data.freshness.values() if v not in ("missing", "parse_error"))
     logger.info("TransPlan data loaded: %d/%d files OK", loaded, len(data.freshness))

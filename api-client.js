@@ -55,6 +55,9 @@
     // Relocation comparison
     if (formData.homeCenter) profile.home_center = formData.homeCenter;
 
+    // M2: Organ-specific donor availability adjustment
+    if (formData.adjustForCauseOfDeath) profile.adjust_for_cause_of_death = true;
+
     return profile;
   }
 

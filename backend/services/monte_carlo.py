@@ -23,6 +23,7 @@ import numpy as np
 from config import SIMULATION_ITERATIONS
 from models.schemas import CityProbability, PatientProfile, SimulationResult
 from services.competing_risks import get_annual_mortality_rate, get_annual_delisting_rate
+from services.data_loader import get_data
 from services.distributions import get_wait_time_distribution
 
 logger = logging.getLogger(__name__)
@@ -52,6 +53,61 @@ CITIES = [
     {"city": "Los Angeles", "state": "CA"},
     {"city": "Palo Alto", "state": "CA"},
 ]
+
+# State abbreviation to full name for cause-of-death data lookup
+_STATE_FULL_NAMES = {
+    "PA": "Pennsylvania", "MD": "Maryland", "NY": "New York",
+    "MN": "Minnesota", "WI": "Wisconsin", "IL": "Illinois",
+    "OH": "Ohio", "MO": "Missouri", "IN": "Indiana",
+    "NE": "Nebraska", "TN": "Tennessee", "NC": "North Carolina",
+    "FL": "Florida", "TX": "Texas", "OR": "Oregon",
+    "WA": "Washington", "CA": "California",
+}
+
+
+def _get_cod_multiplier(state_abbrev: str, organ: str) -> float:
+    """
+    Compute organ-specific cause-of-death multiplier for Monte Carlo.
+
+    Returns a value centered around 1.0. Values > 1.0 mean more donors
+    available for this organ in this state → shorter waits (divide times).
+
+    Uses PMC10329409 recovery rates × CDC WONDER state mortality proportions.
+    Returns 1.0 (no adjustment) if data is unavailable.
+    """
+    try:
+        cod = get_data().cause_of_death
+    except RuntimeError:
+        return 1.0
+    if not cod:
+        return 1.0
+
+    recovery_rates = cod.get("organRecoveryRates", {}).get(organ)
+    state_name = _STATE_FULL_NAMES.get(state_abbrev)
+    if not recovery_rates or not state_name:
+        return 1.0
+
+    proportions = cod.get("stateCauseOfDeathProportions", {}).get(state_name)
+    if not proportions:
+        return 1.0
+
+    categories = ["trauma", "cardiovascular", "drug_intox", "stroke"]
+    state_score = sum(proportions.get(c, 0) * recovery_rates.get(c, 0) for c in categories)
+
+    # National average across all states in the dataset
+    all_states = cod.get("stateCauseOfDeathProportions", {})
+    if not all_states:
+        return 1.0
+
+    nat_total = sum(
+        sum(sp.get(c, 0) * recovery_rates.get(c, 0) for c in categories)
+        for sp in all_states.values()
+    )
+    nat_avg = nat_total / len(all_states)
+
+    if nat_avg == 0:
+        return 1.0
+    return state_score / nat_avg
 
 
 def _bootstrap_ci(outcomes: np.ndarray, event: int, threshold_months: np.ndarray, time_horizon: float, confidence: float = 0.95, n_bootstrap: int = 200) -> tuple[float, float]:
@@ -113,6 +169,12 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
             las=patient.las,
         )
         transplant_times = dist.rvs(size=n_iterations)
+
+        # --- Apply organ-specific cause-of-death multiplier (M2) ---
+        if patient.adjust_for_cause_of_death:
+            cod_mult = _get_cod_multiplier(state, patient.organ)
+            if cod_mult > 0:
+                transplant_times = transplant_times / cod_mult  # more donors → shorter waits
 
         # --- Draw mortality times from exponential ---
         annual_mort = get_annual_mortality_rate(

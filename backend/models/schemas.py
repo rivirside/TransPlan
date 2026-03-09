@@ -22,6 +22,11 @@ class PatientProfile(BaseModel):
     las: Optional[float] = Field(None, ge=0, le=100, description="Lung only: Lung Allocation Score")
     # Relocation comparison
     home_center: Optional[str] = Field(None, description="Patient's current transplant listing center (city name)")
+    # Organ-specific donor availability adjustment
+    adjust_for_cause_of_death: bool = Field(
+        False,
+        description="Apply organ-specific donor recovery rates based on regional cause-of-death patterns"
+    )
 
 
 class CityProbability(BaseModel):

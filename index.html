@@ -146,7 +146,13 @@
                                 </select>
                                 <small class="field-help">Select your current transplant center to see how other cities compare.</small>
                             </div>
-                            <!-- M2: organ-specific donor availability toggle will go here -->
+                            <div class="form-group">
+                                <label class="overlay-toggle" for="adjustCauseOfDeath">
+                                    <input type="checkbox" id="adjustCauseOfDeath">
+                                    <span>Adjust for regional cause-of-death patterns</span>
+                                </label>
+                                <small class="field-help">Applies organ-specific donor recovery rates based on state-level mortality data (trauma, stroke, cardiovascular, drug intoxication).</small>
+                            </div>
                         </div>
                     </fieldset>
 

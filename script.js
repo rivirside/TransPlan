@@ -2018,7 +2018,8 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
         cpra: parseInt(document.getElementById('cpra')?.value) || 0,
         meld: parseInt(document.getElementById('meld')?.value) || 0,
         las: parseInt(document.getElementById('las')?.value) || 0,
-        homeCenter: document.getElementById('homeCenter')?.value || ''
+        homeCenter: document.getElementById('homeCenter')?.value || '',
+        adjustForCauseOfDeath: document.getElementById('adjustCauseOfDeath')?.checked || false
     };
 
     // Show loading spinner

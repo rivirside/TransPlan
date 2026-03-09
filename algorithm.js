@@ -151,10 +151,39 @@ function calculateWaitTimeScore(city, organType, formData) {
 }
 
 /**
+ * Compute organ-specific cause-of-death multiplier for a state.
+ * Returns a multiplier centered around 1.0, or null if data is missing.
+ *
+ * Formula: multiplier = stateOrganScore / nationalAvgOrganScore
+ * where stateOrganScore = SUM(proportion[cod] * recoveryRate[organ][cod])
+ *
+ * Source: PMC10329409 organ recovery conversion matrix + CDC WONDER state mortality
+ */
+function _computeCodMultiplier(state, organType, codData) {
+    const rates = codData.organRecoveryRates[organType];
+    const props = codData.stateCauseOfDeathProportions[state];
+    if (!rates || !props) return null;
+
+    const cats = ['trauma', 'cardiovascular', 'drug_intox', 'stroke'];
+
+    // This state's organ-specific score
+    const stateScore = cats.reduce((s, c) => s + (props[c] || 0) * (rates[c] || 0), 0);
+
+    // National average across all states in the dataset
+    const allStates = Object.values(codData.stateCauseOfDeathProportions);
+    if (allStates.length === 0) return null;
+    const natAvg = allStates.reduce((sum, sp) =>
+        sum + cats.reduce((s, c) => s + (sp[c] || 0) * (rates[c] || 0), 0), 0) / allStates.length;
+
+    return natAvg > 0 ? stateScore / natAvg : null;
+}
+
+/**
  * Category 3: Donor Availability (Weight: 18%)
  * Factors: Registration rate, trauma centers, population density, living donor programs
+ * Optional M2 organ-specific adjustment via cause-of-death patterns (when formData.adjustForCauseOfDeath is true)
  */
-function calculateDonorAvailabilityScore(city, state, organType) {
+function calculateDonorAvailabilityScore(city, state, organType, formData) {
     let score = 0;
     const donorData = window.TransPlanData?.donorRegistration;
     const trafficData = window.TransPlanData?.trafficFatalities;
@@ -205,7 +234,19 @@ function calculateDonorAvailabilityScore(city, state, organType) {
     };
     score += ((traumaScores[city] || 50) / 100) * 100 * 0.08;
 
-    return score;
+    // M2: Organ-specific adjustment based on regional cause-of-death patterns
+    // When toggle is ON, multiply score by organ/state-specific factor (centered at 1.0)
+    if (formData && formData.adjustForCauseOfDeath) {
+        const codData = window.TransPlanData?.causeOfDeath;
+        if (codData?.organRecoveryRates && codData?.stateCauseOfDeathProportions) {
+            const mult = _computeCodMultiplier(state, organType, codData);
+            if (mult !== null) {
+                score *= mult;
+            }
+        }
+    }
+
+    return Math.min(100, Math.max(0, score));
 }
 
 /**
@@ -386,7 +427,7 @@ function calculateComprehensiveScore(formData, cityName, stateName, organType) {
     const scores = {
         medicalCompatibility: calculateMedicalCompatibilityScore(formData, cityName, organType),
         waitTime: calculateWaitTimeScore(cityName, organType, formData),
-        donorAvailability: calculateDonorAvailabilityScore(cityName, stateName, organType),
+        donorAvailability: calculateDonorAvailabilityScore(cityName, stateName, organType, formData),
         hospitalQuality: calculateHospitalQualityScore(cityName, organType, formData),
         geographic: calculateGeographicScore(cityName),
         healthDemographics: calculateHealthDemographicsScore(cityName),
