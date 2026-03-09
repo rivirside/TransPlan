@@ -519,6 +519,11 @@ const cityCoordinates = {
     "Indianapolis": [39.7684, -86.1581]
 };
 
+// M3: Stored results for detail modal and comparison
+let _currentResults = null;
+let _currentSimResult = null;
+let _currentFormData = null;
+
 // Map layers
 let map;
 let trafficHeatLayer;
@@ -2252,10 +2257,16 @@ function calculateResults(formData) {
 }
 
 function displayResults(cities, formData) {
+    _currentResults = cities;
+    _currentFormData = formData;
+
     const resultsSection = document.getElementById('resultsSection');
     const resultsContainer = document.getElementById('resultsContainer');
 
     resultsContainer.innerHTML = '';
+
+    // Reset comparison checkboxes
+    _clearCompareSelection();
 
     // Show urgency warning for Status 1 (critical) patients
     let warningEl = document.getElementById('urgency-warning');
@@ -2330,6 +2341,9 @@ function createCityCard(city, rank, formData, homeCenter) {
 
     // Note: innerHTML values are all derived from internal algorithm data (city names,
     // computed scores, static strings), not from user-supplied or external content.
+    card.style.cursor = 'pointer';
+    card.dataset.city = city.city;
+
     card.innerHTML = `
         <div class="city-header">
             <div class="city-info">
@@ -2337,6 +2351,10 @@ function createCityCard(city, rank, formData, homeCenter) {
                 <p class="state">${city.state}</p>
             </div>
             <div class="city-header-right">
+                <label class="compare-check" onclick="event.stopPropagation()" title="Add to comparison">
+                    <input type="checkbox" data-city="${city.city}" data-panel="scores" onchange="updateCompareBar()">
+                    Compare
+                </label>
                 ${comparisonHtml}
                 <div class="rank-badge">Rank #${rank}</div>
             </div>
@@ -2380,6 +2398,11 @@ function createCityCard(city, rank, formData, homeCenter) {
             </ul>
         </div>
     `;
+
+    card.addEventListener('click', function(e) {
+        if (e.target.closest('.compare-check')) return;
+        openCityDetail(city.city);
+    });
 
     // Render radar chart after card is in DOM
     if (city.scoreBreakdown) {
@@ -2477,6 +2500,9 @@ function initResultsTabs(simulationAvailable) {
  * @param {Object} [formData] - Form data for sensitivity analysis
  */
 function renderProbabilityView(simResult, formData) {
+    _currentSimResult = simResult;
+    if (formData) _currentFormData = formData;
+
     const container = document.getElementById('probabilityContainer');
     if (!container) return;
     container.textContent = '';
@@ -2548,6 +2574,8 @@ function _el(tag, className, text) {
  */
 function createProbabilityCard(city, rank, homeCenter) {
     const card = _el('div', 'prob-card');
+    card.style.cursor = 'pointer';
+    card.dataset.city = city.city;
 
     if (rank <= 3) card.classList.add('rank-' + rank);
 
@@ -2562,8 +2590,27 @@ function createProbabilityCard(city, rank, homeCenter) {
     info.appendChild(_el('h3', null, city.city));
     info.appendChild(_el('span', 'state', city.state));
     header.appendChild(info);
-    header.appendChild(_el('span', 'prob-card-rank', '#' + rank));
+
+    const headerRight = _el('div', 'city-header-right');
+    const compareLabel = _el('label', 'compare-check');
+    compareLabel.title = 'Add to comparison';
+    compareLabel.onclick = function(e) { e.stopPropagation(); };
+    const compareInput = document.createElement('input');
+    compareInput.type = 'checkbox';
+    compareInput.dataset.city = city.city;
+    compareInput.dataset.panel = 'probs';
+    compareInput.onchange = updateCompareBar;
+    compareLabel.appendChild(compareInput);
+    compareLabel.appendChild(document.createTextNode(' Compare'));
+    headerRight.appendChild(compareLabel);
+    headerRight.appendChild(_el('span', 'prob-card-rank', '#' + rank));
+    header.appendChild(headerRight);
     card.appendChild(header);
+
+    card.addEventListener('click', function(e) {
+        if (e.target.closest('.compare-check')) return;
+        openCityDetail(city.city);
+    });
 
     // Comparison indicator
     if (homeCenter) {
@@ -2656,4 +2703,407 @@ function probClass(v) {
     if (v >= 0.5) return 'high';
     if (v >= 0.2) return 'mid';
     return 'low';
+}
+
+// ==================== M3: City Detail Modal ====================
+
+const CATEGORY_LABELS = {
+    medicalCompatibility: 'Medical Compatibility',
+    waitTime: 'Wait Time',
+    donorAvailability: 'Donor Availability',
+    hospitalQuality: 'Hospital Quality',
+    geographic: 'Geographic',
+    healthDemographics: 'Health Demographics',
+    policy: 'Policy',
+    socioeconomic: 'Socioeconomic'
+};
+
+const CATEGORY_WEIGHTS = {
+    medicalCompatibility: 25,
+    waitTime: 20,
+    donorAvailability: 18,
+    hospitalQuality: 15,
+    geographic: 10,
+    healthDemographics: 7,
+    policy: 3,
+    socioeconomic: 2
+};
+
+function openCityDetail(cityName) {
+    var city = _currentResults ? _currentResults.find(function(c) { return c.city === cityName; }) : null;
+    var simCity = _currentSimResult && _currentSimResult.cities
+        ? _currentSimResult.cities.find(function(c) { return c.city === cityName; })
+        : null;
+    if (!city && !simCity) return;
+
+    var modal = document.getElementById('cityDetailModal');
+    var nameEl = document.getElementById('modal-city-name');
+    var stateEl = document.getElementById('modal-state-name');
+    var body = document.getElementById('modal-body');
+
+    nameEl.textContent = city ? city.city : simCity.city;
+    stateEl.textContent = city ? city.state : simCity.state;
+    body.innerHTML = '';
+
+    // Rank info
+    if (city) {
+        var rank = _currentResults.indexOf(city) + 1;
+        var overallDiv = document.createElement('div');
+        overallDiv.className = 'modal-overall-score';
+        overallDiv.innerHTML = '<span class="score-big">' + city.personalizedScore.toFixed(1) + '</span>' +
+            '<span class="score-label">/100 &mdash; Rank #' + rank + '</span>';
+        body.appendChild(overallDiv);
+    }
+
+    // Home center comparison
+    if (city && _currentFormData && _currentFormData.homeCenter) {
+        var homeCity = _currentResults.find(function(c) { return c.city === _currentFormData.homeCenter; });
+        if (homeCity && homeCity.city !== city.city) {
+            var delta = city.personalizedScore - homeCity.personalizedScore;
+            var compDiv = document.createElement('div');
+            compDiv.className = 'comparison-badge ' + (delta >= 0 ? 'comparison-positive' : 'comparison-negative');
+            compDiv.style.display = 'inline-block';
+            compDiv.style.marginBottom = 'var(--space-4)';
+            compDiv.textContent = (delta >= 0 ? '+' : '') + delta.toFixed(1) + ' pts vs. ' + homeCity.city;
+            body.appendChild(compDiv);
+        }
+    }
+
+    // Score breakdown table
+    if (city && city.scoreBreakdown) {
+        var section = _modalSection('Score Breakdown');
+        var table = document.createElement('table');
+        table.className = 'modal-score-table';
+        table.innerHTML = '<thead><tr><th>Category</th><th class="num">Score</th><th class="num">Weight</th><th class="num">Contribution</th><th class="modal-score-bar-cell">Visual</th></tr></thead>';
+        var tbody = document.createElement('tbody');
+        var keys = Object.keys(CATEGORY_LABELS);
+        keys.forEach(function(key) {
+            var raw = city.scoreBreakdown[key] || 0;
+            var weight = CATEGORY_WEIGHTS[key] || 0;
+            var contribution = (raw * weight / 100).toFixed(1);
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td class="cat-name">' + CATEGORY_LABELS[key] + '</td>' +
+                '<td class="num">' + raw.toFixed(1) + '</td>' +
+                '<td class="num">' + weight + '%</td>' +
+                '<td class="num">' + contribution + '</td>' +
+                '<td class="modal-score-bar-cell"><div class="modal-score-bar"><div class="modal-score-bar-fill" style="width:' + raw + '%"></div></div></td>';
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        section.appendChild(table);
+        body.appendChild(section);
+    }
+
+    // Key factors
+    if (city && city.factors && city.factors.length > 0) {
+        var factorsSection = _modalSection('Key Factors');
+        var ul = document.createElement('ul');
+        ul.className = 'modal-factors';
+        city.factors.forEach(function(f) {
+            var li = document.createElement('li');
+            li.textContent = f;
+            ul.appendChild(li);
+        });
+        factorsSection.appendChild(ul);
+        body.appendChild(factorsSection);
+    }
+
+    // Radar chart
+    if (city && city.scoreBreakdown && window.TransPlanCharts) {
+        var radarSection = _modalSection('Score Profile');
+        var canvas = document.createElement('canvas');
+        canvas.id = 'modal-radar-chart';
+        canvas.style.maxHeight = '300px';
+        radarSection.appendChild(canvas);
+        body.appendChild(radarSection);
+        setTimeout(function() {
+            window.TransPlanCharts.createRadarChart('modal-radar-chart', city.scoreBreakdown, city.city);
+        }, 50);
+    }
+
+    // Phase 2 probabilities
+    if (simCity) {
+        var probSection = _modalSection('Transplant Probabilities');
+        var grid = document.createElement('div');
+        grid.className = 'modal-prob-grid';
+        var timepoints = [
+            ['6 months', simCity.p_transplant_6mo],
+            ['12 months', simCity.p_transplant_12mo],
+            ['24 months', simCity.p_transplant_24mo],
+            ['36 months', simCity.p_transplant_36mo]
+        ];
+        timepoints.forEach(function(tp) {
+            var item = document.createElement('div');
+            item.className = 'modal-prob-item';
+            item.innerHTML = '<div class="label">' + tp[0] + '</div>' +
+                '<div class="value ' + probClass(tp[1]) + '">' + formatPct(tp[1]) + '</div>';
+            grid.appendChild(item);
+        });
+        // Median wait
+        var medianItem = document.createElement('div');
+        medianItem.className = 'modal-prob-item';
+        medianItem.innerHTML = '<div class="label">Median Wait</div>' +
+            '<div class="value">' + simCity.median_wait_months.toFixed(1) + ' mo</div>';
+        grid.appendChild(medianItem);
+        probSection.appendChild(grid);
+
+        // 95% CI
+        var ci = simCity.confidence_interval_95 || [0, 0];
+        var ciDiv = document.createElement('div');
+        ciDiv.style.marginTop = 'var(--space-3)';
+        ciDiv.style.fontSize = 'var(--fs-sm)';
+        ciDiv.style.color = 'var(--text-3)';
+        ciDiv.textContent = '95% CI at 24 mo: ' + formatPct(ci[0]) + ' \u2013 ' + formatPct(ci[1]);
+        probSection.appendChild(ciDiv);
+
+        body.appendChild(probSection);
+
+        // Competing risks
+        if (simCity.competing_risks) {
+            var riskSection = _modalSection('24-Month Waitlist Outcomes');
+            riskSection.appendChild(buildRiskBar(simCity.competing_risks));
+            body.appendChild(riskSection);
+        }
+    }
+
+    // Show modal
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('.city-modal-close').focus();
+}
+
+function _modalSection(title) {
+    var section = document.createElement('div');
+    section.className = 'modal-section';
+    var h3 = document.createElement('h3');
+    h3.textContent = title;
+    section.appendChild(h3);
+    return section;
+}
+
+function closeCityDetail() {
+    var modal = document.getElementById('cityDetailModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+    // Destroy radar chart if any
+    if (window.TransPlanCharts && window.TransPlanCharts.destroyChart) {
+        window.TransPlanCharts.destroyChart('modal-radar-chart');
+    }
+}
+
+function closeCompareModal() {
+    var modal = document.getElementById('cityCompareModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+// Close modals on backdrop click
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('city-modal-backdrop')) {
+        var modal = e.target.closest('.city-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    }
+});
+
+// Close modals on ESC key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        var detail = document.getElementById('cityDetailModal');
+        var compare = document.getElementById('cityCompareModal');
+        if (compare && compare.style.display !== 'none') {
+            closeCompareModal();
+        } else if (detail && detail.style.display !== 'none') {
+            closeCityDetail();
+        }
+    }
+});
+
+// Close button handlers
+document.addEventListener('DOMContentLoaded', function() {
+    var detailClose = document.querySelector('#cityDetailModal .city-modal-close');
+    if (detailClose) detailClose.addEventListener('click', closeCityDetail);
+    var compareClose = document.querySelector('#cityCompareModal .city-modal-close');
+    if (compareClose) compareClose.addEventListener('click', closeCompareModal);
+
+    // Compare bar buttons
+    var compareBtn = document.getElementById('compareBtn');
+    if (compareBtn) compareBtn.addEventListener('click', openCityComparison);
+    var clearBtn = document.getElementById('compareClear');
+    if (clearBtn) clearBtn.addEventListener('click', _clearCompareSelection);
+});
+
+// ==================== M3: Side-by-Side Comparison ====================
+
+function updateCompareBar() {
+    var checked = document.querySelectorAll('.compare-check input:checked');
+    var bar = document.getElementById('compareBar');
+    var countEl = document.getElementById('compareCount');
+    var btn = document.getElementById('compareBtn');
+    if (!bar) return;
+
+    var count = checked.length;
+    bar.style.display = count >= 1 ? 'flex' : 'none';
+    countEl.textContent = count + ' selected';
+    btn.disabled = count < 2;
+
+    // Disable unchecked boxes when 3 already selected
+    var allBoxes = document.querySelectorAll('.compare-check input');
+    allBoxes.forEach(function(box) {
+        if (!box.checked) {
+            box.disabled = count >= 3;
+            box.closest('.compare-check').title = count >= 3 ? 'Maximum 3 cities' : 'Add to comparison';
+        }
+    });
+}
+
+function _clearCompareSelection() {
+    var allBoxes = document.querySelectorAll('.compare-check input');
+    allBoxes.forEach(function(box) {
+        box.checked = false;
+        box.disabled = false;
+    });
+    var bar = document.getElementById('compareBar');
+    if (bar) bar.style.display = 'none';
+}
+
+function openCityComparison() {
+    var checked = document.querySelectorAll('.compare-check input:checked');
+    var cityNames = [];
+    checked.forEach(function(box) { cityNames.push(box.dataset.city); });
+    if (cityNames.length < 2) return;
+
+    // Gather data for selected cities
+    var cities = cityNames.map(function(name) {
+        var phase1 = _currentResults ? _currentResults.find(function(c) { return c.city === name; }) : null;
+        var phase2 = _currentSimResult && _currentSimResult.cities
+            ? _currentSimResult.cities.find(function(c) { return c.city === name; })
+            : null;
+        return { name: name, phase1: phase1, phase2: phase2 };
+    });
+
+    var modal = document.getElementById('cityCompareModal');
+    var body = document.getElementById('compare-body');
+    body.innerHTML = '';
+
+    var table = document.createElement('table');
+    table.className = 'compare-table';
+
+    // Header row
+    var thead = document.createElement('thead');
+    var headerRow = document.createElement('tr');
+    headerRow.appendChild(_th('Metric'));
+    cities.forEach(function(c) {
+        var th = _th(c.name);
+        var stateText = c.phase1 ? c.phase1.state : (c.phase2 ? c.phase2.state : '');
+        th.innerHTML = c.name + '<br><small style="font-weight:normal;color:var(--text-3)">' + stateText + '</small>';
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    var tbody = document.createElement('tbody');
+
+    // Phase 1 scores
+    if (cities[0].phase1) {
+        tbody.appendChild(_sectionRow('Location Scores', cities.length + 1));
+        _addCompareRow(tbody, 'Overall Score', cities.map(function(c) {
+            return c.phase1 ? c.phase1.personalizedScore.toFixed(1) : '—';
+        }), 'max');
+
+        var catKeys = Object.keys(CATEGORY_LABELS);
+        catKeys.forEach(function(key) {
+            _addCompareRow(tbody, CATEGORY_LABELS[key] + ' (' + CATEGORY_WEIGHTS[key] + '%)', cities.map(function(c) {
+                if (!c.phase1 || !c.phase1.scoreBreakdown) return '—';
+                return c.phase1.scoreBreakdown[key] ? c.phase1.scoreBreakdown[key].toFixed(1) : '—';
+            }), 'max');
+        });
+    }
+
+    // Phase 2 probabilities
+    if (cities.some(function(c) { return c.phase2; })) {
+        tbody.appendChild(_sectionRow('Simulation Probabilities', cities.length + 1));
+        _addCompareRow(tbody, 'P(transplant 6 mo)', cities.map(function(c) {
+            return c.phase2 ? formatPct(c.phase2.p_transplant_6mo) : '—';
+        }), 'max');
+        _addCompareRow(tbody, 'P(transplant 12 mo)', cities.map(function(c) {
+            return c.phase2 ? formatPct(c.phase2.p_transplant_12mo) : '—';
+        }), 'max');
+        _addCompareRow(tbody, 'P(transplant 24 mo)', cities.map(function(c) {
+            return c.phase2 ? formatPct(c.phase2.p_transplant_24mo) : '—';
+        }), 'max');
+        _addCompareRow(tbody, 'P(transplant 36 mo)', cities.map(function(c) {
+            return c.phase2 ? formatPct(c.phase2.p_transplant_36mo) : '—';
+        }), 'max');
+        _addCompareRow(tbody, 'Median Wait', cities.map(function(c) {
+            return c.phase2 ? c.phase2.median_wait_months.toFixed(1) + ' mo' : '—';
+        }), 'min');
+
+        // Competing risks
+        if (cities.some(function(c) { return c.phase2 && c.phase2.competing_risks; })) {
+            _addCompareRow(tbody, 'P(mortality 24 mo)', cities.map(function(c) {
+                return c.phase2 && c.phase2.competing_risks ? formatPct(c.phase2.competing_risks.p_mortality_24mo || 0) : '—';
+            }), 'min');
+            _addCompareRow(tbody, 'P(delisting 24 mo)', cities.map(function(c) {
+                return c.phase2 && c.phase2.competing_risks ? formatPct(c.phase2.competing_risks.p_delisting_24mo || 0) : '—';
+            }), 'min');
+        }
+    }
+
+    table.appendChild(tbody);
+    body.appendChild(table);
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function _th(text) {
+    var th = document.createElement('th');
+    th.textContent = text;
+    return th;
+}
+
+function _sectionRow(label, colspan) {
+    var tr = document.createElement('tr');
+    tr.className = 'section-row';
+    var td = document.createElement('td');
+    td.colSpan = colspan;
+    td.textContent = label;
+    tr.appendChild(td);
+    return tr;
+}
+
+function _addCompareRow(tbody, label, values, bestDirection) {
+    var tr = document.createElement('tr');
+    var labelTd = document.createElement('td');
+    labelTd.textContent = label;
+    tr.appendChild(labelTd);
+
+    // Find best value index
+    var numericValues = values.map(function(v) {
+        return parseFloat(v) || 0;
+    });
+    var bestIdx = -1;
+    if (values.some(function(v) { return v !== '—'; })) {
+        if (bestDirection === 'max') {
+            bestIdx = numericValues.indexOf(Math.max.apply(null, numericValues));
+        } else {
+            // For 'min', find lowest non-zero
+            var filtered = numericValues.map(function(v, i) { return values[i] === '—' ? Infinity : v; });
+            bestIdx = filtered.indexOf(Math.min.apply(null, filtered));
+        }
+    }
+
+    values.forEach(function(val, i) {
+        var td = document.createElement('td');
+        td.className = 'num';
+        td.textContent = val;
+        if (i === bestIdx && val !== '—' && values.filter(function(v) { return v !== '—'; }).length > 1) {
+            td.classList.add('compare-best');
+        }
+        tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
 }
