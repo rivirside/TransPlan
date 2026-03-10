@@ -61,12 +61,29 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 3 M5:** See roadmap for full milestone breakdown
-- **Deploy:** Configure GitHub Pages (Settings > Pages > Source: main)
-- **FARS API (L-045):** MITIGATED — entire NHTSA FARS API appears retired; seed data preserved; FIXME for CSV bulk download alternative
-- **Deferred:** OPO boundaries (L-009), SRTR outcomes (L-017), donor reg fetch (L-033)
+- **Pick winning UI theme** (#3) — 3 professional themes (Clinical/Research/Government) live for comparison
+- **Phase 3 M5:** UX Polish & Export (#4–#9) — dark mode, URL sharing, PDF/CSV/JSON export, sensitivity sliders
+- **Deploy:** Configure GitHub Pages (#2)
+- **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
+- **Deferred:** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21)
 - See `docs/roadmap.md` for full phased plan (5 phases through FDA clearance)
 - See `docs/ideas.md` for full SRS with architecture, governance, and regulatory details
+
+## Issue Tracking
+
+**GitHub Issues** is the primary tracker for actionable work items (bugs, features, limitations). 23 issues across 5 milestones:
+
+| Milestone | Issues | Description |
+|-----------|--------|-------------|
+| Phase 1: Deployment | 2 | GitHub Pages, FARS API |
+| Phase 3: UI Overhaul | 1 | Pick winning theme, merge, cleanup |
+| Phase 3 M5: UX Polish & Export | 6 | Dark mode, URL sharing, PDF/CSV/JSON, charts, sensitivity sliders |
+| M2b: COD Model Data Quality | 8 | L-049 through L-056 — upgrade COD multiplier |
+| Phase 4: Advanced Modeling | 2 | Configurable weights, causal policy simulator |
+
+**Labels:** `phase:*`, `priority:*`, `limitation`, `cod-model`, `blocked`, `deferred`, `ui/ux`, `backend`, `frontend`, `data-quality`, `data-pipeline`, `milestone:m5`
+
+**Doc files stay as reference:** `status.md` (session start), `design.md` (UI guidelines), `brand-bible.md` (colors/fonts), `limitations.md` (full issue descriptions with file paths and fix complexity).
 
 ## File Map
 
@@ -91,7 +108,9 @@ TransPlan/
   script.js               <- UI, map, form, results display, probability card rendering
   data-loader.js          <- Runtime JSON loader with fallbacks
   charts.js               <- Chart.js radar/bar/donut charts
-  styles.css              <- All CSS: design tokens, accordion, responsive (768px + 480px)
+  styles.css              <- All CSS: design tokens, nav bar, accordion, responsive (768px + 480px)
+  themes.css              <- TEMPORARY: 3 professional theme overrides (clinical/research/government)
+  theme-switcher.js       <- TEMPORARY: floating theme picker (remove after winner selected)
   package.json            <- Node deps (xml2js, jest)
   README.md               <- User-facing docs
   tests/                  <- Unit tests (Jest)
