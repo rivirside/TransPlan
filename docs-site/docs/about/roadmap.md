@@ -8,11 +8,11 @@ TransPlan's development plan covers 5 phases from open-source educational tool t
 
 ## Phase 1: MVP (Complete)
 
-Static site scoring 22 cities across 8 weighted categories using 40+ data points. The core scoring algorithm covers all 8 categories and all 6 organs, with organ-specific inputs (cPRA, MELD, LAS). Visualizations use Chart.js (stacked bar, radar, donut) and a Leaflet interactive map. The data pipeline runs on GitHub Actions with 5 API sources. 91 Jest unit tests provide coverage. Accessibility (ARIA, keyboard navigation) and CDN fallback guards are in place, and a professional UI/UX redesign introduced the Inter font and design token system.
+Static site scoring 22 cities across 8 weighted categories using 40+ data points. The core scoring algorithm covers all 8 categories and all 6 organs, with organ-specific inputs (cPRA, MELD, LAS). Visualizations use Chart.js (stacked bar, radar, donut) and a Leaflet interactive map. The data pipeline runs on GitHub Actions with 5 API sources. 98 Jest unit tests provide coverage. Accessibility (ARIA, keyboard navigation) and CDN fallback guards are in place, and a professional UI/UX redesign introduced the Inter font and design token system. Multi-page architecture with landing page and simulator. 4-theme system (Default, Clinical, Research, Government).
 
-## Phase 2: Probabilistic Engine (Mostly Complete)
+## Phase 2: Probabilistic Engine (Complete)
 
-Monte Carlo simulation + competing risks modeling.
+Monte Carlo simulation + competing risks modeling. All 7 milestones complete. 193 pytest tests.
 
 | Milestone | Status |
 |-----------|--------|
@@ -22,20 +22,27 @@ Monte Carlo simulation + competing risks modeling.
 | M4: Competing risks model | ✅ Complete |
 | M5: SRTR data pipeline (Excel PSR) | ✅ Complete |
 | M6: Frontend integration | ✅ Complete |
-| **M7: Validation & docs** | In Progress |
+| M7: Validation & docs | ✅ Complete |
 
-**M7 remaining work:**
-1. Brier score retrospective validation against SRTR outcomes
-2. Sensitivity analysis (tornado charts showing which inputs most affect output)
-3. This documentation site
+M7 deliverables: Brier score retrospective validation (BS < 0.001 all organs), sensitivity analysis (tornado charts), this documentation site.
 
-## Phase 3: Advanced Analytics
+## Phase 3: UI Overhaul & Advanced Features (In Progress)
 
-Phase 3 will introduce a multi-listing optimizer to model probability improvement from listing at N cities simultaneously, clinical trajectory modeling with MELD progression curves and cPRA changes post-desensitization, a policy impact simulator to toggle allocation policy changes and see projected effects, center-level drill-down to compare specific transplant programs within a city, PDF report export for clinical discussions, and Jupyter notebooks for open reproducible research.
+| Milestone | Status |
+|-----------|--------|
+| M1: Home Center Comparison | ✅ Complete |
+| M2: Organ-Specific Donor Model (COD multiplier) | ✅ Complete |
+| M3: City Detail & Comparison UI | ✅ Complete |
+| M4: Equity Analysis | ✅ Complete |
+| M5: UX Polish & Export | Pending |
 
-## Phase 4: Data Quality and Validation
+**M1** added Home Center dropdown for relocation comparison, with score/probability badges and green map marker. **M2** introduced the organ-specific cause-of-death donor multiplier using PMC10329409 recovery rates and CDC WONDER data. **M3** added city detail modals (click any card for 8-category breakdown) and side-by-side comparison (up to 3 cities) with print view. **M4** added demographic equity analysis with a 48-profile matrix, Gini coefficient, and 3 charts.
 
-Phase 4 will add Brier score validation of Monte Carlo estimates against SRTR historical outcomes, an equity analysis to identify and surface disparities by race, insurance status, and geography, real-time SRTR integration via direct API access when SRTR makes data available programmatically, and an IRB study in partnership with transplant centers for prospective validation.
+**M5 remaining work:** dark mode, URL sharing, PDF/CSV/JSON export, sensitivity sliders.
+
+## Phase 4: Advanced Modeling
+
+Phase 4 will add configurable weights (user-adjustable category weights saved in URL), a causal policy simulator (toggle allocation policy changes and see projected effects), real-time SRTR integration via direct API access when SRTR makes data available programmatically, and an IRB study in partnership with transplant centers for prospective validation. COD model data quality improvements (L-049 through L-056) are tracked under the M2b milestone.
 
 ## Phase 5: FDA Clearance Path
 
@@ -49,6 +56,6 @@ This is an open-source project. Contributions are welcome:
 
 1. [Development Guide](/contributing/development-guide): setup and conventions
 2. [Data Curation](/contributing/data-curation): improving data quality
-3. [GitHub Issues](https://github.com/your-github-user/TransPlan/issues): bug reports and feature requests
+3. [GitHub Issues](https://github.com/rivirside/TransPlan/issues): bug reports and feature requests
 
 The full roadmap with ADR context is in `docs/roadmap.md` in the repository.

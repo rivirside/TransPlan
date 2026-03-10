@@ -25,7 +25,9 @@ Content-Type: application/json
     "urgency": 2,
     "cpra": 35,
     "weight_lbs": 180,
-    "height_inches": 70
+    "height_inches": 70,
+    "home_center": "Chicago",
+    "adjust_for_cause_of_death": false
   }
 }
 ```
@@ -45,6 +47,8 @@ Content-Type: application/json
 | `cpra` | integer | no | 0–100 | cPRA % (kidney only) |
 | `meld` | integer | no | 6–40 | MELD score (liver only) |
 | `las` | float | no | 0–100 | Lung Allocation Score (lung only) |
+| `home_center` | string | no | Valid city name | Patient's current transplant listing center |
+| `adjust_for_cause_of_death` | boolean | no | default `false` | Apply organ-specific COD donor recovery multiplier |
 
 ## Response
 
@@ -141,7 +145,7 @@ Rare. This occurs only if data files are corrupted or missing. Check `/health` t
 ## Example: Kidney Patient
 
 ```bash
-curl -X POST http://localhost:8003/simulate \
+curl -X POST http://localhost:8002/simulate \
   -H "Content-Type: application/json" \
   -d '{
     "patient": {

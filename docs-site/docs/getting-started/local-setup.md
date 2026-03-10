@@ -15,7 +15,7 @@ You need **macOS** (primary platform; Linux works via `start.command`), **Python
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-github-user/TransPlan.git
+git clone https://github.com/rivirside/TransPlan.git
 cd TransPlan
 ```
 
@@ -62,10 +62,10 @@ To stop:
 ### Option C: Manual uvicorn
 
 ```bash
-backend/.venv/bin/python -m uvicorn backend.main:app --host 127.0.0.1 --port 8003
+backend/.venv/bin/python -m uvicorn backend.main:app --host 127.0.0.1 --port 8002
 ```
 
-Then open `http://127.0.0.1:8003` in your browser.
+Then open `http://127.0.0.1:8002` in your browser.
 
 ## Verifying the Setup
 
@@ -75,7 +75,7 @@ Once running, visit `http://127.0.0.1:<port>/health`:
 {
   "status": "ok",
   "version": "2.0.0",
-  "data_files_loaded": 8,
+  "data_files_loaded": 10,
   "data_freshness": { ... }
 }
 ```
@@ -105,10 +105,10 @@ See [Data Pipeline](/architecture/data-pipeline) for details on each data source
 ## Running Tests
 
 ```bash
-# JavaScript unit tests (91 tests)
+# JavaScript unit tests (98 tests)
 npm test
 
-# Python backend tests (120 tests)
+# Python backend tests (193 tests)
 cd backend
 python -m pytest
 ```

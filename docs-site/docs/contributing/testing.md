@@ -8,7 +8,7 @@ TransPlan has two test suites: Jest (JavaScript) and pytest (Python).
 
 ## JavaScript Tests (Jest)
 
-**91 tests** covering the Phase 1 scoring algorithm and data utilities.
+**98 tests** covering the Phase 1 scoring algorithm, COD multiplier, and data utilities.
 
 ```bash
 npm test
@@ -18,7 +18,7 @@ npm test
 
 | File | Tests | Coverage |
 |------|-------|---------|
-| `tests/algorithm.test.js` | 68 | All 8 scoring categories, organ-specific inputs, edge cases |
+| `tests/algorithm.test.js` | 75 | All 8 scoring categories, organ-specific inputs, COD multiplier, edge cases |
 | `tests/utils.test.js` | 23 | `deepMerge`, `writeDataFile`, `mergeDataFile`, CITIES list |
 
 ### What's Tested
@@ -42,7 +42,7 @@ npx jest --watch
 
 ## Python Tests (pytest)
 
-**120 tests** covering the Phase 2 backend.
+**193 tests** covering the Phase 2 backend, sensitivity analysis, and equity analysis.
 
 ```bash
 cd backend
@@ -58,6 +58,10 @@ backend/tests/
   test_monte_carlo.py       ← Monte Carlo engine (25 tests)
   test_competing_risks.py   ← Mortality/delisting models (17 tests)
   test_data_loader.py       ← Data loading and fallbacks (34 tests)
+  test_sensitivity.py       ← Sensitivity analysis (tornado chart data)
+  test_equity.py            ← Equity analysis (48-profile demographic matrix)
+  test_brier_score.py       ← Brier score calibration validation
+  test_cod_multiplier.py    ← COD donor recovery multiplier
 ```
 
 ### What's Tested
@@ -70,7 +74,7 @@ backend/tests/
 
 **test_competing_risks.py** checks that competing risks sum to 1.0 within floating point tolerance (i.e., `p_transplant + p_mortality + p_delisting + p_still_waiting = 1.0`), all risk components are non-negative, and organ-specific rates differ appropriately (heart > kidney for mortality).
 
-**test_data_loader.py** confirms that all 8 data files load successfully from `data/`, wait time distributions are parsed for all 6 organs, competing risks are parsed for all 6 organs, and a missing file falls back gracefully without crashing.
+**test_data_loader.py** confirms that all 10 data files load successfully from `data/`, wait time distributions are parsed for all 6 organs, competing risks are parsed for all 6 organs, and a missing file falls back gracefully without crashing.
 
 ### Running Specific Tests
 
@@ -109,7 +113,7 @@ GitHub Actions runs both test suites on every push to `main`:
 - run: cd backend && python -m pytest
 ```
 
-All 211 tests (91 JS + 120 Python) must pass before merging.
+All 291 tests (98 JS + 193 Python) must pass before merging.
 
 ## What's Not Tested
 

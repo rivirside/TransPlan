@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Limitations
 
-TransPlan tracks 48 known limitations in `docs/limitations.md`. This page summarizes the most important ones.
+TransPlan tracks 56 known limitations in `docs/limitations.md`. This page summarizes the most important ones.
 
 ## Model Limitations
 
@@ -24,7 +24,13 @@ Phase 2 uses wait time distributions (Table B10) and removal reasons (Table B7),
 
 Cities with high deterministic scores (Phase 1) don't always have high Monte Carlo probabilities (Phase 2). This is by design. Phase 1 scores include non-time factors (hospital quality, socioeconomic support) that don't directly affect wait time.
 
-**Status**: Won't fix. The two scores measure different things, and the dual-tab UI makes this distinction clear.
+**Status**: Won't fix. The two scores measure different things, and the three-tab UI makes this distinction clear.
+
+### L-049–L-056: COD Model Data Quality
+
+The cause-of-death (COD) donor multiplier (Phase 3 M2) relies on a single published source (PMC10329409) for organ recovery rates and CDC WONDER for state-level cause-of-death proportions. Eight tracked issues (L-049 through L-056) document areas where the model could be improved with better data granularity, additional academic sources, or live data feeds.
+
+**Status**: Open (tracked under M2b: COD Model Data Quality milestone)
 
 ## Data Limitations
 
@@ -78,12 +84,13 @@ The socioeconomic category uses a transplant-specific support rubric rather than
 
 ## Full Limitation Tracker
 
-The complete list of 48 tracked issues (L-001 through L-048) is in `docs/limitations.md` in the repository. Statuses:
+The complete list of 56 tracked issues (L-001 through L-056) is in `docs/limitations.md` in the repository. Statuses:
 
 | Status | Count |
 |--------|-------|
 | Fixed | 36 |
-| Open | 4 |
+| Open | 12 |
 | Deferred | 3 |
+| Mitigated | 3 |
 | Won't Fix | 2 |
-| **Total** | **48** |
+| **Total** | **56** |

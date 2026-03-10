@@ -13,7 +13,7 @@ You need **Python 3.11+** for the backend, **Node.js 18+** for tests and data sc
 ## Setup
 
 ```bash
-git clone https://github.com/your-github-user/TransPlan.git
+git clone https://github.com/rivirside/TransPlan.git
 cd TransPlan
 
 # Python venv
@@ -31,7 +31,7 @@ npm install
 
 ```bash
 # Start the full stack (backend + static files on one port)
-backend/.venv/bin/python -m uvicorn backend.main:app --host 127.0.0.1 --port 8003 --reload
+backend/.venv/bin/python -m uvicorn backend.main:app --host 127.0.0.1 --port 8002 --reload
 ```
 
 The `--reload` flag enables hot reload when Python files change. For frontend changes (HTML/CSS/JS), just refresh the browser; no build step is needed.
@@ -39,10 +39,10 @@ The `--reload` flag enables hot reload when Python files change. For frontend ch
 ## Running Tests
 
 ```bash
-# JavaScript unit tests (91 tests)
+# JavaScript unit tests (98 tests)
 npm test
 
-# Python backend tests (120 tests)
+# Python backend tests (193 tests)
 cd backend
 python -m pytest
 
@@ -79,7 +79,7 @@ Edit any `.html`, `.js`, or `.css` file directly. Refresh the browser to see cha
 
 ### Backend
 
-Edit Python files in `backend/`. With `--reload`, uvicorn restarts automatically. Check `http://localhost:8003/health` after changes.
+Edit Python files in `backend/`. With `--reload`, uvicorn restarts automatically. Check `http://localhost:8002/health` after changes.
 
 ### Adding a New City
 
@@ -97,7 +97,7 @@ Edit Python files in `backend/`. With `--reload`, uvicorn restarts automatically
 2. Add `data/<category>.json` with seed data
 3. Add defaults to `data-loader.js`
 4. Add scoring logic to `algorithm.js`
-5. Add category weight to the form in `index.html`
+5. Add category weight to the form in `simulator.html`
 6. Add unit tests in `tests/algorithm.test.js`
 
 ## Git Workflow
@@ -114,15 +114,17 @@ git commit -m "feat: description of change"
 
 ```
 TransPlan/
-  backend/         ← FastAPI Python backend
-  data/            ← JSON data files
+  backend/         ← FastAPI Python backend (193 pytest tests)
+  data/            ← JSON data files (10 files, seed + auto-updated)
   docs/            ← Project documentation (status, design, ADR, roadmap)
   docs-site/       ← Docusaurus documentation site (you are here)
-  scripts/         ← Node.js data fetch scripts
-  tests/           ← JavaScript Jest tests
+  scripts/         ← Node.js/Python data fetch scripts
+  tests/           ← JavaScript Jest tests (98 tests)
   .github/         ← GitHub Actions workflows
-  index.html       ← Main app entry point
+  index.html       ← Landing page (features, CTA)
+  simulator.html   ← Simulation tool (form, results, map)
   algorithm.js     ← Phase 1 scoring engine
   script.js        ← UI orchestration
-  styles.css       ← All CSS
+  styles.css       ← All CSS + design tokens + landing page
+  themes.css       ← 4-theme system overrides
 ```

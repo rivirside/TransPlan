@@ -31,6 +31,13 @@ No database. No server-side rendering. All data lives as JSON files in the `data
 | CDC SODA API (health demographics) | `data/health-demographics.json` | Weekly | None |
 | SRTR PSR Excel (wait times + outcomes) | `data/wait-time-distributions.json` `data/competing-risks.json` | Bimonthly check | None |
 | Donor registration | `data/donor-registration.json` | Weekly | None |
+| SRTR center mapping | `data/srtr-center-mapping.json` | As-needed | None |
+
+### Derived Data
+
+| File | Source | Description |
+|------|--------|-------------|
+| `data/cause-of-death-by-region.json` | PMC10329409 × CDC WONDER | Organ recovery rates by regional cause-of-death patterns |
 
 ### Manual Sources
 

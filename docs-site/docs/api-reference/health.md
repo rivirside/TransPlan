@@ -20,7 +20,7 @@ No authentication, no parameters.
 {
   "status": "ok",
   "version": "2.0.0",
-  "data_files_loaded": 8,
+  "data_files_loaded": 10,
   "data_freshness": {
     "air-quality.json": "2026-01-06T06:12:31Z",
     "cost-of-living.json": "2026-01-06T06:14:05Z",
@@ -29,7 +29,9 @@ No authentication, no parameters.
     "donor-registration.json": "2026-01-06T06:10:44Z",
     "traffic-fatalities.json": "2025-10-14T06:09:12Z",
     "wait-time-distributions.json": "2025-11-01T00:00:00Z",
-    "competing-risks.json": "2025-11-01T00:00:00Z"
+    "competing-risks.json": "2025-11-01T00:00:00Z",
+    "cause-of-death-by-region.json": "2026-02-15T00:00:00Z",
+    "srtr-center-mapping.json": "2025-11-01T00:00:00Z"
   }
 }
 ```
@@ -59,5 +61,5 @@ The `session.js` frontend module polls `/health` to:
 ## Example
 
 ```bash
-curl http://localhost:8003/health
+curl http://localhost:8002/health
 ```

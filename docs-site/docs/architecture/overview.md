@@ -11,32 +11,40 @@ TransPlan uses a two-layer architecture: a static frontend (Phase 1) augmented b
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     FastAPI Server (uvicorn)                  │
-│                     localhost:8003                            │
+│                     localhost:8002                            │
 │                                                               │
 │  ┌─────────────────────────┐  ┌────────────────────────────┐ │
 │  │   Static File Serving   │  │       REST API              │ │
 │  │   GET /  → index.html   │  │   POST /simulate           │ │
-│  │   GET /algorithm.js     │  │   GET  /health             │ │
-│  │   GET /styles.css       │  │   POST /shutdown           │ │
-│  │   GET /data/*.json      │  │                            │ │
+│  │   GET /simulator.html   │  │   POST /sensitivity        │ │
+│  │   GET /algorithm.js     │  │   POST /equity-analysis    │ │
+│  │   GET /styles.css       │  │   GET  /health             │ │
+│  │   GET /data/*.json      │  │   POST /shutdown           │ │
 │  └─────────────────────────┘  └────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────┘
          ↓ same-origin requests (no CORS needed)
 ┌──────────────────────────────────────────────────────────────┐
 │                   Browser (Frontend)                          │
 │                                                               │
+│  index.html     ← Landing page (features, CTA)              │
+│  simulator.html ← Simulation tool (form, results, map)      │
 │  algorithm.js   ← Phase 1: deterministic scoring engine      │
-│  api-client.js  ← Phase 2: calls POST /simulate              │
+│  api-client.js  ← Phase 2: calls /simulate + /sensitivity   │
+│                    + /equity-analysis                         │
 │  script.js      ← UI, form handling, results display         │
 │  charts.js      ← Chart.js radar/bar/donut                   │
-│  probability-charts.js ← CDF curves + competing risks        │
+│  probability-charts.js ← CDF curves + competing risks +     │
+│                          tornado sensitivity chart            │
+│  equity-charts.js ← Blood type/age/Gini equity charts        │
 │  data-loader.js ← loads data/*.json from server              │
+│  themes.css     ← 4-theme design system overrides            │
+│  theme-switcher.js ← Theme picker UI                         │
 └──────────────────────────────────────────────────────────────┘
          ↓ data loaded at runtime
 ┌──────────────────────────────────────────────────────────────┐
 │                   Data Layer (data/)                           │
 │                                                               │
-│  JSON files auto-updated by GitHub Actions (weekly/bimonth)  │
+│  10 JSON files auto-updated by GitHub Actions / manual       │
 │  Fallback to hardcoded defaults if unavailable               │
 └──────────────────────────────────────────────────────────────┘
          ↑ updated by
@@ -69,7 +77,7 @@ If the backend is not running, the frontend falls back silently to Phase 1 (dete
 
 ### Data at Rest vs Runtime
 
-Public API data is fetched by GitHub Actions on a weekly/bimonthly schedule and committed as JSON to the repo. The frontend loads this JSON at runtime. There is no database and no server-side rendering. This keeps deployment simple (static host or GitHub Pages for Phase 1; uvicorn for Phase 2).
+Public API data is fetched by GitHub Actions on a weekly/bimonthly schedule and committed as JSON to the repo. The frontend loads this JSON at runtime. There is no database and no server-side rendering. This keeps deployment simple (Vercel for the landing page and docs; uvicorn locally for Phase 2 simulation).
 
 ## Component Inventory
 
@@ -77,15 +85,19 @@ Public API data is fetched by GitHub Actions on a weekly/bimonthly schedule and 
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Main page: form, methodology accordion, results panel, map |
+| `index.html` | Landing page: features, how-it-works, CTA to simulator |
+| `simulator.html` | Simulation tool: form, 3-tab results, modals, map, methodology |
 | `algorithm.js` | Phase 1 scoring engine: 8 categories × 22 cities |
-| `script.js` | UI orchestration: form, results display, map controls |
-| `api-client.js` | Phase 2 API client: form normalization, POST /simulate, graceful fallback |
-| `probability-charts.js` | CDF line charts + competing risks stacked bars (Chart.js) |
+| `script.js` | UI orchestration: form, results display, map controls, city detail modal, comparison |
+| `api-client.js` | API client: POST /simulate, /sensitivity, /equity-analysis, graceful fallback |
+| `probability-charts.js` | CDF line charts, competing risks bars, tornado sensitivity chart (Chart.js) |
+| `equity-charts.js` | Blood type disparity, age bracket disparity, Gini by city charts (Chart.js) |
 | `charts.js` | Phase 1 charts: radar, weighted bar, donut (Chart.js) |
 | `data-loader.js` | Runtime JSON loader with hardcoded fallback defaults |
 | `session.js` | Session bar: health check, "End Session" button |
-| `styles.css` | All CSS: design tokens, components, responsive breakpoints |
+| `styles.css` | All CSS: design tokens, landing page, components, responsive breakpoints |
+| `themes.css` | Theme overrides: Clinical, Research, Government (+ landing page per-theme) |
+| `theme-switcher.js` | Floating theme picker (4 themes) |
 
 ### Backend Files
 
@@ -93,13 +105,18 @@ Public API data is fetched by GitHub Actions on a weekly/bimonthly schedule and 
 |------|---------|
 | `backend/main.py` | FastAPI app, startup data load, static file mounting |
 | `backend/config.py` | Configuration: DATA_DIR, SIMULATION_ITERATIONS, ALLOWED_ORIGINS |
-| `backend/models/schemas.py` | Pydantic schemas: PatientProfile, SimulationResult, etc. |
+| `backend/models/schemas.py` | Pydantic schemas: PatientProfile, SimulationResult, SensitivityResult, EquityAnalysisResult |
 | `backend/routers/simulate.py` | POST /simulate endpoint |
+| `backend/routers/sensitivity.py` | POST /sensitivity endpoint |
+| `backend/routers/equity.py` | POST /equity-analysis endpoint |
 | `backend/routers/health.py` | GET /health endpoint |
 | `backend/routers/shutdown.py` | POST /shutdown endpoint (local session management) |
 | `backend/services/monte_carlo.py` | Monte Carlo simulation engine |
 | `backend/services/distributions.py` | Log-normal wait time model |
 | `backend/services/competing_risks.py` | Mortality/delisting exponential models |
+| `backend/services/sensitivity.py` | Sensitivity analysis: parameter impact on p_transplant_24mo |
+| `backend/services/equity.py` | Demographic equity analysis (48 profiles × 22 cities, Gini coefficient) |
+| `backend/services/brier_score.py` | Brier score calibration: Monte Carlo vs analytical validation |
 | `backend/services/data_loader.py` | Loads and caches data/*.json at startup |
 
 ## Data Flow: Simulation Request
@@ -125,5 +142,5 @@ User submits form
 | Local (macOS) | Double-click `TransPlan.app` | No Terminal, background app |
 | Local (any) | `./start.command` | Bash script, opens browser |
 | Local (manual) | `uvicorn backend.main:app` | Full control |
-| Phase 1 only | GitHub Pages | Static files only, no simulation |
-| Production | TBD (Docker Compose) | Future: cloud deployment |
+| Static (hosted) | Vercel | Landing page + docs site (no simulation) |
+| Production | TBD (Docker Compose) | Future: cloud deployment with backend |

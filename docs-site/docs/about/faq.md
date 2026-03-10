@@ -58,7 +58,7 @@ Because these events compete, adding their probabilities correctly requires comp
 
 ### Why does Phase 2 sometimes not show up?
 
-Phase 2 (Monte Carlo simulation) requires the local Python backend to be running. If you're using TransPlan directly via `index.html` (not through the launcher), the backend won't be available. Use `TransPlan.app` or `start.command` to launch the full stack.
+Phase 2 (Monte Carlo simulation) and equity analysis require the local Python backend to be running. If you're using TransPlan directly via `simulator.html` (not through the launcher), the backend won't be available. Use `TransPlan.app` or `start.command` to launch the full stack.
 
 ### Why are the confidence intervals sometimes wide?
 
@@ -82,6 +82,18 @@ Phase 1 (scoring) works entirely offline. Data is pre-loaded as JSON files in th
 | Uncertainty | None | 95% CI |
 | Backend needed | No | Yes |
 
+### What is the Home Center feature?
+
+The Home Center dropdown lets you select your current transplant listing center (city). When set, the results show comparison badges on each city card indicating the score or probability difference compared to your home center. A green "H" marker appears on the map. This helps answer the question: "Would I benefit from relisting at a different center?"
+
+### What is the COD multiplier?
+
+The **Cause of Death (COD) multiplier** adjusts donor availability estimates based on regional cause-of-death patterns. Different regions have different proportions of motor vehicle accidents, strokes, and other causes of death that produce transplantable organs for specific organ types. Enabling this toggle applies these regional differences to the simulation. It's based on published recovery rate data and CDC WONDER state-level statistics.
+
+### What is the Equity Analysis tab?
+
+The equity analysis evaluates fairness across a 48-profile demographic matrix (8 blood types × 3 age brackets × 2 sexes). For each city, it computes a Gini coefficient measuring outcome equality and shows charts comparing disparities by blood type and age bracket. Note: race, ethnicity, and insurance status are deliberately not modeled.
+
 ---
 
 ## Limitations
@@ -93,3 +105,4 @@ The most important limitations:
 2. City-level models average across multiple centers, so individual center variation is not captured
 3. Clinical status changes over time (rising MELD, changing cPRA) are not modeled
 4. OPO geographic boundaries are not modeled, so results are city-level only
+5. Equity analysis does not include race/ethnicity or insurance status by design

@@ -23,6 +23,8 @@ class PatientProfile(BaseModel):
     cpra: Optional[int]    # 0–100 (kidney only)
     meld: Optional[int]    # 6–40  (liver only)
     las: Optional[float]   # 0–100 (lung only)
+    home_center: Optional[str]     # Patient's current listing center (city name)
+    adjust_for_cause_of_death: bool  # default False; apply COD donor multiplier
 ```
 
 ### Field Details
@@ -115,6 +117,73 @@ class HealthResponse(BaseModel):
 
 ---
 
+## ParameterImpact
+
+Per-parameter sensitivity data (part of SensitivityResult).
+
+```python
+class ParameterImpact(BaseModel):
+    parameter: str        # e.g., 'cpra', 'meld', 'las', 'urgency'
+    label: str            # Human-readable name
+    baseline_value: float # Patient's current value
+    low_value: float      # Most favorable extreme tested
+    high_value: float     # Least favorable extreme tested
+    p24_baseline: float   # p_transplant_24mo at patient's actual value
+    p24_at_low: float     # p_transplant_24mo at low_value
+    p24_at_high: float    # p_transplant_24mo at high_value
+```
+
+---
+
+## SensitivityResult
+
+`POST /sensitivity` response.
+
+```python
+class SensitivityResult(BaseModel):
+    patient: PatientProfile
+    city: str                       # City used for analysis
+    impacts: list[ParameterImpact]  # Sorted by magnitude (largest first)
+    iterations: int
+    elapsed_seconds: float
+```
+
+---
+
+## CityEquity
+
+Per-city equity metrics (part of EquityAnalysisResult).
+
+```python
+class CityEquity(BaseModel):
+    city: str
+    state: str
+    gini_coefficient: float                # 0 = equality, 1 = total inequality
+    p24_range: tuple[float, float]         # (min, max) p_transplant_24mo across profiles
+    median_wait_range: tuple[float, float] # (min, max) median wait across profiles
+    dimension_disparities: dict[str, list[dict]]
+    # e.g., { 'blood_type': [{value, p24, median_wait}, ...], ... }
+```
+
+---
+
+## EquityAnalysisResult
+
+`POST /equity-analysis` response.
+
+```python
+class EquityAnalysisResult(BaseModel):
+    organ: str
+    cities: list[CityEquity]       # Sorted by gini ascending (most equitable first)
+    overall_gini: float            # Gini across all profiles × all cities
+    profiles_simulated: int        # Total demographic profiles (48)
+    iterations_per_profile: int
+    elapsed_seconds: float
+    disclaimers: list[str]         # Mandatory limitation disclaimers
+```
+
+---
+
 ## Frontend Field Mapping
 
 The frontend form uses camelCase. `api-client.js` normalizes to snake_case before sending:
@@ -131,3 +200,5 @@ The frontend form uses camelCase. `api-client.js` normalizes to snake_case befor
 | `organ` | `organ` |
 | `age` | `age` |
 | `sex` | `sex` |
+| `homeCenter` | `home_center` |
+| `adjustForCauseOfDeath` | `adjust_for_cause_of_death` |

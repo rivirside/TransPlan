@@ -13,9 +13,12 @@ backend/
   main.py               ← FastAPI app, startup, static file mount
   config.py             ← DATA_DIR, SIMULATION_ITERATIONS, ALLOWED_ORIGINS
   models/
-    schemas.py          ← Pydantic schemas (PatientProfile, SimulationResult, etc.)
+    schemas.py          ← Pydantic schemas (PatientProfile, SimulationResult,
+                           SensitivityResult, EquityAnalysisResult, etc.)
   routers/
     simulate.py         ← POST /simulate
+    sensitivity.py      ← POST /sensitivity
+    equity.py           ← POST /equity-analysis
     health.py           ← GET /health
     shutdown.py         ← POST /shutdown
   services/
@@ -23,6 +26,9 @@ backend/
     monte_carlo.py      ← Monte Carlo simulation engine (22 cities × 1000 iter)
     distributions.py    ← Log-normal wait time distributions
     competing_risks.py  ← Exponential mortality/delisting models
+    sensitivity.py      ← Parameter impact analysis (tornado chart data)
+    equity.py           ← Demographic equity (48 profiles × 22 cities, Gini)
+    brier_score.py      ← Brier score calibration validation
 ```
 
 ## Startup Sequence
@@ -32,8 +38,8 @@ When `backend/main.py` starts:
 1. `data_loader.py` loads all `data/*.json` files into memory
 2. `distributions.py` initializes log-normal parameters from `wait-time-distributions.json`
 3. `competing_risks.py` initializes hazard rates from `competing-risks.json`
-4. FastAPI mounts static files at `/` from the repo root (serves `index.html`, `algorithm.js`, etc.)
-5. API router prefixes: `/simulate`, `/health`, `/shutdown`
+4. FastAPI mounts static files at `/` from the repo root (serves `index.html`, `simulator.html`, `algorithm.js`, etc.)
+5. API router prefixes: `/simulate`, `/sensitivity`, `/equity-analysis`, `/health`, `/shutdown`
 
 ## Static File Serving
 
@@ -61,7 +67,9 @@ See the full [API Reference](/api-reference/simulate) for request/response schem
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/simulate` | Run Monte Carlo simulation |
+| `POST` | `/simulate` | Run Monte Carlo simulation (22 cities × 1000 iterations) |
+| `POST` | `/sensitivity` | Parameter sensitivity analysis (tornado chart data) |
+| `POST` | `/equity-analysis` | Demographic equity analysis (48 profiles × 22 cities) |
 | `GET` | `/health` | Data freshness and status |
 | `POST` | `/shutdown` | Graceful session termination (local only) |
 
@@ -69,7 +77,7 @@ See the full [API Reference](/api-reference/simulate) for request/response schem
 
 ```bash
 # From repo root:
-backend/.venv/bin/python -m uvicorn backend.main:app --host 127.0.0.1 --port 8003
+backend/.venv/bin/python -m uvicorn backend.main:app --host 127.0.0.1 --port 8002
 
 # Or use the launcher:
 ./start.command

@@ -38,10 +38,10 @@ where `μ` and `σ` are estimated from SRTR Table B10 (Program-Specific Reports,
 
 ### City Factor and Clinical Multiplier
 
-The raw sampled wait time is scaled by two independent terms:
+The raw sampled wait time is scaled by up to three independent terms:
 
 ```
-T_adjusted = T × city_factor × clinical_multiplier
+T_adjusted = T × city_factor × clinical_multiplier / cod_multiplier
 ```
 
 The **city factor** captures how a city's historical median compares to the national median for that organ and blood type. A city_factor > 1.0 means longer waits than average; < 1.0 means shorter. These are derived from SRTR Table B10 by computing each city's median divided by the national median across all centers.
@@ -55,6 +55,10 @@ The **clinical multiplier** adjusts for the patient's organ-specific clinical sc
 | LAS (lung) | 0–100 | < 1.0 at high values | High LAS patients receive allocation priority by the same urgency-based logic |
 
 A cPRA of 80% produces a multiplier of roughly 1.5× to 3.0×, meaning the adjusted wait is 50–200% longer than baseline. A MELD of 35+ produces a multiplier around 0.3×, reflecting emergency-level allocation priority.
+
+### Cause-of-Death (COD) Multiplier (Optional)
+
+When `adjust_for_cause_of_death` is enabled, the simulation divides wait times by a COD multiplier that reflects regional organ-specific donor availability. The multiplier combines organ recovery rates from published literature (PMC10329409) with state-level cause-of-death proportions from CDC WONDER. It is normalized and centered at 1.0, with typical variation of 1–15% depending on the organ type. More donors in a region means shorter expected wait. This is computed per-city using `data/cause-of-death-by-region.json`.
 
 ## Output: Probability Estimates
 
