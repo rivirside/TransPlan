@@ -6,13 +6,17 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 3 M4 Complete — Equity Analysis
+## Current State: Phase 3 M4 Complete + Multi-Page Architecture
 
-Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 193 pytest tests passing. Phase 3 M1: Home Center relocation comparison. Phase 3 M2: Organ-specific donor availability model. Phase 3 M3: City detail modal + side-by-side comparison + print-friendly view. Phase 3 M4: Demographic equity analysis with Gini coefficient metrics, 48-profile stratification matrix (8 blood types × 3 age brackets × 2 sexes), per-city equity rankings, 3 Chart.js disparity visualizations, and mandatory disclaimers. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` (macOS .app bundle, no Terminal window) or `start.command`. Graceful degradation when backend unavailable.
+Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 193 pytest tests passing. Phase 3 M1-M4 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
-**UI/UX Redesign (March 2026):** Full professional redesign completed. Design token system in CSS custom properties. Header with gradient + curved bottom edge. Methodology section rebuilt as compact accordion (native `<details>/<summary>`) with inline SVG icons. Form grouped into fieldset sections. Two responsive breakpoints (768px tablet, 480px mobile). All JS functionality preserved — zero breaking changes.
+**Multi-Page Architecture (March 2026):** Split from single-page to landing + simulator. `index.html` = lightweight landing page (features, how-it-works, CTA). `simulator.html` = full simulation tool (form, results, modals, map, charts). No header/hero section — nav brand is the only title. Info buttons (ⓘ) on simulator form labels link to relevant docs pages. Docs URL resolution script detects local dev vs deployment.
 
-**Docusaurus Docs Site (March 2026):** Full documentation site in `docs-site/`. Covers: Introduction, Getting Started (Quick Start + Local Setup), Theory (Scoring Methodology, Monte Carlo, Competing Risks, Wait Time Distributions), Architecture (Overview, Data Pipeline, Backend API, Frontend), API Reference (POST /simulate, GET /health, Schemas), Contributing (Dev Guide, Data Curation, Testing), About (FAQ, Limitations, Roadmap). TransPlan brand theme (Inter font, indigo color tokens). GitHub Actions deploy workflow. Builds cleanly (`npm run build` in `docs-site/`).
+**Theme System (March 2026):** 4 themes — Default (dark nav, indigo accent, centered), Clinical (compact, uppercase, muted teal), Research (serif Lora headings, editorial, warm tones), Government (USWDS-inspired, gov banner, bordered panels). Each is a genuinely different design language, not just color swaps. Design token system in CSS custom properties. Landing page has per-theme overrides.
+
+**Docusaurus Docs Site (March 2026):** Full documentation site in `docs-site/`. 20 pages, 7 sections. baseUrl configured for local dev (`/docs-site/build/`). Builds cleanly (`npm run build` in `docs-site/`).
+
+**Pre-Release Status:** Project under active development. GitHub links removed (not yet public). Contact: tomer@arizona.edu.
 
 ### What's Done
 
@@ -33,8 +37,10 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | CDN fallback | ✅ Done | Graceful degradation when Leaflet/Chart.js CDN unavailable |
 | CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
-| UI/UX redesign | ✅ Done | Design tokens, header curve, methodology accordion, SVG icons, responsive breakpoints |
-| Docusaurus docs site | ✅ Done | 20 pages, 7 sections, TransPlan brand theme, GitHub Pages deploy workflow |
+| UI/UX redesign | ✅ Done | Design tokens, methodology accordion, SVG icons, responsive breakpoints |
+| Theme system | ✅ Done | 4 themes (Default/Clinical/Research/Government), genuinely different design languages |
+| Multi-page split | ✅ Done | Landing page (index.html) + simulator (simulator.html), info buttons, nav active state |
+| Docusaurus docs site | ✅ Done | 20 pages, 7 sections, TransPlan brand theme, baseUrl fixed for local dev |
 
 ### Phase 2 Progress
 
@@ -61,9 +67,8 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 
 ### What's NOT Done (Next Steps)
 
-- **Pick winning UI theme** (#3) — 3 professional themes (Clinical/Research/Government) live for comparison
 - **Phase 3 M5:** UX Polish & Export (#4–#9) — dark mode, URL sharing, PDF/CSV/JSON export, sensitivity sliders
-- **Deploy:** Configure GitHub Pages (#2)
+- **Deploy:** Configure deployment (project not yet public)
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred:** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21)
 - See `docs/roadmap.md` for full phased plan (5 phases through FDA clearance)
@@ -92,7 +97,7 @@ TransPlan/
   docs-site/              <- Docusaurus documentation site
     docs/                 <- 20 markdown pages (intro, getting-started/, theory/, architecture/, api-reference/, contributing/, about/)
     src/css/custom.css    <- TransPlan brand theme
-    docusaurus.config.ts  <- Site config (baseUrl /TransPlan/docs/, blog disabled)
+    docusaurus.config.ts  <- Site config (baseUrl /docs-site/build/, blog disabled)
     sidebars.ts           <- 7-section sidebar navigation
   TransPlan.app/          <- macOS .app bundle (double-click to launch, no Terminal)
     Contents/Info.plist   <- App metadata, LSUIElement=true (background app)
@@ -103,14 +108,15 @@ TransPlan/
   api-client.js           <- Backend API client (POST /simulate + /sensitivity + /equity-analysis, graceful fallback)
   probability-charts.js   <- CDF curves, competing risks bar, tornado sensitivity chart (Chart.js)
   equity-charts.js        <- Blood type disparity, age bracket disparity, Gini by city charts (Chart.js)
-  index.html              <- Main page (3-tab results: scores, probabilities, equity)
+  index.html              <- Landing page (features, how-it-works, CTA → simulator)
+  simulator.html          <- Simulation tool (form, 3-tab results, modals, map, methodology)
   algorithm.js            <- Scoring engine (8 categories, 22 cities)
   script.js               <- UI, map, form, results display, probability card rendering
   data-loader.js          <- Runtime JSON loader with fallbacks
   charts.js               <- Chart.js radar/bar/donut charts
-  styles.css              <- All CSS: design tokens, nav bar, accordion, responsive (768px + 480px)
-  themes.css              <- TEMPORARY: 3 professional theme overrides (clinical/research/government)
-  theme-switcher.js       <- TEMPORARY: floating theme picker (remove after winner selected)
+  styles.css              <- All CSS: design tokens, nav bar, landing page, accordion, responsive (768px + 480px)
+  themes.css              <- Theme overrides: clinical, research, government (+ landing page per-theme)
+  theme-switcher.js       <- Floating theme picker (4 themes: Default/Clinical/Research/Government)
   package.json            <- Node deps (xml2js, jest)
   README.md               <- User-facing docs
   tests/                  <- Unit tests (Jest)
