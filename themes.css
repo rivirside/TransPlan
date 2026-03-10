@@ -1,6 +1,6 @@
 /* ===================================================================
    TransPlan — Theme Overrides
-   3 professional themes for user comparison.
+   3 professional themes with genuinely different design languages.
    Applied via data-theme attribute on <html>.
    Loaded AFTER styles.css to override :root tokens.
    =================================================================== */
@@ -17,16 +17,14 @@
   & header::before { display: none !important; }
   & header::after  { display: none !important; }
 
-  /* Remove header gradient — each theme sets its own flat bg */
+  /* Remove header gradient — each theme sets its own bg */
   & header {
     overflow: visible;
-    padding-bottom: var(--space-8);
   }
 
   /* Remove main card negative margin float (tied to curved header) */
   & main {
     margin-top: 0;
-    border-radius: var(--radius-md);
   }
 
   /* Remove gradient from submit button */
@@ -77,7 +75,7 @@
 /* ===================================================================
    THEME A: Clinical Tool
    Inspired by UpToDate, Epic MyChart, DynaMed
-   Steel blue palette, flat shadows, 4px radii, dense layout
+   Dense, utility-focused, no-nonsense clinical reference tool
    =================================================================== */
 [data-theme="clinical"] {
   /* Primary scale (steel blue) */
@@ -142,31 +140,185 @@
   --radius-lg:   6px;
   --radius-xl:   8px;
   --radius-full: 9999px;
+
+  /* Dense typography */
+  --font-heading: 'Inter', -apple-system, sans-serif;
+  --line-height-body: 1.5;
+  --fs-3xl: 1.75rem;
+  --fs-2xl: 1.375rem;
+  --fs-xl:  1.125rem;
 }
 
-/* Clinical: flat dark header */
+/* Clinical: compact nav with pill-button links */
+[data-theme="clinical"] .site-nav {
+  background: var(--color-primary-800);
+}
+[data-theme="clinical"] .nav-inner {
+  padding: var(--space-1) var(--space-5);
+}
+[data-theme="clinical"] .nav-brand-icon {
+  display: none;
+}
+[data-theme="clinical"] .nav-brand-text {
+  font-weight: 700;
+  font-size: var(--fs-sm);
+}
+[data-theme="clinical"] .nav-link {
+  background: rgba(255,255,255,0.06);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+[data-theme="clinical"] .nav-link:hover {
+  background: rgba(255,255,255,0.14);
+}
+
+/* Clinical: minimal, LEFT-aligned header */
 [data-theme="clinical"] header {
-  background: #1E3A50;
+  background: var(--color-primary-800);
   color: white;
+  text-align: left;
+  padding: var(--space-5) var(--space-5) var(--space-5);
+}
+[data-theme="clinical"] header h1 {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-1);
+}
+[data-theme="clinical"] .tagline {
+  font-size: var(--fs-sm);
+  opacity: 0.7;
 }
 
-/* Clinical: tighter card spacing */
+/* Clinical: dense cards with LEFT border accent */
 [data-theme="clinical"] .city-card,
 [data-theme="clinical"] .prob-card {
-  padding: var(--space-5);
-  border-top-width: 2px;
+  padding: var(--space-4);
+  border-top: none;
+  border-left: 3px solid var(--color-primary-500);
+  border-radius: var(--radius-xs);
+}
+[data-theme="clinical"] .city-card.rank-1 { border-left-color: var(--rank-gold); }
+[data-theme="clinical"] .city-card.rank-2 { border-left-color: var(--rank-silver); }
+[data-theme="clinical"] .city-card.rank-3 { border-left-color: var(--rank-bronze); }
+[data-theme="clinical"] .city-card:hover,
+[data-theme="clinical"] .prob-card:hover {
+  background: var(--neutral-50);
+}
+
+/* Clinical: clean UNDERLINE tabs (not pills) */
+[data-theme="clinical"] .results-mode-toggle {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--neutral-200);
+  border-radius: 0;
+  padding: 0;
+}
+[data-theme="clinical"] .mode-tab {
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  background: transparent;
+  font-size: var(--fs-sm);
+  padding: var(--space-2) var(--space-5);
+  font-weight: 600;
+}
+[data-theme="clinical"] .mode-tab.active {
+  border-bottom-color: var(--color-primary-500);
+  color: var(--color-primary-600);
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Clinical: compact, uppercase button */
+[data-theme="clinical"] .submit-btn {
+  max-width: 340px;
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-xs);
+}
+
+/* Clinical: small muted badges */
+[data-theme="clinical"] .rank-badge,
+[data-theme="clinical"] .prob-card-rank {
+  font-size: 0.6875rem;
+  padding: 2px var(--space-3);
+  border-radius: var(--radius-xs);
+}
+
+/* Clinical: UPPERCASE section labels */
+[data-theme="clinical"] .info-card h2,
+[data-theme="clinical"] .form-section h2,
+[data-theme="clinical"] .methodology-section h2 {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: var(--fs-md);
+  color: var(--color-primary-600);
+}
+
+/* Clinical: dense form */
+[data-theme="clinical"] .form-section {
+  padding: var(--space-5) var(--space-6);
+}
+[data-theme="clinical"] .info-card {
+  padding: var(--space-4) var(--space-5);
 }
 
 /* Clinical: thinner methodology bar */
 [data-theme="clinical"] .method-bar {
   height: 5px;
 }
+[data-theme="clinical"] main {
+  border-radius: var(--radius-sm);
+}
+
+/* Clinical: compact dark footer */
+[data-theme="clinical"] .site-footer {
+  background: var(--color-primary-900);
+  color: var(--neutral-400);
+  padding: var(--space-6) var(--space-5);
+  border-top: none;
+}
+[data-theme="clinical"] .footer-disclaimer {
+  margin-bottom: var(--space-4);
+}
+[data-theme="clinical"] .footer-disclaimer h3 {
+  color: var(--neutral-200);
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+[data-theme="clinical"] .footer-disclaimer p {
+  color: var(--neutral-400);
+  font-size: var(--fs-xs);
+  margin-bottom: var(--space-1);
+}
+[data-theme="clinical"] .footer-meta {
+  border-top-color: rgba(255,255,255,0.1);
+}
+[data-theme="clinical"] .footer-links a {
+  color: var(--neutral-400);
+  font-size: var(--fs-xs);
+}
+[data-theme="clinical"] .footer-links a:hover {
+  color: white;
+}
+[data-theme="clinical"] .footer-copy {
+  color: var(--neutral-500);
+}
 
 
 /* ===================================================================
    THEME B: Research Dashboard
    Inspired by Observable, Nature.com, Lancet dashboards
-   Deep teal palette, warm paper backgrounds, editorial typography
+   Editorial, thoughtful data storytelling, academic credibility
    =================================================================== */
 [data-theme="research"] {
   /* Primary scale (deep teal) */
@@ -231,39 +383,201 @@
   --radius-lg:   10px;
   --radius-xl:   14px;
   --radius-full: 9999px;
+
+  /* Editorial typography */
+  --font-heading: 'Lora', Georgia, 'Times New Roman', serif;
+  --line-height-body: 1.8;
+  --fs-3xl: 2.5rem;
+  --fs-2xl: 1.875rem;
 }
 
-/* Research: dark header with accent bar */
+/* Research: clean nav with serif brand + underline hover links */
+[data-theme="research"] .site-nav {
+  background: var(--neutral-900);
+  border-bottom: 3px solid var(--color-primary-500);
+}
+[data-theme="research"] .nav-inner {
+  padding: var(--space-4) var(--space-5);
+}
+[data-theme="research"] .nav-brand-text {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+[data-theme="research"] .nav-link {
+  font-weight: 400;
+  font-size: var(--fs-sm);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+}
+[data-theme="research"] .nav-link:hover {
+  background: transparent;
+  border-bottom-color: rgba(255,255,255,0.4);
+  color: white;
+}
+
+/* Research: centered editorial header with serif h1 */
 [data-theme="research"] header {
   background: #1B2D36;
   color: white;
-  border-top: 3px solid var(--color-primary-500);
+  text-align: center;
+  padding: var(--space-10) var(--space-5) var(--space-10);
+  border-top: 3px solid var(--color-primary-400);
+}
+[data-theme="research"] header h1 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-3xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+[data-theme="research"] .tagline {
+  font-size: var(--fs-md);
+  opacity: 0.75;
+  font-style: italic;
+  margin-top: var(--space-3);
 }
 
-/* Research: slightly larger body text for editorial feel */
+/* Research: spacious cards with bottom dividers (no borders) */
+[data-theme="research"] .city-card,
+[data-theme="research"] .prob-card {
+  padding: var(--space-7);
+  border: none;
+  border-top: none;
+  border-bottom: 1px solid var(--neutral-200);
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--surface);
+}
+[data-theme="research"] .city-card:hover,
+[data-theme="research"] .prob-card:hover {
+  box-shadow: none;
+  background: var(--surface);
+}
+/* Rank via subtle left bar */
+[data-theme="research"] .city-card.rank-1 { border-left: 4px solid var(--rank-gold); }
+[data-theme="research"] .city-card.rank-2 { border-left: 4px solid var(--rank-silver); }
+[data-theme="research"] .city-card.rank-3 { border-left: 4px solid var(--rank-bronze); }
+[data-theme="research"] .city-card.rank-4,
+[data-theme="research"] .city-card.rank-5 { border-left: 4px solid var(--color-primary-300); }
+
+/* Research: thick underline tabs */
+[data-theme="research"] .results-mode-toggle {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--neutral-200);
+  border-radius: 0;
+  padding: 0;
+}
+[data-theme="research"] .mode-tab {
+  border-radius: 0;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+  background: transparent;
+  padding: var(--space-3) var(--space-6);
+  font-weight: 500;
+}
+[data-theme="research"] .mode-tab.active {
+  border-bottom-color: var(--color-primary-500);
+  color: var(--color-primary-600);
+  background: transparent;
+  box-shadow: none;
+  font-weight: 600;
+}
+
+/* Research: rounded pill button */
+[data-theme="research"] .submit-btn {
+  border-radius: var(--radius-full);
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--fs-md);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+[data-theme="research"] .submit-btn:hover {
+  box-shadow: 0 4px 16px rgba(26, 107, 90, 0.25) !important;
+}
+
+/* Research: warm rounded badges */
+[data-theme="research"] .rank-badge,
+[data-theme="research"] .prob-card-rank {
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  padding: var(--space-1) var(--space-4);
+}
+
+/* Research: serif headings, elegant */
+[data-theme="research"] .info-card h2,
+[data-theme="research"] .form-section h2,
+[data-theme="research"] .methodology-section h2 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Research: spacious form */
+[data-theme="research"] .form-section {
+  padding: var(--space-9) var(--space-8);
+}
+[data-theme="research"] .form-section legend {
+  font-family: var(--font-heading);
+  text-transform: none;
+  font-size: var(--fs-base);
+  font-weight: 600;
+  letter-spacing: normal;
+}
+
+/* Research: editorial body text */
 [data-theme="research"] .info-card p,
 [data-theme="research"] .disclaimer-banner,
 [data-theme="research"] .results-intro {
   line-height: 1.8;
 }
-
-/* Research: hairline borders on cards */
-[data-theme="research"] .city-card,
-[data-theme="research"] .prob-card {
-  border-color: var(--neutral-200);
-  border-top-width: 2px;
+[data-theme="research"] .info-card {
+  background: var(--neutral-50);
+}
+[data-theme="research"] .info-card p {
+  font-size: var(--fs-base);
 }
 
-/* Research: warmer method section */
+/* Research: warmer methodology */
 [data-theme="research"] .methodology-section {
+  background: var(--neutral-50);
+}
+[data-theme="research"] main {
+  border-radius: var(--radius-md);
+}
+
+/* Research: warm academic footer */
+[data-theme="research"] .site-footer {
   background: var(--neutral-100);
+  border-top: 1px solid var(--neutral-200);
+  padding: var(--space-10) var(--space-5) var(--space-8);
+}
+[data-theme="research"] .footer-disclaimer h3 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+[data-theme="research"] .footer-disclaimer p {
+  line-height: 1.8;
+}
+[data-theme="research"] .footer-meta {
+  border-top-color: var(--neutral-200);
+}
+[data-theme="research"] .footer-links a:hover {
+  color: var(--color-primary-600);
+}
+[data-theme="research"] .footer-copy {
+  font-style: italic;
 }
 
 
 /* ===================================================================
    THEME C: Government / Institutional
    Inspired by CDC, FDA, CMS.gov, data.gov, USWDS
-   Blue for links/actions only, monochrome otherwise, zero decoration
+   Institutional authority, maximum accessibility, zero decoration
    =================================================================== */
 [data-theme="government"] {
   /* Primary scale (government blue) */
@@ -330,48 +644,77 @@
   --radius-lg:   2px;
   --radius-xl:   4px;
   --radius-full: 2px;
+
+  /* System fonts, pragmatic sizing */
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --line-height-body: 1.6;
+  --fs-base: 0.9375rem;
 }
 
-/* Government: system font stack */
-[data-theme="government"] .container,
-[data-theme="government"] .site-nav {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+/* Government: show official banner */
+[data-theme="government"] .gov-banner {
+  display: block;
+  background: var(--neutral-100);
+  border-bottom: 1px solid var(--neutral-200);
+  font-size: var(--fs-xs);
+  font-weight: 500;
 }
 
-/* Government: nav bar matches institutional style */
+/* Government: USWDS dark blue nav with underline links */
 [data-theme="government"] .site-nav {
   background: var(--color-primary-800);
 }
+[data-theme="government"] .nav-inner {
+  padding: var(--space-3) var(--space-5);
+}
+[data-theme="government"] .nav-brand-icon {
+  display: none;
+}
+[data-theme="government"] .nav-brand-text {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: var(--fs-sm);
+}
+[data-theme="government"] .nav-link {
+  border-radius: 0;
+  padding: var(--space-2) var(--space-4);
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+}
+[data-theme="government"] .nav-link:hover {
+  background: transparent;
+  border-bottom-color: rgba(255,255,255,0.5);
+  color: white;
+}
 
-/* Government: white header with blue text, bottom border only */
+/* Government: white header, blue text, LEFT-aligned, bottom border */
 [data-theme="government"] header {
   background: #FFFFFF;
   color: var(--color-primary-700);
   border-bottom: 3px solid var(--color-primary-500);
-  padding-top: var(--space-8);
-  padding-bottom: var(--space-6);
+  text-align: left;
+  padding: var(--space-7) var(--space-5) var(--space-6);
 }
 [data-theme="government"] header h1 {
   color: var(--color-primary-800);
+  font-weight: 800;
+  font-size: var(--fs-2xl);
 }
 [data-theme="government"] .tagline {
   opacity: 1;
   color: var(--neutral-600);
+  font-size: var(--fs-base);
 }
 
-/* Government: main card loses its shadow & big radius */
-[data-theme="government"] main {
-  box-shadow: none;
-  border: 1px solid var(--neutral-200);
-  border-radius: 2px;
-}
-
-/* Government: explicit borders on cards (no shadows) */
+/* Government: bordered panel cards with blue top, no shadows */
 [data-theme="government"] .city-card,
 [data-theme="government"] .prob-card {
   border: 1px solid #DCDCDC;
   border-top: 3px solid var(--color-primary-500);
   box-shadow: none;
+  padding: var(--space-5);
 }
 [data-theme="government"] .city-card:hover,
 [data-theme="government"] .prob-card:hover {
@@ -379,54 +722,65 @@
   background: var(--neutral-50);
 }
 
-/* Government: rank badges are flat with no shadow */
-[data-theme="government"] .rank-badge,
-[data-theme="government"] .prob-card-rank {
-  border-radius: 2px;
-  font-size: var(--fs-xs);
-}
-
-/* Government: results mode toggle - square tabs */
+/* Government: bordered box tabs */
 [data-theme="government"] .results-mode-toggle {
-  border-radius: 2px;
+  border-radius: 0;
+  border: 1px solid var(--neutral-200);
+  background: var(--neutral-50);
+  padding: 0;
 }
 [data-theme="government"] .mode-tab {
-  border-radius: 2px;
+  border-radius: 0;
+  border-right: 1px solid var(--neutral-200);
+  font-weight: 600;
+  padding: var(--space-2) var(--space-5);
+}
+[data-theme="government"] .mode-tab:last-child {
+  border-right: none;
+}
+[data-theme="government"] .mode-tab.active {
+  background: white;
+  color: var(--color-primary-600);
+  box-shadow: none;
+  border-bottom: 2px solid var(--color-primary-500);
 }
 
-/* Government: submit button - USWDS style */
+/* Government: USWDS square bold button */
 [data-theme="government"] .submit-btn {
   border-radius: 2px;
   letter-spacing: 0;
   font-weight: 700;
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--fs-md);
 }
 
-/* Government: info card no background tint */
+/* Government: square label badges */
+[data-theme="government"] .rank-badge,
+[data-theme="government"] .prob-card-rank {
+  border-radius: 2px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  padding: 2px var(--space-3);
+}
+
+/* Government: bold pragmatic headings */
+[data-theme="government"] .info-card h2,
+[data-theme="government"] .form-section h2,
+[data-theme="government"] .methodology-section h2 {
+  font-weight: 800;
+  letter-spacing: -0.005em;
+}
+
+/* Government: main card no shadow, bordered */
+[data-theme="government"] main {
+  box-shadow: none;
+  border: 1px solid var(--neutral-200);
+  border-radius: 2px;
+}
+
+/* Government: info card no tint */
 [data-theme="government"] .info-card {
   background: var(--surface);
-}
-
-/* Government: score section flat */
-[data-theme="government"] .score {
-  border-radius: 2px;
-}
-
-/* Government: disclaimer banner squared */
-[data-theme="government"] .disclaimer-banner {
-  border-radius: 2px;
-}
-
-/* Government: methodology section */
-[data-theme="government"] .methodology-section {
-  background: var(--neutral-50);
-}
-
-/* Government: method bar squared */
-[data-theme="government"] .method-bar {
-  border-radius: 0;
-}
-[data-theme="government"] .method-bar-fill {
-  border-radius: 0;
 }
 
 /* Government: flat form elements */
@@ -435,12 +789,27 @@
 [data-theme="government"] input[type="number"] {
   border-radius: 2px;
   box-shadow: none;
+  border: 1px solid var(--neutral-300);
 }
 
-/* Government: equity summary card */
-[data-theme="government"] .equity-gini-badge {
-  border-radius: 2px;
+/* Government: methodology */
+[data-theme="government"] .methodology-section {
+  background: var(--neutral-50);
+  border-top: 1px solid var(--neutral-200);
+  border-bottom: 1px solid var(--neutral-200);
 }
+[data-theme="government"] .method-bar,
+[data-theme="government"] .method-bar-fill {
+  border-radius: 0;
+}
+
+/* Government: square everything */
+[data-theme="government"] .score { border-radius: 2px; }
+[data-theme="government"] .disclaimer-banner {
+  border-radius: 2px;
+  border-left: 4px solid var(--warning-500);
+}
+[data-theme="government"] .equity-gini-badge { border-radius: 2px; }
 
 /* Government: range slider */
 [data-theme="government"] .range-wrapper input[type="range"]::-webkit-slider-thumb {
@@ -454,4 +823,87 @@
   width: 18px;
   height: 18px;
   border-width: 2px;
+}
+
+/* Government: navy "big footer" with white text */
+[data-theme="government"] .site-footer {
+  background: var(--color-primary-900);
+  color: var(--neutral-300);
+  border-top: none;
+  padding: var(--space-9) var(--space-5) var(--space-7);
+}
+[data-theme="government"] .footer-inner {
+  max-width: 1200px;
+}
+[data-theme="government"] .footer-disclaimer h3 {
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+[data-theme="government"] .footer-disclaimer p {
+  color: var(--neutral-300);
+}
+[data-theme="government"] .footer-meta {
+  border-top-color: rgba(255,255,255,0.15);
+}
+[data-theme="government"] .footer-links {
+  gap: var(--space-6);
+}
+[data-theme="government"] .footer-links a {
+  color: var(--neutral-200);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+[data-theme="government"] .footer-links a:hover {
+  color: white;
+}
+[data-theme="government"] .footer-copy {
+  color: var(--neutral-400);
+}
+
+
+/* ===================================================================
+   RESPONSIVE: Theme-specific adjustments
+   =================================================================== */
+@media (max-width: 768px) {
+  /* Clinical: tighter nav links on tablet */
+  [data-theme="clinical"] .nav-link {
+    font-size: 0.625rem;
+    padding: 2px var(--space-2);
+  }
+
+  /* Government: hide banner on mobile */
+  [data-theme="government"] .gov-banner {
+    display: none;
+  }
+
+  /* Research: tighter header on tablet */
+  [data-theme="research"] header {
+    padding: var(--space-8) var(--space-4) var(--space-8);
+  }
+  [data-theme="research"] header h1 {
+    font-size: var(--fs-2xl);
+  }
+}
+
+@media (max-width: 480px) {
+  /* Clinical: minimal header on mobile */
+  [data-theme="clinical"] header {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  /* Research: smaller heading */
+  [data-theme="research"] header h1 {
+    font-size: 1.5rem;
+  }
+  /* Reduce editorial line-height on small screens */
+  [data-theme="research"] {
+    --line-height-body: 1.6;
+  }
+
+  /* Government: compact header */
+  [data-theme="government"] header h1 {
+    font-size: var(--fs-xl);
+  }
 }

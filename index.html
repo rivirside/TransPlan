@@ -6,20 +6,30 @@
     <title>TransplantMatch - Find Your Best Location</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leafletCss=true;" />
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="themes.css">
 </head>
 <body>
+    <div class="gov-banner" aria-label="Tool information banner">
+        <div class="gov-banner-inner">
+            <span class="gov-banner-text">An unofficial public data exploration tool using SRTR, OPTN, and CDC datasets</span>
+        </div>
+    </div>
     <nav class="site-nav" aria-label="Site navigation">
         <div class="nav-inner">
-            <a href="/" class="nav-brand">TransplantMatch</a>
+            <a href="/" class="nav-brand">
+                <span class="nav-brand-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <span class="nav-brand-text">TransplantMatch</span>
+            </a>
             <div class="nav-links">
                 <a href="#methodology" class="nav-link">Methodology</a>
                 <a href="docs-site/" class="nav-link" target="_blank" rel="noopener">Documentation</a>
-                <a href="https://github.com/rivir/TransPlan" class="nav-link nav-link--github" target="_blank" rel="noopener">
+                <a href="https://github.com/rivirside/TransPlan" class="nav-link nav-link--github" target="_blank" rel="noopener">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
                     GitHub
                 </a>
@@ -593,8 +603,11 @@
             </section>
         </main>
 
-        <footer id="disclaimer-full">
-            <div class="disclaimer-full">
+    </div>
+
+    <footer id="disclaimer-full" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-disclaimer">
                 <h3>Disclaimer</h3>
                 <p><strong>This tool is for educational and exploratory purposes only.</strong> TransplantMatch is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
                 <p><strong>What this tool cannot account for:</strong> HLA typing and crossmatch compatibility, specific disease etiology and comorbidities, your current functional status, individual OPO performance, or your relationship with specific transplant programs. While optional inputs for cPRA, MELD, and LAS adjust scoring, they are rough approximations and do not replace clinical allocation models.</p>
@@ -602,8 +615,16 @@
                 <p><strong>Some data is estimated or manually curated</strong> and may not reflect current conditions. Wait time estimates are derived from regional averages and may not match your individual circumstances.</p>
                 <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant. Your medical team has access to your complete clinical picture, which this tool does not.</p>
             </div>
-        </footer>
-    </div>
+            <div class="footer-meta">
+                <div class="footer-links">
+                    <a href="docs-site/" target="_blank" rel="noopener">Documentation</a>
+                    <a href="#methodology">Methodology</a>
+                    <a href="https://github.com/rivirside/TransPlan" target="_blank" rel="noopener">GitHub</a>
+                </div>
+                <p class="footer-copy">TransplantMatch is an open-source research tool. Not affiliated with UNOS, OPTN, or any transplant center.</p>
+            </div>
+        </div>
+    </footer>
 
     <!-- City Detail Modal (M3) -->
     <div id="cityDetailModal" class="city-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modal-city-name">
