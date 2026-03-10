@@ -157,6 +157,64 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* --- Site Navigation --- */
+.site-nav {
+  background: var(--neutral-900);
+  color: var(--neutral-300);
+  font-size: var(--fs-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-2) var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  color: white;
+  font-weight: 700;
+  font-size: var(--fs-base);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.nav-brand:hover {
+  opacity: 0.9;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.nav-link {
+  color: var(--neutral-400);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.nav-link:hover {
+  color: white;
+}
+
+.nav-link--github {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.nav-link--github svg {
+  flex-shrink: 0;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -2108,6 +2166,10 @@ footer {
 
 /* --- Responsive: Tablet (768px) --- */
 @media (max-width: 768px) {
+  .nav-links {
+    gap: var(--space-3);
+  }
+
   header {
     padding: var(--space-9) var(--space-4) 68px;
   }
@@ -2559,7 +2621,7 @@ footer {
 
 /* --- Print Styles --- */
 @media print {
-  header, .methodology-section, .form-section,
+  .site-nav, header, .methodology-section, .form-section,
   .map-section, .map-controls, .session-bar,
   .simulation-spinner, .city-modal, .compare-bar,
   .results-header-row, .compare-check,
