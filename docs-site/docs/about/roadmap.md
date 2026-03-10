@@ -52,7 +52,11 @@ TransPlan targets FDA clearance as Class II Software as a Medical Device (SaMD) 
 
 ## Contributing to the Roadmap
 
-This is an open-source project. Contributions are welcome:
+:::info Pre-Release
+TransPlan is being developed in the open but the repository is currently private. The project will be open-sourced at a future stable release milestone. Until then, contributions are coordinated through the development team.
+:::
+
+Once open-sourced, contributions will be welcome through:
 
 1. [Development Guide](/contributing/development-guide): setup and conventions
 2. [Data Curation](/contributing/data-curation): improving data quality

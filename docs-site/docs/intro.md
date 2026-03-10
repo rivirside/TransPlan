@@ -4,6 +4,10 @@ sidebar_position: 1
 
 # Introduction
 
+:::info Pre-Release Software
+TransPlan is being **developed in the open** but the repository is currently **private**. The project will be open-sourced once it reaches a stable release milestone. Until then, access is limited to the development team and invited collaborators. If you're interested in contributing or following progress, reach out via the Contact link above.
+:::
+
 TransPlan is a patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs.
 
 ## What TransPlan Does

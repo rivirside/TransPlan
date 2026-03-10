@@ -59,15 +59,20 @@ const config: Config = {
       },
       items: [
         {
+          type: 'html',
+          position: 'left',
+          value: '<a href="/" class="navbar__link">Home</a>',
+        },
+        {
           type: 'docSidebar',
           sidebarId: 'docsSidebar',
           position: 'left',
           label: 'Docs',
         },
         {
-          href: 'http://localhost:8003',
-          label: '← Open App',
+          type: 'html',
           position: 'left',
+          value: '<a href="/simulator.html" class="navbar__link">← Open App</a>',
         },
         {
           href: 'mailto:tomer@arizona.edu',

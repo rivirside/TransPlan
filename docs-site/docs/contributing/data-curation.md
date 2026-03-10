@@ -4,6 +4,10 @@ sidebar_position: 2
 
 # Data Curation Guide
 
+:::info Pre-Release
+TransPlan is being developed in the open but the repository is currently private. These instructions are for the development team and invited collaborators. The project will be open-sourced at a future stable release milestone.
+:::
+
 How to maintain and update TransPlan's data files.
 
 ## Data File Types
