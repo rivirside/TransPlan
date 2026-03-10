@@ -11,10 +11,10 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://your-github-user.github.io',
-  baseUrl: '/TransPlan/docs/',
+  url: 'http://localhost:8002',
+  baseUrl: '/docs-site/build/',
 
-  organizationName: 'your-github-user',
+  organizationName: 'transplantmatch',
   projectName: 'TransPlan',
   trailingSlash: false,
 
@@ -37,7 +37,7 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           routeBasePath: '/',
-          editUrl: 'https://github.com/your-github-user/TransPlan/edit/main/docs-site/',
+          // editUrl will be set when open-sourced
         },
         blog: false,
         theme: {
@@ -70,8 +70,8 @@ const config: Config = {
           position: 'left',
         },
         {
-          href: 'https://github.com/your-github-user/TransPlan',
-          label: 'GitHub',
+          href: 'mailto:tomer@arizona.edu',
+          label: 'Contact',
           position: 'right',
         },
       ],
@@ -100,7 +100,7 @@ const config: Config = {
           items: [
             { label: 'API Reference', to: '/api-reference/simulate' },
             { label: 'FAQ', to: '/about/faq' },
-            { label: 'GitHub', href: 'https://github.com/your-github-user/TransPlan' },
+            { label: 'Contact', href: 'mailto:tomer@arizona.edu' },
           ],
         },
       ],

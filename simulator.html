@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransplantMatch - Find Your Best Location</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leafletCss=true;" />
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="themes.css">
+</head>
+<body>
+    <div class="gov-banner" aria-label="Tool information banner">
+        <div class="gov-banner-inner">
+            <span class="gov-banner-text">An unofficial public data exploration tool using SRTR, OPTN, and CDC datasets</span>
+        </div>
+    </div>
+    <nav class="site-nav" aria-label="Site navigation">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <span class="nav-brand-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <span class="nav-brand-text">TransplantMatch</span>
+            </a>
+            <div class="nav-links">
+                <a href="simulator.html" class="nav-link nav-link--active">Simulator</a>
+                <a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Documentation</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <main>
+            <section class="info-card">
+                <h2>About This Tool</h2>
+                <div class="disclaimer-banner">
+                    <strong>Important:</strong> This tool is for <strong>educational and exploratory purposes only</strong>. It does not predict actual transplant outcomes. Scores reflect regional data trends, not individual clinical assessments. Always consult your transplant team before making any decisions. See <a href="#disclaimer-full">full disclaimer</a> below.
+                </div>
+                <p>TransplantMatch compares US cities across regional transplant data, donor availability, wait times, and health demographics to help you explore which locations may align with your transplant needs.</p>
+            </section>
+
+            <section class="form-section">
+                <h2>Your Health Profile</h2>
+                <form id="transplantForm">
+                    <fieldset>
+                        <legend>Required Information</legend>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="organ">Needed Organ *</label>
+                                <select id="organ" required>
+                                    <option value="">Select organ...</option>
+                                    <option value="kidney">Kidney</option>
+                                    <option value="liver">Liver</option>
+                                    <option value="heart">Heart</option>
+                                    <option value="lung">Lung</option>
+                                    <option value="pancreas">Pancreas</option>
+                                    <option value="intestine">Intestine</option>
+                                </select>
+                            </div>
+
+                            <!-- Organ-specific clinical inputs (conditional) -->
+                            <div class="form-group conditional-field" id="cpra-group" data-organ="kidney" style="display:none;">
+                                <label for="cpra">cPRA (Sensitization Level) <a class="info-btn" data-doc-path="/about/faq" title="Learn about cPRA" target="_blank" rel="noopener" aria-label="Documentation: cPRA FAQ"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></a></label>
+                                <div class="range-wrapper">
+                                    <input type="range" id="cpra" min="0" max="100" value="0">
+                                    <output id="cpra-output">0%</output>
+                                </div>
+                                <small class="field-help">Panel Reactive Antibody measures how sensitized your immune system is to donor tissue. Higher values mean longer expected waits. Leave at 0 if unknown.</small>
+                            </div>
+
+                            <div class="form-group conditional-field" id="meld-group" data-organ="liver" style="display:none;">
+                                <label for="meld">MELD Score <a class="info-btn" data-doc-path="/about/faq" title="Learn about MELD scoring" target="_blank" rel="noopener" aria-label="Documentation: MELD FAQ"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></a></label>
+                                <input type="number" id="meld" min="6" max="40" placeholder="6-40 (optional)">
+                                <small class="field-help">Model for End-Stage Liver Disease score. Higher MELD = higher medical priority = shorter wait. Leave blank to use general urgency level.</small>
+                            </div>
+
+                            <div class="form-group conditional-field" id="las-group" data-organ="lung" style="display:none;">
+                                <label for="las">LAS (Lung Allocation Score) <a class="info-btn" data-doc-path="/about/faq" title="Learn about LAS" target="_blank" rel="noopener" aria-label="Documentation: LAS FAQ"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></a></label>
+                                <input type="number" id="las" min="0" max="100" placeholder="0-100 (optional)">
+                                <small class="field-help">Composite score balancing medical urgency and expected post-transplant benefit. Higher LAS = higher priority. Leave blank to use general urgency level.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="bloodType">Blood Type * <a class="info-btn" data-doc-path="/about/faq" title="Learn about blood type compatibility" target="_blank" rel="noopener" aria-label="Documentation: Blood type FAQ"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></a></label>
+                                <select id="bloodType" required>
+                                    <option value="">Select blood type...</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="age">Age *</label>
+                                <input type="number" id="age" min="1" max="120" placeholder="Your age" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sex">Sex *</label>
+                                <select id="sex" required>
+                                    <option value="">Select...</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="urgency">Medical Urgency * <a class="info-btn" data-doc-path="/about/faq" title="Learn about urgency status levels" target="_blank" rel="noopener" aria-label="Documentation: Urgency levels FAQ"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></a></label>
+                                <select id="urgency" required>
+                                    <option value="">Select urgency level...</option>
+                                    <option value="1">Critical (Status 1)</option>
+                                    <option value="2">High Priority (Status 2)</option>
+                                    <option value="3">Active (Status 3)</option>
+                                    <option value="4">Inactive (Status 4)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Optional Details</legend>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="weight">Weight (lbs)</label>
+                                <input type="number" id="weight" min="20" max="800" placeholder="Optional">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="height">Height (inches)</label>
+                                <input type="number" id="height" min="20" max="100" placeholder="Optional">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="insurance">Insurance Type</label>
+                                <select id="insurance">
+                                    <option value="">Select...</option>
+                                    <option value="medicare">Medicare</option>
+                                    <option value="medicaid">Medicaid</option>
+                                    <option value="private">Private Insurance</option>
+                                    <option value="none">Uninsured</option>
+                                </select>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Simulation Settings</legend>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="homeCenter">Home Center</label>
+                                <select id="homeCenter">
+                                    <option value="">None selected</option>
+                                </select>
+                                <small class="field-help">Select your current transplant center to see how other cities compare.</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="overlay-toggle" for="adjustCauseOfDeath">
+                                    <input type="checkbox" id="adjustCauseOfDeath">
+                                    <span>Adjust for regional cause-of-death patterns</span>
+                                </label>
+                                <small class="field-help">Applies organ-specific donor recovery rates based on state-level mortality data (trauma, stroke, cardiovascular, drug intoxication).</small>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit" class="submit-btn">Find Best Locations</button>
+                </form>
+            </section>
+
+            <section class="methodology-section" id="methodology">
+                <h2>How Our Algorithm Works <a class="info-btn" data-doc-path="/theory/scoring-methodology" title="Full scoring methodology documentation" target="_blank" rel="noopener" aria-label="Documentation: Scoring methodology"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></a></h2>
+
+                <div class="methodology-intro">
+                    <p>TransplantMatch uses a multi-factor algorithm that analyzes <strong>40+ data points</strong> across 8 major categories to generate a <strong>relative location suitability score</strong> for each city. These scores reflect regional data trends and are <em>not</em> clinical predictions. Our scoring system is weighted based on publicly available transplant research and regional statistics.</p>
+                </div>
+
+                <div class="methodology-list">
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><path d="M22 10a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/></svg></span>
+                            <span class="method-title">Medical Compatibility</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:100%"></span></span>
+                            <span class="method-pct">25%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Blood type matching:</strong> AB+ (universal recipient) scores highest, O- (limited options) faces most challenges</li>
+                                <li><strong>Age-based prioritization:</strong> Pediatric patients (&lt;18) receive priority; outcomes decline after 65</li>
+                                <li><strong>Organ size matching:</strong> Height/weight ratios critical for heart and lung transplants</li>
+                                <li><strong>Sex considerations:</strong> Body size matching relevant for heart and lung transplants; minimal factor for other organs</li>
+                                <li><strong>Antibody sensitivity (cPRA):</strong> Panel Reactive Antibody level affects kidney wait time; highly sensitized patients (cPRA &gt;80%) face significantly longer waits</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+                            <span class="method-title">Wait Time &amp; Competition</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:80%"></span></span>
+                            <span class="method-pct">20%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>UNOS regional wait times:</strong> Varies by region (Southwest: 3.8 yrs vs Midwest: 2.1 yrs for kidneys)</li>
+                                <li><strong>Waitlist size:</strong> Fewer competing patients = faster transplant</li>
+                                <li><strong>Medical urgency:</strong> Status 1 (critical) patients prioritized over Status 3 (stable). Organ-specific scores (cPRA for kidney, MELD for liver, LAS for lung) replace generic urgency when provided</li>
+                                <li><strong>Annual death rates on waitlist:</strong> Higher in regions with long waits</li>
+                                <li><strong>Transplant volume:</strong> High-volume centers process lists faster</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></span>
+                            <span class="method-title">Donor Availability</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:72%"></span></span>
+                            <span class="method-pct">18%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>State registration rates:</strong> Montana (82%) vs Mississippi (22%)</li>
+                                <li><strong>Deceased donor events:</strong> Traffic fatality rates are one proxy among several for regional donor availability (only ~20-25% of modern donors come from motor vehicle accidents)</li>
+                                <li><strong>Living donor programs:</strong> Strength of paired exchange and altruistic programs</li>
+                                <li><strong>Population density:</strong> Larger metro areas = larger potential donor pools</li>
+                                <li><strong>Donor demographics:</strong> Age, health status of regional population</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+                            <span class="method-title">Hospital Quality</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:60%"></span></span>
+                            <span class="method-pct">15%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Annual transplant volume:</strong> Volume-outcome relationship proven in research (data from SRTR program-specific reports)</li>
+                                <li><strong>Center reputation:</strong> UPMC, Cleveland Clinic, Mayo score highest</li>
+                                <li><strong>Organ specialization:</strong> Duke leads in lungs, Minneapolis in pancreas</li>
+                                <li><strong>Insurance acceptance:</strong> Medicaid and uninsured patients face access barriers that vary by center</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+                            <span class="method-title">Geographic &amp; Logistical</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:40%"></span></span>
+                            <span class="method-pct">10%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Cost of living:</strong> Impacts ability to afford relocation and post-transplant care</li>
+                                <li><strong>Climate:</strong> Moderate temperatures aid recovery; extreme weather creates challenges</li>
+                                <li><strong>Air quality:</strong> Critical for lung recipients; poor air quality in LA vs excellent in Madison</li>
+                                <li><strong>Housing availability:</strong> Need to live near center for 3-6 months post-transplant</li>
+                                <li><strong>Transportation access:</strong> Proximity to center for frequent follow-ups</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+                            <span class="method-title">Health Demographics</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:28%"></span></span>
+                            <span class="method-pct">7%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Diabetes prevalence:</strong> High rates (Miami 12.8%) damage potential donor kidneys</li>
+                                <li><strong>Obesity rates:</strong> Affects donor organ quality and surgical outcomes</li>
+                                <li><strong>Chronic kidney disease:</strong> Reduces kidney donor pool in affected regions</li>
+                                <li><strong>Hypertension:</strong> Impacts heart and kidney donor quality</li>
+                                <li><strong>Smoking rates:</strong> Tennessee (22.8%) vs California (13.5%) affects lung donors</li>
+                                <li class="method-note"><em>Note: Uses state-level CDC BRFSS data with city-level adjustments. County-level granularity (CDC PLACES) would change scores by &lt;0.5 points given this category's 7% weight.</em></li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+                            <span class="method-title">Policy &amp; Legal</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:12%"></span></span>
+                            <span class="method-pct">3%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Donation laws:</strong> States with strong DMV-based registration and first-person consent laws score higher</li>
+                                <li><strong>First-person consent:</strong> Some states require family cannot override donor card</li>
+                                <li><strong>Medicaid expansion:</strong> Affects post-transplant medication coverage</li>
+                                <li><strong>Insurance mandates:</strong> State requirements for transplant coverage</li>
+                                <li><strong>DMV enrollment:</strong> Automatic registry at license renewal boosts donor rates</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                            <span class="method-title">Socioeconomic</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:8%"></span></span>
+                            <span class="method-pct">2%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Patient housing (30%):</strong> Dedicated transplant hospitality houses, on-site temporary housing (e.g., Gift of Life Transplant House, Transplant House of Cleveland)</li>
+                                <li><strong>Financial assistance (25%):</strong> Transplant financial counselors, charity care, fundraising support programs</li>
+                                <li><strong>Support groups (20%):</strong> Peer mentorship, survivor support groups, transplant-specific community programs</li>
+                                <li><strong>Caregiver resources (15%):</strong> Caregiver housing, training programs (e.g., Nebraska Medicine's cooperative care model), respite support</li>
+                                <li><strong>Health literacy (10%):</strong> Patient education programs, multilingual services, transplant coordinator counseling</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="methodology-weights-chart">
+                    <h3>Category Weights</h3>
+                    <div class="chart-container chart-container-small">
+                        <canvas id="weightsDonutChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="methodology-calculation">
+                    <h3>Example Calculation</h3>
+                    <div class="calc-example">
+                        <p><strong>Patient Profile:</strong> 45-year-old female, blood type A+, needs kidney, Status 2 urgency</p>
+                        <p><strong>City:</strong> Pittsburgh, PA</p>
+
+                        <div class="calc-breakdown">
+                            <div class="calc-row">
+                                <span>Medical Compatibility (A+ blood type, age 45, female):</span>
+                                <span><strong>95/100</strong> × 25% = 23.75</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Wait Time (1.8 years, Status 2):</span>
+                                <span><strong>92/100</strong> × 20% = 18.40</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Donor Availability (PA 42% registration, trauma network):</span>
+                                <span><strong>88/100</strong> × 18% = 15.84</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Hospital Quality (UPMC, 350 kidney transplants/year):</span>
+                                <span><strong>100/100</strong> × 15% = 15.00</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Geographic (affordable COL, moderate climate):</span>
+                                <span><strong>83/100</strong> × 10% = 8.30</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Health Demographics (low diabetes, moderate obesity):</span>
+                                <span><strong>85/100</strong> × 7% = 5.95</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Policy (PA strong opt-in laws):</span>
+                                <span><strong>88/100</strong> × 3% = 2.64</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Socioeconomic (good support systems):</span>
+                                <span><strong>83/100</strong> × 2% = 1.66</span>
+                            </div>
+                            <div class="calc-total">
+                                <span><strong>TOTAL LOCATION SUITABILITY SCORE:</strong></span>
+                                <span><strong>91.54/100</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="methodology-footer">
+                    <h3>Data Sources & Validation</h3>
+                    <ul>
+                        <li>SRTR (Scientific Registry of Transplant Recipients): Center-specific transplant volumes and program data (2023-2024)</li>
+                        <li>UNOS/OPTN: National transplant registry, wait time estimates by organ type</li>
+                        <li>BLS (Bureau of Labor Statistics): Consumer Price Index for metro area cost of living</li>
+                        <li>NHTSA FARS: Traffic fatality rates by state (one component of donor availability)</li>
+                        <li>EPA AQS: Ozone and PM2.5 air quality measurements, converted via AQI breakpoints</li>
+                        <li>CDC BRFSS: Chronic disease prevalence (diabetes, obesity, CKD, hypertension, smoking)</li>
+                        <li>State DMV/Registry data: Donor registration rates by state</li>
+                        <li>Census Bureau: Population density, socioeconomic demographics</li>
+                    </ul>
+                    <p class="methodology-note"><strong>Data Updates:</strong> Regional data is refreshed weekly via automated pipelines where APIs are available. Some data sources (SRTR program reports, policy tiers) are manually curated and updated less frequently. Check the data freshness banner in results for current status.</p>
+                </div>
+            </section>
+
+            <!-- Loading spinner overlay -->
+            <div id="simulationSpinner" class="simulation-spinner" style="display: none;">
+                <div class="spinner-content">
+                    <div class="spinner-ring"></div>
+                    <p class="spinner-text">Running simulation...</p>
+                </div>
+            </div>
+
+            <section id="resultsSection" class="results-section" style="display: none;">
+                <div id="data-freshness-banner"></div>
+                <h2>Your Top Recommended Cities</h2>
+                <p class="results-intro">Based on your profile, here are cities ranked by location suitability score. These scores reflect regional data trends, not individual clinical predictions.</p>
+
+                <!-- Dual-mode tab toggle -->
+                <div class="results-header-row">
+                    <div class="results-mode-toggle" role="tablist" aria-label="Results view mode">
+                        <button id="tab-scores" class="mode-tab active" role="tab" aria-selected="true" aria-controls="panel-scores">Location Scores</button>
+                        <button id="tab-probabilities" class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-probabilities">Simulation Probabilities</button>
+                        <button id="tab-equity" class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-equity" disabled title="Backend not running">Equity Analysis</button>
+                    </div>
+                    <button id="printResults" class="btn-print" onclick="window.print()" title="Print results for your care team">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 1h8v3H4V1zm-1 3h10a2 2 0 012 2v4a2 2 0 01-2 2h-1v3H4v-3H3a2 2 0 01-2-2V6a2 2 0 012-2zm2 6v4h6v-4H5zm6-3a1 1 0 100-2 1 1 0 000 2z" fill="currentColor"/></svg>
+                        Print
+                    </button>
+                </div>
+
+                <!-- Compare bar (appears when 2+ cities selected) -->
+                <div id="compareBar" class="compare-bar" style="display:none">
+                    <span id="compareCount">0 selected</span>
+                    <button id="compareBtn" class="btn-compare" disabled>Compare Selected</button>
+                    <button id="compareClear" class="btn-compare-clear">Clear</button>
+                </div>
+
+                <!-- Backend unavailable notice -->
+                <div id="simulation-unavailable" class="simulation-unavailable-banner" style="display: none;" role="alert">
+                    Monte Carlo simulation unavailable. Showing location scores only. Start the backend with <code>./start.command</code> for probability estimates.
+                </div>
+
+                <div class="map-section">
+                    <div id="map" role="application" aria-label="Interactive map showing transplant center locations and data overlays across US cities"></div>
+                    <div class="map-controls">
+                        <h3 id="overlays-heading">
+                            <button class="overlay-collapse-toggle" aria-expanded="false" aria-controls="overlay-controls-panel" onclick="this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); this.closest('.map-controls').querySelector('.overlay-controls').classList.toggle('collapsed');">
+                                Map Overlays <span class="toggle-icon" aria-hidden="true">▼</span>
+                            </button>
+                            <span class="overlay-heading-desktop">Map Overlays</span>
+                        </h3>
+                        <div class="overlay-controls collapsed" id="overlay-controls-panel" role="group" aria-labelledby="overlays-heading">
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="trafficAccidentsLayer" checked>
+                                <span>Traffic Accident Fatalities</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="donorRegistrationLayer">
+                                <span>Organ Donor Registration Rates</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="transplantCentersLayer" checked>
+                                <span>Transplant Centers</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="statePoliciesLayer">
+                                <span>State Donation Policies</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="waitTimeGridLayer">
+                                <span>Regional Wait Time Grid</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="diabetesLayer">
+                                <span>Diabetes Prevalence Heatmap</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="obesityLayer">
+                                <span>Obesity Rates</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="costOfLivingLayer">
+                                <span>Cost of Living Index</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="airQualityLayer">
+                                <span>Air Quality Index</span>
+                            </label>
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="insuranceCoverageLayer">
+                                <span>Insurance Acceptance Rates</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 1: Score View -->
+                <div id="panel-scores" class="results-panel active" role="tabpanel" aria-labelledby="tab-scores">
+                    <div id="resultsContainer" class="results-container" aria-live="polite" aria-label="City ranking results">
+                        <!-- Results will be inserted here -->
+                    </div>
+
+                    <div class="charts-section">
+                        <h3>City Comparison</h3>
+                        <div class="chart-container">
+                            <canvas id="comparisonChart" role="img" aria-label="Bar chart comparing scoring categories across top-ranked cities"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 2: Probability View -->
+                <div id="panel-probabilities" class="results-panel" role="tabpanel" aria-labelledby="tab-probabilities" style="display: none;">
+                    <div id="probabilityContainer" class="results-container" aria-live="polite" aria-label="Simulation probability results">
+                        <!-- Probability cards will be inserted here -->
+                    </div>
+
+                    <div class="charts-section">
+                        <h3>Transplant Probability Over Time</h3>
+                        <div class="chart-container">
+                            <canvas id="cdfChart" role="img" aria-label="Line chart showing probability of transplant over time for top cities"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="charts-section">
+                        <h3>24-Month Waitlist Outcomes</h3>
+                        <div class="chart-container">
+                            <canvas id="competingRisksChart" role="img" aria-label="Stacked bar chart showing transplant, mortality, delisting, and still-waiting outcomes"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="charts-section" id="tornadoSection" style="display:none">
+                        <h3>Input Sensitivity Analysis</h3>
+                        <p class="chart-description">How much does each clinical parameter affect your 24-month transplant probability? Each bar shows the outcome range from most favorable to least favorable value for that parameter, using the top-ranked city.</p>
+                        <div class="chart-container chart-container--tornado">
+                            <canvas id="tornadoChart" role="img" aria-label="Tornado chart showing how each input parameter affects 24-month transplant probability"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 3 M4: Equity Analysis View -->
+                <div id="panel-equity" class="results-panel" role="tabpanel" aria-labelledby="tab-equity" style="display: none;">
+                    <div class="equity-disclaimer" role="alert">
+                        <strong>Equity Analysis Limitations</strong>
+                        <p>This analysis varies blood type, age, and sex while holding clinical parameters fixed. It does not model race, ethnicity, socioeconomic status, or insurance type. Results reflect model behavior, not observed real-world disparities.</p>
+                    </div>
+
+                    <div id="equityContainer" aria-live="polite" aria-label="Equity analysis results">
+                        <!-- Summary card + city equity table rendered by script.js -->
+                    </div>
+
+                    <div class="charts-section">
+                        <h3>Blood Type Disparity</h3>
+                        <p class="chart-description">Average 24-month transplant probability by blood type across the selected city. Blood types compatible with fewer donors (e.g., O) typically show lower probabilities.</p>
+                        <div class="chart-container">
+                            <canvas id="equityBloodTypeChart" role="img" aria-label="Bar chart showing transplant probability disparity across blood types"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="charts-section">
+                        <h3>Age Bracket Disparity</h3>
+                        <p class="chart-description">Average 24-month transplant probability by age bracket. Age affects donor-recipient matching dynamics in the simulation model.</p>
+                        <div class="chart-container">
+                            <canvas id="equityAgeChart" role="img" aria-label="Bar chart showing transplant probability disparity across age brackets"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="charts-section">
+                        <h3>Gini Coefficient by City</h3>
+                        <p class="chart-description">Demographic inequality index for each city (0 = perfect equality, 1 = total inequality). Lower Gini means more equitable outcomes across demographic profiles.</p>
+                        <div class="chart-container chart-container--gini">
+                            <canvas id="equityGiniChart" role="img" aria-label="Horizontal bar chart showing Gini coefficient for each city"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="equityDisclaimers" class="equity-disclaimers-section">
+                        <!-- Disclaimers rendered from API response -->
+                    </div>
+                </div>
+
+                <div class="data-sources">
+                    <h3>Data Sources</h3>
+                    <ul>
+                        <li>UNOS (United Network for Organ Sharing) transplant registry data</li>
+                        <li>OPTN (Organ Procurement and Transplantation Network) regional statistics</li>
+                        <li>CDC mortality and donor availability rates</li>
+                        <li>Regional health demographics and comorbidity prevalence</li>
+                        <li>Hospital transplant center performance metrics</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+    <footer id="disclaimer-full" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-disclaimer">
+                <h3>Disclaimer</h3>
+                <p><strong>This tool is for educational and exploratory purposes only.</strong> TransplantMatch is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
+                <p><strong>What this tool cannot account for:</strong> HLA typing and crossmatch compatibility, specific disease etiology and comorbidities, your current functional status, individual OPO performance, or your relationship with specific transplant programs. While optional inputs for cPRA, MELD, and LAS adjust scoring, they are rough approximations and do not replace clinical allocation models.</p>
+                <p><strong>Scores are relative comparisons</strong> based on publicly available regional statistics. They are not clinical assessments. A city scoring 85/100 does not mean you have an 85% chance of a successful transplant there.</p>
+                <p><strong>Some data is estimated or manually curated</strong> and may not reflect current conditions. Wait time estimates are derived from regional averages and may not match your individual circumstances.</p>
+                <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant. Your medical team has access to your complete clinical picture, which this tool does not.</p>
+            </div>
+            <div class="footer-meta">
+                <div class="footer-links">
+                    <a href="/">Home</a>
+                    <a href="#methodology">Methodology</a>
+                    <a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>
+                </div>
+                <p class="footer-copy">TransplantMatch is a project under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
+                <p class="footer-copy">Interested in learning more? Contact <a href="mailto:tomer@arizona.edu">tomer@arizona.edu</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- City Detail Modal (M3) -->
+    <div id="cityDetailModal" class="city-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modal-city-name">
+        <div class="city-modal-backdrop"></div>
+        <div class="city-modal-content">
+            <div class="city-modal-header">
+                <div>
+                    <h2 id="modal-city-name"></h2>
+                    <span id="modal-state-name" class="state"></span>
+                </div>
+                <button class="city-modal-close" aria-label="Close detail view">&times;</button>
+            </div>
+            <div id="modal-body" class="city-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- City Comparison Modal (M3) -->
+    <div id="cityCompareModal" class="city-modal city-modal--wide" style="display:none" role="dialog" aria-modal="true" aria-labelledby="compare-modal-title">
+        <div class="city-modal-backdrop"></div>
+        <div class="city-modal-content">
+            <div class="city-modal-header">
+                <h2 id="compare-modal-title">City Comparison</h2>
+                <button class="city-modal-close" aria-label="Close comparison">&times;</button>
+            </div>
+            <div id="compare-body" class="city-modal-body"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leaflet=true;"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"
+            onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leafletHeat=true;"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"
+            onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.chartjs=true;"></script>
+    <script>
+        // CDN availability gate — checked by app scripts before using libraries
+        window.TransPlanCDN = {
+            leaflet: typeof L !== 'undefined' && typeof L.map === 'function',
+            leafletHeat: typeof L !== 'undefined' && typeof L.heatLayer === 'function',
+            chartjs: typeof Chart !== 'undefined'
+        };
+    </script>
+    <script src="data-loader.js"></script>
+    <script src="algorithm.js"></script>
+    <script src="api-client.js"></script>
+    <script src="script.js"></script>
+    <script src="charts.js"></script>
+    <script src="probability-charts.js"></script>
+    <script src="equity-charts.js"></script>
+    <script src="session.js"></script>
+    <script src="theme-switcher.js"></script>
+    <script>
+    /* Resolve info button hrefs for local dev vs GitHub Pages */
+    (function() {
+      var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+      var base = isLocal ? '/docs-site/build' : '/TransPlan/docs';
+      document.querySelectorAll('.info-btn[data-doc-path]').forEach(function(btn) {
+        btn.href = base + btn.dataset.docPath;
+      });
+    })();
+    </script>
+</body>
+</html>
