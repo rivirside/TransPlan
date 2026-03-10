@@ -14,9 +14,11 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 
 **Theme System (March 2026):** 4 themes — Default (dark nav, indigo accent, centered), Clinical (compact, uppercase, muted teal), Research (serif Lora headings, editorial, warm tones), Government (USWDS-inspired, gov banner, bordered panels). Each is a genuinely different design language, not just color swaps. Design token system in CSS custom properties. Landing page has per-theme overrides.
 
-**Docusaurus Docs Site (March 2026):** Full documentation site in `docs-site/`. 20 pages, 7 sections. baseUrl configured for local dev (`/docs-site/build/`). Builds cleanly (`npm run build` in `docs-site/`).
+**Docusaurus Docs Site (March 2026):** Full documentation site in `docs-site/`. 20 pages, 7 sections. baseUrl configured for local dev (`/docs-site/build/`). Builds cleanly (`npm run build` in `docs-site/`). Comprehensive docs audit completed March 2026: all 20 pages updated to reflect Phase 3 M4, multi-page architecture, new API endpoints, current test counts, and deployment changes. Navbar has Home (→ `/`) and Open App (→ `/simulator.html`) links using `type: 'html'` to bypass Docusaurus baseUrl prepending. Pre-release info admonitions on intro, roadmap, and contributing pages.
 
-**Pre-Release Status:** Project under active development. GitHub links removed (not yet public). Contact: tomer@arizona.edu.
+**Deployment (March 2026):** Primary deployment is **Vercel** (`vercel.json` at repo root, `outputDirectory: "."`). Vercel Analytics added to both `index.html` and `simulator.html`. GitHub Pages **disabled** — the `deploy-docs.yml` workflow was removed because it deployed only the docs with a mismatched baseUrl, causing a broken error page. When the project is open-sourced, GitHub Pages can be re-enabled with corrected config.
+
+**Pre-Release Status:** Project under active development. Repository is private, being developed in the open. Will be open-sourced at a future stable release milestone. Contact: tomer@arizona.edu.
 
 ### What's Done
 
@@ -68,7 +70,6 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 ### What's NOT Done (Next Steps)
 
 - **Phase 3 M5:** UX Polish & Export (#4–#9) — dark mode, URL sharing, PDF/CSV/JSON export, sensitivity sliders
-- **Deploy:** Configure deployment (project not yet public)
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred:** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21)
 - See `docs/roadmap.md` for full phased plan (5 phases through FDA clearance)
@@ -80,7 +81,7 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 
 | Milestone | Issues | Description |
 |-----------|--------|-------------|
-| Phase 1: Deployment | 2 | GitHub Pages, FARS API |
+| Phase 1: Deployment | 1 | FARS API (GitHub Pages disabled, Vercel is primary) |
 | Phase 3: UI Overhaul | 1 | Pick winning theme, merge, cleanup |
 | Phase 3 M5: UX Polish & Export | 6 | Dark mode, URL sharing, PDF/CSV/JSON, charts, sensitivity sliders |
 | M2b: COD Model Data Quality | 8 | L-049 through L-056 — upgrade COD multiplier |
@@ -153,6 +154,7 @@ TransPlan/
   .github/workflows/
     fetch-data.yml        <- Weekly data fetch (Mon 6am UTC)
     check-srtr-updates.yml <- Bimonthly SRTR check
+    (deploy-docs.yml removed — GitHub Pages disabled, Vercel is primary deployment)
   backend/                <- Phase 2 Python FastAPI backend
     main.py               <- FastAPI app, CORS, static file serving, startup data load
     config.py             <- DATA_DIR, SIMULATION_ITERATIONS, ALLOWED_ORIGINS

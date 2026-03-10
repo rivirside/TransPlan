@@ -1,9 +1,10 @@
 /**
- * TransPlan — Theme Switcher (Temporary)
+ * TransPlan — Theme Switcher (Temporarily Hidden)
  *
- * Floating UI for comparing 3 professional themes.
+ * Floating UI for comparing 4 professional themes.
  * Sets data-theme attribute on <html> and persists to localStorage.
- * Remove this file (and themes.css) after the winning theme is merged.
+ * HIDDEN: Set SHOW_SWITCHER = true to re-enable the floating picker.
+ * The saved theme preference is still applied even when hidden.
  */
 (function () {
   'use strict';
@@ -16,6 +17,7 @@
   ];
 
   var STORAGE_KEY = 'transplan-theme';
+  var SHOW_SWITCHER = false; // Set to true to re-enable the floating theme picker
 
   // Apply saved theme immediately (before paint)
   var saved = localStorage.getItem(STORAGE_KEY) || '';
@@ -24,6 +26,7 @@
   }
 
   function buildSwitcher() {
+    if (!SHOW_SWITCHER) return; // Hidden — flip SHOW_SWITCHER to re-enable
     var bar = document.createElement('div');
     bar.id = 'theme-switcher';
     bar.style.cssText = [
