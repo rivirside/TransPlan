@@ -20,10 +20,13 @@
   var STORAGE_KEY = 'transplan-theme';
   var SHOW_SWITCHER = true; // Theme picker enabled for comparison
 
-  // Apply saved theme immediately (before paint)
-  var saved = localStorage.getItem(STORAGE_KEY) || '';
-  if (saved) {
-    document.documentElement.setAttribute('data-theme', saved);
+  var DEFAULT_THEME = 'xp'; // Windows XP Luna as default
+
+  // Apply saved theme immediately (before paint), fall back to default
+  var saved = localStorage.getItem(STORAGE_KEY);
+  var activeTheme = saved !== null ? saved : DEFAULT_THEME;
+  if (activeTheme) {
+    document.documentElement.setAttribute('data-theme', activeTheme);
   }
 
   function buildSwitcher() {
@@ -79,17 +82,17 @@
     });
 
     document.body.appendChild(bar);
-    updateActive(bar, saved);
+    updateActive(bar, activeTheme);
   }
 
   function applyTheme(themeId) {
     if (themeId) {
       document.documentElement.setAttribute('data-theme', themeId);
-      localStorage.setItem(STORAGE_KEY, themeId);
     } else {
       document.documentElement.removeAttribute('data-theme');
-      localStorage.removeItem(STORAGE_KEY);
     }
+    // Always persist so we know user made a choice (even '' = original default)
+    localStorage.setItem(STORAGE_KEY, themeId);
   }
 
   function updateActive(bar, activeId) {
