@@ -2173,6 +2173,35 @@ main {
   margin: var(--space-3) 0;
 }
 
+/* --- Share Results Button (mirrors .btn-print) --- */
+.share-results-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-3);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+}
+.share-results-btn:hover {
+  background: var(--neutral-100);
+  color: var(--text-1);
+}
+.share-results-btn--copied {
+  color: var(--success);
+  border-color: var(--success);
+}
+.share-results-btn svg {
+  flex-shrink: 0;
+}
+
 /* --- Session bar --- */
 .transplan-session-bar {
   position: fixed;
