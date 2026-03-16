@@ -1,10 +1,9 @@
 /**
- * TransPlan — Theme Switcher (Temporarily Hidden)
+ * TransPlan — Theme Switcher
  *
- * Floating UI for comparing 4 professional themes.
+ * Floating UI for comparing 6 themes (4 professional + 2 retro).
  * Sets data-theme attribute on <html> and persists to localStorage.
- * HIDDEN: Set SHOW_SWITCHER = true to re-enable the floating picker.
- * The saved theme preference is still applied even when hidden.
+ * Toggle SHOW_SWITCHER to show/hide the floating picker.
  */
 (function () {
   'use strict';
@@ -13,11 +12,13 @@
     { id: '',           label: 'Default',    color: '#5B6FE6' },
     { id: 'clinical',   label: 'Clinical',   color: '#3B6B8A' },
     { id: 'research',   label: 'Research',   color: '#1A6B5A' },
-    { id: 'government', label: 'Government', color: '#1A4480' }
+    { id: 'government', label: 'Government', color: '#1A4480' },
+    { id: 'xp',         label: 'Windows XP', color: '#0055E5' },
+    { id: 'twenty10',   label: '2010s Flat', color: '#2196F3' }
   ];
 
   var STORAGE_KEY = 'transplan-theme';
-  var SHOW_SWITCHER = false; // Set to true to re-enable the floating theme picker
+  var SHOW_SWITCHER = true; // Theme picker enabled for comparison
 
   // Apply saved theme immediately (before paint)
   var saved = localStorage.getItem(STORAGE_KEY) || '';
