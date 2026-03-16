@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 from models.schemas import PatientProfile, SimulationResult
-from services.monte_carlo import simulate, CITIES, _bootstrap_ci
+from services.monte_carlo import simulate, CITIES, _bootstrap_ci, _get_cod_multiplier
 
 
 # -- Fixtures --
@@ -203,3 +203,95 @@ class TestAllOrgans:
         result = simulate(patient, n_iterations=200)
         assert len(result.cities) == 22
         assert all(c.p_transplant_24mo >= 0 for c in result.cities)
+
+
+# -- Stochastic COD multiplier tests --
+
+class TestCodMultiplierDeterministic:
+    """Tests for the deterministic (n_samples=0) COD multiplier."""
+
+    def test_returns_float_when_deterministic(self):
+        result = _get_cod_multiplier("TN", "kidney")
+        assert isinstance(result, float)
+
+    def test_centered_around_one(self):
+        """Multiplier for any state should be within plausible range."""
+        for state in ["TN", "CA", "NY", "TX", "OH", "FL"]:
+            mult = _get_cod_multiplier(state, "kidney")
+            assert 0.8 < mult < 1.3, f"{state} kidney multiplier {mult} out of range"
+
+    def test_unknown_state_returns_one(self):
+        assert _get_cod_multiplier("XX", "kidney") == 1.0
+
+    def test_organ_variation(self):
+        """Different organs should produce different multipliers for the same state."""
+        kidney = _get_cod_multiplier("TN", "kidney")
+        heart = _get_cod_multiplier("TN", "heart")
+        # They CAN be equal but in practice differ due to different recovery rate profiles
+        # Just verify both are valid
+        assert 0.5 < kidney < 2.0
+        assert 0.5 < heart < 2.0
+
+
+class TestCodMultiplierStochastic:
+    """Tests for the stochastic (n_samples>0) COD multiplier with Beta distributions."""
+
+    def test_returns_array_when_stochastic(self):
+        rng = np.random.default_rng(42)
+        result = _get_cod_multiplier("TN", "kidney", n_samples=100, rng=rng)
+        assert isinstance(result, np.ndarray)
+        assert result.shape == (100,)
+
+    def test_stochastic_mean_near_deterministic(self):
+        """Mean of many stochastic draws should be close to the deterministic value."""
+        det = _get_cod_multiplier("CA", "kidney")
+        rng = np.random.default_rng(42)
+        stoch = _get_cod_multiplier("CA", "kidney", n_samples=5000, rng=rng)
+        assert abs(stoch.mean() - det) < 0.05, (
+            f"Stochastic mean {stoch.mean():.4f} too far from deterministic {det:.4f}"
+        )
+
+    def test_stochastic_has_variance(self):
+        """Stochastic draws should NOT all be identical."""
+        rng = np.random.default_rng(42)
+        result = _get_cod_multiplier("TN", "kidney", n_samples=1000, rng=rng)
+        assert result.std() > 0.001, "Stochastic multiplier should have nonzero variance"
+
+    def test_stochastic_bounded_positive(self):
+        """All draws should be positive (no negative donor multipliers)."""
+        rng = np.random.default_rng(42)
+        result = _get_cod_multiplier("TN", "kidney", n_samples=5000, rng=rng)
+        assert (result > 0).all(), "All stochastic multiplier draws should be positive"
+
+    def test_stochastic_variance_reasonable(self):
+        """Relative std dev should be small (~5-15%) — not a high-variance distribution."""
+        rng = np.random.default_rng(42)
+        result = _get_cod_multiplier("TN", "kidney", n_samples=5000, rng=rng)
+        cv = result.std() / result.mean()  # coefficient of variation
+        assert 0.01 < cv < 0.25, f"CV {cv:.4f} outside expected range"
+
+    def test_unknown_state_returns_ones_array(self):
+        rng = np.random.default_rng(42)
+        result = _get_cod_multiplier("XX", "kidney", n_samples=100, rng=rng)
+        assert isinstance(result, np.ndarray)
+        assert (result == 1.0).all()
+
+    @pytest.mark.parametrize("organ", ["kidney", "liver", "heart", "lung", "pancreas", "intestine"])
+    def test_all_organs_stochastic(self, organ):
+        """Stochastic mode works for all organ types."""
+        rng = np.random.default_rng(42)
+        result = _get_cod_multiplier("CA", organ, n_samples=500, rng=rng)
+        assert result.shape == (500,)
+        assert (result > 0).all()
+        assert result.std() > 0
+
+    def test_cod_enabled_simulation_still_valid(self):
+        """Full simulation with COD enabled (now stochastic) produces valid results."""
+        patient = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            adjust_for_cause_of_death=True,
+        )
+        result = simulate(patient, n_iterations=500)
+        assert len(result.cities) == 22
+        for city in result.cities:
+            assert 0 <= city.p_transplant_24mo <= 1

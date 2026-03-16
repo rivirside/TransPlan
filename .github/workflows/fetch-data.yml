@@ -51,6 +51,10 @@ jobs:
         run: node scripts/fetch-health-data.js
         continue-on-error: true
 
+      - name: Fetch cause-of-death data (CDC SODA)
+        run: node scripts/fetch-cod-data.js
+        continue-on-error: true
+
       # --- Single commit for all data changes ---
 
       - name: Commit all data changes

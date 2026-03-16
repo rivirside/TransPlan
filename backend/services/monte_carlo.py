@@ -20,7 +20,7 @@ import time
 
 import numpy as np
 
-from config import SIMULATION_ITERATIONS
+from config import SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY
 from models.schemas import CityProbability, PatientProfile, SimulationResult
 from services.competing_risks import get_annual_mortality_rate, get_annual_delisting_rate
 from services.data_loader import get_data
@@ -65,49 +65,82 @@ _STATE_FULL_NAMES = {
 }
 
 
-def _get_cod_multiplier(state_abbrev: str, organ: str) -> float:
+def _get_cod_multiplier(state_abbrev: str, organ: str, *, n_samples: int = 0, rng: np.random.Generator | None = None) -> float | np.ndarray:
     """
     Compute organ-specific cause-of-death multiplier for Monte Carlo.
 
     Returns a value centered around 1.0. Values > 1.0 mean more donors
     available for this organ in this state → shorter waits (divide times).
 
-    Uses PMC10329409 recovery rates × CDC WONDER state mortality proportions.
+    Uses PMC10329409 recovery rates × CDC state mortality proportions.
     Returns 1.0 (no adjustment) if data is unavailable.
+
+    Parameters
+    ----------
+    state_abbrev : two-letter state code
+    organ : organ name (e.g. "kidney")
+    n_samples : if > 0, return an array of stochastic multiplier draws
+        using Beta-distributed recovery rates. If 0, return deterministic float.
+    rng : numpy random generator (required when n_samples > 0)
     """
     try:
         cod = get_data().cause_of_death
     except RuntimeError:
-        return 1.0
+        return np.ones(n_samples) if n_samples > 0 else 1.0
     if not cod:
-        return 1.0
+        return np.ones(n_samples) if n_samples > 0 else 1.0
 
     recovery_rates = cod.get("organRecoveryRates", {}).get(organ)
     state_name = _STATE_FULL_NAMES.get(state_abbrev)
     if not recovery_rates or not state_name:
-        return 1.0
+        return np.ones(n_samples) if n_samples > 0 else 1.0
 
     proportions = cod.get("stateCauseOfDeathProportions", {}).get(state_name)
     if not proportions:
-        return 1.0
+        return np.ones(n_samples) if n_samples > 0 else 1.0
 
     categories = ["trauma", "cardiovascular", "drug_intox", "stroke"]
-    state_score = sum(proportions.get(c, 0) * recovery_rates.get(c, 0) for c in categories)
 
-    # National average across all states in the dataset
     all_states = cod.get("stateCauseOfDeathProportions", {})
     if not all_states:
-        return 1.0
+        return np.ones(n_samples) if n_samples > 0 else 1.0
 
+    # Compute deterministic national average (used as normalizer in both modes)
     nat_total = sum(
         sum(sp.get(c, 0) * recovery_rates.get(c, 0) for c in categories)
         for sp in all_states.values()
     )
     nat_avg = nat_total / len(all_states)
-
     if nat_avg == 0:
-        return 1.0
-    return state_score / nat_avg
+        return np.ones(n_samples) if n_samples > 0 else 1.0
+
+    if n_samples > 0 and rng is not None:
+        # Stochastic mode: draw recovery rates from Beta distributions.
+        # Beta(a, b) where a = rate * kappa, b = (1-rate) * kappa.
+        # kappa (concentration) controls variance. Higher = tighter.
+        # kappa=50 gives ~5-10% relative std dev for typical rates.
+        KAPPA = 50.0
+        state_scores = np.zeros(n_samples)
+
+        for c in categories:
+            rate = recovery_rates.get(c, 0)
+            if rate <= 0 or rate >= 1:
+                sampled = np.full(n_samples, rate)
+            else:
+                a = rate * KAPPA
+                b = (1.0 - rate) * KAPPA
+                sampled = rng.beta(a, b, size=n_samples)
+
+            p_state = proportions.get(c, 0)
+            state_scores += p_state * sampled
+
+        # Normalize against deterministic national average so stochastic
+        # variation in recovery rates propagates to the multiplier
+        return state_scores / nat_avg
+    else:
+        # Deterministic mode (original behavior)
+        state_score = sum(proportions.get(c, 0) * recovery_rates.get(c, 0) for c in categories)
+        return state_score / nat_avg
 
 
 def _bootstrap_ci(outcomes: np.ndarray, event: int, threshold_months: np.ndarray, time_horizon: float, confidence: float = 0.95, n_bootstrap: int = 200) -> tuple[float, float]:
@@ -171,10 +204,16 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
         transplant_times = dist.rvs(size=n_iterations)
 
         # --- Apply organ-specific cause-of-death multiplier (M2) ---
+        # Sublinear elasticity: wait_adj = multiplier ^ elasticity (L-056)
         if patient.adjust_for_cause_of_death:
-            cod_mult = _get_cod_multiplier(state, patient.organ)
-            if cod_mult > 0:
-                transplant_times = transplant_times / cod_mult  # more donors → shorter waits
+            cod_mult = _get_cod_multiplier(
+                state, patient.organ,
+                n_samples=n_iterations, rng=rng,
+            )
+            # cod_mult is an array of per-iteration multipliers (stochastic)
+            safe_mult = np.where(cod_mult > 0, cod_mult, 1.0)
+            effective_mult = np.power(safe_mult, SUPPLY_WAIT_ELASTICITY)
+            transplant_times = transplant_times / effective_mult
 
         # --- Draw mortality times from exponential ---
         annual_mort = get_annual_mortality_rate(

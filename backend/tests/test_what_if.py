@@ -186,3 +186,34 @@ class TestRunSingle:
         rng2 = np.random.default_rng(42)
         more_donors = _run_single(kidney_patient, "Nashville", "TN", 500, rng2, donor_rate_multiplier=2.0)
         assert more_donors["median_wait"] < base["median_wait"] * 0.9, "2× donors should substantially decrease median"
+
+
+# -- Elasticity tests (L-056) --
+
+class TestSupplyWaitElasticity:
+    """Verify that donor supply changes apply sublinear elasticity."""
+
+    def test_elasticity_is_sublinear(self, kidney_patient):
+        """2× donors with elasticity=0.65 should reduce waits less than 2×."""
+        rng1 = np.random.default_rng(42)
+        base = _run_single(kidney_patient, "Nashville", "TN", 1000, rng1, donor_rate_multiplier=1.0)
+        rng2 = np.random.default_rng(42)
+        double = _run_single(kidney_patient, "Nashville", "TN", 1000, rng2, donor_rate_multiplier=2.0)
+        # With elasticity=0.65, effective_mult = 2^0.65 ≈ 1.57 (not 2.0)
+        # So wait should decrease by ~36% (not 50%)
+        ratio = double["median_wait"] / base["median_wait"]
+        # Should be closer to 1/1.57 ≈ 0.64 than 1/2 = 0.50
+        assert ratio > 0.50, f"Ratio {ratio:.3f} too aggressive — elasticity not applied"
+        assert ratio < 0.85, f"Ratio {ratio:.3f} too mild — donor effect not working"
+
+    def test_elasticity_symmetric_for_decrease(self, kidney_patient):
+        """0.5× donors should increase waits sublinearly too."""
+        rng1 = np.random.default_rng(42)
+        base = _run_single(kidney_patient, "Nashville", "TN", 1000, rng1, donor_rate_multiplier=1.0)
+        rng2 = np.random.default_rng(42)
+        half = _run_single(kidney_patient, "Nashville", "TN", 1000, rng2, donor_rate_multiplier=0.5)
+        ratio = half["median_wait"] / base["median_wait"]
+        # With elasticity=0.65, effective_mult = 0.5^0.65 ≈ 0.637
+        # Wait ratio = 1/0.637 ≈ 1.57 (not 2.0)
+        assert ratio < 2.0, f"Ratio {ratio:.3f} too aggressive — elasticity not applied"
+        assert ratio > 1.1, f"Ratio {ratio:.3f} too mild — donor effect not working"

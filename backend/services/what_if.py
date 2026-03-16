@@ -17,6 +17,7 @@ from pydantic import BaseModel, Field
 from models.schemas import PatientProfile
 from services.competing_risks import get_annual_delisting_rate, get_annual_mortality_rate
 from services.distributions import get_wait_time_distribution
+from config import SUPPLY_WAIT_ELASTICITY
 from services.monte_carlo import CITIES, _get_cod_multiplier
 
 logger = logging.getLogger(__name__)
@@ -80,15 +81,22 @@ def _run_single(
 
     transplant_times = dist.rvs(size=n_iterations, random_state=rng)
 
-    # Apply COD multiplier if enabled (same as main engine)
+    # Apply COD multiplier if enabled (same as main engine — stochastic Beta)
+    # Sublinear elasticity: wait_adj = multiplier ^ elasticity (L-056)
     if patient.adjust_for_cause_of_death:
-        cod_mult = _get_cod_multiplier(state, patient.organ)
-        if cod_mult > 0:
-            transplant_times = transplant_times / cod_mult
+        cod_mult = _get_cod_multiplier(
+            state, patient.organ,
+            n_samples=n_iterations, rng=rng,
+        )
+        safe_mult = np.where(cod_mult > 0, cod_mult, 1.0)
+        effective_mult = np.power(safe_mult, SUPPLY_WAIT_ELASTICITY)
+        transplant_times = transplant_times / effective_mult
 
     # Apply donor rate multiplier: more donors → shorter waits
+    # Same sublinear elasticity applies (L-056)
     if donor_rate_multiplier != 1.0 and donor_rate_multiplier > 0:
-        transplant_times = transplant_times / donor_rate_multiplier
+        effective_donor = donor_rate_multiplier ** SUPPLY_WAIT_ELASTICITY
+        transplant_times = transplant_times / effective_donor
 
     # Draw mortality times
     annual_mort = get_annual_mortality_rate(

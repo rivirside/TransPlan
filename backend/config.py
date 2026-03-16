@@ -7,6 +7,13 @@ DATA_DIR: Path = Path(__file__).parent.parent / "data"
 # Monte Carlo default iteration count
 SIMULATION_ITERATIONS: int = 1000
 
+# Supply-wait elasticity: how much a change in donor supply affects wait times.
+# wait_adjustment = supply_multiplier ^ SUPPLY_WAIT_ELASTICITY
+# Value of 1.0 = linear (old behavior). Value of 0.65 = sublinear (more realistic).
+# Empirical range from queuing theory + SRTR data: 0.5–0.8.
+# 0.65 means 10% more donors → ~6.5% shorter waits (not 10%).
+SUPPLY_WAIT_ELASTICITY: float = 0.65
+
 # Semantic version
 VERSION: str = "2.0.0-alpha"
 
