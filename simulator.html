@@ -540,6 +540,57 @@
                             <canvas id="tornadoChart" role="img" aria-label="Tornado chart showing how each input parameter affects 24-month transplant probability"></canvas>
                         </div>
                     </div>
+
+                    <!-- Phase 3 M5: What-If Scenario Sliders -->
+                    <div class="charts-section" id="whatIfSection" style="display:none">
+                        <h3>What-If Scenario Analysis</h3>
+                        <p class="chart-description">Adjust model assumptions to explore how changes in donor availability or base wait times would affect your transplant probability. Each slider triggers a full Monte Carlo re-simulation — results are not interpolated.</p>
+
+                        <div class="what-if-controls">
+                            <div class="what-if-slider-group">
+                                <label for="whatIfDonorRate">
+                                    Donor Availability
+                                    <span class="what-if-value" id="whatIfDonorRateValue">1.0×</span>
+                                </label>
+                                <input type="range" id="whatIfDonorRate" min="0.5" max="2.0" step="0.1" value="1.0"
+                                       aria-label="Donor availability multiplier" />
+                                <div class="what-if-range-labels">
+                                    <span>0.5× (50% fewer)</span>
+                                    <span>1.0× (baseline)</span>
+                                    <span>2.0× (2× more)</span>
+                                </div>
+                            </div>
+
+                            <div class="what-if-slider-group">
+                                <label for="whatIfWaitTime">
+                                    Base Wait Time
+                                    <span class="what-if-value" id="whatIfWaitTimeValue">1.0×</span>
+                                </label>
+                                <input type="range" id="whatIfWaitTime" min="0.5" max="2.0" step="0.1" value="1.0"
+                                       aria-label="Wait time multiplier" />
+                                <div class="what-if-range-labels">
+                                    <span>0.5× (50% shorter)</span>
+                                    <span>1.0× (baseline)</span>
+                                    <span>2.0× (2× longer)</span>
+                                </div>
+                            </div>
+
+                            <div class="what-if-city-select">
+                                <label for="whatIfCity">City</label>
+                                <select id="whatIfCity" aria-label="City for what-if analysis">
+                                    <option value="">Top-ranked city</option>
+                                </select>
+                            </div>
+
+                            <button type="button" id="whatIfRunBtn" class="btn btn-secondary">
+                                Run What-If Simulation
+                            </button>
+                        </div>
+
+                        <div id="whatIfResults" class="what-if-results" style="display:none" aria-live="polite">
+                            <!-- Filled by script.js -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Phase 3 M4: Equity Analysis View -->

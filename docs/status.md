@@ -6,9 +6,9 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 3 M4 Complete + Multi-Page Architecture
+## Current State: Phase 3 M5 Complete + Multi-Page Architecture
 
-Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 193 pytest tests passing. Phase 3 M1-M4 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
+Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 218 pytest tests passing. Phase 3 M1-M5 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
 **Multi-Page Architecture (March 2026):** Split from single-page to landing + simulator. `index.html` = lightweight landing page (features, how-it-works, CTA). `simulator.html` = full simulation tool (form, results, modals, map, charts). No header/hero section — nav brand is the only title. Info buttons (ⓘ) on simulator form labels link to relevant docs pages. Docs URL resolution script detects local dev vs deployment.
 
@@ -65,11 +65,11 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | M3: City Detail & Comparison UI | ✅ Done | Detail modal (8-cat breakdown + radar + probs), 3-city comparison table, print view (ADR-018) |
 | ~~M4: Policy Toggle Simulator~~ | Deferred | Partially redundant with M2 COD multiplier; sensitivity sliders → M5; causal model → Phase 4 |
 | M4: Equity Analysis | ✅ Done | 48-profile demographic matrix, Gini coefficient, 3 charts, city equity table, disclaimers (ADR-019) |
-| M5: UX Polish & Export | Pending | Dark mode, URL sharing, PDF reports, CSV/JSON export, sensitivity sliders |
+| M5: UX Polish & Export | ✅ Done | Dark mode, URL sharing, PDF reports, CSV/JSON export, chart image export, what-if scenario sliders (ADR-020), 25 new pytest tests (218 total) |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 3 M5:** UX Polish & Export (#4–#9) — dark mode, URL sharing, PDF/CSV/JSON export, sensitivity sliders
+- **Phase 3 M5 COMPLETE** — all 6 sub-features shipped (#4–#9)
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred:** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21)
 - See `docs/roadmap.md` for full phased plan (5 phases through FDA clearance)
@@ -83,7 +83,7 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 |-----------|--------|-------------|
 | Phase 1: Deployment | 1 | FARS API (GitHub Pages disabled, Vercel is primary) |
 | Phase 3: UI Overhaul | 1 | Pick winning theme, merge, cleanup |
-| Phase 3 M5: UX Polish & Export | 6 | Dark mode, URL sharing, PDF/CSV/JSON, charts, sensitivity sliders |
+| Phase 3 M5: UX Polish & Export | 6 | ✅ DONE — Dark mode, URL sharing, PDF/CSV/JSON, charts, what-if sliders |
 | M2b: COD Model Data Quality | 8 | L-049 through L-056 — upgrade COD multiplier |
 | Phase 4: Advanced Modeling | 2 | Configurable weights, causal policy simulator |
 
@@ -106,9 +106,12 @@ TransPlan/
   start.command           <- Double-click to launch (macOS); auto-finds free ports
   stop.command            <- Double-click to stop a running session
   session.js              <- Local session UI (End Session button, same-origin health check)
-  api-client.js           <- Backend API client (POST /simulate + /sensitivity + /equity-analysis, graceful fallback)
+  api-client.js           <- Backend API client (POST /simulate + /sensitivity + /equity-analysis + /what-if, graceful fallback)
   probability-charts.js   <- CDF curves, competing risks bar, tornado sensitivity chart (Chart.js)
   equity-charts.js        <- Blood type disparity, age bracket disparity, Gini by city charts (Chart.js)
+  dark-mode.js            <- Dark mode toggle (auto-detect, localStorage persist, sun/moon button)
+  url-sharing.js          <- URL query param encode/decode for shareable form state
+  export-handler.js       <- PDF report, CSV, JSON, chart PNG export
   index.html              <- Landing page (features, how-it-works, CTA → simulator)
   simulator.html          <- Simulation tool (form, 3-tab results, modals, map, methodology)
   algorithm.js            <- Scoring engine (8 categories, 22 cities)
@@ -167,6 +170,7 @@ TransPlan/
       simulate.py         <- POST /simulate (Monte Carlo simulation)
       sensitivity.py      <- POST /sensitivity (tornado chart parameter analysis)
       equity.py           <- POST /equity-analysis (demographic equity analysis)
+      what_if.py          <- POST /what-if (what-if scenario analysis with multipliers)
     services/
       data_loader.py      <- Loads data/*.json at startup
       distributions.py    <- Log-normal wait time distributions (6 organs)
@@ -174,8 +178,9 @@ TransPlan/
       competing_risks.py  <- Competing risks: mortality/delisting rates (6 organs)
       sensitivity.py      <- Sensitivity analysis: parameter impact on p_transplant_24mo
       equity.py           <- Demographic equity analysis (48 profiles × 22 cities, Gini coefficient)
+      what_if.py          <- What-if scenario analysis (Monte Carlo with donor/wait multipliers)
       brier_score.py      <- Brier score calibration: Monte Carlo vs analytical validation
-    tests/                <- pytest suite (193 tests)
+    tests/                <- pytest suite (218 tests)
   docs/
     status.md             <- THIS FILE (read every session)
     ideas.md              <- Full SRS: requirements, architecture, FDA pathway

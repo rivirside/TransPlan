@@ -184,6 +184,53 @@
   }
 
   /**
+   * Call POST /what-if on the backend.
+   * Runs Monte Carlo with adjusted model assumptions for a single city.
+   * @param {Object} formData - Raw form data from the frontend
+   * @param {string} city - City to run what-if analysis for
+   * @param {number} donorRateMultiplier - Donor availability multiplier (0.5-2.0)
+   * @param {number} waitTimeMultiplier - Wait time multiplier (0.5-2.0)
+   * @param {number} [iterations] - Monte Carlo iterations (default 500)
+   * @returns {Promise<Object|null>} WhatIfResult or null on failure
+   */
+  async function whatIf(formData, city, donorRateMultiplier, waitTimeMultiplier, iterations) {
+    var base = getBaseUrl();
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
+
+    try {
+      var body = {
+        patient: normalizeFormData(formData),
+        city: city || 'Nashville',
+        donor_rate_multiplier: donorRateMultiplier || 1.0,
+        wait_time_multiplier: waitTimeMultiplier || 1.0,
+        iterations: iterations || 500
+      };
+      var response = await fetch(base + '/what-if', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        console.warn('TransPlan What-If API error:', response.status, response.statusText);
+        return null;
+      }
+
+      return await response.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        console.warn('TransPlan What-If API timeout after', API_TIMEOUT_MS, 'ms');
+      }
+      return null;
+    }
+  }
+
+  /**
    * Check if the backend is reachable (GET /health).
    * @returns {Promise<boolean>}
    */
@@ -205,6 +252,7 @@
     simulate: simulate,
     sensitivity: sensitivity,
     equityAnalysis: equityAnalysis,
+    whatIf: whatIf,
     isBackendAvailable: isBackendAvailable,
     normalizeFormData: normalizeFormData
   };

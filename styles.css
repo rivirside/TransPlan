@@ -2260,6 +2260,170 @@ main {
   border-top: 1px solid var(--border-light);
 }
 
+/* --- What-If Scenario Sliders --- */
+.what-if-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+}
+.what-if-slider-group {
+  grid-column: span 1;
+}
+.what-if-slider-group label {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  color: var(--text-1);
+  margin-bottom: var(--space-2);
+}
+.what-if-value {
+  font-weight: 700;
+  color: var(--color-primary-600);
+  font-variant-numeric: tabular-nums;
+}
+.what-if-slider-group input[type="range"] {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  appearance: none;
+  background: var(--border);
+  outline: none;
+  cursor: pointer;
+}
+.what-if-slider-group input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-primary-600);
+  border: 2px solid #fff;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+.what-if-slider-group input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-primary-600);
+  border: 2px solid #fff;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+.what-if-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  margin-top: var(--space-1);
+}
+.what-if-city-select {
+  grid-column: span 1;
+}
+.what-if-city-select label {
+  display: block;
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  color: var(--text-1);
+  margin-bottom: var(--space-2);
+}
+.what-if-city-select select {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  background: var(--surface);
+  color: var(--text-1);
+}
+#whatIfRunBtn {
+  grid-column: span 1;
+  align-self: end;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-primary-600);
+  background: var(--color-primary-600);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+#whatIfRunBtn:hover {
+  background: var(--color-primary-700);
+}
+#whatIfRunBtn:active {
+  transform: scale(0.98);
+}
+#whatIfRunBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.what-if-results {
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+}
+.what-if-result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-3);
+}
+.what-if-metric {
+  text-align: center;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+}
+.what-if-metric-label {
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--space-1);
+}
+.what-if-metric-value {
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+}
+.what-if-metric-delta {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  margin-top: var(--space-1);
+}
+.what-if-metric-delta.positive { color: var(--color-success); }
+.what-if-metric-delta.negative { color: var(--color-danger); }
+.what-if-metric-delta.neutral { color: var(--text-3); }
+.what-if-meta {
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  text-align: center;
+  margin-top: var(--space-3);
+}
+
+@media (max-width: 640px) {
+  .what-if-controls {
+    grid-template-columns: 1fr;
+  }
+  .what-if-slider-group,
+  .what-if-city-select,
+  #whatIfRunBtn {
+    grid-column: span 1;
+  }
+  .what-if-result-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* --- Session bar --- */
 .transplan-session-bar {
   position: fixed;

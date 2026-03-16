@@ -2605,7 +2605,174 @@ function renderProbabilityView(simResult, formData) {
                 }
             });
         }
+
+        // What-If scenario sliders — show section and populate city dropdown
+        _initWhatIfSliders(simResult, formData);
     }, 200);
+}
+
+
+/**
+ * Initialize the what-if scenario sliders section.
+ * Populates the city dropdown from simulation results and wires event handlers.
+ */
+function _initWhatIfSliders(simResult, formData) {
+    var section = document.getElementById('whatIfSection');
+    if (!section || !window.TransPlanAPI || !window.TransPlanAPI.whatIf) return;
+    if (!simResult || !simResult.cities) return;
+
+    section.style.display = '';
+
+    // Populate city dropdown from simulation results
+    var citySelect = document.getElementById('whatIfCity');
+    if (citySelect && citySelect.options.length <= 1) {
+        simResult.cities.forEach(function (c) {
+            var opt = document.createElement('option');
+            opt.value = c.city;
+            opt.textContent = c.city + ', ' + c.state;
+            citySelect.appendChild(opt);
+        });
+    }
+
+    // Wire slider value displays
+    var donorSlider = document.getElementById('whatIfDonorRate');
+    var donorValue = document.getElementById('whatIfDonorRateValue');
+    var waitSlider = document.getElementById('whatIfWaitTime');
+    var waitValue = document.getElementById('whatIfWaitTimeValue');
+
+    if (donorSlider) {
+        donorSlider.oninput = function () {
+            donorValue.textContent = parseFloat(this.value).toFixed(1) + '\u00d7';
+        };
+    }
+    if (waitSlider) {
+        waitSlider.oninput = function () {
+            waitValue.textContent = parseFloat(this.value).toFixed(1) + '\u00d7';
+        };
+    }
+
+    // Wire run button
+    var runBtn = document.getElementById('whatIfRunBtn');
+    if (runBtn) {
+        runBtn.onclick = function () {
+            _runWhatIfAnalysis(simResult, formData);
+        };
+    }
+}
+
+
+/**
+ * Execute what-if analysis: call backend with slider values, render results.
+ */
+function _runWhatIfAnalysis(simResult, formData) {
+    var donorSlider = document.getElementById('whatIfDonorRate');
+    var waitSlider = document.getElementById('whatIfWaitTime');
+    var citySelect = document.getElementById('whatIfCity');
+    var runBtn = document.getElementById('whatIfRunBtn');
+    var resultsDiv = document.getElementById('whatIfResults');
+
+    if (!donorSlider || !waitSlider || !formData) return;
+
+    var donorMult = parseFloat(donorSlider.value);
+    var waitMult = parseFloat(waitSlider.value);
+    var city = citySelect && citySelect.value
+        ? citySelect.value
+        : (simResult.cities[0] && simResult.cities[0].city) || 'Nashville';
+
+    // Disable button during request
+    if (runBtn) {
+        runBtn.disabled = true;
+        runBtn.textContent = 'Running simulation\u2026';
+    }
+
+    window.TransPlanAPI.whatIf(formData, city, donorMult, waitMult, 500).then(function (result) {
+        if (runBtn) {
+            runBtn.disabled = false;
+            runBtn.textContent = 'Run What-If Simulation';
+        }
+
+        if (!result || !resultsDiv) return;
+        _renderWhatIfResults(resultsDiv, result);
+    });
+}
+
+
+/**
+ * Render what-if results into the results container using safe DOM methods.
+ */
+function _renderWhatIfResults(container, result) {
+    container.style.display = '';
+    container.textContent = '';
+
+    var grid = _el('div', 'what-if-result-grid');
+
+    // Baseline p24
+    var baselineMetric = _el('div', 'what-if-metric');
+    baselineMetric.appendChild(_el('div', 'what-if-metric-label', 'Baseline'));
+    baselineMetric.appendChild(_el('div', 'what-if-metric-value', (result.baseline_p24 * 100).toFixed(1) + '%'));
+    var baseCi = _el('div', 'what-if-meta');
+    baseCi.textContent = '95% CI: ' + (result.baseline_ci_95[0] * 100).toFixed(1) + '–' + (result.baseline_ci_95[1] * 100).toFixed(1) + '%';
+    baselineMetric.appendChild(baseCi);
+    grid.appendChild(baselineMetric);
+
+    // Adjusted p24
+    var adjustedMetric = _el('div', 'what-if-metric');
+    adjustedMetric.appendChild(_el('div', 'what-if-metric-label', 'Adjusted'));
+    adjustedMetric.appendChild(_el('div', 'what-if-metric-value', (result.adjusted_p24 * 100).toFixed(1) + '%'));
+    var adjCi = _el('div', 'what-if-meta');
+    adjCi.textContent = '95% CI: ' + (result.adjusted_ci_95[0] * 100).toFixed(1) + '–' + (result.adjusted_ci_95[1] * 100).toFixed(1) + '%';
+    adjustedMetric.appendChild(adjCi);
+    grid.appendChild(adjustedMetric);
+
+    // Delta
+    var deltaMetric = _el('div', 'what-if-metric');
+    deltaMetric.appendChild(_el('div', 'what-if-metric-label', 'Change'));
+    var deltaVal = result.delta_p24 * 100;
+    var deltaSign = deltaVal > 0 ? '+' : '';
+    var deltaEl = _el('div', 'what-if-metric-value', deltaSign + deltaVal.toFixed(1) + ' pp');
+    deltaMetric.appendChild(deltaEl);
+    var deltaClass = deltaVal > 0.05 ? 'positive' : deltaVal < -0.05 ? 'negative' : 'neutral';
+    var deltaLabel = _el('div', 'what-if-metric-delta ' + deltaClass);
+    deltaLabel.textContent = deltaVal > 0.05 ? 'Improved' : deltaVal < -0.05 ? 'Worsened' : 'No significant change';
+    deltaMetric.appendChild(deltaLabel);
+    grid.appendChild(deltaMetric);
+
+    container.appendChild(grid);
+
+    // Median wait comparison
+    var waitGrid = _el('div', 'what-if-result-grid');
+    waitGrid.style.marginTop = 'var(--space-3)';
+
+    var baseWait = _el('div', 'what-if-metric');
+    baseWait.appendChild(_el('div', 'what-if-metric-label', 'Baseline Median Wait'));
+    baseWait.appendChild(_el('div', 'what-if-metric-value', result.baseline_median_wait.toFixed(1) + ' mo'));
+    waitGrid.appendChild(baseWait);
+
+    var adjWait = _el('div', 'what-if-metric');
+    adjWait.appendChild(_el('div', 'what-if-metric-label', 'Adjusted Median Wait'));
+    adjWait.appendChild(_el('div', 'what-if-metric-value', result.adjusted_median_wait.toFixed(1) + ' mo'));
+    waitGrid.appendChild(adjWait);
+
+    var waitDelta = _el('div', 'what-if-metric');
+    waitDelta.appendChild(_el('div', 'what-if-metric-label', 'Wait Change'));
+    var waitDiff = result.adjusted_median_wait - result.baseline_median_wait;
+    var waitSign = waitDiff > 0 ? '+' : '';
+    waitDelta.appendChild(_el('div', 'what-if-metric-value', waitSign + waitDiff.toFixed(1) + ' mo'));
+    // For wait: negative is good (shorter wait)
+    var waitClass = waitDiff < -0.1 ? 'positive' : waitDiff > 0.1 ? 'negative' : 'neutral';
+    var waitLabel = _el('div', 'what-if-metric-delta ' + waitClass);
+    waitLabel.textContent = waitDiff < -0.1 ? 'Shorter wait' : waitDiff > 0.1 ? 'Longer wait' : 'No significant change';
+    waitDelta.appendChild(waitLabel);
+    waitGrid.appendChild(waitDelta);
+
+    container.appendChild(waitGrid);
+
+    // Metadata
+    var meta = _el('div', 'what-if-meta');
+    meta.textContent = result.city + ' · ' + result.iterations.toLocaleString() + ' iterations · ' +
+        'Donor ' + result.donor_rate_multiplier.toFixed(1) + '\u00d7 · Wait ' +
+        result.wait_time_multiplier.toFixed(1) + '\u00d7 · ' + result.elapsed_seconds.toFixed(2) + 's';
+    container.appendChild(meta);
 }
 
 /**

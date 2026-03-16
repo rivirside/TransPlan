@@ -144,7 +144,7 @@
 - [x] CDF curves with confidence intervals (M6)
 - [ ] Ranked output: boost vs. current location
 - [x] Visual comparison panels (side-by-side probability curves) — M3 comparison table
-- [ ] Exportable chart images
+- [x] Exportable chart images — Phase 3 M5
 
 ### FR-4: Configurable Weights
 - [ ] Research mode: allow users to adjust category weights
@@ -247,13 +247,13 @@
 - [x] 28 new pytest tests (193 total), 98 Jest tests unchanged
 - [x] ADR-019 documenting demographic simulation matrix design
 
-### M5: UX Polish & Export (FR-19/FR-20) ← was M6
-- [ ] Dark mode (CSS custom properties)
-- [ ] Save/share results via URL parameters
-- [ ] PDF report generation with disclaimers
-- [ ] CSV/JSON data export
-- [ ] Exportable chart images
-- [ ] Sensitivity sliders (donor rate ±20%, wait time ±30%) — rolled in from old M4
+### M5: UX Polish & Export (FR-19/FR-20) ← was M6 ✅
+- [x] Dark mode (CSS custom properties, auto-detect prefers-color-scheme, localStorage persist)
+- [x] Save/share results via URL parameters (url-sharing.js, auto-submit on load)
+- [x] PDF report generation with disclaimers (browser print to PDF, DOM-built)
+- [x] CSV/JSON data export (scores + probabilities, metadata headers)
+- [x] Exportable chart images (Chart.js toBase64Image, bulk PNG zip)
+- [x] What-if scenario sliders — real Monte Carlo re-simulation, not interpolation (POST /what-if, 25 new pytest tests, 218 total)
 
 ### Documentation
 - [x] User-facing "How It Works" page — Docusaurus docs site (completed Phase 2)
@@ -287,9 +287,9 @@
 - [ ] Versioned API endpoints
 - [ ] API authentication and usage tracking
 
-### FR-19/FR-20: Export & Reports
-- [ ] CSV/JSON data export
-- [ ] PDF reports with disclaimers, sources, watermarks
+### FR-19/FR-20: Export & Reports (core done in Phase 3 M5)
+- [x] CSV/JSON data export — Phase 3 M5
+- [x] PDF reports with disclaimers — Phase 3 M5 (browser print-to-PDF)
 - [ ] Clinical export format for provider discussions
 
 ### Clinical Validation
