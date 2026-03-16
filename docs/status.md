@@ -6,13 +6,20 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 3 M5 Complete + Multi-Page Architecture
+## Current State: Phase 3 Complete + Data Quality Sprint
 
-Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 218 pytest tests passing. Phase 3 M1-M5 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
+Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 237 pytest tests passing. Phase 3 M1-M5 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
+
+**Data Quality Sprint (March 2026):** 4 of 8 COD model issues resolved:
+- L-055: Expanded state COD proportions from 17 to all 50 states + DC (CDC SODA API, donor-eligibility calibration)
+- L-051: Automated `fetch-cod-data.js` script added to CI pipeline
+- L-053: COD multiplier now stochastic (Beta-distributed recovery rates, kappa=50, ~3.5% CV)
+- L-056: Sublinear supply-wait elasticity (0.65 exponent) replaces linear assumption
+- Remaining: L-049 (cross-validate OPTN), L-050 (OPO boundaries), L-052 (anoxia COD), L-054 (intestine proxy) — all documented as comprehensive GitHub issues
 
 **Multi-Page Architecture (March 2026):** Split from single-page to landing + simulator. `index.html` = lightweight landing page (features, how-it-works, CTA). `simulator.html` = full simulation tool (form, results, modals, map, charts). No header/hero section — nav brand is the only title. Info buttons (ⓘ) on simulator form labels link to relevant docs pages. Docs URL resolution script detects local dev vs deployment.
 
-**Theme System (March 2026):** 4 themes — Default (dark nav, indigo accent, centered), Clinical (compact, uppercase, muted teal), Research (serif Lora headings, editorial, warm tones), Government (USWDS-inspired, gov banner, bordered panels). Each is a genuinely different design language, not just color swaps. Design token system in CSS custom properties. Landing page has per-theme overrides.
+**Theme System (March 2026):** 6 themes — Default (dark nav, indigo accent, centered), Clinical (compact, uppercase, muted teal), Research (serif Lora headings, editorial, warm tones), Government (USWDS-inspired, gov banner, bordered panels), **Windows XP Luna** (blue gradients, silver panels, 3D beveled borders, Tahoma), **2010s Flat** (Material blue, flat geometry, thin headings, Roboto). Windows XP Luna is the default theme. Theme selection deferred to Phase 7. Design token system in CSS custom properties. Landing page has per-theme overrides.
 
 **Docusaurus Docs Site (March 2026):** Full documentation site in `docs-site/`. 20 pages, 7 sections. baseUrl configured for local dev (`/docs-site/build/`). Builds cleanly (`npm run build` in `docs-site/`). Comprehensive docs audit completed March 2026: all 20 pages updated to reflect Phase 3 M4, multi-page architecture, new API endpoints, current test counts, and deployment changes. Navbar has Home (→ `/`) and Open App (→ `/simulator.html`) links using `type: 'html'` to bypass Docusaurus baseUrl prepending. Pre-release info admonitions on intro, roadmap, and contributing pages.
 
@@ -40,7 +47,7 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
 | UI/UX redesign | ✅ Done | Design tokens, methodology accordion, SVG icons, responsive breakpoints |
-| Theme system | ✅ Done | 4 themes (Default/Clinical/Research/Government), genuinely different design languages |
+| Theme system | ✅ Done | 6 themes (Default/Clinical/Research/Government/WinXP/2010s Flat), XP Luna default |
 | Multi-page split | ✅ Done | Landing page (index.html) + simulator (simulator.html), info buttons, nav active state |
 | Docusaurus docs site | ✅ Done | 20 pages, 7 sections, TransPlan brand theme, baseUrl fixed for local dev |
 
@@ -67,11 +74,26 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | M4: Equity Analysis | ✅ Done | 48-profile demographic matrix, Gini coefficient, 3 charts, city equity table, disclaimers (ADR-019) |
 | M5: UX Polish & Export | ✅ Done | Dark mode, URL sharing, PDF reports, CSV/JSON export, chart image export, what-if scenario sliders (ADR-020), 25 new pytest tests (218 total) |
 
+### Data Quality Sprint (M2b: COD Model)
+
+| Issue | Status | Notes |
+|-------|--------|-------|
+| L-055: 50-state COD proportions (#17) | ✅ Done | CDC SODA API, donor-eligibility calibration weights |
+| L-051: Automated CDC fetch script (#13) | ✅ Done | `fetch-cod-data.js` added to CI pipeline |
+| L-053: Stochastic COD multiplier (#15) | ✅ Done | Beta-distributed recovery rates, kappa=50, ~3.5% CV |
+| L-056: Supply-wait elasticity (#18) | ✅ Done | 0.65 exponent, sublinear donor→wait relationship |
+| L-049: Cross-validate OPTN rates (#11) | Open | Comprehensive issue with validation approach documented |
+| L-050: OPO boundary mapping (#12) | Open | City→OPO mapping documented, highest complexity |
+| L-052: Add anoxia COD category (#14) | Open | 9% of donors, PMC10329409 Supp Table 3 needed |
+| L-054: Intestine-specific rates (#16) | Open | OTPD ratio + clinical adjustment factors documented |
+
 ### What's NOT Done (Next Steps)
 
-- **Phase 3 M5 COMPLETE** — all 6 sub-features shipped (#4–#9)
+- **Phase 3 COMPLETE** — all milestones shipped
+- **Data Quality Sprint** — 4/8 COD model issues resolved, 4 documented as comprehensive feature requests
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
-- **Deferred:** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21)
+- **Deferred:** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21), theme selection (Phase 7, #3)
+- **Infrastructure:** CI pipeline (#29), Docker Compose (#30) — both documented
 - See `docs/roadmap.md` for full phased plan (5 phases through FDA clearance)
 - See `docs/ideas.md` for full SRS with architecture, governance, and regulatory details
 
@@ -84,7 +106,7 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | Phase 1: Deployment | 1 | FARS API (GitHub Pages disabled, Vercel is primary) |
 | Phase 3: UI Overhaul | 1 | Pick winning theme, merge, cleanup |
 | Phase 3 M5: UX Polish & Export | 6 | ✅ DONE — Dark mode, URL sharing, PDF/CSV/JSON, charts, what-if sliders |
-| M2b: COD Model Data Quality | 8 | L-049 through L-056 — upgrade COD multiplier |
+| M2b: COD Model Data Quality | 4 open / 4 closed | L-049–L-056 — 4 resolved (50-state, fetch script, stochastic, elasticity), 4 remain (OPTN validation, OPO mapping, anoxia, intestine) |
 | Phase 4: Advanced Modeling | 2 | Configurable weights, causal policy simulator |
 
 **Labels:** `phase:*`, `priority:*`, `limitation`, `cod-model`, `blocked`, `deferred`, `ui/ux`, `backend`, `frontend`, `data-quality`, `data-pipeline`, `milestone:m5`
@@ -120,7 +142,7 @@ TransPlan/
   charts.js               <- Chart.js radar/bar/donut charts
   styles.css              <- All CSS: design tokens, nav bar, landing page, accordion, responsive (768px + 480px)
   themes.css              <- Theme overrides: clinical, research, government (+ landing page per-theme)
-  theme-switcher.js       <- Floating theme picker (4 themes: Default/Clinical/Research/Government)
+  theme-switcher.js       <- Floating theme picker (6 themes: Default/Clinical/Research/Government/WinXP/2010s Flat)
   package.json            <- Node deps (xml2js, jest)
   README.md               <- User-facing docs
   tests/                  <- Unit tests (Jest)
@@ -150,6 +172,7 @@ TransPlan/
     fetch-hospital-quality.js <- CMS Provider Data
     fetch-cost-of-living.js   <- BLS API (needs API key)
     fetch-health-data.js      <- CDC SODA
+    fetch-cod-data.js         <- CDC SODA (cause-of-death by state, donor-eligibility calibration)
     check-srtr-updates.js     <- SRTR website hash check
     validate-data.js          <- Post-fetch validation
     fetch-srtr-excel.py       <- Download SRTR PSR Excel files (6 organs)
@@ -160,7 +183,7 @@ TransPlan/
     (deploy-docs.yml removed — GitHub Pages disabled, Vercel is primary deployment)
   backend/                <- Phase 2 Python FastAPI backend
     main.py               <- FastAPI app, CORS, static file serving, startup data load
-    config.py             <- DATA_DIR, SIMULATION_ITERATIONS, ALLOWED_ORIGINS
+    config.py             <- DATA_DIR, SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY, ALLOWED_ORIGINS
     requirements.txt      <- Python dependencies
     models/
       schemas.py          <- Pydantic: PatientProfile, SimulationResult, etc.
@@ -180,7 +203,7 @@ TransPlan/
       equity.py           <- Demographic equity analysis (48 profiles × 22 cities, Gini coefficient)
       what_if.py          <- What-if scenario analysis (Monte Carlo with donor/wait multipliers)
       brier_score.py      <- Brier score calibration: Monte Carlo vs analytical validation
-    tests/                <- pytest suite (218 tests)
+    tests/                <- pytest suite (237 tests)
   docs/
     status.md             <- THIS FILE (read every session)
     ideas.md              <- Full SRS: requirements, architecture, FDA pathway
@@ -213,7 +236,8 @@ TransPlan/
 | Status | Count | Details |
 |--------|-------|---------|
 | FIXED | 36 | All critical + most high/medium issues (L-001–L-044) |
-| OPEN | 12 | L-045 (FARS), L-046–L-048 (fixed), L-049–L-056 (M2 COD model data quality) |
+| OPEN | 8 | L-045 (FARS), L-049–L-052, L-054 (M2 COD model), L-046–L-048 fixed |
+| FIXED (M2b) | 4 | L-051 (fetch script), L-053 (stochastic), L-055 (50 states), L-056 (elasticity) |
 | DEFERRED | 3 | L-009 (OPO), L-017 (SRTR outcomes), L-033 (donor reg fetch) |
 | WONT FIX | 2 | L-012 (county health, <0.5pt impact), L-039 (false positive) |
 
