@@ -408,11 +408,22 @@
     return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
   }
 
+  function getChartImage(id) {
+    var chart = instances[id];
+    return chart ? chart.toBase64Image() : null;
+  }
+
+  function getChartIds() {
+    return Object.keys(instances);
+  }
+
   // Expose globally
   window.TransPlanProbCharts = {
     renderCDFChart: renderCDFChart,
     renderCompetingRisksChart: renderCompetingRisksChart,
     renderTornadoChart: renderTornadoChart,
-    destroyAll: destroyAll
+    destroyAll: destroyAll,
+    getChartImage: getChartImage,
+    getChartIds: getChartIds
   };
 })();

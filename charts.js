@@ -251,11 +251,23 @@
         });
     }
 
+    // Get chart image as base64 PNG (for export)
+    function getChartImage(id) {
+        var chart = chartInstances[id];
+        return chart ? chart.toBase64Image() : null;
+    }
+
+    function getChartIds() {
+        return Object.keys(chartInstances);
+    }
+
     // Expose functions globally
     window.TransPlanCharts = {
         renderWeightsDonutChart,
         createRadarChart,
-        createComparisonChart
+        createComparisonChart,
+        getChartImage: getChartImage,
+        getChartIds: getChartIds
     };
 
     // Render donut chart on page load

@@ -526,6 +526,14 @@ let _currentFormData = null;
 // M4: Equity analysis result
 let _currentEquityResult = null;
 
+// M5: Expose results for export module
+window.TransPlanResults = {
+    getResults: function() { return _currentResults; },
+    getSimResult: function() { return _currentSimResult; },
+    getFormData: function() { return _currentFormData; },
+    getEquityResult: function() { return _currentEquityResult; }
+};
+
 // Map layers
 let map;
 let trafficHeatLayer;

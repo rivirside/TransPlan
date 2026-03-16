@@ -285,11 +285,22 @@
     });
   }
 
+  function getChartImage(id) {
+    var chart = instances[id];
+    return chart ? chart.toBase64Image() : null;
+  }
+
+  function getChartIds() {
+    return Object.keys(instances);
+  }
+
   // Expose globally
   window.TransPlanEquityCharts = {
     renderBloodTypeDisparityChart: renderBloodTypeDisparityChart,
     renderAgeDisparityChart: renderAgeDisparityChart,
     renderGiniByCity: renderGiniByCity,
-    destroyAll: destroyAll
+    destroyAll: destroyAll,
+    getChartImage: getChartImage,
+    getChartIds: getChartIds
   };
 })();
