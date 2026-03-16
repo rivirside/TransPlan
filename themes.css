@@ -1021,3 +1021,280 @@
     font-size: var(--fs-xl);
   }
 }
+
+
+/* ===================================================================
+   DARK MODE
+   Applied via data-dark="true" on <html>.
+   Works as an overlay on any theme — inverts neutral/surface/text tokens.
+   Auto-detected from prefers-color-scheme, user can toggle manually.
+   =================================================================== */
+
+[data-dark="true"] {
+  /* Inverted neutral scale */
+  --neutral-50:  #16181F;
+  --neutral-100: #1A1D27;
+  --neutral-200: #252837;
+  --neutral-300: #2F3344;
+  --neutral-400: #5E6375;
+  --neutral-500: #858A9C;
+  --neutral-600: #B0B5C5;
+  --neutral-700: #CDD1DE;
+  --neutral-800: #E2E5ED;
+  --neutral-900: #F0F1F8;
+
+  /* Surfaces */
+  --bg: #0F1117;
+  --surface: #1A1D2A;
+  --surface-raised: #1F2235;
+  --surface-sunken: #14161F;
+  --border: #2A2E42;
+  --border-light: #1E2235;
+
+  /* Text (re-pointed to inverted neutrals) */
+  --text-1: #F0F1F8;
+  --text-2: #B0B5C5;
+  --text-3: #858A9C;
+  --text-muted: #5E6375;
+
+  /* Shadows: subtle glow instead of drop shadows */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.25);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.45), 0 2px 4px rgba(0,0,0,0.3);
+  --shadow-xl: 0 8px 24px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.35);
+
+  /* Lighten primary tints for visibility on dark bg */
+  --color-primary-light: var(--color-primary-900);
+
+  /* Rank colors: slightly brighter for dark bg */
+  --rank-gold-bg: rgba(212,160,23,0.15);
+  --rank-silver-bg: rgba(107,114,128,0.15);
+  --rank-bronze-bg: rgba(161,99,48,0.15);
+
+  /* Semantic backgrounds: darken */
+  --success-50: rgba(29,158,92,0.1);
+  --success-100: rgba(29,158,92,0.15);
+  --warning-50: rgba(212,134,10,0.1);
+  --warning-100: rgba(212,134,10,0.15);
+  --danger-50: rgba(217,59,59,0.1);
+  --danger-100: rgba(217,59,59,0.15);
+
+  color-scheme: dark;
+}
+
+/* Dark: nav already dark, just ensure consistency */
+[data-dark="true"] .site-nav {
+  background: #0D0F14;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Dark: form inputs */
+[data-dark="true"] select,
+[data-dark="true"] input[type="text"],
+[data-dark="true"] input[type="number"] {
+  background: var(--surface-sunken);
+  color: var(--text-1);
+  border-color: var(--border);
+}
+[data-dark="true"] select option {
+  background: var(--surface);
+  color: var(--text-1);
+}
+
+/* Dark: range slider */
+[data-dark="true"] .range-wrapper input[type="range"] {
+  background: var(--neutral-200);
+}
+
+/* Dark: disclaimer banner */
+[data-dark="true"] .disclaimer-banner {
+  background: var(--warning-50);
+  border-color: var(--warning-500);
+  color: var(--text-2);
+}
+
+/* Dark: default theme header gradient (keep indigo but darken ends) */
+[data-dark="true"]:not([data-theme]) header,
+[data-dark="true"][data-theme=""] header {
+  background: linear-gradient(135deg, var(--color-primary-800), var(--color-accent-800));
+}
+
+/* Dark: methodology section */
+[data-dark="true"] .methodology-section {
+  background: var(--surface-sunken);
+}
+
+/* Dark: footer */
+[data-dark="true"] .site-footer {
+  background: #0A0C12;
+  border-top: 1px solid var(--border);
+}
+
+/* Dark: modal overlay */
+[data-dark="true"] .city-detail-overlay {
+  background: rgba(0,0,0,0.7);
+}
+[data-dark="true"] .city-detail-modal {
+  background: var(--surface);
+  color: var(--text-1);
+}
+
+/* Dark: compare bar */
+[data-dark="true"] .compare-bar {
+  background: rgba(15,17,23,0.95);
+}
+
+/* Dark: equity tab */
+[data-dark="true"] .equity-disclaimer {
+  background: var(--warning-50);
+  border-color: var(--warning-500);
+}
+
+/* Dark: info card */
+[data-dark="true"] .info-card {
+  background: var(--surface-sunken);
+}
+
+/* Dark: tabs */
+[data-dark="true"] .mode-tab {
+  color: var(--text-3);
+}
+[data-dark="true"] .mode-tab.active {
+  color: var(--color-primary-400);
+  background: var(--surface);
+}
+
+/* Dark: Leaflet map invert for readability */
+[data-dark="true"] .leaflet-container {
+  filter: invert(1) hue-rotate(180deg);
+}
+[data-dark="true"] .leaflet-container .leaflet-marker-icon,
+[data-dark="true"] .leaflet-container .leaflet-marker-shadow {
+  filter: invert(1) hue-rotate(180deg); /* cancel parent inversion for markers */
+}
+
+/* Dark: score badge backgrounds */
+[data-dark="true"] .score {
+  background: var(--color-primary-900);
+  color: var(--color-primary-200);
+}
+
+/* Dark: metric tiles */
+[data-dark="true"] .metric {
+  background: var(--surface-sunken);
+}
+
+/* Dark: prob card metric tiles */
+[data-dark="true"] .prob-metric {
+  background: var(--surface-sunken);
+}
+
+/* Dark mode toggle button in nav */
+.dark-toggle {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-sm);
+  color: var(--neutral-400);
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+  font-size: 0;
+  line-height: 1;
+}
+.dark-toggle:hover {
+  color: white;
+  border-color: rgba(255,255,255,0.3);
+}
+.dark-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+/* Show moon icon by default (light mode), sun when dark */
+.dark-toggle .icon-sun { display: none; }
+.dark-toggle .icon-moon { display: block; }
+[data-dark="true"] .dark-toggle .icon-sun { display: block; }
+[data-dark="true"] .dark-toggle .icon-moon { display: none; }
+
+
+/* ===================================================================
+   DARK MODE: Theme-specific overrides
+   =================================================================== */
+
+/* Government dark: its header is normally white — needs dark override */
+[data-dark="true"][data-theme="government"] header {
+  background: var(--surface);
+  color: var(--text-1);
+  border-bottom-color: var(--color-primary-400);
+}
+[data-dark="true"][data-theme="government"] header h1 {
+  color: var(--text-1);
+}
+[data-dark="true"][data-theme="government"] .tagline {
+  color: var(--text-3);
+}
+[data-dark="true"][data-theme="government"] .gov-banner {
+  background: var(--surface-sunken);
+  border-bottom-color: var(--border);
+}
+/* Government dark: bordered cards */
+[data-dark="true"][data-theme="government"] .city-card,
+[data-dark="true"][data-theme="government"] .prob-card {
+  border-color: var(--border);
+  border-top-color: var(--color-primary-400);
+}
+[data-dark="true"][data-theme="government"] main {
+  border-color: var(--border);
+}
+/* Government dark: form inputs */
+[data-dark="true"][data-theme="government"] select,
+[data-dark="true"][data-theme="government"] input[type="text"],
+[data-dark="true"][data-theme="government"] input[type="number"] {
+  border-color: var(--border);
+}
+/* Government dark: feature cards on landing */
+[data-dark="true"][data-theme="government"] .feature-card {
+  border-color: var(--border);
+  border-top-color: var(--color-primary-400);
+}
+[data-dark="true"][data-theme="government"] .landing-main {
+  border-color: var(--border);
+}
+
+/* Research dark: warm dark bg */
+[data-dark="true"][data-theme="research"] {
+  --bg: #121110;
+  --surface: #1E1C19;
+  --surface-raised: #24221E;
+  --surface-sunken: #161412;
+  --border: #332F29;
+  --border-light: #252220;
+}
+[data-dark="true"][data-theme="research"] header {
+  background: #1A1816;
+}
+[data-dark="true"][data-theme="research"] .site-nav {
+  background: #0E0D0B;
+}
+[data-dark="true"][data-theme="research"] .city-card,
+[data-dark="true"][data-theme="research"] .prob-card {
+  border-bottom-color: var(--border);
+}
+[data-dark="true"][data-theme="research"] .info-card {
+  background: var(--surface-sunken);
+}
+/* Research dark: landing */
+[data-dark="true"][data-theme="research"] .feature-card {
+  border-bottom-color: var(--border);
+}
+
+/* Landing page dark overrides */
+[data-dark="true"] .landing-hero-inline {
+  border-bottom-color: var(--border);
+}
+[data-dark="true"][data-theme="government"] .landing-hero-inline h1 {
+  color: var(--text-1);
+}
