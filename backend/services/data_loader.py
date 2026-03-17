@@ -28,6 +28,8 @@ class TransPlanData:
     srtr_reports: dict = field(default_factory=dict)
     # M2: Cause-of-death by region (organ-specific donor availability)
     cause_of_death: dict = field(default_factory=dict)
+    # Phase 4 M2: Post-transplant graft/patient survival by center
+    post_transplant_outcomes: dict = field(default_factory=dict)
     # freshness metadata keyed by logical name
     freshness: dict = field(default_factory=dict)
 
@@ -84,6 +86,7 @@ def load_all() -> TransPlanData:
     data.socioeconomic      = _load_json(DATA_DIR / "manual/socioeconomic.json",   "socioeconomic",   data)
     data.srtr_reports       = _load_json(DATA_DIR / "manual/srtr-reports.json",    "srtr_reports",    data)
     data.cause_of_death     = _load_json(DATA_DIR / "cause-of-death-by-region.json", "cause_of_death", data)
+    data.post_transplant_outcomes = _load_json(DATA_DIR / "post-transplant-outcomes.json", "post_transplant_outcomes", data)
 
     loaded = sum(1 for v in data.freshness.values() if v not in ("missing", "parse_error"))
     logger.info("TransPlan data loaded: %d/%d files OK", loaded, len(data.freshness))

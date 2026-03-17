@@ -28,6 +28,7 @@ RAW_DIR = os.path.join(DATA_DIR, "srtr-raw")
 MAPPING_PATH = os.path.join(DATA_DIR, "srtr-center-mapping.json")
 WAIT_TIME_OUT = os.path.join(DATA_DIR, "wait-time-distributions.json")
 COMPETING_OUT = os.path.join(DATA_DIR, "competing-risks.json")
+OUTCOMES_OUT = os.path.join(DATA_DIR, "post-transplant-outcomes.json")
 
 ORGAN_CODES = {
     "kidney": "KI",
@@ -476,6 +477,217 @@ def parse_outcomes(mapping: dict) -> dict:
     return result
 
 
+# Phase 4 M2: Post-transplant graft and patient survival columns
+# From "TablesC5-C12 Figures C1-C20" (graft survival)
+GRAFT_COLS = {
+    "graft_survival_1yr": "GSR_AD_ACT_C1Y",
+    "graft_survival_3yr": "GSR_AD_ACT_C3Y",
+    "graft_hr_1yr": "GSR_AD_HR_C1Y",
+    "graft_hr_lo": "GSR_AD_CREDLO_C1Y",
+    "graft_hr_hi": "GSR_AD_CREDHI_C1Y",
+    "graft_n_1yr": "GSR_AD_N_C1Y",
+}
+GRAFT_NAT_COLS = {
+    "graft_survival_1yr": "GSR_AD_ACT_U1Y",
+    "graft_survival_3yr": "GSR_AD_ACT_U3Y",
+}
+
+# From "TablesC11-C20 FiguresC21-C32" (patient survival)
+PATIENT_COLS = {
+    "patient_survival_1yr": "PSR_AD_ACT_C1Y",
+    "patient_survival_3yr": "PSR_AD_ACT_C3Y",
+    "patient_hr_1yr": "PSR_AD_HR_C1Y",
+    "patient_hr_lo": "PSR_AD_CREDLO_C1Y",
+    "patient_hr_hi": "PSR_AD_CREDHI_C1Y",
+    "patient_n_1yr": "PSR_AD_N_C1Y",
+}
+PATIENT_NAT_COLS = {
+    "patient_survival_1yr": "PSR_AD_ACT_U1Y",
+    "patient_survival_3yr": "PSR_AD_ACT_U3Y",
+}
+
+# Graft survival sheet name
+GRAFT_SHEET = "TablesC5-C12 Figures C1-C20"
+PATIENT_SHEET = "TablesC11-C20 FiguresC21-C32"
+
+# Minimum sample size for reliable survival estimates
+MIN_N_OUTCOMES = 10
+
+
+def _get_first_nonempty_national(sheet, col_indices: dict) -> dict | None:
+    """
+    Get national-level data by scanning rows until we find non-empty values.
+    The C-series tables have national values (_U) populated only on certain rows.
+    """
+    if not col_indices:
+        return None
+    first_key = next(iter(col_indices))
+    first_col = col_indices[first_key]
+    for r in range(2, min(sheet.nrows, 50)):
+        val = _safe_float(sheet.cell_value(r, first_col))
+        if val is not None:
+            result = {}
+            for key, col_idx in col_indices.items():
+                result[key] = _safe_float(sheet.cell_value(r, col_idx))
+            return result
+    return None
+
+
+def _performance_rating(hr: float | None, ci_lo: float | None, ci_hi: float | None) -> str:
+    """
+    Classify center performance based on hazard ratio and 95% credible interval.
+    Matches SRTR's own classification methodology.
+    """
+    if hr is None or ci_lo is None or ci_hi is None:
+        return "insufficient_data"
+    if ci_hi < 1.0:
+        return "better_than_expected"
+    if ci_lo > 1.0:
+        return "worse_than_expected"
+    return "as_expected"
+
+
+def parse_post_transplant_outcomes(mapping: dict) -> dict:
+    """
+    Parse graft and patient survival from C-series tables in all organ Excel files.
+    Returns dict structure for post-transplant-outcomes.json.
+    """
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    result = {
+        "_meta": {
+            "source": "SRTR PSR National Center-Level Summary Data (January 2025 release)",
+            "method": "Center-level post-transplant graft survival (Tables C5-C12) and patient survival (Tables C11-C20). Adult (18+) estimates only.",
+            "references": [
+                "https://www.srtr.org/reports/program-specific-reports/",
+            ],
+            "fetchedAt": now,
+            "notes": "Risk-adjusted Bayesian hierarchical estimates. Performance ratings derived from 1-year hazard ratio 95% credible intervals vs expected.",
+        }
+    }
+
+    city_outcomes = {}
+
+    for organ, code in ORGAN_CODES.items():
+        excel_path = os.path.join(RAW_DIR, f"csrs_final_tables_2511_{code}.xls")
+        if not os.path.exists(excel_path):
+            print(f"  WARNING: {excel_path} not found, skipping {organ}")
+            continue
+
+        wb = xlrd.open_workbook(excel_path)
+
+        # --- Graft survival ---
+        try:
+            gs_sheet = wb.sheet_by_name(GRAFT_SHEET)
+        except xlrd.biffh.XLRDError:
+            print(f"  WARNING: No graft survival sheet for {organ}")
+            continue
+
+        gs_ctr_cols = _build_col_map(gs_sheet, GRAFT_COLS)
+        gs_nat_cols = _build_col_map(gs_sheet, GRAFT_NAT_COLS)
+        gs_nat = _get_first_nonempty_national(gs_sheet, gs_nat_cols)
+
+        # --- Patient survival ---
+        try:
+            ps_sheet = wb.sheet_by_name(PATIENT_SHEET)
+        except xlrd.biffh.XLRDError:
+            print(f"  WARNING: No patient survival sheet for {organ}")
+            ps_sheet = None
+
+        ps_ctr_cols = _build_col_map(ps_sheet, PATIENT_COLS) if ps_sheet else {}
+        ps_nat_cols = _build_col_map(ps_sheet, PATIENT_NAT_COLS) if ps_sheet else {}
+        ps_nat = _get_first_nonempty_national(ps_sheet, ps_nat_cols) if ps_sheet else None
+
+        # Store national baselines
+        nat_gs_1yr = gs_nat.get("graft_survival_1yr") if gs_nat else None
+        nat_gs_3yr = gs_nat.get("graft_survival_3yr") if gs_nat else None
+        nat_ps_1yr = ps_nat.get("patient_survival_1yr") if ps_nat else None
+        nat_ps_3yr = ps_nat.get("patient_survival_3yr") if ps_nat else None
+
+        result[organ] = {
+            "national_graft_survival_1yr": round(nat_gs_1yr, 1) if nat_gs_1yr else None,
+            "national_graft_survival_3yr": round(nat_gs_3yr, 1) if nat_gs_3yr else None,
+            "national_patient_survival_1yr": round(nat_ps_1yr, 1) if nat_ps_1yr else None,
+            "national_patient_survival_3yr": round(nat_ps_3yr, 1) if nat_ps_3yr else None,
+        }
+
+        print(f"  {organ}: national graft 1yr={nat_gs_1yr}, patient 1yr={nat_ps_1yr}")
+
+        # --- Per-city extraction ---
+        for city, info in mapping["cities"].items():
+            # Look up graft survival for this center
+            gs_data = _get_row_by_code(gs_sheet, info["primary"], gs_ctr_cols)
+            if not gs_data:
+                for alt_code in info.get("alternates", []):
+                    gs_data = _get_row_by_code(gs_sheet, alt_code, gs_ctr_cols)
+                    if gs_data:
+                        break
+
+            # Look up patient survival
+            ps_data = None
+            if ps_sheet:
+                ps_data = _get_row_by_code(ps_sheet, info["primary"], ps_ctr_cols)
+                if not ps_data:
+                    for alt_code in info.get("alternates", []):
+                        ps_data = _get_row_by_code(ps_sheet, alt_code, ps_ctr_cols)
+                        if ps_data:
+                            break
+
+            if not gs_data:
+                continue
+
+            # Check sample size
+            n_1yr = gs_data.get("graft_n_1yr")
+            if n_1yr is not None and n_1yr < MIN_N_OUTCOMES:
+                print(f"    {city} {organ}: N={n_1yr} < {MIN_N_OUTCOMES}, skipping")
+                continue
+
+            # Build city outcome entry
+            entry = {}
+            gs_1yr = gs_data.get("graft_survival_1yr")
+            gs_3yr = gs_data.get("graft_survival_3yr")
+            gs_hr = gs_data.get("graft_hr_1yr")
+            gs_hr_lo = gs_data.get("graft_hr_lo")
+            gs_hr_hi = gs_data.get("graft_hr_hi")
+
+            if gs_1yr is not None:
+                entry["graft_survival_1yr"] = round(gs_1yr, 1)
+            if gs_3yr is not None:
+                entry["graft_survival_3yr"] = round(gs_3yr, 1)
+            if gs_hr is not None:
+                entry["graft_hr_1yr"] = round(gs_hr, 3)
+            if gs_hr_lo is not None and gs_hr_hi is not None:
+                entry["graft_hr_1yr_ci"] = [round(gs_hr_lo, 3), round(gs_hr_hi, 3)]
+            if n_1yr is not None:
+                entry["n_1yr"] = int(n_1yr)
+
+            # Patient survival
+            if ps_data:
+                ps_1yr = ps_data.get("patient_survival_1yr")
+                ps_3yr = ps_data.get("patient_survival_3yr")
+                ps_hr = ps_data.get("patient_hr_1yr")
+                ps_hr_lo = ps_data.get("patient_hr_lo")
+                ps_hr_hi = ps_data.get("patient_hr_hi")
+
+                if ps_1yr is not None:
+                    entry["patient_survival_1yr"] = round(ps_1yr, 1)
+                if ps_3yr is not None:
+                    entry["patient_survival_3yr"] = round(ps_3yr, 1)
+                if ps_hr is not None:
+                    entry["patient_hr_1yr"] = round(ps_hr, 3)
+                if ps_hr_lo is not None and ps_hr_hi is not None:
+                    entry["patient_hr_1yr_ci"] = [round(ps_hr_lo, 3), round(ps_hr_hi, 3)]
+
+            # Performance rating based on graft survival HR
+            entry["performance_rating"] = _performance_rating(gs_hr, gs_hr_lo, gs_hr_hi)
+
+            if city not in city_outcomes:
+                city_outcomes[city] = {}
+            city_outcomes[city][organ] = entry
+
+    result["city_outcomes"] = city_outcomes
+    return result
+
+
 def _load_existing(path: str) -> dict | None:
     """Load existing JSON file, or None if it doesn't exist."""
     try:
@@ -504,6 +716,9 @@ def main():
     print("\n=== Parsing SRTR Outcome Data (Table B7) ===")
     outcome_data = parse_outcomes(mapping)
 
+    print("\n=== Parsing SRTR Post-Transplant Outcomes (Tables C5-C12, C11-C20) ===")
+    pt_outcomes = parse_post_transplant_outcomes(mapping)
+
     # Write output files
     with open(WAIT_TIME_OUT, "w") as f:
         json.dump(wait_data, f, indent=2)
@@ -515,10 +730,16 @@ def main():
         f.write("\n")
     print(f"Wrote {COMPETING_OUT}")
 
+    with open(OUTCOMES_OUT, "w") as f:
+        json.dump(pt_outcomes, f, indent=2)
+        f.write("\n")
+    print(f"Wrote {OUTCOMES_OUT}")
+
     # Summary
     n_organs = len([k for k in wait_data if not k.startswith("_") and k != "city_wait_time_factors"])
     n_cities = len([k for k in wait_data.get("city_wait_time_factors", {}) if not k.startswith("_")])
-    print(f"\nSummary: {n_organs} organs, {n_cities} cities with wait time factors")
+    n_outcomes_cities = len(pt_outcomes.get("city_outcomes", {}))
+    print(f"\nSummary: {n_organs} organs, {n_cities} cities with wait time factors, {n_outcomes_cities} cities with post-transplant outcomes")
 
 
 if __name__ == "__main__":

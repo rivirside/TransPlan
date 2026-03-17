@@ -89,7 +89,8 @@
       'Rank', 'City', 'State',
       'P(Transplant 6mo)', 'P(Transplant 12mo)', 'P(Transplant 24mo)', 'P(Transplant 36mo)',
       'Median Wait (months)', 'CI 95% Low', 'CI 95% High',
-      'P(Transplant)', 'P(Mortality)', 'P(Delisting)', 'P(Still Waiting)'
+      'P(Transplant)', 'P(Mortality)', 'P(Delisting)', 'P(Still Waiting)',
+      '1yr Graft Survival', '1yr Patient Survival', 'Overall Success', 'Performance Rating'
     ];
 
     var rows = [headers.map(escapeCsv).join(',')];
@@ -97,6 +98,7 @@
     simResult.cities.forEach(function (city, i) {
       var cr = city.competing_risks || {};
       var ci = city.confidence_interval_95 || [0, 0];
+      var oc = city.outcomes || {};
       rows.push([
         i + 1,
         city.city,
@@ -111,7 +113,11 @@
         (cr.p_transplant || 0).toFixed(4),
         (cr.p_mortality || 0).toFixed(4),
         (cr.p_delisting || 0).toFixed(4),
-        (cr.p_still_waiting || 0).toFixed(4)
+        (cr.p_still_waiting || 0).toFixed(4),
+        oc.graft_survival_1yr != null ? (oc.graft_survival_1yr * 100).toFixed(1) + '%' : '',
+        oc.patient_survival_1yr != null ? (oc.patient_survival_1yr * 100).toFixed(1) + '%' : '',
+        oc.compound_success != null ? (oc.compound_success * 100).toFixed(1) + '%' : '',
+        oc.performance_rating || ''
       ].map(escapeCsv).join(','));
     });
 
@@ -404,7 +410,7 @@
     if (simResult && simResult.cities) {
       appendTo(body, 'h2', null, 'Simulation Probabilities');
       appendTo(body, 'p', { className: 'meta' }, 'Monte Carlo simulation: ' + (simResult.iterations || 'N/A') + ' iterations');
-      var probHeaders = ['#', 'City', 'P(6mo)', 'P(12mo)', 'P(24mo)', 'P(36mo)', 'Median Wait', 'P(Mortality)'];
+      var probHeaders = ['#', 'City', 'P(6mo)', 'P(12mo)', 'P(24mo)', 'P(36mo)', 'Median Wait', 'P(Mortality)', '1yr Graft', 'Success'];
       var probTable = appendTo(body, 'table');
       var pThead = appendTo(probTable, 'thead');
       var pHRow = appendTo(pThead, 'tr');
@@ -412,6 +418,7 @@
       var pTbody = appendTo(probTable, 'tbody');
       simResult.cities.forEach(function (city, i) {
         var cr = city.competing_risks || {};
+        var oc = city.outcomes || {};
         var tr = appendTo(pTbody, 'tr', i < 3 ? { className: 'rank-' + (i + 1) } : null);
         [
           i + 1,
@@ -421,7 +428,9 @@
           ((city.p_transplant_24mo || 0) * 100).toFixed(1) + '%',
           ((city.p_transplant_36mo || 0) * 100).toFixed(1) + '%',
           (city.median_wait_months || 0).toFixed(1) + ' mo',
-          ((cr.p_mortality || 0) * 100).toFixed(1) + '%'
+          ((cr.p_mortality || 0) * 100).toFixed(1) + '%',
+          oc.graft_survival_1yr != null ? (oc.graft_survival_1yr * 100).toFixed(1) + '%' : 'N/A',
+          oc.compound_success != null ? (oc.compound_success * 100).toFixed(1) + '%' : 'N/A'
         ].forEach(function (val) { appendTo(tr, 'td', null, String(val)); });
       });
     }

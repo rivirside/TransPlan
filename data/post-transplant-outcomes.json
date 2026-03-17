@@ -1,0 +1,1920 @@
+{
+  "_meta": {
+    "source": "SRTR PSR National Center-Level Summary Data (January 2025 release)",
+    "method": "Center-level post-transplant graft survival (Tables C5-C12) and patient survival (Tables C11-C20). Adult (18+) estimates only.",
+    "references": [
+      "https://www.srtr.org/reports/program-specific-reports/"
+    ],
+    "fetchedAt": "2026-03-17T06:33:05Z",
+    "notes": "Risk-adjusted Bayesian hierarchical estimates. Performance ratings derived from 1-year hazard ratio 95% credible intervals vs expected."
+  },
+  "kidney": {
+    "national_graft_survival_1yr": 95.0,
+    "national_graft_survival_3yr": 87.5,
+    "national_patient_survival_1yr": 97.3,
+    "national_patient_survival_3yr": 91.6
+  },
+  "liver": {
+    "national_graft_survival_1yr": 92.4,
+    "national_graft_survival_3yr": 86.0,
+    "national_patient_survival_1yr": 94.3,
+    "national_patient_survival_3yr": 88.3
+  },
+  "heart": {
+    "national_graft_survival_1yr": 92.2,
+    "national_graft_survival_3yr": 85.0,
+    "national_patient_survival_1yr": 92.4,
+    "national_patient_survival_3yr": 85.6
+  },
+  "lung": {
+    "national_graft_survival_1yr": 89.6,
+    "national_graft_survival_3yr": 72.7,
+    "national_patient_survival_1yr": 90.2,
+    "national_patient_survival_3yr": 74.1
+  },
+  "pancreas": {
+    "national_graft_survival_1yr": null,
+    "national_graft_survival_3yr": null,
+    "national_patient_survival_1yr": 96.6,
+    "national_patient_survival_3yr": 93.9
+  },
+  "intestine": {
+    "national_graft_survival_1yr": 76.3,
+    "national_graft_survival_3yr": 55.3,
+    "national_patient_survival_1yr": 82.8,
+    "national_patient_survival_3yr": 62.6
+  },
+  "city_outcomes": {
+    "Pittsburgh": {
+      "kidney": {
+        "graft_survival_1yr": 94.1,
+        "graft_survival_3yr": 82.4,
+        "graft_hr_1yr": 1.429,
+        "graft_hr_1yr_ci": [
+          0.949,
+          2.004
+        ],
+        "n_1yr": 454,
+        "patient_survival_1yr": 97.7,
+        "patient_survival_3yr": 86.5,
+        "patient_hr_1yr": 1.063,
+        "patient_hr_1yr_ci": [
+          0.51,
+          1.815
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 89.0,
+        "graft_survival_3yr": 84.6,
+        "graft_hr_1yr": 1.47,
+        "graft_hr_1yr_ci": [
+          1.035,
+          1.98
+        ],
+        "n_1yr": 337,
+        "patient_survival_1yr": 91.4,
+        "patient_survival_3yr": 85.3,
+        "patient_hr_1yr": 1.593,
+        "patient_hr_1yr_ci": [
+          1.059,
+          2.235
+        ],
+        "performance_rating": "worse_than_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 95.9,
+        "graft_survival_3yr": 89.7,
+        "graft_hr_1yr": 0.601,
+        "graft_hr_1yr_ci": [
+          0.195,
+          1.232
+        ],
+        "n_1yr": 78,
+        "patient_survival_1yr": 95.7,
+        "patient_survival_3yr": 89.7,
+        "patient_hr_1yr": 0.665,
+        "patient_hr_1yr_ci": [
+          0.216,
+          1.362
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 89.6,
+        "graft_survival_3yr": 74.0,
+        "graft_hr_1yr": 1.022,
+        "graft_hr_1yr_ci": [
+          0.572,
+          1.6
+        ],
+        "n_1yr": 131,
+        "patient_survival_1yr": 89.3,
+        "patient_survival_3yr": 76.7,
+        "patient_hr_1yr": 1.098,
+        "patient_hr_1yr_ci": [
+          0.615,
+          1.72
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 11,
+        "patient_survival_1yr": 100.0,
+        "patient_survival_3yr": 100.0,
+        "patient_hr_1yr": 0.906,
+        "patient_hr_1yr_ci": [
+          0.11,
+          2.523
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Baltimore": {
+      "kidney": {
+        "graft_survival_1yr": 96.0,
+        "graft_survival_3yr": 90.3,
+        "graft_hr_1yr": 0.844,
+        "graft_hr_1yr_ci": [
+          0.529,
+          1.231
+        ],
+        "n_1yr": 510,
+        "patient_survival_1yr": 98.9,
+        "patient_survival_3yr": 94.0,
+        "patient_hr_1yr": 0.525,
+        "patient_hr_1yr_ci": [
+          0.211,
+          0.98
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 91.9,
+        "graft_survival_3yr": 90.0,
+        "graft_hr_1yr": 1.152,
+        "graft_hr_1yr_ci": [
+          0.73,
+          1.669
+        ],
+        "n_1yr": 278,
+        "patient_survival_1yr": 95.0,
+        "patient_survival_3yr": 92.0,
+        "patient_hr_1yr": 0.975,
+        "patient_hr_1yr_ci": [
+          0.533,
+          1.548
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 86.9,
+        "graft_survival_3yr": 68.1,
+        "graft_hr_1yr": 1.287,
+        "graft_hr_1yr_ci": [
+          0.665,
+          2.111
+        ],
+        "n_1yr": 87,
+        "patient_survival_1yr": 87.8,
+        "patient_survival_3yr": 69.0,
+        "patient_hr_1yr": 1.239,
+        "patient_hr_1yr_ci": [
+          0.618,
+          2.071
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 90.8,
+        "graft_survival_3yr": 82.4,
+        "graft_hr_1yr": 1.048,
+        "graft_hr_1yr_ci": [
+          0.503,
+          1.791
+        ],
+        "n_1yr": 90,
+        "patient_survival_1yr": 91.7,
+        "patient_survival_3yr": 82.4,
+        "patient_hr_1yr": 1.033,
+        "patient_hr_1yr_ci": [
+          0.472,
+          1.81
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 16,
+        "patient_survival_1yr": 93.8,
+        "patient_survival_3yr": 91.7,
+        "patient_hr_1yr": 1.268,
+        "patient_hr_1yr_ci": [
+          0.262,
+          3.054
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Philadelphia": {
+      "kidney": {
+        "graft_survival_1yr": 96.6,
+        "graft_survival_3yr": 92.1,
+        "graft_hr_1yr": 0.887,
+        "graft_hr_1yr_ci": [
+          0.549,
+          1.305
+        ],
+        "n_1yr": 616,
+        "patient_survival_1yr": 98.5,
+        "patient_survival_3yr": 95.0,
+        "patient_hr_1yr": 0.751,
+        "patient_hr_1yr_ci": [
+          0.344,
+          1.316
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 94.2,
+        "graft_survival_3yr": 86.2,
+        "graft_hr_1yr": 0.815,
+        "graft_hr_1yr_ci": [
+          0.522,
+          1.171
+        ],
+        "n_1yr": 389,
+        "patient_survival_1yr": 96.6,
+        "patient_survival_3yr": 88.6,
+        "patient_hr_1yr": 0.646,
+        "patient_hr_1yr_ci": [
+          0.353,
+          1.026
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 95.8,
+        "graft_survival_3yr": 83.2,
+        "graft_hr_1yr": 0.732,
+        "graft_hr_1yr_ci": [
+          0.269,
+          1.424
+        ],
+        "n_1yr": 96,
+        "patient_survival_1yr": 95.7,
+        "patient_survival_3yr": 83.2,
+        "patient_hr_1yr": 0.753,
+        "patient_hr_1yr_ci": [
+          0.276,
+          1.464
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 92.1,
+        "graft_survival_3yr": 78.2,
+        "graft_hr_1yr": 0.93,
+        "graft_hr_1yr_ci": [
+          0.495,
+          1.5
+        ],
+        "n_1yr": 143,
+        "patient_survival_1yr": 93.3,
+        "patient_survival_3yr": 79.5,
+        "patient_hr_1yr": 0.867,
+        "patient_hr_1yr_ci": [
+          0.433,
+          1.449
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 40,
+        "patient_survival_1yr": 100.0,
+        "patient_survival_3yr": 96.4,
+        "patient_hr_1yr": 0.602,
+        "patient_hr_1yr_ci": [
+          0.073,
+          1.678
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "New York": {
+      "kidney": {
+        "graft_survival_1yr": 94.3,
+        "graft_survival_3yr": 90.0,
+        "graft_hr_1yr": 1.229,
+        "graft_hr_1yr_ci": [
+          0.817,
+          1.725
+        ],
+        "n_1yr": 491,
+        "patient_survival_1yr": 95.9,
+        "patient_survival_3yr": 94.1,
+        "patient_hr_1yr": 1.708,
+        "patient_hr_1yr_ci": [
+          0.995,
+          2.611
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 89.6,
+        "graft_survival_3yr": 87.3,
+        "graft_hr_1yr": 1.289,
+        "graft_hr_1yr_ci": [
+          0.849,
+          1.819
+        ],
+        "n_1yr": 251,
+        "patient_survival_1yr": 91.1,
+        "patient_survival_3yr": 91.9,
+        "patient_hr_1yr": 1.525,
+        "patient_hr_1yr_ci": [
+          0.956,
+          2.226
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 96.6,
+        "graft_survival_3yr": 88.9,
+        "graft_hr_1yr": 0.559,
+        "graft_hr_1yr_ci": [
+          0.225,
+          1.044
+        ],
+        "n_1yr": 154,
+        "patient_survival_1yr": 96.5,
+        "patient_survival_3yr": 91.5,
+        "patient_hr_1yr": 0.574,
+        "patient_hr_1yr_ci": [
+          0.231,
+          1.07
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 88.7,
+        "graft_survival_3yr": 72.4,
+        "graft_hr_1yr": 1.077,
+        "graft_hr_1yr_ci": [
+          0.727,
+          1.496
+        ],
+        "n_1yr": 271,
+        "patient_survival_1yr": 89.4,
+        "patient_survival_3yr": 73.4,
+        "patient_hr_1yr": 1.048,
+        "patient_hr_1yr_ci": [
+          0.691,
+          1.479
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 20,
+        "patient_survival_1yr": 94.4,
+        "patient_survival_3yr": 95.2,
+        "patient_hr_1yr": 1.171,
+        "patient_hr_1yr_ci": [
+          0.242,
+          2.821
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Minneapolis": {
+      "kidney": {
+        "graft_survival_1yr": 94.8,
+        "graft_survival_3yr": 91.3,
+        "graft_hr_1yr": 1.458,
+        "graft_hr_1yr_ci": [
+          0.934,
+          2.096
+        ],
+        "n_1yr": 456,
+        "patient_survival_1yr": 98.8,
+        "patient_survival_3yr": 94.0,
+        "patient_hr_1yr": 0.685,
+        "patient_hr_1yr_ci": [
+          0.252,
+          1.333
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 96.3,
+        "graft_survival_3yr": 92.6,
+        "graft_hr_1yr": 0.558,
+        "graft_hr_1yr_ci": [
+          0.279,
+          0.933
+        ],
+        "n_1yr": 262,
+        "patient_survival_1yr": 97.0,
+        "patient_survival_3yr": 95.1,
+        "patient_hr_1yr": 0.583,
+        "patient_hr_1yr_ci": [
+          0.267,
+          1.021
+        ],
+        "performance_rating": "better_than_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 87.3,
+        "graft_survival_3yr": 91.2,
+        "graft_hr_1yr": 1.88,
+        "graft_hr_1yr_ci": [
+          0.939,
+          3.143
+        ],
+        "n_1yr": 71,
+        "patient_survival_1yr": 87.0,
+        "patient_survival_3yr": 91.2,
+        "patient_hr_1yr": 1.9,
+        "patient_hr_1yr_ci": [
+          0.948,
+          3.176
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 90.9,
+        "graft_survival_3yr": 67.3,
+        "graft_hr_1yr": 1.209,
+        "graft_hr_1yr_ci": [
+          0.625,
+          1.983
+        ],
+        "n_1yr": 122,
+        "patient_survival_1yr": 91.5,
+        "patient_survival_3yr": 70.9,
+        "patient_hr_1yr": 1.065,
+        "patient_hr_1yr_ci": [
+          0.532,
+          1.78
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 63,
+        "patient_survival_1yr": 92.8,
+        "patient_survival_3yr": 88.4,
+        "patient_hr_1yr": 1.249,
+        "patient_hr_1yr_ci": [
+          0.458,
+          2.428
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Madison": {
+      "kidney": {
+        "graft_survival_1yr": 95.5,
+        "graft_survival_3yr": 88.6,
+        "graft_hr_1yr": 0.891,
+        "graft_hr_1yr_ci": [
+          0.601,
+          1.237
+        ],
+        "n_1yr": 659,
+        "patient_survival_1yr": 97.2,
+        "patient_survival_3yr": 91.4,
+        "patient_hr_1yr": 1.066,
+        "patient_hr_1yr_ci": [
+          0.609,
+          1.649
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 90.6,
+        "graft_survival_3yr": 85.3,
+        "graft_hr_1yr": 1.145,
+        "graft_hr_1yr_ci": [
+          0.748,
+          1.626
+        ],
+        "n_1yr": 268,
+        "patient_survival_1yr": 95.5,
+        "patient_survival_3yr": 88.3,
+        "patient_hr_1yr": 0.765,
+        "patient_hr_1yr_ci": [
+          0.395,
+          1.255
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 97.5,
+        "graft_survival_3yr": 75.5,
+        "graft_hr_1yr": 0.657,
+        "graft_hr_1yr_ci": [
+          0.135,
+          1.581
+        ],
+        "n_1yr": 40,
+        "patient_survival_1yr": 97.5,
+        "patient_survival_3yr": 82.3,
+        "patient_hr_1yr": 0.654,
+        "patient_hr_1yr_ci": [
+          0.135,
+          1.576
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 91.3,
+        "graft_survival_3yr": 85.0,
+        "graft_hr_1yr": 0.918,
+        "graft_hr_1yr_ci": [
+          0.489,
+          1.48
+        ],
+        "n_1yr": 133,
+        "patient_survival_1yr": 92.1,
+        "patient_survival_3yr": 85.0,
+        "patient_hr_1yr": 0.898,
+        "patient_hr_1yr_ci": [
+          0.464,
+          1.473
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 75,
+        "patient_survival_1yr": 100.0,
+        "patient_survival_3yr": 95.9,
+        "patient_hr_1yr": 0.461,
+        "patient_hr_1yr_ci": [
+          0.056,
+          1.285
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Chicago": {
+      "kidney": {
+        "graft_survival_1yr": 96.6,
+        "graft_survival_3yr": 90.0,
+        "graft_hr_1yr": 0.746,
+        "graft_hr_1yr_ci": [
+          0.496,
+          1.046
+        ],
+        "n_1yr": 801,
+        "patient_survival_1yr": 98.2,
+        "patient_survival_3yr": 94.5,
+        "patient_hr_1yr": 0.737,
+        "patient_hr_1yr_ci": [
+          0.393,
+          1.189
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 92.7,
+        "graft_survival_3yr": 82.4,
+        "graft_hr_1yr": 1.023,
+        "graft_hr_1yr_ci": [
+          0.641,
+          1.493
+        ],
+        "n_1yr": 295,
+        "patient_survival_1yr": 94.8,
+        "patient_survival_3yr": 86.2,
+        "patient_hr_1yr": 1.072,
+        "patient_hr_1yr_ci": [
+          0.612,
+          1.657
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 95.9,
+        "graft_survival_3yr": 92.2,
+        "graft_hr_1yr": 0.687,
+        "graft_hr_1yr_ci": [
+          0.223,
+          1.407
+        ],
+        "n_1yr": 80,
+        "patient_survival_1yr": 96.9,
+        "patient_survival_3yr": 91.9,
+        "patient_hr_1yr": 0.576,
+        "patient_hr_1yr_ci": [
+          0.157,
+          1.263
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 89.6,
+        "graft_survival_3yr": 67.0,
+        "graft_hr_1yr": 0.987,
+        "graft_hr_1yr_ci": [
+          0.656,
+          1.385
+        ],
+        "n_1yr": 273,
+        "patient_survival_1yr": 90.0,
+        "patient_survival_3yr": 70.3,
+        "patient_hr_1yr": 0.963,
+        "patient_hr_1yr_ci": [
+          0.629,
+          1.367
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 62,
+        "patient_survival_1yr": 98.4,
+        "patient_survival_3yr": 96.0,
+        "patient_hr_1yr": 0.731,
+        "patient_hr_1yr_ci": [
+          0.151,
+          1.761
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Cleveland": {
+      "kidney": {
+        "graft_survival_1yr": 95.9,
+        "graft_survival_3yr": 87.7,
+        "graft_hr_1yr": 0.724,
+        "graft_hr_1yr_ci": [
+          0.495,
+          0.996
+        ],
+        "n_1yr": 761,
+        "patient_survival_1yr": 97.4,
+        "patient_survival_3yr": 91.6,
+        "patient_hr_1yr": 0.969,
+        "patient_hr_1yr_ci": [
+          0.592,
+          1.437
+        ],
+        "performance_rating": "better_than_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 90.5,
+        "graft_survival_3yr": 83.5,
+        "graft_hr_1yr": 1.027,
+        "graft_hr_1yr_ci": [
+          0.757,
+          1.337
+        ],
+        "n_1yr": 521,
+        "patient_survival_1yr": 92.7,
+        "patient_survival_3yr": 86.4,
+        "patient_hr_1yr": 1.07,
+        "patient_hr_1yr_ci": [
+          0.745,
+          1.453
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 97.6,
+        "graft_survival_3yr": 89.8,
+        "graft_hr_1yr": 0.388,
+        "graft_hr_1yr_ci": [
+          0.126,
+          0.794
+        ],
+        "n_1yr": 134,
+        "patient_survival_1yr": 97.5,
+        "patient_survival_3yr": 90.6,
+        "patient_hr_1yr": 0.408,
+        "patient_hr_1yr_ci": [
+          0.132,
+          0.836
+        ],
+        "performance_rating": "better_than_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 88.2,
+        "graft_survival_3yr": 75.9,
+        "graft_hr_1yr": 1.002,
+        "graft_hr_1yr_ci": [
+          0.698,
+          1.36
+        ],
+        "n_1yr": 314,
+        "patient_survival_1yr": 89.4,
+        "patient_survival_3yr": 76.1,
+        "patient_hr_1yr": 0.931,
+        "patient_hr_1yr_ci": [
+          0.632,
+          1.286
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 12,
+        "patient_survival_1yr": 100.0,
+        "patient_survival_3yr": 100.0,
+        "patient_hr_1yr": 0.825,
+        "patient_hr_1yr_ci": [
+          0.1,
+          2.299
+        ],
+        "performance_rating": "insufficient_data"
+      },
+      "intestine": {
+        "graft_survival_1yr": 87.8,
+        "graft_survival_3yr": 72.2,
+        "graft_hr_1yr": 0.554,
+        "graft_hr_1yr_ci": [
+          0.18,
+          1.135
+        ],
+        "n_1yr": 29,
+        "patient_survival_1yr": 90.5,
+        "patient_survival_3yr": 79.5,
+        "patient_hr_1yr": 0.621,
+        "patient_hr_1yr_ci": [
+          0.169,
+          1.36
+        ],
+        "performance_rating": "as_expected"
+      }
+    },
+    "St. Louis": {
+      "kidney": {
+        "graft_survival_1yr": 95.8,
+        "graft_survival_3yr": 86.7,
+        "graft_hr_1yr": 0.765,
+        "graft_hr_1yr_ci": [
+          0.52,
+          1.057
+        ],
+        "n_1yr": 742,
+        "patient_survival_1yr": 97.8,
+        "patient_survival_3yr": 90.1,
+        "patient_hr_1yr": 0.816,
+        "patient_hr_1yr_ci": [
+          0.467,
+          1.262
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 92.3,
+        "graft_survival_3yr": 81.4,
+        "graft_hr_1yr": 0.96,
+        "graft_hr_1yr_ci": [
+          0.621,
+          1.371
+        ],
+        "n_1yr": 310,
+        "patient_survival_1yr": 95.0,
+        "patient_survival_3yr": 83.7,
+        "patient_hr_1yr": 0.839,
+        "patient_hr_1yr_ci": [
+          0.479,
+          1.297
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 97.4,
+        "graft_survival_3yr": 79.7,
+        "graft_hr_1yr": 0.501,
+        "graft_hr_1yr_ci": [
+          0.137,
+          1.098
+        ],
+        "n_1yr": 89,
+        "patient_survival_1yr": 97.4,
+        "patient_survival_3yr": 80.4,
+        "patient_hr_1yr": 0.511,
+        "patient_hr_1yr_ci": [
+          0.139,
+          1.121
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 90.8,
+        "graft_survival_3yr": 70.8,
+        "graft_hr_1yr": 0.909,
+        "graft_hr_1yr_ci": [
+          0.509,
+          1.423
+        ],
+        "n_1yr": 156,
+        "patient_survival_1yr": 90.8,
+        "patient_survival_3yr": 71.3,
+        "patient_hr_1yr": 0.955,
+        "patient_hr_1yr_ci": [
+          0.534,
+          1.495
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 27,
+        "patient_survival_1yr": 100.0,
+        "patient_survival_3yr": 100.0,
+        "patient_hr_1yr": 0.654,
+        "patient_hr_1yr_ci": [
+          0.079,
+          1.823
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Indianapolis": {
+      "kidney": {
+        "graft_survival_1yr": 94.3,
+        "graft_survival_3yr": 84.2,
+        "graft_hr_1yr": 1.074,
+        "graft_hr_1yr_ci": [
+          0.719,
+          1.499
+        ],
+        "n_1yr": 488,
+        "patient_survival_1yr": 96.2,
+        "patient_survival_3yr": 89.0,
+        "patient_hr_1yr": 1.421,
+        "patient_hr_1yr_ci": [
+          0.828,
+          2.172
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 95.3,
+        "graft_survival_3yr": 86.1,
+        "graft_hr_1yr": 0.693,
+        "graft_hr_1yr_ci": [
+          0.423,
+          1.027
+        ],
+        "n_1yr": 421,
+        "patient_survival_1yr": 96.3,
+        "patient_survival_3yr": 88.2,
+        "patient_hr_1yr": 0.716,
+        "patient_hr_1yr_ci": [
+          0.409,
+          1.108
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 94.3,
+        "graft_survival_3yr": 74.9,
+        "graft_hr_1yr": 0.838,
+        "graft_hr_1yr_ci": [
+          0.228,
+          1.836
+        ],
+        "n_1yr": 35,
+        "patient_survival_1yr": 94.1,
+        "patient_survival_3yr": 74.9,
+        "patient_hr_1yr": 0.859,
+        "patient_hr_1yr_ci": [
+          0.234,
+          1.882
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 96.3,
+        "graft_survival_3yr": 71.8,
+        "graft_hr_1yr": 0.539,
+        "graft_hr_1yr_ci": [
+          0.198,
+          1.049
+        ],
+        "n_1yr": 113,
+        "patient_survival_1yr": 96.3,
+        "patient_survival_3yr": 72.8,
+        "patient_hr_1yr": 0.535,
+        "patient_hr_1yr_ci": [
+          0.197,
+          1.041
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 58,
+        "patient_survival_1yr": 100.0,
+        "patient_survival_3yr": 95.0,
+        "patient_hr_1yr": 0.602,
+        "patient_hr_1yr_ci": [
+          0.073,
+          1.677
+        ],
+        "performance_rating": "insufficient_data"
+      },
+      "intestine": {
+        "graft_survival_1yr": 72.7,
+        "graft_survival_3yr": 36.4,
+        "graft_hr_1yr": 1.092,
+        "graft_hr_1yr_ci": [
+          0.471,
+          1.968
+        ],
+        "n_1yr": 22,
+        "patient_survival_1yr": 76.2,
+        "patient_survival_3yr": 40.0,
+        "patient_hr_1yr": 1.283,
+        "patient_hr_1yr_ci": [
+          0.516,
+          2.394
+        ],
+        "performance_rating": "as_expected"
+      }
+    },
+    "Omaha": {
+      "kidney": {
+        "graft_survival_1yr": 96.3,
+        "graft_survival_3yr": 88.1,
+        "graft_hr_1yr": 0.894,
+        "graft_hr_1yr_ci": [
+          0.5,
+          1.4
+        ],
+        "n_1yr": 387,
+        "patient_survival_1yr": 97.7,
+        "patient_survival_3yr": 89.4,
+        "patient_hr_1yr": 1.089,
+        "patient_hr_1yr_ci": [
+          0.498,
+          1.908
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 91.4,
+        "graft_survival_3yr": 87.8,
+        "graft_hr_1yr": 1.211,
+        "graft_hr_1yr_ci": [
+          0.791,
+          1.719
+        ],
+        "n_1yr": 278,
+        "patient_survival_1yr": 92.9,
+        "patient_survival_3yr": 91.3,
+        "patient_hr_1yr": 1.362,
+        "patient_hr_1yr_ci": [
+          0.843,
+          2.003
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 94.2,
+        "graft_survival_3yr": 82.7,
+        "graft_hr_1yr": 0.694,
+        "graft_hr_1yr_ci": [
+          0.279,
+          1.295
+        ],
+        "n_1yr": 93,
+        "patient_survival_1yr": 94.2,
+        "patient_survival_3yr": 82.7,
+        "patient_hr_1yr": 0.745,
+        "patient_hr_1yr_ci": [
+          0.3,
+          1.39
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 78.1,
+        "graft_survival_3yr": 66.2,
+        "graft_hr_1yr": 1.799,
+        "graft_hr_1yr_ci": [
+          0.777,
+          3.243
+        ],
+        "n_1yr": 30,
+        "patient_survival_1yr": 78.1,
+        "patient_survival_3yr": 64.7,
+        "patient_hr_1yr": 1.837,
+        "patient_hr_1yr_ci": [
+          0.793,
+          3.312
+        ],
+        "performance_rating": "as_expected"
+      }
+    },
+    "Rochester": {
+      "kidney": {
+        "graft_survival_1yr": 96.8,
+        "graft_survival_3yr": 90.9,
+        "graft_hr_1yr": 0.996,
+        "graft_hr_1yr_ci": [
+          0.624,
+          1.453
+        ],
+        "n_1yr": 666,
+        "patient_survival_1yr": 99.2,
+        "patient_survival_3yr": 93.1,
+        "patient_hr_1yr": 0.532,
+        "patient_hr_1yr_ci": [
+          0.195,
+          1.035
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 93.4,
+        "graft_survival_3yr": 90.5,
+        "graft_hr_1yr": 0.864,
+        "graft_hr_1yr_ci": [
+          0.528,
+          1.282
+        ],
+        "n_1yr": 295,
+        "patient_survival_1yr": 95.1,
+        "patient_survival_3yr": 91.9,
+        "patient_hr_1yr": 0.858,
+        "patient_hr_1yr_ci": [
+          0.469,
+          1.363
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 89.6,
+        "graft_survival_3yr": 91.1,
+        "graft_hr_1yr": 1.266,
+        "graft_hr_1yr_ci": [
+          0.692,
+          2.01
+        ],
+        "n_1yr": 115,
+        "patient_survival_1yr": 92.0,
+        "patient_survival_3yr": 92.7,
+        "patient_hr_1yr": 1.054,
+        "patient_hr_1yr_ci": [
+          0.526,
+          1.761
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 89.2,
+        "graft_survival_3yr": 77.6,
+        "graft_hr_1yr": 1.032,
+        "graft_hr_1yr_ci": [
+          0.621,
+          1.545
+        ],
+        "n_1yr": 172,
+        "patient_survival_1yr": 90.7,
+        "patient_survival_3yr": 77.6,
+        "patient_hr_1yr": 0.988,
+        "patient_hr_1yr_ci": [
+          0.565,
+          1.527
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 27,
+        "patient_survival_1yr": 92.0,
+        "patient_survival_3yr": 95.2,
+        "patient_hr_1yr": 1.39,
+        "patient_hr_1yr_ci": [
+          0.379,
+          3.047
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Nashville": {
+      "kidney": {
+        "graft_survival_1yr": 95.7,
+        "graft_survival_3yr": 87.0,
+        "graft_hr_1yr": 0.887,
+        "graft_hr_1yr_ci": [
+          0.61,
+          1.214
+        ],
+        "n_1yr": 767,
+        "patient_survival_1yr": 96.7,
+        "patient_survival_3yr": 92.0,
+        "patient_hr_1yr": 1.24,
+        "patient_hr_1yr_ci": [
+          0.786,
+          1.795
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 91.9,
+        "graft_survival_3yr": 85.2,
+        "graft_hr_1yr": 1.133,
+        "graft_hr_1yr_ci": [
+          0.775,
+          1.558
+        ],
+        "n_1yr": 372,
+        "patient_survival_1yr": 95.7,
+        "patient_survival_3yr": 85.7,
+        "patient_hr_1yr": 0.784,
+        "patient_hr_1yr_ci": [
+          0.457,
+          1.198
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 91.7,
+        "graft_survival_3yr": 87.2,
+        "graft_hr_1yr": 1.062,
+        "graft_hr_1yr_ci": [
+          0.7,
+          1.499
+        ],
+        "n_1yr": 301,
+        "patient_survival_1yr": 91.5,
+        "patient_survival_3yr": 87.9,
+        "patient_hr_1yr": 1.15,
+        "patient_hr_1yr_ci": [
+          0.751,
+          1.632
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 94.5,
+        "graft_survival_3yr": 80.1,
+        "graft_hr_1yr": 0.58,
+        "graft_hr_1yr_ci": [
+          0.309,
+          0.936
+        ],
+        "n_1yr": 222,
+        "patient_survival_1yr": 95.2,
+        "patient_survival_3yr": 80.0,
+        "patient_hr_1yr": 0.531,
+        "patient_hr_1yr_ci": [
+          0.265,
+          0.888
+        ],
+        "performance_rating": "better_than_expected"
+      },
+      "pancreas": {
+        "n_1yr": 14,
+        "patient_survival_1yr": 100.0,
+        "patient_survival_3yr": 93.3,
+        "patient_hr_1yr": 0.846,
+        "patient_hr_1yr_ci": [
+          0.102,
+          2.356
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Durham": {
+      "kidney": {
+        "graft_survival_1yr": 94.5,
+        "graft_survival_3yr": 88.7,
+        "graft_hr_1yr": 1.009,
+        "graft_hr_1yr_ci": [
+          0.659,
+          1.432
+        ],
+        "n_1yr": 451,
+        "patient_survival_1yr": 99.0,
+        "patient_survival_3yr": 93.9,
+        "patient_hr_1yr": 0.514,
+        "patient_hr_1yr_ci": [
+          0.189,
+          1.0
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 94.3,
+        "graft_survival_3yr": 87.0,
+        "graft_hr_1yr": 0.67,
+        "graft_hr_1yr_ci": [
+          0.409,
+          0.994
+        ],
+        "n_1yr": 335,
+        "patient_survival_1yr": 96.4,
+        "patient_survival_3yr": 90.0,
+        "patient_hr_1yr": 0.601,
+        "patient_hr_1yr_ci": [
+          0.32,
+          0.97
+        ],
+        "performance_rating": "better_than_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 88.6,
+        "graft_survival_3yr": 87.0,
+        "graft_hr_1yr": 1.415,
+        "graft_hr_1yr_ci": [
+          0.974,
+          1.937
+        ],
+        "n_1yr": 286,
+        "patient_survival_1yr": 88.3,
+        "patient_survival_3yr": 87.1,
+        "patient_hr_1yr": 1.493,
+        "patient_hr_1yr_ci": [
+          1.028,
+          2.044
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 82.1,
+        "graft_survival_3yr": 68.4,
+        "graft_hr_1yr": 1.49,
+        "graft_hr_1yr_ci": [
+          1.049,
+          2.008
+        ],
+        "n_1yr": 219,
+        "patient_survival_1yr": 82.7,
+        "patient_survival_3yr": 70.3,
+        "patient_hr_1yr": 1.477,
+        "patient_hr_1yr_ci": [
+          1.035,
+          1.997
+        ],
+        "performance_rating": "worse_than_expected"
+      },
+      "pancreas": {
+        "n_1yr": 30,
+        "patient_survival_1yr": 96.6,
+        "patient_survival_3yr": 90.9,
+        "patient_hr_1yr": 1.034,
+        "patient_hr_1yr_ci": [
+          0.213,
+          2.49
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Miami": {
+      "kidney": {
+        "graft_survival_1yr": 93.2,
+        "graft_survival_3yr": 80.9,
+        "graft_hr_1yr": 1.109,
+        "graft_hr_1yr_ci": [
+          0.829,
+          1.431
+        ],
+        "n_1yr": 772,
+        "patient_survival_1yr": 95.7,
+        "patient_survival_3yr": 88.4,
+        "patient_hr_1yr": 1.492,
+        "patient_hr_1yr_ci": [
+          1.014,
+          2.061
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 88.9,
+        "graft_survival_3yr": 84.7,
+        "graft_hr_1yr": 1.498,
+        "graft_hr_1yr_ci": [
+          1.031,
+          2.051
+        ],
+        "n_1yr": 291,
+        "patient_survival_1yr": 91.4,
+        "patient_survival_3yr": 86.8,
+        "patient_hr_1yr": 1.534,
+        "patient_hr_1yr_ci": [
+          0.992,
+          2.19
+        ],
+        "performance_rating": "worse_than_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 78.6,
+        "graft_survival_3yr": 76.9,
+        "graft_hr_1yr": 1.804,
+        "graft_hr_1yr_ci": [
+          0.586,
+          3.696
+        ],
+        "n_1yr": 14,
+        "patient_survival_1yr": 78.6,
+        "patient_survival_3yr": 76.9,
+        "patient_hr_1yr": 1.812,
+        "patient_hr_1yr_ci": [
+          0.588,
+          3.711
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 86.7,
+        "graft_survival_3yr": 62.8,
+        "graft_hr_1yr": 1.332,
+        "graft_hr_1yr_ci": [
+          0.862,
+          1.902
+        ],
+        "n_1yr": 178,
+        "patient_survival_1yr": 87.6,
+        "patient_survival_3yr": 65.7,
+        "patient_hr_1yr": 1.296,
+        "patient_hr_1yr_ci": [
+          0.821,
+          1.877
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 68,
+        "patient_survival_1yr": 98.5,
+        "patient_survival_3yr": 93.8,
+        "patient_hr_1yr": 0.711,
+        "patient_hr_1yr_ci": [
+          0.147,
+          1.713
+        ],
+        "performance_rating": "insufficient_data"
+      },
+      "intestine": {
+        "graft_survival_1yr": 87.4,
+        "graft_survival_3yr": 30.8,
+        "graft_hr_1yr": 0.647,
+        "graft_hr_1yr_ci": [
+          0.176,
+          1.417
+        ],
+        "n_1yr": 17,
+        "patient_survival_1yr": 92.3,
+        "patient_survival_3yr": 31.7,
+        "patient_hr_1yr": 0.651,
+        "patient_hr_1yr_ci": [
+          0.134,
+          1.567
+        ],
+        "performance_rating": "as_expected"
+      }
+    },
+    "Dallas": {
+      "kidney": {
+        "graft_survival_1yr": 96.7,
+        "graft_survival_3yr": 88.5,
+        "graft_hr_1yr": 0.802,
+        "graft_hr_1yr_ci": [
+          0.459,
+          1.241
+        ],
+        "n_1yr": 427,
+        "patient_survival_1yr": 97.7,
+        "patient_survival_3yr": 91.7,
+        "patient_hr_1yr": 0.986,
+        "patient_hr_1yr_ci": [
+          0.473,
+          1.685
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 91.0,
+        "graft_survival_3yr": 82.9,
+        "graft_hr_1yr": 1.162,
+        "graft_hr_1yr_ci": [
+          0.71,
+          1.724
+        ],
+        "n_1yr": 223,
+        "patient_survival_1yr": 93.0,
+        "patient_survival_3yr": 87.6,
+        "patient_hr_1yr": 1.354,
+        "patient_hr_1yr_ci": [
+          0.758,
+          2.12
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 93.4,
+        "graft_survival_3yr": 78.9,
+        "graft_hr_1yr": 0.77,
+        "graft_hr_1yr_ci": [
+          0.369,
+          1.316
+        ],
+        "n_1yr": 130,
+        "patient_survival_1yr": 94.0,
+        "patient_survival_3yr": 79.6,
+        "patient_hr_1yr": 0.755,
+        "patient_hr_1yr_ci": [
+          0.345,
+          1.322
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 89.5,
+        "graft_survival_3yr": 65.1,
+        "graft_hr_1yr": 1.061,
+        "graft_hr_1yr_ci": [
+          0.53,
+          1.773
+        ],
+        "n_1yr": 91,
+        "patient_survival_1yr": 90.2,
+        "patient_survival_3yr": 65.5,
+        "patient_hr_1yr": 1.036,
+        "patient_hr_1yr_ci": [
+          0.497,
+          1.77
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 29,
+        "patient_survival_1yr": 96.6,
+        "patient_survival_3yr": 94.4,
+        "patient_hr_1yr": 1.091,
+        "patient_hr_1yr_ci": [
+          0.225,
+          2.626
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Houston": {
+      "kidney": {
+        "graft_survival_1yr": 95.7,
+        "graft_survival_3yr": 90.6,
+        "graft_hr_1yr": 1.171,
+        "graft_hr_1yr_ci": [
+          0.75,
+          1.684
+        ],
+        "n_1yr": 530,
+        "patient_survival_1yr": 97.7,
+        "patient_survival_3yr": 94.1,
+        "patient_hr_1yr": 1.062,
+        "patient_hr_1yr_ci": [
+          0.549,
+          1.743
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 89.3,
+        "graft_survival_3yr": 80.8,
+        "graft_hr_1yr": 0.991,
+        "graft_hr_1yr_ci": [
+          0.753,
+          1.262
+        ],
+        "n_1yr": 561,
+        "patient_survival_1yr": 93.7,
+        "patient_survival_3yr": 84.1,
+        "patient_hr_1yr": 0.744,
+        "patient_hr_1yr_ci": [
+          0.512,
+          1.018
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 95.9,
+        "graft_survival_3yr": 87.9,
+        "graft_hr_1yr": 0.649,
+        "graft_hr_1yr_ci": [
+          0.238,
+          1.263
+        ],
+        "n_1yr": 97,
+        "patient_survival_1yr": 95.9,
+        "patient_survival_3yr": 87.9,
+        "patient_hr_1yr": 0.655,
+        "patient_hr_1yr_ci": [
+          0.24,
+          1.274
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 91.8,
+        "graft_survival_3yr": 76.1,
+        "graft_hr_1yr": 0.909,
+        "graft_hr_1yr_ci": [
+          0.52,
+          1.406
+        ],
+        "n_1yr": 193,
+        "patient_survival_1yr": 92.3,
+        "patient_survival_3yr": 77.0,
+        "patient_hr_1yr": 0.886,
+        "patient_hr_1yr_ci": [
+          0.496,
+          1.387
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 26,
+        "patient_survival_1yr": 100.0,
+        "patient_survival_3yr": 93.9,
+        "patient_hr_1yr": 0.805,
+        "patient_hr_1yr_ci": [
+          0.098,
+          2.244
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Portland": {
+      "kidney": {
+        "graft_survival_1yr": 95.7,
+        "graft_survival_3yr": 90.9,
+        "graft_hr_1yr": 1.049,
+        "graft_hr_1yr_ci": [
+          0.6,
+          1.622
+        ],
+        "n_1yr": 332,
+        "patient_survival_1yr": 98.2,
+        "patient_survival_3yr": 93.9,
+        "patient_hr_1yr": 0.89,
+        "patient_hr_1yr_ci": [
+          0.358,
+          1.66
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 93.5,
+        "graft_survival_3yr": 95.8,
+        "graft_hr_1yr": 0.946,
+        "graft_hr_1yr_ci": [
+          0.517,
+          1.503
+        ],
+        "n_1yr": 200,
+        "patient_survival_1yr": 96.0,
+        "patient_survival_3yr": 96.5,
+        "patient_hr_1yr": 0.803,
+        "patient_hr_1yr_ci": [
+          0.367,
+          1.406
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 96.9,
+        "graft_survival_3yr": 100.0,
+        "graft_hr_1yr": 0.748,
+        "graft_hr_1yr_ci": [
+          0.154,
+          1.8
+        ],
+        "n_1yr": 32,
+        "patient_survival_1yr": 96.9,
+        "patient_survival_3yr": 100.0,
+        "patient_hr_1yr": 0.739,
+        "patient_hr_1yr_ci": [
+          0.152,
+          1.779
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 20,
+        "patient_survival_1yr": 95.0,
+        "patient_survival_3yr": 92.3,
+        "patient_hr_1yr": 1.156,
+        "patient_hr_1yr_ci": [
+          0.238,
+          2.783
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Seattle": {
+      "kidney": {
+        "graft_survival_1yr": 96.0,
+        "graft_survival_3yr": 94.4,
+        "graft_hr_1yr": 0.809,
+        "graft_hr_1yr_ci": [
+          0.507,
+          1.18
+        ],
+        "n_1yr": 531,
+        "patient_survival_1yr": 98.6,
+        "patient_survival_3yr": 96.4,
+        "patient_hr_1yr": 0.591,
+        "patient_hr_1yr_ci": [
+          0.255,
+          1.065
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 94.5,
+        "graft_survival_3yr": 93.4,
+        "graft_hr_1yr": 0.83,
+        "graft_hr_1yr_ci": [
+          0.492,
+          1.255
+        ],
+        "n_1yr": 294,
+        "patient_survival_1yr": 96.8,
+        "patient_survival_3yr": 94.1,
+        "patient_hr_1yr": 0.704,
+        "patient_hr_1yr_ci": [
+          0.351,
+          1.177
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 90.4,
+        "graft_survival_3yr": 86.6,
+        "graft_hr_1yr": 1.217,
+        "graft_hr_1yr_ci": [
+          0.733,
+          1.822
+        ],
+        "n_1yr": 181,
+        "patient_survival_1yr": 93.2,
+        "patient_survival_3yr": 86.6,
+        "patient_hr_1yr": 0.933,
+        "patient_hr_1yr_ci": [
+          0.497,
+          1.504
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 85.5,
+        "graft_survival_3yr": 78.9,
+        "graft_hr_1yr": 1.406,
+        "graft_hr_1yr_ci": [
+          0.871,
+          2.069
+        ],
+        "n_1yr": 138,
+        "patient_survival_1yr": 85.2,
+        "patient_survival_3yr": 80.6,
+        "patient_hr_1yr": 1.511,
+        "patient_hr_1yr_ci": [
+          0.935,
+          2.223
+        ],
+        "performance_rating": "as_expected"
+      },
+      "intestine": {
+        "graft_survival_3yr": 100.0,
+        "patient_survival_3yr": 100.0,
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "San Francisco": {
+      "kidney": {
+        "graft_survival_1yr": 96.2,
+        "graft_survival_3yr": 89.1,
+        "graft_hr_1yr": 0.977,
+        "graft_hr_1yr_ci": [
+          0.68,
+          1.326
+        ],
+        "n_1yr": 929,
+        "patient_survival_1yr": 97.8,
+        "patient_survival_3yr": 92.5,
+        "patient_hr_1yr": 0.914,
+        "patient_hr_1yr_ci": [
+          0.542,
+          1.382
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 92.5,
+        "graft_survival_3yr": 91.4,
+        "graft_hr_1yr": 1.016,
+        "graft_hr_1yr_ci": [
+          0.695,
+          1.398
+        ],
+        "n_1yr": 409,
+        "patient_survival_1yr": 93.9,
+        "patient_survival_3yr": 92.6,
+        "patient_hr_1yr": 1.095,
+        "patient_hr_1yr_ci": [
+          0.708,
+          1.563
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 91.4,
+        "graft_survival_3yr": 85.6,
+        "graft_hr_1yr": 0.925,
+        "graft_hr_1yr_ci": [
+          0.518,
+          1.448
+        ],
+        "n_1yr": 156,
+        "patient_survival_1yr": 91.9,
+        "patient_survival_3yr": 85.3,
+        "patient_hr_1yr": 0.945,
+        "patient_hr_1yr_ci": [
+          0.517,
+          1.5
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 93.2,
+        "graft_survival_3yr": 83.9,
+        "graft_hr_1yr": 0.867,
+        "graft_hr_1yr_ci": [
+          0.505,
+          1.326
+        ],
+        "n_1yr": 234,
+        "patient_survival_1yr": 94.7,
+        "patient_survival_3yr": 84.8,
+        "patient_hr_1yr": 0.704,
+        "patient_hr_1yr_ci": [
+          0.375,
+          1.136
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "n_1yr": 29,
+        "patient_survival_1yr": 95.5,
+        "patient_survival_3yr": 100.0,
+        "patient_hr_1yr": 1.053,
+        "patient_hr_1yr_ci": [
+          0.217,
+          2.536
+        ],
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Los Angeles": {
+      "kidney": {
+        "graft_survival_1yr": 94.7,
+        "graft_survival_3yr": 91.0,
+        "graft_hr_1yr": 1.225,
+        "graft_hr_1yr_ci": [
+          0.897,
+          1.603
+        ],
+        "n_1yr": 861,
+        "patient_survival_1yr": 98.6,
+        "patient_survival_3yr": 93.6,
+        "patient_hr_1yr": 0.614,
+        "patient_hr_1yr_ci": [
+          0.317,
+          1.008
+        ],
+        "performance_rating": "as_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 92.7,
+        "graft_survival_3yr": 85.9,
+        "graft_hr_1yr": 0.849,
+        "graft_hr_1yr_ci": [
+          0.573,
+          1.178
+        ],
+        "n_1yr": 404,
+        "patient_survival_1yr": 94.6,
+        "patient_survival_3yr": 88.6,
+        "patient_hr_1yr": 0.788,
+        "patient_hr_1yr_ci": [
+          0.494,
+          1.149
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 94.8,
+        "graft_survival_3yr": 89.9,
+        "graft_hr_1yr": 0.676,
+        "graft_hr_1yr_ci": [
+          0.309,
+          1.184
+        ],
+        "n_1yr": 145,
+        "patient_survival_1yr": 95.2,
+        "patient_survival_3yr": 89.8,
+        "patient_hr_1yr": 0.63,
+        "patient_hr_1yr_ci": [
+          0.272,
+          1.135
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 93.5,
+        "graft_survival_3yr": 73.2,
+        "graft_hr_1yr": 0.742,
+        "graft_hr_1yr_ci": [
+          0.406,
+          1.178
+        ],
+        "n_1yr": 202,
+        "patient_survival_1yr": 93.3,
+        "patient_survival_3yr": 74.1,
+        "patient_hr_1yr": 0.819,
+        "patient_hr_1yr_ci": [
+          0.448,
+          1.3
+        ],
+        "performance_rating": "as_expected"
+      },
+      "pancreas": {
+        "patient_survival_3yr": 100.0,
+        "performance_rating": "insufficient_data"
+      }
+    },
+    "Palo Alto": {
+      "kidney": {
+        "graft_survival_1yr": 98.0,
+        "graft_survival_3yr": 93.9,
+        "graft_hr_1yr": 0.534,
+        "graft_hr_1yr_ci": [
+          0.256,
+          0.913
+        ],
+        "n_1yr": 415,
+        "patient_survival_1yr": 98.9,
+        "patient_survival_3yr": 94.2,
+        "patient_hr_1yr": 0.553,
+        "patient_hr_1yr_ci": [
+          0.203,
+          1.075
+        ],
+        "performance_rating": "better_than_expected"
+      },
+      "liver": {
+        "graft_survival_1yr": 93.7,
+        "graft_survival_3yr": 85.4,
+        "graft_hr_1yr": 0.853,
+        "graft_hr_1yr_ci": [
+          0.521,
+          1.266
+        ],
+        "n_1yr": 318,
+        "patient_survival_1yr": 95.0,
+        "patient_survival_3yr": 88.4,
+        "patient_hr_1yr": 0.858,
+        "patient_hr_1yr_ci": [
+          0.49,
+          1.327
+        ],
+        "performance_rating": "as_expected"
+      },
+      "heart": {
+        "graft_survival_1yr": 92.5,
+        "graft_survival_3yr": 89.7,
+        "graft_hr_1yr": 0.804,
+        "graft_hr_1yr_ci": [
+          0.45,
+          1.259
+        ],
+        "n_1yr": 190,
+        "patient_survival_1yr": 92.8,
+        "patient_survival_3yr": 90.5,
+        "patient_hr_1yr": 0.82,
+        "patient_hr_1yr_ci": [
+          0.448,
+          1.301
+        ],
+        "performance_rating": "as_expected"
+      },
+      "lung": {
+        "graft_survival_1yr": 92.2,
+        "graft_survival_3yr": 73.8,
+        "graft_hr_1yr": 0.866,
+        "graft_hr_1yr_ci": [
+          0.473,
+          1.374
+        ],
+        "n_1yr": 165,
+        "patient_survival_1yr": 92.4,
+        "patient_survival_3yr": 73.0,
+        "patient_hr_1yr": 0.939,
+        "patient_hr_1yr_ci": [
+          0.5,
+          1.514
+        ],
+        "performance_rating": "as_expected"
+      }
+    }
+  }
+}

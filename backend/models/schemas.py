@@ -73,6 +73,10 @@ class CityProbability(BaseModel):
         None,
         description="{ p_transplant, p_mortality, p_delisting, p_still_waiting } at 24 months"
     )
+    outcomes: Optional[dict] = Field(
+        None,
+        description="Post-transplant: graft/patient survival, hazard ratio, compound success metric"
+    )
 
 
 class SimulationResult(BaseModel):

@@ -2877,6 +2877,11 @@ function createProbabilityCard(city, rank, homeCenter) {
         card.appendChild(buildRiskBar(city.competing_risks));
     }
 
+    // Post-transplant outcomes (Phase 4 M2)
+    if (city.outcomes) {
+        card.appendChild(buildOutcomesSection(city.outcomes));
+    }
+
     return card;
 }
 
@@ -2910,6 +2915,52 @@ function buildRiskBar(cr) {
     wrapper.appendChild(legend);
 
     return wrapper;
+}
+
+function buildOutcomesSection(outcomes) {
+    var section = _el('div', 'prob-outcomes');
+
+    // Graft survival row
+    if (outcomes.graft_survival_1yr != null) {
+        var gsPct = (outcomes.graft_survival_1yr * 100).toFixed(1);
+        var natGs = outcomes.national_graft_survival_1yr
+            ? (outcomes.national_graft_survival_1yr * 100).toFixed(1) : null;
+        var gsRow = _el('div', 'outcome-row');
+        gsRow.appendChild(_el('span', 'outcome-label', '1yr Graft Survival'));
+        var gsVal = _el('span', 'outcome-value');
+        gsVal.textContent = gsPct + '%';
+        if (natGs) {
+            gsVal.classList.add(parseFloat(gsPct) >= parseFloat(natGs) ? 'outcome-good' : 'outcome-warn');
+            gsVal.title = 'National avg: ' + natGs + '%';
+        }
+        gsRow.appendChild(gsVal);
+        section.appendChild(gsRow);
+    }
+
+    // Compound success
+    if (outcomes.compound_success != null) {
+        var csRow = _el('div', 'outcome-row outcome-compound');
+        csRow.appendChild(_el('span', 'outcome-label', 'Overall Success'));
+        var csVal = _el('span', 'outcome-value ' + probClass(outcomes.compound_success));
+        csVal.textContent = (outcomes.compound_success * 100).toFixed(1) + '%';
+        csVal.title = 'P(transplant within 24mo) \u00D7 P(1yr graft survival)';
+        csRow.appendChild(csVal);
+        section.appendChild(csRow);
+    }
+
+    // Performance badge
+    if (outcomes.performance_rating && outcomes.performance_rating !== 'insufficient_data') {
+        var badge = _el('span', 'performance-badge performance-' + outcomes.performance_rating.replace(/_/g, '-'));
+        var badgeLabels = {
+            'better_than_expected': 'Above Expected',
+            'as_expected': 'As Expected',
+            'worse_than_expected': 'Below Expected'
+        };
+        badge.textContent = badgeLabels[outcomes.performance_rating] || outcomes.performance_rating;
+        section.appendChild(badge);
+    }
+
+    return section;
 }
 
 function formatPct(v) {
@@ -3210,6 +3261,61 @@ function openCityDetail(cityName) {
             riskSection.appendChild(buildRiskBar(simCity.competing_risks));
             body.appendChild(riskSection);
         }
+
+        // Post-transplant outcomes (Phase 4 M2)
+        if (simCity.outcomes) {
+            var outcomeSection = _modalSection('Post-Transplant Outlook');
+            var oc = simCity.outcomes;
+
+            var outcomeGrid = _el('div', 'outcome-grid');
+            var items = [];
+            if (oc.graft_survival_1yr != null) {
+                items.push(['1yr Graft Survival', (oc.graft_survival_1yr * 100).toFixed(1) + '%',
+                    oc.national_graft_survival_1yr ? 'National: ' + (oc.national_graft_survival_1yr * 100).toFixed(1) + '%' : '']);
+            }
+            if (oc.patient_survival_1yr != null) {
+                items.push(['1yr Patient Survival', (oc.patient_survival_1yr * 100).toFixed(1) + '%',
+                    oc.national_patient_survival_1yr ? 'National: ' + (oc.national_patient_survival_1yr * 100).toFixed(1) + '%' : '']);
+            }
+            if (oc.graft_hr_1yr != null) {
+                var hrText = oc.graft_hr_1yr.toFixed(3);
+                if (oc.graft_hr_1yr_ci) {
+                    hrText += ' (' + oc.graft_hr_1yr_ci[0].toFixed(3) + '\u2013' + oc.graft_hr_1yr_ci[1].toFixed(3) + ')';
+                }
+                items.push(['Hazard Ratio (1yr)', hrText, 'Lower is better; <1.0 = above expected']);
+            }
+            if (oc.compound_success != null) {
+                items.push(['Overall Success', (oc.compound_success * 100).toFixed(1) + '%',
+                    'P(transplant 24mo) \u00D7 P(1yr graft survival)']);
+            }
+            if (oc.n_1yr != null) {
+                items.push(['Cohort Size', String(oc.n_1yr) + ' patients', '']);
+            }
+
+            items.forEach(function(item) {
+                var cell = _el('div', 'outcome-grid-cell');
+                cell.appendChild(_el('div', 'outcome-grid-label', item[0]));
+                cell.appendChild(_el('div', 'outcome-grid-value', item[1]));
+                if (item[2]) cell.appendChild(_el('div', 'outcome-grid-note', item[2]));
+                outcomeGrid.appendChild(cell);
+            });
+            outcomeSection.appendChild(outcomeGrid);
+
+            // Performance badge
+            if (oc.performance_rating && oc.performance_rating !== 'insufficient_data') {
+                var badge = _el('div', 'performance-badge performance-' + oc.performance_rating.replace(/_/g, '-'));
+                var labels = { 'better_than_expected': 'Above Expected', 'as_expected': 'As Expected', 'worse_than_expected': 'Below Expected' };
+                badge.textContent = 'SRTR Rating: ' + (labels[oc.performance_rating] || oc.performance_rating);
+                outcomeSection.appendChild(badge);
+            }
+
+            // Disclaimer
+            var disc = _el('div', 'outcome-disclaimer');
+            disc.textContent = 'These are risk-adjusted center-level averages from SRTR, not individual predictions. Actual outcomes depend on many clinical factors.';
+            outcomeSection.appendChild(disc);
+
+            body.appendChild(outcomeSection);
+        }
     }
 
     // Show modal
@@ -3410,6 +3516,19 @@ function openCityComparison() {
             _addCompareRow(tbody, 'P(delisting 24 mo)', cities.map(function(c) {
                 return c.phase2 && c.phase2.competing_risks ? formatPct(c.phase2.competing_risks.p_delisting_24mo || 0) : '—';
             }), 'min');
+        }
+
+        // Post-transplant outcomes
+        if (cities.some(function(c) { return c.phase2 && c.phase2.outcomes; })) {
+            tbody.appendChild(_sectionRow('Post-Transplant Outcomes', cities.length + 1));
+            _addCompareRow(tbody, '1yr Graft Survival', cities.map(function(c) {
+                return c.phase2 && c.phase2.outcomes && c.phase2.outcomes.graft_survival_1yr != null
+                    ? (c.phase2.outcomes.graft_survival_1yr * 100).toFixed(1) + '%' : '—';
+            }), 'max');
+            _addCompareRow(tbody, 'Overall Success', cities.map(function(c) {
+                return c.phase2 && c.phase2.outcomes && c.phase2.outcomes.compound_success != null
+                    ? (c.phase2.outcomes.compound_success * 100).toFixed(1) + '%' : '—';
+            }), 'max');
         }
     }
 

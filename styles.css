@@ -2042,6 +2042,64 @@ main {
 .risk-delisted::before { background: var(--warning-500) !important; }
 .risk-mortality::before { background: var(--danger-500) !important; }
 
+/* --- Post-Transplant Outcomes (Phase 4 M2) --- */
+
+.prob-outcomes {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+.outcome-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-1) 0;
+}
+.outcome-label { font-size: var(--fs-sm); color: var(--text-muted); }
+.outcome-value { font-weight: 700; font-size: var(--fs-sm); }
+.outcome-good { color: var(--success-700); }
+.outcome-warn { color: var(--warning-700); }
+.outcome-compound { margin-top: var(--space-2); }
+.performance-badge {
+  display: inline-block;
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.performance-better-than-expected { background: var(--success-50); color: var(--success-700); border: 1px solid var(--success-200); }
+.performance-as-expected { background: var(--neutral-50); color: var(--text-muted); border: 1px solid var(--neutral-200); }
+.performance-worse-than-expected { background: var(--warning-50); color: var(--warning-700); border: 1px solid var(--warning-200); }
+
+/* Modal outcomes grid */
+.outcome-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-3) 0;
+}
+.outcome-grid-cell {
+  background: var(--bg-secondary, var(--neutral-50));
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.outcome-grid-label { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+.outcome-grid-value { font-weight: 700; font-size: var(--fs-md); margin-top: var(--space-1); }
+.outcome-grid-note { font-size: var(--fs-xs); color: var(--text-muted); margin-top: var(--space-1); }
+.outcome-disclaimer {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  background: var(--warning-50);
+  border: 1px solid var(--warning-200);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+}
+
 /* --- Home Center & Comparison --- */
 
 .city-card.home-center,

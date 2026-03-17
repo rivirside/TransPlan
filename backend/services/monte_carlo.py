@@ -25,6 +25,7 @@ from models.schemas import CityProbability, PatientProfile, SimulationResult
 from services.competing_risks import get_annual_mortality_rate, get_annual_delisting_rate
 from services.data_loader import get_data
 from services.distributions import get_wait_time_distribution
+from services.outcomes import build_outcomes_dict
 
 logger = logging.getLogger(__name__)
 
@@ -265,6 +266,13 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
             "p_still_waiting_24mo": round(p_waiting_24, 4),
         }
 
+        # Phase 4 M2: Attach post-transplant outcomes if available
+        outcomes_data = None
+        try:
+            outcomes_data = build_outcomes_dict(organ, city, p_24)
+        except Exception:
+            pass  # Graceful degradation if outcomes data unavailable
+
         city_results.append(CityProbability(
             city=city,
             state=state,
@@ -275,6 +283,7 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
             confidence_interval_95=(round(ci_95[0], 4), round(ci_95[1], 4)),
             median_wait_months=round(median_wait, 2),
             competing_risks=competing_risks_24,
+            outcomes=outcomes_data,
         ))
 
     # Rank by 24-month transplant probability, descending
