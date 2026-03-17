@@ -1,0 +1,5 @@
+# Generated figures — regenerate by running notebooks
+*.png
+*.pdf
+*.svg
+!.gitignore

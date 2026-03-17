@@ -103,7 +103,7 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | M2: Post-Transplant Outcomes Model | ✅ Done | SRTR PSR C-series graft/patient survival, compound success metric, performance ratings, 35 pytest (#31) |
 | M3: Historical Trends & Trajectories | ✅ Done | Multi-year SRTR (2019-2025), linregress trends, sparkline charts, trending badges, 51 pytest (ADR-022) |
 | M4: Policy Scenario Engine | 🔲 Not started | Literature review → predefined UNOS scenarios (#23) |
-| M5: Validation & Reproducibility Pack | 🔲 Not started | Retrospective validation, bias audit, Jupyter notebooks (NEW) |
+| M5: Validation & Reproducibility Pack | 🔨 In progress | Jupyter notebooks (2/6 done), multi-horizon Brier scores, figures dir |
 
 ### What's NOT Done (Next Steps)
 
@@ -207,6 +207,11 @@ TransPlan/
   Dockerfile              <- Single container: Python 3.13, uvicorn, static files
   docker-compose.yml      <- Docker Compose: port 8002, data/ volume mount, healthcheck
   .dockerignore           <- Excludes node_modules, .venv, tests, docs, .git
+  notebooks/              <- Validation Jupyter notebooks (Phase 4 M5)
+    01-wait-time-distributions.ipynb  <- Log-normal model: parameters, PDFs, CDFs, sensitivity
+    02-competing-risks.ipynb          <- Mortality/delisting: stacked outcomes, multi-horizon Brier
+    figures/              <- Generated PNG figures (gitignored, regenerate by running notebooks)
+    README.md             <- Setup instructions, notebook index
   backend/                <- Phase 2 Python FastAPI backend
     main.py               <- FastAPI app, CORS, static file serving, startup data load
     config.py             <- DATA_DIR, SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY, ALLOWED_ORIGINS
