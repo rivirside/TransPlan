@@ -6,7 +6,7 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 3 Complete + Data Quality Sprint
+## Current State: Phase 3 Complete + Data Quality Sprint + Infrastructure
 
 Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 237 pytest tests passing. Phase 3 M1-M5 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
@@ -19,9 +19,13 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 - L-052: Anoxia-NOS added as 5th COD category (9.2% of donors, estimated recovery rates, drowning-based state shares)
 - Remaining: L-049 (cross-validate OPTN), L-050 (OPO boundaries) — documented as comprehensive GitHub issues
 
-**Multi-Page Architecture (March 2026):** Split from single-page to landing + simulator. `index.html` = lightweight landing page (features, how-it-works, CTA). `simulator.html` = full simulation tool (form, results, modals, map, charts). No header/hero section — nav brand is the only title. Info buttons (ⓘ) on simulator form labels link to relevant docs pages. Docs URL resolution script detects local dev vs deployment.
+**Multi-Page Architecture (March 2026):** Split from single-page to landing + simulator. `index.html` = dense landing page (features table, how-it-works list, data sources). `simulator.html` = full simulation tool (form, results, modals, map, charts). No header/hero section — nav brand is the only title. Info buttons (ⓘ) on simulator form labels link to relevant docs pages. Docs URL resolution script detects local dev vs deployment.
 
-**Theme System (March 2026):** 6 themes — Default (dark nav, indigo accent, centered), Clinical (compact, uppercase, muted teal), Research (serif Lora headings, editorial, warm tones), Government (USWDS-inspired, gov banner, bordered panels), **Windows XP Luna** (blue gradients, silver panels, 3D beveled borders, Tahoma), **2010s Flat** (Material blue, flat geometry, thin headings, Roboto). Windows XP Luna is the default theme. Theme selection deferred to Phase 7. Design token system in CSS custom properties. Landing page has per-theme overrides.
+**Infrastructure (March 2026):** CI pipeline (`.github/workflows/ci.yml`) with 3 parallel jobs: pytest, Jest, data validation. Docker single-container deployment (`Dockerfile` + `docker-compose.yml`): FastAPI serves API + static files, data/ volume-mounted. GitHub issue #1 (data validation failure) closed as stale.
+
+**Design Overhaul (March 2026):** Early-2000s web-inspired redesign. Fonts: IBM Plex Sans (body) + Libre Baskerville (headings), replacing Inter/Lora. Spacing reduced ~40%, shadows eliminated (borders instead), border-radius flattened to 2-3px. Landing page: features table with colored headers, numbered steps list, HR dividers, inline anchor links. Navigation: pipe-separated links with more items (Features, Methodology, Disclaimer, Contact/Docs). Container max-width 960px. White background.
+
+**Theme System (March 2026):** 6 themes — Default (dark nav, indigo accent, centered), Clinical (compact, uppercase, muted teal), Research (serif headings, editorial, warm tones), Government (USWDS-inspired, gov banner, bordered panels), **Windows XP Luna** (blue gradients, silver panels, 3D beveled borders, Tahoma), **2010s Flat** (Material blue, flat geometry, thin headings, Roboto). Windows XP Luna is the default theme. Theme switcher in page footer (both pages). Theme selection deferred to Phase 7. Design token system in CSS custom properties. Landing page has per-theme overrides.
 
 **Docusaurus Docs Site (March 2026):** Full documentation site in `docs-site/`. 20 pages, 7 sections. baseUrl configured for local dev (`/docs-site/build/`). Builds cleanly (`npm run build` in `docs-site/`). Comprehensive docs audit completed March 2026: all 20 pages updated to reflect Phase 3 M4, multi-page architecture, new API endpoints, current test counts, and deployment changes. Navbar has Home (→ `/`) and Open App (→ `/simulator.html`) links using `type: 'html'` to bypass Docusaurus baseUrl prepending. Pre-release info admonitions on intro, roadmap, and contributing pages.
 
@@ -95,7 +99,7 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 - **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred:** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21), theme selection (Phase 7, #3)
-- **Infrastructure:** CI pipeline (#29), Docker Compose (#30) — both documented
+- **Infrastructure:** CI pipeline (#29) ✅, Docker Compose (#30) ✅ — both shipped
 - See `docs/roadmap.md` for full phased plan (5 phases through FDA clearance)
 - See `docs/ideas.md` for full SRS with architecture, governance, and regulatory details
 
@@ -136,15 +140,15 @@ TransPlan/
   dark-mode.js            <- Dark mode toggle (auto-detect, localStorage persist, sun/moon button)
   url-sharing.js          <- URL query param encode/decode for shareable form state
   export-handler.js       <- PDF report, CSV, JSON, chart PNG export
-  index.html              <- Landing page (features, how-it-works, CTA → simulator)
+  index.html              <- Landing page (features table, how-it-works list, data sources)
   simulator.html          <- Simulation tool (form, 3-tab results, modals, map, methodology)
   algorithm.js            <- Scoring engine (8 categories, 22 cities)
   script.js               <- UI, map, form, results display, probability card rendering
   data-loader.js          <- Runtime JSON loader with fallbacks
   charts.js               <- Chart.js radar/bar/donut charts
-  styles.css              <- All CSS: design tokens, nav bar, landing page, accordion, responsive (768px + 480px)
+  styles.css              <- All CSS: design tokens (tight spacing, no shadows), nav, landing, accordion, responsive
   themes.css              <- Theme overrides: clinical, research, government (+ landing page per-theme)
-  theme-switcher.js       <- Floating theme picker (6 themes: Default/Clinical/Research/Government/WinXP/2010s Flat)
+  theme-switcher.js       <- Footer-mounted theme picker (6 themes: Default/Clinical/Research/Government/WinXP/2010s Flat)
   package.json            <- Node deps (xml2js, jest)
   README.md               <- User-facing docs
   tests/                  <- Unit tests (Jest)
@@ -180,9 +184,13 @@ TransPlan/
     fetch-srtr-excel.py       <- Download SRTR PSR Excel files (6 organs)
     parse-srtr-reports.py     <- Parse Excel → wait-time-distributions.json + competing-risks.json
   .github/workflows/
+    ci.yml                <- CI: 3 parallel jobs (pytest, Jest, data validation) on push/PR to main
     fetch-data.yml        <- Weekly data fetch (Mon 6am UTC)
     check-srtr-updates.yml <- Bimonthly SRTR check
     (deploy-docs.yml removed — GitHub Pages disabled, Vercel is primary deployment)
+  Dockerfile              <- Single container: Python 3.13, uvicorn, static files
+  docker-compose.yml      <- Docker Compose: port 8002, data/ volume mount, healthcheck
+  .dockerignore           <- Excludes node_modules, .venv, tests, docs, .git
   backend/                <- Phase 2 Python FastAPI backend
     main.py               <- FastAPI app, CORS, static file serving, startup data load
     config.py             <- DATA_DIR, SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY, ALLOWED_ORIGINS
