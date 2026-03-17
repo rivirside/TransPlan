@@ -264,6 +264,7 @@ TransPlan/
 | FIXED | 36 | All critical + most high/medium issues (L-001–L-044) |
 | OPEN | 6 | L-045 (FARS), L-049–L-050 (M2 COD model), L-046–L-048 fixed |
 | FIXED (M2b) | 6 | L-051 (fetch script), L-052 (anoxia), L-053 (stochastic), L-054 (intestine), L-055 (50 states), L-056 (elasticity) |
+| MITIGATED | 1 | L-057 (pancreas graft survival — falls back to patient survival) |
 | DEFERRED | 3 | L-009 (OPO), L-017 (SRTR outcomes), L-033 (donor reg fetch) |
 | WONT FIX | 2 | L-012 (county health, <0.5pt impact), L-039 (false positive) |
 
