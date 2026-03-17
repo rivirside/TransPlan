@@ -10,12 +10,14 @@ A patient-facing clinical decision support tool that helps transplant patients i
 
 Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 237 pytest tests passing. Phase 3 M1-M5 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
-**Data Quality Sprint (March 2026):** 4 of 8 COD model issues resolved:
+**Data Quality Sprint (March 2026):** 6 of 8 COD model issues resolved:
 - L-055: Expanded state COD proportions from 17 to all 50 states + DC (CDC SODA API, donor-eligibility calibration)
 - L-051: Automated `fetch-cod-data.js` script added to CI pipeline
 - L-053: COD multiplier now stochastic (Beta-distributed recovery rates, kappa=50, ~3.5% CV)
 - L-056: Sublinear supply-wait elasticity (0.65 exponent) replaces linear assumption
-- Remaining: L-049 (cross-validate OPTN), L-050 (OPO boundaries), L-052 (anoxia COD), L-054 (intestine proxy) — all documented as comprehensive GitHub issues
+- L-054: Intestine recovery rates replaced pancreas proxy with OTPD-derived COD-specific rates
+- L-052: Anoxia-NOS added as 5th COD category (9.2% of donors, estimated recovery rates, drowning-based state shares)
+- Remaining: L-049 (cross-validate OPTN), L-050 (OPO boundaries) — documented as comprehensive GitHub issues
 
 **Multi-Page Architecture (March 2026):** Split from single-page to landing + simulator. `index.html` = lightweight landing page (features, how-it-works, CTA). `simulator.html` = full simulation tool (form, results, modals, map, charts). No header/hero section — nav brand is the only title. Info buttons (ⓘ) on simulator form labels link to relevant docs pages. Docs URL resolution script detects local dev vs deployment.
 
@@ -84,13 +86,13 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | L-056: Supply-wait elasticity (#18) | ✅ Done | 0.65 exponent, sublinear donor→wait relationship |
 | L-049: Cross-validate OPTN rates (#11) | Open | Comprehensive issue with validation approach documented |
 | L-050: OPO boundary mapping (#12) | Open | City→OPO mapping documented, highest complexity |
-| L-052: Add anoxia COD category (#14) | Open | 9% of donors, PMC10329409 Supp Table 3 needed |
-| L-054: Intestine-specific rates (#16) | Open | OTPD ratio + clinical adjustment factors documented |
+| L-052: Add anoxia COD category (#14) | ✅ Done | 5th COD category added (9.2% of donors), estimated recovery rates, state shares from drowning patterns |
+| L-054: Intestine-specific rates (#16) | ✅ Done | OTPD ratio × COD-specific clinical adjustments (trauma=0.030, cardio=0.003, drug=0.010, stroke=0.004) |
 
 ### What's NOT Done (Next Steps)
 
 - **Phase 3 COMPLETE** — all milestones shipped
-- **Data Quality Sprint** — 4/8 COD model issues resolved, 4 documented as comprehensive feature requests
+- **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred:** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21), theme selection (Phase 7, #3)
 - **Infrastructure:** CI pipeline (#29), Docker Compose (#30) — both documented
@@ -106,7 +108,7 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | Phase 1: Deployment | 1 | FARS API (GitHub Pages disabled, Vercel is primary) |
 | Phase 3: UI Overhaul | 1 | Pick winning theme, merge, cleanup |
 | Phase 3 M5: UX Polish & Export | 6 | ✅ DONE — Dark mode, URL sharing, PDF/CSV/JSON, charts, what-if sliders |
-| M2b: COD Model Data Quality | 4 open / 4 closed | L-049–L-056 — 4 resolved (50-state, fetch script, stochastic, elasticity), 4 remain (OPTN validation, OPO mapping, anoxia, intestine) |
+| M2b: COD Model Data Quality | 2 open / 6 closed | L-049–L-056 — 6 resolved (50-state, fetch script, stochastic, elasticity, intestine rates, anoxia COD), 2 remain (OPTN validation, OPO mapping) |
 | Phase 4: Advanced Modeling | 2 | Configurable weights, causal policy simulator |
 
 **Labels:** `phase:*`, `priority:*`, `limitation`, `cod-model`, `blocked`, `deferred`, `ui/ux`, `backend`, `frontend`, `data-quality`, `data-pipeline`, `milestone:m5`
@@ -236,8 +238,8 @@ TransPlan/
 | Status | Count | Details |
 |--------|-------|---------|
 | FIXED | 36 | All critical + most high/medium issues (L-001–L-044) |
-| OPEN | 8 | L-045 (FARS), L-049–L-052, L-054 (M2 COD model), L-046–L-048 fixed |
-| FIXED (M2b) | 4 | L-051 (fetch script), L-053 (stochastic), L-055 (50 states), L-056 (elasticity) |
+| OPEN | 6 | L-045 (FARS), L-049–L-050 (M2 COD model), L-046–L-048 fixed |
+| FIXED (M2b) | 6 | L-051 (fetch script), L-052 (anoxia), L-053 (stochastic), L-054 (intestine), L-055 (50 states), L-056 (elasticity) |
 | DEFERRED | 3 | L-009 (OPO), L-017 (SRTR outcomes), L-033 (donor reg fetch) |
 | WONT FIX | 2 | L-012 (county health, <0.5pt impact), L-039 (false positive) |
 

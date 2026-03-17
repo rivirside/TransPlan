@@ -377,10 +377,10 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-052: Only 4 of 6 cause-of-death categories modeled
 - **Severity:** MEDIUM
-- **Status:** OPEN
-- **Details:** PMC10329409 identifies 6 donor cause-of-death categories: trauma, cardiovascular, CVA/stroke, drug intoxication, **anoxia NOS**, and **other**. Our model drops anoxia and other entirely. Anoxia (drowning, asphyxiation) is a growing share of the donor pool — the paper found anoxia-related donors rose from 31.4% to 49.4% between 2013 and 2023. Our 4-category proportions are normalized to sum to 1.0, which conflates anoxia deaths into the other categories without matching their actual recovery rate profiles.
-- **File:** `data/cause-of-death-by-region.json` → `causeCategories`, `stateCauseOfDeathProportions`
-- **Fix:** Add `anoxia` and `other` categories. PMC10329409 likely has recovery rates for these. Requires re-sourcing state proportions from CDC WONDER with ICD-10 codes for anoxia (W65-W74, T71) and computing a 6-category breakdown.
+- **Status:** FIXED (March 2026) — anoxia-NOS added as 5th category; "other" (1.7% of donors) deferred as negligible
+- **Details:** Added anoxia-NOS (9.2% of donors nationally) as a 5th COD category. Recovery rates estimated from PMC10329409 OR 0.848 vs trauma. State-level anoxia shares estimated from CDC drowning rate geographic patterns (range 0.05–0.14, mean 0.091). Existing 4 categories scaled down proportionally. CDC WONDER ICD-10 data (W65-W74, T71, T58, W75-W84) would provide exact state values but has no REST API. "Other" category (1.7% of donors) not added — too small and heterogeneous to model meaningfully.
+- **File:** `data/cause-of-death-by-region.json`, `algorithm.js`, `backend/services/monte_carlo.py`, `scripts/fetch-cod-data.js`, `data-loader.js`
+- **Fix:** Anoxia-NOS added across data file, fetch script, frontend, and backend. See GitHub #14 for full methodology.
 
 ### L-053: COD multiplier is deterministic, not stochastic
 - **Severity:** MEDIUM
@@ -391,10 +391,10 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-054: Intestine organ uses pancreas recovery rates as proxy
 - **Severity:** LOW
-- **Status:** OPEN
-- **Details:** PMC10329409 does not report intestine-specific recovery rates. The intestine row in `organRecoveryRates` is an exact copy of pancreas rates (0.246/0.048/0.095/0.053). Intestinal transplants are rare (~100/year in the US) so the practical impact is small, but it's technically inaccurate.
+- **Status:** FIXED (March 2026)
+- **Details:** PMC10329409 does not report intestine-specific recovery rates. Replaced pancreas-proxy rates with COD-specific estimates derived from OPTN 2023 OTPD ratio (intestine/pancreas = 0.104) and clinical adjustment factors accounting for intestine's extreme sensitivity to donor quality (trauma 0.12x, cardiovascular 0.06x, drug_intox 0.10x, stroke 0.08x of pancreas). New rates: trauma=0.030, cardiovascular=0.003, drug_intox=0.010, stroke=0.004.
 - **File:** `data/cause-of-death-by-region.json` → `organRecoveryRates.intestine`
-- **Fix:** Search for intestine-specific recovery rate literature; if unavailable, document the proxy explicitly in the UI tooltip.
+- **Fix:** Replaced proxy with OTPD-derived COD-specific rates. See GitHub #16 for full methodology.
 
 ### L-055: Only 17 of 50 states have COD proportions
 - **Severity:** LOW

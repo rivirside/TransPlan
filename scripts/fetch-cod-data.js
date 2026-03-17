@@ -5,14 +5,20 @@
  * Sources:
  *   1. data.cdc.gov "bi63-dtpu" — NCHS Leading Causes of Death (injury, heart, stroke)
  *   2. data.cdc.gov "xkb8-kh2a" — VSRR Provisional Drug Overdose Death Counts
+ *   3. Anoxia-NOS: estimated from PMC10329409 (9.2% of donors nationally) +
+ *      CDC drowning rate patterns by state. CDC WONDER has the ICD-10 level
+ *      data (W65-W74, T71, T58, W75-W84) but has NO REST API; these estimates
+ *      use published drowning death rate geographic patterns as a proxy.
  *
  * CDC WONDER has NO programmatic REST API, so we use the SODA API on data.cdc.gov.
  *
  * Output: data/cause-of-death-by-region.json
- *   - Preserves existing organRecoveryRates (from PMC10329409, not fetchable)
- *   - Updates stateCauseOfDeathProportions for all 50 states + DC
+ *   - Preserves existing organRecoveryRates (from PMC10329409 + estimates)
+ *   - Updates stateCauseOfDeathProportions for all 50 states + DC (5 categories)
  *   - Uses donor-eligibility calibration weights to convert general population
  *     mortality into organ-donor-relevant proportions
+ *   - Anoxia-NOS allocated by state from estimated shares, other 4 categories
+ *     scaled proportionally
  *
  * Auth: None required (public SODA endpoints)
  * Rate limit: Unauthenticated SODA = 1000 req/hr; we make ~3 requests total
@@ -36,6 +42,32 @@ const DONOR_WEIGHTS = {
     drug_intox: 0.721,
     stroke: 0.175
 };
+
+// Estimated anoxia-NOS donor shares by state.
+// Anoxia-NOS = 9.2% of donors nationally (PMC10329409), primarily drowning (~45%),
+// asphyxiation (~35%), and CO poisoning (~15%). State variation driven by drowning
+// rates: coastal/warm states higher, cold inland states lower.
+// CDC WONDER has ICD-10 level data but no REST API; these use published patterns.
+// FIXME: Replace with CDC WONDER query if API becomes available (#14).
+const STATE_ANOXIA_SHARES = {
+    "Alabama": 0.10, "Alaska": 0.14, "Arizona": 0.10, "Arkansas": 0.10,
+    "California": 0.09, "Colorado": 0.09, "Connecticut": 0.08,
+    "Delaware": 0.09, "District of Columbia": 0.05, "Florida": 0.12,
+    "Georgia": 0.10, "Hawaii": 0.13, "Idaho": 0.10, "Illinois": 0.08,
+    "Indiana": 0.08, "Iowa": 0.07, "Kansas": 0.08, "Kentucky": 0.08,
+    "Louisiana": 0.12, "Maine": 0.09, "Maryland": 0.09,
+    "Massachusetts": 0.08, "Michigan": 0.09, "Minnesota": 0.09,
+    "Mississippi": 0.11, "Missouri": 0.09, "Montana": 0.10,
+    "Nebraska": 0.08, "Nevada": 0.10, "New Hampshire": 0.08,
+    "New Jersey": 0.08, "New Mexico": 0.10, "New York": 0.07,
+    "North Carolina": 0.10, "North Dakota": 0.08, "Ohio": 0.08,
+    "Oklahoma": 0.10, "Oregon": 0.10, "Pennsylvania": 0.08,
+    "Rhode Island": 0.06, "South Carolina": 0.10, "South Dakota": 0.08,
+    "Tennessee": 0.10, "Texas": 0.10, "Utah": 0.08, "Vermont": 0.08,
+    "Virginia": 0.10, "Washington": 0.10, "West Virginia": 0.07,
+    "Wisconsin": 0.09, "Wyoming": 0.10,
+};
+const DEFAULT_ANOXIA_SHARE = 0.09; // National average fallback
 
 // Mapping from CDC cause_name values to our categories
 const CAUSE_MAP = {
@@ -147,7 +179,9 @@ async function fetchDrugOverdoses() {
 
 /**
  * Convert raw death counts to donor-eligible proportions using calibration weights.
- * Each state gets proportions that sum to 1.0.
+ * Each state gets 5-category proportions that sum to 1.0.
+ * Anoxia-NOS is allocated from estimated state shares, then the 4 CDC-fetched
+ * categories are scaled down proportionally.
  */
 function computeProportions(leadingCauses, drugOverdoses) {
     const proportions = {};
@@ -155,7 +189,7 @@ function computeProportions(leadingCauses, drugOverdoses) {
     for (const [state, counts] of Object.entries(leadingCauses)) {
         const overdoseCount = drugOverdoses[state] || 0;
 
-        // Apply donor-eligibility weights
+        // Apply donor-eligibility weights to the 4 fetched categories
         const weighted = {
             trauma: (counts.trauma || 0) * DONOR_WEIGHTS.trauma,
             cardiovascular: (counts.cardiovascular || 0) * DONOR_WEIGHTS.cardiovascular,
@@ -166,21 +200,33 @@ function computeProportions(leadingCauses, drugOverdoses) {
         const total = weighted.trauma + weighted.cardiovascular + weighted.drug_intox + weighted.stroke;
 
         if (total > 0) {
-            proportions[state] = {
-                trauma: Math.round((weighted.trauma / total) * 100) / 100,
-                cardiovascular: Math.round((weighted.cardiovascular / total) * 100) / 100,
-                drug_intox: Math.round((weighted.drug_intox / total) * 100) / 100,
-                stroke: Math.round((weighted.stroke / total) * 100) / 100
+            // First compute 4-category proportions (sum to 1.0)
+            const fourCat = {
+                trauma: weighted.trauma / total,
+                cardiovascular: weighted.cardiovascular / total,
+                drug_intox: weighted.drug_intox / total,
+                stroke: weighted.stroke / total
             };
 
-            // Ensure they sum to exactly 1.0 (adjust largest category for rounding)
-            const sum = proportions[state].trauma + proportions[state].cardiovascular +
-                        proportions[state].drug_intox + proportions[state].stroke;
-            if (sum !== 1.0) {
-                const diff = 1.0 - sum;
-                // Find the largest category and adjust it
-                const cats = Object.entries(proportions[state]);
-                cats.sort((a, b) => b[1] - a[1]);
+            // Allocate anoxia share, scale other 4 down proportionally
+            const anoxiaShare = STATE_ANOXIA_SHARES[state] || DEFAULT_ANOXIA_SHARE;
+            const remaining = 1.0 - anoxiaShare;
+
+            proportions[state] = {
+                trauma: Math.round(fourCat.trauma * remaining * 100) / 100,
+                cardiovascular: Math.round(fourCat.cardiovascular * remaining * 100) / 100,
+                drug_intox: Math.round(fourCat.drug_intox * remaining * 100) / 100,
+                stroke: Math.round(fourCat.stroke * remaining * 100) / 100,
+                anoxia: anoxiaShare
+            };
+
+            // Ensure they sum to exactly 1.0 (adjust largest non-anoxia category)
+            const sum = Object.values(proportions[state]).reduce((a, b) => a + b, 0);
+            if (Math.abs(sum - 1.0) > 0.001) {
+                const diff = Math.round((1.0 - sum) * 100) / 100;
+                const cats = Object.entries(proportions[state])
+                    .filter(([k]) => k !== 'anoxia')
+                    .sort((a, b) => b[1] - a[1]);
                 proportions[state][cats[0][0]] = Math.round((cats[0][1] + diff) * 100) / 100;
             }
         }
@@ -232,26 +278,28 @@ async function main() {
         _meta: {
             fetchedAt: new Date().toISOString(),
             source: `Organ recovery rates: PMC10329409 Table 2 (2023). State proportions: CDC ${TARGET_YEAR} mortality data (data.cdc.gov bi63-dtpu + xkb8-kh2a) with donor-eligibility calibration.`,
-            notes: 'Intestine uses pancreas rates as proxy (PMC10329409 has no intestine data). ' +
+            notes: 'Intestine rates from OPTN 2023 OTPD ratio (intestine/pancreas=0.104) with COD-specific clinical adjustments (see GitHub #16). ' +
+                   'Anoxia-NOS recovery rates estimated from PMC10329409 OR 0.848 vs trauma (see GitHub #14); state shares from CDC drowning rate patterns. ' +
                    'Proportions represent share of potential brain-dead donors by cause among donor-eligible deaths. ' +
                    `Calibration weights (trauma=${DONOR_WEIGHTS.trauma}, cardiovascular=${DONOR_WEIGHTS.cardiovascular}, ` +
                    `drug_intox=${DONOR_WEIGHTS.drug_intox}, stroke=${DONOR_WEIGHTS.stroke}) fitted via Nelder-Mead optimization.`,
             calibration: 'Weights represent fraction of general-population deaths in each category that result in donor-eligible brain death.'
         },
         organRecoveryRates: existing.organRecoveryRates || {
-            heart:     { trauma: 0.488, cardiovascular: 0.151, drug_intox: 0.369, stroke: 0.157 },
-            lung:      { trauma: 0.280, cardiovascular: 0.094, drug_intox: 0.204, stroke: 0.190 },
-            liver:     { trauma: 0.797, cardiovascular: 0.654, drug_intox: 0.780, stroke: 0.737 },
-            kidney:    { trauma: 0.896, cardiovascular: 0.686, drug_intox: 0.824, stroke: 0.668 },
-            pancreas:  { trauma: 0.246, cardiovascular: 0.048, drug_intox: 0.095, stroke: 0.053 },
-            intestine: { trauma: 0.246, cardiovascular: 0.048, drug_intox: 0.095, stroke: 0.053 }
+            heart:     { trauma: 0.488, cardiovascular: 0.151, drug_intox: 0.369, stroke: 0.157, anoxia: 0.39 },
+            lung:      { trauma: 0.280, cardiovascular: 0.094, drug_intox: 0.204, stroke: 0.190, anoxia: 0.22 },
+            liver:     { trauma: 0.797, cardiovascular: 0.654, drug_intox: 0.780, stroke: 0.737, anoxia: 0.74 },
+            kidney:    { trauma: 0.896, cardiovascular: 0.686, drug_intox: 0.824, stroke: 0.668, anoxia: 0.82 },
+            pancreas:  { trauma: 0.246, cardiovascular: 0.048, drug_intox: 0.095, stroke: 0.053, anoxia: 0.15 },
+            intestine: { trauma: 0.030, cardiovascular: 0.003, drug_intox: 0.010, stroke: 0.004, anoxia: 0.02 }
         },
         stateCauseOfDeathProportions: sortedProportions,
         causeCategories: existing.causeCategories || {
             trauma: 'ICD-10 V01-Y34: Transport accidents, falls, assaults',
             cardiovascular: 'ICD-10 I21-I25: Acute MI, ischemic heart disease',
             drug_intox: 'ICD-10 T36-T50: Drug/substance poisoning (opioids, sedatives, stimulants)',
-            stroke: 'ICD-10 I60-I69: Subarachnoid/intracerebral hemorrhage, cerebrovascular'
+            stroke: 'ICD-10 I60-I69: Subarachnoid/intracerebral hemorrhage, cerebrovascular',
+            anoxia: 'ICD-10 W65-W74, T71, T58, W75-W84: Drowning, asphyxiation, carbon monoxide, other oxygen deprivation (non-drug, non-cardiac)'
         }
     };
 

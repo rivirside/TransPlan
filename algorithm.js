@@ -164,7 +164,7 @@ function _computeCodMultiplier(state, organType, codData) {
     const props = codData.stateCauseOfDeathProportions[state];
     if (!rates || !props) return null;
 
-    const cats = ['trauma', 'cardiovascular', 'drug_intox', 'stroke'];
+    const cats = ['trauma', 'cardiovascular', 'drug_intox', 'stroke', 'anoxia'];
 
     // This state's organ-specific score
     const stateScore = cats.reduce((s, c) => s + (props[c] || 0) * (rates[c] || 0), 0);

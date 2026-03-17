@@ -99,7 +99,7 @@ def _get_cod_multiplier(state_abbrev: str, organ: str, *, n_samples: int = 0, rn
     if not proportions:
         return np.ones(n_samples) if n_samples > 0 else 1.0
 
-    categories = ["trauma", "cardiovascular", "drug_intox", "stroke"]
+    categories = ["trauma", "cardiovascular", "drug_intox", "stroke", "anoxia"]
 
     all_states = cod.get("stateCauseOfDeathProportions", {})
     if not all_states:
