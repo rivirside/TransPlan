@@ -33,7 +33,22 @@
         'socioeconomic'
     ];
 
-    const CATEGORY_WEIGHTS = [25, 20, 18, 15, 10, 7, 3, 2];
+    const DEFAULT_CATEGORY_WEIGHTS = [25, 20, 18, 15, 10, 7, 3, 2];
+
+    /**
+     * Get current category weights as integer percentages.
+     * Uses custom weights from TransPlanWeights if available, otherwise defaults.
+     */
+    function getCategoryWeights() {
+        var tw = window.TransPlanWeights;
+        if (tw) {
+            var custom = tw.getWeights();
+            if (custom) {
+                return CATEGORY_KEYS.map(function(k) { return Math.round(custom[k] * 100); });
+            }
+        }
+        return DEFAULT_CATEGORY_WEIGHTS;
+    }
 
     const CHART_COLORS = [
         '#667eea', '#764ba2', '#f093fb', '#f5576c',
@@ -74,7 +89,7 @@
             data: {
                 labels: CATEGORY_LABELS,
                 datasets: [{
-                    data: CATEGORY_WEIGHTS,
+                    data: getCategoryWeights(),
                     backgroundColor: CHART_COLORS,
                     borderWidth: 2,
                     borderColor: '#fff'
@@ -192,11 +207,12 @@
 
         // Show weighted contributions (score * weight/100) so bar heights
         // reflect actual impact on the final score, not raw category scores
+        const currentWeights = getCategoryWeights();
         const datasets = CATEGORY_KEYS.map((key, i) => ({
-            label: `${CATEGORY_LABELS[i]} (${CATEGORY_WEIGHTS[i]}%)`,
+            label: `${CATEGORY_LABELS[i]} (${currentWeights[i]}%)`,
             data: topCities.map(c => {
                 const raw = c.scoreBreakdown?.[key] || 0;
-                return raw * CATEGORY_WEIGHTS[i] / 100;
+                return raw * currentWeights[i] / 100;
             }),
             backgroundColor: CHART_COLORS[i],
             borderWidth: 0,
@@ -241,7 +257,7 @@
                         callbacks: {
                             label: function (context) {
                                 const catIndex = context.datasetIndex;
-                                const rawScore = context.raw * 100 / CATEGORY_WEIGHTS[catIndex];
+                                const rawScore = context.raw * 100 / (getCategoryWeights()[catIndex] || 1);
                                 return `${CATEGORY_LABELS[catIndex]}: ${rawScore.toFixed(0)}/100 (contributes ${context.raw.toFixed(1)} pts)`;
                             }
                         }
@@ -261,11 +277,23 @@
         return Object.keys(chartInstances);
     }
 
+    /**
+     * Update the donut chart with current weight values.
+     * Called by weight-config.js after slider changes.
+     */
+    function updateWeightsDonut() {
+        if (chartInstances.weightsDonut) {
+            chartInstances.weightsDonut.data.datasets[0].data = getCategoryWeights();
+            chartInstances.weightsDonut.update();
+        }
+    }
+
     // Expose functions globally
     window.TransPlanCharts = {
         renderWeightsDonutChart,
         createRadarChart,
         createComparisonChart,
+        updateWeightsDonut: updateWeightsDonut,
         getChartImage: getChartImage,
         getChartIds: getChartIds
     };

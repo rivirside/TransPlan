@@ -385,3 +385,79 @@ The multiplier is **toggleable** (default OFF) via a checkbox in the Simulation 
 - Age brackets use representative ages (26, 45, 62) which are approximations of continuous age effects.
 - Gini is computed from p24 values only; could also weight by median wait time for a more holistic metric.
 - Charts show averages across all cities; per-city drill-down charts deferred to future work.
+
+---
+
+## ADR-020: What-If Scenario Analysis with Paired Seeds
+
+**Date:** 2026-03-10
+**Status:** Accepted
+
+**Context:** Phase 3 M5 added what-if scenario sliders (donor rate ±20%, wait time ±30%). The naive approach — run two independent simulations and compare — produces noisy deltas because Monte Carlo variance swamps the signal from small multiplier changes.
+
+**Decision:** Use paired seeds: baseline and adjusted scenarios share the same RNG seed per iteration. The same "patient" draws the same random events in both runs; only the multiplier-adjusted parameters differ. This isolates the effect of the scenario change from Monte Carlo noise.
+
+**Rationale:** Paired seeds reduce delta noise by ~10× compared to independent runs. A 5% donor increase that changes p24 by 1.2 percentage points would be lost in ±3% Monte Carlo noise without pairing.
+
+---
+
+## ADR-021: Phase 4 Scope — Advanced Modeling & Validation
+
+**Date:** 2026-03-16
+**Status:** Accepted
+
+**Context:** The roadmap's Phase 4 ("Advanced Modeling & Clinical Validation") originally listed ~15 features spanning software engineering, academic research, regulatory consulting, and clinical partnerships. This is ~1500+ hours of work — unrealistic as a single development phase. We need to scope Phase 4 to what's buildable on the existing infrastructure while directly supporting the publication goal.
+
+**Decision:** Phase 4 is scoped to 5 milestones focused on **deepening clinical accuracy** and **enabling publication-grade validation**:
+
+| # | Milestone | Scope |
+|---|-----------|-------|
+| M1 | Configurable Scoring Weights | Weight sliders (research mode), presets, backend re-simulation with custom weights |
+| M2 | Post-Transplant Outcomes Model | SRTR Table B11 graft survival data, compound success metric (P(transplant) × P(graft survival)) |
+| M3 | Historical Trends & Center Trajectories | Multi-year SRTR data, trajectory analysis, sparkline charts, trending badges |
+| M4 | Policy Scenario Engine | Predefined UNOS policy scenarios with literature-backed parameters, upgraded what-if |
+| M5 | Validation & Reproducibility Pack | Retrospective validation, bias audit, Jupyter notebooks, publication-ready artifacts |
+
+**Deferred to Phase 5+:**
+- Public REST API with tiered access (FR-18) — no public deployment yet
+- Python & JavaScript SDKs — premature without public API
+- Policy scenario builder (interactive UI) — builds on M4 but requires M4 to stabilize first
+- Institutional bulk analysis & cohort tools — requires deployed API
+- Embeddable widget / white-label integration — premature
+- Bayesian belief networks / agent-based simulation — academic research features
+- Insurance compatibility layer — no data source available
+- RCT design, FDA pathway — require external partnerships and funding
+
+**Rationale:**
+- **M1 (Weights)** enables ablation studies — essential for any publication. "What happens if we remove category X?" is a standard validation question. Also the highest-demand user feature (researchers want to explore weight sensitivity).
+- **M2 (Outcomes)** transforms the tool from "where to get a transplant fastest" to "where to get AND keep a transplant" — a genuine clinical contribution. SRTR PSR Table B11 data is parseable using the proven M5 pipeline pattern.
+- **M3 (Trends)** adds temporal validity — "is this center improving or declining?" is critical context that no existing tool provides. Multi-year SRTR PSR downloads are feasible with the existing fetch infrastructure.
+- **M4 (Policy)** is the hardest but most novel feature. Upgrades the Phase 3 what-if sliders from raw multipliers to real UNOS policy scenarios with literature-backed elasticities. Requires research before coding.
+- **M5 (Validation)** is the capstone — retrospective validation against SRTR cohorts, demographic bias audits, and reproducible Jupyter notebooks. This is what makes the model publishable.
+
+**Dependencies:**
+```
+M1 (Weights) ─── independent, start immediately
+M2 (Outcomes) ── extends SRTR pipeline (fetch-srtr-excel.py)
+M3 (Trends) ──── extends SRTR pipeline (multi-year downloads)
+M4 (Policy) ──── requires literature review before coding
+M5 (Validation) ─ runs after M1-M4 stabilize
+```
+
+M1 is fully independent. M2 and M3 share SRTR pipeline work and can be parallelized. M4 needs upfront research. M5 is the final integration milestone.
+
+**Ordering rationale:**
+- M1 first because it's the simplest, unblocks ablation studies, and demonstrates immediate user value.
+- M2 before M3 because outcomes data is clinically more important than trends.
+- M4 after M2/M3 because it needs literature review time (can happen while M2/M3 are coded).
+- M5 last because it validates everything built in M1-M4.
+
+**What this means for existing GitHub issues:**
+- #22 (Configurable weights) → updated as M1
+- #23 (Causal policy simulator) → updated as M4
+- #24 (Public REST API) → deferred to Phase 5
+- #25 (SDKs) → deferred to Phase 5
+- #26 (Policy scenario builder) → deferred to Phase 5
+- #27 (Bulk analysis) → deferred to Phase 5
+- #28 (Embeddable widget) → deferred to Phase 5
+- New: M2 (Post-Transplant Outcomes), M3 (Historical Trends), M5 (Validation Pack)

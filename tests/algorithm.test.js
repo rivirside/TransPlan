@@ -14,7 +14,10 @@ const {
     calculateGeographicScore,
     calculateHealthDemographicsScore,
     calculatePolicyScore,
-    calculateSocioeconomicScore
+    calculateSocioeconomicScore,
+    DEFAULT_WEIGHTS,
+    CATEGORY_LABELS,
+    CATEGORY_KEYS
 } = require('../algorithm');
 
 // ==================== MOCK DATA ====================
@@ -800,5 +803,173 @@ describe('calculateComprehensiveScore', () => {
         const kidney = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney');
         const heart = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'heart');
         expect(kidney.total).not.toBe(heart.total);
+    });
+});
+
+// ==================== CONFIGURABLE WEIGHTS ====================
+
+describe('Configurable Weights', () => {
+    test('DEFAULT_WEIGHTS has all 8 categories', () => {
+        expect(Object.keys(DEFAULT_WEIGHTS)).toHaveLength(8);
+        expect(DEFAULT_WEIGHTS.medicalCompatibility).toBe(0.25);
+        expect(DEFAULT_WEIGHTS.waitTime).toBe(0.20);
+        expect(DEFAULT_WEIGHTS.donorAvailability).toBe(0.18);
+        expect(DEFAULT_WEIGHTS.hospitalQuality).toBe(0.15);
+        expect(DEFAULT_WEIGHTS.geographic).toBe(0.10);
+        expect(DEFAULT_WEIGHTS.healthDemographics).toBe(0.07);
+        expect(DEFAULT_WEIGHTS.policy).toBe(0.03);
+        expect(DEFAULT_WEIGHTS.socioeconomic).toBe(0.02);
+    });
+
+    test('DEFAULT_WEIGHTS sums to 1.0', () => {
+        const sum = Object.values(DEFAULT_WEIGHTS).reduce((s, v) => s + v, 0);
+        expect(sum).toBeCloseTo(1.0, 10);
+    });
+
+    test('CATEGORY_KEYS has 8 entries in correct order', () => {
+        expect(CATEGORY_KEYS).toHaveLength(8);
+        expect(CATEGORY_KEYS[0]).toBe('medicalCompatibility');
+        expect(CATEGORY_KEYS[7]).toBe('socioeconomic');
+    });
+
+    test('CATEGORY_LABELS has human-readable names for all keys', () => {
+        expect(Object.keys(CATEGORY_LABELS)).toHaveLength(8);
+        expect(CATEGORY_LABELS.medicalCompatibility).toBe('Medical Compatibility');
+        expect(CATEGORY_LABELS.waitTime).toBe('Wait Time');
+    });
+
+    test('no custom weights produces same result as before', () => {
+        const form = makeFormData();
+        const without = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney');
+        const withNull = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney', null);
+        const withUndef = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney', undefined);
+        expect(withNull.total).toBe(without.total);
+        expect(withUndef.total).toBe(without.total);
+    });
+
+    test('passing DEFAULT_WEIGHTS explicitly produces same result', () => {
+        const form = makeFormData();
+        const without = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney');
+        const withDefaults = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney', DEFAULT_WEIGHTS);
+        expect(withDefaults.total).toBeCloseTo(without.total, 10);
+    });
+
+    test('all weight on one category returns that category raw score', () => {
+        const form = makeFormData();
+        const allOnMedical = {};
+        CATEGORY_KEYS.forEach(k => { allOnMedical[k] = k === 'medicalCompatibility' ? 1.0 : 0.0; });
+
+        const result = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney', allOnMedical);
+        const medScore = calculateMedicalCompatibilityScore(form, 'Cleveland', 'kidney');
+        expect(result.total).toBeCloseTo(medScore, 5);
+    });
+
+    test('all weight on waitTime returns waitTime raw score', () => {
+        const form = makeFormData();
+        const allOnWait = {};
+        CATEGORY_KEYS.forEach(k => { allOnWait[k] = k === 'waitTime' ? 1.0 : 0.0; });
+
+        const result = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney', allOnWait);
+        const waitScore = calculateWaitTimeScore('Cleveland', 'kidney', form);
+        expect(result.total).toBeCloseTo(waitScore, 5);
+    });
+
+    test('zero weight on a category eliminates its influence', () => {
+        const form1 = makeFormData({ urgency: '1' });
+        const form4 = makeFormData({ urgency: '4' });
+
+        // With default weights, different urgency changes scores (via waitTime category)
+        const def1 = calculateComprehensiveScore(form1, 'Cleveland', 'Ohio', 'kidney');
+        const def4 = calculateComprehensiveScore(form4, 'Cleveland', 'Ohio', 'kidney');
+        expect(def1.total).not.toBeCloseTo(def4.total, 1);
+
+        // With waitTime zeroed out, urgency difference vanishes
+        const noWait = { ...DEFAULT_WEIGHTS, waitTime: 0.0 };
+        const nw1 = calculateComprehensiveScore(form1, 'Cleveland', 'Ohio', 'kidney', noWait);
+        const nw4 = calculateComprehensiveScore(form4, 'Cleveland', 'Ohio', 'kidney', noWait);
+        expect(nw1.total).toBeCloseTo(nw4.total, 5);
+    });
+
+    test('weights auto-normalize when sum is not 1.0', () => {
+        const form = makeFormData();
+        // Double all weights (sum=2.0) — should normalize and produce same result
+        const doubled = {};
+        CATEGORY_KEYS.forEach(k => { doubled[k] = DEFAULT_WEIGHTS[k] * 2; });
+
+        const normal = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney', DEFAULT_WEIGHTS);
+        const dbld = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney', doubled);
+        expect(dbld.total).toBeCloseTo(normal.total, 5);
+    });
+
+    test('partial/invalid weights object falls back to defaults', () => {
+        const form = makeFormData();
+        const defaultResult = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney');
+
+        // Only 3 keys — invalid, should fall back
+        const partial = { medicalCompatibility: 0.5, waitTime: 0.3, geographic: 0.2 };
+        const partialResult = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney', partial);
+        expect(partialResult.total).toBe(defaultResult.total);
+
+        // Empty object — should fall back
+        const emptyResult = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney', {});
+        expect(emptyResult.total).toBe(defaultResult.total);
+
+        // Non-object — should fall back
+        const strResult = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney', 'balanced');
+        expect(strResult.total).toBe(defaultResult.total);
+    });
+
+    test('custom weights change city rankings', () => {
+        const form = makeFormData();
+        // Default: balanced weights
+        const balanced = calculateComprehensiveScore(form, 'San Francisco', 'California', 'kidney');
+        const balancedOmaha = calculateComprehensiveScore(form, 'Omaha', 'Nebraska', 'kidney');
+
+        // QoL preset: heavy geographic weight — expensive cities should drop
+        const qol = {
+            medicalCompatibility: 0.15, waitTime: 0.15, donorAvailability: 0.10,
+            hospitalQuality: 0.10, geographic: 0.20, healthDemographics: 0.10,
+            policy: 0.05, socioeconomic: 0.15
+        };
+        const qolSF = calculateComprehensiveScore(form, 'San Francisco', 'California', 'kidney', qol);
+        const qolOmaha = calculateComprehensiveScore(form, 'Omaha', 'Nebraska', 'kidney', qol);
+
+        // SF should lose relative advantage when geographic weight increases (high COL)
+        const balancedGap = balanced.total - balancedOmaha.total;
+        const qolGap = qolSF.total - qolOmaha.total;
+        expect(qolGap).toBeLessThan(balancedGap);
+    });
+
+    test('all presets produce valid scores in [0, 100] with no NaN', () => {
+        const presets = [
+            { medicalCompatibility: 0.25, waitTime: 0.20, donorAvailability: 0.18, hospitalQuality: 0.15, geographic: 0.10, healthDemographics: 0.07, policy: 0.03, socioeconomic: 0.02 },
+            { medicalCompatibility: 0.35, waitTime: 0.15, donorAvailability: 0.10, hospitalQuality: 0.25, geographic: 0.05, healthDemographics: 0.05, policy: 0.03, socioeconomic: 0.02 },
+            { medicalCompatibility: 0.15, waitTime: 0.30, donorAvailability: 0.25, hospitalQuality: 0.10, geographic: 0.08, healthDemographics: 0.05, policy: 0.05, socioeconomic: 0.02 },
+            { medicalCompatibility: 0.15, waitTime: 0.15, donorAvailability: 0.10, hospitalQuality: 0.10, geographic: 0.20, healthDemographics: 0.10, policy: 0.05, socioeconomic: 0.15 },
+        ];
+        const form = makeFormData();
+        const organs = ['kidney', 'liver', 'heart', 'lung', 'pancreas', 'intestine'];
+
+        for (const preset of presets) {
+            for (const organ of organs) {
+                const result = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', organ, preset);
+                expect(Number.isNaN(result.total)).toBe(false);
+                expect(result.total).toBeGreaterThanOrEqual(0);
+                expect(result.total).toBeLessThanOrEqual(100);
+            }
+        }
+    });
+
+    test('breakdown scores are unaffected by custom weights', () => {
+        const form = makeFormData();
+        const defaultResult = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney');
+        const customResult = calculateComprehensiveScore(form, 'Cleveland', 'Ohio', 'kidney', {
+            medicalCompatibility: 0.50, waitTime: 0.50, donorAvailability: 0, hospitalQuality: 0,
+            geographic: 0, healthDemographics: 0, policy: 0, socioeconomic: 0
+        });
+        // Raw breakdown scores should be identical — weights only affect total
+        expect(customResult.breakdown.medicalCompatibility).toBe(defaultResult.breakdown.medicalCompatibility);
+        expect(customResult.breakdown.waitTime).toBe(defaultResult.breakdown.waitTime);
+        expect(customResult.breakdown.geographic).toBe(defaultResult.breakdown.geographic);
     });
 });

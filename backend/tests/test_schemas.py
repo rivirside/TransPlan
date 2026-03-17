@@ -89,6 +89,96 @@ class TestPatientProfileValidation:
         )
         assert p.adjust_for_cause_of_death is True
 
+    # --- Phase 4 M1: custom_weights validation ---
+
+    VALID_WEIGHTS = {
+        "medicalCompatibility": 0.25, "waitTime": 0.20, "donorAvailability": 0.18,
+        "hospitalQuality": 0.15, "geographic": 0.10, "healthDemographics": 0.07,
+        "policy": 0.03, "socioeconomic": 0.02
+    }
+
+    def test_custom_weights_defaults_none(self):
+        p = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male", urgency=2)
+        assert p.custom_weights is None
+
+    def test_custom_weights_valid_accepted(self):
+        p = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            custom_weights=self.VALID_WEIGHTS
+        )
+        assert p.custom_weights == self.VALID_WEIGHTS
+
+    def test_custom_weights_clinical_preset(self):
+        clinical = {
+            "medicalCompatibility": 0.35, "waitTime": 0.15, "donorAvailability": 0.10,
+            "hospitalQuality": 0.25, "geographic": 0.05, "healthDemographics": 0.05,
+            "policy": 0.03, "socioeconomic": 0.02
+        }
+        p = PatientProfile(
+            organ="liver", blood_type="A-", age=52, sex="female", urgency=3,
+            custom_weights=clinical
+        )
+        assert p.custom_weights["medicalCompatibility"] == 0.35
+
+    def test_custom_weights_missing_key_rejected(self):
+        incomplete = {k: v for k, v in self.VALID_WEIGHTS.items() if k != "policy"}
+        with pytest.raises(ValidationError, match="custom_weights must have exactly"):
+            PatientProfile(
+                organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+                custom_weights=incomplete
+            )
+
+    def test_custom_weights_extra_key_rejected(self):
+        extra = {**self.VALID_WEIGHTS, "bogus": 0.0}
+        with pytest.raises(ValidationError, match="custom_weights must have exactly"):
+            PatientProfile(
+                organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+                custom_weights=extra
+            )
+
+    def test_custom_weights_negative_value_rejected(self):
+        bad = {**self.VALID_WEIGHTS, "policy": -0.01}
+        with pytest.raises(ValidationError, match="must be >= 0"):
+            PatientProfile(
+                organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+                custom_weights=bad
+            )
+
+    def test_custom_weights_sum_too_high_rejected(self):
+        doubled = {k: v * 2 for k, v in self.VALID_WEIGHTS.items()}
+        with pytest.raises(ValidationError, match="must sum to ~1.0"):
+            PatientProfile(
+                organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+                custom_weights=doubled
+            )
+
+    def test_custom_weights_sum_too_low_rejected(self):
+        halved = {k: v * 0.5 for k, v in self.VALID_WEIGHTS.items()}
+        with pytest.raises(ValidationError, match="must sum to ~1.0"):
+            PatientProfile(
+                organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+                custom_weights=halved
+            )
+
+    def test_custom_weights_within_tolerance_accepted(self):
+        # Sum = 1.04 — within ±0.05 tolerance
+        slightly_off = {**self.VALID_WEIGHTS, "socioeconomic": 0.06}
+        p = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            custom_weights=slightly_off
+        )
+        assert abs(sum(p.custom_weights.values()) - 1.04) < 0.001
+
+    def test_custom_weights_round_trip_preserved(self):
+        """Weights survive serialization/deserialization (export fidelity)."""
+        p = PatientProfile(
+            organ="heart", blood_type="B+", age=55, sex="female", urgency=1,
+            custom_weights=self.VALID_WEIGHTS
+        )
+        data = p.model_dump()
+        p2 = PatientProfile(**data)
+        assert p2.custom_weights == self.VALID_WEIGHTS
+
 
 class TestCityProbabilityValidation:
     def test_valid_city_probability(self):

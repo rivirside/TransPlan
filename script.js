@@ -2034,7 +2034,8 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
         meld: parseInt(document.getElementById('meld')?.value) || 0,
         las: parseInt(document.getElementById('las')?.value) || 0,
         homeCenter: document.getElementById('homeCenter')?.value || '',
-        adjustForCauseOfDeath: document.getElementById('adjustCauseOfDeath')?.checked || false
+        adjustForCauseOfDeath: document.getElementById('adjustCauseOfDeath')?.checked || false,
+        weights: window.TransPlanWeights?.getWeights() || null
     };
 
     // Show loading spinner
@@ -2237,7 +2238,7 @@ function calculateResults(formData) {
     // Use comprehensive algorithm to dynamically score all cities
     if (typeof calculateComprehensiveScore === 'function') {
         const cities = Object.entries(cityStateMap).map(([cityName, stateName]) => {
-            const result = calculateComprehensiveScore(formData, cityName, stateName, organ);
+            const result = calculateComprehensiveScore(formData, cityName, stateName, organ, formData.weights);
             const metrics = deriveDisplayMetrics(cityName, stateName, organ, formData, result.breakdown);
             return {
                 city: cityName,
@@ -3278,6 +3279,21 @@ document.addEventListener('DOMContentLoaded', function() {
     if (compareBtn) compareBtn.addEventListener('click', openCityComparison);
     var clearBtn = document.getElementById('compareClear');
     if (clearBtn) clearBtn.addEventListener('click', _clearCompareSelection);
+
+    // Wire weight slider re-scoring (Phase 4 M1)
+    // When weights change, re-calculate Phase 1 scores instantly (no backend call)
+    if (window.TransPlanWeights) {
+        window.TransPlanWeights.onReScore(function() {
+            if (!_currentFormData) return;
+            // Update weights in stored form data and re-run scoring
+            _currentFormData.weights = window.TransPlanWeights.getWeights();
+            calculateResults(_currentFormData);
+            // Update methodology donut chart to reflect new weights
+            if (window.TransPlanCharts?.updateWeightsDonut) {
+                window.TransPlanCharts.updateWeightsDonut();
+            }
+        });
+    }
 });
 
 // ==================== M3: Side-by-Side Comparison ====================

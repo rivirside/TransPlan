@@ -135,6 +135,17 @@
         meta += '# Organ: ' + (formData.organ || '') + ', Blood Type: ' + (formData.bloodType || '') +
                 ', Age: ' + (formData.age || '') + ', Sex: ' + (formData.sex || '') + '\n';
         meta += '# Generated: ' + new Date().toISOString() + '\n';
+        // Weight configuration (Phase 4 M1)
+        if (window.TransPlanWeights) {
+          var wp = window.TransPlanWeights.getPresetName();
+          var wLabels = window.TransPlanWeights.CATEGORY_LABELS;
+          var wKeys = window.TransPlanWeights.CATEGORY_KEYS;
+          var wCustom = window.TransPlanWeights.getWeights();
+          var wVals = wCustom || window.TransPlanWeights.DEFAULT_WEIGHTS;
+          meta += '# Weights (' + wp + '): ' + wKeys.map(function(k) {
+            return wLabels[k] + '=' + Math.round(wVals[k] * 100) + '%';
+          }).join(', ') + '\n';
+        }
       }
       downloadText(meta + scoresCsv, 'transplan-scores-' + ts + '.csv', 'text/csv');
     }
@@ -157,14 +168,29 @@
     var R = window.TransPlanResults;
     if (!R) return;
 
+    var weightConfig = null;
+    if (window.TransPlanWeights) {
+      var wCustom = window.TransPlanWeights.getWeights();
+      var wVals = wCustom || window.TransPlanWeights.DEFAULT_WEIGHTS;
+      var wObj = {};
+      window.TransPlanWeights.CATEGORY_KEYS.forEach(function (k) {
+        wObj[k] = wVals[k];
+      });
+      weightConfig = {
+        preset: window.TransPlanWeights.getPresetName(),
+        weights: wObj
+      };
+    }
+
     var exportData = {
       metadata: {
         tool: 'TransPlan',
-        version: '0.3',
+        version: '0.4',
         exported_at: new Date().toISOString(),
         disclaimer: 'This data is for educational and exploratory purposes only. It does not predict actual transplant outcomes.'
       },
       patient_profile: R.getFormData(),
+      weight_configuration: weightConfig,
       location_scores: R.getResults(),
       simulation: R.getSimResult(),
       equity_analysis: R.getEquityResult()
@@ -331,6 +357,26 @@
       appendTo(pi, 'div', { className: 'profile-label' }, item[0]);
       appendTo(pi, 'div', { className: 'profile-value' }, item[1]);
     });
+
+    // Scoring Weights (Phase 4 M1)
+    if (window.TransPlanWeights) {
+      appendTo(body, 'h2', null, 'Scoring Weights');
+      var wpName = window.TransPlanWeights.getPresetName();
+      appendTo(body, 'p', { className: 'meta' }, 'Preset: ' + wpName.charAt(0).toUpperCase() + wpName.slice(1));
+      var wTable = appendTo(body, 'table');
+      var wThead = appendTo(wTable, 'thead');
+      var wHRow = appendTo(wThead, 'tr');
+      ['Category', 'Weight'].forEach(function (h) { appendTo(wHRow, 'th', null, h); });
+      var wTbody = appendTo(wTable, 'tbody');
+      var wCustom = window.TransPlanWeights.getWeights();
+      var wVals = wCustom || window.TransPlanWeights.DEFAULT_WEIGHTS;
+      var wLabels = window.TransPlanWeights.CATEGORY_LABELS;
+      window.TransPlanWeights.CATEGORY_KEYS.forEach(function (k) {
+        var tr = appendTo(wTbody, 'tr');
+        appendTo(tr, 'td', null, wLabels[k]);
+        appendTo(tr, 'td', null, Math.round(wVals[k] * 100) + '%');
+      });
+    }
 
     // Location Scores table
     appendTo(body, 'h2', null, 'Location Scores');

@@ -175,6 +175,31 @@
                         </div>
                     </fieldset>
 
+                    <fieldset>
+                        <legend>Scoring Weights</legend>
+                        <div class="weights-controls">
+                            <div class="weights-mode-row">
+                                <div class="form-group weights-preset-group">
+                                    <label for="weightPreset">Preset</label>
+                                    <select id="weightPreset">
+                                        <option value="balanced">Balanced (Default)</option>
+                                        <option value="clinical">Clinical Focus</option>
+                                        <option value="speed">Speed Priority</option>
+                                        <option value="qol">Quality of Life</option>
+                                        <option value="custom">Custom</option>
+                                    </select>
+                                </div>
+                                <span class="weights-sum weights-sum-ok" id="weightsSumDisplay">100%</span>
+                            </div>
+                            <details id="weightsDetails">
+                                <summary>Adjust individual weights</summary>
+                                <div id="weightsSliders" class="weights-sliders">
+                                </div>
+                            </details>
+                            <small class="field-help">Adjust how much each category contributes to the overall score. Weights auto-balance to 100%. Lock individual weights to pin them during adjustment.</small>
+                        </div>
+                    </fieldset>
+
                     <button type="submit" class="submit-btn">Find Best Locations</button>
                 </form>
             </section>
@@ -717,6 +742,7 @@
     </script>
     <script src="data-loader.js"></script>
     <script src="algorithm.js"></script>
+    <script src="weight-config.js"></script>
     <script src="api-client.js"></script>
     <script src="script.js"></script>
     <script src="charts.js"></script>

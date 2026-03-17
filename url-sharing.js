@@ -69,6 +69,15 @@
       params.set(paramName, value);
     });
 
+    // Scoring weights (Phase 4 M1)
+    if (window.TransPlanWeights) {
+      var wts = window.TransPlanWeights.toParamString();
+      if (wts) {
+        params.set('wts', wts);
+        params.set('wp', window.TransPlanWeights.getPresetName());
+      }
+    }
+
     return params.toString();
   }
 
@@ -106,6 +115,15 @@
     if (params.has('organ')) {
       var organEl = document.getElementById('organ');
       if (organEl) organEl.dispatchEvent(new Event('change'));
+    }
+
+    // Restore scoring weights (Phase 4 M1)
+    if (params.has('wts') && window.TransPlanWeights) {
+      window.TransPlanWeights.setWeightsFromString(params.get('wts'));
+      // Expand the details element so user can see custom weights
+      var details = document.getElementById('weightsDetails');
+      if (details) details.open = true;
+      restored = true;
     }
 
     return restored;

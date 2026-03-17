@@ -6,9 +6,11 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 3 Complete + Data Quality Sprint + Infrastructure
+## Current State: Phase 4 In Progress (Advanced Modeling & Validation)
 
 Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 237 pytest tests passing. Phase 3 M1-M5 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
+
+**Phase 4 in progress (March 2026):** 5 milestones scoped (ADR-021). Goal: deepen clinical accuracy and enable publication-grade validation. M1 (Configurable Weights) complete — 4 presets, 8 sliders with auto-normalization + locks, URL/export round-trip, backend pass-through for fidelity. 112 Jest, 247 pytest.
 
 **Data Quality Sprint (March 2026):** 6 of 8 COD model issues resolved:
 - L-055: Expanded state COD proportions from 17 to all 50 states + DC (CDC SODA API, donor-eligibility calibration)
@@ -48,7 +50,7 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | Fetch scripts (scripts/) | ✅ Done | All scripts use mergeDataFile, skip-on-empty guards added |
 | GitHub Actions | ✅ Done | Single sequential job, weekly cron + manual dispatch |
 | Socioeconomic data | ✅ Done | Transplant-support rubric replacing wealth-correlated scores |
-| Unit tests | ✅ Done | 98 tests (Jest): 75 algorithm + 23 utilities, 0 failures |
+| Unit tests | ✅ Done | 112 tests (Jest): 89 algorithm + 23 utilities, 0 failures |
 | CDN fallback | ✅ Done | Graceful degradation when Leaflet/Chart.js CDN unavailable |
 | CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
@@ -93,14 +95,25 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | L-052: Add anoxia COD category (#14) | ✅ Done | 5th COD category added (9.2% of donors), estimated recovery rates, state shares from drowning patterns |
 | L-054: Intestine-specific rates (#16) | ✅ Done | OTPD ratio × COD-specific clinical adjustments (trauma=0.030, cardio=0.003, drug=0.010, stroke=0.004) |
 
+### Phase 4 Progress
+
+| Milestone | Status | Notes |
+|-----------|--------|-------|
+| M1: Configurable Scoring Weights | ✅ Done | Weight sliders, 4 presets, auto-normalization, lock, URL/export round-trip, 14 Jest + 10 pytest (#22) |
+| M2: Post-Transplant Outcomes Model | 🔲 Not started | SRTR Table B11, compound success metric (NEW) |
+| M3: Historical Trends & Trajectories | 🔲 Not started | Multi-year SRTR, sparklines, trending badges (NEW) |
+| M4: Policy Scenario Engine | 🔲 Not started | Literature review → predefined UNOS scenarios (#23) |
+| M5: Validation & Reproducibility Pack | 🔲 Not started | Retrospective validation, bias audit, Jupyter notebooks (NEW) |
+
 ### What's NOT Done (Next Steps)
 
-- **Phase 3 COMPLETE** — all milestones shipped
+- **Phase 4 IN PROGRESS** — 5 milestones scoped (ADR-021), M1 first
 - **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
-- **Deferred:** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21), theme selection (Phase 7, #3)
+- **Deferred to Phase 5:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
+- **Deferred (no API):** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21), theme selection (Phase 7, #3)
 - **Infrastructure:** CI pipeline (#29) ✅, Docker Compose (#30) ✅ — both shipped
-- See `docs/roadmap.md` for full phased plan (5 phases through FDA clearance)
+- See `docs/roadmap.md` for full phased plan (Phase 4 detailed, Phase 5 expanded)
 - See `docs/ideas.md` for full SRS with architecture, governance, and regulatory details
 
 ## Issue Tracking
@@ -151,8 +164,9 @@ TransPlan/
   theme-switcher.js       <- Footer-mounted theme picker (6 themes: Default/Clinical/Research/Government/WinXP/2010s Flat)
   package.json            <- Node deps (xml2js, jest)
   README.md               <- User-facing docs
+  weight-config.js          <- Scoring weight sliders, presets, normalization, re-score trigger (Phase 4 M1)
   tests/                  <- Unit tests (Jest)
-    algorithm.test.js     <- 75 tests: all 8 scoring categories + comprehensive + COD multiplier
+    algorithm.test.js     <- 89 tests: all 8 scoring categories + comprehensive + COD multiplier + configurable weights
     utils.test.js         <- 23 tests: deepMerge, writeDataFile, mergeDataFile, CITIES
   data/                   <- JSON data files (seed + auto-updated)
     air-quality.json
@@ -213,7 +227,7 @@ TransPlan/
       equity.py           <- Demographic equity analysis (48 profiles × 22 cities, Gini coefficient)
       what_if.py          <- What-if scenario analysis (Monte Carlo with donor/wait multipliers)
       brier_score.py      <- Brier score calibration: Monte Carlo vs analytical validation
-    tests/                <- pytest suite (237 tests)
+    tests/                <- pytest suite (247 tests)
   docs/
     status.md             <- THIS FILE (read every session)
     ideas.md              <- Full SRS: requirements, architecture, FDA pathway

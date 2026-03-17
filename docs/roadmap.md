@@ -268,47 +268,141 @@
 
 ---
 
-## Phase 4: Advanced Modeling & Clinical Validation (Months 25-36 per SRS)
+## Phase 4: Advanced Modeling & Validation (ADR-021)
 
-> **Goal:** Publication-grade modeling, RCT, and FDA pathway preparation.
+> **Goal:** Deepen clinical accuracy and enable publication-grade validation. Transform TransPlan from "where to get a transplant fastest" to "where to get AND keep a transplant, with validated evidence."
+>
+> **Scoping decision (2026-03-16):** Original Phase 4 listed ~15 features (~1500+ hours). Scoped down to 5 milestones that build on existing infrastructure and directly support the publication goal. API access, SDKs, bulk analysis, and embeddable widgets deferred to Phase 5. See ADR-021 for full rationale.
 
-### Advanced Modeling
-- [ ] **Causal Policy Simulator (FR-9)** — research real elasticities from transplant literature (how donor supply changes propagate to wait times), build proper causal model in backend, support predefined UNOS policy scenarios (2021 kidney 250nm circles, 2023 continuous distribution) and user-defined parameter sweeps. Requires literature review + validated causal DAG before implementation.
-- [ ] Bayesian Belief Network layer (conditional probability graph for wait time)
-- [ ] Agent-based simulation (patient agents, donor pool, regional allocation)
-- [ ] Post-transplant survival estimator (1-year, 5-year graft survival)
-- [ ] Living donor matching optimization (geographic clustering, demographic match probability)
-- [ ] Historical trend analyzer (5-10 year changes in volumes, donor trends, waitlist mortality)
-- [ ] Regression overlays for trend data
+### M1: Configurable Scoring Weights (FR-4) — #22
 
-### FR-18: API Access
-- [ ] REST API for programmatic queries (FastAPI + Swagger docs)
-- [ ] Rate-limited research tier
-- [ ] Versioned API endpoints
-- [ ] API authentication and usage tracking
+> **Why:** Enables ablation studies ("what if we remove category X?") essential for any publication. Highest-demand researcher feature.
 
-### FR-19/FR-20: Export & Reports (core done in Phase 3 M5)
+- [ ] **Research mode**: weight sliders in Advanced Settings panel (8 categories, sum to 100%)
+- [ ] **Patient mode**: locked defaults with explanation tooltip
+- [ ] **Presets**: "Balanced" (current defaults), "Clinical Focus" (medical 35% + hospital 25%), "Speed" (wait time 30% + donor 25%), "Quality of Life" (geographic 20% + socio 15%)
+- [ ] Frontend: instant re-scoring for Phase 1 scores (no backend needed)
+- [ ] Backend: `custom_weights` field on `PatientProfile`, `POST /simulate` re-weights Monte Carlo city scoring
+- [ ] Validation: weights must sum to 100%, each clamped [0, 100%], error message if invalid
+- [ ] Weight change audit trail (session-level, logged to console/export)
+- [ ] Tests: weight edge cases (all on one category, zero weight, preset switching)
+
+**Key files:** `algorithm.js` (weights), `script.js` (form UI), `backend/models/schemas.py`, `backend/services/monte_carlo.py`
+**Depends on:** Nothing — fully independent, start immediately.
+
+### M2: Post-Transplant Outcomes Model — NEW
+
+> **Why:** "Getting a transplant" is half the story. Center-level graft survival data transforms TransPlan into a tool clinicians take seriously. Compound success metric (P(transplant) × P(1yr graft survival)) is a novel contribution.
+
+- [ ] **SRTR PSR Table B11 parsing**: extract observed vs expected 1-year graft/patient survival by center (6 organs × 22 cities)
+- [ ] New data file: `data/post-transplant-outcomes.json` — center performance ratios, observed/expected rates
+- [ ] Extend `scripts/parse-srtr-reports.py` to extract Table B11 (alongside existing B7/B10)
+- [ ] New backend service: `services/outcomes.py` — patient risk-adjusted survival estimate per city
+- [ ] **Compound success metric**: `P(transplant within 24mo) × P(1yr graft survival)` = overall success probability
+- [ ] New endpoint: `POST /outcomes` or extend `POST /simulate` response with outcomes data
+- [ ] Frontend: new section in city detail modal ("Post-Transplant Outlook")
+- [ ] Frontend: outcome metric displayed on probability city cards (e.g., "92% 1yr graft survival")
+- [ ] Disclaimers: center performance ratios are risk-adjusted averages, not individual predictions
+- [ ] Tests: outcomes parsing, compound metric math, edge cases (missing centers, small programs)
+
+**Key files:** `scripts/parse-srtr-reports.py`, `backend/services/outcomes.py` (new), `script.js` (modal), `probability-charts.js`
+**Depends on:** SRTR pipeline (proven in Phase 2 M5). Same Excel files, new table extraction.
+
+### M3: Historical Trends & Center Trajectories — NEW
+
+> **Why:** Centers change over time. "Is Cleveland getting better or worse for kidney transplants?" is critical context no existing tool provides. Adds temporal validity to the model.
+
+- [ ] **Multi-year SRTR PSR downloads**: fetch reports for 2019–2024 (6 years × 6 organs, if available)
+- [ ] Extend `scripts/fetch-srtr-excel.py` to download historical report versions
+- [ ] New data file: `data/srtr-historical.json` — time-series of wait times, volumes, outcomes per center per year
+- [ ] New backend service: `services/trends.py` — linear regression on center metrics, slope + significance
+- [ ] **Trending badge** on city cards: ↑ improving / → stable / ↓ declining (based on 3-year trajectory)
+- [ ] **Sparkline charts** in city detail modal: wait time trend, volume trend, outcomes trend (small inline charts)
+- [ ] New endpoint: `GET /trends/{city}` or include in `POST /simulate` response
+- [ ] Handle missing years gracefully (center may not have reported every year)
+- [ ] Tests: trend direction detection, regression edge cases, sparse data handling
+
+**Key files:** `scripts/fetch-srtr-excel.py`, `scripts/parse-srtr-reports.py`, `backend/services/trends.py` (new), `script.js` (badges + sparklines)
+**Depends on:** SRTR pipeline. Shares data work with M2 (both parse PSR Excel files).
+
+### M4: Policy Scenario Engine (FR-9 upgrade) — #23
+
+> **Why:** The hardest but most novel feature. Upgrades Phase 3 what-if sliders from raw multipliers to real UNOS policy scenarios with literature-backed elasticities. This is what makes TransPlan a research-grade tool.
+
+**Phase 1: Literature Review (before coding)**
+- [ ] Research SRTR historical wait times before/after 2021 kidney allocation policy change
+- [ ] Estimate empirical supply-to-wait elasticity from real data (validate/update 0.65 assumption)
+- [ ] Review transplant policy papers: OPTN continuous distribution, regional sharing rules, DCD expansion
+- [ ] Document causal model assumptions as a formal DAG (directed acyclic graph)
+
+**Phase 2: Predefined Scenarios**
+- [ ] **2021 Kidney 250nm circles**: donor pool +15-25% for small centers, -5% for large (geography-dependent)
+- [ ] **Continuous distribution**: points-based allocation, reduces geographic advantage (distance matters less)
+- [ ] **Increased DCD utilization**: organ supply +10-20% (expanded donation after circulatory death)
+- [ ] **Broader HCV+ acceptance**: donor pool +5-8% (hepatitis C positive donors with DAA treatment)
+- [ ] Each scenario maps to concrete per-city parameter adjustments (not just global multipliers)
+
+**Phase 3: Implementation**
+- [ ] Upgrade `POST /what-if` to accept structured `PolicyScenario` objects (not just raw multipliers)
+- [ ] New schema: `PolicyScenario` with name, description, per-city adjustments, literature references
+- [ ] Paired-seed comparison (baseline vs. scenario) — reuse Phase 3 M5 infrastructure
+- [ ] Frontend: scenario selector dropdown (predefined) + custom parameter builder
+- [ ] Side-by-side results: baseline vs scenario, delta highlighting, ranking changes
+- [ ] Tests: scenario application correctness, per-city vs global adjustments, edge cases
+
+**Key files:** `backend/services/what_if.py`, `backend/models/schemas.py`, `api-client.js`, `script.js`
+**Depends on:** Literature review (Weeks 2-4). Can research while M1-M2 are being coded.
+
+### M5: Validation & Reproducibility Pack — NEW
+
+> **Why:** This is what makes the model publishable. Retrospective validation against real outcomes, demographic bias audits, and reproducible Jupyter notebooks are standard requirements for medical informatics publications.
+
+- [ ] **Retrospective validation**: run model against historical SRTR cohorts, compare predicted vs actual wait times and outcomes
+- [ ] **Bias audit**: run equity analysis with expanded demographic profiles, document disparity patterns and magnitudes
+- [ ] **Calibration curves**: predicted P(transplant by X months) vs observed rates (extending Phase 2 M7 Brier scores)
+- [ ] **Jupyter notebooks** (3-5): one per major model component (wait times, competing risks, COD multiplier, outcomes, trends)
+- [ ] **Validation report**: auto-generated document with Brier scores, calibration plots, fairness metrics, sensitivity results
+- [ ] **Ablation study**: use M1 configurable weights to systematically test category importance
+- [ ] Export validation artifacts for paper supplementary materials (tables, figures, data)
+- [ ] **Reproducibility**: document exact software versions, data file hashes, RNG seeds for all validation runs
+
+**Key files:** New `notebooks/` directory, `backend/services/brier_score.py` (extend), `backend/services/equity.py` (extend)
+**Depends on:** M1-M4 stabilized. This is the capstone milestone.
+
+### Documentation
+- [x] User-facing "How It Works" page — Docusaurus docs site (completed Phase 2)
+- [x] Technical implementation guide — architecture docs in docs-site/
+- [x] FAQ page with transplant disclaimers — docs-site/docs/about/faq.md
+- [ ] Jupyter notebooks for model documentation — Phase 4 M5
 - [x] CSV/JSON data export — Phase 3 M5
 - [x] PDF reports with disclaimers — Phase 3 M5 (browser print-to-PDF)
 - [ ] Clinical export format for provider discussions
 
-### Clinical Validation
-- [x] Retrospective calibration (Brier score <0.001 for all 6 organs -- exceeded <0.2 target) — completed in Phase 2 M7
-- [ ] External validation against held-out SRTR cohort data
-- [ ] Bias audits across demographics
-- [ ] RCT design (n=200-500): does TransPlan improve patient decision quality?
-- [ ] Publication in transplant/health informatics journal
-
-### Insurance Compatibility Layer
-- [ ] Medicaid vs private transplant access differences by center
-- [ ] Regional insurance acceptance patterns
-- [ ] Payer-access analytics
+### Phase 4 Dependency Graph
+```
+M1 (Weights) ──────────── independent ─────────────────┐
+                                                        │
+M2 (Outcomes) ── SRTR Table B11 ────────────────────────┼──→ M5 (Validation)
+                                                        │
+M3 (Trends) ──── multi-year SRTR ───────────────────────┤
+                                                        │
+M4 (Policy) ──── literature review (weeks 2-4) ────────┘
+```
 
 ---
 
-## Phase 5: FDA Clearance & Scaling (Months 37+ per SRS)
+## Phase 5: Platform, Regulatory & Scaling
 
-> **Goal:** FDA clearance as SaMD, widespread adoption, sustainability.
+> **Goal:** Public API, FDA clearance as SaMD, widespread adoption, sustainability.
+> **Includes items deferred from Phase 4 scope-down (ADR-021).**
+
+### Platform API & Integrations (deferred from Phase 4)
+- [ ] **Public REST API with tiered access (FR-18)** — #24: API key auth, rate limiting, versioned endpoints, Swagger docs
+- [ ] **Python & JavaScript SDKs** — #25: client libraries wrapping TransPlan API (PyPI + npm)
+- [ ] **Policy scenario builder UI** — #26: interactive scenario creation extending M4 engine
+- [ ] **Institutional bulk analysis & cohort tools** — #27: CSV upload, batch simulation, cohort equity reports
+- [ ] **Embeddable widget / white-label integration** — #28: iframe/Web Component mini-calculator
+- [ ] Clinical export format for provider discussions
 
 ### Regulatory
 - [ ] FDA Q-submission for classification (Non-Device CDSS vs SaMD)
@@ -316,10 +410,21 @@
 - [ ] QMS documentation (21 CFR 820)
 - [ ] Risk management (ISO 14971)
 
+### Clinical Validation (continued from Phase 4 M5)
+- [ ] RCT design (n=200-500): does TransPlan improve patient decision quality?
+- [ ] Publication in transplant/health informatics journal
+- [ ] External validation with transplant center partners
+
 ### Deployment Modes
 - [ ] **Local/Offline Mode** (default): runs entirely in-browser, no PHI transmitted
 - [ ] **HIPAA-Compliant Cloud Mode** (clinical pilots): BAA-backed hosting, encryption, audit logging
 - [ ] Feature flags to build both modes from same codebase
+
+### Advanced Modeling (deferred from Phase 4)
+- [ ] Bayesian Belief Network layer (conditional probability graph for wait time)
+- [ ] Agent-based simulation (patient agents, donor pool, regional allocation)
+- [ ] Living donor matching optimization (geographic clustering, demographic match probability)
+- [ ] Insurance compatibility layer (Medicaid vs private access patterns)
 
 ### Scaling
 - [ ] EHR integration (post-FDA)

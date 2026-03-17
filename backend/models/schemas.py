@@ -1,6 +1,6 @@
 """Pydantic schemas for TransPlan Phase 2 API."""
 from typing import Literal, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class PatientProfile(BaseModel):
@@ -27,6 +27,35 @@ class PatientProfile(BaseModel):
         False,
         description="Apply organ-specific donor recovery rates based on regional cause-of-death patterns"
     )
+    # Phase 4 M1: Configurable scoring weights (frontend concern, passed through for export fidelity)
+    custom_weights: Optional[dict[str, float]] = Field(
+        None,
+        description="Custom scoring weights as { category: decimal_fraction }. 8 keys, all >= 0, sum ~1.0"
+    )
+
+    @model_validator(mode="after")
+    def validate_custom_weights(self):
+        w = self.custom_weights
+        if w is None:
+            return self
+        expected_keys = {
+            "medicalCompatibility", "waitTime", "donorAvailability", "hospitalQuality",
+            "geographic", "healthDemographics", "policy", "socioeconomic"
+        }
+        if set(w.keys()) != expected_keys:
+            raise ValueError(
+                f"custom_weights must have exactly these keys: {sorted(expected_keys)}; "
+                f"got: {sorted(w.keys())}"
+            )
+        for k, v in w.items():
+            if v < 0:
+                raise ValueError(f"custom_weights['{k}'] must be >= 0, got {v}")
+        total = sum(w.values())
+        if total <= 0 or abs(total - 1.0) > 0.05:
+            raise ValueError(
+                f"custom_weights must sum to ~1.0 (tolerance ±0.05), got {total}"
+            )
+        return self
 
 
 class CityProbability(BaseModel):

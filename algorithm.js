@@ -21,6 +21,34 @@
 // Scoring functions read from window.TransPlanData (populated by data-loader.js).
 // L-024: Removed ~140 lines of duplicate inline constants that drifted from DEFAULTS.
 
+// ==================== DEFAULT WEIGHTS ====================
+
+const DEFAULT_WEIGHTS = {
+    medicalCompatibility: 0.25,
+    waitTime: 0.20,
+    donorAvailability: 0.18,
+    hospitalQuality: 0.15,
+    geographic: 0.10,
+    healthDemographics: 0.07,
+    policy: 0.03,
+    socioeconomic: 0.02
+};
+
+// Category display labels (used by weight UI and charts)
+const CATEGORY_LABELS = {
+    medicalCompatibility: 'Medical Compatibility',
+    waitTime: 'Wait Time',
+    donorAvailability: 'Donor Availability',
+    hospitalQuality: 'Hospital Quality',
+    geographic: 'Geographic',
+    healthDemographics: 'Health Demographics',
+    policy: 'Policy',
+    socioeconomic: 'Socioeconomic'
+};
+
+// Ordered list of category keys (canonical order for serialization)
+const CATEGORY_KEYS = Object.keys(DEFAULT_WEIGHTS);
+
 // ==================== SCORING FUNCTIONS ====================
 
 /**
@@ -412,17 +440,22 @@ function calculateSocioeconomicScore(city) {
 
 // ==================== MASTER CALCULATION FUNCTION ====================
 
-function calculateComprehensiveScore(formData, cityName, stateName, organType) {
-    const weights = {
-        medicalCompatibility: 0.25,
-        waitTime: 0.20,
-        donorAvailability: 0.18,
-        hospitalQuality: 0.15,
-        geographic: 0.10,
-        healthDemographics: 0.07,
-        policy: 0.03,
-        socioeconomic: 0.02
-    };
+function calculateComprehensiveScore(formData, cityName, stateName, organType, customWeights) {
+    // Use custom weights if valid (all 8 keys present, all numeric), otherwise defaults
+    var weights = DEFAULT_WEIGHTS;
+    if (customWeights && typeof customWeights === 'object') {
+        var valid = CATEGORY_KEYS.every(function(k) {
+            return typeof customWeights[k] === 'number' && customWeights[k] >= 0;
+        });
+        if (valid) {
+            // Normalize to sum=1.0 (safety net for floating-point drift)
+            var sum = CATEGORY_KEYS.reduce(function(s, k) { return s + customWeights[k]; }, 0);
+            if (sum > 0) {
+                weights = {};
+                CATEGORY_KEYS.forEach(function(k) { weights[k] = customWeights[k] / sum; });
+            }
+        }
+    }
 
     const scores = {
         medicalCompatibility: calculateMedicalCompatibilityScore(formData, cityName, organType),
@@ -458,6 +491,9 @@ if (typeof module !== 'undefined' && module.exports) {
         calculateGeographicScore,
         calculateHealthDemographicsScore,
         calculatePolicyScore,
-        calculateSocioeconomicScore
+        calculateSocioeconomicScore,
+        DEFAULT_WEIGHTS,
+        CATEGORY_LABELS,
+        CATEGORY_KEYS
     };
 }

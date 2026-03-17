@@ -517,6 +517,132 @@ main {
   line-height: 1.5;
 }
 
+/* ==================== Scoring Weights ==================== */
+
+.weights-controls {
+  margin-top: var(--space-2);
+}
+
+.weights-mode-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.weights-preset-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.weights-preset-group label {
+  font-size: var(--fs-xs);
+  margin-bottom: 2px;
+}
+
+.weights-sum {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  font-family: var(--font-mono, monospace);
+  white-space: nowrap;
+}
+
+.weights-sum-ok {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.weights-sum-err {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.weights-controls details {
+  margin-top: var(--space-2);
+}
+
+.weights-controls summary {
+  cursor: pointer;
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  user-select: none;
+}
+
+.weights-controls summary:hover {
+  color: var(--color-primary-700);
+}
+
+.weights-sliders {
+  margin-top: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.weight-slider-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 42px 28px;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 2px 0;
+}
+
+.weight-slider-label {
+  font-size: var(--fs-xs);
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.weight-slider {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  accent-color: var(--color-primary-700);
+}
+
+.weight-value {
+  font-size: var(--fs-xs);
+  font-family: var(--font-mono, monospace);
+  text-align: right;
+  color: var(--text-1);
+  font-weight: 600;
+}
+
+.weight-lock-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.weight-lock {
+  display: none;
+}
+
+.weight-lock-icon {
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.weight-lock:checked + .weight-lock-icon {
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .weight-slider-row {
+    grid-template-columns: 110px 1fr 36px 24px;
+    gap: var(--space-1);
+  }
+}
+
 /* Submit button */
 .submit-btn {
   display: block;
