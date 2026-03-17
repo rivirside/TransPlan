@@ -144,7 +144,7 @@
   --radius-full: 9999px;
 
   /* Dense typography */
-  --font-heading: 'Inter', -apple-system, sans-serif;
+  --font-heading: 'IBM Plex Sans', -apple-system, sans-serif;
   --line-height-body: 1.5;
   --fs-3xl: 1.75rem;
   --fs-2xl: 1.375rem;
@@ -387,7 +387,7 @@
   --radius-full: 9999px;
 
   /* Editorial typography */
-  --font-heading: 'Lora', Georgia, 'Times New Roman', serif;
+  --font-heading: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
   --line-height-body: 1.8;
   --fs-3xl: 2.5rem;
   --fs-2xl: 1.875rem;
