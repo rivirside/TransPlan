@@ -410,6 +410,13 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **File:** `backend/services/monte_carlo.py` line ~177
 - **Fix:** Use a sub-linear scaling function (e.g., `wait_time / cod_mult^0.7`) or calibrate the elasticity against SRTR historical data.
 
+### L-057: Pancreas lacks adult graft survival data in SRTR
+- **Severity:** LOW
+- **Status:** MITIGATED (March 2026)
+- **Details:** SRTR Program-Specific Reports do not publish adult pancreas graft survival rates. The `GSR_AD_ACT_C1Y` column in the PA.xls C-series table is empty for all 331 rows. This is because most pancreas transplants are simultaneous kidney-pancreas (SPK), and graft outcomes are tracked under the kidney organ file. As a result, `get_graft_survival_1yr("pancreas", ...)` returns `None` for all cities. The compound success metric falls back to patient survival (96.6% national) with an annotation (`compound_success_note`). This is clinically reasonable — pancreas patient survival is a valid proxy — but it means pancreas compound success is not directly comparable to other organs where graft survival is used.
+- **File:** `backend/services/outcomes.py` lines 142-149, `data/post-transplant-outcomes.json`
+- **Fix:** Future work could extract SPK graft survival from the kidney file and attribute it to pancreas centers, or use OPTN View Data Reports which may publish pancreas-specific graft data separately. Low priority since the patient survival fallback is clinically sound.
+
 ---
 
 ## Resolution Log

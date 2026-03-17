@@ -236,7 +236,7 @@ TransPlan/
     design.md             <- Read when touching UI/UX/CSS
     adr-log.md            <- Grep-searchable decision log
     roadmap.md            <- Phased development plan (5 phases)
-    limitations.md        <- Issue tracker (56 items, L-001 through L-056)
+    limitations.md        <- Issue tracker (57 items, L-001 through L-057)
     brand-bible.md        <- Grep-searchable visual identity
 ```
 
@@ -257,7 +257,7 @@ TransPlan/
 
 ## Known Limitations
 
-**56 tracked issues** in `docs/limitations.md`. Read when auditing data quality or planning future work.
+**57 tracked issues** in `docs/limitations.md`. Read when auditing data quality or planning future work.
 
 | Status | Count | Details |
 |--------|-------|---------|
