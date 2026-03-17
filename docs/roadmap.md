@@ -290,23 +290,25 @@
 **Key files:** `algorithm.js` (weights), `script.js` (form UI), `backend/models/schemas.py`, `backend/services/monte_carlo.py`
 **Depends on:** Nothing — fully independent, start immediately.
 
-### M2: Post-Transplant Outcomes Model — NEW
+### M2: Post-Transplant Outcomes Model ✅ DONE
 
 > **Why:** "Getting a transplant" is half the story. Center-level graft survival data transforms TransPlan into a tool clinicians take seriously. Compound success metric (P(transplant) × P(1yr graft survival)) is a novel contribution.
 
-- [ ] **SRTR PSR Table B11 parsing**: extract observed vs expected 1-year graft/patient survival by center (6 organs × 22 cities)
-- [ ] New data file: `data/post-transplant-outcomes.json` — center performance ratios, observed/expected rates
-- [ ] Extend `scripts/parse-srtr-reports.py` to extract Table B11 (alongside existing B7/B10)
-- [ ] New backend service: `services/outcomes.py` — patient risk-adjusted survival estimate per city
-- [ ] **Compound success metric**: `P(transplant within 24mo) × P(1yr graft survival)` = overall success probability
-- [ ] New endpoint: `POST /outcomes` or extend `POST /simulate` response with outcomes data
-- [ ] Frontend: new section in city detail modal ("Post-Transplant Outlook")
-- [ ] Frontend: outcome metric displayed on probability city cards (e.g., "92% 1yr graft survival")
-- [ ] Disclaimers: center performance ratios are risk-adjusted averages, not individual predictions
-- [ ] Tests: outcomes parsing, compound metric math, edge cases (missing centers, small programs)
+- [x] **SRTR PSR Tables C5-C12 / C11-C20 parsing**: extract graft/patient survival, hazard ratios, 95% CI, performance ratings (6 organs × 22 cities)
+- [x] New data file: `data/post-transplant-outcomes.json` — center graft/patient survival, HR, CI, performance ratings, national baselines
+- [x] Extend `scripts/parse-srtr-reports.py` to extract C-series tables (alongside existing B7/B10)
+- [x] New backend service: `services/outcomes.py` — survival lookup with center→national fallback, compound success computation
+- [x] **Compound success metric**: `P(transplant within 24mo) × P(1yr graft survival)` = overall success probability
+- [x] Extended `POST /simulate` response: outcomes dict attached to each CityProbability
+- [x] Frontend: "Post-Transplant Outlook" section in city detail modal (5-cell outcome grid, performance badge)
+- [x] Frontend: graft survival + compound success on probability cards, outcomes in comparison table
+- [x] Disclaimers: risk-adjusted Bayesian hierarchical estimates, not individual predictions
+- [x] Export: outcomes in CSV (4 columns), JSON (pass-through), PDF (2 columns)
+- [x] Tests: 35 new pytest (282 total) — baselines, city outcomes, survival helpers, compound metric, build_outcomes_dict
+- [x] Pancreas handling: no adult graft survival in SRTR; falls back to patient survival with annotation
 
-**Key files:** `scripts/parse-srtr-reports.py`, `backend/services/outcomes.py` (new), `script.js` (modal), `probability-charts.js`
-**Depends on:** SRTR pipeline (proven in Phase 2 M5). Same Excel files, new table extraction.
+**Key files:** `scripts/parse-srtr-reports.py`, `backend/services/outcomes.py`, `script.js`, `export-handler.js`
+**Completed:** March 2026. GitHub issue #31.
 
 ### M3: Historical Trends & Center Trajectories — NEW
 
@@ -382,7 +384,7 @@
 ```
 M1 (Weights) ──────────── independent ─────────────────┐
                                                         │
-M2 (Outcomes) ── SRTR Table B11 ────────────────────────┼──→ M5 (Validation)
+M2 (Outcomes) ── SRTR C-series ── ✅ DONE ──────────────┼──→ M5 (Validation)
                                                         │
 M3 (Trends) ──── multi-year SRTR ───────────────────────┤
                                                         │

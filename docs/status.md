@@ -10,7 +10,7 @@ A patient-facing clinical decision support tool that helps transplant patients i
 
 Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 237 pytest tests passing. Phase 3 M1-M5 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
-**Phase 4 in progress (March 2026):** 5 milestones scoped (ADR-021). Goal: deepen clinical accuracy and enable publication-grade validation. M1 (Configurable Weights) complete — 4 presets, 8 sliders with auto-normalization + locks, URL/export round-trip, backend pass-through for fidelity. 112 Jest, 247 pytest.
+**Phase 4 in progress (March 2026):** 5 milestones scoped (ADR-021). Goal: deepen clinical accuracy and enable publication-grade validation. M1 (Configurable Weights) complete. M2 (Post-Transplant Outcomes) complete — SRTR PSR graft/patient survival (C-series tables), compound success metric, performance ratings, frontend display + export. 112 Jest, 282 pytest.
 
 **Data Quality Sprint (March 2026):** 6 of 8 COD model issues resolved:
 - L-055: Expanded state COD proportions from 17 to all 50 states + DC (CDC SODA API, donor-eligibility calibration)
@@ -100,14 +100,14 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | Milestone | Status | Notes |
 |-----------|--------|-------|
 | M1: Configurable Scoring Weights | ✅ Done | Weight sliders, 4 presets, auto-normalization, lock, URL/export round-trip, 14 Jest + 10 pytest (#22) |
-| M2: Post-Transplant Outcomes Model | 🔲 Not started | SRTR Table B11, compound success metric (NEW) |
+| M2: Post-Transplant Outcomes Model | ✅ Done | SRTR PSR C-series graft/patient survival, compound success metric, performance ratings, 35 pytest (#31) |
 | M3: Historical Trends & Trajectories | 🔲 Not started | Multi-year SRTR, sparklines, trending badges (NEW) |
 | M4: Policy Scenario Engine | 🔲 Not started | Literature review → predefined UNOS scenarios (#23) |
 | M5: Validation & Reproducibility Pack | 🔲 Not started | Retrospective validation, bias audit, Jupyter notebooks (NEW) |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 4 IN PROGRESS** — 5 milestones scoped (ADR-021), M1 first
+- **Phase 4 IN PROGRESS** — 5 milestones scoped (ADR-021), M1-M2 done, M3 next
 - **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred to Phase 5:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
@@ -177,6 +177,7 @@ TransPlan/
     traffic-fatalities.json
     wait-time-distributions.json  <- Log-normal params from SRTR Table B10
     competing-risks.json          <- Mortality/delisting from SRTR Table B7
+    post-transplant-outcomes.json <- Graft/patient survival from SRTR Tables C5-C20 (Phase 4 M2)
     cause-of-death-by-region.json <- Organ recovery rates × state COD proportions (M2)
     srtr-center-mapping.json      <- SRTR center codes → 22 TransPlan cities
     srtr-raw/                     <- Downloaded SRTR Excel files (gitignored)
@@ -196,7 +197,7 @@ TransPlan/
     check-srtr-updates.js     <- SRTR website hash check
     validate-data.js          <- Post-fetch validation
     fetch-srtr-excel.py       <- Download SRTR PSR Excel files (6 organs)
-    parse-srtr-reports.py     <- Parse Excel → wait-time-distributions.json + competing-risks.json
+    parse-srtr-reports.py     <- Parse Excel → wait-time-distributions.json + competing-risks.json + post-transplant-outcomes.json
   .github/workflows/
     ci.yml                <- CI: 3 parallel jobs (pytest, Jest, data validation) on push/PR to main
     fetch-data.yml        <- Weekly data fetch (Mon 6am UTC)
@@ -227,7 +228,8 @@ TransPlan/
       equity.py           <- Demographic equity analysis (48 profiles × 22 cities, Gini coefficient)
       what_if.py          <- What-if scenario analysis (Monte Carlo with donor/wait multipliers)
       brier_score.py      <- Brier score calibration: Monte Carlo vs analytical validation
-    tests/                <- pytest suite (247 tests)
+      outcomes.py         <- Post-transplant outcomes: graft/patient survival, compound success (Phase 4 M2)
+    tests/                <- pytest suite (282 tests)
   docs/
     status.md             <- THIS FILE (read every session)
     ideas.md              <- Full SRS: requirements, architecture, FDA pathway
