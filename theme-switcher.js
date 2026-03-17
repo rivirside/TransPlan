@@ -30,30 +30,28 @@
   }
 
   function buildSwitcher() {
-    if (!SHOW_SWITCHER) return; // Hidden — flip SHOW_SWITCHER to re-enable
+    if (!SHOW_SWITCHER) return;
+
+    // Mount into footer container if available, else append to body
+    var mount = document.getElementById('theme-switcher-mount');
+
     var bar = document.createElement('div');
     bar.id = 'theme-switcher';
     bar.style.cssText = [
-      'position: fixed',
-      'bottom: 56px',
-      'right: 16px',
-      'z-index: 10000',
       'display: flex',
+      'flex-wrap: wrap',
       'gap: 6px',
-      'padding: 8px 12px',
-      'background: rgba(255,255,255,0.95)',
-      'backdrop-filter: blur(8px)',
-      'border: 1px solid #ddd',
-      'border-radius: 8px',
-      'box-shadow: 0 4px 16px rgba(0,0,0,0.12)',
+      'padding: 10px 0',
+      'margin-top: 8px',
       'font-family: Inter, system-ui, sans-serif',
       'font-size: 12px',
-      'align-items: center'
+      'align-items: center',
+      'justify-content: center'
     ].join('; ');
 
     var label = document.createElement('span');
     label.textContent = 'Theme:';
-    label.style.cssText = 'color: #666; font-weight: 600; margin-right: 4px;';
+    label.style.cssText = 'color: #999; font-weight: 600; margin-right: 4px;';
     bar.appendChild(label);
 
     THEMES.forEach(function (theme) {
@@ -62,10 +60,10 @@
       btn.dataset.themeId = theme.id;
       btn.style.cssText = [
         'padding: 4px 10px',
-        'border: 1px solid #ccc',
+        'border: 1px solid rgba(255,255,255,0.2)',
         'border-radius: 4px',
-        'background: white',
-        'color: #333',
+        'background: rgba(255,255,255,0.1)',
+        'color: #ccc',
         'cursor: pointer',
         'font-size: 11px',
         'font-weight: 500',
@@ -81,7 +79,20 @@
       bar.appendChild(btn);
     });
 
-    document.body.appendChild(bar);
+    if (mount) {
+      mount.appendChild(bar);
+    } else {
+      // Fallback: fixed position if no mount point
+      bar.style.position = 'fixed';
+      bar.style.bottom = '16px';
+      bar.style.right = '16px';
+      bar.style.zIndex = '10000';
+      bar.style.background = 'rgba(255,255,255,0.95)';
+      bar.style.padding = '8px 12px';
+      bar.style.borderRadius = '8px';
+      bar.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
+      document.body.appendChild(bar);
+    }
     updateActive(bar, activeTheme);
   }
 
@@ -105,9 +116,9 @@
         btn.style.color = 'white';
         btn.style.borderColor = theme.color;
       } else {
-        btn.style.background = 'white';
-        btn.style.color = '#333';
-        btn.style.borderColor = '#ccc';
+        btn.style.background = 'rgba(255,255,255,0.1)';
+        btn.style.color = '#ccc';
+        btn.style.borderColor = 'rgba(255,255,255,0.2)';
       }
     });
   }
