@@ -1,0 +1,14 @@
+services:
+  transplan:
+    build: .
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - TRANSPLAN_PORT=8002
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

@@ -1,0 +1,15 @@
+node_modules/
+backend/.venv/
+backend/tests/
+data/srtr-raw/
+docs/
+docs-site/
+tests/
+.git/
+.github/
+TransPlan.app/
+*.command
+.transplan.pid
+.claude/
+__pycache__/
+*.pyc
