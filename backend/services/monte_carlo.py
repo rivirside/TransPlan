@@ -270,14 +270,14 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
         # Phase 4 M2: Attach post-transplant outcomes if available
         outcomes_data = None
         try:
-            outcomes_data = build_outcomes_dict(organ, city, p_24)
+            outcomes_data = build_outcomes_dict(patient.organ, city, p_24)
         except Exception:
             pass  # Graceful degradation if outcomes data unavailable
 
         # Phase 4 M3: Attach historical trends if available
         trends_data = None
         try:
-            trends_data = get_city_trends(organ, city)
+            trends_data = get_city_trends(patient.organ, city)
         except Exception:
             pass  # Graceful degradation if trends data unavailable
 

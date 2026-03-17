@@ -3132,16 +3132,7 @@ function _aggregateDimension(cities, dimKey) {
 
 // ==================== M3: City Detail Modal ====================
 
-const CATEGORY_LABELS = {
-    medicalCompatibility: 'Medical Compatibility',
-    waitTime: 'Wait Time',
-    donorAvailability: 'Donor Availability',
-    hospitalQuality: 'Hospital Quality',
-    geographic: 'Geographic',
-    healthDemographics: 'Health Demographics',
-    policy: 'Policy',
-    socioeconomic: 'Socioeconomic'
-};
+// CATEGORY_LABELS is already declared in algorithm.js (loaded before script.js)
 
 const CATEGORY_WEIGHTS = {
     medicalCompatibility: 25,
