@@ -103,11 +103,11 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | M2: Post-Transplant Outcomes Model | ✅ Done | SRTR PSR C-series graft/patient survival, compound success metric, performance ratings, 35 pytest (#31) |
 | M3: Historical Trends & Trajectories | ✅ Done | Multi-year SRTR (2019-2025), linregress trends, sparkline charts, trending badges, 51 pytest (ADR-022) |
 | M4: Policy Scenario Engine | 🔲 Not started | Literature review → predefined UNOS scenarios (#23) |
-| M5: Validation & Reproducibility Pack | 🔨 In progress | Jupyter notebooks (2/6 done), multi-horizon Brier scores, figures dir |
+| M5: Validation & Reproducibility Pack | ✅ Done | 6 Jupyter notebooks (wait-time, competing-risks, COD-multiplier, outcomes, trends, equity), bias audit service (19 pytest), 39 figures |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 4 IN PROGRESS** — 5 milestones scoped (ADR-021), M1-M3 done, M4 next
+- **Phase 4 IN PROGRESS** — 5 milestones scoped (ADR-021), M1-M3 + M5 done, M4 remaining
 - **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred to Phase 5:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)

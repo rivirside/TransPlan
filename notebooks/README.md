@@ -12,10 +12,10 @@ Reproducible Jupyter notebooks documenting each major model component of the Tra
 |---|----------|-----------------|--------|
 | 01 | `01-wait-time-distributions.ipynb` | Log-normal wait time model | Done |
 | 02 | `02-competing-risks.ipynb` | Mortality/delisting competing events | Done |
-| 03 | `03-cod-multiplier.ipynb` | Cause-of-death donor availability | Planned |
-| 04 | `04-post-transplant-outcomes.ipynb` | Graft/patient survival model | Planned |
-| 05 | `05-calibration-validation.ipynb` | Brier scores & calibration curves | Planned |
-| 06 | `06-full-validation-report.ipynb` | Capstone: all metrics + bias audit | Planned |
+| 03 | `03-cod-multiplier.ipynb` | COD donor availability model (Beta-distributed recovery rates, state proportions, elasticity) | Done |
+| 04 | `04-post-transplant-outcomes.ipynb` | Graft/patient survival, compound success metric, performance ratings | Done |
+| 05 | `05-historical-trends.ipynb` | Multi-year SRTR trends (2019-2025), regression quality, COVID impact | Done |
+| 06 | `06-equity-analysis.ipynb` | Demographic equity (48-profile matrix, Gini, Cohen's d, disparity decomposition) | Done |
 
 ## Setup
 
@@ -39,4 +39,4 @@ jupyter notebook
 
 ## Data Dependencies
 
-Notebooks import from the TransPlan backend services and data files. The `sys.path` setup at the top of each notebook adds `backend/` to the Python path so that `from services.distributions import ...` works directly.
+Notebooks 01-04 import from the TransPlan backend services and data files. The `sys.path` setup at the top of each notebook adds `backend/` to the Python path so that `from services.distributions import ...` works directly. Notebooks 05-06 are fully standalone (no backend imports) — they load JSON data directly and reimplement computations locally for maximum reproducibility.
