@@ -2606,6 +2606,62 @@ main {
   margin-top: var(--space-3);
 }
 
+/* Phase 4 M4: Policy scenario selector */
+.policy-scenario-controls {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: var(--space-3);
+  align-items: end;
+  margin-bottom: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+}
+.policy-scenario-select-group label,
+.policy-scenario-city-select label {
+  display: block;
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  color: var(--text-1);
+  margin-bottom: var(--space-1);
+}
+.policy-scenario-select-group select,
+.policy-scenario-city-select select {
+  width: 100%;
+}
+.policy-scenario-info {
+  padding: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-3);
+}
+.policy-scenario-desc {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  line-height: 1.5;
+  margin: 0 0 var(--space-2) 0;
+}
+.policy-scenario-refs li,
+.policy-scenario-caveats li {
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  line-height: 1.4;
+  margin-bottom: var(--space-1);
+}
+.policy-scenario-result-header {
+  font-weight: 700;
+  font-size: var(--fs-base);
+  color: var(--text-1);
+  margin-bottom: var(--space-2);
+}
+@media (max-width: 640px) {
+  .policy-scenario-controls {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .what-if-controls {
     grid-template-columns: 1fr;

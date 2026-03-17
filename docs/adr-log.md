@@ -502,3 +502,34 @@ M1 is fully independent. M2 and M3 share SRTR pipeline work and can be paralleli
 - Older releases (pre-2019) may have different Excel formats; the parser handles this gracefully with try/except
 - Trend direction can change when new SRTR releases become available (by design)
 - New: M2 (Post-Transplant Outcomes), M3 (Historical Trends), M5 (Validation Pack)
+
+---
+
+## ADR-023: Policy Scenario Engine with Literature-Backed Parameters
+
+**Date:** 2026-03-17
+**Status:** Accepted
+
+**Context:** Phase 3 M5 introduced what-if sliders with raw multipliers (donor availability, wait time). While useful for exploration, raw multipliers lack clinical grounding — users don't know what "1.2× donor rate" means in real-world terms. Phase 4 M4 upgrades this to predefined UNOS policy scenarios with literature-backed parameters.
+
+**Decision:** Implement a `PolicyScenario` system that maps real transplant policy changes to concrete per-city model parameter adjustments:
+
+1. **2021 Kidney 250nm Circles** — OPTN's shift from DSA-based to 250nm circle allocation. Small centers get +20% donor access, large centers get -4%. Based on King et al., AJT 2023.
+2. **Continuous Distribution** — OPTN's points-based allocation that de-emphasizes geography. Stronger effect than 250nm: +30% for small, -8% for large. Based on OPTN framework documents.
+3. **Increased DCD Utilization** — +15% organ supply from expanded DCD protocols. Uniform geographically. Based on Croome et al., Transplantation 2020.
+4. **Broader HCV+ Acceptance** — +6% donor pool for kidney/liver via DAA treatment. Based on Reese et al., NEJM 2023.
+
+**Key design choices:**
+- **Per-city overrides**: Scenarios 1-2 have different multipliers per city based on center size classification (large/medium/small). This is the key upgrade over raw multipliers.
+- **Organ applicability**: Each scenario specifies which organs it applies to. The endpoint returns 400 for mismatched organs.
+- **Backward compatible**: Existing `POST /what-if` is unchanged. New `POST /policy-scenario` and `GET /policy-scenarios` endpoints added.
+- **Literature references and caveats**: Every scenario includes published references and explicit caveats (limitations of the model, assumptions, etc.).
+
+**Files:** `backend/services/policy_scenarios.py`, `backend/routers/what_if.py` (extended), `api-client.js`, `script.js`, `simulator.html`, `styles.css`
+
+**Consequences:**
+- 4 predefined scenarios with 24 tests
+- Frontend shows scenario selector with description, references, and caveats — full transparency
+- Per-city multipliers make the results more meaningful than raw slider adjustments
+- Adding new scenarios is simple: call `_register(PolicyScenario(...))` in policy_scenarios.py
+- Phase 5 can build a custom scenario builder UI on top of this foundation

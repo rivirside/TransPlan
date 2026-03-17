@@ -236,6 +236,71 @@
   }
 
   /**
+   * Fetch available policy scenarios from GET /policy-scenarios.
+   * @param {string} [organ] - Optional organ filter
+   * @returns {Promise<Array|null>} List of PolicyScenario objects or null
+   */
+  async function policyScenarios(organ) {
+    var base = getBaseUrl();
+    var url = base + '/policy-scenarios';
+    if (organ) url += '?organ=' + encodeURIComponent(organ);
+    try {
+      var response = await fetch(url, {
+        method: 'GET',
+        signal: AbortSignal.timeout(5000)
+      });
+      if (!response.ok) return null;
+      return await response.json();
+    } catch (err) {
+      return null;
+    }
+  }
+
+  /**
+   * Run a policy scenario analysis via POST /policy-scenario.
+   * @param {Object} formData - Raw form data from the frontend
+   * @param {string} scenarioId - ID of the predefined policy scenario
+   * @param {string} city - City to analyze
+   * @param {number} [iterations] - Monte Carlo iterations (default 500)
+   * @returns {Promise<Object|null>} PolicyScenarioResult or null
+   */
+  async function policyScenario(formData, scenarioId, city, iterations) {
+    var base = getBaseUrl();
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
+
+    try {
+      var body = {
+        patient: normalizeFormData(formData),
+        scenario_id: scenarioId,
+        city: city || 'Nashville',
+        iterations: iterations || 500
+      };
+      var response = await fetch(base + '/policy-scenario', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        console.warn('TransPlan Policy Scenario API error:', response.status, response.statusText);
+        return null;
+      }
+
+      return await response.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        console.warn('TransPlan Policy Scenario API timeout after', API_TIMEOUT_MS, 'ms');
+      }
+      return null;
+    }
+  }
+
+  /**
    * Check if the backend is reachable (GET /health).
    * @returns {Promise<boolean>}
    */
@@ -258,6 +323,8 @@
     sensitivity: sensitivity,
     equityAnalysis: equityAnalysis,
     whatIf: whatIf,
+    policyScenarios: policyScenarios,
+    policyScenario: policyScenario,
     isBackendAvailable: isBackendAvailable,
     normalizeFormData: normalizeFormData
   };

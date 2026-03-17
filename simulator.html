@@ -572,8 +572,41 @@
                     <!-- Phase 3 M5: What-If Scenario Sliders -->
                     <div class="charts-section" id="whatIfSection" style="display:none">
                         <h3>What-If Scenario Analysis</h3>
-                        <p class="chart-description">Adjust model assumptions to explore how changes in donor availability or base wait times would affect your transplant probability. Each slider triggers a full Monte Carlo re-simulation — results are not interpolated.</p>
+                        <p class="chart-description">Explore how UNOS policy changes or model assumption adjustments would affect your transplant probability. Choose a predefined policy scenario or adjust raw multipliers manually. Each analysis triggers a full Monte Carlo re-simulation.</p>
 
+                        <!-- Phase 4 M4: Policy Scenario Selector -->
+                        <div class="policy-scenario-section" id="policyScenarioSection">
+                            <h4>Policy Scenarios</h4>
+                            <div class="policy-scenario-controls">
+                                <div class="policy-scenario-select-group">
+                                    <label for="policyScenarioSelect">Predefined Scenario</label>
+                                    <select id="policyScenarioSelect" aria-label="Select a UNOS policy scenario">
+                                        <option value="">Select a policy scenario...</option>
+                                    </select>
+                                </div>
+                                <div class="policy-scenario-city-select">
+                                    <label for="policyScenarioCity">City</label>
+                                    <select id="policyScenarioCity" aria-label="City for policy scenario">
+                                        <option value="">Top-ranked city</option>
+                                    </select>
+                                </div>
+                                <button type="button" id="policyScenarioRunBtn" class="btn btn-secondary" disabled>
+                                    Run Policy Scenario
+                                </button>
+                            </div>
+                            <div id="policyScenarioInfo" class="policy-scenario-info" style="display:none">
+                                <p id="policyScenarioDesc" class="policy-scenario-desc"></p>
+                                <details>
+                                    <summary>References &amp; Caveats</summary>
+                                    <ul id="policyScenarioRefs" class="policy-scenario-refs"></ul>
+                                    <ul id="policyScenarioCaveats" class="policy-scenario-caveats"></ul>
+                                </details>
+                            </div>
+                            <div id="policyScenarioResults" class="what-if-results" style="display:none" aria-live="polite"></div>
+                        </div>
+
+                        <hr style="margin: 1.5rem 0; border-color: var(--border-color, #ddd);">
+                        <h4>Manual Multipliers</h4>
                         <div class="what-if-controls">
                             <div class="what-if-slider-group">
                                 <label for="whatIfDonorRate">

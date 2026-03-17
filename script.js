@@ -2609,6 +2609,8 @@ function renderProbabilityView(simResult, formData) {
 
         // What-If scenario sliders — show section and populate city dropdown
         _initWhatIfSliders(simResult, formData);
+        // Phase 4 M4: Policy scenario selector
+        _initPolicyScenarios(simResult, formData);
     }, 200);
 }
 
@@ -2659,6 +2661,151 @@ function _initWhatIfSliders(simResult, formData) {
             _runWhatIfAnalysis(simResult, formData);
         };
     }
+}
+
+
+/**
+ * Initialize the policy scenario selector (Phase 4 M4).
+ * Fetches available scenarios from the backend and wires the UI.
+ */
+function _initPolicyScenarios(simResult, formData) {
+    var section = document.getElementById('policyScenarioSection');
+    if (!section || !window.TransPlanAPI || !window.TransPlanAPI.policyScenarios) return;
+    if (!simResult || !simResult.cities) return;
+
+    var scenarioSelect = document.getElementById('policyScenarioSelect');
+    var citySelect = document.getElementById('policyScenarioCity');
+    var runBtn = document.getElementById('policyScenarioRunBtn');
+    var infoDiv = document.getElementById('policyScenarioInfo');
+    var descEl = document.getElementById('policyScenarioDesc');
+    var refsEl = document.getElementById('policyScenarioRefs');
+    var caveatsEl = document.getElementById('policyScenarioCaveats');
+
+    if (!scenarioSelect) return;
+
+    // Populate city dropdown
+    if (citySelect && citySelect.options.length <= 1) {
+        simResult.cities.forEach(function (c) {
+            var opt = document.createElement('option');
+            opt.value = c.city;
+            opt.textContent = c.city + ', ' + c.state;
+            citySelect.appendChild(opt);
+        });
+    }
+
+    // Fetch scenarios filtered by current organ
+    var organ = formData && formData.organ ? formData.organ : null;
+    var _scenarioCache = [];
+
+    window.TransPlanAPI.policyScenarios(organ).then(function (scenarios) {
+        if (!scenarios || !scenarios.length) {
+            section.style.display = 'none';
+            return;
+        }
+        _scenarioCache = scenarios;
+
+        // Clear and populate scenario dropdown
+        scenarioSelect.textContent = '';
+        var defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.textContent = 'Select a policy scenario\u2026';
+        scenarioSelect.appendChild(defaultOpt);
+
+        scenarios.forEach(function (s) {
+            var opt = document.createElement('option');
+            opt.value = s.id;
+            opt.textContent = s.name;
+            scenarioSelect.appendChild(opt);
+        });
+    });
+
+    // Show scenario info on selection change
+    scenarioSelect.onchange = function () {
+        var selectedId = scenarioSelect.value;
+        if (!selectedId) {
+            if (infoDiv) infoDiv.style.display = 'none';
+            if (runBtn) runBtn.disabled = true;
+            return;
+        }
+
+        var scenario = _scenarioCache.find(function (s) { return s.id === selectedId; });
+        if (!scenario) return;
+
+        if (descEl) descEl.textContent = scenario.description;
+        if (refsEl) {
+            refsEl.textContent = '';
+            (scenario.references || []).forEach(function (ref) {
+                var li = document.createElement('li');
+                li.textContent = ref;
+                refsEl.appendChild(li);
+            });
+        }
+        if (caveatsEl) {
+            caveatsEl.textContent = '';
+            (scenario.caveats || []).forEach(function (caveat) {
+                var li = document.createElement('li');
+                li.textContent = caveat;
+                caveatsEl.appendChild(li);
+            });
+        }
+        if (infoDiv) infoDiv.style.display = '';
+        if (runBtn) runBtn.disabled = false;
+    };
+
+    // Wire run button
+    if (runBtn) {
+        runBtn.onclick = function () {
+            _runPolicyScenario(simResult, formData);
+        };
+    }
+}
+
+/**
+ * Execute a policy scenario analysis.
+ */
+function _runPolicyScenario(simResult, formData) {
+    var scenarioSelect = document.getElementById('policyScenarioSelect');
+    var citySelect = document.getElementById('policyScenarioCity');
+    var runBtn = document.getElementById('policyScenarioRunBtn');
+    var resultsDiv = document.getElementById('policyScenarioResults');
+
+    if (!scenarioSelect || !scenarioSelect.value || !formData) return;
+
+    var scenarioId = scenarioSelect.value;
+    var city = citySelect && citySelect.value
+        ? citySelect.value
+        : (simResult.cities[0] && simResult.cities[0].city) || 'Nashville';
+
+    if (runBtn) {
+        runBtn.disabled = true;
+        runBtn.textContent = 'Running scenario\u2026';
+    }
+
+    window.TransPlanAPI.policyScenario(formData, scenarioId, city, 500).then(function (result) {
+        if (runBtn) {
+            runBtn.disabled = false;
+            runBtn.textContent = 'Run Policy Scenario';
+        }
+
+        if (!result || !resultsDiv) return;
+
+        // Render using the same grid as what-if results
+        _renderWhatIfResults(resultsDiv, result);
+
+        // Add scenario-specific header
+        var header = _el('div', 'policy-scenario-result-header');
+        header.textContent = result.scenario
+            ? result.scenario.name + ' \u2014 ' + result.city
+            : city;
+        resultsDiv.insertBefore(header, resultsDiv.firstChild);
+
+        // Show effective multipliers
+        var multInfo = _el('div', 'what-if-meta');
+        multInfo.textContent = 'Effective multipliers for ' + result.city + ': '
+            + 'donor ' + (result.donor_rate_multiplier || 1.0).toFixed(2) + '\u00d7, '
+            + 'wait ' + (result.wait_time_multiplier || 1.0).toFixed(2) + '\u00d7';
+        resultsDiv.insertBefore(multInfo, resultsDiv.children[1]);
+    });
 }
 
 

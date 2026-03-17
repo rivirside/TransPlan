@@ -6,11 +6,13 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 4 In Progress (Advanced Modeling & Validation)
+## Current State: Phase 4 Complete (Advanced Modeling & Validation)
 
-Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 237 pytest tests passing. Phase 3 M1-M5 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
+Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. Phase 3 M1-M5 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
-**Phase 4 in progress (March 2026):** 5 milestones scoped (ADR-021). Goal: deepen clinical accuracy and enable publication-grade validation. M1 (Configurable Weights) complete. M2 (Post-Transplant Outcomes) complete. M3 (Historical Trends) complete — multi-year SRTR time series, linear regression trend analysis, trending badges on cards, sparkline charts in modal, trend data in exports/comparison. Post-M3 bugfix: `organ` → `patient.organ` in monte_carlo.py (NameError silently caught, outcomes+trends always null in /simulate), duplicate `const CATEGORY_LABELS` in script.js (SyntaxError broke form submit handler). Both fixed and visually verified. 112 Jest, 333 pytest.
+**Phase 4 complete (March 2026):** All 5 milestones done (ADR-021). M1 (Configurable Weights), M2 (Post-Transplant Outcomes), M3 (Historical Trends), M4 (Policy Scenario Engine), M5 (Validation & Reproducibility Pack). 112 Jest, 376 pytest.
+
+**M4 (Policy Scenario Engine):** 4 predefined UNOS policy scenarios with literature-backed parameters and per-city adjustments: (1) 2021 Kidney 250nm Circles — per-center-size donor/wait adjustments, (2) Continuous Distribution — stronger geography de-emphasis, (3) Increased DCD Utilization — +15% organ supply, (4) Broader HCV+ Acceptance — +6% donor pool for kidney/liver. Frontend policy scenario selector in probability tab. `POST /policy-scenario` endpoint, `GET /policy-scenarios` listing. 24 new pytest tests.
 
 **Data Quality Sprint (March 2026):** 6 of 8 COD model issues resolved:
 - L-055: Expanded state COD proportions from 17 to all 50 states + DC (CDC SODA API, donor-eligibility calibration)
@@ -50,7 +52,7 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | Fetch scripts (scripts/) | ✅ Done | All scripts use mergeDataFile, skip-on-empty guards added |
 | GitHub Actions | ✅ Done | Single sequential job, weekly cron + manual dispatch |
 | Socioeconomic data | ✅ Done | Transplant-support rubric replacing wealth-correlated scores |
-| Unit tests | ✅ Done | 112 tests (Jest), 333 tests (pytest), 0 failures |
+| Unit tests | ✅ Done | 112 tests (Jest), 376 tests (pytest), 0 failures |
 | CDN fallback | ✅ Done | Graceful degradation when Leaflet/Chart.js CDN unavailable |
 | CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
@@ -102,12 +104,12 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | M1: Configurable Scoring Weights | ✅ Done | Weight sliders, 4 presets, auto-normalization, lock, URL/export round-trip, 14 Jest + 10 pytest (#22) |
 | M2: Post-Transplant Outcomes Model | ✅ Done | SRTR PSR C-series graft/patient survival, compound success metric, performance ratings, 35 pytest (#31) |
 | M3: Historical Trends & Trajectories | ✅ Done | Multi-year SRTR (2019-2025), linregress trends, sparkline charts, trending badges, 51 pytest (ADR-022) |
-| M4: Policy Scenario Engine | 🔲 Not started | Literature review → predefined UNOS scenarios (#23) |
+| M4: Policy Scenario Engine | ✅ Done | 4 predefined UNOS scenarios (250nm circles, continuous distribution, DCD expansion, HCV+ donors), per-city multipliers, literature refs, 24 pytest (#23) |
 | M5: Validation & Reproducibility Pack | ✅ Done | 6 Jupyter notebooks (wait-time, competing-risks, COD-multiplier, outcomes, trends, equity), bias audit service (19 pytest), 39 figures |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 4 IN PROGRESS** — 5 milestones scoped (ADR-021), M1-M3 + M5 done, M4 remaining
+- **Phase 4 COMPLETE** — all 5 milestones done (M1-M5), 376 pytest, 112 Jest
 - **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred to Phase 5:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
@@ -236,10 +238,16 @@ TransPlan/
       brier_score.py      <- Brier score calibration: Monte Carlo vs analytical validation
       outcomes.py         <- Post-transplant outcomes: graft/patient survival, compound success (Phase 4 M2)
       trends.py           <- Historical trends: linear regression, direction classification (Phase 4 M3)
+      policy_scenarios.py <- Policy scenario engine: 4 UNOS scenarios, per-city multipliers (Phase 4 M4)
+      bias_audit.py       <- Demographic bias audit: Cohen's d, Gini, disparity metrics (Phase 4 M5)
     routers/
       ...
       trends.py           <- GET /trends/{city}/{organ}, GET /trends/{organ} (Phase 4 M3)
-    tests/                <- pytest suite (333 tests)
+    tests/                <- pytest suite (376 tests)
+      ...
+      test_policy_scenarios.py <- 24 tests: scenario registry, filtering, per-city multipliers
+      test_bias_audit.py       <- 19 tests: Cohen's d, Gini, dimension disparity, full audit
+    tests/                <- pytest suite (376 tests)
   docs/
     status.md             <- THIS FILE (read every session)
     ideas.md              <- Full SRS: requirements, architecture, FDA pathway
