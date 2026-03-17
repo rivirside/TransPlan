@@ -2882,6 +2882,11 @@ function createProbabilityCard(city, rank, homeCenter) {
         card.appendChild(buildOutcomesSection(city.outcomes));
     }
 
+    // Historical trend badge (Phase 4 M3)
+    if (city.trends && city.trends.overall_direction && city.trends.overall_direction !== 'insufficient_data') {
+        card.appendChild(buildTrendBadge(city.trends));
+    }
+
     return card;
 }
 
@@ -2961,6 +2966,29 @@ function buildOutcomesSection(outcomes) {
     }
 
     return section;
+}
+
+function buildTrendBadge(trends) {
+    var badge = _el('div', 'trend-badge trend-' + trends.overall_direction);
+    var arrows = { improving: '\u2191', stable: '\u2192', declining: '\u2193' };
+    var labels = { improving: 'Improving', stable: 'Stable', declining: 'Declining' };
+    var dir = trends.overall_direction;
+    badge.textContent = (arrows[dir] || '') + ' ' + (labels[dir] || dir) + ' (historical trend)';
+
+    // Tooltip with detail
+    var details = [];
+    if (trends.wait_time_trend && trends.wait_time_trend.direction !== 'insufficient_data') {
+        details.push('Wait time: ' + trends.wait_time_trend.direction);
+    }
+    if (trends.volume_trend && trends.volume_trend.direction !== 'insufficient_data') {
+        details.push('Volume: ' + trends.volume_trend.direction);
+    }
+    if (trends.graft_survival_trend && trends.graft_survival_trend.direction !== 'insufficient_data') {
+        details.push('Graft survival: ' + trends.graft_survival_trend.direction);
+    }
+    if (details.length) badge.title = details.join('\n');
+
+    return badge;
 }
 
 function formatPct(v) {
@@ -3316,6 +3344,73 @@ function openCityDetail(cityName) {
 
             body.appendChild(outcomeSection);
         }
+
+        // Historical trends with sparkline charts (Phase 4 M3)
+        if (simCity.trends && simCity.trends.sparklines) {
+            var trendSection = _modalSection('Historical Trends');
+
+            // Overall trend badge in modal
+            if (simCity.trends.overall_direction && simCity.trends.overall_direction !== 'insufficient_data') {
+                trendSection.appendChild(buildTrendBadge(simCity.trends));
+            }
+
+            // Sparkline grid
+            var sparkGrid = _el('div', 'trend-sparklines');
+            var sparklines = simCity.trends.sparklines;
+            var national = simCity.trends.national || {};
+
+            var sparkConfigs = [
+                { key: 'wait_time', label: 'Wait Time (months)', trendKey: 'wait_time_trend', unit: ' mo', lower_is_better: true },
+                { key: 'volume', label: 'Transplant Volume', trendKey: 'volume_trend', unit: '', lower_is_better: false },
+                { key: 'graft_survival', label: 'Graft Survival 1yr (%)', trendKey: 'graft_survival_trend', unit: '%', lower_is_better: false },
+            ];
+
+            sparkConfigs.forEach(function(cfg) {
+                var values = sparklines[cfg.key];
+                if (!values || !values.some(function(v) { return v != null; })) return;
+
+                var cell = _el('div', 'sparkline-cell');
+                cell.appendChild(_el('h4', null, cfg.label));
+
+                // Canvas for Chart.js sparkline
+                var canvasWrap = _el('div', 'sparkline-canvas-wrapper');
+                var canvas = document.createElement('canvas');
+                canvas.id = 'sparkline-' + cfg.key;
+                canvasWrap.appendChild(canvas);
+                cell.appendChild(canvasWrap);
+
+                // Direction indicator
+                var metricTrend = simCity.trends[cfg.trendKey];
+                if (metricTrend && metricTrend.direction !== 'insufficient_data') {
+                    var dirSpan = _el('div', 'sparkline-direction');
+                    var arrows = { improving: '\u2191', stable: '\u2192', declining: '\u2193' };
+                    var colors = { improving: 'var(--success-700)', stable: 'var(--text-muted)', declining: 'var(--warning-700)' };
+                    dirSpan.textContent = (arrows[metricTrend.direction] || '') + ' ' + metricTrend.direction;
+                    dirSpan.style.color = colors[metricTrend.direction] || '';
+                    if (metricTrend.change_per_year != null) {
+                        var sign = metricTrend.change_per_year >= 0 ? '+' : '';
+                        dirSpan.textContent += ' (' + sign + metricTrend.change_per_year + cfg.unit + '/yr)';
+                    }
+                    cell.appendChild(dirSpan);
+                }
+
+                sparkGrid.appendChild(cell);
+
+                // Render sparkline after DOM insertion
+                setTimeout(function() {
+                    _renderSparkline(canvas, sparklines.years, values, national[cfg.key], cfg.lower_is_better);
+                }, 50);
+            });
+
+            trendSection.appendChild(sparkGrid);
+
+            // Trend disclaimer
+            var tDisc = _el('div', 'outcome-disclaimer');
+            tDisc.textContent = 'Trends are based on multi-year SRTR data. Statistical significance tested via linear regression (p < 0.10). Past trends do not predict future performance.';
+            trendSection.appendChild(tDisc);
+
+            body.appendChild(trendSection);
+        }
     }
 
     // Show modal
@@ -3333,6 +3428,80 @@ function _modalSection(title) {
     return section;
 }
 
+// Track sparkline Chart.js instances for cleanup
+var _sparklineCharts = [];
+
+function _renderSparkline(canvas, years, values, nationalValues, lowerIsBetter) {
+    if (typeof Chart === 'undefined') return;
+
+    // Filter data for Chart.js (replace nulls with NaN for gaps)
+    var data = values.map(function(v) { return v != null ? v : NaN; });
+
+    var datasets = [{
+        data: data,
+        borderColor: 'var(--accent, #4361ee)',
+        backgroundColor: 'rgba(67, 97, 238, 0.08)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 0,
+        pointHoverRadius: 3,
+        spanGaps: true,
+    }];
+
+    // National reference line (dashed)
+    if (nationalValues && nationalValues.length === years.length) {
+        var natData = nationalValues.map(function(v) { return v != null ? v : NaN; });
+        datasets.push({
+            data: natData,
+            borderColor: 'rgba(128, 128, 128, 0.5)',
+            borderWidth: 1,
+            borderDash: [4, 3],
+            fill: false,
+            tension: 0.3,
+            pointRadius: 0,
+            spanGaps: true,
+        });
+    }
+
+    var chart = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: years.map(String),
+            datasets: datasets,
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function(ctx) {
+                            var val = ctx.parsed.y;
+                            return ctx.datasetIndex === 0 ? 'Center: ' + val : 'National: ' + val;
+                        }
+                    }
+                },
+            },
+            scales: {
+                x: { display: false },
+                y: { display: false },
+            },
+            elements: {
+                point: { radius: 0 },
+                line: { borderWidth: 2 },
+            },
+            animation: { duration: 300 },
+        },
+    });
+
+    _sparklineCharts.push(chart);
+}
+
 function closeCityDetail() {
     var modal = document.getElementById('cityDetailModal');
     modal.style.display = 'none';
@@ -3341,6 +3510,9 @@ function closeCityDetail() {
     if (window.TransPlanCharts && window.TransPlanCharts.destroyChart) {
         window.TransPlanCharts.destroyChart('modal-radar-chart');
     }
+    // Destroy sparkline charts
+    _sparklineCharts.forEach(function(c) { try { c.destroy(); } catch(e) {} });
+    _sparklineCharts = [];
 }
 
 function closeCompareModal() {
@@ -3529,6 +3701,29 @@ function openCityComparison() {
                 return c.phase2 && c.phase2.outcomes && c.phase2.outcomes.compound_success != null
                     ? (c.phase2.outcomes.compound_success * 100).toFixed(1) + '%' : '—';
             }), 'max');
+        }
+
+        // Historical trends (Phase 4 M3)
+        if (cities.some(function(c) { return c.phase2 && c.phase2.trends && c.phase2.trends.overall_direction; })) {
+            tbody.appendChild(_sectionRow('Historical Trends', cities.length + 1));
+            _addCompareRow(tbody, 'Overall Trend', cities.map(function(c) {
+                if (!c.phase2 || !c.phase2.trends) return '—';
+                var dir = c.phase2.trends.overall_direction;
+                var arrows = { improving: '\u2191 Improving', stable: '\u2192 Stable', declining: '\u2193 Declining' };
+                return arrows[dir] || dir || '—';
+            }), null);
+            _addCompareRow(tbody, 'Wait Time Trend', cities.map(function(c) {
+                if (!c.phase2 || !c.phase2.trends || !c.phase2.trends.wait_time_trend) return '—';
+                return c.phase2.trends.wait_time_trend.direction || '—';
+            }), null);
+            _addCompareRow(tbody, 'Volume Trend', cities.map(function(c) {
+                if (!c.phase2 || !c.phase2.trends || !c.phase2.trends.volume_trend) return '—';
+                return c.phase2.trends.volume_trend.direction || '—';
+            }), null);
+            _addCompareRow(tbody, 'Graft Survival Trend', cities.map(function(c) {
+                if (!c.phase2 || !c.phase2.trends || !c.phase2.trends.graft_survival_trend) return '—';
+                return c.phase2.trends.graft_survival_trend.direction || '—';
+            }), null);
         }
     }
 

@@ -77,6 +77,10 @@ class CityProbability(BaseModel):
         None,
         description="Post-transplant: graft/patient survival, hazard ratio, compound success metric"
     )
+    trends: Optional[dict] = Field(
+        None,
+        description="Historical trends: wait_time, volume, graft_survival with direction and sparkline data"
+    )
 
 
 class SimulationResult(BaseModel):

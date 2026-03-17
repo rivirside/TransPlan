@@ -460,4 +460,45 @@ M1 is fully independent. M2 and M3 share SRTR pipeline work and can be paralleli
 - #26 (Policy scenario builder) → deferred to Phase 5
 - #27 (Bulk analysis) → deferred to Phase 5
 - #28 (Embeddable widget) → deferred to Phase 5
+
+---
+
+## ADR-022: Historical Trends via Multi-Year SRTR PSR Releases
+
+**Date:** 2026-03-17
+**Status:** Accepted
+
+**Context:** Phase 4 M3 adds "Historical Trends & Center Trajectories" — answering "Is Cleveland getting better or worse for kidney transplants?" Centers change over time, and temporal context is critical for patient decision-making. No existing patient-facing tool provides this.
+
+**Decision:** Use archived SRTR PSR releases (one per year, 2019–2025) to build center-level time series. One release per year (January releases preferred) for 7 data points. Each release parsed for Table B10 (wait times), Table B7 (volumes/outcomes), and C-series (survival).
+
+**Technical approach:**
+- `fetch-srtr-excel.py --historical` downloads archived zip bundles from SRTR's archive URL pattern (`csrs_tables_all/csrs_final_tables_{YYMM}.zip`)
+- `parse-srtr-reports.py` extended with `parse_historical_trends()` producing `data/srtr-historical.json`
+- New `services/trends.py`: `scipy.stats.linregress` on each metric, p < 0.10 significance threshold, direction classification (improving/stable/declining)
+- Trends attached to `/simulate` response (same pattern as M2 outcomes), plus dedicated `GET /trends/{city}/{organ}` endpoint
+- Frontend: trend badges on probability cards, sparkline charts in city detail modal (Chart.js), trend column in comparison table and exports
+
+**Trend classification logic:**
+- Wait time: negative slope = improving (shorter waits)
+- Volume: positive slope = improving (more transplants)
+- Survival: positive slope = improving (better outcomes)
+- Mortality/delisting: negative slope = improving (fewer adverse events)
+- "Stable" if p > 0.10 or |slope| below minimum annual change threshold
+- Overall direction: weighted vote (wait time ×3, volume ×2, survival ×2, mortality ×1)
+- Minimum 3 data points for any regression; fewer → "insufficient_data"
+
+**Seed data strategy:** Deterministic generator script produces realistic 7-year time series from SRTR-calibrated baselines with city profiles (improving/stable/declining), COVID dip modeling, and null values for smaller programs. Replaced when actual historical downloads are run.
+
+**Rationale:**
+- Leverages existing SRTR pipeline (proven in M2/M5) — low marginal effort
+- One release per year avoids redundant overlapping cohorts
+- Linear regression is simple, interpretable, and appropriate for 5-7 data points
+- p-value threshold of 0.10 (rather than 0.05) is appropriate for the small sample size and exploratory nature
+
+**Consequences:**
+- Historical data requires ~2 GB of Excel files (gitignored in `data/srtr-raw/historical/`)
+- Seed data is placeholder until actual downloads complete
+- Older releases (pre-2019) may have different Excel formats; the parser handles this gracefully with try/except
+- Trend direction can change when new SRTR releases become available (by design)
 - New: M2 (Post-Transplant Outcomes), M3 (Historical Trends), M5 (Validation Pack)

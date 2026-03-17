@@ -26,6 +26,7 @@ from services.competing_risks import get_annual_mortality_rate, get_annual_delis
 from services.data_loader import get_data
 from services.distributions import get_wait_time_distribution
 from services.outcomes import build_outcomes_dict
+from services.trends import get_city_trends
 
 logger = logging.getLogger(__name__)
 
@@ -273,6 +274,13 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
         except Exception:
             pass  # Graceful degradation if outcomes data unavailable
 
+        # Phase 4 M3: Attach historical trends if available
+        trends_data = None
+        try:
+            trends_data = get_city_trends(organ, city)
+        except Exception:
+            pass  # Graceful degradation if trends data unavailable
+
         city_results.append(CityProbability(
             city=city,
             state=state,
@@ -284,6 +292,7 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
             median_wait_months=round(median_wait, 2),
             competing_risks=competing_risks_24,
             outcomes=outcomes_data,
+            trends=trends_data,
         ))
 
     # Rank by 24-month transplant probability, descending

@@ -310,22 +310,23 @@
 **Key files:** `scripts/parse-srtr-reports.py`, `backend/services/outcomes.py`, `script.js`, `export-handler.js`
 **Completed:** March 2026. GitHub issue #31.
 
-### M3: Historical Trends & Center Trajectories — NEW
+### M3: Historical Trends & Center Trajectories ✅ DONE
 
 > **Why:** Centers change over time. "Is Cleveland getting better or worse for kidney transplants?" is critical context no existing tool provides. Adds temporal validity to the model.
 
-- [ ] **Multi-year SRTR PSR downloads**: fetch reports for 2019–2024 (6 years × 6 organs, if available)
-- [ ] Extend `scripts/fetch-srtr-excel.py` to download historical report versions
-- [ ] New data file: `data/srtr-historical.json` — time-series of wait times, volumes, outcomes per center per year
-- [ ] New backend service: `services/trends.py` — linear regression on center metrics, slope + significance
-- [ ] **Trending badge** on city cards: ↑ improving / → stable / ↓ declining (based on 3-year trajectory)
-- [ ] **Sparkline charts** in city detail modal: wait time trend, volume trend, outcomes trend (small inline charts)
-- [ ] New endpoint: `GET /trends/{city}` or include in `POST /simulate` response
-- [ ] Handle missing years gracefully (center may not have reported every year)
-- [ ] Tests: trend direction detection, regression edge cases, sparse data handling
+- [x] **Multi-year SRTR PSR downloads**: `fetch-srtr-excel.py --historical` downloads archived zip bundles (2019–2025, one per year)
+- [x] Extended `scripts/parse-srtr-reports.py` with `parse_historical_trends()` extracting Table B10, B7, C-series across releases
+- [x] New data file: `data/srtr-historical.json` — 7-year time-series of wait times, volumes, outcomes per center per organ
+- [x] New backend service: `services/trends.py` — `scipy.stats.linregress`, p < 0.10 significance, direction classification
+- [x] **Trending badge** on city probability cards: ↑ improving / → stable / ↓ declining (weighted vote across metrics)
+- [x] **Sparkline charts** in city detail modal: wait time, volume, graft survival (Chart.js, national reference dashed line)
+- [x] Trends included in `POST /simulate` response + dedicated `GET /trends/{city}/{organ}` endpoint
+- [x] Missing years handled gracefully (null filtering, MIN_POINTS=3 guard, try/except per release)
+- [x] Trend data in CSV/JSON/PDF exports and side-by-side comparison table
+- [x] 51 new pytest tests (333 total), 112 Jest unchanged
 
-**Key files:** `scripts/fetch-srtr-excel.py`, `scripts/parse-srtr-reports.py`, `backend/services/trends.py` (new), `script.js` (badges + sparklines)
-**Depends on:** SRTR pipeline. Shares data work with M2 (both parse PSR Excel files).
+**Key files:** `scripts/fetch-srtr-excel.py`, `scripts/parse-srtr-reports.py`, `backend/services/trends.py`, `backend/routers/trends.py`, `script.js`, `styles.css`
+**Completed:** March 2026. ADR-022.
 
 ### M4: Policy Scenario Engine (FR-9 upgrade) — #23
 
@@ -386,7 +387,7 @@ M1 (Weights) ──────────── independent ──────
                                                         │
 M2 (Outcomes) ── SRTR C-series ── ✅ DONE ──────────────┼──→ M5 (Validation)
                                                         │
-M3 (Trends) ──── multi-year SRTR ───────────────────────┤
+M3 (Trends) ──── multi-year SRTR ── ✅ DONE ───────────┤
                                                         │
 M4 (Policy) ──── literature review (weeks 2-4) ────────┘
 ```

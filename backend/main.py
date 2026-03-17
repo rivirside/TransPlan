@@ -19,7 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from config import ALLOWED_ORIGINS, DATA_DIR, VERSION
-from routers import equity, health, sensitivity, shutdown, simulate, what_if
+from routers import equity, health, sensitivity, shutdown, simulate, trends, what_if
 from services.data_loader import load_all
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
@@ -52,6 +52,7 @@ app.include_router(simulate.router, tags=["simulation"])
 app.include_router(sensitivity.router, tags=["simulation"])
 app.include_router(equity.router, tags=["simulation"])
 app.include_router(what_if.router, tags=["simulation"])
+app.include_router(trends.router, tags=["trends"])
 
 
 @app.on_event("startup")

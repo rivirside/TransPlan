@@ -90,7 +90,8 @@
       'P(Transplant 6mo)', 'P(Transplant 12mo)', 'P(Transplant 24mo)', 'P(Transplant 36mo)',
       'Median Wait (months)', 'CI 95% Low', 'CI 95% High',
       'P(Transplant)', 'P(Mortality)', 'P(Delisting)', 'P(Still Waiting)',
-      '1yr Graft Survival', '1yr Patient Survival', 'Overall Success', 'Performance Rating'
+      '1yr Graft Survival', '1yr Patient Survival', 'Overall Success', 'Performance Rating',
+      'Trend Direction'
     ];
 
     var rows = [headers.map(escapeCsv).join(',')];
@@ -117,7 +118,8 @@
         oc.graft_survival_1yr != null ? (oc.graft_survival_1yr * 100).toFixed(1) + '%' : '',
         oc.patient_survival_1yr != null ? (oc.patient_survival_1yr * 100).toFixed(1) + '%' : '',
         oc.compound_success != null ? (oc.compound_success * 100).toFixed(1) + '%' : '',
-        oc.performance_rating || ''
+        oc.performance_rating || '',
+        city.trends && city.trends.overall_direction ? city.trends.overall_direction : ''
       ].map(escapeCsv).join(','));
     });
 
@@ -410,7 +412,7 @@
     if (simResult && simResult.cities) {
       appendTo(body, 'h2', null, 'Simulation Probabilities');
       appendTo(body, 'p', { className: 'meta' }, 'Monte Carlo simulation: ' + (simResult.iterations || 'N/A') + ' iterations');
-      var probHeaders = ['#', 'City', 'P(6mo)', 'P(12mo)', 'P(24mo)', 'P(36mo)', 'Median Wait', 'P(Mortality)', '1yr Graft', 'Success'];
+      var probHeaders = ['#', 'City', 'P(6mo)', 'P(12mo)', 'P(24mo)', 'P(36mo)', 'Median Wait', 'P(Mortality)', '1yr Graft', 'Success', 'Trend'];
       var probTable = appendTo(body, 'table');
       var pThead = appendTo(probTable, 'thead');
       var pHRow = appendTo(pThead, 'tr');
@@ -430,7 +432,8 @@
           (city.median_wait_months || 0).toFixed(1) + ' mo',
           ((cr.p_mortality || 0) * 100).toFixed(1) + '%',
           oc.graft_survival_1yr != null ? (oc.graft_survival_1yr * 100).toFixed(1) + '%' : 'N/A',
-          oc.compound_success != null ? (oc.compound_success * 100).toFixed(1) + '%' : 'N/A'
+          oc.compound_success != null ? (oc.compound_success * 100).toFixed(1) + '%' : 'N/A',
+          city.trends && city.trends.overall_direction ? city.trends.overall_direction : 'N/A'
         ].forEach(function (val) { appendTo(tr, 'td', null, String(val)); });
       });
     }

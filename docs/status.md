@@ -10,7 +10,7 @@ A patient-facing clinical decision support tool that helps transplant patients i
 
 Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. 237 pytest tests passing. Phase 3 M1-M5 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
-**Phase 4 in progress (March 2026):** 5 milestones scoped (ADR-021). Goal: deepen clinical accuracy and enable publication-grade validation. M1 (Configurable Weights) complete. M2 (Post-Transplant Outcomes) complete — SRTR PSR graft/patient survival (C-series tables), compound success metric, performance ratings, frontend display + export. 112 Jest, 282 pytest.
+**Phase 4 in progress (March 2026):** 5 milestones scoped (ADR-021). Goal: deepen clinical accuracy and enable publication-grade validation. M1 (Configurable Weights) complete. M2 (Post-Transplant Outcomes) complete. M3 (Historical Trends) complete — multi-year SRTR time series, linear regression trend analysis, trending badges on cards, sparkline charts in modal, trend data in exports/comparison. 112 Jest, 333 pytest.
 
 **Data Quality Sprint (March 2026):** 6 of 8 COD model issues resolved:
 - L-055: Expanded state COD proportions from 17 to all 50 states + DC (CDC SODA API, donor-eligibility calibration)
@@ -50,7 +50,7 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 | Fetch scripts (scripts/) | ✅ Done | All scripts use mergeDataFile, skip-on-empty guards added |
 | GitHub Actions | ✅ Done | Single sequential job, weekly cron + manual dispatch |
 | Socioeconomic data | ✅ Done | Transplant-support rubric replacing wealth-correlated scores |
-| Unit tests | ✅ Done | 112 tests (Jest): 89 algorithm + 23 utilities, 0 failures |
+| Unit tests | ✅ Done | 112 tests (Jest), 333 tests (pytest), 0 failures |
 | CDN fallback | ✅ Done | Graceful degradation when Leaflet/Chart.js CDN unavailable |
 | CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
@@ -101,13 +101,13 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 |-----------|--------|-------|
 | M1: Configurable Scoring Weights | ✅ Done | Weight sliders, 4 presets, auto-normalization, lock, URL/export round-trip, 14 Jest + 10 pytest (#22) |
 | M2: Post-Transplant Outcomes Model | ✅ Done | SRTR PSR C-series graft/patient survival, compound success metric, performance ratings, 35 pytest (#31) |
-| M3: Historical Trends & Trajectories | 🔲 Not started | Multi-year SRTR, sparklines, trending badges (NEW) |
+| M3: Historical Trends & Trajectories | ✅ Done | Multi-year SRTR (2019-2025), linregress trends, sparkline charts, trending badges, 51 pytest (ADR-022) |
 | M4: Policy Scenario Engine | 🔲 Not started | Literature review → predefined UNOS scenarios (#23) |
 | M5: Validation & Reproducibility Pack | 🔲 Not started | Retrospective validation, bias audit, Jupyter notebooks (NEW) |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 4 IN PROGRESS** — 5 milestones scoped (ADR-021), M1-M2 done, M3 next
+- **Phase 4 IN PROGRESS** — 5 milestones scoped (ADR-021), M1-M3 done, M4 next
 - **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred to Phase 5:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
@@ -178,6 +178,7 @@ TransPlan/
     wait-time-distributions.json  <- Log-normal params from SRTR Table B10
     competing-risks.json          <- Mortality/delisting from SRTR Table B7
     post-transplant-outcomes.json <- Graft/patient survival from SRTR Tables C5-C20 (Phase 4 M2)
+    srtr-historical.json      <- Multi-year SRTR center metrics for trend analysis (Phase 4 M3)
     cause-of-death-by-region.json <- Organ recovery rates × state COD proportions (M2)
     srtr-center-mapping.json      <- SRTR center codes → 22 TransPlan cities
     srtr-raw/                     <- Downloaded SRTR Excel files (gitignored)
@@ -229,7 +230,11 @@ TransPlan/
       what_if.py          <- What-if scenario analysis (Monte Carlo with donor/wait multipliers)
       brier_score.py      <- Brier score calibration: Monte Carlo vs analytical validation
       outcomes.py         <- Post-transplant outcomes: graft/patient survival, compound success (Phase 4 M2)
-    tests/                <- pytest suite (282 tests)
+      trends.py           <- Historical trends: linear regression, direction classification (Phase 4 M3)
+    routers/
+      ...
+      trends.py           <- GET /trends/{city}/{organ}, GET /trends/{organ} (Phase 4 M3)
+    tests/                <- pytest suite (333 tests)
   docs/
     status.md             <- THIS FILE (read every session)
     ideas.md              <- Full SRS: requirements, architecture, FDA pathway

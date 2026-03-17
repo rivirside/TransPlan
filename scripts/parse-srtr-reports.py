@@ -688,6 +688,285 @@ def parse_post_transplant_outcomes(mapping: dict) -> dict:
     return result
 
 
+# ---------- Phase 4 M3: Historical trend parsing ----------
+
+# Release code → year mapping (must match fetch-srtr-excel.py)
+HISTORICAL_RELEASES = {
+    "1901": 2019,
+    "2001": 2020,
+    "2101": 2021,
+    "2201": 2022,
+    "2301": 2023,
+    "2401": 2024,
+}
+CURRENT_RELEASE = ("2511", 2025)
+
+HISTORICAL_DIR = os.path.join(RAW_DIR, "historical")
+HISTORICAL_OUT = os.path.join(DATA_DIR, "srtr-historical.json")
+
+
+def _extract_b10_metrics(sheet, center_code: str, ctr_cols: dict, nat_cols: dict) -> dict | None:
+    """Extract wait time metrics from Table B10 for a single center."""
+    nat_data = _get_national_row(sheet, nat_cols)
+    nat_median = nat_data["p50"] if nat_data else None
+    nat_fit = fit_lognormal(
+        nat_data.get("p10") if nat_data else None,
+        nat_data.get("p25") if nat_data else None,
+        nat_median,
+        nat_data.get("p75") if nat_data else None,
+    )
+    effective_median = round(math.exp(nat_fit[0]), 1) if nat_fit else None
+
+    ctr_data = _get_row_by_code(sheet, center_code, ctr_cols)
+    if not ctr_data:
+        return None
+
+    ctr_p50 = ctr_data.get("p50")
+    median_wait = round(ctr_p50, 1) if _is_valid(ctr_p50) else None
+    factor = _compute_city_factor(ctr_data, effective_median, nat_data) if effective_median else None
+
+    return {
+        "median_wait_months": median_wait,
+        "wait_time_factor": factor,
+        "national_median_months": effective_median,
+    }
+
+
+def _extract_b7_metrics(sheet, center_code: str, ctr_cols: dict, nat_cols: dict) -> dict | None:
+    """Extract volume and outcome metrics from Table B7 for a single center."""
+    nat_data = _get_national_row(sheet, nat_cols)
+    if not nat_data:
+        return None
+
+    ctr_data = _get_row_by_code(sheet, center_code, ctr_cols)
+    if not ctr_data:
+        return None
+
+    # Volume: total transplants in the 12-month cohort
+    volume = ctr_data.get("removed_transplant")
+    if volume is not None:
+        volume = int(round(volume / 100.0 * (ctr_data.get("n") or 0))) if ctr_data.get("n") else None
+
+    # Mortality and delisting rates
+    mortality_rate = (ctr_data.get("died_waitlist") or 0) / 100.0
+    delisting_rate = sum(
+        (ctr_data.get(k) or 0) for k in ["removed_worsened", "removed_improved", "removed_refused", "removed_other"]
+    ) / 100.0
+
+    return {
+        "volume": volume,
+        "mortality_rate": round(mortality_rate, 4),
+        "delisting_rate": round(delisting_rate, 4),
+    }
+
+
+def _extract_survival_metrics(wb, center_code: str) -> dict:
+    """Extract graft and patient survival from C-series tables."""
+    result = {}
+    try:
+        gs_sheet = wb.sheet_by_name(GRAFT_SHEET)
+        gs_ctr_cols = _build_col_map(gs_sheet, GRAFT_COLS)
+        gs_data = _get_row_by_code(gs_sheet, center_code, gs_ctr_cols)
+        if gs_data and gs_data.get("graft_survival_1yr") is not None:
+            result["graft_survival_1yr"] = round(gs_data["graft_survival_1yr"], 1)
+    except (xlrd.biffh.XLRDError, Exception):
+        pass  # Sheet may not exist in older releases
+
+    try:
+        ps_sheet = wb.sheet_by_name(PATIENT_SHEET)
+        ps_ctr_cols = _build_col_map(ps_sheet, PATIENT_COLS)
+        ps_data = _get_row_by_code(ps_sheet, center_code, ps_ctr_cols)
+        if ps_data and ps_data.get("patient_survival_1yr") is not None:
+            result["patient_survival_1yr"] = round(ps_data["patient_survival_1yr"], 1)
+    except (xlrd.biffh.XLRDError, Exception):
+        pass
+
+    return result
+
+
+def _extract_national_survival(wb) -> dict:
+    """Extract national survival baselines from C-series tables."""
+    result = {}
+    try:
+        gs_sheet = wb.sheet_by_name(GRAFT_SHEET)
+        gs_nat_cols = _build_col_map(gs_sheet, GRAFT_NAT_COLS)
+        gs_nat = _get_first_nonempty_national(gs_sheet, gs_nat_cols)
+        if gs_nat and gs_nat.get("graft_survival_1yr") is not None:
+            result["graft_survival_1yr"] = round(gs_nat["graft_survival_1yr"], 1)
+    except (xlrd.biffh.XLRDError, Exception):
+        pass
+
+    try:
+        ps_sheet = wb.sheet_by_name(PATIENT_SHEET)
+        ps_nat_cols = _build_col_map(ps_sheet, PATIENT_NAT_COLS)
+        ps_nat = _get_first_nonempty_national(ps_sheet, ps_nat_cols)
+        if ps_nat and ps_nat.get("patient_survival_1yr") is not None:
+            result["patient_survival_1yr"] = round(ps_nat["patient_survival_1yr"], 1)
+    except (xlrd.biffh.XLRDError, Exception):
+        pass
+
+    return result
+
+
+def parse_historical_trends(mapping: dict) -> dict:
+    """
+    Parse multiple SRTR releases to build a time-series dataset.
+
+    For each release × organ × city, extracts:
+    - median_wait_months (Table B10)
+    - volume (Table B7)
+    - mortality_rate, delisting_rate (Table B7)
+    - graft_survival_1yr, patient_survival_1yr (C-series, when available)
+
+    Output: dict structure for data/srtr-historical.json
+    """
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # Collect all available releases (historical + current)
+    releases = {}
+    for code, year in HISTORICAL_RELEASES.items():
+        release_dir = os.path.join(HISTORICAL_DIR, code)
+        if os.path.isdir(release_dir):
+            releases[code] = {"year": year, "dir": release_dir, "pattern": "csrs_final_tables_{code}_{organ_code}.xls"}
+
+    # Current release (in srtr-raw/ root)
+    cur_code, cur_year = CURRENT_RELEASE
+    releases[cur_code] = {"year": cur_year, "dir": RAW_DIR, "pattern": "csrs_final_tables_{code}_{organ_code}.xls"}
+
+    if not releases:
+        print("  WARNING: No SRTR releases found. Run fetch-srtr-excel.py --historical first.")
+        return {}
+
+    sorted_releases = sorted(releases.items(), key=lambda x: x[1]["year"])
+    years = [info["year"] for _, info in sorted_releases]
+    print(f"  Found {len(releases)} releases: {years}")
+
+    cities_data = {}
+    national_data = {}
+
+    for organ, organ_code in ORGAN_CODES.items():
+        national_data[organ] = {
+            "years": [],
+            "median_wait_months": [],
+            "graft_survival_1yr": [],
+        }
+
+        for release_code, info in sorted_releases:
+            year = info["year"]
+            release_dir = info["dir"]
+
+            # Find the Excel file for this organ
+            filename = f"csrs_final_tables_{release_code}_{organ_code}.xls"
+            excel_path = os.path.join(release_dir, filename)
+            if not os.path.exists(excel_path):
+                # Try without the release code in the filename (some zips use different naming)
+                alt_files = [f for f in os.listdir(release_dir) if f.lower().endswith(".xls") and f"_{organ_code}." in f.upper()]
+                if alt_files:
+                    excel_path = os.path.join(release_dir, alt_files[0])
+                else:
+                    continue
+
+            try:
+                wb = xlrd.open_workbook(excel_path)
+            except Exception as e:
+                print(f"    WARNING: Could not open {excel_path}: {e}")
+                continue
+
+            # Parse B10 and B7 sheets
+            try:
+                b10_sheet = wb.sheet_by_name("Table B10")
+                b10_ctr_cols = _build_col_map(b10_sheet, B10_COLS)
+                b10_nat_cols = _build_col_map(b10_sheet, B10_NAT_COLS)
+            except (xlrd.biffh.XLRDError, Exception):
+                b10_sheet = None
+                b10_ctr_cols = {}
+                b10_nat_cols = {}
+
+            try:
+                b7_sheet = wb.sheet_by_name("Table B7")
+                b7_ctr_cols = _build_col_map(b7_sheet, B7_COLS)
+                b7_nat_cols = _build_col_map(b7_sheet, B7_NAT_COLS)
+            except (xlrd.biffh.XLRDError, Exception):
+                b7_sheet = None
+                b7_ctr_cols = {}
+                b7_nat_cols = {}
+
+            # National baselines
+            nat_median = None
+            if b10_sheet:
+                nat_row = _get_national_row(b10_sheet, b10_nat_cols)
+                if nat_row:
+                    nat_p50 = nat_row.get("p50")
+                    if _is_valid(nat_p50):
+                        nat_median = round(nat_p50, 1)
+
+            nat_survival = _extract_national_survival(wb)
+
+            national_data[organ]["years"].append(year)
+            national_data[organ]["median_wait_months"].append(nat_median)
+            national_data[organ]["graft_survival_1yr"].append(
+                nat_survival.get("graft_survival_1yr")
+            )
+
+            # Per-city extraction
+            for city, city_info in mapping["cities"].items():
+                if city not in cities_data:
+                    cities_data[city] = {}
+                if organ not in cities_data[city]:
+                    cities_data[city][organ] = {
+                        "years": [],
+                        "median_wait_months": [],
+                        "volume": [],
+                        "mortality_rate": [],
+                        "delisting_rate": [],
+                        "graft_survival_1yr": [],
+                        "patient_survival_1yr": [],
+                        "wait_time_factor": [],
+                    }
+
+                entry = cities_data[city][organ]
+                entry["years"].append(year)
+
+                # Try primary center, then alternates
+                codes_to_try = [city_info["primary"]] + city_info.get("alternates", [])
+                b10_metrics = None
+                b7_metrics = None
+                surv_metrics = {}
+
+                for code in codes_to_try:
+                    if b10_sheet and not b10_metrics:
+                        b10_metrics = _extract_b10_metrics(b10_sheet, code, b10_ctr_cols, b10_nat_cols)
+                    if b7_sheet and not b7_metrics:
+                        b7_metrics = _extract_b7_metrics(b7_sheet, code, b7_ctr_cols, b7_nat_cols)
+                    if not surv_metrics:
+                        surv_metrics = _extract_survival_metrics(wb, code)
+                    if b10_metrics and b7_metrics:
+                        break
+
+                entry["median_wait_months"].append(b10_metrics["median_wait_months"] if b10_metrics else None)
+                entry["wait_time_factor"].append(b10_metrics["wait_time_factor"] if b10_metrics else None)
+                entry["volume"].append(b7_metrics["volume"] if b7_metrics else None)
+                entry["mortality_rate"].append(b7_metrics["mortality_rate"] if b7_metrics else None)
+                entry["delisting_rate"].append(b7_metrics["delisting_rate"] if b7_metrics else None)
+                entry["graft_survival_1yr"].append(surv_metrics.get("graft_survival_1yr"))
+                entry["patient_survival_1yr"].append(surv_metrics.get("patient_survival_1yr"))
+
+        print(f"  {organ}: parsed {len(national_data[organ]['years'])} releases")
+
+    return {
+        "_meta": {
+            "source": "SRTR PSR National Center-Level Summary Data (multiple releases)",
+            "method": "Per-year extraction from Table B10 (wait times), B7 (volumes/outcomes), C-series (survival)",
+            "releases": [code for code, _ in sorted_releases],
+            "years": years,
+            "fetchedAt": now,
+            "notes": "One entry per city per organ per release year. null values indicate center did not report or data was unavailable.",
+        },
+        "cities": cities_data,
+        "national": national_data,
+    }
+
+
 def _load_existing(path: str) -> dict | None:
     """Load existing JSON file, or None if it doesn't exist."""
     try:
@@ -718,6 +997,23 @@ def main():
 
     print("\n=== Parsing SRTR Post-Transplant Outcomes (Tables C5-C12, C11-C20) ===")
     pt_outcomes = parse_post_transplant_outcomes(mapping)
+
+    # Phase 4 M3: Parse historical trends if data is available
+    has_historical = os.path.isdir(HISTORICAL_DIR) and any(
+        os.path.isdir(os.path.join(HISTORICAL_DIR, d)) for d in os.listdir(HISTORICAL_DIR)
+    ) if os.path.isdir(HISTORICAL_DIR) else False
+
+    if has_historical or "--historical" in sys.argv:
+        print("\n=== Parsing Historical Trends (Phase 4 M3) ===")
+        historical_data = parse_historical_trends(mapping)
+        if historical_data:
+            with open(HISTORICAL_OUT, "w") as f:
+                json.dump(historical_data, f, indent=2)
+                f.write("\n")
+            print(f"Wrote {HISTORICAL_OUT}")
+    else:
+        print("\n  Skipping historical trends (no historical data in srtr-raw/historical/)")
+        print("  Run: python scripts/fetch-srtr-excel.py --historical to download")
 
     # Write output files
     with open(WAIT_TIME_OUT, "w") as f:

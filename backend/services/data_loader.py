@@ -30,6 +30,8 @@ class TransPlanData:
     cause_of_death: dict = field(default_factory=dict)
     # Phase 4 M2: Post-transplant graft/patient survival by center
     post_transplant_outcomes: dict = field(default_factory=dict)
+    # Phase 4 M3: Historical SRTR trends for multi-year analysis
+    historical_trends: dict = field(default_factory=dict)
     # freshness metadata keyed by logical name
     freshness: dict = field(default_factory=dict)
 
@@ -87,6 +89,7 @@ def load_all() -> TransPlanData:
     data.srtr_reports       = _load_json(DATA_DIR / "manual/srtr-reports.json",    "srtr_reports",    data)
     data.cause_of_death     = _load_json(DATA_DIR / "cause-of-death-by-region.json", "cause_of_death", data)
     data.post_transplant_outcomes = _load_json(DATA_DIR / "post-transplant-outcomes.json", "post_transplant_outcomes", data)
+    data.historical_trends = _load_json(DATA_DIR / "srtr-historical.json", "historical_trends", data)
 
     loaded = sum(1 for v in data.freshness.values() if v not in ("missing", "parse_error"))
     logger.info("TransPlan data loaded: %d/%d files OK", loaded, len(data.freshness))
