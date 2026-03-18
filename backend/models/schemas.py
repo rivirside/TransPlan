@@ -92,6 +92,10 @@ class SimulationResult(BaseModel):
         default_factory=dict,
         description="Phase 1 suitability scores for comparison (city → score)"
     )
+    inference_mode: Literal["monte_carlo", "bayesian"] = Field(
+        default="monte_carlo",
+        description="Which inference engine produced this result"
+    )
 
 
 class ParameterImpact(BaseModel):

@@ -69,16 +69,21 @@
   /**
    * Call POST /simulate on the backend.
    * @param {Object} formData - Raw form data from the frontend
+   * @param {string} [inferenceMode] - 'monte_carlo' (default) or 'bayesian'
    * @returns {Promise<Object|null>} SimulationResult or null on failure
    */
-  async function simulate(formData) {
+  async function simulate(formData, inferenceMode) {
     var base = getBaseUrl();
     var controller = new AbortController();
     var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
 
     try {
       var body = normalizeFormData(formData);
-      var response = await fetch(base + '/simulate', {
+      var url = base + '/simulate';
+      if (inferenceMode && inferenceMode !== 'monte_carlo') {
+        url += '?inference_mode=' + encodeURIComponent(inferenceMode);
+      }
+      var response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

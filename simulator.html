@@ -172,6 +172,14 @@
                                 </label>
                                 <small class="field-help">Applies organ-specific donor recovery rates based on state-level mortality data (trauma, stroke, cardiovascular, drug intoxication, anoxia).</small>
                             </div>
+                            <div class="form-group">
+                                <label for="inferenceMode">Inference Method</label>
+                                <select id="inferenceMode">
+                                    <option value="monte_carlo">Monte Carlo (stochastic, default)</option>
+                                    <option value="bayesian">Bayesian Network (exact, faster)</option>
+                                </select>
+                                <small class="field-help">Monte Carlo runs 1,000+ random simulations. Bayesian Network uses an exact probabilistic model for instant results.</small>
+                            </div>
                         </div>
                     </fieldset>
 

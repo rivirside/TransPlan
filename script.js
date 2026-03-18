@@ -2035,6 +2035,7 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
         las: parseInt(document.getElementById('las')?.value) || 0,
         homeCenter: document.getElementById('homeCenter')?.value || '',
         adjustForCauseOfDeath: document.getElementById('adjustCauseOfDeath')?.checked || false,
+        inferenceMode: document.getElementById('inferenceMode')?.value || 'monte_carlo',
         weights: window.TransPlanWeights?.getWeights() || null
     };
 
@@ -2050,11 +2051,11 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
     // Phase 1: Calculate deterministic scores
     calculateResults(formData);
 
-    // Phase 2: Call backend for Monte Carlo simulation
+    // Phase 2: Call backend for simulation (Monte Carlo or Bayesian)
     let simResult = null;
     let equityResult = null;
     if (window.TransPlanAPI) {
-        simResult = await window.TransPlanAPI.simulate(formData);
+        simResult = await window.TransPlanAPI.simulate(formData, formData.inferenceMode);
         // M4: Run equity analysis in parallel with the spinner still visible
         if (simResult) {
             equityResult = await window.TransPlanAPI.equityAnalysis(formData);
@@ -2563,11 +2564,17 @@ function renderProbabilityView(simResult, formData) {
 
     if (!simResult || !simResult.cities) return;
 
-    // Simulation metadata
+    // Simulation metadata with inference mode badge
     const meta = document.createElement('div');
     meta.className = 'simulation-meta';
-    meta.textContent = 'Monte Carlo simulation: ' + simResult.iterations.toLocaleString() +
-        ' iterations in ' + simResult.elapsed_seconds.toFixed(2) + 's';
+    var isBayesian = simResult.inference_mode === 'bayesian';
+    if (isBayesian) {
+        meta.innerHTML = '<span class="inference-badge inference-badge--bayesian">Bayesian Network</span> ' +
+            'Exact inference in ' + simResult.elapsed_seconds.toFixed(2) + 's';
+    } else {
+        meta.innerHTML = '<span class="inference-badge inference-badge--mc">Monte Carlo</span> ' +
+            simResult.iterations.toLocaleString() + ' iterations in ' + simResult.elapsed_seconds.toFixed(2) + 's';
+    }
     container.appendChild(meta);
 
     // Find home center for comparison (null if not selected)

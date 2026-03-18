@@ -22,7 +22,8 @@
     meld:                'meld',
     las:                 'las',
     homeCenter:          'hc',
-    adjustCauseOfDeath:  'cod'
+    adjustCauseOfDeath:  'cod',
+    inferenceMode:       'im'
   };
 
   // Reverse map: URL param → field ID
@@ -49,7 +50,8 @@
       meld:               document.getElementById('meld'),
       las:                document.getElementById('las'),
       homeCenter:         document.getElementById('homeCenter'),
-      adjustCauseOfDeath: document.getElementById('adjustCauseOfDeath')
+      adjustCauseOfDeath: document.getElementById('adjustCauseOfDeath'),
+      inferenceMode:      document.getElementById('inferenceMode')
     };
 
     Object.keys(fields).forEach(function (fieldId) {
