@@ -295,3 +295,47 @@ class TestCodMultiplierStochastic:
         assert len(result.cities) == 22
         for city in result.cities:
             assert 0 <= city.p_transplant_24mo <= 1
+
+
+# -- Clayton copula integration tests (Phase 5 M2) --
+
+class TestCopulaIntegration:
+    """Verify that use_copula=True produces valid simulation results."""
+
+    def test_copula_simulation_runs(self):
+        patient = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            use_copula=True,
+        )
+        result = simulate(patient, n_iterations=500)
+        assert len(result.cities) == 22
+        for city in result.cities:
+            assert 0 <= city.p_transplant_24mo <= 1
+
+    def test_copula_probabilities_monotonic(self):
+        patient = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            use_copula=True,
+        )
+        result = simulate(patient, n_iterations=500)
+        for city in result.cities:
+            assert city.p_transplant_6mo <= city.p_transplant_12mo + 0.02
+            assert city.p_transplant_12mo <= city.p_transplant_24mo + 0.02
+            assert city.p_transplant_24mo <= city.p_transplant_36mo + 0.02
+
+    @pytest.mark.parametrize("organ", ["kidney", "liver", "heart", "lung", "pancreas", "intestine"])
+    def test_copula_all_organs(self, organ):
+        patient = PatientProfile(organ=organ, blood_type="A+", age=40, sex="male", urgency=2, use_copula=True)
+        result = simulate(patient, n_iterations=200)
+        assert len(result.cities) == 22
+
+    def test_copula_with_cod_combined(self):
+        """Copula + cause-of-death adjustment should work together."""
+        patient = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            use_copula=True, adjust_for_cause_of_death=True,
+        )
+        result = simulate(patient, n_iterations=500)
+        assert len(result.cities) == 22
+        for city in result.cities:
+            assert 0 <= city.p_transplant_24mo <= 1

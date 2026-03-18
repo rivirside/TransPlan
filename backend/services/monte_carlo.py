@@ -20,9 +20,10 @@ import time
 
 import numpy as np
 
-from config import SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY
+from config import COPULA_THETA, SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY
 from models.schemas import CityProbability, PatientProfile, SimulationResult
 from services.competing_risks import get_annual_mortality_rate, get_annual_delisting_rate
+from services.copula import draw_correlated_competing_risks
 from services.data_loader import get_data
 from services.distributions import get_wait_time_distribution
 from services.outcomes import build_outcomes_dict
@@ -217,19 +218,28 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
             effective_mult = np.power(safe_mult, SUPPLY_WAIT_ELASTICITY)
             transplant_times = transplant_times / effective_mult
 
-        # --- Draw mortality times from exponential ---
+        # --- Draw mortality & delisting times ---
         annual_mort = get_annual_mortality_rate(
             organ=patient.organ, city=city, urgency=patient.urgency, meld=patient.meld,
         )
-        # Convert annual rate to monthly: monthly_rate = annual_rate / 12
-        # Exponential scale = 1/rate = 12/annual_rate (mean time in months)
         mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
-        mortality_times = rng.exponential(scale=mort_scale, size=n_iterations)
 
-        # --- Draw delisting times from exponential ---
         annual_delist = get_annual_delisting_rate(organ=patient.organ, city=city)
         delist_scale = 12.0 / annual_delist if annual_delist > 0 else 1e6
-        delisting_times = rng.exponential(scale=delist_scale, size=n_iterations)
+
+        if patient.use_copula:
+            # Clayton copula: correlated lower-tail dependence (Phase 5 M2)
+            mortality_times, delisting_times = draw_correlated_competing_risks(
+                mort_scale=mort_scale,
+                delist_scale=delist_scale,
+                n=n_iterations,
+                theta=COPULA_THETA,
+                rng=rng,
+            )
+        else:
+            # Independent exponentials (original model)
+            mortality_times = rng.exponential(scale=mort_scale, size=n_iterations)
+            delisting_times = rng.exponential(scale=delist_scale, size=n_iterations)
 
         # --- Determine outcome: which event occurs first ---
         all_times = np.stack([transplant_times, mortality_times, delisting_times], axis=1)

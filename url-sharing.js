@@ -23,6 +23,7 @@
     las:                 'las',
     homeCenter:          'hc',
     adjustCauseOfDeath:  'cod',
+    useCopula:           'cop',
     inferenceMode:       'im'
   };
 
@@ -51,6 +52,7 @@
       las:                document.getElementById('las'),
       homeCenter:         document.getElementById('homeCenter'),
       adjustCauseOfDeath: document.getElementById('adjustCauseOfDeath'),
+      useCopula:          document.getElementById('useCopula'),
       inferenceMode:      document.getElementById('inferenceMode')
     };
 

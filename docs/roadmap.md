@@ -416,6 +416,42 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 **Key files:** `backend/services/bbn_parameterizer.py`, `backend/services/bayesian_network.py`, `api-client.js`, `simulator.html`
 **Completed:** March 2026. ADR-024. Issues #36-#42.
 
+### M2: Clayton Copula for Correlated Competing Risks ✅ DONE
+
+> **Why:** The independence assumption between mortality and delisting in the Monte Carlo engine (three separate exponential draws) underestimates clustered adverse events. A Clayton copula introduces positive lower-tail dependence — when health deteriorates, both mortality and delisting accelerate together.
+
+- [x] **Clayton copula sampler**: `services/copula.py` with conditional method (Nelsen, 2006 §4.2)
+- [x] **Marginal preservation**: maps copula-coupled uniforms through exponential inverse CDF
+- [x] **Opt-in toggle**: `use_copula: bool` on PatientProfile (default False for backward compat)
+- [x] **All 3 simulation paths**: monte_carlo.py, what_if.py, sensitivity.py support copula draws
+- [x] **Config**: `COPULA_THETA = 1.0` (Kendall's τ ≈ 0.33, moderate positive dependence)
+- [x] **22 copula unit tests**: marginal uniformity (KS test), Kendall's τ matches theoretical, edge cases
+- [x] **4 integration tests**: copula + all organs, copula + COD combined, probability monotonicity
+- [x] **ADR-025**: documents copula choice, alternatives rejected, validation approach
+
+**Key files:** `backend/services/copula.py`, `backend/config.py`, `backend/models/schemas.py`, `backend/services/monte_carlo.py`, `backend/services/what_if.py`, `backend/services/sensitivity.py`
+**Completed:** March 2026. ADR-025. Issues #94.
+
+### M3: MCMC Hierarchical Survival Model — PLANNED
+
+> **Why:** Replace point-estimate parameters (fixed mortality rates, fixed delisting rates) with full posterior distributions. A ~650-parameter PyMC model with organ→city→patient hierarchy produces credible intervals on every prediction, honest uncertainty quantification, and adaptive shrinkage for data-sparse centers.
+
+**Architecture:**
+- **Offline training**: PyMC NUTS sampler fits organ-specific hierarchical models from SRTR data
+- **Trace-as-cache**: Posterior traces saved as ArviZ InferenceData (~50MB per organ)
+- **Online query**: Draw from cached trace at inference time (~50ms, no re-fitting)
+- **Schema**: `inference_mode: "mcmc"` on SimulationResult
+
+**Key components:**
+- [ ] PyMC dependency + hierarchical model specification (organ→city→patient)
+- [ ] SRTR data adapter: existing JSON → PyMC observed data
+- [ ] Trace caching + loading infrastructure
+- [ ] `POST /simulate?inference_mode=mcmc` endpoint
+- [ ] Cross-validation: MCMC vs Monte Carlo vs BBN ranking agreement
+- [ ] ADR-026: MCMC hierarchical survival model
+
+**Depends on:** M2 copula (provides correlated prior structure for mortality/delisting). GitHub issue #95.
+
 ### Platform API & Integrations (deferred from Phase 4)
 - [ ] **Public REST API with tiered access (FR-18)** — #24: API key auth, rate limiting, versioned endpoints, Swagger docs
 - [ ] **Python & JavaScript SDKs** — #25: client libraries wrapping TransPlan API (PyPI + npm)

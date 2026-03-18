@@ -11,7 +11,7 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'http://localhost:8002',
+  url: 'https://trans-plan.vercel.app',
   baseUrl: '/docs-site/build/',
 
   organizationName: 'transplantmatch',

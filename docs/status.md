@@ -6,13 +6,15 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 5 M1 Complete (Bayesian Belief Network)
+## Current State: Phase 5 M2 Complete (Clayton Copula)
 
-Phase 1 MVP complete (112 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. Phase 3 M1-M5 done. Phase 4 M1-M5 done. Phase 5 M1 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
+Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. Phase 3 M1-M5 done. Phase 4 M1-M5 done. Phase 5 M1-M2 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
 **Phase 4 complete (March 2026):** All 5 milestones done (ADR-021). M1 (Configurable Weights), M2 (Post-Transplant Outcomes), M3 (Historical Trends), M4 (Policy Scenario Engine), M5 (Validation & Reproducibility Pack). 112 Jest, 448 pytest.
 
-**Phase 5 M1 complete (March 2026):** Bayesian Belief Network inference engine (ADR-024). 12-node DAG with pgmpy VariableElimination for exact inference (~30ms cached vs ~2s MC). Toggle via `POST /simulate?inference_mode=bayesian`. All 7 CPTs derived from existing JSON data (no duplication). Cross-validated: Spearman rank > 0.5 for city rankings, directional consistency on blood type/organ/urgency effects. Frontend inference method dropdown + method badge. 72 new BBN-specific pytest tests. 448 pytest + 112 Jest = 560 total, 0 failures. Issues #36-#42 closed.
+**Phase 5 M1 complete (March 2026):** Bayesian Belief Network inference engine (ADR-024). 12-node DAG with pgmpy VariableElimination for exact inference (~30ms cached vs ~2s MC). Toggle via `POST /simulate?inference_mode=bayesian`. All 7 CPTs derived from existing JSON data (no duplication). Cross-validated: Spearman rank > 0.5 for city rankings, directional consistency on blood type/organ/urgency effects. Frontend inference method dropdown + method badge. 72 new BBN-specific pytest tests. Issues #36-#42 closed.
+
+**Phase 5 M2 complete (March 2026):** Clayton copula for correlated competing risks (ADR-025). Mortality and delisting times now optionally drawn with positive lower-tail dependence via `use_copula: true` on PatientProfile. Default θ=1.0 (Kendall's τ ≈ 0.33). Conditional sampling method preserves marginal exponential distributions. All 3 simulation paths (monte_carlo, what_if, sensitivity) support copula. 22 copula unit tests + 4 integration tests. 474 pytest + 112 Jest = 586 total (8 pre-existing COD stochastic failures, not copula-related). Issue #94.
 
 **M4 (Policy Scenario Engine):** 4 predefined UNOS policy scenarios with literature-backed parameters and per-city adjustments: (1) 2021 Kidney 250nm Circles — per-center-size donor/wait adjustments, (2) Continuous Distribution — stronger geography de-emphasis, (3) Increased DCD Utilization — +15% organ supply, (4) Broader HCV+ Acceptance — +6% donor pool for kidney/liver. Frontend policy scenario selector in probability tab. `POST /policy-scenario` endpoint, `GET /policy-scenarios` listing. 24 new pytest tests.
 
@@ -54,7 +56,7 @@ Phase 1 MVP complete (112 Jest tests, 56 limitations tracked). Phase 2 probabili
 | Fetch scripts (scripts/) | ✅ Done | All scripts use mergeDataFile, skip-on-empty guards added |
 | GitHub Actions | ✅ Done | Single sequential job, weekly cron + manual dispatch |
 | Socioeconomic data | ✅ Done | Transplant-support rubric replacing wealth-correlated scores |
-| Unit tests | ✅ Done | 112 tests (Jest), 448 tests (pytest), 0 failures |
+| Unit tests | ✅ Done | 112 tests (Jest), 474 tests (pytest) |
 | CDN fallback | ✅ Done | Graceful degradation when Leaflet/Chart.js CDN unavailable |
 | CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
@@ -114,10 +116,12 @@ Phase 1 MVP complete (112 Jest tests, 56 limitations tracked). Phase 2 probabili
 | Milestone | Status | Notes |
 |-----------|--------|-------|
 | M1: Bayesian Belief Network | ✅ Done | 12-node DAG, pgmpy VariableElimination, 7 CPTs from existing data, API toggle, frontend dropdown, cross-validated, 72 pytest (ADR-024, #36-#42 closed) |
+| M2: Clayton Copula | ✅ Done | Correlated mortality/delisting draws, θ=1.0 (τ≈0.33), opt-in via `use_copula`, all 3 sim paths, 22+4 tests (ADR-025, #94) |
+| M3: MCMC Hierarchical Model | Planned | ~650-param PyMC model, trace-as-cache architecture, posterior uncertainty quantification (#95) |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 5 M1 COMPLETE** — BBN inference engine, 448 pytest + 112 Jest = 560 total
+- **Phase 5 M2 COMPLETE** — Clayton copula, 474 pytest + 112 Jest = 586 total
 - **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred to Phase 5:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
@@ -250,16 +254,18 @@ TransPlan/
       bias_audit.py       <- Demographic bias audit: Cohen's d, Gini, disparity metrics (Phase 4 M5)
       bbn_parameterizer.py <- BBN CPT builder: 7 CPTs from existing JSON data, no duplication (Phase 5 M1)
       bayesian_network.py  <- BBN inference engine: 12-node DAG, pgmpy VariableElimination (Phase 5 M1)
+      copula.py            <- Clayton copula: correlated mortality/delisting draws, conditional method (Phase 5 M2)
     routers/
       ...
       trends.py           <- GET /trends/{city}/{organ}, GET /trends/{organ} (Phase 4 M3)
-    tests/                <- pytest suite (448 tests)
+    tests/                <- pytest suite (474 tests)
       ...
       test_policy_scenarios.py <- 24 tests: scenario registry, filtering, per-city multipliers
       test_bias_audit.py       <- 19 tests: Cohen's d, Gini, dimension disparity, full audit
       test_bbn_parameterizer.py <- 30 tests: CPT shapes, normalization, semantic checks (Phase 5 M1)
       test_bayesian_network.py  <- 32 tests: DAG structure, inference validity, organ-specific (Phase 5 M1)
       test_bbn_cross_validation.py <- 10 tests: rank correlation, directional consistency, speed (Phase 5 M1)
+      test_copula.py             <- 22 tests: marginal uniformity, Kendall's τ, edge cases, integration (Phase 5 M2)
   docs/
     status.md             <- THIS FILE (read every session)
     ideas.md              <- Full SRS: requirements, architecture, FDA pathway

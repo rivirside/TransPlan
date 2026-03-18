@@ -1,4 +1,5 @@
 {
+  "framework": null,
   "outputDirectory": ".",
   "buildCommand": "cd docs-site && npm install && npm run build"
 }

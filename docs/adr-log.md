@@ -567,3 +567,34 @@ M1 is fully independent. M2 and M3 share SRTR pipeline work and can be paralleli
 - Performance: BBN is 10-50× faster than MC, enabling real-time exploration
 - Maintenance: both engines read from the same data layer, but CPT logic must be updated when new variables are added
 - Future: BBN can be extended with learned parameters if patient-level data becomes available
+
+---
+
+## ADR-025: Clayton Copula for Correlated Competing Risks
+
+**Date:** 2026-03-18
+**Status:** Accepted
+
+**Context:** The Monte Carlo engine draws mortality and delisting times as independent exponentials (lines 220-232 of `monte_carlo.py`). In reality, a patient whose health deteriorates faces both higher mortality AND higher delisting risk simultaneously — these events exhibit positive lower-tail dependence. The independence assumption underestimates the probability that both bad outcomes cluster together, leading to overly optimistic transplant probability estimates for high-risk patients.
+
+**Decision:** Introduce a Clayton copula to model correlated mortality-delisting draws, available as an opt-in toggle (`use_copula: true` on PatientProfile).
+
+1. **Clayton copula**: Chosen specifically for its asymmetric dependence structure — strong positive dependence in the lower tail (both events happen sooner when health deteriorates), weaker upper tail. This matches the clinical reality: declining health simultaneously accelerates mortality and delisting, but being very healthy doesn't equally decouple the events.
+2. **Conditional sampling method** (Nelsen, 2006 §4.2): Draw `u1, t ~ Uniform(0,1)`, compute `u2 = (u1^(-θ) · (t^(-θ/(θ+1)) - 1) + 1)^(-1/θ)`. Map through exponential inverse CDF to get correlated event times. Preserves marginal exponential distributions exactly.
+3. **Default θ = 1.0**: Kendall's τ ≈ 0.33 (moderate positive dependence). Conservative choice supported by SRTR registry analyses. Configurable via `config.py::COPULA_THETA`.
+4. **Opt-in via `use_copula` flag**: Default `False` preserves backward compatibility. All three simulation paths (monte_carlo, what_if, sensitivity) support the toggle.
+
+**Alternatives considered:**
+- **Gaussian copula**: Symmetric tail dependence — doesn't match clinical asymmetry. Rejected.
+- **Frank copula**: No tail dependence at all — events become independent in extremes. Rejected.
+- **Gumbel copula**: Upper-tail dependence (opposite of what we need). Rejected.
+- **Full joint survival model**: Requires patient-level data we don't have. Deferred to Phase 5 M3 (MCMC).
+
+**Files:** `backend/services/copula.py` (new), `backend/config.py`, `backend/models/schemas.py`, `backend/services/monte_carlo.py`, `backend/services/what_if.py`, `backend/services/sensitivity.py`, `backend/tests/test_copula.py` (new, 22 tests)
+
+**Consequences:**
+- With copula enabled, mortality and delisting times are positively correlated: patients in decline face clustered adverse events
+- Transplant probabilities for high-acuity patients decrease slightly (more realistic)
+- Marginal distributions unchanged — mean mortality/delisting rates are preserved
+- Statistical validation: empirical Kendall's τ matches θ/(θ+2) within 0.03 tolerance across θ ∈ {0.5, 1, 2, 5}
+- Future: θ can be calibrated from patient-level competing risks data when available

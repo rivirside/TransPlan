@@ -27,6 +27,11 @@ class PatientProfile(BaseModel):
         False,
         description="Apply organ-specific donor recovery rates based on regional cause-of-death patterns"
     )
+    # Phase 5 M2: Correlated competing risks via Clayton copula
+    use_copula: bool = Field(
+        False,
+        description="Use Clayton copula for correlated mortality/delisting draws instead of independent exponentials"
+    )
     # Phase 4 M1: Configurable scoring weights (frontend concern, passed through for export fidelity)
     custom_weights: Optional[dict[str, float]] = Field(
         None,

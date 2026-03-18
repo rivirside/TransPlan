@@ -2035,6 +2035,7 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
         las: parseInt(document.getElementById('las')?.value) || 0,
         homeCenter: document.getElementById('homeCenter')?.value || '',
         adjustForCauseOfDeath: document.getElementById('adjustCauseOfDeath')?.checked || false,
+        useCopula: document.getElementById('useCopula')?.checked || false,
         inferenceMode: document.getElementById('inferenceMode')?.value || 'monte_carlo',
         weights: window.TransPlanWeights?.getWeights() || null
     };

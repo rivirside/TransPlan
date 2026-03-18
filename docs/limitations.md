@@ -419,6 +419,24 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ---
 
+## 8. Statistical Model (discovered 2026-03-18 review)
+
+### L-058: Competing risks drawn as independent exponentials
+- **Severity:** HIGH
+- **Status:** FIXED (March 2026)
+- **Details:** The Monte Carlo engine draws mortality and delisting times as independent exponential random variables. In reality, a patient whose health is declining faces both higher mortality AND higher delisting risk simultaneously — positive lower-tail dependence. The independence assumption underestimates the probability of clustered adverse events, leading to overly optimistic transplant probability estimates for high-acuity patients.
+- **File:** `backend/services/monte_carlo.py` lines 220-232, `backend/services/what_if.py` lines 101-111, `backend/services/sensitivity.py` lines 44-55
+- **Fix:** Added Clayton copula (`services/copula.py`) with opt-in `use_copula: true` toggle. Default θ=1.0 (Kendall's τ ≈ 0.33). Marginal distributions preserved exactly; only the dependence structure changes. ADR-025.
+
+### L-059: Single fixed copula parameter (θ) for all organs
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** The Clayton copula parameter θ=1.0 is applied uniformly across all 6 organ types. In reality, the mortality-delisting correlation likely varies by organ: heart patients (high-acuity, short window) may have stronger dependence than kidney patients (lower-acuity, longer stable periods). Organ-specific θ calibration from SRTR competing risks data would improve accuracy.
+- **File:** `backend/config.py` → `COPULA_THETA`
+- **Fix:** Future work: fit organ-specific θ from SRTR waitlist event data using maximum pseudo-likelihood estimation. Requires patient-level competing event timestamps.
+
+---
+
 ## Resolution Log
 
 | ID | Fixed In | Date | Notes |
@@ -471,3 +489,4 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-046 | 822b778 | 2026-03-06 | FIXED — multi-strategy CMS API (SQL/filter/legacy); filter strategy works, 22 cities fetched |
 | L-047 | 2b4d542 | 2026-03-06 | FIXED — onerror handlers + TransPlanCDN gate + guard clauses in map/chart init; yellow fallback banners |
 | L-048 | 2b4d542 | 2026-03-06 | FIXED — dynamic min/max from loaded COL data; FIXME fallbacks for empty data |
+| L-058 | (Phase 5 M2) | 2026-03-18 | FIXED — Clayton copula for correlated mortality/delisting; θ=1.0, opt-in via use_copula flag; ADR-025 |

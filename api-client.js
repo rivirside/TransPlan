@@ -58,6 +58,9 @@
     // M2: Organ-specific donor availability adjustment
     if (formData.adjustForCauseOfDeath) profile.adjust_for_cause_of_death = true;
 
+    // Phase 5 M2: Correlated competing risks via Clayton copula
+    if (formData.useCopula) profile.use_copula = true;
+
     // Phase 4 M1: Custom scoring weights (pass-through for export fidelity)
     if (formData.weights && typeof formData.weights === 'object') {
       profile.custom_weights = formData.weights;

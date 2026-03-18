@@ -17,8 +17,10 @@ import time
 
 import numpy as np
 
+from config import COPULA_THETA
 from models.schemas import ParameterImpact, PatientProfile, SensitivityResult
 from services.competing_risks import get_annual_delisting_rate, get_annual_mortality_rate
+from services.copula import draw_correlated_competing_risks
 from services.distributions import get_wait_time_distribution
 
 logger = logging.getLogger(__name__)
@@ -48,11 +50,21 @@ def _p24_single_city(
         meld=patient.meld,
     )
     mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
-    mortality_times = rng.exponential(scale=mort_scale, size=n_iterations)
 
     annual_delist = get_annual_delisting_rate(organ=patient.organ, city=city)
     delist_scale = 12.0 / annual_delist if annual_delist > 0 else 1e6
-    delisting_times = rng.exponential(scale=delist_scale, size=n_iterations)
+
+    if patient.use_copula:
+        mortality_times, delisting_times = draw_correlated_competing_risks(
+            mort_scale=mort_scale,
+            delist_scale=delist_scale,
+            n=n_iterations,
+            theta=COPULA_THETA,
+            rng=rng,
+        )
+    else:
+        mortality_times = rng.exponential(scale=mort_scale, size=n_iterations)
+        delisting_times = rng.exponential(scale=delist_scale, size=n_iterations)
 
     all_times = np.stack([transplant_times, mortality_times, delisting_times], axis=1)
     event_times = np.min(all_times, axis=1)

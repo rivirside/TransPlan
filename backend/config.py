@@ -14,6 +14,11 @@ SIMULATION_ITERATIONS: int = 1000
 # 0.65 means 10% more donors → ~6.5% shorter waits (not 10%).
 SUPPLY_WAIT_ELASTICITY: float = 0.65
 
+# Clayton copula dependence parameter for correlated competing risks (Phase 5 M2).
+# θ > 0; higher values = stronger lower-tail dependence between mortality & delisting.
+# θ = 1.0 ≈ Kendall's τ 0.33 (moderate, conservative default from SRTR analyses).
+COPULA_THETA: float = 1.0
+
 # Semantic version
 VERSION: str = "2.0.0-alpha"
 

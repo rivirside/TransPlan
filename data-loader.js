@@ -253,13 +253,25 @@
         const banner = document.getElementById('data-freshness-banner');
         if (!banner) return;
 
-        const lastUpdate = metadata?.lastFullFetch
-            ? new Date(metadata.lastFullFetch).toLocaleDateString('en-US', {
+        // Determine last update: prefer metadata.lastFullFetch, fall back to
+        // the most recent fetchedAt from any individual source
+        let lastFetch = metadata?.lastFullFetch;
+        if (!lastFetch && metadata?.sources) {
+            const dates = Object.values(metadata.sources)
+                .map(s => s.fetchedAt)
+                .filter(Boolean)
+                .sort()
+                .reverse();
+            if (dates.length) lastFetch = dates[0];
+        }
+
+        const lastUpdate = lastFetch
+            ? new Date(lastFetch).toLocaleDateString('en-US', {
                 year: 'numeric', month: 'long', day: 'numeric'
             })
             : 'Unknown';
 
-        const overallFreshness = getFreshness(metadata?.lastFullFetch);
+        const overallFreshness = getFreshness(lastFetch);
         const freshnessColors = { fresh: '#27ae60', stale: '#f39c12', expired: '#e74c3c' };
         const freshnessLabels = { fresh: 'Up to date', stale: 'Some data may be outdated', expired: 'Data may be outdated' };
 

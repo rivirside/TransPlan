@@ -16,8 +16,9 @@ from pydantic import BaseModel, Field
 
 from models.schemas import PatientProfile
 from services.competing_risks import get_annual_delisting_rate, get_annual_mortality_rate
+from services.copula import draw_correlated_competing_risks
 from services.distributions import get_wait_time_distribution
-from config import SUPPLY_WAIT_ELASTICITY
+from config import COPULA_THETA, SUPPLY_WAIT_ELASTICITY
 from services.monte_carlo import CITIES, _get_cod_multiplier
 
 logger = logging.getLogger(__name__)
@@ -98,17 +99,26 @@ def _run_single(
         effective_donor = donor_rate_multiplier ** SUPPLY_WAIT_ELASTICITY
         transplant_times = transplant_times / effective_donor
 
-    # Draw mortality times
+    # Draw mortality & delisting times
     annual_mort = get_annual_mortality_rate(
         organ=patient.organ, city=city, urgency=patient.urgency, meld=patient.meld,
     )
     mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
-    mortality_times = rng.exponential(scale=mort_scale, size=n_iterations)
 
-    # Draw delisting times
     annual_delist = get_annual_delisting_rate(organ=patient.organ, city=city)
     delist_scale = 12.0 / annual_delist if annual_delist > 0 else 1e6
-    delisting_times = rng.exponential(scale=delist_scale, size=n_iterations)
+
+    if patient.use_copula:
+        mortality_times, delisting_times = draw_correlated_competing_risks(
+            mort_scale=mort_scale,
+            delist_scale=delist_scale,
+            n=n_iterations,
+            theta=COPULA_THETA,
+            rng=rng,
+        )
+    else:
+        mortality_times = rng.exponential(scale=mort_scale, size=n_iterations)
+        delisting_times = rng.exponential(scale=delist_scale, size=n_iterations)
 
     # Competing risks: which event occurs first
     all_times = np.stack([transplant_times, mortality_times, delisting_times], axis=1)

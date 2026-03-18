@@ -173,6 +173,13 @@
                                 <small class="field-help">Applies organ-specific donor recovery rates based on state-level mortality data (trauma, stroke, cardiovascular, drug intoxication, anoxia).</small>
                             </div>
                             <div class="form-group">
+                                <label class="overlay-toggle" for="useCopula">
+                                    <input type="checkbox" id="useCopula">
+                                    <span>Correlated competing risks (Clayton copula)</span>
+                                </label>
+                                <small class="field-help">Models positive dependence between mortality and delisting — declining health accelerates both events simultaneously, producing more realistic risk estimates.</small>
+                            </div>
+                            <div class="form-group">
                                 <label for="inferenceMode">Inference Method</label>
                                 <select id="inferenceMode">
                                     <option value="monte_carlo">Monte Carlo (stochastic, default)</option>
