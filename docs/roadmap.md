@@ -399,6 +399,23 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 > **Goal:** Public API, FDA clearance as SaMD, widespread adoption, sustainability.
 > **Includes items deferred from Phase 4 scope-down (ADR-021).**
 
+### M1: Bayesian Belief Network ✅ DONE
+
+> **Why:** Alternative inference engine providing exact probabilistic inference (~30ms cached vs ~2s Monte Carlo). Enables instant results and cross-validation of Monte Carlo outputs.
+
+- [x] **pgmpy dependency + CPT parameterizer**: 7 CPTs built from existing JSON data (no duplication) — `bbn_parameterizer.py`
+- [x] **12-node DAG + inference engine**: 5 evidence, 3 latent, 2 outcome, 2 post-tx nodes, 21 edges — `bayesian_network.py`
+- [x] **API integration**: `POST /simulate?inference_mode=bayesian` dispatches to BBN; default remains Monte Carlo
+- [x] **Frontend toggle + results badge**: inference method dropdown, blue MC / green BBN badge
+- [x] **Cross-validation**: Spearman rank correlation > 0.5, directional consistency on blood type/organ/urgency
+- [x] **ADR-024 + documentation**: architecture decision record, status.md, file map updates
+- [x] **Age mortality multipliers**: added to competing-risks.json for BBN age-group modeling
+- [x] **URL sharing**: inference mode persisted in URL params
+- [x] 72 new pytest tests (30 parameterizer + 32 inference + 10 cross-validation)
+
+**Key files:** `backend/services/bbn_parameterizer.py`, `backend/services/bayesian_network.py`, `api-client.js`, `simulator.html`
+**Completed:** March 2026. ADR-024. Issues #36-#42.
+
 ### Platform API & Integrations (deferred from Phase 4)
 - [ ] **Public REST API with tiered access (FR-18)** — #24: API key auth, rate limiting, versioned endpoints, Swagger docs
 - [ ] **Python & JavaScript SDKs** — #25: client libraries wrapping TransPlan API (PyPI + npm)
@@ -424,7 +441,7 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 - [ ] Feature flags to build both modes from same codebase
 
 ### Advanced Modeling (deferred from Phase 4)
-- [ ] Bayesian Belief Network layer (conditional probability graph for wait time)
+- [x] Bayesian Belief Network layer — ✅ Phase 5 M1 (see above)
 - [ ] Agent-based simulation (patient agents, donor pool, regional allocation)
 - [ ] Living donor matching optimization (geographic clustering, demographic match probability)
 - [ ] Insurance compatibility layer (Medicaid vs private access patterns)

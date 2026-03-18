@@ -6,13 +6,13 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 5 M1 In Progress (Bayesian Belief Network)
+## Current State: Phase 5 M1 Complete (Bayesian Belief Network)
 
-Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. Phase 3 M1-M5 done. Phase 4 M1-M5 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
+Phase 1 MVP complete (112 Jest tests, 56 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. Phase 3 M1-M5 done. Phase 4 M1-M5 done. Phase 5 M1 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
 **Phase 4 complete (March 2026):** All 5 milestones done (ADR-021). M1 (Configurable Weights), M2 (Post-Transplant Outcomes), M3 (Historical Trends), M4 (Policy Scenario Engine), M5 (Validation & Reproducibility Pack). 112 Jest, 448 pytest.
 
-**Phase 5 M1: Bayesian Belief Network (ADR-024, March 2026):** 12-node DAG as alternative inference engine alongside Monte Carlo. pgmpy VariableElimination for exact inference (~30ms cached vs ~2s MC). Toggle via `POST /simulate?inference_mode=bayesian`. All CPTs derived from existing JSON data (no duplication). Cross-validated: Spearman rank correlation > 0.5 for city rankings, directional consistency on blood type/organ/urgency effects. Frontend inference method dropdown + method badge. 72 new BBN-specific pytest tests (448 total). Issues #36-#42 track sub-features.
+**Phase 5 M1 complete (March 2026):** Bayesian Belief Network inference engine (ADR-024). 12-node DAG with pgmpy VariableElimination for exact inference (~30ms cached vs ~2s MC). Toggle via `POST /simulate?inference_mode=bayesian`. All 7 CPTs derived from existing JSON data (no duplication). Cross-validated: Spearman rank > 0.5 for city rankings, directional consistency on blood type/organ/urgency effects. Frontend inference method dropdown + method badge. 72 new BBN-specific pytest tests. 448 pytest + 112 Jest = 560 total, 0 failures. Issues #36-#42 closed.
 
 **M4 (Policy Scenario Engine):** 4 predefined UNOS policy scenarios with literature-backed parameters and per-city adjustments: (1) 2021 Kidney 250nm Circles — per-center-size donor/wait adjustments, (2) Continuous Distribution — stronger geography de-emphasis, (3) Increased DCD Utilization — +15% organ supply, (4) Broader HCV+ Acceptance — +6% donor pool for kidney/liver. Frontend policy scenario selector in probability tab. `POST /policy-scenario` endpoint, `GET /policy-scenarios` listing. 24 new pytest tests.
 
@@ -113,11 +113,11 @@ Phase 1 MVP complete (98 Jest tests, 56 limitations tracked). Phase 2 probabilis
 
 | Milestone | Status | Notes |
 |-----------|--------|-------|
-| M1: Bayesian Belief Network | In Progress | 12-node DAG, pgmpy inference, CPT parameterizer, API toggle, frontend dropdown, 72 pytest (ADR-024, #36-#42) |
+| M1: Bayesian Belief Network | ✅ Done | 12-node DAG, pgmpy VariableElimination, 7 CPTs from existing data, API toggle, frontend dropdown, cross-validated, 72 pytest (ADR-024, #36-#42 closed) |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 4 COMPLETE** — all 5 milestones done (M1-M5), 448 pytest, 112 Jest
+- **Phase 5 M1 COMPLETE** — BBN inference engine, 448 pytest + 112 Jest = 560 total
 - **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred to Phase 5:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
