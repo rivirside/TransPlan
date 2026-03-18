@@ -533,3 +533,37 @@ M1 is fully independent. M2 and M3 share SRTR pipeline work and can be paralleli
 - Per-city multipliers make the results more meaningful than raw slider adjustments
 - Adding new scenarios is simple: call `_register(PolicyScenario(...))` in policy_scenarios.py
 - Phase 5 can build a custom scenario builder UI on top of this foundation
+
+---
+
+## ADR-024: Bayesian Belief Network as Alternative Inference Engine
+
+**Date:** 2026-03-17
+**Status:** Accepted
+
+**Context:** The existing Monte Carlo engine treats all factors as multiplicatively independent: blood type multiplier × city factor × urgency multiplier × COD multiplier. This misses important interactions: the effect of blood type on wait time depends on regional donor supply (O- in a low-O-donor region is superlinearly disadvantaged), age-organ mortality interactions vary (heart mortality is far more age-sensitive than kidney), and high-wait cities tend to have correlated high delisting rates. A Bayesian Belief Network can model these causal dependencies as a directed acyclic graph with conditional probability tables.
+
+**Decision:** Add a BBN as a **toggle mode** alongside Monte Carlo, not a replacement.
+
+1. **12-node DAG**: 5 evidence nodes (Organ, BloodType, AgeGroup, Urgency, Region), 3 latent nodes (DonorSupply, WaitCategory, MortalityRisk), 2 outcome nodes (DelistingRisk, CompetingOutcome), 2 post-transplant nodes (GraftSurvival1yr, CompoundSuccess).
+2. **CPTs derived from existing data**: The parameterizer reads the same JSON files (wait-time-distributions, competing-risks, cause-of-death-by-region, post-transplant-outcomes) through the same `data_loader.py`. No data duplication. One new parameter added: age-mortality multipliers from SRTR literature.
+3. **Exact inference via Variable Elimination**: The small DAG (12 nodes, max 8 states) allows exact inference in microseconds. Full 22-city inference in < 100ms (vs ~1s for MC).
+4. **Same output schema**: `simulate_bbn()` returns `SimulationResult` — identical to Monte Carlo. Frontend rendering code works unchanged.
+5. **Single endpoint dispatch**: `POST /simulate?inference_mode=bayesian` routes to BBN; default remains Monte Carlo. Feature flag `BBN_ENABLED` for graceful degradation.
+
+**Key interactions captured:**
+- `DonorSupply` as mediator between (Organ, BloodType, Region) and WaitCategory — blood type effect varies by regional supply
+- `MortalityRisk` conditional on (AgeGroup × Organ) — age-dependent mortality per organ type
+- `DelistingRisk` conditional on WaitCategory — correlated with wait duration, not independent
+- `CompetingOutcome` jointly conditioned on WaitCategory + MortalityRisk + DelistingRisk — captures correlations
+
+**Validation approach:** Cross-validate BBN vs Monte Carlo. Acceptance: Spearman rank correlation > 0.7 for city rankings, all directional effects preserved. Exact numerical match not required — divergence from interaction effects is expected and correct.
+
+**Files:** `backend/services/bayesian_network.py`, `backend/services/bbn_parameterizer.py`, `backend/routers/simulate.py` (modified), `backend/models/schemas.py` (modified), `simulator.html`, `api-client.js`
+
+**Consequences:**
+- Users can compare two inference approaches for the same patient profile
+- BBN surfaces interaction effects invisible to the Monte Carlo
+- Performance: BBN is 10-50× faster than MC, enabling real-time exploration
+- Maintenance: both engines read from the same data layer, but CPT logic must be updated when new variables are added
+- Future: BBN can be extended with learned parameters if patient-level data becomes available
