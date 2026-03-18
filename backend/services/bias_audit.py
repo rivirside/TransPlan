@@ -15,8 +15,6 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from services.monte_carlo import CITIES
-
 logger = logging.getLogger(__name__)
 
 
@@ -116,7 +114,7 @@ def _gini(values: list[float] | np.ndarray) -> float:
     s = np.sort(values)
     n = len(s)
     idx = np.arange(1, n + 1)
-    return float((2 * np.sum(idx * s) - (n + 1) * np.sum(s)) / (n * np.sum(s)))
+    return max(0.0, float((2 * np.sum(idx * s) - (n + 1) * np.sum(s)) / (n * np.sum(s))))
 
 
 def run_bias_audit(equity_result: dict) -> BiasAuditResult:

@@ -244,14 +244,18 @@
     var base = getBaseUrl();
     var url = base + '/policy-scenarios';
     if (organ) url += '?organ=' + encodeURIComponent(organ);
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, 5000);
     try {
       var response = await fetch(url, {
         method: 'GET',
-        signal: AbortSignal.timeout(5000)
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
       if (!response.ok) return null;
       return await response.json();
     } catch (err) {
+      clearTimeout(timeoutId);
       return null;
     }
   }
@@ -306,13 +310,17 @@
    */
   async function isBackendAvailable() {
     var base = getBaseUrl();
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, 3000);
     try {
       var response = await fetch(base + '/health', {
         method: 'GET',
-        signal: AbortSignal.timeout(3000)
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
       return response.ok;
     } catch (err) {
+      clearTimeout(timeoutId);
       return false;
     }
   }

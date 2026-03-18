@@ -2606,6 +2606,16 @@ main {
   margin-top: var(--space-3);
 }
 
+.what-if-error {
+  padding: var(--space-3);
+  color: var(--color-danger);
+  font-size: var(--fs-sm);
+  text-align: center;
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius);
+  margin-top: var(--space-3);
+}
+
 /* Phase 4 M4: Policy scenario selector */
 .policy-scenario-controls {
   display: grid;

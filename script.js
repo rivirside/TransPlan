@@ -2787,7 +2787,17 @@ function _runPolicyScenario(simResult, formData) {
             runBtn.textContent = 'Run Policy Scenario';
         }
 
-        if (!result || !resultsDiv) return;
+        if (!result) {
+            if (resultsDiv) {
+                while (resultsDiv.firstChild) resultsDiv.removeChild(resultsDiv.firstChild);
+                var errMsg = _el('div', 'what-if-error');
+                errMsg.textContent = 'Scenario could not be run. This may happen if the selected '
+                    + 'policy scenario does not apply to the chosen organ type.';
+                resultsDiv.appendChild(errMsg);
+            }
+            return;
+        }
+        if (!resultsDiv) return;
 
         // Render using the same grid as what-if results
         _renderWhatIfResults(resultsDiv, result);
