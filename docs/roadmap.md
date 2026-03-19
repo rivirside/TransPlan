@@ -472,6 +472,25 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 **Key files:** `backend/services/mcmc_survival.py` (model restructured), `backend/services/mcmc_inference.py` (Bayesian HDI + frailty detection)
 **Completed:** March 2026. ADR-027. Issues #96, #99.
 
+### M5: Cross-Engine Validation & Model Quality (in progress)
+
+> **Why:** Paper-grade validation that all three inference engines (MC, BBN, MCMC) agree on key predictions, and that MCMC posterior predictions match observed SRTR data. Also fixes known statistical issues.
+
+**Completed:**
+- [x] Cross-engine validation service (`services/cross_validation.py`): runs MC, BBN, MCMC on same patient; Spearman rank correlation, mean/max p24 diff, top-5 overlap
+- [x] Posterior predictive checks (`services/posterior_checks.py`): MCMC posterior vs observed SRTR statistics (8 checks: national median, log-sigma, city factors, blood type ranks, mortality, delisting, urgency monotonicity, calibration)
+- [x] L-059 fix: per-organ copula θ (kidney=0.8, liver=1.2, heart=1.8, lung=1.5, pancreas=0.9, intestine=1.5) — all 4 simulation paths
+- [x] L-062 fix: `--strict` convergence gate (R-hat < 1.01, ESS > 400) on `fit-mcmc-model.py`
+- [x] 24 new tests (14 cross-validation + 10 posterior checks)
+
+**Remaining:**
+- [ ] #104: Replace synthetic `srtr-historical.json` with real SRTR data (archive URLs 404 — needs manual download investigation)
+- [ ] API endpoint for cross-engine validation (`POST /cross-validate`)
+- [ ] API endpoint for posterior checks (`GET /posterior-checks/{organ}`)
+
+**Key files:** `backend/services/cross_validation.py`, `backend/services/posterior_checks.py`, `backend/config.py`
+**Started:** March 2026.
+
 ### Platform API & Integrations (deferred from Phase 4)
 - [ ] **Public REST API with tiered access (FR-18)** — #24: API key auth, rate limiting, versioned endpoints, Swagger docs
 - [ ] **Python & JavaScript SDKs** — #25: client libraries wrapping TransPlan API (PyPI + npm)
