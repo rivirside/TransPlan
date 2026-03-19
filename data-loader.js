@@ -21,6 +21,7 @@
         // L-034: srtr-reports.json removed from runtime loading — data was never
         // read by algorithm.js (dead path). File kept as documentation artifact.
         causeOfDeath: 'data/cause-of-death-by-region.json',
+        cityWaitTimeFactors: 'data/city-wait-time-factors.json',
         climateScores: 'data/manual/climate-scores.json',
         policyTiers: 'data/manual/policy-tiers.json',
         socioeconomic: 'data/manual/socioeconomic.json'

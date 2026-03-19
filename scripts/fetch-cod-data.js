@@ -77,8 +77,29 @@ const CAUSE_MAP = {
     // Drug overdose comes from the separate VSRR dataset
 };
 
-// Target the most recent year available in bi63-dtpu (2017 is the latest)
-const TARGET_YEAR = '2017';
+// Discover the most recent year with data instead of hardcoding.
+// bi63-dtpu goes up to ~2017; try recent years first, fall back to older.
+let TARGET_YEAR = null;
+
+async function discoverTargetYear() {
+    const currentYear = new Date().getFullYear();
+    // CDC data typically lags 2-3 years; try from (current-2) down to 2017
+    for (let y = currentYear - 2; y >= 2017; y--) {
+        const testUrl = `${LEADING_CAUSES_URL}?$where=year='${y}' AND cause_name='Heart disease'&$limit=1&$select=year`;
+        try {
+            const resp = await fetchWithRetry(testUrl);
+            const data = await resp.json();
+            if (data.length > 0) {
+                console.log(`  Most recent year with data: ${y}`);
+                return String(y);
+            }
+        } catch {
+            // continue to next year
+        }
+    }
+    console.warn('  Could not discover year, defaulting to 2017');
+    return '2017';
+}
 
 /**
  * Fetch leading causes of death (injury, heart, stroke) for all states.
@@ -129,9 +150,8 @@ async function fetchDrugOverdoses() {
     console.log('Fetching drug overdose data from VSRR dataset (xkb8-kh2a)...');
 
     // VSRR has rolling 12-month totals. Get "Number of Drug Overdose Deaths"
-    // for the period ending December 2017 to align with leading causes data.
-    // The indicator we want is "Number of Drug Overdose Deaths"
-    const url = `${DRUG_OVERDOSE_URL}?$where=year='2017' AND month='December' AND indicator='Number of Drug Overdose Deaths'&$limit=60&$select=state_name,data_value`;
+    // for the period ending December of TARGET_YEAR to align with leading causes.
+    const url = `${DRUG_OVERDOSE_URL}?$where=year='${TARGET_YEAR}' AND month='December' AND indicator='Number of Drug Overdose Deaths'&$limit=60&$select=state_name,data_value`;
 
     const results = {};
 
@@ -153,10 +173,11 @@ async function fetchDrugOverdoses() {
     } catch (err) {
         console.warn(`  Failed to fetch drug overdose data: ${err.message}`);
 
-        // Fallback: try 2018 data
-        console.log('  Trying 2018 fallback...');
+        // Fallback: try next year's data (VSRR may have different coverage)
+        const fallbackYear = String(Number(TARGET_YEAR) + 1);
+        console.log(`  Trying ${fallbackYear} fallback...`);
         try {
-            const fallbackUrl = `${DRUG_OVERDOSE_URL}?$where=year='2018' AND month='December' AND indicator='Number of Drug Overdose Deaths'&$limit=60&$select=state_name,data_value`;
+            const fallbackUrl = `${DRUG_OVERDOSE_URL}?$where=year='${fallbackYear}' AND month='December' AND indicator='Number of Drug Overdose Deaths'&$limit=60&$select=state_name,data_value`;
             const response = await fetchWithRetry(fallbackUrl);
             const data = await response.json();
 
@@ -168,7 +189,7 @@ async function fetchDrugOverdoses() {
                     results[state] = deaths;
                 }
             }
-            console.log(`  Drug overdose (2018 fallback): ${Object.keys(results).length} states`);
+            console.log(`  Drug overdose (${fallbackYear} fallback): ${Object.keys(results).length} states`);
         } catch (err2) {
             console.warn(`  Fallback also failed: ${err2.message}`);
         }
@@ -237,6 +258,10 @@ function computeProportions(leadingCauses, drugOverdoses) {
 
 async function main() {
     console.log('=== Fetching Cause-of-Death Data for Organ Donor Model ===\n');
+
+    // Discover latest available year
+    TARGET_YEAR = await discoverTargetYear();
+    console.log(`Using TARGET_YEAR = ${TARGET_YEAR}\n`);
 
     // Fetch both data sources
     const [leadingCauses, drugOverdoses] = await Promise.all([

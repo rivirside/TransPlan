@@ -1,0 +1,172 @@
+{
+  "_meta": {
+    "source": "SRTR PSR data (latest release wait_time_factor from srtr-historical.json)",
+    "generatedAt": "2026-03-19T18:44:28Z",
+    "notes": "Ratio of city median wait time to national median for each organ. Values > 1.0 = longer than national average."
+  },
+  "Pittsburgh": {
+    "kidney": 1.08,
+    "liver": 0.83,
+    "heart": 0.55,
+    "lung": 0.57,
+    "pancreas": 2.5,
+    "intestine": 3.0
+  },
+  "Baltimore": {
+    "kidney": 1.11,
+    "liver": 1.85,
+    "heart": 0.64,
+    "lung": 1.36,
+    "pancreas": 2.5
+  },
+  "Philadelphia": {
+    "kidney": 2.19,
+    "liver": 1.33,
+    "heart": 1.05,
+    "lung": 1.64,
+    "pancreas": 2.5
+  },
+  "New York": {
+    "kidney": 0.51,
+    "liver": 0.59,
+    "heart": 1.64,
+    "lung": 2.07,
+    "pancreas": 1.11,
+    "intestine": 0.53
+  },
+  "Minneapolis": {
+    "kidney": 0.85,
+    "liver": 0.41,
+    "heart": 0.82,
+    "lung": 1.14,
+    "pancreas": 2.5,
+    "intestine": 0.43
+  },
+  "Madison": {
+    "kidney": 0.48,
+    "liver": 0.59,
+    "heart": 0.59,
+    "lung": 0.57,
+    "pancreas": 0.3,
+    "intestine": 0.35
+  },
+  "Chicago": {
+    "kidney": 0.68,
+    "liver": 0.63,
+    "heart": 1.0,
+    "lung": 0.3,
+    "pancreas": 1.69,
+    "intestine": 0.3
+  },
+  "Cleveland": {
+    "kidney": 0.3,
+    "liver": 0.39,
+    "heart": 3.0,
+    "lung": 1.36,
+    "pancreas": 1.61,
+    "intestine": 0.84
+  },
+  "St. Louis": {
+    "kidney": 0.68,
+    "liver": 0.41,
+    "heart": 0.5,
+    "lung": 0.86,
+    "pancreas": 0.4
+  },
+  "Indianapolis": {
+    "kidney": 0.84,
+    "liver": 0.61,
+    "heart": 3.0,
+    "lung": 0.43,
+    "pancreas": 0.61,
+    "intestine": 1.19
+  },
+  "Omaha": {
+    "kidney": 0.31,
+    "liver": 0.57,
+    "heart": 0.77,
+    "lung": 1.14,
+    "pancreas": 1.05,
+    "intestine": 1.35
+  },
+  "Rochester": {
+    "kidney": 0.56,
+    "liver": 0.93,
+    "heart": 0.95,
+    "lung": 0.93,
+    "pancreas": 1.7
+  },
+  "Nashville": {
+    "kidney": 0.97,
+    "liver": 1.17,
+    "heart": 0.36,
+    "lung": 0.36,
+    "pancreas": 1.25
+  },
+  "Durham": {
+    "kidney": 1.04,
+    "liver": 0.3,
+    "heart": 0.45,
+    "lung": 0.3,
+    "pancreas": 0.89,
+    "intestine": 1.69
+  },
+  "Miami": {
+    "kidney": 0.3,
+    "liver": 0.78,
+    "heart": 3.0,
+    "lung": 0.64,
+    "pancreas": 0.73,
+    "intestine": 0.64
+  },
+  "Dallas": {
+    "kidney": 1.24,
+    "liver": 0.48,
+    "heart": 0.55,
+    "lung": 1.0,
+    "pancreas": 0.54
+  },
+  "Houston": {
+    "kidney": 1.32,
+    "liver": 2.52,
+    "heart": 1.91,
+    "lung": 1.36,
+    "pancreas": 0.52
+  },
+  "Portland": {
+    "kidney": 0.65,
+    "liver": 1.46,
+    "heart": 1.82
+  },
+  "Seattle": {
+    "kidney": 0.58,
+    "liver": 0.91,
+    "heart": 0.45,
+    "lung": 2.36,
+    "pancreas": 3.0,
+    "intestine": 3.0
+  },
+  "San Francisco": {
+    "kidney": 3.0,
+    "liver": 3.0,
+    "heart": 0.41,
+    "lung": 1.21,
+    "pancreas": 3.0
+  },
+  "Los Angeles": {
+    "kidney": 1.69,
+    "liver": 2.4,
+    "heart": 0.5,
+    "lung": 0.86,
+    "pancreas": 2.5,
+    "intestine": 3.0
+  },
+  "Palo Alto": {
+    "kidney": 3.0,
+    "liver": 1.37,
+    "heart": 0.3,
+    "lung": 1.93,
+    "pancreas": 0.3,
+    "intestine": 0.3
+  }
+}

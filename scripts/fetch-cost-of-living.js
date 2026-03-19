@@ -29,9 +29,12 @@ const METRO_SERIES = {
     'Minneapolis': 'CUURS24ASA0',
     'St. Louis': 'CUURS24BSA0',
     'Baltimore': 'CUURS35BSA0',
-    'Pittsburgh': 'CUURS12DSA0',
-    'Portland': 'CUURS49CSA0',
     'Cleveland': 'CUURS23BSA0'
+    // NOTE: Portland (CUURS49ESA0) and Pittsburgh (CUURS12DSA0) use different
+    // CPI base periods (Dec 2001 and Nov 1996 respectively) vs national
+    // (1982-84=100), making direct ratio comparison invalid. They are
+    // estimated from nearby metros in the estimates section below.
+    // Previously Portland used CUURS49CSA0 which is actually Riverside, CA.
 };
 
 // National average series for normalization
@@ -132,7 +135,17 @@ async function fetchCostOfLiving() {
             // Zillow median home value ~$3.5M vs SF ~$1.4M. Palo Alto is within
             // the SF-Oakland-Hayward MSA but significantly more expensive due to
             // proximity to Stanford and tech HQs.
-            'Palo Alto': result['San Francisco'] ? Math.round(result['San Francisco'] * 1.07) : null
+            'Palo Alto': result['San Francisco'] ? Math.round(result['San Francisco'] * 1.07) : null,
+
+            // Portland, OR: BLS series CUURS49ESA0 uses Dec 2001 base period,
+            // incompatible with 1982-84 national base. Estimated from Seattle.
+            // BEA Regional Price Parity 2023: Portland ~95% of Seattle.
+            'Portland': result['Seattle'] ? Math.round(result['Seattle'] * 0.95) : null,
+
+            // Pittsburgh, PA: BLS series CUURS12DSA0 uses Nov 1996 base period,
+            // incompatible with 1982-84 national base. Estimated from Philadelphia.
+            // BEA Regional Price Parity 2023: Pittsburgh ~85% of Philadelphia.
+            'Pittsburgh': result['Philadelphia'] ? Math.round(result['Philadelphia'] * 0.85) : null
         };
 
         for (const [city, val] of Object.entries(estimates)) {

@@ -121,18 +121,11 @@ function calculateWaitTimeScore(city, organType, formData) {
         intestine: { min: 0.6, max: 1.5 }
     };
 
-    const cityWaitTimeFactors = {
-        "Minneapolis": 0.85, "Madison": 0.88, "Portland": 0.90,
-        "Pittsburgh": 0.87, "Baltimore": 0.95, "Cleveland": 0.92,
-        "Nashville": 0.89, "Durham": 0.91, "Rochester": 0.86,
-        "Omaha": 0.84, "Seattle": 0.93, "St. Louis": 0.90,
-        "Indianapolis": 0.91, "Chicago": 1.05, "Philadelphia": 1.08,
-        "Houston": 0.96, "Dallas": 0.94, "Miami": 0.98,
-        "Los Angeles": 1.15, "San Francisco": 1.18, "Palo Alto": 1.16,
-        "New York": 1.12
-    };
-
-    const factor = cityWaitTimeFactors[city] || 1.0;
+    // Per-city per-organ wait time factors from SRTR data (issue #47)
+    // Loaded from data/city-wait-time-factors.json via data-loader.js
+    const cityWaitTimeFactors = (window.TransPlanData && window.TransPlanData.cityWaitTimeFactors) || {};
+    const cityFactors = cityWaitTimeFactors[city] || {};
+    const factor = cityFactors[organType] || 1.0;
     const avgWait = (baseWaitTimes[organType].min + baseWaitTimes[organType].max) / 2;
     const cityWait = avgWait * factor;
 

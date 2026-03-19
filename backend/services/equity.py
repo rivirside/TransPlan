@@ -91,6 +91,7 @@ def _simulate_profile_city(
     p24 = _p24_single_city(patient, city, n_iterations, rng)
 
     # Compute median wait from the distribution (log-normal median = exp(mu))
+    # Issue #48: pass age/sex so demographic multipliers affect the distribution
     dist = get_wait_time_distribution(
         organ=patient.organ,
         blood_type=patient.blood_type,
@@ -98,6 +99,8 @@ def _simulate_profile_city(
         cpra=patient.cpra,
         meld=patient.meld,
         las=patient.las,
+        age=patient.age,
+        sex=patient.sex,
     )
     median_wait = float(dist.median())
 

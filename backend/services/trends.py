@@ -19,11 +19,16 @@ logger = logging.getLogger(__name__)
 # Valid organs
 VALID_ORGANS = {"kidney", "liver", "heart", "lung", "pancreas", "intestine"}
 
-# Minimum data points for a meaningful regression
-MIN_POINTS = 3
+# Minimum data points for a meaningful regression (issue #58: raised from 3)
+MIN_POINTS = 5
 
 # p-value threshold for declaring a trend statistically significant
-P_VALUE_THRESHOLD = 0.10
+# (issue #58: tightened from 0.10 to standard 0.05)
+P_VALUE_THRESHOLD = 0.05
+
+# Minimum R² for practical significance — even a statistically significant
+# trend is labeled "stable" if R² is below this (issue #58)
+MIN_R_SQUARED = 0.3
 
 # Minimum annual change thresholds (to avoid declaring noise as a trend)
 # These are absolute values per year — the metric must be changing at least
@@ -72,17 +77,19 @@ def _compute_metric_trend(
     result = stats.linregress(x, y)
     slope = float(result.slope)
     p_value = float(result.pvalue)
+    r_squared = float(result.rvalue ** 2)
     change_per_year = round(slope, 4)
 
-    # Classify direction
+    # Classify direction (issue #58: also checks R²)
     min_change = MIN_ANNUAL_CHANGE.get(metric_name, 0.1)
-    direction = _classify_trend(slope, p_value, metric_name, min_change)
+    direction = _classify_trend(slope, p_value, r_squared, metric_name, min_change)
 
     return {
         "years": years,
         "values": values,
         "slope": round(slope, 6),
         "p_value": round(p_value, 4),
+        "r_squared": round(r_squared, 4),
         "direction": direction,
         "change_per_year": change_per_year,
     }
@@ -91,6 +98,7 @@ def _compute_metric_trend(
 def _classify_trend(
     slope: float,
     p_value: float,
+    r_squared: float,
     metric_name: str,
     min_change: float,
 ) -> str:
@@ -105,6 +113,10 @@ def _classify_trend(
     """
     # Not significant → stable
     if p_value > P_VALUE_THRESHOLD:
+        return "stable"
+
+    # R² too low → statistically significant but practically meaningless (issue #58)
+    if r_squared < MIN_R_SQUARED:
         return "stable"
 
     # Slope too small to be meaningful

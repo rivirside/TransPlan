@@ -16,7 +16,9 @@ if _BACKEND_DIR not in sys.path:
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from starlette.responses import PlainTextResponse
+from starlette.staticfiles import StaticFiles
+from starlette.types import Scope
 
 from config import ALLOWED_ORIGINS, DATA_DIR, VERSION
 from routers import equity, health, sensitivity, shutdown, simulate, trends, what_if
@@ -62,7 +64,39 @@ def startup_event() -> None:
     logger.info("TransPlan backend ready — version %s", VERSION)
 
 
-# Serve static frontend files (index.html, JS, CSS, data/) from repo root.
+# ---------------------------------------------------------------------------
+# Safe static file serving — blocks access to sensitive paths (issue #50)
+# ---------------------------------------------------------------------------
+
+class SafeStaticFiles(StaticFiles):
+    """StaticFiles subclass that blocks access to backend code, dotfiles, and secrets."""
+
+    _BLOCKED_DIRS = frozenset({
+        "backend", "scripts", "docs", "node_modules",
+        "__pycache__", ".venv", ".git", ".github", ".claude",
+    })
+    _BLOCKED_ROOT_FILES = frozenset({
+        "package.json", "package-lock.json",
+        ".gitignore", ".env", ".env.local", ".env.production",
+    })
+
+    async def get_response(self, path: str, scope: Scope):
+        parts = path.strip("/").split("/")
+        # Block dotfiles and dotdirs ("." is Starlette's internal path for "/")
+        if any(p.startswith(".") for p in parts if p and p != "."):
+            return PlainTextResponse("Not Found", status_code=404)
+        # Block sensitive directories
+        if parts[0] in self._BLOCKED_DIRS:
+            return PlainTextResponse("Not Found", status_code=404)
+        # Block sensitive root-level files
+        if len(parts) == 1 and parts[0] in self._BLOCKED_ROOT_FILES:
+            return PlainTextResponse("Not Found", status_code=404)
+        # Block Python/YAML/config files anywhere in tree
+        if path.endswith((".py", ".pyc", ".yml", ".yaml", ".toml", ".cfg")):
+            return PlainTextResponse("Not Found", status_code=404)
+        return await super().get_response(path, scope)
+
+
+# Serve frontend files from repo root with sensitive-path blocking.
 # Mounted AFTER API routes so API endpoints take priority.
-# html=True enables serving index.html for the root path.
-app.mount("/", StaticFiles(directory=str(REPO_ROOT), html=True), name="static")
+app.mount("/", SafeStaticFiles(directory=str(REPO_ROOT), html=True), name="static")

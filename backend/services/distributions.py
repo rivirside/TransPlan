@@ -70,6 +70,34 @@ def _get_range_multiplier(value: int | float, ranges: dict[str, float]) -> float
     return 1.0
 
 
+def _age_sex_multiplier(organ: str, age: int | None, sex: str | None) -> float:
+    """
+    Compute a wait-time multiplier based on age and sex.
+
+    Based on OPTN/SRTR 2023 Annual Data Report demographic analyses:
+    - Age: younger adults (18-34) ~5% shorter waits; 55+ ~10% longer
+      (fewer size-matched donors, comorbidity screening delays).
+    - Sex: males ~5% longer kidney waits (larger body → fewer matches);
+      neutral for most other organs.
+    """
+    mult = 1.0
+
+    if age is not None:
+        if age < 35:
+            mult *= 0.95
+        elif age >= 55:
+            mult *= 1.10
+
+    if sex is not None and organ == "kidney":
+        # Males have ~5% longer kidney waits (OPTN data)
+        if sex.lower() == "male":
+            mult *= 1.05
+        elif sex.lower() == "female":
+            mult *= 0.95
+
+    return mult
+
+
 def get_wait_time_distribution(
     organ: str,
     blood_type: str,
@@ -77,12 +105,14 @@ def get_wait_time_distribution(
     cpra: int | None = None,
     meld: int | None = None,
     las: float | None = None,
+    age: int | None = None,
+    sex: str | None = None,
 ) -> scipy.stats.rv_continuous:
     """
     Return a log-normal distribution for wait time in months.
 
     The distribution's median (50th percentile) is the national median adjusted
-    by blood type, city factor, and organ-specific clinical score.
+    by blood type, city factor, organ-specific clinical score, and demographics.
 
     Parameters
     ----------
@@ -98,6 +128,10 @@ def get_wait_time_distribution(
         Model for End-Stage Liver Disease score (liver only, 6-40).
     las : float, optional
         Lung Allocation Score (lung only, 0-100).
+    age : int, optional
+        Patient age (affects wait time via demographic multiplier).
+    sex : str, optional
+        Patient sex ("male" or "female").
 
     Returns
     -------
@@ -135,8 +169,11 @@ def get_wait_time_distribution(
     if organ == "lung" and las is not None and "las" in clinical_multipliers:
         clinical_mult = _get_range_multiplier(las, clinical_multipliers["las"])
 
-    # Adjusted median = national × blood_type × city × clinical
-    adjusted_median = median * bt_mult * city_mult * clinical_mult
+    # Age/sex demographic modifier (issue #48)
+    demo_mult = _age_sex_multiplier(organ, age, sex)
+
+    # Adjusted median = national × blood_type × city × clinical × demographics
+    adjusted_median = median * bt_mult * city_mult * clinical_mult * demo_mult
 
     # scipy.stats.lognorm(s=sigma, scale=exp(mu)) has median = scale = exp(mu)
     # So scale = adjusted_median gives the desired median directly
