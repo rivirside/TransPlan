@@ -435,6 +435,27 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **File:** `backend/config.py` → `COPULA_THETA`
 - **Fix:** Future work: fit organ-specific θ from SRTR waitlist event data using maximum pseudo-likelihood estimation. Requires patient-level competing event timestamps.
 
+### L-060: MCMC model uses aggregate center-level data, not patient-level
+- **Severity:** HIGH
+- **Status:** OPEN
+- **Details:** The PyMC hierarchical model treats SRTR center-level summary statistics (median wait times, mortality rates, delisting rates) as noisy observations. It does not have access to patient-level event times, which means it cannot learn individual-level covariate effects (age × blood type interactions, time-varying hazards, etc.) from data. Patient-level effects (blood type multipliers, urgency multipliers) are applied deterministically at query time using the same fixed factors as the Monte Carlo engine. The hierarchical structure adds uncertainty quantification and partial pooling across cities, but the patient-level model is no richer than the standard Monte Carlo approach.
+- **File:** `backend/services/mcmc_survival.py` → `build_organ_model()`, `backend/services/mcmc_inference.py` → `simulate_mcmc()`
+- **Fix:** Would require patient-level SRTR Standard Analysis Files (SAFs), which are restricted-access research datasets requiring a Data Use Agreement. With SAFs, the model could learn age×blood type×urgency interactions directly from event histories.
+
+### L-061: Informative priors anchored to existing point estimates
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** The MCMC model's priors are centered on the same SRTR-derived point estimates used by the Monte Carlo engine (e.g., `mu=np.log(data["national_median"])` with `sigma=0.3`). This means posteriors will not deviate dramatically from the frequentist estimates unless there is strong tension in the data. The model is essentially a Bayesian meta-analysis that adds uncertainty bands and partial pooling, not an independent re-estimation from raw data. Users should not interpret MCMC results as "more accurate" — they are "better calibrated for uncertainty."
+- **File:** `backend/services/mcmc_survival.py` → `build_organ_model()` prior specifications
+- **Fix:** Document clearly in the UI that MCMC mode provides uncertainty quantification, not fundamentally different point estimates. Consider weakening priors (larger sigma) if independent data sources become available for validation.
+
+### L-062: Quick-fit mode (--quick) may produce unreliable posteriors
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** The `--quick` flag runs only 200 draws / 1 chain / 100 tuning steps. This is fast (~5s) but may not achieve convergence for all parameters, especially city-level random effects in organs with high variability. R-hat values above 1.05 and low ESS (<100) are expected in quick mode. The script prints convergence diagnostics but does not block trace saving on poor convergence.
+- **File:** `scripts/fit-mcmc-model.py` → `--quick` flag
+- **Fix:** Add a `--strict` flag that checks R-hat < 1.01 and ESS > 400 before saving. For production use, recommend `--samples 2000 --chains 4` (the default).
+
 ---
 
 ## Resolution Log

@@ -21,6 +21,9 @@ backend/.pytest_cache/
 # SRTR raw Excel files (large binaries, re-downloadable via fetch-srtr-excel.py)
 data/srtr-raw/
 
+# MCMC posterior traces (large, machine-specific, regenerate via scripts/fit-mcmc-model.py)
+data/mcmc-traces/
+
 # Local session state (written by start.command)
 .transplan.pid
 .transplan-session.json

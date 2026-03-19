@@ -2569,9 +2569,13 @@ function renderProbabilityView(simResult, formData) {
     const meta = document.createElement('div');
     meta.className = 'simulation-meta';
     var isBayesian = simResult.inference_mode === 'bayesian';
+    var isMCMC = simResult.inference_mode === 'mcmc';
     if (isBayesian) {
         meta.innerHTML = '<span class="inference-badge inference-badge--bayesian">Bayesian Network</span> ' +
             'Exact inference in ' + simResult.elapsed_seconds.toFixed(2) + 's';
+    } else if (isMCMC) {
+        meta.innerHTML = '<span class="inference-badge inference-badge--mcmc">MCMC Hierarchical</span> ' +
+            simResult.iterations.toLocaleString() + ' posterior draws in ' + simResult.elapsed_seconds.toFixed(2) + 's';
     } else {
         meta.innerHTML = '<span class="inference-badge inference-badge--mc">Monte Carlo</span> ' +
             simResult.iterations.toLocaleString() + ' iterations in ' + simResult.elapsed_seconds.toFixed(2) + 's';

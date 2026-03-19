@@ -6,7 +6,7 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 5 M2 Complete (Clayton Copula)
+## Current State: Phase 5 M3 Complete (MCMC Hierarchical Model)
 
 Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. Phase 3 M1-M5 done. Phase 4 M1-M5 done. Phase 5 M1-M2 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
@@ -14,7 +14,9 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 
 **Phase 5 M1 complete (March 2026):** Bayesian Belief Network inference engine (ADR-024). 12-node DAG with pgmpy VariableElimination for exact inference (~30ms cached vs ~2s MC). Toggle via `POST /simulate?inference_mode=bayesian`. All 7 CPTs derived from existing JSON data (no duplication). Cross-validated: Spearman rank > 0.5 for city rankings, directional consistency on blood type/organ/urgency effects. Frontend inference method dropdown + method badge. 72 new BBN-specific pytest tests. Issues #36-#42 closed.
 
-**Phase 5 M2 complete (March 2026):** Clayton copula for correlated competing risks (ADR-025). Mortality and delisting times now optionally drawn with positive lower-tail dependence via `use_copula: true` on PatientProfile. Default θ=1.0 (Kendall's τ ≈ 0.33). Conditional sampling method preserves marginal exponential distributions. All 3 simulation paths (monte_carlo, what_if, sensitivity) support copula. 22 copula unit tests + 4 integration tests. 474 pytest + 112 Jest = 586 total (8 pre-existing COD stochastic failures, not copula-related). Issue #94.
+**Phase 5 M2 complete (March 2026):** Clayton copula for correlated competing risks (ADR-025). Mortality and delisting times now optionally drawn with positive lower-tail dependence via `use_copula: true` on PatientProfile. Default θ=1.0 (Kendall's τ ≈ 0.33). Conditional sampling method preserves marginal exponential distributions. All 3 simulation paths (monte_carlo, what_if, sensitivity) support copula. 22 copula unit tests + 4 integration tests. Issue #94.
+
+**Phase 5 M3 complete (March 2026):** PyMC MCMC hierarchical survival model (ADR-026). Third inference engine (`inference_mode=mcmc`) with honest Bayesian uncertainty quantification. Three-level hierarchy: national hyperpriors → 22 city random effects → patient covariates (blood type, urgency). 92 free parameters per organ, 6 independent models. Offline NUTS fitting via `scripts/fit-mcmc-model.py`, cached traces in ArviZ NetCDF (~10-50 MB per organ). Query-time: 50 posterior draws × forward simulation (~200-500ms). Frontend dropdown + orange MCMC badge. 53 new pytest tests. 527 pytest + 112 Jest = 639 total. Issue #95.
 
 **M4 (Policy Scenario Engine):** 4 predefined UNOS policy scenarios with literature-backed parameters and per-city adjustments: (1) 2021 Kidney 250nm Circles — per-center-size donor/wait adjustments, (2) Continuous Distribution — stronger geography de-emphasis, (3) Increased DCD Utilization — +15% organ supply, (4) Broader HCV+ Acceptance — +6% donor pool for kidney/liver. Frontend policy scenario selector in probability tab. `POST /policy-scenario` endpoint, `GET /policy-scenarios` listing. 24 new pytest tests.
 
@@ -56,7 +58,7 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 | Fetch scripts (scripts/) | ✅ Done | All scripts use mergeDataFile, skip-on-empty guards added |
 | GitHub Actions | ✅ Done | Single sequential job, weekly cron + manual dispatch |
 | Socioeconomic data | ✅ Done | Transplant-support rubric replacing wealth-correlated scores |
-| Unit tests | ✅ Done | 112 tests (Jest), 474 tests (pytest) |
+| Unit tests | ✅ Done | 112 tests (Jest), 527 tests (pytest) |
 | CDN fallback | ✅ Done | Graceful degradation when Leaflet/Chart.js CDN unavailable |
 | CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
@@ -117,11 +119,11 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 |-----------|--------|-------|
 | M1: Bayesian Belief Network | ✅ Done | 12-node DAG, pgmpy VariableElimination, 7 CPTs from existing data, API toggle, frontend dropdown, cross-validated, 72 pytest (ADR-024, #36-#42 closed) |
 | M2: Clayton Copula | ✅ Done | Correlated mortality/delisting draws, θ=1.0 (τ≈0.33), opt-in via `use_copula`, all 3 sim paths, 22+4 tests (ADR-025, #94) |
-| M3: MCMC Hierarchical Model | Planned | ~650-param PyMC model, trace-as-cache architecture, posterior uncertainty quantification (#95) |
+| M3: MCMC Hierarchical Model | ✅ Done | PyMC NUTS, 92 params/organ, trace-as-cache, offline fitting, posterior uncertainty, 53 pytest (ADR-026, #95) |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 5 M2 COMPLETE** — Clayton copula, 474 pytest + 112 Jest = 586 total
+- **Phase 5 M3 COMPLETE** — MCMC hierarchical model, 527 pytest + 112 Jest = 639 total
 - **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred to Phase 5:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
@@ -255,6 +257,8 @@ TransPlan/
       bbn_parameterizer.py <- BBN CPT builder: 7 CPTs from existing JSON data, no duplication (Phase 5 M1)
       bayesian_network.py  <- BBN inference engine: 12-node DAG, pgmpy VariableElimination (Phase 5 M1)
       copula.py            <- Clayton copula: correlated mortality/delisting draws, conditional method (Phase 5 M2)
+      mcmc_survival.py     <- MCMC hierarchical model: PyMC specification, fitting, trace I/O (Phase 5 M3)
+      mcmc_inference.py    <- MCMC query-time inference: posterior sampling, forward simulation (Phase 5 M3)
     routers/
       ...
       trends.py           <- GET /trends/{city}/{organ}, GET /trends/{organ} (Phase 4 M3)
@@ -266,6 +270,8 @@ TransPlan/
       test_bayesian_network.py  <- 32 tests: DAG structure, inference validity, organ-specific (Phase 5 M1)
       test_bbn_cross_validation.py <- 10 tests: rank correlation, directional consistency, speed (Phase 5 M1)
       test_copula.py             <- 22 tests: marginal uniformity, Kendall's τ, edge cases, integration (Phase 5 M2)
+      test_mcmc_survival.py      <- 38 tests: data loading, model building, posterior sampling, sanity (Phase 5 M3)
+      test_mcmc_inference.py     <- 15 tests: result structure, clinical params, copula compat, error handling (Phase 5 M3)
   docs/
     status.md             <- THIS FILE (read every session)
     ideas.md              <- Full SRS: requirements, architecture, FDA pathway

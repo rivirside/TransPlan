@@ -432,25 +432,29 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 **Key files:** `backend/services/copula.py`, `backend/config.py`, `backend/models/schemas.py`, `backend/services/monte_carlo.py`, `backend/services/what_if.py`, `backend/services/sensitivity.py`
 **Completed:** March 2026. ADR-025. Issues #94.
 
-### M3: MCMC Hierarchical Survival Model — PLANNED
+### M3: MCMC Hierarchical Survival Model ✅ DONE
 
-> **Why:** Replace point-estimate parameters (fixed mortality rates, fixed delisting rates) with full posterior distributions. A ~650-parameter PyMC model with organ→city→patient hierarchy produces credible intervals on every prediction, honest uncertainty quantification, and adaptive shrinkage for data-sparse centers.
+> **Why:** Replace point-estimate parameters (fixed mortality rates, fixed delisting rates) with full posterior distributions. A ~550-parameter PyMC model with organ→city→patient hierarchy produces credible intervals on every prediction, honest uncertainty quantification, and adaptive shrinkage for data-sparse centers.
 
 **Architecture:**
 - **Offline training**: PyMC NUTS sampler fits organ-specific hierarchical models from SRTR data
-- **Trace-as-cache**: Posterior traces saved as ArviZ InferenceData (~50MB per organ)
-- **Online query**: Draw from cached trace at inference time (~50ms, no re-fitting)
+- **Trace-as-cache**: Posterior traces saved as ArviZ InferenceData (~10-50MB per organ)
+- **Online query**: Draw from cached trace at inference time (~200-500ms, no re-fitting)
 - **Schema**: `inference_mode: "mcmc"` on SimulationResult
 
-**Key components:**
-- [ ] PyMC dependency + hierarchical model specification (organ→city→patient)
-- [ ] SRTR data adapter: existing JSON → PyMC observed data
-- [ ] Trace caching + loading infrastructure
-- [ ] `POST /simulate?inference_mode=mcmc` endpoint
-- [ ] Cross-validation: MCMC vs Monte Carlo vs BBN ranking agreement
-- [ ] ADR-026: MCMC hierarchical survival model
+**Completed:**
+- [x] PyMC + ArviZ dependencies added to requirements.txt
+- [x] Hierarchical model specification: national hyperpriors → city random effects → patient covariates (92 free params per organ)
+- [x] SRTR data adapter: existing JSON → PyMC observed data (5 likelihood terms)
+- [x] Trace caching + loading infrastructure (ArviZ NetCDF)
+- [x] Offline fitting script: `scripts/fit-mcmc-model.py` (per-organ or --all, --quick mode)
+- [x] `POST /simulate?inference_mode=mcmc` endpoint with 503 if trace missing
+- [x] Frontend: dropdown option + orange MCMC badge
+- [x] ADR-026: MCMC hierarchical survival model
+- [x] 53 new pytest tests (38 survival + 15 inference)
 
-**Depends on:** M2 copula (provides correlated prior structure for mortality/delisting). GitHub issue #95.
+**Key files:** `backend/services/mcmc_survival.py`, `backend/services/mcmc_inference.py`, `scripts/fit-mcmc-model.py`, `backend/routers/simulate.py`
+**Completed:** March 2026. ADR-026. Issue #95.
 
 ### Platform API & Integrations (deferred from Phase 4)
 - [ ] **Public REST API with tiered access (FR-18)** — #24: API key auth, rate limiting, versioned endpoints, Swagger docs

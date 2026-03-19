@@ -2247,6 +2247,16 @@ main {
   color: #81c784;
 }
 
+.inference-badge--mcmc {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+[data-dark="true"] .inference-badge--mcmc {
+  background: #3e2723;
+  color: #ffb74d;
+}
+
 /* --- Charts --- */
 .charts-section {
   margin-top: var(--space-7);

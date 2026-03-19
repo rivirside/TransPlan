@@ -598,3 +598,40 @@ M1 is fully independent. M2 and M3 share SRTR pipeline work and can be paralleli
 - Marginal distributions unchanged — mean mortality/delisting rates are preserved
 - Statistical validation: empirical Kendall's τ matches θ/(θ+2) within 0.03 tolerance across θ ∈ {0.5, 1, 2, 5}
 - Future: θ can be calibrated from patient-level competing risks data when available
+
+---
+
+## ADR-026: PyMC MCMC Hierarchical Survival Model
+
+**Date:** 2026-03-18
+**Status:** Accepted
+
+**Context:** The Monte Carlo engine and Bayesian Belief Network both treat model parameters as known constants — `national_median_months = 27.4` for kidney, `city_wait_time_factor["Portland"] = 0.73`, etc. In reality, these are noisy estimates from SRTR data with finite sample sizes. A city with 30 heart transplants per year has much more parameter uncertainty than one with 300. The BBN's "confidence intervals" are a fixed ±5% band, not data-derived. We need honest uncertainty quantification.
+
+**Decision:** Add a PyMC-based MCMC hierarchical survival model as a third inference engine (`inference_mode=mcmc`).
+
+1. **Hierarchical structure**: Three levels — national hyperpriors, city random effects, patient-level covariates (blood type, urgency). Each level has learned variance parameters that control partial pooling.
+2. **Observation model**: Treats existing SRTR-derived point estimates (city wait factors, mortality factors, blood type multipliers) as noisy observations of true underlying parameters. Observation noise is learned.
+3. **Offline fitting + trace caching**: NUTS sampler runs offline (2-30 min per organ) and saves posterior traces as ArviZ NetCDF files. At query time, parameters are sampled from the cached trace (~50-200ms).
+4. **One model per organ**: 6 independent models, each with ~92 free parameters. Total ~552 parameters across all organs.
+5. **Forward simulation**: For each posterior draw, constructs log-normal wait time distributions and exponential competing risk distributions, then runs the same outcome determination logic as standard Monte Carlo. Credible intervals reflect both sampling noise and parameter uncertainty.
+
+**Architecture:**
+- `mcmc_survival.py`: Model specification (`build_organ_model`), fitting (`fit_organ_model`), trace I/O
+- `mcmc_inference.py`: Query-time simulation using cached traces (`simulate_mcmc`)
+- `scripts/fit-mcmc-model.py`: CLI for offline fitting (per-organ or all, configurable draws/chains)
+- `data/mcmc-traces/*.nc`: Cached ArviZ traces (gitignored, ~10-50MB each)
+
+**Alternatives considered:**
+- **Stan/CmdStan**: More mature sampler but harder Python integration. PyMC has native NumPy arrays.
+- **Variational inference (ADVI)**: Faster fitting but biased posteriors. NUTS preferred for accuracy.
+- **Patient-level survival model**: Requires individual patient data from SRTR research files. We use aggregate center-level statistics. Deferred pending data access.
+
+**Files:** `backend/services/mcmc_survival.py` (new), `backend/services/mcmc_inference.py` (new), `scripts/fit-mcmc-model.py` (new), `backend/routers/simulate.py`, `backend/models/schemas.py`, `backend/config.py`, `backend/tests/test_mcmc_survival.py` (new, 38 tests), `backend/tests/test_mcmc_inference.py` (new, 15 tests)
+
+**Consequences:**
+- MCMC confidence intervals are wider than Monte Carlo (reflect parameter uncertainty, not just sampling)
+- Cities with sparse data shrink toward national mean (appropriate hierarchical regularization)
+- Requires offline fitting before first use (`scripts/fit-mcmc-model.py`)
+- PyMC adds ~350MB to the Python environment
+- Trace files are per-organ, gitignored, regenerated when SRTR data updates
