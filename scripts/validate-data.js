@@ -157,10 +157,11 @@ for (const manualFile of ['manual/climate-scores.json', 'manual/policy-tiers.jso
     }
 }
 
-// 8. Metadata
-const metadata = validateJSON('metadata.json');
-if (metadata) {
-    if (!metadata.sources) {
+// 8. Metadata (optional — gitignored, only present after local fetch)
+const metadataPath = path.join(DATA_DIR, 'metadata.json');
+if (fs.existsSync(metadataPath)) {
+    const metadata = validateJSON('metadata.json');
+    if (metadata && !metadata.sources) {
         addWarning('metadata.json has no sources object');
     }
 }

@@ -36,17 +36,17 @@ Content-Type: application/json
 
 | Field | Type | Required | Constraints | Description |
 |-------|------|----------|-------------|-------------|
-| `organ` | string | ✓ | `kidney` `liver` `heart` `lung` `pancreas` `intestine` | Organ type |
-| `blood_type` | string | ✓ | `A+` `A-` `B+` `B-` `AB+` `AB-` `O+` `O-` | ABO blood type |
-| `age` | integer | ✓ | 0–99 | Patient age in years |
-| `sex` | string | ✓ | `male` `female` | Biological sex |
-| `urgency` | integer | ✓ | 1–4 | Urgency level (1=elective, 4=emergency) |
+| `organ` | string | yes | `kidney` `liver` `heart` `lung` `pancreas` `intestine` | Organ type |
+| `blood_type` | string | yes | `A+` `A-` `B+` `B-` `AB+` `AB-` `O+` `O-` | ABO blood type |
+| `age` | integer | yes | 1-99 | Patient age in years |
+| `sex` | string | yes | `male` `female` | Biological sex |
+| `urgency` | integer | yes | 1-4 | Urgency level (1=elective, 4=emergency) |
 | `insurance` | string | no | `medicare` `medicaid` `private` `uninsured` | Insurance type |
-| `weight_lbs` | float | no | 0–1000 | Weight in pounds |
-| `height_inches` | float | no | 0–120 | Height in inches |
-| `cpra` | integer | no | 0–100 | cPRA % (kidney only) |
-| `meld` | integer | no | 6–40 | MELD score (liver only) |
-| `las` | float | no | 0–100 | Lung Allocation Score (lung only) |
+| `weight_lbs` | float | no | 0-1000 | Weight in pounds |
+| `height_inches` | float | no | 0-120 | Height in inches |
+| `cpra` | integer | no | 0-100 | cPRA % (kidney only) |
+| `meld` | integer | no | 6-40 | MELD score (liver only) |
+| `las` | float | no | 0-100 | Lung Allocation Score (lung only) |
 | `home_center` | string | no | Valid city name | Patient's current transplant listing center |
 | `adjust_for_cause_of_death` | boolean | no | default `false` | Apply organ-specific COD donor recovery multiplier |
 
@@ -123,7 +123,7 @@ All four values sum to 1.0.
 
 ### 422 Unprocessable Entity
 
-Returned when the request body fails Pydantic validation:
+Returned when the request body fails Pydantic validation.
 
 ```json
 {
@@ -140,7 +140,7 @@ Returned when the request body fails Pydantic validation:
 
 ### 500 Internal Server Error
 
-Rare. This occurs only if data files are corrupted or missing. Check `/health` to diagnose.
+This is rare and occurs only if data files are corrupted or missing. Check `/health` to diagnose.
 
 ## Example: Kidney Patient
 
@@ -161,4 +161,4 @@ curl -X POST http://localhost:8002/simulate \
 
 ## Performance
 
-Typical response time: **60–100ms** for 1,000 iterations × 22 cities. There is no caching; each request recomputes fresh.
+Typical response time is 60-100ms for 1,000 iterations across 22 cities. There is no caching; each request recomputes fresh.

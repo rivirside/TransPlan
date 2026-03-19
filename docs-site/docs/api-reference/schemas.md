@@ -14,7 +14,7 @@ Input schema for simulation requests.
 class PatientProfile(BaseModel):
     organ: Literal["kidney", "liver", "heart", "lung", "pancreas", "intestine"]
     blood_type: str  # pattern: ^(A|B|AB|O)[+-]$
-    age: int         # 0–99
+    age: int         # 1–99
     sex: Literal["male", "female"]
     urgency: int     # 1–4
     insurance: Optional[Literal["medicare", "medicaid", "private", "uninsured"]]
@@ -30,14 +30,14 @@ class PatientProfile(BaseModel):
 ### Field Details
 
 #### `organ`
-One of six transplantable solid organs. Determines which wait time distribution, competing risks model, and clinical score multiplier are used.
+One of six transplantable solid organs. This field determines which wait time distribution, competing risks model, and clinical score multiplier are used.
 
 #### `blood_type`
 ABO type with Rh factor. Must match the regex `^(A|B|AB|O)[+-]$`. Valid values:
 `A+`, `A-`, `B+`, `B-`, `AB+`, `AB-`, `O+`, `O-`
 
 #### `urgency`
-Urgency level on a 1–4 scale:
+Urgency level on a 1-4 scale.
 
 | Value | Meaning |
 |-------|---------|
@@ -47,16 +47,13 @@ Urgency level on a 1–4 scale:
 | 4 | Emergency (Status 1A/1B equivalent) |
 
 #### `cpra`
-Calculated Panel Reactive Antibody percentage (kidney only). Range 0–100.
-At 0%, the patient has no sensitization and will accept most donors. At 80%+, the patient is highly sensitized and needs a rare compatible donor, significantly extending wait time. At 99%+, only extremely rare matches exist.
+Calculated Panel Reactive Antibody percentage (kidney only), ranging from 0 to 100. At 0%, the patient has no sensitization and will accept most donors. At 80% or above, the patient is highly sensitized and needs a rare compatible donor, which significantly extends wait time. At 99% or above, only extremely rare matches exist.
 
 #### `meld`
-Model for End-Stage Liver Disease score (liver only). Range 6–40.
-Scores of 6–14 indicate low urgency. Scores of 15–24 indicate moderate urgency with expedited allocation. Scores of 25–35 carry high urgency with significant mortality risk. Scores above 35 trigger emergency allocation with the shortest expected wait.
+Model for End-Stage Liver Disease score (liver only), ranging from 6 to 40. Scores of 6-14 indicate low urgency. Scores of 15-24 indicate moderate urgency with expedited allocation. Scores of 25-35 carry high urgency with significant mortality risk. Scores above 35 trigger emergency allocation with the shortest expected wait.
 
 #### `las`
-Lung Allocation Score (lung only). Range 0–100.
-Higher scores indicate greater urgency and receive allocation priority.
+Lung Allocation Score (lung only), ranging from 0 to 100. Higher scores indicate greater urgency and receive allocation priority.
 
 ---
 
@@ -99,7 +96,7 @@ class SimulationResult(BaseModel):
 ```
 
 #### `deterministic_scores`
-Phase 1 suitability scores (0–100) for all 22 cities, computed in parallel with the Monte Carlo simulation. Useful for side-by-side comparison.
+Phase 1 suitability scores (0-100) for all 22 cities, computed in parallel with the Monte Carlo simulation. Useful for side-by-side comparison.
 
 ---
 
@@ -186,7 +183,7 @@ class EquityAnalysisResult(BaseModel):
 
 ## Frontend Field Mapping
 
-The frontend form uses camelCase. `api-client.js` normalizes to snake_case before sending:
+The frontend form uses camelCase, and `api-client.js` normalizes these to snake_case before sending to the API.
 
 | Form field | API field |
 |-----------|-----------|

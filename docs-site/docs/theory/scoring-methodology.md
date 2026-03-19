@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Scoring Methodology
 
-TransPlan's Phase 1 engine computes a weighted composite score (0–100) for each of 22 US cities based on a patient's profile.
+TransPlan's Phase 1 engine computes a weighted composite score (0 to 100) for each of 22 US cities based on a patient's profile.
 
 ## Overview
 
@@ -31,15 +31,15 @@ Scores the biological match between patient profile and the donor pool at each c
 
 **Inputs:** `organ`, `blood_type`, `age`, `sex`, `weight_lbs`, `height_inches` (for BMI)
 
-**Blood type compatibility** is the primary factor: O- scores highest universally while AB+ is most restricted, and a compatibility matrix is applied per organ. **Age** also affects scoring because pediatric and elderly patients face different wait time patterns relative to the expected donor age distribution. **Organ-specific clinical scores** (cPRA for kidney, MELD for liver, LAS for lung) directly influence the compatibility assessment. **BMI** is also considered because extreme values can disqualify candidates at some centers.
+Blood type compatibility is the primary factor. O- scores highest universally while AB+ is most restricted, and a compatibility matrix is applied per organ. Age also affects scoring because pediatric and elderly patients face different wait time patterns relative to the expected donor age distribution. Organ-specific clinical scores (cPRA for kidney, MELD for liver, LAS for lung) directly influence the compatibility assessment. BMI is also considered because extreme values can disqualify candidates at some centers.
 
 ### 2. Wait Time & Competition (20%)
 
 Estimates relative wait time advantage based on city-level SRTR data and patient urgency.
 
-**Inputs:** `urgency` (1–4), organ-specific clinical scores
+**Inputs:** `urgency` (1 to 4), organ-specific clinical scores
 
-City wait time factors are derived from SRTR Table B10 log-normal distribution parameters. A urgency multiplier applies for Status 1A/1B patients (heart/liver), significantly reducing expected wait. Competition index reflects the ratio of candidates to donors at each center.
+City wait time factors are derived from SRTR Table B10 log-normal distribution parameters. An urgency multiplier applies for Status 1A/1B patients (heart/liver), significantly reducing expected wait. The competition index reflects the ratio of candidates to donors at each center.
 
 ### 3. Donor Availability (18%)
 
@@ -95,6 +95,6 @@ Users can customize category weights via the methodology accordion in the app. W
 
 ## Limitations
 
-Scores are population-level estimates, not individual predictions. SRTR data is updated biannually, so current data may be 6–18 months old. Some data points are manually curated and may lag real-world changes. OPO boundary effects are not modeled (see `docs/limitations.md` L-009).
+Scores are population-level estimates, not individual predictions. SRTR data is updated biannually, so current data may be 6 to 18 months old. Some data points are manually curated and may lag real-world changes. OPO boundary effects are not modeled; see `docs/limitations.md` L-009 for details.
 
 See [Phase 2: Monte Carlo Simulation](/theory/monte-carlo) for individual-level probabilistic estimates.

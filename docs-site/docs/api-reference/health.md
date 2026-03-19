@@ -4,15 +4,13 @@ sidebar_position: 2
 
 # GET /health
 
-Check backend health and data freshness.
+Check backend health and data freshness. This endpoint requires no authentication and accepts no parameters.
 
 ## Request
 
 ```
 GET /health
 ```
-
-No authentication, no parameters.
 
 ## Response
 
@@ -45,18 +43,11 @@ No authentication, no parameters.
 | `data_files_loaded` | integer | varies | Number of data files loaded at startup |
 | `data_freshness` | object | varies | `{ filename: iso_timestamp }` for each loaded file |
 
-### Status Values
-
-| Value | Meaning |
-|-------|---------|
-| `ok` | All data files loaded, simulation ready |
-| `degraded` | Some data files missing or load failed; simulation may use fallback parameters |
+A status of `ok` means all data files loaded successfully and the simulation is ready to run. A status of `degraded` means some data files are missing or failed to load; the simulation may fall back to default parameters in that case.
 
 ## Usage
 
-The `session.js` frontend module polls `/health` to:
-1. Detect that the backend is running (shows session bar)
-2. Verify data is loaded before offering Phase 2 simulation
+The `session.js` frontend module polls `/health` for two purposes. First, it detects whether the backend is running and shows the session bar accordingly. Second, it verifies that data is loaded before offering Phase 2 simulation to the user.
 
 ## Example
 

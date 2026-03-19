@@ -4,11 +4,11 @@ sidebar_position: 3
 
 # Testing
 
-TransPlan has two test suites: Jest (JavaScript) and pytest (Python).
+TransPlan has two test suites: Jest for JavaScript and pytest for Python.
 
 ## JavaScript Tests (Jest)
 
-**98 tests** covering the Phase 1 scoring algorithm, COD multiplier, and data utilities.
+The JavaScript suite contains **98 tests** covering the Phase 1 scoring algorithm, COD multiplier, and data utilities.
 
 ```bash
 npm test
@@ -16,16 +16,13 @@ npm test
 
 ### Test Files
 
-| File | Tests | Coverage |
-|------|-------|---------|
-| `tests/algorithm.test.js` | 75 | All 8 scoring categories, organ-specific inputs, COD multiplier, edge cases |
-| `tests/utils.test.js` | 23 | `deepMerge`, `writeDataFile`, `mergeDataFile`, CITIES list |
+`tests/algorithm.test.js` contains 75 tests covering all 8 scoring categories, organ-specific inputs, the COD multiplier, and edge cases. `tests/utils.test.js` contains 23 tests covering `deepMerge`, `writeDataFile`, `mergeDataFile`, and the CITIES list.
 
 ### What's Tested
 
-**algorithm.test.js** covers blood type compatibility scoring for all organs, cPRA sensitivity for kidney (0%, 50%, 80%+), MELD scoring for liver (low, medium, high urgency), LAS scoring for lung, BMI/height/weight scoring, all 8 category weight combinations, full integration (`calculateScores()` returns valid scores for all 22 cities), and edge cases including missing fields, extreme values, and null inputs.
+The algorithm tests verify blood type compatibility scoring for all organs, cPRA sensitivity for kidney (0%, 50%, 80%+), MELD scoring for liver (low, medium, high urgency), LAS scoring for lung, BMI/height/weight scoring, all 8 category weight combinations, full integration through `calculateScores()` returning valid scores for all 22 cities, and edge cases including missing fields, extreme values, and null inputs.
 
-**utils.test.js** verifies that `deepMerge()` correctly merges nested objects, `mergeDataFile()` preserves existing data when new data is empty, `mergeDataFile()` updates only keys present in new data, and the `CITIES` array contains exactly the 22 expected cities.
+The utils tests verify that `deepMerge()` correctly merges nested objects, that `mergeDataFile()` preserves existing data when new data is empty and updates only keys present in new data, and that the `CITIES` array contains exactly the 22 expected cities.
 
 ### Running Specific Tests
 
@@ -42,7 +39,7 @@ npx jest --watch
 
 ## Python Tests (pytest)
 
-**193 tests** covering the Phase 2 backend, sensitivity analysis, and equity analysis.
+The Python suite contains **193 tests** covering the Phase 2 backend, sensitivity analysis, and equity analysis.
 
 ```bash
 cd backend
@@ -53,28 +50,28 @@ python -m pytest
 
 ```
 backend/tests/
-  test_schemas.py           ← Pydantic schema validation (22 tests)
-  test_distributions.py     ← Log-normal wait time model (22 tests)
-  test_monte_carlo.py       ← Monte Carlo engine (25 tests)
-  test_competing_risks.py   ← Mortality/delisting models (17 tests)
-  test_data_loader.py       ← Data loading and fallbacks (34 tests)
-  test_sensitivity.py       ← Sensitivity analysis (tornado chart data)
-  test_equity.py            ← Equity analysis (48-profile demographic matrix)
-  test_brier_score.py       ← Brier score calibration validation
-  test_cod_multiplier.py    ← COD donor recovery multiplier
+  test_schemas.py           <- Pydantic schema validation (22 tests)
+  test_distributions.py     <- Log-normal wait time model (22 tests)
+  test_monte_carlo.py       <- Monte Carlo engine (25 tests)
+  test_competing_risks.py   <- Mortality/delisting models (17 tests)
+  test_data_loader.py       <- Data loading and fallbacks (34 tests)
+  test_sensitivity.py       <- Sensitivity analysis (tornado chart data)
+  test_equity.py            <- Equity analysis (48-profile demographic matrix)
+  test_brier_score.py       <- Brier score calibration validation
+  test_cod_multiplier.py    <- COD donor recovery multiplier
 ```
 
 ### What's Tested
 
-**test_schemas.py** validates PatientProfile for all organ/blood type combinations, checks cPRA, MELD, and LAS range constraints per organ, and confirms that invalid values raise ValidationError.
+The schema tests validate PatientProfile for all organ and blood type combinations, check cPRA, MELD, and LAS range constraints per organ, and confirm that invalid values raise ValidationError.
 
-**test_distributions.py** verifies that LogNormal parameters are loaded for all (organ, blood_type) combinations, city factor multipliers are applied correctly, cPRA multiplier increases wait time at 80%+, MELD multiplier decreases wait time at high scores, and sampled wait times are always positive.
+The distribution tests verify that LogNormal parameters are loaded for all organ and blood type combinations, that city factor multipliers are applied correctly, that cPRA multipliers increase wait time at 80%+, that MELD multipliers decrease wait time at high scores, and that sampled wait times are always positive.
 
-**test_monte_carlo.py** confirms that 1,000 iterations complete for all 22 cities, `p_transplant_*` probabilities are in [0, 1], cities are ranked by `p_transplant_24mo` descending, the 95% CI lower bound does not exceed the point estimate, and the full run completes in under 2 seconds.
+The Monte Carlo tests confirm that 1,000 iterations complete for all 22 cities, that `p_transplant_*` probabilities fall within [0, 1], that cities are ranked by `p_transplant_24mo` descending, that the 95% CI lower bound does not exceed the point estimate, and that the full run completes in under 2 seconds.
 
-**test_competing_risks.py** checks that competing risks sum to 1.0 within floating point tolerance (i.e., `p_transplant + p_mortality + p_delisting + p_still_waiting = 1.0`), all risk components are non-negative, and organ-specific rates differ appropriately (heart > kidney for mortality).
+The competing risks tests check that all risk components sum to 1.0 within floating point tolerance (meaning `p_transplant + p_mortality + p_delisting + p_still_waiting = 1.0`), that all components are non-negative, and that organ-specific rates differ appropriately (for example, heart has higher mortality rates than kidney).
 
-**test_data_loader.py** confirms that all 10 data files load successfully from `data/`, wait time distributions are parsed for all 6 organs, competing risks are parsed for all 6 organs, and a missing file falls back gracefully without crashing.
+The data loader tests confirm that all 10 data files load successfully from `data/`, that wait time distributions and competing risks are parsed for all 6 organs, and that a missing file falls back gracefully without crashing.
 
 ### Running Specific Tests
 
@@ -101,7 +98,7 @@ Some Monte Carlo tests use relaxed tolerances due to inherent stochasticity:
 assert abs(p - expected) <= max(0.15 * expected, 0.03)
 ```
 
-This is appropriate for probabilities in sparse regions (rare blood types, extreme clinical scores).
+This is appropriate for probabilities in sparse regions such as rare blood types or extreme clinical scores.
 
 ## Continuous Integration
 

@@ -8,7 +8,7 @@ Run the full TransPlan stack locally with Phase 2 Monte Carlo simulation enabled
 
 ## Prerequisites
 
-You need **macOS** (primary platform; Linux works via `start.command`), **Python 3.11+** with pip, **Node.js 18+** (for data pipeline scripts and tests), and **Git**.
+You need **macOS** as the primary platform (Linux also works via `start.command`), **Python 3.11+** with pip, **Node.js 18+** for data pipeline scripts and tests, and **Git**.
 
 ## Installation
 
@@ -39,9 +39,7 @@ npm install
 
 ### Option A: Double-Click (macOS)
 
-Double-click `TransPlan.app` in Finder. The app starts the FastAPI backend (uvicorn) on a free port starting from 8002, opens your default browser to the app, and runs as a background process with no Terminal window.
-
-To stop: Double-click `stop.command` or click "End Session" in the app.
+Double-click `TransPlan.app` in Finder. The app starts the FastAPI backend (uvicorn) on a free port starting from 8002, opens your default browser to the app, and runs as a background process with no Terminal window. To stop, double-click `stop.command` or click "End Session" in the app.
 
 ### Option B: Terminal
 
@@ -49,12 +47,8 @@ To stop: Double-click `stop.command` or click "End Session" in the app.
 ./start.command
 ```
 
-This script:
-1. Scans for a free port starting at 8002
-2. Starts uvicorn serving both API and static files
-3. Opens the browser
+This script scans for a free port starting at 8002, starts uvicorn serving both API and static files, and opens the browser. To stop, run the following.
 
-To stop:
 ```bash
 ./stop.command
 ```
@@ -84,7 +78,7 @@ The green session bar at the bottom of the app also confirms the backend is runn
 
 ## Data Pipeline (Optional)
 
-To refresh data from public APIs:
+To refresh data from public APIs, first set the required API keys (only needed for EPA and BLS), then run the fetch scripts.
 
 ```bash
 # Set API keys first (only needed for EPA and BLS)
@@ -115,9 +109,10 @@ python -m pytest
 
 ## Troubleshooting
 
-| Issue | Fix |
-|-------|-----|
-| Port already in use | The launcher scans for a free port automatically. If `start.command` fails, manually specify a port with the Option C method. |
-| `ModuleNotFoundError: backend` | Run uvicorn from the repo root, not from inside `backend/`. Use `backend.main:app` as the module path. |
-| Phase 2 tab not showing | Backend is not running. Check that uvicorn started and `/health` returns `"status": "ok"`. |
-| `pip install` fails (PEP 668) | Use the venv at `backend/.venv/`: `backend/.venv/bin/pip install -r backend/requirements.txt` |
+If a **port is already in use**, the launcher scans for a free port automatically. If `start.command` still fails, manually specify a port using the Option C method.
+
+If you see a **`ModuleNotFoundError: backend`**, you are likely running uvicorn from inside the `backend/` directory. Run it from the repo root instead, using `backend.main:app` as the module path.
+
+If the **Phase 2 tab is not showing**, the backend is not running. Check that uvicorn started successfully and that `/health` returns `"status": "ok"`.
+
+If **`pip install` fails with a PEP 668 error**, use the venv at `backend/.venv/` directly: `backend/.venv/bin/pip install -r backend/requirements.txt`.

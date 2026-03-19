@@ -14,17 +14,11 @@ Monte Carlo simulation captures the full distribution by sampling from calibrate
 
 ## Algorithm Overview
 
-For each city, the engine:
-
-1. **Samples a wait time** from a log-normal distribution parameterized by SRTR data for that city, organ, and blood type
-2. **Applies clinical multipliers** based on cPRA / MELD / LAS
-3. **Applies a competing risks check**: at each time step, the patient may receive a transplant, die, or be delisted
-4. **Records the outcome** (transplant / mortality / delisting / still waiting) at 6, 12, 24, and 36 months
-5. **Repeats 1,000 times** to build the outcome distribution
+For each city, the engine first samples a wait time from a log-normal distribution parameterized by SRTR data for that city, organ, and blood type. It then applies clinical multipliers based on cPRA, MELD, or LAS. Next, a competing risks check determines whether the patient receives a transplant, dies, or is delisted at each time step. The outcome (transplant, mortality, delisting, or still waiting) is recorded at the 6, 12, 24, and 36 month horizons. This entire process repeats 1,000 times to build the outcome distribution.
 
 ### Performance
 
-22 cities × 1,000 iterations runs in approximately 80ms on a typical laptop. Results are not cached; each request recomputes fresh.
+Running 22 cities at 1,000 iterations each takes approximately 80ms on a typical laptop. Results are not cached; each request recomputes fresh.
 
 ## Log-Normal Wait Time Model
 
@@ -44,21 +38,21 @@ The raw sampled wait time is scaled by up to three independent terms:
 T_adjusted = T × city_factor × clinical_multiplier / cod_multiplier
 ```
 
-The **city factor** captures how a city's historical median compares to the national median for that organ and blood type. A city_factor > 1.0 means longer waits than average; < 1.0 means shorter. These are derived from SRTR Table B10 by computing each city's median divided by the national median across all centers.
+The **city factor** captures how a city's historical median compares to the national median for that organ and blood type. A city_factor greater than 1.0 means longer waits than average, while a value less than 1.0 means shorter. These are derived from SRTR Table B10 by computing each city's median divided by the national median across all centers.
 
 The **clinical multiplier** adjusts for the patient's organ-specific clinical score, which affects allocation priority independently of city:
 
 | Score | Range | Multiplier direction | Rationale |
 |-------|-------|---------------------|-----------|
-| cPRA (kidney) | 0–100% | > 1.0 at high values | Highly sensitized patients need a rare antigen-negative donor, making each match attempt less likely to succeed |
-| MELD (liver) | 6–40 | < 1.0 at high values | High MELD patients receive allocation priority; the sickest patients are offered organs first |
-| LAS (lung) | 0–100 | < 1.0 at high values | High LAS patients receive allocation priority by the same urgency-based logic |
+| cPRA (kidney) | 0 to 100% | > 1.0 at high values | Highly sensitized patients need a rare antigen-negative donor, making each match attempt less likely to succeed |
+| MELD (liver) | 6 to 40 | < 1.0 at high values | High MELD patients receive allocation priority; the sickest patients are offered organs first |
+| LAS (lung) | 0 to 100 | < 1.0 at high values | High LAS patients receive allocation priority by the same urgency-based logic |
 
-A cPRA of 80% produces a multiplier of roughly 1.5× to 3.0×, meaning the adjusted wait is 50–200% longer than baseline. A MELD of 35+ produces a multiplier around 0.3×, reflecting emergency-level allocation priority.
+A cPRA of 80% produces a multiplier of roughly 1.5x to 3.0x, meaning the adjusted wait is 50% to 200% longer than baseline. A MELD of 35 or higher produces a multiplier around 0.3x, reflecting emergency-level allocation priority.
 
 ### Cause-of-Death (COD) Multiplier (Optional)
 
-When `adjust_for_cause_of_death` is enabled, the simulation divides wait times by a COD multiplier that reflects regional organ-specific donor availability. The multiplier combines organ recovery rates from published literature (PMC10329409) with state-level cause-of-death proportions from CDC WONDER. It is normalized and centered at 1.0, with typical variation of 1–15% depending on the organ type. More donors in a region means shorter expected wait. This is computed per-city using `data/cause-of-death-by-region.json`.
+When `adjust_for_cause_of_death` is enabled, the simulation divides wait times by a COD multiplier that reflects regional organ-specific donor availability. The multiplier combines organ recovery rates from published literature (PMC10329409) with state-level cause-of-death proportions from CDC WONDER. It is normalized and centered at 1.0, with typical variation of 1 to 15% depending on the organ type. More donors in a region means shorter expected wait. This is computed per-city using `data/cause-of-death-by-region.json`.
 
 ## Output: Probability Estimates
 
@@ -87,11 +81,7 @@ Cities with steeper CDFs offer faster access for this patient profile.
 
 ## Confidence Intervals
 
-The 95% CI is computed via bootstrap resampling of the 1,000 simulation outcomes:
-
-1. Resample 1,000 outcomes with replacement (200 bootstrap resamples)
-2. Compute `p_transplant_24mo` for each resample
-3. Report the 2.5th and 97.5th percentile
+The 95% CI is computed via bootstrap resampling of the 1,000 simulation outcomes. The procedure resamples the 1,000 outcomes with replacement across 200 bootstrap iterations, computes `p_transplant_24mo` for each resample, and then reports the 2.5th and 97.5th percentile as the interval bounds.
 
 Wide CIs indicate high variance, often due to rare blood types or extreme clinical scores that hit data-sparse regions of the model.
 
@@ -101,6 +91,6 @@ Cities are ranked by `p_transplant_24mo` descending. For ties, `median_wait_mont
 
 ## Limitations
 
-The model is calibrated on historical SRTR data; future policy changes (e.g., kidney allocation score updates) may not be reflected. Blood type–organ combinations with low SRTR sample counts have higher uncertainty. The model does not account for center-specific acceptance practices or multi-listing (being listed at multiple centers).
+The model is calibrated on historical SRTR data, so future policy changes (for example, kidney allocation score updates) may not be reflected. Blood type and organ combinations with low SRTR sample counts have higher uncertainty. The model does not account for center-specific acceptance practices or multi-listing, that is, being listed at multiple centers simultaneously.
 
 See [Competing Risks](/theory/competing-risks) for the mortality and delisting models.

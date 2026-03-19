@@ -65,7 +65,7 @@ TransPlan uses a two-layer architecture: a static frontend (Phase 1) augmented b
 
 ### Single-Process Architecture (ADR-015)
 
-FastAPI serves both the API endpoints and the static frontend on a single port. This eliminates CORS complexity and enables same-origin `/simulate` requests. The frontend uses relative URLs (`/simulate`, `/health`) with no hardcoded backend URL.
+FastAPI serves both the API endpoints and the static frontend on a single port, eliminating CORS complexity and enabling same-origin `/simulate` requests. The frontend uses relative URLs (`/simulate`, `/health`) with no hardcoded backend URL.
 
 ### No Build Step Frontend
 
@@ -73,11 +73,11 @@ The frontend is plain HTML/CSS/JS with no bundler. This avoids build toolchain c
 
 ### Graceful Degradation
 
-If the backend is not running, the frontend falls back silently to Phase 1 (deterministic scores only). The Phase 2 tab remains hidden. A yellow banner informs the user that probabilistic simulation is unavailable.
+If the backend is not running, the frontend falls back silently to Phase 1, providing deterministic scores only. The Phase 2 tab remains hidden, and a yellow banner informs the user that probabilistic simulation is unavailable.
 
 ### Data at Rest vs Runtime
 
-Public API data is fetched by GitHub Actions on a weekly/bimonthly schedule and committed as JSON to the repo. The frontend loads this JSON at runtime. There is no database and no server-side rendering. This keeps deployment simple (Vercel for the landing page and docs; uvicorn locally for Phase 2 simulation).
+Public API data is fetched by GitHub Actions on a weekly or bimonthly schedule and committed as JSON to the repo. The frontend loads this JSON at runtime. There is no database and no server-side rendering. This keeps deployment simple: Vercel handles the landing page and docs, while uvicorn runs locally for Phase 2 simulation.
 
 ## Component Inventory
 
@@ -87,7 +87,7 @@ Public API data is fetched by GitHub Actions on a weekly/bimonthly schedule and 
 |------|---------|
 | `index.html` | Landing page: features, how-it-works, CTA to simulator |
 | `simulator.html` | Simulation tool: form, 3-tab results, modals, map, methodology |
-| `algorithm.js` | Phase 1 scoring engine: 8 categories × 22 cities |
+| `algorithm.js` | Phase 1 scoring engine: 8 categories x 22 cities |
 | `script.js` | UI orchestration: form, results display, map controls, city detail modal, comparison |
 | `api-client.js` | API client: POST /simulate, /sensitivity, /equity-analysis, graceful fallback |
 | `probability-charts.js` | CDF line charts, competing risks bars, tornado sensitivity chart (Chart.js) |
@@ -115,7 +115,7 @@ Public API data is fetched by GitHub Actions on a weekly/bimonthly schedule and 
 | `backend/services/distributions.py` | Log-normal wait time model |
 | `backend/services/competing_risks.py` | Mortality/delisting exponential models |
 | `backend/services/sensitivity.py` | Sensitivity analysis: parameter impact on p_transplant_24mo |
-| `backend/services/equity.py` | Demographic equity analysis (48 profiles × 22 cities, Gini coefficient) |
+| `backend/services/equity.py` | Demographic equity analysis (48 profiles x 22 cities, Gini coefficient) |
 | `backend/services/brier_score.py` | Brier score calibration: Monte Carlo vs analytical validation |
 | `backend/services/data_loader.py` | Loads and caches data/*.json at startup |
 

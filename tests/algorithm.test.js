@@ -94,6 +94,17 @@ const MOCK_TRANSPLANT_DATA = {
         "Rochester": 95, "Cleveland": 92, "Pittsburgh": 91,
         "Houston": 90, "Minneapolis": 81, "Miami": 78, "New York": 85
     },
+    cityWaitTimeFactors: {
+        "Omaha": { kidney: 0.31, liver: 0.57, heart: 0.77, lung: 1.14 },
+        "Los Angeles": { kidney: 1.69, liver: 2.40, heart: 0.50, lung: 0.86 },
+        "Minneapolis": { kidney: 0.53, liver: 1.41, heart: 0.64, lung: 0.93 },
+        "Cleveland": { kidney: 0.54, liver: 0.86, heart: 0.77, lung: 0.64 },
+        "Rochester": { kidney: 1.27, liver: 0.75, heart: 1.36, lung: 1.07 },
+        "Houston": { kidney: 0.81, liver: 1.18, heart: 0.55, lung: 0.79 },
+        "Pittsburgh": { kidney: 0.86, liver: 0.73, heart: 0.64, lung: 0.57 },
+        "Miami": { kidney: 1.11, liver: 1.93, heart: 0.77, lung: 1.43 },
+        "New York": { kidney: 0.51, liver: 0.59, heart: 1.64, lung: 2.07 }
+    },
     causeOfDeath: {
         organRecoveryRates: {
             heart:     { trauma: 0.488, cardiovascular: 0.151, drug_intox: 0.369, stroke: 0.157 },

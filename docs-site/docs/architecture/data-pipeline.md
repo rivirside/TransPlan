@@ -4,55 +4,37 @@ sidebar_position: 2
 
 # Data Pipeline
 
-TransPlan's data is automatically refreshed by GitHub Actions and committed to the repository as JSON files.
+TransPlan's data is automatically refreshed by GitHub Actions and committed to the repository as JSON files. There is no database and no server-side rendering. All data lives as JSON files in the `data/` directory, and the frontend loads them at runtime.
 
 ## Overview
 
 ```
 Public APIs (weekly/bimonthly)
-  → GitHub Actions workflows
-    → Node.js / Python fetch scripts
-      → data/*.json updated + committed
-        → Frontend loads JSON at runtime
+  -> GitHub Actions workflows
+    -> Node.js / Python fetch scripts
+      -> data/*.json updated + committed
+        -> Frontend loads JSON at runtime
 ```
-
-No database. No server-side rendering. All data lives as JSON files in the `data/` directory.
 
 ## Data Sources
 
 ### Automated Sources
 
-| Source | File | Update Frequency | Auth Required |
-|--------|------|-----------------|---------------|
-| NHTSA FARS (traffic fatalities) | `data/traffic-fatalities.json` | Weekly | None (API retired: seed data only) |
-| EPA AQS (air quality) | `data/air-quality.json` | Weekly | `EPA_EMAIL`, `EPA_API_KEY` |
-| CMS Provider Data (hospital quality) | `data/hospital-quality.json` | Weekly | None |
-| BLS API v2 (cost of living) | `data/cost-of-living.json` | Weekly | `BLS_API_KEY` |
-| CDC SODA API (health demographics) | `data/health-demographics.json` | Weekly | None |
-| SRTR PSR Excel (wait times + outcomes) | `data/wait-time-distributions.json` `data/competing-risks.json` | Bimonthly check | None |
-| Donor registration | `data/donor-registration.json` | Weekly | None |
-| SRTR center mapping | `data/srtr-center-mapping.json` | As-needed | None |
+Several public APIs provide regularly updated data. The EPA AQS API supplies air quality data to `data/air-quality.json` on a weekly schedule and requires `EPA_EMAIL` and `EPA_API_KEY` credentials. CMS Provider Data feeds hospital quality scores into `data/hospital-quality.json` weekly with no authentication needed. The BLS API v2 provides cost-of-living data to `data/cost-of-living.json` weekly, requiring a `BLS_API_KEY`. The CDC SODA API populates `data/health-demographics.json` weekly without credentials, and donor registration data goes into `data/donor-registration.json` through the same script. Traffic fatality data in `data/traffic-fatalities.json` was sourced from the NHTSA FARS API, which has since been retired, so this data is now frozen as seed values.
+
+SRTR Program-Specific Reports provide the statistical backbone of the simulation. A bimonthly check downloads Excel files and parses them into `data/wait-time-distributions.json` and `data/competing-risks.json`. The center mapping file `data/srtr-center-mapping.json` is updated as needed.
 
 ### Derived Data
 
-| File | Source | Description |
-|------|--------|-------------|
-| `data/cause-of-death-by-region.json` | PMC10329409 × CDC WONDER | Organ recovery rates by regional cause-of-death patterns |
+The file `data/cause-of-death-by-region.json` combines data from the published study PMC10329409 with CDC WONDER statistics to estimate organ recovery rates by regional cause-of-death patterns.
 
 ### Manual Sources
 
-Curated by hand in `data/manual/`. No API exists for these:
-
-| File | Content | Update Cadence |
-|------|---------|----------------|
-| `data/manual/srtr-reports.json` | Center volumes, specializations, performance tiers | As-needed (SRTR biannual) |
-| `data/manual/climate-scores.json` | Recovery-favorable climate scores (1–10 per city) | Annually |
-| `data/manual/policy-tiers.json` | State donation law rankings | As-needed |
-| `data/manual/socioeconomic.json` | Transplant support system scores (1–10 per city) | Annually |
+Some data files are curated by hand in `data/manual/` because no API exists for the underlying information. These include `data/manual/srtr-reports.json` (center volumes, specializations, and performance tiers, updated as needed with each biannual SRTR release), `data/manual/climate-scores.json` (recovery-favorable climate scores on a 1 to 10 scale per city, reviewed annually), `data/manual/policy-tiers.json` (state donation law rankings, updated as needed), and `data/manual/socioeconomic.json` (transplant support system scores on a 1 to 10 scale per city, reviewed annually).
 
 ## Fetch Scripts
 
-All scripts are in `scripts/`. They use a shared `utils.js` with retry logic and file write helpers.
+All scripts live in `scripts/` and share a common `utils.js` module with retry logic and file write helpers.
 
 ```bash
 # Run all fetch scripts locally
@@ -64,11 +46,11 @@ node scripts/fetch-health-data.js
 node scripts/validate-data.js           # post-fetch validation
 ```
 
-Each script uses `mergeDataFile()`, which deep-merges new data with existing, only overwriting keys that have fresh data. This prevents an API outage from wiping out previously fetched data.
+Each script uses `mergeDataFile()`, which deep-merges new data with existing records and only overwrites keys that have fresh data. This design prevents an API outage from wiping out previously fetched values.
 
 ### SRTR Pipeline (Python)
 
-SRTR publishes Excel files (Program-Specific Reports) biannually. The Python pipeline:
+SRTR publishes Excel files (Program-Specific Reports) biannually. The Python pipeline downloads these files and parses the relevant tables into JSON.
 
 ```bash
 # Download SRTR Excel files (6 organs, ~200MB)
@@ -78,26 +60,17 @@ python scripts/fetch-srtr-excel.py
 python scripts/parse-srtr-reports.py
 ```
 
-Output: `data/wait-time-distributions.json` and `data/competing-risks.json`
-
-The SRTR check workflow (`check-srtr-updates.yml`) runs bimonthly and opens a GitHub issue if new PSR files are detected.
+This produces `data/wait-time-distributions.json` and `data/competing-risks.json`. The SRTR check workflow (`check-srtr-updates.yml`) runs bimonthly and opens a GitHub issue if new PSR files are detected.
 
 ## GitHub Actions Workflows
 
-### `fetch-data.yml`: Weekly Data Refresh
+### Weekly Data Refresh (`fetch-data.yml`)
 
-Runs every Monday at 6am UTC. Sequential job:
+This workflow runs every Monday at 6am UTC as a sequential job. It installs Node.js dependencies, runs all five automated fetch scripts, then runs `validate-data.js` to verify the results. If any data changed, it commits and pushes with the message `data: automated weekly update`. The workflow requires three secrets configured in GitHub Settings: `EPA_EMAIL`, `EPA_API_KEY`, and `BLS_API_KEY`.
 
-1. Install Node.js deps
-2. Run all 5 automated fetch scripts
-3. Run `validate-data.js`
-4. If any data changed, commit and push with message `data: automated weekly update`
+### Bimonthly SRTR Check (`check-srtr-updates.yml`)
 
-Required secrets (GitHub Settings > Secrets > Actions): `EPA_EMAIL`, `EPA_API_KEY`, and `BLS_API_KEY`.
-
-### `check-srtr-updates.yml`: Bimonthly SRTR Check
-
-Runs 1st and 15th of each month. Checks SRTR website for new PSR files by comparing hashes. Opens a GitHub issue if updates are detected.
+This workflow runs on the 1st and 15th of each month. It checks the SRTR website for new PSR files by comparing hashes and opens a GitHub issue if updates are detected.
 
 ## Data Loading at Runtime
 
@@ -108,21 +81,16 @@ Runs 1st and 15th of each month. Checks SRTR website for new PSR files by compar
 const data = await loadDataFile('air-quality.json', DEFAULT_AIR_QUALITY);
 ```
 
-The `DEFAULTS` objects in `data-loader.js` are the last known-good values, serving as a safety net for offline use or CDN failures.
+The `DEFAULTS` objects in `data-loader.js` contain the last known-good values, serving as a safety net for offline use or CDN failures.
 
 ## Data Validation
 
-`scripts/validate-data.js` runs after each fetch cycle and checks that all 22 cities have entries in each data file, numeric values are within expected ranges, no `null` or missing keys appear in required fields, and out-of-range values are logged as warnings (not errors) to avoid blocking the GitHub Action.
+`scripts/validate-data.js` runs after each fetch cycle. It checks that all 22 cities have entries in each data file, that numeric values fall within expected ranges, and that no `null` or missing keys appear in required fields. Out-of-range values are logged as warnings rather than errors to avoid blocking the GitHub Action.
 
 ## Adding a New Data Source
 
-1. Create `scripts/fetch-<source>.js`
-2. Use `mergeDataFile(outputPath, newData)` from `utils.js`
-3. Add the script to `.github/workflows/fetch-data.yml`
-4. Add validation rules in `scripts/validate-data.js`
-5. Add default values to `data-loader.js`
-6. Update the algorithm in `algorithm.js` to use the new data
+To add a new data source, start by creating a fetch script at `scripts/fetch-<source>.js` that uses `mergeDataFile(outputPath, newData)` from `utils.js`. Then add the script to the workflow in `.github/workflows/fetch-data.yml` so it runs as part of the weekly refresh. Next, add validation rules in `scripts/validate-data.js` to cover the new data, and add default fallback values to `data-loader.js` so the frontend can function even if the fetch fails. Finally, update the scoring algorithm in `algorithm.js` to incorporate the new data into its calculations.
 
 ## Known Limitations
 
-The NHTSA FARS API has been retired (L-045): traffic fatality data is now frozen at the last fetched values, and a CSV bulk download alternative exists at NHTSA but is not yet automated. SRTR data may be 6–18 months old since PSR files are released biannually. Without EPA and BLS API keys, those data files will not update in forks.
+The NHTSA FARS API has been retired (L-045), so traffic fatality data is now frozen at the last fetched values. A CSV bulk download alternative exists at NHTSA but is not yet automated. SRTR data may be 6 to 18 months old since PSR files are released biannually. Forks of the repository will not be able to update EPA or BLS data files without their own API keys.
