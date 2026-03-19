@@ -5,7 +5,7 @@
     "references": [
       "https://www.srtr.org/reports/program-specific-reports/"
     ],
-    "fetchedAt": "2026-03-17T06:33:03Z",
+    "fetchedAt": "2026-03-19T16:58:32Z",
     "notes": "Center-level rates from SRTR Table B7. Urgency and clinical multipliers retained from literature estimates."
   },
   "kidney": {
@@ -73,18 +73,6 @@
       "3": 1.5,
       "4": 2.5
     }
-  },
-  "age_mortality_multipliers": {
-    "_notes": "Age-group waitlist mortality multipliers. Source: SRTR 2023 Annual Data Report Table 5.3 (kidney, extrapolated to other organs). Reference age group: 50-64.",
-    "18-34": 0.4,
-    "35-49": 0.7,
-    "50-64": 1.0,
-    "65+": 1.9
-  },
-  "age_organ_overrides": {
-    "_notes": "Organ-specific adjustments to the base age multipliers. Heart mortality is extremely age-sensitive; kidney is less so. Source: SRTR organ-specific waitlist survival tables.",
-    "heart": { "18-34": 0.3, "35-49": 0.6, "50-64": 1.0, "65+": 2.5 },
-    "liver": { "18-34": 0.5, "35-49": 0.8, "50-64": 1.0, "65+": 1.7 }
   },
   "city_adjustments": {
     "_notes": "Center-level mortality and delisting factors relative to national average. Averaged across available organs. Source: SRTR Table B7.",

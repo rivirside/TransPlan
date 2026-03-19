@@ -199,10 +199,11 @@ TransPlan/
     wait-time-distributions.json  <- Log-normal params from SRTR Table B10
     competing-risks.json          <- Mortality/delisting from SRTR Table B7
     post-transplant-outcomes.json <- Graft/patient survival from SRTR Tables C5-C20 (Phase 4 M2)
-    srtr-historical.json      <- Multi-year SRTR center metrics for trend analysis (Phase 4 M3)
+    srtr-historical.json      <- Real SRTR 15-release time-series 2019–2025 (Phase 4 M3, #104 resolved)
     cause-of-death-by-region.json <- Organ recovery rates × state COD proportions (M2)
     srtr-center-mapping.json      <- SRTR center codes → 22 TransPlan cities
     srtr-raw/                     <- Downloaded SRTR Excel files (gitignored)
+      historical/               <- 14 extracted SRTR archive releases (gitignored, auto-fetched)
     manual/               <- Hand-curated data (no API available)
       srtr-reports.json
       climate-scores.json

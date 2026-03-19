@@ -486,7 +486,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 | File | Tier | Source | Vintage | Notes |
 |------|------|--------|---------|-------|
-| `srtr-historical.json` | **Synthetic** | `scripts/generate-srtr-historical.py` with `random.seed(42)` | N/A | **Entirely procedurally generated.** Calibrated against published SRTR statistics but NOT real historical data. The `_meta` field explicitly states "NOT real patient data." Powers trend sparklines and trajectory analysis. A `parse_historical_trends()` function exists in `parse-srtr-reports.py` but no historical SRTR Excel files have been downloaded. |
+| `srtr-historical.json` | **Real** | SRTR PSR National Summary Data (14 biannual releases, Jan 2019 – Jul 2025) | Jan 2019 – Jul 2025 | **Real SRTR data.** Parsed from archived Excel files via `parse_historical_trends()`. Auto-discovery from `data/srtr-raw/historical/` directories. Automated via `fetch-srtr-historical.yml` GitHub Actions workflow. |
 
 ### Manual / Curated
 
@@ -501,7 +501,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 1. **Core probability pipeline is real SRTR data** — national medians, city factors, mortality/delisting rates, and post-transplant outcomes all parsed from official January 2025 SRTR Excel releases.
 2. **Patient-level modifiers are literature-estimated** — blood type multipliers, cPRA/MELD/LAS effects, urgency/age mortality factors come from published literature, not SRTR-stratified data.
-3. **Historical trends are synthetic** — `srtr-historical.json` must be disclosed as calibrated simulations if trend charts appear in the paper.
+3. **Historical trends are now real SRTR data** — `srtr-historical.json` contains 15-release time-series (2019–2025) parsed from official SRTR PSR archives. Trend charts can be cited as SRTR-sourced.
 4. **Several scoring-engine inputs are seed data** — air quality, traffic fatalities, donor registration, and most health demographics have never been live-fetched. These affect the location suitability score (frontend) but NOT the probabilistic simulation engine (backend).
 5. **CDC cause-of-death data is from 2017** — drug intoxication distributions have shifted substantially since then (opioid crisis escalation).
 

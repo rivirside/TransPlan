@@ -85,6 +85,21 @@ B7_NAT_COLS = {
 
 # ---------- helpers ----------
 
+# Sheet name mapping: old-format (pre-2111) → new-format (2111+)
+# SRTR renamed Table B9→B10, Table B6→B7 starting with the Jan 2022 release (code 2111).
+B10_SHEET_NAMES = ["Table B10", "Table B9"]                 # wait time percentiles
+B7_SHEET_NAMES = ["Table B7", "Table B6", "Tables B7-B8 Center <=1yr"]  # waitlist outcomes
+
+
+def _open_sheet(wb, candidates: list[str]):
+    """Try multiple sheet names, return first match or None."""
+    for name in candidates:
+        try:
+            return wb.sheet_by_name(name)
+        except xlrd.biffh.XLRDError:
+            continue
+    return None
+
 
 def _col_index(sheet, col_name: str) -> int:
     """Find column index by header name (row 0)."""
@@ -690,15 +705,29 @@ def parse_post_transplant_outcomes(mapping: dict) -> dict:
 
 # ---------- Phase 4 M3: Historical trend parsing ----------
 
-# Release code → year mapping (must match fetch-srtr-excel.py)
-HISTORICAL_RELEASES = {
-    "1901": 2019,
-    "2001": 2020,
-    "2101": 2021,
-    "2201": 2022,
-    "2301": 2023,
-    "2401": 2024,
-}
+# Auto-discover historical releases from extracted directories on disk.
+# SRTR file codes use YYMM format (2-digit year + 2-digit month), so the
+# release year can be derived: add 2 months to get the approximate release
+# date, then use that year (e.g. "1811" → Nov 2018 + 2mo → Jan 2019 → 2019).
+def _discover_historical_releases(hist_dir: str) -> dict:
+    """Scan historical/ for extracted release directories and infer years."""
+    releases = {}
+    if not os.path.isdir(hist_dir):
+        return releases
+    for entry in sorted(os.listdir(hist_dir)):
+        entry_path = os.path.join(hist_dir, entry)
+        if not os.path.isdir(entry_path) or len(entry) != 4 or not entry.isdigit():
+            continue
+        # Check it actually contains .xls files
+        if not any(f.endswith(".xls") for f in os.listdir(entry_path)):
+            continue
+        yy, mm = int(entry[:2]), int(entry[2:])
+        # Approximate release date: data code + ~2 months
+        release_month = mm + 2
+        release_year = 2000 + yy + (1 if release_month > 12 else 0)
+        releases[entry] = release_year
+    return releases
+
 CURRENT_RELEASE = ("2511", 2025)
 
 HISTORICAL_DIR = os.path.join(RAW_DIR, "historical")
@@ -822,12 +851,12 @@ def parse_historical_trends(mapping: dict) -> dict:
     """
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    # Collect all available releases (historical + current)
+    # Collect all available releases (auto-discovered from disk + current)
+    discovered = _discover_historical_releases(HISTORICAL_DIR)
     releases = {}
-    for code, year in HISTORICAL_RELEASES.items():
+    for code, year in discovered.items():
         release_dir = os.path.join(HISTORICAL_DIR, code)
-        if os.path.isdir(release_dir):
-            releases[code] = {"year": year, "dir": release_dir, "pattern": "csrs_final_tables_{code}_{organ_code}.xls"}
+        releases[code] = {"year": year, "dir": release_dir, "pattern": "csrs_final_tables_{code}_{organ_code}.xls"}
 
     # Current release (in srtr-raw/ root)
     cur_code, cur_year = CURRENT_RELEASE
@@ -872,22 +901,20 @@ def parse_historical_trends(mapping: dict) -> dict:
                 print(f"    WARNING: Could not open {excel_path}: {e}")
                 continue
 
-            # Parse B10 and B7 sheets
-            try:
-                b10_sheet = wb.sheet_by_name("Table B10")
+            # Parse B10 and B7 sheets (handles old sheet names: B9→B10, B6→B7)
+            b10_sheet = _open_sheet(wb, B10_SHEET_NAMES)
+            if b10_sheet:
                 b10_ctr_cols = _build_col_map(b10_sheet, B10_COLS)
                 b10_nat_cols = _build_col_map(b10_sheet, B10_NAT_COLS)
-            except (xlrd.biffh.XLRDError, Exception):
-                b10_sheet = None
+            else:
                 b10_ctr_cols = {}
                 b10_nat_cols = {}
 
-            try:
-                b7_sheet = wb.sheet_by_name("Table B7")
+            b7_sheet = _open_sheet(wb, B7_SHEET_NAMES)
+            if b7_sheet:
                 b7_ctr_cols = _build_col_map(b7_sheet, B7_COLS)
                 b7_nat_cols = _build_col_map(b7_sheet, B7_NAT_COLS)
-            except (xlrd.biffh.XLRDError, Exception):
-                b7_sheet = None
+            else:
                 b7_ctr_cols = {}
                 b7_nat_cols = {}
 
@@ -999,9 +1026,7 @@ def main():
     pt_outcomes = parse_post_transplant_outcomes(mapping)
 
     # Phase 4 M3: Parse historical trends if data is available
-    has_historical = os.path.isdir(HISTORICAL_DIR) and any(
-        os.path.isdir(os.path.join(HISTORICAL_DIR, d)) for d in os.listdir(HISTORICAL_DIR)
-    ) if os.path.isdir(HISTORICAL_DIR) else False
+    has_historical = bool(_discover_historical_releases(HISTORICAL_DIR))
 
     if has_historical or "--historical" in sys.argv:
         print("\n=== Parsing Historical Trends (Phase 4 M3) ===")

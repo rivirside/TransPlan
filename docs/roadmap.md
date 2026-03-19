@@ -314,9 +314,11 @@
 
 > **Why:** Centers change over time. "Is Cleveland getting better or worse for kidney transplants?" is critical context no existing tool provides. Adds temporal validity to the model.
 
-- [x] **Multi-year SRTR PSR downloads**: `fetch-srtr-excel.py --historical` downloads archived zip bundles (2019–2025, one per year)
-- [x] Extended `scripts/parse-srtr-reports.py` with `parse_historical_trends()` extracting Table B10, B7, C-series across releases
-- [x] New data file: `data/srtr-historical.json` — 7-year time-series of wait times, volumes, outcomes per center per organ
+- [x] **Multi-year SRTR PSR downloads**: `fetch-srtr-historical.py` scrapes srtr.org dropdown, downloads archived zip bundles (2019–2025, 14 biannual releases)
+- [x] Extended `scripts/parse-srtr-reports.py` with `parse_historical_trends()` extracting Table B10/B9, B7/B6, C-series across releases (handles old/new sheet naming)
+- [x] Auto-discovery: parser scans `data/srtr-raw/historical/` directories — no hardcoded release list needed for future releases
+- [x] New data file: `data/srtr-historical.json` — 15-release time-series (2019–2025) of wait times, volumes, outcomes per center per organ (real SRTR data, not synthetic)
+- [x] GitHub Actions workflow: `.github/workflows/fetch-srtr-historical.yml` — scheduled checks after SRTR Jan/Jul releases
 - [x] New backend service: `services/trends.py` — `scipy.stats.linregress`, p < 0.10 significance, direction classification
 - [x] **Trending badge** on city probability cards: ↑ improving / → stable / ↓ declining (weighted vote across metrics)
 - [x] **Sparkline charts** in city detail modal: wait time, volume, graft survival (Chart.js, national reference dashed line)
@@ -484,7 +486,7 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 - [x] 24 new tests (14 cross-validation + 10 posterior checks)
 
 **Remaining:**
-- [ ] #104: Replace synthetic `srtr-historical.json` with real SRTR data (archive URLs 404 — needs manual download investigation)
+- [x] #104: Replace synthetic `srtr-historical.json` with real SRTR data (14 biannual releases downloaded, parsed, automated via GH Actions)
 - [ ] API endpoint for cross-engine validation (`POST /cross-validate`)
 - [ ] API endpoint for posterior checks (`GET /posterior-checks/{organ}`)
 

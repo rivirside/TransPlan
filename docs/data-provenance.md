@@ -51,6 +51,54 @@
 
 ---
 
+## Phase 4 Data (Historical Trends)
+
+| Data Point | Source | API/Fetch Script | Automated? | Data File | Freshness |
+|------------|--------|-----------------|------------|-----------|-----------|
+| Historical SRTR PSR Excel archives (2019–2025) | SRTR Program-Specific Reports archive | Manual download (see below) | No | `data/srtr-raw/historical/*.zip` (gitignored) | Biannual SRTR releases |
+| Historical trend metrics (year-over-year) | Parsed from historical Excel archives | `scripts/parse-srtr-reports.py` (`parse_historical_trends()`) | Semi | `data/srtr-historical.json` | Depends on historical downloads |
+
+### How to Download Historical SRTR PSR Archives
+
+The SRTR website provides archived national center-level summary data as zip files containing per-organ Excel files. These are **not** available via a direct/predictable URL pattern — you must use the dropdown on the website or follow the mapping below.
+
+**Steps:**
+1. Go to https://www.srtr.org/reports/program-specific-reports/
+2. Scroll to **"National Center-Level Summary Data by Organ"** section
+3. Find the text: *"Access archived national center-level summary data below (the zip files contain all organs)."*
+4. Select a period from the **second dropdown** (the archive dropdown, not the current organ dropdown)
+5. Click the **Download** link that appears
+
+**URL pattern:** `https://www.srtr.org/assets/media/PSRdownloads/csrs_tables_all/csrs_final_tables_{YYMM}all.zip`
+
+The `{YYMM}` code is **not** the release date — it's approximately 2 months before. The complete mapping:
+
+| Release Period | File Code | Zip Filename |
+|---|---|---|
+| January 2019 | 1811 | `csrs_final_tables_1811all.zip` |
+| July 2019 | 1905 | `csrs_final_tables_1905all.zip` |
+| January 2020 | 1911 | `csrs_final_tables_1911all.zip` |
+| August 2020 | 2006 | `csrs_final_tables_2006all.zip` |
+| January 2021 | 2011 | `csrs_final_tables_2011all.zip` |
+| July 2021 | 2105 | `csrs_final_tables_2105all.zip` |
+| January 2022 | 2111 | `csrs_final_tables_2111all.zip` |
+| July 2022 | 2205 | `csrs_final_tables_2205all.zip` |
+| January 2023 | 2211 | `csrs_final_tables_2211all.zip` |
+| July 2023 | 2305 | `csrs_final_tables_2305all.zip` |
+| January 2024 | 2311 | `csrs_final_tables_2311all.zip` |
+| July 2024 | 2405 | `csrs_final_tables_2405all.zip` |
+| January 2025 | 2411 | `csrs_final_tables_2411all.zip` |
+| July 2025 | 2505 | `csrs_final_tables_2505all.zip` |
+
+Each zip contains 8 per-organ Excel files: `csrs_final_tables_{YYMM}_{organ}.xls` where organ codes are: `HL` (Heart-Lung), `HR` (Heart), `IN` (Intestine), `KI` (Kidney), `KP` (Kidney-Pancreas), `LI` (Liver), `LU` (Lung), `PA` (Pancreas).
+
+**Important notes:**
+- The previous `fetch-srtr-excel.py --historical` attempt failed because it used the wrong URL pattern (individual release codes like `1901`, not the actual `1811` codes, and missing `all` suffix)
+- These zip files are large (8–12 MB each) and gitignored
+- SRTR publishes new PSR data twice yearly (January and July); check the dropdown for new periods
+
+---
+
 ## Data Quality Notes
 
 - **No PHI:** All data is aggregate/population-level. No patient-identifiable information.
