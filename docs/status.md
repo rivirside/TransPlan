@@ -6,7 +6,7 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 5 M5 In Progress (Cross-Engine Validation & Model Checks)
+## Current State: Phase 5 M5 Near-Complete (Cross-Engine Validation & Bug/Quality Sprint)
 
 Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. Phase 3 M1-M5 done. Phase 4 M1-M5 done. Phase 5 M1-M2 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
@@ -20,7 +20,7 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 
 **Phase 5 M4 complete (March 2026):** Shared frailty via LKJ-Cholesky correlated city offsets (ADR-027). MCMC model now learns mortality ↔ delisting correlation from data via bivariate MvNormal with LKJ prior (η=2), replacing the fixed external copula for MCMC mode. Bayesian HDI replaces bootstrap CIs — posterior-predictive credible intervals computed from per-draw p24 values. 11 new tests. 538 pytest + 112 Jest = 650 total. Issues #96, #99.
 
-**Phase 5 M5 in progress (March 2026):** Cross-engine validation and model quality checks. (1) Cross-engine validation service (`services/cross_validation.py`): runs MC, BBN, and MCMC on the same patient and computes Spearman rank correlation, mean/max absolute probability differences, top-5 city overlap. (2) Per-organ copula θ (L-059 fix): organ-specific Clayton copula parameters (kidney=0.8 through heart=1.8) replace the single fixed θ=1.0 across all 4 simulation paths. (3) Strict convergence gate (L-062 fix): `--strict` flag on `fit-mcmc-model.py` requires R-hat < 1.01 and ESS > 400 before saving traces. (4) Posterior predictive checks (`services/posterior_checks.py`): compares MCMC posterior predictions against observed SRTR statistics (national medians, city factors, blood type multipliers, mortality/delisting rates, urgency monotonicity). 24 new tests (14 cross-validation + 10 posterior checks).
+**Phase 5 M5 near-complete (March 2026):** Cross-engine validation, model quality checks, and comprehensive bug/quality sprint. (1) Cross-engine validation service (`services/cross_validation.py`): runs MC, BBN, and MCMC on the same patient and computes Spearman rank correlation, mean/max absolute probability differences, top-5 city overlap. (2) Per-organ copula θ (L-059 fix): organ-specific Clayton copula parameters (kidney=0.8 through heart=1.8) replace the single fixed θ=1.0 across all 4 simulation paths. (3) Strict convergence gate (L-062 fix): `--strict` flag on `fit-mcmc-model.py` requires R-hat < 1.01 and ESS > 400 before saving traces. (4) Posterior predictive checks (`services/posterior_checks.py`): compares MCMC posterior predictions against observed SRTR statistics (national medians, city factors, blood type multipliers, mortality/delisting rates, urgency monotonicity). 24 new tests (14 cross-validation + 10 posterior checks). (5) Bug/quality sprint: 15 issues closed across 3 tiers — thread safety (#55), exception handling (#56), centerReputation differentiation (#44), XSS audit (#57), nullish coalescing (#67), LAS float parsing (#68), dead code removal (#71), concurrent submission guard (#66), frozen dist introspection (#61), honest BBN uncertainty band (#54), per-organ BBN terciles (#59), BLS cost-of-living verified (#101), EPA air quality verified (#100), CDC PLACES expanded to 5 county-level indicators (#102), FARS CSV bulk download (#103). (6) #104: Real SRTR historical data (14 biannual releases 2019–2025) with automated GitHub Actions refresh — resolved by user.
 
 **M4 (Policy Scenario Engine):** 4 predefined UNOS policy scenarios with literature-backed parameters and per-city adjustments: (1) 2021 Kidney 250nm Circles — per-center-size donor/wait adjustments, (2) Continuous Distribution — stronger geography de-emphasis, (3) Increased DCD Utilization — +15% organ supply, (4) Broader HCV+ Acceptance — +6% donor pool for kidney/liver. Frontend policy scenario selector in probability tab. `POST /policy-scenario` endpoint, `GET /policy-scenarios` listing. 24 new pytest tests.
 
@@ -62,7 +62,7 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 | Fetch scripts (scripts/) | ✅ Done | All scripts use mergeDataFile, skip-on-empty guards added |
 | GitHub Actions | ✅ Done | Single sequential job, weekly cron + manual dispatch |
 | Socioeconomic data | ✅ Done | Transplant-support rubric replacing wealth-correlated scores |
-| Unit tests | ✅ Done | 112 tests (Jest), 527 tests (pytest) |
+| Unit tests | ✅ Done | 112 tests (Jest), 562 tests (pytest) |
 | CDN fallback | ✅ Done | Graceful degradation when Leaflet/Chart.js CDN unavailable |
 | CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
@@ -125,12 +125,16 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 | M2: Clayton Copula | ✅ Done | Correlated mortality/delisting draws, θ=1.0 (τ≈0.33), opt-in via `use_copula`, all 3 sim paths, 22+4 tests (ADR-025, #94) |
 | M3: MCMC Hierarchical Model | ✅ Done | PyMC NUTS, 92 params/organ, trace-as-cache, offline fitting, posterior uncertainty, 53 pytest (ADR-026, #95) |
 | M4: Shared Frailty + Bayesian HDI | ✅ Done | LKJ-Cholesky correlated mort/delist offsets, learned correlation, posterior-predictive CIs, 11 new tests (ADR-027, #96, #99) |
+| M5: Cross-Engine Validation & Quality | 🔄 Near-complete | Cross-engine validation, posterior checks, per-organ copula, strict convergence, 15-issue bug sprint, real SRTR historical data (#104). Remaining: API endpoints for cross-validate and posterior-checks |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 5 M4 COMPLETE** — Shared frailty + Bayesian HDI, 538 pytest + 112 Jest = 650 total
+- **Phase 5 M5 NEAR-COMPLETE** — Cross-engine validation + bug/quality sprint, 562 pytest + 112 Jest = 674 total
+- **Bug/Quality Sprint** — 15 issues closed across 3 tiers (thread safety, error handling, data quality, code fixes)
 - **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
-- **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
+- **FARS API (L-045):** FIXED — rewritten to use FARS CSV bulk download from static.nhtsa.gov (#103)
+- **CDC PLACES (L-012):** health-demographics.json now has 5 real county-level indicators for 20/22 cities (#102)
+- **SRTR Historical (#104):** Real 14-release time-series (2019–2025) with automated GH Actions refresh
 - **Deferred to Phase 5:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
 - **Deferred (no API):** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21), theme selection (Phase 7, #3)
 - **Infrastructure:** CI pipeline (#29) ✅, Docker Compose (#30) ✅ — both shipped
@@ -139,15 +143,16 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 
 ## Issue Tracking
 
-**GitHub Issues** is the primary tracker for actionable work items (bugs, features, limitations). 23 issues across 5 milestones:
+**GitHub Issues** is the primary tracker for actionable work items (bugs, features, limitations). ~37 open, ~30+ closed:
 
-| Milestone | Issues | Description |
-|-----------|--------|-------------|
-| Phase 1: Deployment | 1 | FARS API (GitHub Pages disabled, Vercel is primary) |
-| Phase 3: UI Overhaul | 1 | Pick winning theme, merge, cleanup |
-| Phase 3 M5: UX Polish & Export | 6 | ✅ DONE — Dark mode, URL sharing, PDF/CSV/JSON, charts, what-if sliders |
-| M2b: COD Model Data Quality | 2 open / 6 closed | L-049–L-056 — 6 resolved (50-state, fetch script, stochastic, elasticity, intestine rates, anoxia COD), 2 remain (OPTN validation, OPO mapping) |
-| Phase 4: Advanced Modeling | 2 | Configurable weights, causal policy simulator |
+| Category | Status | Description |
+|----------|--------|-------------|
+| Bug/Quality Sprint (March 2026) | ✅ 15 closed | #55, #56, #44, #57, #67, #68, #71, #66, #61, #54, #59, #101, #100, #102, #103 |
+| SRTR Historical Data | ✅ Closed | #104 — real 14-release time-series, automated GH Actions refresh |
+| Phase 5 M1-M4 | ✅ 8 closed | #36-#42, #94, #95, #96, #99 — BBN, copula, MCMC, shared frailty |
+| M2b: COD Model Data Quality | 2 open / 6 closed | L-049–L-056 — 6 resolved, 2 remain (OPTN validation, OPO mapping) |
+| Code quality / tech debt | ~25 open | Various bugs, duplications, hardcoded values — see open issues |
+| Phase 5+ features | ~10 open | API access (#24), SDKs (#25), scenario builder (#26), bulk analysis (#27), widget (#28) |
 
 **Labels:** `phase:*`, `priority:*`, `limitation`, `cod-model`, `blocked`, `deferred`, `ui/ux`, `backend`, `frontend`, `data-quality`, `data-pipeline`, `milestone:m5`
 
@@ -211,11 +216,11 @@ TransPlan/
       socioeconomic.json
   scripts/                <- Node fetch scripts for GitHub Actions
     utils.js              <- Shared retry, write, city list
-    fetch-traffic.js      <- NHTSA FARS
+    fetch-traffic.js      <- NHTSA FARS CSV bulk download (state fatalities)
     fetch-air-quality.js  <- EPA AQS (needs API key)
     fetch-hospital-quality.js <- CMS Provider Data
     fetch-cost-of-living.js   <- BLS API (needs API key)
-    fetch-health-data.js      <- CDC SODA
+    fetch-health-data.js      <- CDC PLACES county-level (5 indicators)
     fetch-cod-data.js         <- CDC SODA (cause-of-death by state, donor-eligibility calibration)
     check-srtr-updates.js     <- SRTR website hash check
     validate-data.js          <- Post-fetch validation
@@ -225,6 +230,7 @@ TransPlan/
     ci.yml                <- CI: 3 parallel jobs (pytest, Jest, data validation) on push/PR to main
     fetch-data.yml        <- Weekly data fetch (Mon 6am UTC)
     check-srtr-updates.yml <- Bimonthly SRTR check
+    fetch-srtr-historical.yml <- Auto-fetch SRTR historical archives after Jan/Jul releases
     (deploy-docs.yml removed — GitHub Pages disabled, Vercel is primary deployment)
   Dockerfile              <- Single container: Python 3.13, uvicorn, static files
   docker-compose.yml      <- Docker Compose: port 8002, data/ volume mount, healthcheck
@@ -268,7 +274,7 @@ TransPlan/
     routers/
       ...
       trends.py           <- GET /trends/{city}/{organ}, GET /trends/{organ} (Phase 4 M3)
-    tests/                <- pytest suite (474 tests)
+    tests/                <- pytest suite (562 tests)
       ...
       test_policy_scenarios.py <- 24 tests: scenario registry, filtering, per-city multipliers
       test_bias_audit.py       <- 19 tests: Cohen's d, Gini, dimension disparity, full audit
@@ -284,7 +290,7 @@ TransPlan/
     design.md             <- Read when touching UI/UX/CSS
     adr-log.md            <- Grep-searchable decision log
     roadmap.md            <- Phased development plan (5 phases)
-    limitations.md        <- Issue tracker (57 items, L-001 through L-057)
+    limitations.md        <- Issue tracker (62 items, L-001 through L-062)
     brand-bible.md        <- Grep-searchable visual identity
 ```
 
@@ -305,13 +311,12 @@ TransPlan/
 
 ## Known Limitations
 
-**57 tracked issues** in `docs/limitations.md`. Read when auditing data quality or planning future work.
+**62 tracked issues** in `docs/limitations.md`. Read when auditing data quality or planning future work.
 
 | Status | Count | Details |
 |--------|-------|---------|
-| FIXED | 36 | All critical + most high/medium issues (L-001–L-044) |
-| OPEN | 6 | L-045 (FARS), L-049–L-050 (M2 COD model), L-046–L-048 fixed |
-| FIXED (M2b) | 6 | L-051 (fetch script), L-052 (anoxia), L-053 (stochastic), L-054 (intestine), L-055 (50 states), L-056 (elasticity) |
+| FIXED | 48 | L-001–L-048 (all critical/high/medium from original audit), L-051–L-056 (COD model), L-058–L-059, L-062 |
+| OPEN | 4 | L-049 (OPTN cross-validation), L-050 (OPO boundaries), L-060 (patient-level MCMC), L-061 (informative priors) |
 | MITIGATED | 1 | L-057 (pancreas graft survival — falls back to patient survival) |
 | DEFERRED | 3 | L-009 (OPO), L-017 (SRTR outcomes), L-033 (donor reg fetch) |
 | WONT FIX | 2 | L-012 (county health, <0.5pt impact), L-039 (false positive) |

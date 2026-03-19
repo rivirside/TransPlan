@@ -64,17 +64,17 @@
 - [ ] Set up custom domain (transplan.org) if available
 
 ### Data Pipeline Health
-- [x] Run fetch scripts against live APIs (CDC works, FARS/CMS broken)
+- [x] Run fetch scripts against live APIs (all 7 scripts working as of March 2026)
 - [x] GitHub Actions weekly fetch operational (cron + workflow_dispatch)
-- [ ] Fix FARS endpoint (L-045) — API may have moved to data.transportation.gov
-- [ ] Fix CMS endpoint (L-046) — verify dataset ID and query format
-- [ ] Add CDN fallback or error messaging (L-047)
+- [x] Fix FARS endpoint (L-045) — rewritten to use CSV bulk download from static.nhtsa.gov
+- [x] Fix CMS endpoint (L-046) — multi-strategy query (SQL/filter/legacy)
+- [x] Add CDN fallback or error messaging (L-047)
 
-### Open Limitations (L-045 through L-048)
-- [ ] L-045: NHTSA FARS API endpoint returns 403
-- [ ] L-046: CMS Provider Data API endpoint returns 400
-- [ ] L-047: CDN fallback for Leaflet/Chart.js
-- [ ] L-048: COL normalization hardcoded range
+### Open Limitations (L-045 through L-048) — ALL FIXED
+- [x] L-045: NHTSA FARS — rewritten to CSV bulk download (#103)
+- [x] L-046: CMS Provider Data — multi-strategy query fix
+- [x] L-047: CDN fallback for Leaflet/Chart.js — onerror handlers + warning banners
+- [x] L-048: COL normalization — dynamic min/max from loaded data
 
 ---
 
@@ -485,8 +485,13 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 - [x] L-062 fix: `--strict` convergence gate (R-hat < 1.01, ESS > 400) on `fit-mcmc-model.py`
 - [x] 24 new tests (14 cross-validation + 10 posterior checks)
 
+**Bug/Quality Sprint (March 2026):** 15 issues closed across 3 tiers:
+- [x] Tier 1: Thread-safe lazy-load globals (#55), bare except handling (#56), centerReputation differentiation (#44), XSS audit — no user input reaches innerHTML (#57, closed as won't-fix)
+- [x] Tier 2: Nullish coalescing for zero-preserving defaults (#67), LAS float parsing (#68), dead variable removal (#71), concurrent submission guard (#66), frozen dist introspection helper (#61), honest BBN uncertainty band (#54), per-organ BBN CPT terciles (#59)
+- [x] Tier 3: BLS cost-of-living verified (#101), EPA air quality verified (#100), CDC PLACES expanded to 5 county-level indicators (#102), FARS CSV bulk download (#103)
+- [x] #104: Real SRTR historical data — 14 biannual releases (2019–2025) with automated GH Actions refresh (resolved by user)
+
 **Remaining:**
-- [x] #104: Replace synthetic `srtr-historical.json` with real SRTR data (14 biannual releases downloaded, parsed, automated via GH Actions)
 - [ ] API endpoint for cross-engine validation (`POST /cross-validate`)
 - [ ] API endpoint for posterior checks (`GET /posterior-checks/{organ}`)
 
@@ -562,12 +567,14 @@ This avoids a premature rewrite while keeping the path open.
 
 | Source | Script | API Status | Frequency |
 |--------|--------|------------|-----------|
-| NHTSA FARS | fetch-traffic.js | 403 Forbidden (L-045) | Weekly (CI) |
-| EPA AQS | fetch-air-quality.js | Works (needs API key) | Weekly (CI) |
-| CMS Provider | fetch-hospital-quality.js | 400 Bad Request (L-046) | Weekly (CI) |
-| BLS | fetch-cost-of-living.js | Works (needs API key) | Weekly (CI) |
-| CDC SODA | fetch-health-data.js | Works (public) | Weekly (CI) |
+| NHTSA FARS | fetch-traffic.js | ✅ Works (CSV bulk download) | Weekly (CI) |
+| EPA AQS | fetch-air-quality.js | ✅ Works (needs API key) | Weekly (CI) |
+| CMS Provider | fetch-hospital-quality.js | ✅ Works (multi-strategy query) | Weekly (CI) |
+| BLS | fetch-cost-of-living.js | ✅ Works (needs API key) | Weekly (CI) |
+| CDC PLACES | fetch-health-data.js | ✅ Works (5 county-level indicators, public) | Weekly (CI) |
+| CDC COD | fetch-cod-data.js | ✅ Works (50 states + DC, public) | Weekly (CI) |
 | SRTR | check-srtr-updates.js | Hash check only | Bimonthly (CI) |
+| SRTR Historical | fetch-srtr-historical.yml | ✅ Works (GH Actions automated) | After SRTR Jan/Jul releases |
 | Donor Registration | (none) | Deferred (L-033) | Manual |
 
 **Automation:** GitHub Actions runs weekly on Monday 6am UTC. Manual trigger available via `workflow_dispatch`. All scripts use `continue-on-error` so one failure doesn't block others. Single commit at end.
@@ -581,5 +588,3 @@ This avoids a premature rewrite while keeping the path open.
 | L-009 | OPO boundary mapping | No API; 22 cities → 58 OPOs manual lookup |
 | L-017 | SRTR program-specific outcomes | HTML/PDF reports only; 132 manual data points |
 | L-033 | Donor registration fetch script | Donate Life America has no API |
-| L-045 | FARS API endpoint | Endpoint deprecated or moved |
-| L-046 | CMS API endpoint | Query format or dataset ID changed |

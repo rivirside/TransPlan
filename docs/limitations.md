@@ -328,8 +328,8 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-045: NHTSA FARS API endpoint unreachable
 - **Severity:** MEDIUM
-- **Status:** MITIGATED
-- **Details:** Both FARS endpoints (`GetCrashesByLocation`, `GetFARSData`) return non-JSON responses (HTML error pages). The entire `crashviewer.nhtsa.dot.gov` API appears retired. Script now tries multi-year fallback (year-2/year-3), correctly records `'error'` metadata status, and preserves seed data via skip-on-empty guard. FIXME comments note CSV bulk download alternative at `nhtsa.gov/file-downloads/fars`.
+- **Status:** FIXED (March 2026)
+- **Details:** The `crashviewer.nhtsa.dot.gov` API was retired in late 2025. Rewrote `fetch-traffic.js` to download annual FARS CSV bulk archives from `static.nhtsa.gov/nhtsa/downloads/FARS/{year}/National/FARS{year}NationalCSV.zip`, extract ACCIDENT.CSV via `execFileSync('unzip', ...)`, and sum fatalities per state FIPS code. Computes per-capita rates (per 100k population) and trauma scores (0-100 scale). Successfully parsed FARS 2023 data for all 17 states covering 22 cities. See GitHub #103.
 - **File:** `scripts/fetch-traffic.js`
 
 ### L-046: CMS Provider Data API endpoint returns 400 Bad Request
@@ -370,10 +370,9 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-051: Static cause-of-death proportions with no automated refresh
 - **Severity:** MEDIUM
-- **Status:** OPEN
-- **Details:** State-level cause-of-death proportions are a one-time snapshot manually curated from CDC WONDER's web interface. The opioid crisis has dramatically shifted drug intoxication proportions in many states year over year (e.g., West Virginia's drug OD rate tripled 2010–2020). No automated fetch script exists. The `_meta.notes` field contains a FIXME.
-- **File:** `data/cause-of-death-by-region.json`
-- **Fix:** CDC WONDER's programmatic API does NOT support state filtering (policy restriction). Two alternatives: (1) data.cdc.gov SODA API has partial state-level mortality data (broad categories only), (2) OPTN "Build Advanced Report" generates CSVs with donor cause-of-death by state but requires manual web download.
+- **Status:** FIXED (March 2026)
+- **Details:** Automated `scripts/fetch-cod-data.js` added to CI pipeline. Uses CDC SODA API (`data.cdc.gov`) to fetch state-level cause-of-death proportions with donor-eligibility calibration weights. Runs weekly via GitHub Actions. See GitHub #13.
+- **File:** `scripts/fetch-cod-data.js`, `data/cause-of-death-by-region.json`
 
 ### L-052: Only 4 of 6 cause-of-death categories modeled
 - **Severity:** MEDIUM
@@ -398,10 +397,9 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-055: Only 17 of 50 states have COD proportions
 - **Severity:** LOW
-- **Status:** OPEN
-- **Details:** `stateCauseOfDeathProportions` covers only the 17 states containing our 22 cities. Cities added in uncovered states would receive no COD adjustment (graceful degradation — multiplier returns `null`). The limited state coverage also means the "national average" denominator is not truly national — it's the average of 17 states.
-- **File:** `data/cause-of-death-by-region.json` → `stateCauseOfDeathProportions`
-- **Fix:** Expand to all 50 states + DC. OPTN View Data Reports can provide donor cause-of-death by all donor states.
+- **Status:** FIXED (March 2026)
+- **Details:** Expanded `stateCauseOfDeathProportions` from 17 to all 50 states + DC via CDC SODA API with donor-eligibility calibration weights. National average is now truly national. See GitHub #17.
+- **File:** `scripts/fetch-cod-data.js`, `data/cause-of-death-by-region.json`
 
 ### L-056: Linear supply→wait assumption in Monte Carlo backend
 - **Severity:** MEDIUM
