@@ -17,7 +17,7 @@ import time
 
 import numpy as np
 
-from config import COPULA_THETA
+from config import COPULA_THETA, ORGAN_COPULA_THETA
 from models.schemas import ParameterImpact, PatientProfile, SensitivityResult
 from services.competing_risks import get_annual_delisting_rate, get_annual_mortality_rate
 from services.copula import draw_correlated_competing_risks
@@ -59,7 +59,7 @@ def _p24_single_city(
             mort_scale=mort_scale,
             delist_scale=delist_scale,
             n=n_iterations,
-            theta=COPULA_THETA,
+            theta=ORGAN_COPULA_THETA.get(patient.organ, COPULA_THETA),
             rng=rng,
         )
     else:

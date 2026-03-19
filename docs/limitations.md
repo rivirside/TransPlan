@@ -430,10 +430,10 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-059: Single fixed copula parameter (θ) for all organs
 - **Severity:** MEDIUM
-- **Status:** OPEN
-- **Details:** The Clayton copula parameter θ=1.0 is applied uniformly across all 6 organ types. In reality, the mortality-delisting correlation likely varies by organ: heart patients (high-acuity, short window) may have stronger dependence than kidney patients (lower-acuity, longer stable periods). Organ-specific θ calibration from SRTR competing risks data would improve accuracy.
-- **File:** `backend/config.py` → `COPULA_THETA`
-- **Fix:** Future work: fit organ-specific θ from SRTR waitlist event data using maximum pseudo-likelihood estimation. Requires patient-level competing event timestamps.
+- **Status:** FIXED
+- **Details:** The Clayton copula parameter θ=1.0 was applied uniformly across all 6 organ types. Now each organ has a literature-derived θ based on clinical acuity: kidney=0.8 (τ≈0.29), liver=1.2 (τ≈0.37), heart=1.8 (τ≈0.47), lung=1.5 (τ≈0.43), pancreas=0.9 (τ≈0.31), intestine=1.5 (τ≈0.43). Applied across all 4 copula call sites (monte_carlo, what_if, sensitivity, mcmc_inference).
+- **File:** `backend/config.py` → `ORGAN_COPULA_THETA`
+- **Fix:** Per-organ θ values added to config.py and consumed by all simulation engines.
 
 ### L-060: MCMC model uses aggregate center-level data, not patient-level
 - **Severity:** HIGH
@@ -451,10 +451,10 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-062: Quick-fit mode (--quick) may produce unreliable posteriors
 - **Severity:** MEDIUM
-- **Status:** OPEN
-- **Details:** The `--quick` flag runs only 200 draws / 1 chain / 100 tuning steps. This is fast (~5s) but may not achieve convergence for all parameters, especially city-level random effects in organs with high variability. R-hat values above 1.05 and low ESS (<100) are expected in quick mode. The script prints convergence diagnostics but does not block trace saving on poor convergence.
-- **File:** `scripts/fit-mcmc-model.py` → `--quick` flag
-- **Fix:** Add a `--strict` flag that checks R-hat < 1.01 and ESS > 400 before saving. For production use, recommend `--samples 2000 --chains 4` (the default).
+- **Status:** FIXED
+- **Details:** The `--quick` flag runs only 200 draws / 1 chain / 100 tuning steps. This is fast (~5s) but may not achieve convergence for all parameters. Now a `--strict` flag gates trace saving on R-hat < 1.01 AND ESS (bulk) > 400. If either threshold fails, the trace file is deleted and the script raises an error. For production use, recommend `--samples 2000 --chains 4 --strict`.
+- **File:** `scripts/fit-mcmc-model.py` → `--strict` flag
+- **Fix:** `--strict` convergence gate implemented. Checks both R-hat and ESS bulk before allowing trace save.
 
 ---
 

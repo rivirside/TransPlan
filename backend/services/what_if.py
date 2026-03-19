@@ -18,7 +18,7 @@ from models.schemas import PatientProfile
 from services.competing_risks import get_annual_delisting_rate, get_annual_mortality_rate
 from services.copula import draw_correlated_competing_risks
 from services.distributions import get_wait_time_distribution
-from config import COPULA_THETA, SUPPLY_WAIT_ELASTICITY
+from config import COPULA_THETA, ORGAN_COPULA_THETA, SUPPLY_WAIT_ELASTICITY
 from services.monte_carlo import CITIES, _get_cod_multiplier
 
 logger = logging.getLogger(__name__)
@@ -113,7 +113,7 @@ def _run_single(
             mort_scale=mort_scale,
             delist_scale=delist_scale,
             n=n_iterations,
-            theta=COPULA_THETA,
+            theta=ORGAN_COPULA_THETA.get(patient.organ, COPULA_THETA),
             rng=rng,
         )
     else:

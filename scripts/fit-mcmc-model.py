@@ -52,6 +52,7 @@ def fit_and_save(
     n_chains: int,
     n_tune: int,
     target_accept: float,
+    strict: bool = False,
 ) -> None:
     """Fit model for one organ and save the trace."""
     logger.info("=" * 60)
@@ -95,11 +96,27 @@ def fit_and_save(
 
     # Check R-hat
     rhats = summary["r_hat"].values
-    max_rhat = max(rhats)
+    max_rhat = float(max(rhats))
     if max_rhat > 1.05:
         logger.warning("R-hat > 1.05 detected (max=%.3f). Consider more samples/tune.", max_rhat)
     else:
         logger.info("All R-hat values <= 1.05 (max=%.3f). Convergence OK.", max_rhat)
+
+    # Check ESS
+    ess_vals = summary["ess_bulk"].values
+    min_ess = float(min(ess_vals))
+    logger.info("Min ESS (bulk): %.0f", min_ess)
+
+    # Strict mode: block saving if convergence criteria not met
+    if strict:
+        if max_rhat >= 1.01:
+            logger.error("--strict: R-hat %.4f >= 1.01. Deleting trace.", max_rhat)
+            path.unlink(missing_ok=True)
+            raise RuntimeError(f"--strict: R-hat {max_rhat:.4f} >= 1.01 for {organ}")
+        if min_ess < 400:
+            logger.error("--strict: min ESS %.0f < 400. Deleting trace.", min_ess)
+            path.unlink(missing_ok=True)
+            raise RuntimeError(f"--strict: min ESS {min_ess:.0f} < 400 for {organ}")
 
 
 def main():
@@ -111,6 +128,7 @@ def main():
     parser.add_argument("--tune", type=int, default=1000, help="Tuning samples per chain (default: 1000)")
     parser.add_argument("--target-accept", type=float, default=0.90, help="NUTS target acceptance (default: 0.90)")
     parser.add_argument("--quick", action="store_true", help="Quick mode: 100 samples, 1 chain, 50 tune")
+    parser.add_argument("--strict", action="store_true", help="Block trace save if R-hat >= 1.01 or ESS < 400")
 
     args = parser.parse_args()
 
@@ -132,6 +150,7 @@ def main():
             n_chains=args.chains,
             n_tune=args.tune,
             target_accept=args.target_accept,
+            strict=args.strict,
         )
 
     total_elapsed = time.perf_counter() - total_start

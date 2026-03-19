@@ -20,7 +20,7 @@ import time
 
 import numpy as np
 
-from config import COPULA_THETA, SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY
+from config import COPULA_THETA, ORGAN_COPULA_THETA, SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY
 from models.schemas import CityProbability, PatientProfile, SimulationResult
 from services.competing_risks import get_annual_mortality_rate, get_annual_delisting_rate
 from services.copula import draw_correlated_competing_risks
@@ -233,7 +233,7 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
                 mort_scale=mort_scale,
                 delist_scale=delist_scale,
                 n=n_iterations,
-                theta=COPULA_THETA,
+                theta=ORGAN_COPULA_THETA.get(patient.organ, COPULA_THETA),
                 rng=rng,
             )
         else:

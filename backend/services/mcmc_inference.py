@@ -20,7 +20,7 @@ import time
 import numpy as np
 import scipy.stats
 
-from config import COPULA_THETA, DATA_DIR, SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY
+from config import COPULA_THETA, DATA_DIR, ORGAN_COPULA_THETA, SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY
 from models.schemas import CityProbability, PatientProfile, SimulationResult
 from services.copula import draw_correlated_competing_risks
 from services.mcmc_survival import (
@@ -239,7 +239,7 @@ def simulate_mcmc(
                     mort_scale=mort_scale,
                     delist_scale=delist_scale,
                     n=iters_per_draw,
-                    theta=COPULA_THETA,
+                    theta=ORGAN_COPULA_THETA.get(patient.organ, COPULA_THETA),
                     rng=rng,
                 )
             else:
