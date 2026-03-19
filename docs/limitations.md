@@ -384,10 +384,10 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-053: COD multiplier is deterministic, not stochastic
 - **Severity:** MEDIUM
-- **Status:** OPEN
-- **Details:** The `_computeCodMultiplier()` (frontend) and `_get_cod_multiplier()` (backend) functions compute a fixed ratio (`stateScore / nationalAvg`). Given the same inputs, the multiplier is always identical. In the Monte Carlo simulation, this means the COD adjustment shifts all 1000 iterations uniformly rather than adding realistic uncertainty about donor supply variation. The recovery rates and proportions are point estimates with no confidence intervals.
-- **File:** `algorithm.js` → `_computeCodMultiplier()`, `backend/services/monte_carlo.py` → `_get_cod_multiplier()`
-- **Fix:** Model recovery rates as Beta distributions using PMC10329409 sample counts as α/β parameters. Sample a different multiplier for each Monte Carlo iteration, reflecting genuine uncertainty about local donor supply.
+- **Status:** FIXED (March 2026)
+- **Details:** The backend `_get_cod_multiplier()` now draws recovery rates from `Beta(rate*κ, (1-rate)*κ)` distributions (κ=50) per iteration, producing stochastic COD multipliers that vary across Monte Carlo iterations. The frontend `_computeCodMultiplier()` remains deterministic (browser-side performance).
+- **File:** `backend/services/monte_carlo.py` → `_get_cod_multiplier(n_samples=..., rng=...)`
+- **Fix:** Implemented — Beta-distributed recovery rate sampling with concentration κ=50 (~5-10% relative std dev).
 
 ### L-054: Intestine organ uses pancreas recovery rates as proxy
 - **Severity:** LOW
@@ -405,10 +405,10 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-056: Linear supply→wait assumption in Monte Carlo backend
 - **Severity:** MEDIUM
-- **Status:** OPEN
-- **Details:** The backend divides Monte Carlo transplant wait times by the COD multiplier (`transplant_times / cod_mult`). This assumes a linear relationship: 10% more donors → 10% shorter waits. In reality, organ allocation is a complex queuing system where supply-demand dynamics are nonlinear. A 10% increase in local donors may yield anything from 0% improvement (if organs are shared regionally) to 20% improvement (if the center is below allocation thresholds).
-- **File:** `backend/services/monte_carlo.py` line ~177
-- **Fix:** Use a sub-linear scaling function (e.g., `wait_time / cod_mult^0.7`) or calibrate the elasticity against SRTR historical data.
+- **Status:** FIXED (March 2026)
+- **Details:** Wait time adjustment now uses sub-linear elasticity: `wait_time / cod_mult^ε` where ε = `SUPPLY_WAIT_ELASTICITY` = 0.65 (configurable in `config.py`). This means 10% more donors → ~6.5% shorter waits, reflecting nonlinear queuing dynamics. Applied consistently across all three simulation paths (MC, what-if, MCMC).
+- **File:** `backend/config.py` → `SUPPLY_WAIT_ELASTICITY`, `backend/services/monte_carlo.py`, `backend/services/what_if.py`, `backend/services/mcmc_inference.py`
+- **Fix:** Implemented — configurable elasticity exponent, default 0.65 based on queuing theory + SRTR empirical range (0.5–0.8).
 
 ### L-057: Pancreas lacks adult graft survival data in SRTR
 - **Severity:** LOW
@@ -510,4 +510,6 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-046 | 822b778 | 2026-03-06 | FIXED — multi-strategy CMS API (SQL/filter/legacy); filter strategy works, 22 cities fetched |
 | L-047 | 2b4d542 | 2026-03-06 | FIXED — onerror handlers + TransPlanCDN gate + guard clauses in map/chart init; yellow fallback banners |
 | L-048 | 2b4d542 | 2026-03-06 | FIXED — dynamic min/max from loaded COL data; FIXME fallbacks for empty data |
+| L-053 | (Phase 5 M2) | 2026-03-18 | FIXED — Beta-distributed recovery rates (κ=50) for stochastic COD multiplier per iteration |
+| L-056 | (Phase 5 M2) | 2026-03-18 | FIXED — Sub-linear elasticity (ε=0.65) via SUPPLY_WAIT_ELASTICITY config; applied across MC, what-if, MCMC |
 | L-058 | (Phase 5 M2) | 2026-03-18 | FIXED — Clayton copula for correlated mortality/delisting; θ=1.0, opt-in via use_copula flag; ADR-025 |

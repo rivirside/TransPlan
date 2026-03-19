@@ -30,7 +30,7 @@ from services.mcmc_survival import (
     sample_params_from_trace,
     trace_exists,
 )
-from services.monte_carlo import CITIES, _bootstrap_ci, _get_cod_multiplier
+from services.monte_carlo import CITIES, _get_cod_multiplier
 
 # Lazy import to avoid circular dependency
 _outcomes_builder = None
@@ -170,6 +170,8 @@ def simulate_mcmc(
         all_outcomes = np.empty(actual_iterations, dtype=int)
         all_event_times = np.empty(actual_iterations)
         all_transplant_times = np.empty(actual_iterations)
+        # Per-draw p24 for Bayesian HDI (one value per posterior draw)
+        per_draw_p24 = np.empty(N_PARAM_DRAWS)
 
         for draw_i in range(N_PARAM_DRAWS):
             params = param_draws[draw_i]
@@ -223,8 +225,16 @@ def simulate_mcmc(
             mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
             delist_scale = 12.0 / annual_delist if annual_delist > 0 else 1e6
 
-            # Draw competing risk times
-            if patient.use_copula:
+            # Draw competing risk times.
+            # The MCMC model learns mort↔delist correlation via shared
+            # frailty (LKJ prior).  The posterior draws already carry
+            # correlated city offsets, so the external Clayton copula is
+            # redundant for MCMC mode.  We still honor use_copula as an
+            # extra layer if requested AND the trace lacks learned corr.
+            learned_corr = params.get("mort_delist_corr", 0.0)
+            use_external_copula = patient.use_copula and abs(learned_corr) < 0.01
+
+            if use_external_copula:
                 mortality_times, delisting_times = draw_correlated_competing_risks(
                     mort_scale=mort_scale,
                     delist_scale=delist_scale,
@@ -246,6 +256,11 @@ def simulate_mcmc(
             all_event_times[offset:offset + iters_per_draw] = event_times
             all_transplant_times[offset:offset + iters_per_draw] = transplant_times
 
+            # Per-draw p24 for Bayesian credible interval
+            per_draw_p24[draw_i] = float(np.mean(
+                (outcomes == 0) & (event_times <= 24)
+            ))
+
         # --- Compute probabilities from aggregated results ---
         def p_transplant_within(horizon: float) -> float:
             return float(np.mean((all_outcomes == 0) & (all_event_times <= horizon)))
@@ -255,8 +270,12 @@ def simulate_mcmc(
         p_24 = p_transplant_within(24)
         p_36 = p_transplant_within(36)
 
-        # 95% CI (includes both sampling noise AND parameter uncertainty)
-        ci_95 = _bootstrap_ci(all_outcomes, event=0, threshold_months=all_event_times, time_horizon=24)
+        # 95% Bayesian credible interval from posterior-predictive p24 draws.
+        # Each draw's p24 reflects a different posterior parameter set, so the
+        # spread captures parameter uncertainty (not just sampling noise).
+        ci_lo = float(np.percentile(per_draw_p24, 2.5))
+        ci_hi = float(np.percentile(per_draw_p24, 97.5))
+        ci_95 = (ci_lo, ci_hi)
 
         # Median wait to transplant
         transplanted_mask = all_outcomes == 0

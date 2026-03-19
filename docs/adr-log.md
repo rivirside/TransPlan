@@ -635,3 +635,38 @@ M1 is fully independent. M2 and M3 share SRTR pipeline work and can be paralleli
 - Requires offline fitting before first use (`scripts/fit-mcmc-model.py`)
 - PyMC adds ~350MB to the Python environment
 - Trace files are per-organ, gitignored, regenerated when SRTR data updates
+
+---
+
+## ADR-027: Shared Frailty via LKJ-Cholesky Correlated City Offsets
+
+**Date:** 2026-03-18
+**Status:** Accepted
+**Deciders:** Development team
+**Relates to:** ADR-025 (Clayton copula), ADR-026 (MCMC hierarchical model), L-059, #96
+
+### Context
+
+The Phase 5 M3 MCMC model fitted city-level mortality and delisting offsets independently (`city_mort_offset` and `city_delist_offset` as separate Normal random effects). The Phase 5 M2 Clayton copula coupled these at query time with a fixed θ=1.0. This meant the MCMC model didn't learn the correlation structure from data — it relied on an externally imposed dependence parameter.
+
+### Decision
+
+Replace the two independent city offset priors with a bivariate MvNormal using an LKJ-Cholesky correlation prior (`pm.LKJCholeskyCov`, η=2). The model now learns the mortality ↔ delisting correlation from the observed city-level data. Wait-time offsets remain independent (supply-side, different causal pathway).
+
+Additionally, replaced bootstrap CIs in MCMC inference with posterior-predictive credible intervals (percentiles across per-draw p24 values), producing proper Bayesian credible intervals.
+
+### Alternatives Considered
+
+1. **Keep independent offsets + external copula**: Simpler but the copula θ is arbitrary and uniform across organs. The MCMC model wouldn't be learning anything the MC engine couldn't.
+2. **Full 3×3 MvNormal (wait + mort + delist)**: Wait times are supply-driven (different causal mechanism from mortality/delisting which are demand/patient-health-driven). A 3×3 covariance matrix would be harder to estimate with 22 cities and would conflate unrelated variation.
+3. **Shared gamma frailty**: Classical approach in survival analysis. Less flexible than LKJ — assumes positive correlation only and specific distributional form.
+
+### Consequences
+
+- MCMC model now learns organ-specific mortality ↔ delisting correlation (partially addresses L-059)
+- External copula becomes redundant for MCMC mode (auto-detected via `mort_delist_corr` in trace)
+- Clayton copula remains active for standard MC and BBN engines
+- LKJ η=2 prior weakly regularizes toward zero correlation — the data drives the posterior
+- 11 new tests (7 survival + 4 inference), total MCMC tests: 64
+
+**Files:** `backend/services/mcmc_survival.py` (model restructured), `backend/services/mcmc_inference.py` (Bayesian HDI + shared frailty detection)

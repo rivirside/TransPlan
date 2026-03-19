@@ -164,32 +164,55 @@ def build_organ_model(data: dict[str, Any]) -> pm.Model:
             sigma=0.3,
         )
 
-        # ===== Level 1: City random effects =====
+        # ===== Level 1: City random effects (shared frailty) =====
+        #
+        # Mortality and delisting offsets are drawn from a bivariate normal
+        # with an LKJ-Cholesky correlation prior.  This learns the
+        # mort ↔ delist correlation from data rather than imposing a fixed
+        # copula θ at query time.  Wait-time offsets remain independent
+        # (supply-side; different causal pathway from mortality/delisting).
 
-        # Hierarchical standard deviations
+        # Wait-time city offsets (independent — supply-driven)
         sigma_city_wait = pm.HalfNormal("sigma_city_wait", sigma=0.4)
-        sigma_city_mort = pm.HalfNormal("sigma_city_mort", sigma=0.4)
-        sigma_city_delist = pm.HalfNormal("sigma_city_delist", sigma=0.4)
-
-        # City-level offsets (log-scale, centered at 0 = national average)
         city_wait_offset = pm.Normal(
             "city_wait_offset",
             mu=0,
             sigma=sigma_city_wait,
             shape=n_cities,
         )
-        city_mort_offset = pm.Normal(
-            "city_mort_offset",
-            mu=0,
-            sigma=sigma_city_mort,
-            shape=n_cities,
+
+        # Mortality × Delisting: shared frailty via LKJ-Cholesky
+        sigma_city_mort = pm.HalfNormal("sigma_city_mort", sigma=0.4)
+        sigma_city_delist = pm.HalfNormal("sigma_city_delist", sigma=0.4)
+        city_sd = pm.math.stack([sigma_city_mort, sigma_city_delist])
+
+        # LKJ prior: η=2 weakly favors small correlations (regularization)
+        chol, corr, stds = pm.LKJCholeskyCov(
+            "city_mort_delist_chol",
+            n=2,
+            eta=2.0,
+            sd_dist=pm.HalfNormal.dist(sigma=0.4),
+            compute_corr=True,
         )
-        city_delist_offset = pm.Normal(
-            "city_delist_offset",
+
+        # (n_cities, 2) joint offsets — columns: [mort, delist]
+        city_joint_offset = pm.MvNormal(
+            "city_joint_offset",
             mu=0,
-            sigma=sigma_city_delist,
-            shape=n_cities,
+            chol=chol,
+            shape=(n_cities, 2),
         )
+
+        # Unpack for readability and backward compat with observation model
+        city_mort_offset = pm.Deterministic(
+            "city_mort_offset", city_joint_offset[:, 0]
+        )
+        city_delist_offset = pm.Deterministic(
+            "city_delist_offset", city_joint_offset[:, 1]
+        )
+
+        # Expose the learned correlation as a named deterministic
+        pm.Deterministic("mort_delist_corr", corr[0, 1])
 
         # ===== Level 2: Patient-level effects =====
 
@@ -361,6 +384,7 @@ def sample_params_from_trace(
       - city_delist_offsets: array of shape (n_cities,) [log-scale]
       - bt_multipliers: array of shape (8,)
       - urg_multipliers: array of shape (4,)
+      - mort_delist_corr: float (learned correlation, -1 to 1)
       - cities: list of city names
     """
     if rng is None:
@@ -375,6 +399,9 @@ def sample_params_from_trace(
     flat_idx = rng.integers(0, total_draws, size=n_draws)
     chain_idx = flat_idx // n_sample
     draw_idx = flat_idx % n_sample
+
+    # Extract learned mort↔delist correlation if available (shared frailty model)
+    has_corr = "mort_delist_corr" in posterior
 
     # For single draw, return scalars/1D arrays
     if n_draws == 1:
@@ -391,6 +418,7 @@ def sample_params_from_trace(
             "city_delist_offsets": posterior["city_delist_offset"].values[c, d, :].astype(np.float64),
             "bt_multipliers": posterior["bt_multiplier"].values[c, d, :].astype(np.float64),
             "urg_multipliers": posterior["urg_multiplier"].values[c, d, :].astype(np.float64),
+            "mort_delist_corr": float(posterior["mort_delist_corr"].values[c, d]) if has_corr else 0.0,
             "cities": cities,
         }
 
@@ -409,6 +437,7 @@ def sample_params_from_trace(
             "city_delist_offsets": posterior["city_delist_offset"].values[c, d, :].astype(np.float64),
             "bt_multipliers": posterior["bt_multiplier"].values[c, d, :].astype(np.float64),
             "urg_multipliers": posterior["urg_multiplier"].values[c, d, :].astype(np.float64),
+            "mort_delist_corr": float(posterior["mort_delist_corr"].values[c, d]) if has_corr else 0.0,
             "cities": cities,
         })
     return results

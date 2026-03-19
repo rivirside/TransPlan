@@ -100,6 +100,29 @@ class TestBuildOrganModel:
         assert "bt_multiplier" in det_names
         assert "urg_multiplier" in det_names
 
+    def test_shared_frailty_deterministics(self):
+        """Shared frailty model should expose correlated mort/delist offsets."""
+        data = load_organ_data("kidney")
+        model = build_organ_model(data)
+        det_names = {d.name for d in model.deterministics}
+        assert "city_mort_offset" in det_names
+        assert "city_delist_offset" in det_names
+        assert "mort_delist_corr" in det_names
+
+    def test_joint_offset_in_free_rvs(self):
+        """Model should have city_joint_offset (MvNormal) as a free RV."""
+        data = load_organ_data("kidney")
+        model = build_organ_model(data)
+        free_rv_names = {rv.name for rv in model.free_RVs}
+        assert "city_joint_offset" in free_rv_names
+
+    def test_lkj_cholesky_in_free_rvs(self):
+        """Model should have LKJ Cholesky factor as a free RV."""
+        data = load_organ_data("kidney")
+        model = build_organ_model(data)
+        free_rv_names = {rv.name for rv in model.free_RVs}
+        assert "city_mort_delist_chol" in free_rv_names
+
     @pytest.mark.parametrize("organ", ORGANS)
     def test_model_builds_all_organs(self, organ):
         """Model should build for every organ type."""
@@ -193,6 +216,16 @@ class TestSampleParamsFromTrace:
         params = sample_params_from_trace(kidney_trace, n_draws=1)
         assert len(params["cities"]) == 22
 
+    def test_mort_delist_corr_present(self, kidney_trace):
+        params = sample_params_from_trace(kidney_trace, n_draws=1)
+        assert "mort_delist_corr" in params
+
+    def test_mort_delist_corr_valid_range(self, kidney_trace):
+        """Learned correlation should be in [-1, 1]."""
+        draws = sample_params_from_trace(kidney_trace, n_draws=20, rng=np.random.default_rng(42))
+        for d in draws:
+            assert -1.0 <= d["mort_delist_corr"] <= 1.0
+
 
 # ---------------------------------------------------------------------------
 # Posterior sanity checks
@@ -222,3 +255,19 @@ class TestPosteriorSanity:
         draws = sample_params_from_trace(kidney_trace, n_draws=20, rng=np.random.default_rng(42))
         for d in draws:
             assert d["log_sigma"] > 0
+
+    def test_mort_delist_correlation_varies(self, kidney_trace):
+        """Learned correlation should vary across posterior draws."""
+        draws = sample_params_from_trace(kidney_trace, n_draws=20, rng=np.random.default_rng(42))
+        corrs = [d["mort_delist_corr"] for d in draws]
+        assert len(set(corrs)) > 1, "Correlation should vary across draws"
+
+    def test_city_mort_delist_offsets_correlated(self, kidney_trace):
+        """Mort and delist offsets should show some correlation across draws."""
+        draws = sample_params_from_trace(kidney_trace, n_draws=50, rng=np.random.default_rng(42))
+        # For city 0: collect mort/delist offset pairs across draws
+        mort_offsets = [d["city_mort_offsets"][0] for d in draws]
+        delist_offsets = [d["city_delist_offsets"][0] for d in draws]
+        # At minimum, both should vary (not constant)
+        assert np.std(mort_offsets) > 0
+        assert np.std(delist_offsets) > 0

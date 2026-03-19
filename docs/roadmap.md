@@ -456,6 +456,22 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 **Key files:** `backend/services/mcmc_survival.py`, `backend/services/mcmc_inference.py`, `scripts/fit-mcmc-model.py`, `backend/routers/simulate.py`
 **Completed:** March 2026. ADR-026. Issue #95.
 
+### M4: Shared Frailty + Bayesian HDI ✅ DONE
+
+> **Why:** The MCMC model fitted mortality and delisting city offsets independently, then relied on the external Clayton copula (fixed θ=1.0) to couple them at query time. A shared frailty model learns the correlation from data, making MCMC genuinely richer than MC+copula. Bayesian HDI replaces bootstrap CIs with proper posterior-predictive credible intervals.
+
+**Completed:**
+- [x] LKJ-Cholesky correlation prior (`pm.LKJCholeskyCov`, η=2) for bivariate (mortality, delisting) city offsets
+- [x] `mort_delist_corr` deterministic: learned organ-specific correlation exposed in trace
+- [x] Auto-detect shared frailty in MCMC inference — external copula becomes redundant when trace has learned correlation
+- [x] Posterior-predictive 95% credible intervals: per-draw p24 → percentiles (replaces bootstrap)
+- [x] L-053 and L-056 marked FIXED (stochastic COD + sub-linear elasticity already implemented)
+- [x] 11 new tests (7 survival model + 4 inference), total MCMC tests: 64
+- [x] ADR-027: Shared frailty decision record
+
+**Key files:** `backend/services/mcmc_survival.py` (model restructured), `backend/services/mcmc_inference.py` (Bayesian HDI + frailty detection)
+**Completed:** March 2026. ADR-027. Issues #96, #99.
+
 ### Platform API & Integrations (deferred from Phase 4)
 - [ ] **Public REST API with tiered access (FR-18)** — #24: API key auth, rate limiting, versioned endpoints, Swagger docs
 - [ ] **Python & JavaScript SDKs** — #25: client libraries wrapping TransPlan API (PyPI + npm)

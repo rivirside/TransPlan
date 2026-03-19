@@ -6,7 +6,7 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 5 M3 Complete (MCMC Hierarchical Model)
+## Current State: Phase 5 M4 Complete (Shared Frailty + Bayesian HDI)
 
 Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. Phase 3 M1-M5 done. Phase 4 M1-M5 done. Phase 5 M1-M2 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
@@ -16,7 +16,9 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 
 **Phase 5 M2 complete (March 2026):** Clayton copula for correlated competing risks (ADR-025). Mortality and delisting times now optionally drawn with positive lower-tail dependence via `use_copula: true` on PatientProfile. Default θ=1.0 (Kendall's τ ≈ 0.33). Conditional sampling method preserves marginal exponential distributions. All 3 simulation paths (monte_carlo, what_if, sensitivity) support copula. 22 copula unit tests + 4 integration tests. Issue #94.
 
-**Phase 5 M3 complete (March 2026):** PyMC MCMC hierarchical survival model (ADR-026). Third inference engine (`inference_mode=mcmc`) with honest Bayesian uncertainty quantification. Three-level hierarchy: national hyperpriors → 22 city random effects → patient covariates (blood type, urgency). 92 free parameters per organ, 6 independent models. Offline NUTS fitting via `scripts/fit-mcmc-model.py`, cached traces in ArviZ NetCDF (~10-50 MB per organ). Query-time: 50 posterior draws × forward simulation (~200-500ms). Frontend dropdown + orange MCMC badge. 53 new pytest tests. 527 pytest + 112 Jest = 639 total. Issue #95.
+**Phase 5 M3 complete (March 2026):** PyMC MCMC hierarchical survival model (ADR-026). Third inference engine (`inference_mode=mcmc`) with honest Bayesian uncertainty quantification. Three-level hierarchy: national hyperpriors → 22 city random effects → patient covariates (blood type, urgency). 92 free parameters per organ, 6 independent models. Offline NUTS fitting via `scripts/fit-mcmc-model.py`, cached traces in ArviZ NetCDF (~10-50 MB per organ). Query-time: 50 posterior draws × forward simulation (~200-500ms). Frontend dropdown + orange MCMC badge. Issue #95.
+
+**Phase 5 M4 complete (March 2026):** Shared frailty via LKJ-Cholesky correlated city offsets (ADR-027). MCMC model now learns mortality ↔ delisting correlation from data via bivariate MvNormal with LKJ prior (η=2), replacing the fixed external copula for MCMC mode. Bayesian HDI replaces bootstrap CIs — posterior-predictive credible intervals computed from per-draw p24 values. 11 new tests. 538 pytest + 112 Jest = 650 total. Issues #96, #99.
 
 **M4 (Policy Scenario Engine):** 4 predefined UNOS policy scenarios with literature-backed parameters and per-city adjustments: (1) 2021 Kidney 250nm Circles — per-center-size donor/wait adjustments, (2) Continuous Distribution — stronger geography de-emphasis, (3) Increased DCD Utilization — +15% organ supply, (4) Broader HCV+ Acceptance — +6% donor pool for kidney/liver. Frontend policy scenario selector in probability tab. `POST /policy-scenario` endpoint, `GET /policy-scenarios` listing. 24 new pytest tests.
 
@@ -120,10 +122,11 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 | M1: Bayesian Belief Network | ✅ Done | 12-node DAG, pgmpy VariableElimination, 7 CPTs from existing data, API toggle, frontend dropdown, cross-validated, 72 pytest (ADR-024, #36-#42 closed) |
 | M2: Clayton Copula | ✅ Done | Correlated mortality/delisting draws, θ=1.0 (τ≈0.33), opt-in via `use_copula`, all 3 sim paths, 22+4 tests (ADR-025, #94) |
 | M3: MCMC Hierarchical Model | ✅ Done | PyMC NUTS, 92 params/organ, trace-as-cache, offline fitting, posterior uncertainty, 53 pytest (ADR-026, #95) |
+| M4: Shared Frailty + Bayesian HDI | ✅ Done | LKJ-Cholesky correlated mort/delist offsets, learned correlation, posterior-predictive CIs, 11 new tests (ADR-027, #96, #99) |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 5 M3 COMPLETE** — MCMC hierarchical model, 527 pytest + 112 Jest = 639 total
+- **Phase 5 M4 COMPLETE** — Shared frailty + Bayesian HDI, 538 pytest + 112 Jest = 650 total
 - **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
 - **FARS API (L-045):** MITIGATED (#10) — entire NHTSA FARS API appears retired; seed data preserved
 - **Deferred to Phase 5:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)

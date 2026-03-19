@@ -165,6 +165,55 @@ class TestClinicalParameters:
 
 
 # ---------------------------------------------------------------------------
+# Bayesian HDI tests
+# ---------------------------------------------------------------------------
+
+class TestBayesianHDI:
+    def test_ci_width_positive(self, kidney_patient):
+        """Bayesian credible interval should have non-zero width for top cities."""
+        from services.mcmc_inference import simulate_mcmc
+        result = simulate_mcmc(kidney_patient, n_iterations=500)
+        widths = [c.confidence_interval_95[1] - c.confidence_interval_95[0]
+                  for c in result.cities]
+        # At least one city should have CI width > 0.01
+        assert max(widths) > 0.01, f"Max CI width {max(widths)} too narrow"
+
+    def test_ci_contains_point_estimate(self, kidney_patient):
+        """The point estimate p24 should be within or near the CI."""
+        from services.mcmc_inference import simulate_mcmc
+        result = simulate_mcmc(kidney_patient, n_iterations=500)
+        top = result.cities[0]
+        lo, hi = top.confidence_interval_95
+        # Allow tolerance for MC noise
+        assert lo <= top.p_transplant_24mo + 0.05
+        assert hi >= top.p_transplant_24mo - 0.05
+
+
+# ---------------------------------------------------------------------------
+# Shared frailty tests
+# ---------------------------------------------------------------------------
+
+class TestSharedFrailty:
+    def test_mcmc_without_copula_flag(self, kidney_patient):
+        """MCMC with shared frailty should work without external copula."""
+        from services.mcmc_inference import simulate_mcmc
+        result = simulate_mcmc(kidney_patient, n_iterations=200)
+        assert len(result.cities) == 22
+        for city in result.cities:
+            assert 0 <= city.p_transplant_24mo <= 1
+
+    def test_competing_risks_sum_to_one(self, kidney_patient):
+        """Competing risks should sum to ~1.0 with shared frailty."""
+        from services.mcmc_inference import simulate_mcmc
+        result = simulate_mcmc(kidney_patient, n_iterations=300)
+        for city in result.cities:
+            cr = city.competing_risks
+            total = (cr["p_transplant_24mo"] + cr["p_mortality_24mo"] +
+                     cr["p_delisting_24mo"] + cr["p_still_waiting_24mo"])
+            assert 0.95 <= total <= 1.05, f"{city.city}: total={total}"
+
+
+# ---------------------------------------------------------------------------
 # Error handling
 # ---------------------------------------------------------------------------
 
