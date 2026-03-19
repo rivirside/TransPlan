@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetchedAt": "2026-03-16T21:57:04.658Z",
+    "fetchedAt": "2026-03-19T05:41:45.386Z",
     "source": "Organ recovery rates: PMC10329409 Table 2 (2023). State proportions: CDC 2017 mortality data (data.cdc.gov bi63-dtpu + xkb8-kh2a) with donor-eligibility calibration.",
     "notes": "Intestine rates from OPTN 2023 OTPD ratio (intestine/pancreas=0.104) with COD-specific clinical adjustments (see GitHub #16). Anoxia-NOS recovery rates estimated from PMC10329409 OR 0.848 vs trauma (see GitHub #14); state shares from CDC drowning rate patterns. Proportions represent share of potential brain-dead donors by cause among donor-eligible deaths. Calibration weights (trauma=0.31, cardiovascular=0.062, drug_intox=0.721, stroke=0.175) fitted via Nelder-Mead optimization.",
     "calibration": "Weights represent fraction of general-population deaths in each category that result in donor-eligible brain death."
@@ -58,9 +58,9 @@
       "anoxia": 0.1
     },
     "Alaska": {
-      "trauma": 0.35,
+      "trauma": 0.36,
       "cardiovascular": 0.14,
-      "drug_intox": 0.28,
+      "drug_intox": 0.27,
       "stroke": 0.09,
       "anoxia": 0.14
     },
@@ -79,23 +79,23 @@
       "anoxia": 0.1
     },
     "California": {
-      "trauma": 0.25,
-      "cardiovascular": 0.25,
-      "drug_intox": 0.23,
+      "trauma": 0.27,
+      "cardiovascular": 0.24,
+      "drug_intox": 0.22,
       "stroke": 0.18,
       "anoxia": 0.09
     },
     "Colorado": {
-      "trauma": 0.35,
+      "trauma": 0.34,
       "cardiovascular": 0.16,
-      "drug_intox": 0.27,
+      "drug_intox": 0.28,
       "stroke": 0.13,
       "anoxia": 0.09
     },
     "Connecticut": {
-      "trauma": 0.29,
+      "trauma": 0.28,
       "cardiovascular": 0.19,
-      "drug_intox": 0.33,
+      "drug_intox": 0.34,
       "stroke": 0.11,
       "anoxia": 0.08
     },
@@ -109,8 +109,8 @@
     "District of Columbia": {
       "trauma": 0.25,
       "cardiovascular": 0.15,
-      "drug_intox": 0.46,
-      "stroke": 0.09,
+      "drug_intox": 0.47,
+      "stroke": 0.08,
       "anoxia": 0.05
     },
     "Florida": {
@@ -121,15 +121,15 @@
       "anoxia": 0.12
     },
     "Georgia": {
-      "trauma": 0.3,
+      "trauma": 0.29,
       "cardiovascular": 0.23,
       "drug_intox": 0.22,
-      "stroke": 0.15,
+      "stroke": 0.16,
       "anoxia": 0.1
     },
     "Hawaii": {
-      "trauma": 0.25,
-      "cardiovascular": 0.23,
+      "trauma": 0.26,
+      "cardiovascular": 0.22,
       "drug_intox": 0.2,
       "stroke": 0.19,
       "anoxia": 0.13
@@ -142,50 +142,50 @@
       "anoxia": 0.1
     },
     "Illinois": {
-      "trauma": 0.27,
+      "trauma": 0.26,
       "cardiovascular": 0.22,
-      "drug_intox": 0.28,
+      "drug_intox": 0.29,
       "stroke": 0.15,
       "anoxia": 0.08
     },
     "Indiana": {
-      "trauma": 0.29,
-      "cardiovascular": 0.2,
+      "trauma": 0.28,
+      "cardiovascular": 0.21,
       "drug_intox": 0.3,
       "stroke": 0.13,
       "anoxia": 0.08
     },
     "Iowa": {
-      "trauma": 0.31,
+      "trauma": 0.32,
       "cardiovascular": 0.29,
       "drug_intox": 0.16,
-      "stroke": 0.17,
+      "stroke": 0.16,
       "anoxia": 0.07
     },
     "Kansas": {
-      "trauma": 0.33,
+      "trauma": 0.34,
       "cardiovascular": 0.25,
-      "drug_intox": 0.17,
+      "drug_intox": 0.16,
       "stroke": 0.17,
       "anoxia": 0.08
     },
     "Kentucky": {
-      "trauma": 0.29,
-      "cardiovascular": 0.18,
-      "drug_intox": 0.35,
-      "stroke": 0.1,
+      "trauma": 0.3,
+      "cardiovascular": 0.19,
+      "drug_intox": 0.32,
+      "stroke": 0.11,
       "anoxia": 0.08
     },
     "Louisiana": {
       "trauma": 0.27,
       "cardiovascular": 0.22,
-      "drug_intox": 0.26,
-      "stroke": 0.13,
+      "drug_intox": 0.25,
+      "stroke": 0.14,
       "anoxia": 0.12
     },
     "Maine": {
-      "trauma": 0.31,
-      "cardiovascular": 0.17,
+      "trauma": 0.3,
+      "cardiovascular": 0.18,
       "drug_intox": 0.3,
       "stroke": 0.13,
       "anoxia": 0.09
@@ -193,29 +193,29 @@
     "Maryland": {
       "trauma": 0.19,
       "cardiovascular": 0.18,
-      "drug_intox": 0.41,
-      "stroke": 0.13,
+      "drug_intox": 0.42,
+      "stroke": 0.12,
       "anoxia": 0.09
     },
     "Massachusetts": {
       "trauma": 0.28,
-      "cardiovascular": 0.17,
-      "drug_intox": 0.37,
+      "cardiovascular": 0.18,
+      "drug_intox": 0.36,
       "stroke": 0.1,
       "anoxia": 0.08
     },
     "Michigan": {
       "trauma": 0.26,
-      "cardiovascular": 0.24,
-      "drug_intox": 0.28,
+      "cardiovascular": 0.23,
+      "drug_intox": 0.29,
       "stroke": 0.13,
       "anoxia": 0.09
     },
     "Minnesota": {
-      "trauma": 0.35,
+      "trauma": 0.34,
       "cardiovascular": 0.2,
       "drug_intox": 0.21,
-      "stroke": 0.15,
+      "stroke": 0.16,
       "anoxia": 0.09
     },
     "Mississippi": {
@@ -240,23 +240,23 @@
       "anoxia": 0.1
     },
     "Nebraska": {
-      "trauma": 0.31,
-      "cardiovascular": 0.29,
-      "drug_intox": 0.15,
+      "trauma": 0.33,
+      "cardiovascular": 0.28,
+      "drug_intox": 0.14,
       "stroke": 0.17,
       "anoxia": 0.08
     },
     "Nevada": {
       "trauma": 0.26,
-      "cardiovascular": 0.23,
-      "drug_intox": 0.3,
+      "cardiovascular": 0.22,
+      "drug_intox": 0.31,
       "stroke": 0.11,
       "anoxia": 0.1
     },
     "New Hampshire": {
       "trauma": 0.29,
-      "cardiovascular": 0.17,
-      "drug_intox": 0.37,
+      "cardiovascular": 0.18,
+      "drug_intox": 0.36,
       "stroke": 0.09,
       "anoxia": 0.08
     },
@@ -268,16 +268,16 @@
       "anoxia": 0.08
     },
     "New Mexico": {
-      "trauma": 0.33,
+      "trauma": 0.34,
       "cardiovascular": 0.18,
       "drug_intox": 0.27,
-      "stroke": 0.12,
+      "stroke": 0.11,
       "anoxia": 0.1
     },
     "New York": {
       "trauma": 0.28,
-      "cardiovascular": 0.32,
-      "drug_intox": 0.2,
+      "cardiovascular": 0.31,
+      "drug_intox": 0.21,
       "stroke": 0.13,
       "anoxia": 0.07
     },
@@ -296,22 +296,22 @@
       "anoxia": 0.08
     },
     "Ohio": {
-      "trauma": 0.28,
+      "trauma": 0.27,
       "cardiovascular": 0.17,
-      "drug_intox": 0.36,
+      "drug_intox": 0.37,
       "stroke": 0.11,
       "anoxia": 0.08
     },
     "Oklahoma": {
-      "trauma": 0.3,
+      "trauma": 0.31,
       "cardiovascular": 0.25,
-      "drug_intox": 0.22,
+      "drug_intox": 0.21,
       "stroke": 0.13,
       "anoxia": 0.1
     },
     "Oregon": {
-      "trauma": 0.31,
-      "cardiovascular": 0.22,
+      "trauma": 0.32,
+      "cardiovascular": 0.21,
       "drug_intox": 0.19,
       "stroke": 0.18,
       "anoxia": 0.1
@@ -338,9 +338,9 @@
       "anoxia": 0.1
     },
     "South Dakota": {
-      "trauma": 0.37,
-      "cardiovascular": 0.25,
-      "drug_intox": 0.13,
+      "trauma": 0.39,
+      "cardiovascular": 0.24,
+      "drug_intox": 0.12,
       "stroke": 0.17,
       "anoxia": 0.08
     },
@@ -373,36 +373,36 @@
       "anoxia": 0.08
     },
     "Virginia": {
-      "trauma": 0.29,
+      "trauma": 0.28,
       "cardiovascular": 0.22,
       "drug_intox": 0.25,
-      "stroke": 0.14,
+      "stroke": 0.15,
       "anoxia": 0.1
     },
     "Washington": {
-      "trauma": 0.3,
-      "cardiovascular": 0.21,
+      "trauma": 0.31,
+      "cardiovascular": 0.2,
       "drug_intox": 0.24,
       "stroke": 0.15,
       "anoxia": 0.1
     },
     "West Virginia": {
-      "trauma": 0.31,
+      "trauma": 0.3,
       "cardiovascular": 0.16,
       "drug_intox": 0.37,
-      "stroke": 0.09,
+      "stroke": 0.1,
       "anoxia": 0.07
     },
     "Wisconsin": {
-      "trauma": 0.32,
+      "trauma": 0.33,
       "cardiovascular": 0.21,
-      "drug_intox": 0.25,
+      "drug_intox": 0.24,
       "stroke": 0.13,
       "anoxia": 0.09
     },
     "Wyoming": {
-      "trauma": 0.38,
-      "cardiovascular": 0.23,
+      "trauma": 0.39,
+      "cardiovascular": 0.22,
       "drug_intox": 0.17,
       "stroke": 0.12,
       "anoxia": 0.1
