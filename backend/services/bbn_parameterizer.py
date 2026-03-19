@@ -197,15 +197,17 @@ def build_donor_supply_cpt() -> np.ndarray:
                 cod_factor = _compute_cod_multiplier(organ, state)
                 scores[i, j, k] = bt_factor * cod_factor
 
-    # Determine tercile thresholds from all scores
-    flat = scores.flatten()
-    t33 = np.percentile(flat, 33.3)
-    t66 = np.percentile(flat, 66.7)
-
     # Build CPT: P(DonorSupply | Organ, BloodType, Region)
+    # Compute tercile thresholds PER ORGAN to avoid cross-organ contamination (#59).
+    # Different organs have fundamentally different supply/demand dynamics —
+    # global terciles would misclassify organs with systematically different baselines.
     cpt = np.zeros((3, n_o, n_b, n_r))
 
     for i in range(n_o):
+        organ_flat = scores[i, :, :].flatten()
+        t33 = np.percentile(organ_flat, 33.3)
+        t66 = np.percentile(organ_flat, 66.7)
+
         for j in range(n_b):
             for k in range(n_r):
                 s = scores[i, j, k]

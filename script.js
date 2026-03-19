@@ -525,6 +525,8 @@ let _currentSimResult = null;
 let _currentFormData = null;
 // M4: Equity analysis result
 let _currentEquityResult = null;
+// Submission guard to prevent concurrent form submissions (#66)
+let _isSubmitting = false;
 
 // M5: Expose results for export module
 window.TransPlanResults = {
@@ -2021,6 +2023,14 @@ const stateAbbreviations = {
 document.getElementById('transplantForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
+    // Prevent concurrent submissions (#66)
+    if (_isSubmitting) return;
+    _isSubmitting = true;
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+
     const formData = {
         organ: document.getElementById('organ').value,
         bloodType: document.getElementById('bloodType').value,
@@ -2032,7 +2042,7 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
         insurance: document.getElementById('insurance').value,
         cpra: parseInt(document.getElementById('cpra')?.value) || 0,
         meld: parseInt(document.getElementById('meld')?.value) || 0,
-        las: parseInt(document.getElementById('las')?.value) || 0,
+        las: parseFloat(document.getElementById('las')?.value) || 0,
         homeCenter: document.getElementById('homeCenter')?.value || '',
         adjustForCauseOfDeath: document.getElementById('adjustCauseOfDeath')?.checked || false,
         useCopula: document.getElementById('useCopula')?.checked || false,
@@ -2074,6 +2084,11 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
 
     // Set up tab toggle state
     initResultsTabs(simResult !== null, equityResult !== null);
+
+    } finally {
+        _isSubmitting = false;
+        if (submitBtn) submitBtn.disabled = false;
+    }
 });
 
 // --- Organ-specific conditional field visibility ---
@@ -2440,7 +2455,6 @@ function createCityCard(city, rank, formData, homeCenter) {
 function getWaitTimeClass(organ, waitTime) {
     // Parse wait time string
     const value = parseFloat(waitTime);
-    const unit = waitTime.includes('month') ? 'months' : 'years';
 
     if (organ === 'kidney' || organ === 'pancreas') {
         return value < 2 ? 'good' : value < 3 ? 'moderate' : 'poor';
@@ -3037,9 +3051,11 @@ function createProbabilityCard(city, rank, homeCenter) {
 
     card.appendChild(metrics);
 
-    // CI text
+    // CI text — BBN is deterministic, so label as "Uncertainty band" (#54)
+    var ciLabel = (_currentSimResult && _currentSimResult.inference_mode === 'bayesian')
+        ? 'Uncertainty band' : '95% CI';
     card.appendChild(_el('div', 'prob-ci',
-        '95% CI at 24 mo: ' + formatPct(ci[0]) + ' \u2013 ' + formatPct(ci[1])));
+        ciLabel + ' at 24 mo: ' + formatPct(ci[0]) + ' \u2013 ' + formatPct(ci[1])));
 
     // Competing risks bar
     if (city.competing_risks) {
@@ -3432,13 +3448,15 @@ function openCityDetail(cityName) {
         grid.appendChild(medianItem);
         probSection.appendChild(grid);
 
-        // 95% CI
+        // CI / Uncertainty band — BBN is deterministic (#54)
         var ci = simCity.confidence_interval_95 || [0, 0];
+        var modalCiLabel = (_currentSimResult && _currentSimResult.inference_mode === 'bayesian')
+            ? 'Uncertainty band' : '95% CI';
         var ciDiv = document.createElement('div');
         ciDiv.style.marginTop = 'var(--space-3)';
         ciDiv.style.fontSize = 'var(--fs-sm)';
         ciDiv.style.color = 'var(--text-3)';
-        ciDiv.textContent = '95% CI at 24 mo: ' + formatPct(ci[0]) + ' \u2013 ' + formatPct(ci[1]);
+        ciDiv.textContent = modalCiLabel + ' at 24 mo: ' + formatPct(ci[0]) + ' \u2013 ' + formatPct(ci[1]);
         probSection.appendChild(ciDiv);
 
         body.appendChild(probSection);

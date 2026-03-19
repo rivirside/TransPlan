@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field
 from models.schemas import PatientProfile
 from services.competing_risks import get_annual_delisting_rate, get_annual_mortality_rate
 from services.copula import draw_correlated_competing_risks
-from services.distributions import get_wait_time_distribution
+from services.distributions import get_wait_time_distribution, get_lognorm_params
 from config import COPULA_THETA, ORGAN_COPULA_THETA, SUPPLY_WAIT_ELASTICITY
 from services.monte_carlo import CITIES, _get_cod_multiplier
 
@@ -74,10 +74,7 @@ def _run_single(
     # distribution proportionally — a 1.2× multiplier makes median 20% longer.
     if wait_time_multiplier != 1.0:
         import scipy.stats
-        # Frozen lognorm: when created with keyword args, both s and scale are in kwds
-        s = dist.args[0] if dist.args else dist.kwds.get('s', 1.0)
-        loc = dist.kwds.get('loc', 0)
-        scale = dist.kwds.get('scale', 1.0)
+        s, loc, scale = get_lognorm_params(dist)
         dist = scipy.stats.lognorm(s=s, loc=loc, scale=scale * wait_time_multiplier)
 
     transplant_times = dist.rvs(size=n_iterations, random_state=rng)

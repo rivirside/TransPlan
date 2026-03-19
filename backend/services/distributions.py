@@ -143,6 +143,24 @@ def get_wait_time_distribution(
     return scipy.stats.lognorm(s=sigma, scale=adjusted_median)
 
 
+def get_lognorm_params(dist) -> tuple[float, float, float]:
+    """
+    Safely extract (s, loc, scale) from a frozen lognorm distribution.
+
+    Handles both positional-arg and keyword-arg construction patterns
+    used by scipy.stats.lognorm. Centralises the fragile introspection
+    so callers don't depend on frozen-dist internals.
+    """
+    # Shape 's' may be in args[0] (positional) or kwds (keyword)
+    if dist.args:
+        s = dist.args[0]
+    else:
+        s = dist.kwds.get('s', 1.0)
+    loc = dist.kwds.get('loc', 0)
+    scale = dist.kwds.get('scale', 1.0)
+    return s, loc, scale
+
+
 def get_city_factors() -> dict[str, float]:
     """Return the city wait time factor dict (for inspection/testing)."""
     _ensure_loaded()

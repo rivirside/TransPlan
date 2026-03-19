@@ -215,9 +215,9 @@
       var body = {
         patient: normalizeFormData(formData),
         city: city || 'Nashville',
-        donor_rate_multiplier: donorRateMultiplier || 1.0,
-        wait_time_multiplier: waitTimeMultiplier || 1.0,
-        iterations: iterations || 500
+        donor_rate_multiplier: donorRateMultiplier ?? 1.0,
+        wait_time_multiplier: waitTimeMultiplier ?? 1.0,
+        iterations: iterations ?? 500
       };
       var response = await fetch(base + '/what-if', {
         method: 'POST',

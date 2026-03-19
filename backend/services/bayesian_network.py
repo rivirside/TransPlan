@@ -355,9 +355,11 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
         # Estimate median wait
         median_wait = _estimate_median_wait(wait_probs)
 
-        # Confidence interval: BBN is deterministic, so CI represents
-        # model uncertainty from discretization (±5% of point estimate)
-        ci_half = max(0.02, p_24 * 0.05)
+        # Uncertainty band: BBN inference is deterministic (exact Variable Elimination),
+        # so this is NOT a sampling confidence interval. The ±10% band represents
+        # epistemic uncertainty from CPT discretization (continuous → tercile categories)
+        # and conditional independence assumptions. See issue #54.
+        ci_half = max(0.03, p_24 * 0.10)
         ci_lo = max(0.0, p_24 - ci_half)
         ci_hi = min(1.0, p_24 + ci_half)
 
