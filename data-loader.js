@@ -60,7 +60,7 @@
             "Indianapolis": { diabetesRate: 11.5, obesityRate: 34.8, ckdRate: 15.7, hypertensionRate: 35.2, smokingRate: 21.3 },
             "Omaha": { diabetesRate: 9.8, obesityRate: 31.2, ckdRate: 13.9, hypertensionRate: 31.5, smokingRate: 17.8 },
             "Rochester": { diabetesRate: 8.5, obesityRate: 28.9, ckdRate: 12.8, hypertensionRate: 29.3, smokingRate: 15.2 },
-            "Nashville": { diabetesRate: 12.3, obesityRate: 36.2, ckdRate: 16.5, hypertensionRate: 37.1, smokingRate: 22.8 },
+            "Nashville": { diabetesRate: 11.7, obesityRate: 32.5, ckdRate: 16.5, hypertensionRate: 34.4, smokingRate: 14.2 },
             "Durham": { diabetesRate: 11.1, obesityRate: 33.1, ckdRate: 15.1, hypertensionRate: 34.5, smokingRate: 18.9 },
             "Miami": { diabetesRate: 12.8, obesityRate: 32.5, ckdRate: 16.8, hypertensionRate: 36.2, smokingRate: 16.4 },
             "Dallas": { diabetesRate: 11.9, obesityRate: 33.9, ckdRate: 15.9, hypertensionRate: 35.8, smokingRate: 17.2 },

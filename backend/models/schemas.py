@@ -10,7 +10,7 @@ class PatientProfile(BaseModel):
         pattern=r"^(A|B|AB|O)[+-]$",
         examples=["O+", "A-", "AB+"],
     )
-    age: int = Field(..., ge=0, le=99)
+    age: int = Field(..., ge=1, le=99)
     sex: Literal["male", "female"]
     urgency: int = Field(..., ge=1, le=4)
     insurance: Optional[Literal["medicare", "medicaid", "private", "uninsured"]] = None

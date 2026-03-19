@@ -165,10 +165,11 @@ def validate_all_organs(n_iterations: int = 1000) -> dict[str, BrierResult]:
 
     results = {}
     for cfg in configs:
-        organ = cfg.pop("organ")
-        bt = cfg.pop("blood_type")
-        urg = cfg.pop("urgency")
-        result = compute_brier_score(organ, bt, urg, n_iterations, **cfg)
+        organ = cfg["organ"]
+        bt = cfg["blood_type"]
+        urg = cfg["urgency"]
+        extras = {k: v for k, v in cfg.items() if k not in ("organ", "blood_type", "urgency")}
+        result = compute_brier_score(organ, bt, urg, n_iterations, **extras)
         results[organ] = result
 
     return results

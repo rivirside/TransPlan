@@ -1,10 +1,13 @@
 """POST /sensitivity — Input parameter sensitivity analysis endpoint."""
-from fastapi import APIRouter
+import logging
+
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from models.schemas import PatientProfile, SensitivityResult
 from services.sensitivity import compute_sensitivity
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -19,4 +22,8 @@ class SensitivityRequest(BaseModel):
 
 @router.post("/sensitivity", response_model=SensitivityResult)
 def run_sensitivity(request: SensitivityRequest) -> SensitivityResult:
-    return compute_sensitivity(request.patient, request.city, request.iterations)
+    try:
+        return compute_sensitivity(request.patient, request.city, request.iterations)
+    except Exception as e:
+        logger.exception("Sensitivity analysis failed for %s/%s", request.patient.organ, request.city)
+        raise HTTPException(status_code=500, detail="Sensitivity analysis failed — see server logs") from e

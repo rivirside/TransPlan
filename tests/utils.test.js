@@ -9,10 +9,8 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-// We need to access deepMerge which isn't exported. We'll test it through mergeDataFile,
-// but also import the module internals by requiring the file and testing merge behavior.
 const utils = require('../scripts/utils');
-const { writeDataFile, mergeDataFile, CITIES, reportError, DATA_DIR } = utils;
+const { deepMerge, writeDataFile, mergeDataFile, CITIES, reportError, DATA_DIR } = utils;
 
 // ==================== SETUP ====================
 
@@ -87,22 +85,6 @@ describe('deepMerge (via mergeDataFile)', () => {
         // Simulate what mergeDataFile does via deepMerge
         const newData = { Rochester: { diabetesRate: 9.0 } };
 
-        // Use the actual deepMerge logic pattern
-        function deepMerge(target, source) {
-            const result = { ...target };
-            for (const [key, value] of Object.entries(source)) {
-                if (
-                    value && typeof value === 'object' && !Array.isArray(value) &&
-                    result[key] && typeof result[key] === 'object' && !Array.isArray(result[key])
-                ) {
-                    result[key] = deepMerge(result[key], value);
-                } else {
-                    result[key] = value;
-                }
-            }
-            return result;
-        }
-
         const merged = deepMerge(raw, newData);
 
         expect(merged.Rochester.diabetesRate).toBe(9.0);  // Updated
@@ -111,21 +93,6 @@ describe('deepMerge (via mergeDataFile)', () => {
     });
 
     test('arrays are replaced, not merged', () => {
-        function deepMerge(target, source) {
-            const result = { ...target };
-            for (const [key, value] of Object.entries(source)) {
-                if (
-                    value && typeof value === 'object' && !Array.isArray(value) &&
-                    result[key] && typeof result[key] === 'object' && !Array.isArray(result[key])
-                ) {
-                    result[key] = deepMerge(result[key], value);
-                } else {
-                    result[key] = value;
-                }
-            }
-            return result;
-        }
-
         const target = { items: [1, 2, 3], name: 'test' };
         const source = { items: [4, 5] };
         const merged = deepMerge(target, source);
@@ -135,21 +102,6 @@ describe('deepMerge (via mergeDataFile)', () => {
     });
 
     test('source overwrites target for conflicting scalar keys', () => {
-        function deepMerge(target, source) {
-            const result = { ...target };
-            for (const [key, value] of Object.entries(source)) {
-                if (
-                    value && typeof value === 'object' && !Array.isArray(value) &&
-                    result[key] && typeof result[key] === 'object' && !Array.isArray(result[key])
-                ) {
-                    result[key] = deepMerge(result[key], value);
-                } else {
-                    result[key] = value;
-                }
-            }
-            return result;
-        }
-
         const target = { a: 1, b: 2 };
         const source = { b: 99 };
         const merged = deepMerge(target, source);
@@ -159,21 +111,6 @@ describe('deepMerge (via mergeDataFile)', () => {
     });
 
     test('empty source returns target unchanged', () => {
-        function deepMerge(target, source) {
-            const result = { ...target };
-            for (const [key, value] of Object.entries(source)) {
-                if (
-                    value && typeof value === 'object' && !Array.isArray(value) &&
-                    result[key] && typeof result[key] === 'object' && !Array.isArray(result[key])
-                ) {
-                    result[key] = deepMerge(result[key], value);
-                } else {
-                    result[key] = value;
-                }
-            }
-            return result;
-        }
-
         const target = { a: 1, b: { c: 2 } };
         const merged = deepMerge(target, {});
 
@@ -181,21 +118,6 @@ describe('deepMerge (via mergeDataFile)', () => {
     });
 
     test('empty target returns source', () => {
-        function deepMerge(target, source) {
-            const result = { ...target };
-            for (const [key, value] of Object.entries(source)) {
-                if (
-                    value && typeof value === 'object' && !Array.isArray(value) &&
-                    result[key] && typeof result[key] === 'object' && !Array.isArray(result[key])
-                ) {
-                    result[key] = deepMerge(result[key], value);
-                } else {
-                    result[key] = value;
-                }
-            }
-            return result;
-        }
-
         const source = { x: 42, y: { z: 7 } };
         const merged = deepMerge({}, source);
 
@@ -296,21 +218,6 @@ describe('mergeDataFile (integration via file I/O)', () => {
         const raw = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
         delete raw._meta;
 
-        function deepMerge(target, source) {
-            const result = { ...target };
-            for (const [key, value] of Object.entries(source)) {
-                if (
-                    value && typeof value === 'object' && !Array.isArray(value) &&
-                    result[key] && typeof result[key] === 'object' && !Array.isArray(result[key])
-                ) {
-                    result[key] = deepMerge(result[key], value);
-                } else {
-                    result[key] = value;
-                }
-            }
-            return result;
-        }
-
         const newData = { centerReputation: { Pittsburgh: 99, Houston: 89 } };
         const merged = deepMerge(raw, newData);
 
@@ -379,21 +286,6 @@ describe('mergeDataFile (integration via file I/O)', () => {
             Rochester: { diabetesRate: 8.5, obesityRate: 28.0, ckdRate: 12.5, hypertensionRate: 28.0, smokingRate: 14.0 },
             Cleveland: { diabetesRate: 12.5, obesityRate: 35.0, ckdRate: 16.0, hypertensionRate: 35.0, smokingRate: 18.0 }
         });
-
-        function deepMerge(target, source) {
-            const result = { ...target };
-            for (const [key, value] of Object.entries(source)) {
-                if (
-                    value && typeof value === 'object' && !Array.isArray(value) &&
-                    result[key] && typeof result[key] === 'object' && !Array.isArray(result[key])
-                ) {
-                    result[key] = deepMerge(result[key], value);
-                } else {
-                    result[key] = value;
-                }
-            }
-            return result;
-        }
 
         const raw = JSON.parse(fs.readFileSync(path.join(tmpDir, 'health.json'), 'utf-8'));
         delete raw._meta;

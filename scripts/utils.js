@@ -204,6 +204,7 @@ module.exports = {
     delay,
     writeDataFile,
     mergeDataFile,
+    deepMerge,
     updateMetadata,
     reportError,
     CITIES,

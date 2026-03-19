@@ -5,6 +5,8 @@ This eliminates CORS issues and simplifies the launcher.
 """
 import logging
 import sys
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 # Ensure backend/ is on sys.path so bare imports (config, routers, etc.)
@@ -30,6 +32,14 @@ logger = logging.getLogger(__name__)
 # Repo root is one level above backend/
 REPO_ROOT: Path = Path(__file__).parent.parent
 
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Load data at startup; yield for request handling."""
+    load_all()
+    logger.info("TransPlan backend ready — version %s", VERSION)
+    yield
+
+
 app = FastAPI(
     title="TransPlan Phase 2 API",
     version=VERSION,
@@ -37,6 +47,7 @@ app = FastAPI(
         "Probabilistic transplant wait-time forecasting engine. "
         "Monte Carlo simulation with competing risks modeling."
     ),
+    lifespan=lifespan,
 )
 
 # CORS kept as fallback for separate frontend/backend dev setups
@@ -55,13 +66,6 @@ app.include_router(sensitivity.router, tags=["simulation"])
 app.include_router(equity.router, tags=["simulation"])
 app.include_router(what_if.router, tags=["simulation"])
 app.include_router(trends.router, tags=["trends"])
-
-
-@app.on_event("startup")
-def startup_event() -> None:
-    """Load all data files into memory at startup."""
-    load_all()
-    logger.info("TransPlan backend ready — version %s", VERSION)
 
 
 # ---------------------------------------------------------------------------

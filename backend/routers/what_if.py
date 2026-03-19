@@ -5,9 +5,12 @@ POST /policy-scenario — Policy scenario analysis with literature-backed parame
 GET /policy-scenarios — List available predefined policy scenarios.
 GET /policy-scenarios/{scenario_id} — Get a specific scenario's details.
 """
+import logging
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException
+
+logger = logging.getLogger(__name__)
 from pydantic import BaseModel, Field
 
 from models.schemas import PatientProfile
@@ -44,13 +47,17 @@ class WhatIfRequest(BaseModel):
 
 @router.post("/what-if", response_model=WhatIfResult)
 def run_what_if(request: WhatIfRequest) -> WhatIfResult:
-    return compute_what_if(
-        patient=request.patient,
-        city=request.city,
-        donor_rate_multiplier=request.donor_rate_multiplier,
-        wait_time_multiplier=request.wait_time_multiplier,
-        n_iterations=request.iterations,
-    )
+    try:
+        return compute_what_if(
+            patient=request.patient,
+            city=request.city,
+            donor_rate_multiplier=request.donor_rate_multiplier,
+            wait_time_multiplier=request.wait_time_multiplier,
+            n_iterations=request.iterations,
+        )
+    except Exception as e:
+        logger.exception("What-if analysis failed for %s/%s", request.patient.organ, request.city)
+        raise HTTPException(status_code=500, detail="What-if analysis failed — see server logs") from e
 
 
 # --- Policy scenario endpoints (Phase 4 M4) ---

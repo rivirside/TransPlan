@@ -1,4 +1,5 @@
 """POST /simulate — Monte Carlo, Bayesian, or MCMC inference endpoint."""
+import logging
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query
@@ -6,6 +7,7 @@ from fastapi import APIRouter, HTTPException, Query
 from models.schemas import PatientProfile, SimulationResult
 from services.monte_carlo import simulate
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -18,16 +20,22 @@ def run_simulation(
         description="Inference engine: 'monte_carlo' (default), 'bayesian' (exact), or 'mcmc' (posterior sampling)",
     ),
 ) -> SimulationResult:
-    if inference_mode == "bayesian":
-        from services.bayesian_network import simulate_bbn
-        return simulate_bbn(patient)
-    if inference_mode == "mcmc":
-        from services.mcmc_inference import is_available, simulate_mcmc
-        if not is_available(patient.organ):
-            raise HTTPException(
-                status_code=503,
-                detail=f"MCMC trace not available for {patient.organ}. "
-                       f"Run scripts/fit-mcmc-model.py --organ {patient.organ} to generate it.",
-            )
-        return simulate_mcmc(patient, n_iterations=iterations)
-    return simulate(patient, n_iterations=iterations)
+    try:
+        if inference_mode == "bayesian":
+            from services.bayesian_network import simulate_bbn
+            return simulate_bbn(patient)
+        if inference_mode == "mcmc":
+            from services.mcmc_inference import is_available, simulate_mcmc
+            if not is_available(patient.organ):
+                raise HTTPException(
+                    status_code=503,
+                    detail=f"MCMC trace not available for {patient.organ}. "
+                           f"Run scripts/fit-mcmc-model.py --organ {patient.organ} to generate it.",
+                )
+            return simulate_mcmc(patient, n_iterations=iterations)
+        return simulate(patient, n_iterations=iterations)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Simulation failed for %s/%s", patient.organ, inference_mode)
+        raise HTTPException(status_code=500, detail="Simulation failed — see server logs") from e

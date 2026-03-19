@@ -87,12 +87,13 @@ class PolicyScenario(BaseModel):
 
 _LARGE_KIDNEY_CENTERS = {
     "New York", "Los Angeles", "Houston", "Chicago", "Philadelphia",
-    "San Francisco", "Miami", "Dallas",
+    "San Francisco", "Miami", "Dallas", "Palo Alto",
 }
 _SMALL_KIDNEY_CENTERS = {
-    "Madison", "Omaha", "Rochester", "Palo Alto", "Durham",
+    "Madison", "Omaha", "Rochester", "Durham",
     "Indianapolis", "St. Louis",
 }
+# Palo Alto (Stanford Health Care) does ~200+/yr — large center, not small.
 # All others are "medium"
 
 
