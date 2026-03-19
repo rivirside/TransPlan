@@ -458,6 +458,55 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ---
 
+## 9. Data Provenance
+
+> **Every data file audited 2026-03-18.** This table documents the actual source and quality tier of each data file used by the simulation and scoring engines. Files are classified as: **SRTR** (parsed from downloaded SRTR Excel files), **API** (fetched from live government APIs), **Literature** (derived from peer-reviewed publications), **Seed** (hardcoded values never refreshed from a live source), or **Synthetic** (procedurally generated).
+
+### Core Simulation Pipeline (drives transplant probability calculations)
+
+| File | Tier | Source | Vintage | Notes |
+|------|------|--------|---------|-------|
+| `wait-time-distributions.json` | **SRTR** | SRTR PSR Table B10, Jan 2025 XLS (`data/srtr-raw/`) | Jan 2025 | National medians + 22 city wait factors parsed by `parse-srtr-reports.py`. Blood type & clinical multipliers (cPRA/MELD/LAS) are **literature-estimated** — SRTR Table B10 does not stratify by blood type. |
+| `competing-risks.json` | **SRTR** | SRTR PSR Table B7, Jan 2025 XLS | Jan 2025 | Annual mortality/delisting rates + 22 city adjustment factors. Urgency & age mortality multipliers are **literature-estimated** (SRTR 2023 ADR Table 5.3). |
+| `post-transplant-outcomes.json` | **SRTR** | SRTR PSR C-series Tables C5–C20, Jan 2025 XLS | Jan 2025 | Graft/patient survival rates, hazard ratios with CIs, performance ratings. Pancreas graft survival correctly `null` (L-057). |
+| `cause-of-death-by-region.json` | **API + Literature** | CDC SODA API (`bi63-dtpu` + `xkb8-kh2a`) + PMC10329409 | CDC: 2017; PMC: 2023 | State COD proportions from CDC (all 50 states + DC). Organ recovery rates from PMC10329409 (OPTN 2005–2019). Anoxia shares estimated from CDC drowning patterns. Donor-eligibility calibration weights fitted via Nelder-Mead. **CDC data is 2017 vintage** (L-051). |
+
+### Scoring Engine (drives location suitability scores)
+
+| File | Tier | Source | Vintage | Notes |
+|------|------|--------|---------|-------|
+| `hospital-quality.json` | **API + Manual** | CMS Provider Data API (centerReputation) + SRTR manual research (centerVolumes) | Mar 2026 (CMS); 2023–2024 (volumes) | CMS ratings are general hospital quality, not transplant-specific (L-017 DEFERRED). Volumes hand-researched from SRTR program-specific reports. |
+| `health-demographics.json` | **Partial API** | CDC SODA API (diabetesRate only) | Mar 2026 (diabetes) | Only `diabetesRate` live-fetched. Other 4 fields (obesityRate, ckdRate, hypertensionRate, smokingRate) are **preserved seed data** from initial project setup. |
+| `cost-of-living.json` | **Seed (disputed)** | Claims BLS API but `metadata.json` says "skipped — no key" | Unknown | Portland value (43) is implausible. Likely seed data, not a real BLS fetch. 7 of 22 cities use fixed-ratio estimates from nearby cities (L-014). |
+| `donor-registration.json` | **Seed** | Labeled "UNOS / Hardcoded seed data" | Unknown | No fetch script exists (L-033 DEFERRED). `livingDonorProgramStrength` and `populationFactors` are round-number estimates. `stateRegistrationRates` are plausible but unverifiable. |
+| `air-quality.json` | **Seed** | EPA AQS fetch skipped (no API key) | Unknown | Static integers, never live-fetched. EPA API requires free registration for key. |
+| `traffic-fatalities.json` | **Seed** | NHTSA FARS API retired (L-045) | Unknown | Plausible values but permanently static. FARS CSV bulk download is an alternative but not implemented. |
+
+### Trend Analysis
+
+| File | Tier | Source | Vintage | Notes |
+|------|------|--------|---------|-------|
+| `srtr-historical.json` | **Synthetic** | `scripts/generate-srtr-historical.py` with `random.seed(42)` | N/A | **Entirely procedurally generated.** Calibrated against published SRTR statistics but NOT real historical data. The `_meta` field explicitly states "NOT real patient data." Powers trend sparklines and trajectory analysis. A `parse_historical_trends()` function exists in `parse-srtr-reports.py` but no historical SRTR Excel files have been downloaded. |
+
+### Manual / Curated
+
+| File | Tier | Source | Notes |
+|------|------|--------|-------|
+| `manual/socioeconomic.json` | **Manual** | Researcher assessment using transplant-support rubric | Housing programs, financial assistance, support groups — not from a published dataset |
+| `manual/climate-scores.json` | **Manual** | Subjective recovery climate scores | No API exists for this concept |
+| `manual/policy-tiers.json` | **Manual** | State donation policy research | Reviewed for accuracy (L-021 fix), should be re-reviewed annually |
+| `srtr-center-mapping.json` | **Manual** | SRTR center directory | Real SRTR center codes (e.g., PAPT = UPMC), manually maintained |
+
+### Key Takeaways for Paper
+
+1. **Core probability pipeline is real SRTR data** — national medians, city factors, mortality/delisting rates, and post-transplant outcomes all parsed from official January 2025 SRTR Excel releases.
+2. **Patient-level modifiers are literature-estimated** — blood type multipliers, cPRA/MELD/LAS effects, urgency/age mortality factors come from published literature, not SRTR-stratified data.
+3. **Historical trends are synthetic** — `srtr-historical.json` must be disclosed as calibrated simulations if trend charts appear in the paper.
+4. **Several scoring-engine inputs are seed data** — air quality, traffic fatalities, donor registration, and most health demographics have never been live-fetched. These affect the location suitability score (frontend) but NOT the probabilistic simulation engine (backend).
+5. **CDC cause-of-death data is from 2017** — drug intoxication distributions have shifted substantially since then (opioid crisis escalation).
+
+---
+
 ## Resolution Log
 
 | ID | Fixed In | Date | Notes |

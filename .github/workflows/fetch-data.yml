@@ -31,9 +31,10 @@ jobs:
         run: node scripts/fetch-traffic.js
         continue-on-error: true
 
-      - name: Parse API keys
-        run: |
-          echo "${{ secrets.EPA_BLS_KEYS }}" >> $GITHUB_ENV
+      - name: Load API keys
+        env:
+          EPA_BLS_KEYS: ${{ secrets.EPA_BLS_KEYS }}
+        run: echo "$EPA_BLS_KEYS" >> "$GITHUB_ENV"
 
       - name: Fetch air quality data (EPA AQS)
         run: node scripts/fetch-air-quality.js
