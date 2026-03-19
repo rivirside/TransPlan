@@ -372,15 +372,15 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
         outcomes_data = None
         try:
             outcomes_data = build_outcomes_dict(patient.organ, city, p_24)
-        except Exception:
-            pass
+        except (KeyError, FileNotFoundError, ValueError) as e:
+            logger.warning("Outcomes data unavailable for %s/%s: %s", patient.organ, city, e)
 
         # Historical trends (reuse existing service)
         trends_data = None
         try:
             trends_data = get_city_trends(patient.organ, city)
-        except Exception:
-            pass
+        except (KeyError, FileNotFoundError, ValueError) as e:
+            logger.warning("Trends data unavailable for %s/%s: %s", patient.organ, city, e)
 
         city_results.append(CityProbability(
             city=city,

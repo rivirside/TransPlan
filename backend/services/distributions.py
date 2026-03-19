@@ -11,6 +11,7 @@ Data source: data/wait-time-distributions.json (OPTN/SRTR 2023 Annual Data Repor
 """
 import json
 import logging
+import threading
 from pathlib import Path
 
 import numpy as np
@@ -22,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 _DISTRIBUTIONS: dict | None = None
 _CITY_FACTORS: dict[str, float] = {}
+_lock = threading.Lock()
 
 
 def _load_distributions() -> tuple[dict, dict[str, float]]:
@@ -45,10 +47,12 @@ def _load_distributions() -> tuple[dict, dict[str, float]]:
 
 
 def _ensure_loaded() -> None:
-    """Lazy-load distribution data on first call."""
+    """Lazy-load distribution data on first call (thread-safe)."""
     global _DISTRIBUTIONS, _CITY_FACTORS
     if _DISTRIBUTIONS is None:
-        _DISTRIBUTIONS, _CITY_FACTORS = _load_distributions()
+        with _lock:
+            if _DISTRIBUTIONS is None:  # double-checked locking
+                _DISTRIBUTIONS, _CITY_FACTORS = _load_distributions()
 
 
 def _get_range_multiplier(value: int | float, ranges: dict[str, float]) -> float:

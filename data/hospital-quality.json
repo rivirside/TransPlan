@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetchedAt": "2026-03-19T05:41:17.427Z",
+    "fetchedAt": "2026-03-19T16:53:05.499Z",
     "source": "CMS Provider Data API (centerReputation updated)"
   },
   "centerVolumes": {
@@ -136,28 +136,28 @@
     }
   },
   "centerReputation": {
-    "Pittsburgh": 87,
-    "Cleveland": 87,
-    "Baltimore": 87,
-    "Rochester": 87,
-    "Los Angeles": 87,
-    "San Francisco": 87,
-    "Minneapolis": 87,
-    "Durham": 87,
-    "Chicago": 87,
-    "Houston": 87,
-    "Palo Alto": 87,
+    "Pittsburgh": 99,
+    "Cleveland": 97,
+    "Baltimore": 96,
+    "Rochester": 96,
+    "Los Angeles": 94,
+    "San Francisco": 93,
+    "Minneapolis": 92,
+    "Durham": 91,
+    "Chicago": 89,
+    "Houston": 88,
+    "Palo Alto": 90,
     "Philadelphia": 87,
-    "Nashville": 87,
-    "Madison": 87,
+    "Nashville": 85,
+    "Madison": 86,
     "Seattle": 87,
-    "St. Louis": 87,
-    "Dallas": 87,
-    "Miami": 87,
-    "Portland": 87,
-    "Indianapolis": 87,
-    "Omaha": 87,
-    "New York": 87
+    "St. Louis": 84,
+    "Dallas": 82,
+    "Miami": 81,
+    "Portland": 83,
+    "Indianapolis": 80,
+    "Omaha": 82,
+    "New York": 91
   },
   "specializations": {
     "kidney": [

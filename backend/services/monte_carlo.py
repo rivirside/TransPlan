@@ -281,15 +281,15 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
         outcomes_data = None
         try:
             outcomes_data = build_outcomes_dict(patient.organ, city, p_24)
-        except Exception:
-            pass  # Graceful degradation if outcomes data unavailable
+        except (KeyError, FileNotFoundError, ValueError) as e:
+            logger.warning("Outcomes data unavailable for %s/%s: %s", patient.organ, city, e)
 
         # Phase 4 M3: Attach historical trends if available
         trends_data = None
         try:
             trends_data = get_city_trends(patient.organ, city)
-        except Exception:
-            pass  # Graceful degradation if trends data unavailable
+        except (KeyError, FileNotFoundError, ValueError) as e:
+            logger.warning("Trends data unavailable for %s/%s: %s", patient.organ, city, e)
 
         city_results.append(CityProbability(
             city=city,

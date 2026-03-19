@@ -11,6 +11,7 @@ Rates sourced from data/competing-risks.json (OPTN/SRTR 2023 Annual Data Report)
 """
 import json
 import logging
+import threading
 from pathlib import Path
 
 from config import DATA_DIR
@@ -19,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 _RISKS: dict | None = None
 _CITY_ADJUSTMENTS: dict[str, dict[str, float]] = {}
+_lock = threading.Lock()
 
 
 def _load_risks() -> tuple[dict, dict]:
@@ -40,9 +42,12 @@ def _load_risks() -> tuple[dict, dict]:
 
 
 def _ensure_loaded() -> None:
+    """Lazy-load competing risks data on first call (thread-safe)."""
     global _RISKS, _CITY_ADJUSTMENTS
     if _RISKS is None:
-        _RISKS, _CITY_ADJUSTMENTS = _load_risks()
+        with _lock:
+            if _RISKS is None:  # double-checked locking
+                _RISKS, _CITY_ADJUSTMENTS = _load_risks()
 
 
 def _get_range_multiplier(value: int | float, ranges: dict[str, float]) -> float:
