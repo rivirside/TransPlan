@@ -1,13 +1,18 @@
 """
-GET /interpolated-value — Query spatial interpolation surfaces.
-GET /spatial-layers — List available interpolation layers.
+Spatial analysis endpoints:
+  GET /interpolated-value — Query spatial interpolation surfaces
+  GET /spatial-layers — List available interpolation layers
+  GET /interpolated-profile — Multi-layer profile at a coordinate
+  GET /allocation-circles — UNOS allocation circle analysis
+  GET /distance-score — Composite distance/geography score
 
-Phase 6B issue #128.
+Phase 6B issues #128, #130.
 """
 import logging
 
 from fastapi import APIRouter, HTTPException, Query
 
+from services.allocation_geography import allocation_circles, distance_score
 from services.spatial_interpolation import available_layers, get_surface, interpolate_at
 
 logger = logging.getLogger(__name__)
@@ -81,3 +86,23 @@ def query_interpolated_profile(
         "values": results,
         "interpolation_method": "rbf",
     }
+
+
+@router.get("/allocation-circles")
+def query_allocation_circles(
+    lat: float = Query(..., ge=24.0, le=50.0, description="Latitude"),
+    lon: float = Query(..., ge=-125.0, le=-66.0, description="Longitude"),
+    organ: str = Query(default="kidney", description="Organ type"),
+):
+    """UNOS allocation circle analysis at a coordinate."""
+    return allocation_circles(lat, lon, organ)
+
+
+@router.get("/distance-score")
+def query_distance_score(
+    lat: float = Query(..., ge=24.0, le=50.0, description="Latitude"),
+    lon: float = Query(..., ge=-125.0, le=-66.0, description="Longitude"),
+    organ: str = Query(default="kidney", description="Organ type"),
+):
+    """Composite distance/geography score at a coordinate."""
+    return distance_score(lat, lon, organ)
