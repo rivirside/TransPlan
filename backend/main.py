@@ -25,7 +25,7 @@ from starlette.staticfiles import StaticFiles
 from starlette.types import Scope
 
 from config import ALLOWED_ORIGINS, DATA_DIR, VERSION
-from routers import centers, equity, health, sensitivity, shutdown, simulate, trends, what_if
+from routers import centers, equity, health, sensitivity, shutdown, simulate, spatial, trends, what_if
 from services.data_loader import load_all
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
@@ -94,6 +94,7 @@ app.include_router(equity.router, tags=["simulation"])
 app.include_router(what_if.router, tags=["simulation"])
 app.include_router(trends.router, tags=["trends"])
 app.include_router(centers.router, tags=["centers"])
+app.include_router(spatial.router, tags=["spatial"])
 
 
 # ---------------------------------------------------------------------------
