@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "fetchedAt": "2026-03-20T21:18:57.758Z",
-    "source": "CDC PLACES API (2956 counties, 4 indicators, age-adjusted prevalence)"
+    "fetchedAt": "2026-03-20T23:23:51.567Z",
+    "source": "CDC PLACES API (3144 counties: 2957 primary + 188 GIS fallback, 4 indicators, age-adjusted prevalence)"
   },
   "counties": {
     "10001": {
@@ -6773,6 +6773,1206 @@
       "smokingRate": 17.7,
       "diabetesRate": 13.9,
       "obesityRate": 40.7
+    },
+    "21001": {
+      "name": "Adair",
+      "state": "KY",
+      "lon": -85.2805346753505,
+      "lat": 37.1041325531016,
+      "diabetesRate": 12.1,
+      "obesityRate": 37.3,
+      "hypertensionRate": 37.8,
+      "smokingRate": 19.9
+    },
+    "21003": {
+      "name": "Allen",
+      "state": "KY",
+      "lon": -86.1908533047186,
+      "lat": 36.7508119663263,
+      "diabetesRate": 12.1,
+      "obesityRate": 41.8,
+      "hypertensionRate": 36.4,
+      "smokingRate": 20.7
+    },
+    "21005": {
+      "name": "Anderson",
+      "state": "KY",
+      "lon": -84.9907572373581,
+      "lat": 38.0037668325819,
+      "diabetesRate": 11.4,
+      "obesityRate": 38.1,
+      "hypertensionRate": 32.9,
+      "smokingRate": 20.6
+    },
+    "21007": {
+      "name": "Ballard",
+      "state": "KY",
+      "lon": -88.9992524332607,
+      "lat": 37.0586730536469,
+      "diabetesRate": 12.2,
+      "obesityRate": 39.5,
+      "hypertensionRate": 36.9,
+      "smokingRate": 22.3
+    },
+    "21009": {
+      "name": "Barren",
+      "state": "KY",
+      "lon": -85.9336697418024,
+      "lat": 36.9652737090174,
+      "diabetesRate": 12.3,
+      "obesityRate": 40.7,
+      "hypertensionRate": 38.4,
+      "smokingRate": 18.9
+    },
+    "21011": {
+      "name": "Bath",
+      "state": "KY",
+      "lon": -83.7425088209458,
+      "lat": 38.1445093169556,
+      "diabetesRate": 11.5,
+      "obesityRate": 38.4,
+      "hypertensionRate": 36.7,
+      "smokingRate": 20.2
+    },
+    "21013": {
+      "name": "Bell",
+      "state": "KY",
+      "lon": -83.6741157617272,
+      "lat": 36.7309048152699,
+      "diabetesRate": 14.3,
+      "obesityRate": 44.2,
+      "hypertensionRate": 40.8,
+      "smokingRate": 25.4
+    },
+    "21015": {
+      "name": "Boone",
+      "state": "KY",
+      "lon": -84.7278410698523,
+      "lat": 38.9698579510047,
+      "diabetesRate": 10.6,
+      "obesityRate": 38.5,
+      "hypertensionRate": 32,
+      "smokingRate": 17.3
+    },
+    "21017": {
+      "name": "Bourbon",
+      "state": "KY",
+      "lon": -84.2168343029249,
+      "lat": 38.2067988804215,
+      "diabetesRate": 12.4,
+      "obesityRate": 40.5,
+      "hypertensionRate": 34.7,
+      "smokingRate": 19.4
+    },
+    "21019": {
+      "name": "Boyd",
+      "state": "KY",
+      "lon": -82.6878142037453,
+      "lat": 38.3593442053016,
+      "diabetesRate": 12,
+      "obesityRate": 40.8,
+      "hypertensionRate": 35.4,
+      "smokingRate": 19.7
+    },
+    "21021": {
+      "name": "Boyle",
+      "state": "KY",
+      "lon": -84.8671221941253,
+      "lat": 37.623981243286,
+      "diabetesRate": 11.5,
+      "obesityRate": 38,
+      "hypertensionRate": 34.1,
+      "smokingRate": 18.2
+    },
+    "21023": {
+      "name": "Bracken",
+      "state": "KY",
+      "lon": -84.0898722887174,
+      "lat": 38.6885793659077,
+      "diabetesRate": 11.9,
+      "obesityRate": 37.2,
+      "hypertensionRate": 36,
+      "smokingRate": 19.4
+    },
+    "21025": {
+      "name": "Breathitt",
+      "state": "KY",
+      "lon": -83.3232215203167,
+      "lat": 37.5213497423623,
+      "diabetesRate": 13.1,
+      "obesityRate": 43.1,
+      "hypertensionRate": 38.7,
+      "smokingRate": 24.4
+    },
+    "21027": {
+      "name": "Breckinridge",
+      "state": "KY",
+      "lon": -86.4292831451791,
+      "lat": 37.7729982869113,
+      "diabetesRate": 14,
+      "obesityRate": 40.1,
+      "hypertensionRate": 37,
+      "smokingRate": 27.2
+    },
+    "21029": {
+      "name": "Bullitt",
+      "state": "KY",
+      "lon": -85.6958525101028,
+      "lat": 37.9697045348797,
+      "diabetesRate": 11,
+      "obesityRate": 38.1,
+      "hypertensionRate": 32.8,
+      "smokingRate": 19.6
+    },
+    "21031": {
+      "name": "Butler",
+      "state": "KY",
+      "lon": -86.6819182717443,
+      "lat": 37.2073783627657,
+      "diabetesRate": 12.7,
+      "obesityRate": 42.8,
+      "hypertensionRate": 35.8,
+      "smokingRate": 22
+    },
+    "21033": {
+      "name": "Caldwell",
+      "state": "KY",
+      "lon": -87.8682999178812,
+      "lat": 37.1454911977858,
+      "diabetesRate": 11.9,
+      "obesityRate": 38,
+      "hypertensionRate": 35.5,
+      "smokingRate": 20.7
+    },
+    "21035": {
+      "name": "Calloway",
+      "state": "KY",
+      "lon": -88.2723209240063,
+      "lat": 36.6209160964555,
+      "diabetesRate": 11.8,
+      "obesityRate": 40.6,
+      "hypertensionRate": 35.2,
+      "smokingRate": 16.3
+    },
+    "21037": {
+      "name": "Campbell",
+      "state": "KY",
+      "lon": -84.3795922103317,
+      "lat": 38.945869235336,
+      "diabetesRate": 10.3,
+      "obesityRate": 35.5,
+      "hypertensionRate": 33.2,
+      "smokingRate": 14.9
+    },
+    "21039": {
+      "name": "Carlisle",
+      "state": "KY",
+      "lon": -88.9710130191677,
+      "lat": 36.8528730035718,
+      "diabetesRate": 12.4,
+      "obesityRate": 40.8,
+      "hypertensionRate": 36.7,
+      "smokingRate": 22.4
+    },
+    "21041": {
+      "name": "Carroll",
+      "state": "KY",
+      "lon": -85.1234865707717,
+      "lat": 38.6682857333643,
+      "diabetesRate": 12.9,
+      "obesityRate": 40.4,
+      "hypertensionRate": 37,
+      "smokingRate": 22.2
+    },
+    "21043": {
+      "name": "Carter",
+      "state": "KY",
+      "lon": -83.0503702006905,
+      "lat": 38.3180880246439,
+      "diabetesRate": 12.8,
+      "obesityRate": 42.9,
+      "hypertensionRate": 37.9,
+      "smokingRate": 21.5
+    },
+    "21045": {
+      "name": "Casey",
+      "state": "KY",
+      "lon": -84.9284353074575,
+      "lat": 37.3221091881153,
+      "diabetesRate": 14.2,
+      "obesityRate": 41.4,
+      "hypertensionRate": 37.8,
+      "smokingRate": 25.7
+    },
+    "21047": {
+      "name": "Christian",
+      "state": "KY",
+      "lon": -87.4905785531917,
+      "lat": 36.8936872854935,
+      "diabetesRate": 13.9,
+      "obesityRate": 41.8,
+      "hypertensionRate": 40,
+      "smokingRate": 21.3
+    },
+    "21049": {
+      "name": "Clark",
+      "state": "KY",
+      "lon": -84.1474184971483,
+      "lat": 37.9706526004069,
+      "diabetesRate": 11.6,
+      "obesityRate": 40,
+      "hypertensionRate": 35.7,
+      "smokingRate": 19.6
+    },
+    "21051": {
+      "name": "Clay",
+      "state": "KY",
+      "lon": -83.7140330666104,
+      "lat": 37.1591369224482,
+      "diabetesRate": 14.6,
+      "obesityRate": 43.2,
+      "hypertensionRate": 41.1,
+      "smokingRate": 27.4
+    },
+    "21053": {
+      "name": "Clinton",
+      "state": "KY",
+      "lon": -85.136495974481,
+      "lat": 36.7276110005056,
+      "diabetesRate": 13.1,
+      "obesityRate": 39.6,
+      "hypertensionRate": 38.3,
+      "smokingRate": 23.1
+    },
+    "21055": {
+      "name": "Crittenden",
+      "state": "KY",
+      "lon": -88.0968339426757,
+      "lat": 37.3524113003446,
+      "diabetesRate": 12.1,
+      "obesityRate": 41,
+      "hypertensionRate": 36.8,
+      "smokingRate": 20.6
+    },
+    "21057": {
+      "name": "Cumberland",
+      "state": "KY",
+      "lon": -85.3881053685446,
+      "lat": 36.7864311819907,
+      "diabetesRate": 13.3,
+      "obesityRate": 42.8,
+      "hypertensionRate": 39.2,
+      "smokingRate": 23.1
+    },
+    "21059": {
+      "name": "Daviess",
+      "state": "KY",
+      "lon": -87.0877123565695,
+      "lat": 37.731853475357,
+      "diabetesRate": 11.4,
+      "obesityRate": 35.6,
+      "hypertensionRate": 33.9,
+      "smokingRate": 19.2
+    },
+    "21061": {
+      "name": "Edmonson",
+      "state": "KY",
+      "lon": -86.238233123919,
+      "lat": 37.209015727993,
+      "diabetesRate": 12.3,
+      "obesityRate": 42.7,
+      "hypertensionRate": 36.3,
+      "smokingRate": 23.2
+    },
+    "21063": {
+      "name": "Elliott",
+      "state": "KY",
+      "lon": -83.0976565838469,
+      "lat": 38.1191036910369,
+      "diabetesRate": 13.8,
+      "obesityRate": 42.2,
+      "hypertensionRate": 40.7,
+      "smokingRate": 23
+    },
+    "21065": {
+      "name": "Estill",
+      "state": "KY",
+      "lon": -83.9634186550768,
+      "lat": 37.6919509574463,
+      "diabetesRate": 13.2,
+      "obesityRate": 42.2,
+      "hypertensionRate": 38,
+      "smokingRate": 25.1
+    },
+    "21067": {
+      "name": "Fayette",
+      "state": "KY",
+      "lon": -84.4587525572091,
+      "lat": 38.0426386097612,
+      "diabetesRate": 11.5,
+      "obesityRate": 34.9,
+      "hypertensionRate": 35.4,
+      "smokingRate": 16.4
+    },
+    "21069": {
+      "name": "Fleming",
+      "state": "KY",
+      "lon": -83.6964964992036,
+      "lat": 38.3703100283795,
+      "diabetesRate": 13,
+      "obesityRate": 41,
+      "hypertensionRate": 35.7,
+      "smokingRate": 24.2
+    },
+    "21071": {
+      "name": "Floyd",
+      "state": "KY",
+      "lon": -82.7456587772522,
+      "lat": 37.5573582856124,
+      "diabetesRate": 12.7,
+      "obesityRate": 39.9,
+      "hypertensionRate": 40.1,
+      "smokingRate": 23.1
+    },
+    "21073": {
+      "name": "Franklin",
+      "state": "KY",
+      "lon": -84.8771189162513,
+      "lat": 38.2393138397685,
+      "diabetesRate": 11.1,
+      "obesityRate": 37.6,
+      "hypertensionRate": 33.9,
+      "smokingRate": 15.9
+    },
+    "21075": {
+      "name": "Fulton",
+      "state": "KY",
+      "lon": -89.1872234673432,
+      "lat": 36.5540492089998,
+      "diabetesRate": 15.7,
+      "obesityRate": 45.4,
+      "hypertensionRate": 41.9,
+      "smokingRate": 27.3
+    },
+    "21077": {
+      "name": "Gallatin",
+      "state": "KY",
+      "lon": -84.8595180021621,
+      "lat": 38.7575987484902,
+      "diabetesRate": 12.2,
+      "obesityRate": 40.3,
+      "hypertensionRate": 36.2,
+      "smokingRate": 20.4
+    },
+    "21079": {
+      "name": "Garrard",
+      "state": "KY",
+      "lon": -84.5378048474526,
+      "lat": 37.6390632992452,
+      "diabetesRate": 12.2,
+      "obesityRate": 39.5,
+      "hypertensionRate": 36,
+      "smokingRate": 20.6
+    },
+    "21081": {
+      "name": "Grant",
+      "state": "KY",
+      "lon": -84.6244499110899,
+      "lat": 38.6486144764892,
+      "diabetesRate": 11.2,
+      "obesityRate": 37.8,
+      "hypertensionRate": 36.5,
+      "smokingRate": 21.8
+    },
+    "21083": {
+      "name": "Graves",
+      "state": "KY",
+      "lon": -88.6511228405933,
+      "lat": 36.7230236653849,
+      "diabetesRate": 12.2,
+      "obesityRate": 40.5,
+      "hypertensionRate": 37.3,
+      "smokingRate": 20.7
+    },
+    "21085": {
+      "name": "Grayson",
+      "state": "KY",
+      "lon": -86.3433553918047,
+      "lat": 37.4605342286517,
+      "diabetesRate": 12.5,
+      "obesityRate": 42.2,
+      "hypertensionRate": 38.4,
+      "smokingRate": 21.2
+    },
+    "21087": {
+      "name": "Green",
+      "state": "KY",
+      "lon": -85.552828171687,
+      "lat": 37.2634349040903,
+      "diabetesRate": 13.5,
+      "obesityRate": 42,
+      "hypertensionRate": 38.5,
+      "smokingRate": 25.9
+    },
+    "21089": {
+      "name": "Greenup",
+      "state": "KY",
+      "lon": -82.9225730950791,
+      "lat": 38.5458069166723,
+      "diabetesRate": 11.7,
+      "obesityRate": 43.8,
+      "hypertensionRate": 34,
+      "smokingRate": 19.9
+    },
+    "21091": {
+      "name": "Hancock",
+      "state": "KY",
+      "lon": -86.7778399083922,
+      "lat": 37.8415102879487,
+      "diabetesRate": 11.2,
+      "obesityRate": 38.4,
+      "hypertensionRate": 33.5,
+      "smokingRate": 18.9
+    },
+    "21093": {
+      "name": "Hardin",
+      "state": "KY",
+      "lon": -85.9635542844833,
+      "lat": 37.6976016089281,
+      "diabetesRate": 12.1,
+      "obesityRate": 38.9,
+      "hypertensionRate": 34.9,
+      "smokingRate": 17.4
+    },
+    "21095": {
+      "name": "Harlan",
+      "state": "KY",
+      "lon": -83.2174837027453,
+      "lat": 36.8569364661169,
+      "diabetesRate": 14.5,
+      "obesityRate": 44.7,
+      "hypertensionRate": 41.2,
+      "smokingRate": 27.8
+    },
+    "21097": {
+      "name": "Harrison",
+      "state": "KY",
+      "lon": -84.331560906251,
+      "lat": 38.4420345571661,
+      "diabetesRate": 11.5,
+      "obesityRate": 40,
+      "hypertensionRate": 35.6,
+      "smokingRate": 20.6
+    },
+    "21099": {
+      "name": "Hart",
+      "state": "KY",
+      "lon": -85.8843957778659,
+      "lat": 37.2997149371142,
+      "diabetesRate": 13.5,
+      "obesityRate": 38.2,
+      "hypertensionRate": 38.4,
+      "smokingRate": 24
+    },
+    "21101": {
+      "name": "Henderson",
+      "state": "KY",
+      "lon": -87.5736419883092,
+      "lat": 37.7960717780832,
+      "diabetesRate": 11,
+      "obesityRate": 40.3,
+      "hypertensionRate": 35.5,
+      "smokingRate": 17.2
+    },
+    "21103": {
+      "name": "Henry",
+      "state": "KY",
+      "lon": -85.1190776551001,
+      "lat": 38.4487901633342,
+      "diabetesRate": 12.5,
+      "obesityRate": 40.6,
+      "hypertensionRate": 35.9,
+      "smokingRate": 20.7
+    },
+    "21105": {
+      "name": "Hickman",
+      "state": "KY",
+      "lon": -88.9757558942533,
+      "lat": 36.6780265601489,
+      "diabetesRate": 11.7,
+      "obesityRate": 40.8,
+      "hypertensionRate": 37.9,
+      "smokingRate": 20.2
+    },
+    "21107": {
+      "name": "Hopkins",
+      "state": "KY",
+      "lon": -87.5408326527605,
+      "lat": 37.3081444900735,
+      "diabetesRate": 13.2,
+      "obesityRate": 40.7,
+      "hypertensionRate": 38.1,
+      "smokingRate": 21.8
+    },
+    "21109": {
+      "name": "Jackson",
+      "state": "KY",
+      "lon": -84.0060290200328,
+      "lat": 37.4196852484332,
+      "diabetesRate": 13.9,
+      "obesityRate": 41.9,
+      "hypertensionRate": 39.6,
+      "smokingRate": 28
+    },
+    "21111": {
+      "name": "Jefferson",
+      "state": "KY",
+      "lon": -85.6594494059303,
+      "lat": 38.1871000298821,
+      "diabetesRate": 12,
+      "obesityRate": 37.2,
+      "hypertensionRate": 34.1,
+      "smokingRate": 17
+    },
+    "21113": {
+      "name": "Jessamine",
+      "state": "KY",
+      "lon": -84.5804067252468,
+      "lat": 37.8719603154165,
+      "diabetesRate": 10.5,
+      "obesityRate": 36.7,
+      "hypertensionRate": 33.5,
+      "smokingRate": 14.8
+    },
+    "21115": {
+      "name": "Johnson",
+      "state": "KY",
+      "lon": -82.8311695927073,
+      "lat": 37.8465874701088,
+      "diabetesRate": 13.5,
+      "obesityRate": 42.4,
+      "hypertensionRate": 37.6,
+      "smokingRate": 26.9
+    },
+    "21117": {
+      "name": "Kenton",
+      "state": "KY",
+      "lon": -84.5335837248603,
+      "lat": 38.9340746084127,
+      "diabetesRate": 10.4,
+      "obesityRate": 34.7,
+      "hypertensionRate": 33.2,
+      "smokingRate": 15.6
+    },
+    "21119": {
+      "name": "Knott",
+      "state": "KY",
+      "lon": -82.9536692365113,
+      "lat": 37.353648307061,
+      "diabetesRate": 14.1,
+      "obesityRate": 42.5,
+      "hypertensionRate": 39.8,
+      "smokingRate": 25.6
+    },
+    "21121": {
+      "name": "Knox",
+      "state": "KY",
+      "lon": -83.8550666376819,
+      "lat": 36.8904261100984,
+      "diabetesRate": 13.2,
+      "obesityRate": 40.6,
+      "hypertensionRate": 41.2,
+      "smokingRate": 22.8
+    },
+    "21123": {
+      "name": "Larue",
+      "state": "KY",
+      "lon": -85.6975773220198,
+      "lat": 37.5455084535106,
+      "diabetesRate": 13,
+      "obesityRate": 42.3,
+      "hypertensionRate": 35,
+      "smokingRate": 24.6
+    },
+    "21125": {
+      "name": "Laurel",
+      "state": "KY",
+      "lon": -84.1180802245554,
+      "lat": 37.110260965665,
+      "diabetesRate": 12.6,
+      "obesityRate": 41.1,
+      "hypertensionRate": 38.3,
+      "smokingRate": 21.3
+    },
+    "21127": {
+      "name": "Lawrence",
+      "state": "KY",
+      "lon": -82.7348687502246,
+      "lat": 38.0677301038054,
+      "diabetesRate": 12.9,
+      "obesityRate": 39.7,
+      "hypertensionRate": 38.5,
+      "smokingRate": 22.1
+    },
+    "21129": {
+      "name": "Lee",
+      "state": "KY",
+      "lon": -83.7161047700104,
+      "lat": 37.5945435020286,
+      "diabetesRate": 16,
+      "obesityRate": 43.3,
+      "hypertensionRate": 41.3,
+      "smokingRate": 29
+    },
+    "21131": {
+      "name": "Leslie",
+      "state": "KY",
+      "lon": -83.38157615835,
+      "lat": 37.0935641968066,
+      "diabetesRate": 13.8,
+      "obesityRate": 43.7,
+      "hypertensionRate": 40.9,
+      "smokingRate": 23.3
+    },
+    "21133": {
+      "name": "Letcher",
+      "state": "KY",
+      "lon": -82.8555345380638,
+      "lat": 37.1211282696762,
+      "diabetesRate": 12.7,
+      "obesityRate": 40.6,
+      "hypertensionRate": 39.9,
+      "smokingRate": 21.2
+    },
+    "21135": {
+      "name": "Lewis",
+      "state": "KY",
+      "lon": -83.3784333524444,
+      "lat": 38.5315059298869,
+      "diabetesRate": 14.1,
+      "obesityRate": 46.3,
+      "hypertensionRate": 40.4,
+      "smokingRate": 26.3
+    },
+    "21137": {
+      "name": "Lincoln",
+      "state": "KY",
+      "lon": -84.6609626267969,
+      "lat": 37.45483747574,
+      "diabetesRate": 12.3,
+      "obesityRate": 40.2,
+      "hypertensionRate": 37.5,
+      "smokingRate": 20.5
+    },
+    "21139": {
+      "name": "Livingston",
+      "state": "KY",
+      "lon": -88.3536595324596,
+      "lat": 37.2104460426636,
+      "diabetesRate": 11.5,
+      "obesityRate": 41.1,
+      "hypertensionRate": 35.8,
+      "smokingRate": 19.4
+    },
+    "21141": {
+      "name": "Logan",
+      "state": "KY",
+      "lon": -86.8787139815547,
+      "lat": 36.8597098212356,
+      "diabetesRate": 12.1,
+      "obesityRate": 40.2,
+      "hypertensionRate": 37.6,
+      "smokingRate": 17.8
+    },
+    "21143": {
+      "name": "Lyon",
+      "state": "KY",
+      "lon": -88.0829816796418,
+      "lat": 37.0191351178528,
+      "diabetesRate": 12.1,
+      "obesityRate": 38.3,
+      "hypertensionRate": 35.7,
+      "smokingRate": 18.4
+    },
+    "21145": {
+      "name": "McCracken",
+      "state": "KY",
+      "lon": -88.712418573827,
+      "lat": 37.05389011778,
+      "diabetesRate": 12.3,
+      "obesityRate": 41.6,
+      "hypertensionRate": 36.8,
+      "smokingRate": 19.7
+    },
+    "21147": {
+      "name": "McCreary",
+      "state": "KY",
+      "lon": -84.4842553993993,
+      "lat": 36.7369269014208,
+      "diabetesRate": 15.1,
+      "obesityRate": 43.2,
+      "hypertensionRate": 41.3,
+      "smokingRate": 25.2
+    },
+    "21149": {
+      "name": "McLean",
+      "state": "KY",
+      "lon": -87.2636837283712,
+      "lat": 37.5289961493988,
+      "diabetesRate": 11.3,
+      "obesityRate": 39.8,
+      "hypertensionRate": 35.5,
+      "smokingRate": 19.9
+    },
+    "21151": {
+      "name": "Madison",
+      "state": "KY",
+      "lon": -84.2773367673672,
+      "lat": 37.720070607056,
+      "diabetesRate": 11.1,
+      "obesityRate": 35.9,
+      "hypertensionRate": 34,
+      "smokingRate": 17.7
+    },
+    "21153": {
+      "name": "Magoffin",
+      "state": "KY",
+      "lon": -83.0646682588275,
+      "lat": 37.7056860924685,
+      "diabetesRate": 15.1,
+      "obesityRate": 44.8,
+      "hypertensionRate": 40.4,
+      "smokingRate": 28.5
+    },
+    "21155": {
+      "name": "Marion",
+      "state": "KY",
+      "lon": -85.2695054075044,
+      "lat": 37.5524792654324,
+      "diabetesRate": 12.9,
+      "obesityRate": 41.1,
+      "hypertensionRate": 36.7,
+      "smokingRate": 22.6
+    },
+    "21157": {
+      "name": "Marshall",
+      "state": "KY",
+      "lon": -88.3291758441086,
+      "lat": 36.8833337985024,
+      "diabetesRate": 10.9,
+      "obesityRate": 38.5,
+      "hypertensionRate": 34.3,
+      "smokingRate": 19
+    },
+    "21159": {
+      "name": "Martin",
+      "state": "KY",
+      "lon": -82.5138935683885,
+      "lat": 37.8005607999162,
+      "diabetesRate": 15.3,
+      "obesityRate": 43.3,
+      "hypertensionRate": 39,
+      "smokingRate": 29.5
+    },
+    "21161": {
+      "name": "Mason",
+      "state": "KY",
+      "lon": -83.8240459724498,
+      "lat": 38.5952597127634,
+      "diabetesRate": 12.2,
+      "obesityRate": 40,
+      "hypertensionRate": 37,
+      "smokingRate": 22.5
+    },
+    "21163": {
+      "name": "Meade",
+      "state": "KY",
+      "lon": -86.2170264932366,
+      "lat": 37.9696619312227,
+      "diabetesRate": 11.2,
+      "obesityRate": 37.8,
+      "hypertensionRate": 34.4,
+      "smokingRate": 19.3
+    },
+    "21165": {
+      "name": "Menifee",
+      "state": "KY",
+      "lon": -83.5985871732603,
+      "lat": 37.9414595291336,
+      "diabetesRate": 13.4,
+      "obesityRate": 40.8,
+      "hypertensionRate": 37,
+      "smokingRate": 25.4
+    },
+    "21167": {
+      "name": "Mercer",
+      "state": "KY",
+      "lon": -84.8735371391474,
+      "lat": 37.8107366587476,
+      "diabetesRate": 11,
+      "obesityRate": 38.4,
+      "hypertensionRate": 34,
+      "smokingRate": 17.1
+    },
+    "21169": {
+      "name": "Metcalfe",
+      "state": "KY",
+      "lon": -85.6290161169446,
+      "lat": 36.9904294171946,
+      "diabetesRate": 12.6,
+      "obesityRate": 41.7,
+      "hypertensionRate": 36.4,
+      "smokingRate": 24.6
+    },
+    "21171": {
+      "name": "Monroe",
+      "state": "KY",
+      "lon": -85.7160839875009,
+      "lat": 36.7122110158609,
+      "diabetesRate": 12.2,
+      "obesityRate": 39.4,
+      "hypertensionRate": 36.8,
+      "smokingRate": 22.2
+    },
+    "21173": {
+      "name": "Montgomery",
+      "state": "KY",
+      "lon": -83.9127364923548,
+      "lat": 38.0328665261264,
+      "diabetesRate": 12.1,
+      "obesityRate": 42.3,
+      "hypertensionRate": 36.8,
+      "smokingRate": 21.7
+    },
+    "21175": {
+      "name": "Morgan",
+      "state": "KY",
+      "lon": -83.2580942035013,
+      "lat": 37.9221947860441,
+      "diabetesRate": 13,
+      "obesityRate": 38.7,
+      "hypertensionRate": 39.1,
+      "smokingRate": 24.1
+    },
+    "21177": {
+      "name": "Muhlenberg",
+      "state": "KY",
+      "lon": -87.1424422137132,
+      "lat": 37.2157493105345,
+      "diabetesRate": 12.5,
+      "obesityRate": 41.4,
+      "hypertensionRate": 36.7,
+      "smokingRate": 21.8
+    },
+    "21179": {
+      "name": "Nelson",
+      "state": "KY",
+      "lon": -85.4661129663254,
+      "lat": 37.8047557055836,
+      "diabetesRate": 10.4,
+      "obesityRate": 34.4,
+      "hypertensionRate": 33.3,
+      "smokingRate": 16
+    },
+    "21181": {
+      "name": "Nicholas",
+      "state": "KY",
+      "lon": -84.0150151282752,
+      "lat": 38.3355074135624,
+      "diabetesRate": 12.4,
+      "obesityRate": 40.2,
+      "hypertensionRate": 37,
+      "smokingRate": 21.5
+    },
+    "21183": {
+      "name": "Ohio",
+      "state": "KY",
+      "lon": -86.8485526530276,
+      "lat": 37.4784025555247,
+      "diabetesRate": 11.9,
+      "obesityRate": 40.3,
+      "hypertensionRate": 35.8,
+      "smokingRate": 21.9
+    },
+    "21185": {
+      "name": "Oldham",
+      "state": "KY",
+      "lon": -85.4487186864819,
+      "lat": 38.3999488893367,
+      "diabetesRate": 9,
+      "obesityRate": 34.2,
+      "hypertensionRate": 31.2,
+      "smokingRate": 12.6
+    },
+    "21187": {
+      "name": "Owen",
+      "state": "KY",
+      "lon": -84.8277485071411,
+      "lat": 38.5202812499294,
+      "diabetesRate": 11.6,
+      "obesityRate": 38.8,
+      "hypertensionRate": 34.6,
+      "smokingRate": 21.3
+    },
+    "21189": {
+      "name": "Owsley",
+      "state": "KY",
+      "lon": -83.6832279038396,
+      "lat": 37.4195062027871,
+      "diabetesRate": 13.7,
+      "obesityRate": 41.2,
+      "hypertensionRate": 39,
+      "smokingRate": 25.6
+    },
+    "21191": {
+      "name": "Pendleton",
+      "state": "KY",
+      "lon": -84.3604490430322,
+      "lat": 38.6954211173796,
+      "diabetesRate": 12.1,
+      "obesityRate": 39.9,
+      "hypertensionRate": 35.7,
+      "smokingRate": 21.1
+    },
+    "21193": {
+      "name": "Perry",
+      "state": "KY",
+      "lon": -83.2219648663507,
+      "lat": 37.2440537215289,
+      "diabetesRate": 12.8,
+      "obesityRate": 41,
+      "hypertensionRate": 39.8,
+      "smokingRate": 22.4
+    },
+    "21195": {
+      "name": "Pike",
+      "state": "KY",
+      "lon": -82.3954805678055,
+      "lat": 37.4688416421726,
+      "diabetesRate": 12.9,
+      "obesityRate": 41.2,
+      "hypertensionRate": 39.6,
+      "smokingRate": 25.5
+    },
+    "21197": {
+      "name": "Powell",
+      "state": "KY",
+      "lon": -83.8237405874821,
+      "lat": 37.8307798699605,
+      "diabetesRate": 12,
+      "obesityRate": 39.7,
+      "hypertensionRate": 35.4,
+      "smokingRate": 21.2
+    },
+    "21199": {
+      "name": "Pulaski",
+      "state": "KY",
+      "lon": -84.5775259958431,
+      "lat": 37.1039609045314,
+      "diabetesRate": 12.9,
+      "obesityRate": 39.3,
+      "hypertensionRate": 36,
+      "smokingRate": 23.4
+    },
+    "21201": {
+      "name": "Robertson",
+      "state": "KY",
+      "lon": -84.0524163932956,
+      "lat": 38.5182993766482,
+      "diabetesRate": 13.2,
+      "obesityRate": 40.8,
+      "hypertensionRate": 37.6,
+      "smokingRate": 24.4
+    },
+    "21203": {
+      "name": "Rockcastle",
+      "state": "KY",
+      "lon": -84.3159750395203,
+      "lat": 37.3649576669397,
+      "diabetesRate": 13.3,
+      "obesityRate": 40.5,
+      "hypertensionRate": 37.3,
+      "smokingRate": 26
+    },
+    "21205": {
+      "name": "Rowan",
+      "state": "KY",
+      "lon": -83.4210384555756,
+      "lat": 38.1967567956103,
+      "diabetesRate": 13.2,
+      "obesityRate": 41.5,
+      "hypertensionRate": 36.4,
+      "smokingRate": 20.8
+    },
+    "21207": {
+      "name": "Russell",
+      "state": "KY",
+      "lon": -85.0582492809635,
+      "lat": 36.9910348161457,
+      "diabetesRate": 13.7,
+      "obesityRate": 40,
+      "hypertensionRate": 36.8,
+      "smokingRate": 25.6
+    },
+    "21209": {
+      "name": "Scott",
+      "state": "KY",
+      "lon": -84.5834151899489,
+      "lat": 38.2913277372308,
+      "diabetesRate": 10.5,
+      "obesityRate": 36.4,
+      "hypertensionRate": 34.1,
+      "smokingRate": 15.8
+    },
+    "21211": {
+      "name": "Shelby",
+      "state": "KY",
+      "lon": -85.1954663779715,
+      "lat": 38.2157212257424,
+      "diabetesRate": 10.5,
+      "obesityRate": 36.1,
+      "hypertensionRate": 32.6,
+      "smokingRate": 15.7
+    },
+    "21213": {
+      "name": "Simpson",
+      "state": "KY",
+      "lon": -86.5827258558606,
+      "lat": 36.7418216694779,
+      "diabetesRate": 11.6,
+      "obesityRate": 41,
+      "hypertensionRate": 35.2,
+      "smokingRate": 19
+    },
+    "21215": {
+      "name": "Spencer",
+      "state": "KY",
+      "lon": -85.3283117620282,
+      "lat": 38.0327291596861,
+      "diabetesRate": 10.8,
+      "obesityRate": 36.9,
+      "hypertensionRate": 33.3,
+      "smokingRate": 19.1
+    },
+    "21217": {
+      "name": "Taylor",
+      "state": "KY",
+      "lon": -85.328384341449,
+      "lat": 37.3663748425833,
+      "diabetesRate": 11.8,
+      "obesityRate": 38.2,
+      "hypertensionRate": 34.7,
+      "smokingRate": 20.5
+    },
+    "21219": {
+      "name": "Todd",
+      "state": "KY",
+      "lon": -87.1791369851051,
+      "lat": 36.8357920521695,
+      "diabetesRate": 13.7,
+      "obesityRate": 39.6,
+      "hypertensionRate": 37,
+      "smokingRate": 23.2
+    },
+    "21221": {
+      "name": "Trigg",
+      "state": "KY",
+      "lon": -87.8732998555619,
+      "lat": 36.8063370344073,
+      "diabetesRate": 12.5,
+      "obesityRate": 40.3,
+      "hypertensionRate": 36.9,
+      "smokingRate": 19.6
+    },
+    "21223": {
+      "name": "Trimble",
+      "state": "KY",
+      "lon": -85.3370797534498,
+      "lat": 38.6131211554902,
+      "diabetesRate": 11.2,
+      "obesityRate": 38.6,
+      "hypertensionRate": 35.1,
+      "smokingRate": 19.7
+    },
+    "21225": {
+      "name": "Union",
+      "state": "KY",
+      "lon": -87.9455809653809,
+      "lat": 37.6583215189591,
+      "diabetesRate": 12.2,
+      "obesityRate": 38.9,
+      "hypertensionRate": 36.9,
+      "smokingRate": 23.7
+    },
+    "21227": {
+      "name": "Warren",
+      "state": "KY",
+      "lon": -86.423795688141,
+      "lat": 36.9936128536653,
+      "diabetesRate": 12.1,
+      "obesityRate": 36.3,
+      "hypertensionRate": 33.8,
+      "smokingRate": 15.3
+    },
+    "21229": {
+      "name": "Washington",
+      "state": "KY",
+      "lon": -85.175051728938,
+      "lat": 37.7532982899311,
+      "diabetesRate": 11.8,
+      "obesityRate": 37.4,
+      "hypertensionRate": 36.5,
+      "smokingRate": 17.9
+    },
+    "21231": {
+      "name": "Wayne",
+      "state": "KY",
+      "lon": -84.8283531236799,
+      "lat": 36.8008845409014,
+      "diabetesRate": 14.2,
+      "obesityRate": 42.1,
+      "hypertensionRate": 38.2,
+      "smokingRate": 25.9
+    },
+    "21233": {
+      "name": "Webster",
+      "state": "KY",
+      "lon": -87.6832955337496,
+      "lat": 37.518446887012,
+      "diabetesRate": 12.8,
+      "obesityRate": 38.2,
+      "hypertensionRate": 36.3,
+      "smokingRate": 22.9
+    },
+    "21235": {
+      "name": "Whitley",
+      "state": "KY",
+      "lon": -84.1455599220577,
+      "lat": 36.7583673699124,
+      "diabetesRate": 12.4,
+      "obesityRate": 41.4,
+      "hypertensionRate": 37.7,
+      "smokingRate": 22
+    },
+    "21237": {
+      "name": "Wolfe",
+      "state": "KY",
+      "lon": -83.493391657711,
+      "lat": 37.7385530324992,
+      "diabetesRate": 16.1,
+      "obesityRate": 44.7,
+      "hypertensionRate": 42.1,
+      "smokingRate": 31
+    },
+    "21239": {
+      "name": "Woodford",
+      "state": "KY",
+      "lon": -84.7431415312927,
+      "lat": 38.04293919193,
+      "diabetesRate": 10,
+      "obesityRate": 35.1,
+      "hypertensionRate": 31.9,
+      "smokingRate": 12
     },
     "22001": {
       "name": "Acadia",
@@ -18084,6 +19284,676 @@
       "diabetesRate": 9.7,
       "obesityRate": 37.3
     },
+    "42001": {
+      "name": "Adams",
+      "state": "PA",
+      "lon": -77.2179067034351,
+      "lat": 39.871619978239,
+      "diabetesRate": 8.8,
+      "obesityRate": 37.3,
+      "hypertensionRate": 29.5,
+      "smokingRate": 17.3
+    },
+    "42003": {
+      "name": "Allegheny",
+      "state": "PA",
+      "lon": -79.9814684118731,
+      "lat": 40.4688763948096,
+      "diabetesRate": 9.4,
+      "obesityRate": 32,
+      "hypertensionRate": 27.6,
+      "smokingRate": 15.4
+    },
+    "42005": {
+      "name": "Armstrong",
+      "state": "PA",
+      "lon": -79.4647906785908,
+      "lat": 40.8120603114913,
+      "diabetesRate": 9.3,
+      "obesityRate": 37.9,
+      "hypertensionRate": 28.7,
+      "smokingRate": 21.1
+    },
+    "42007": {
+      "name": "Beaver",
+      "state": "PA",
+      "lon": -80.349491791472,
+      "lat": 40.6823424598597,
+      "diabetesRate": 9,
+      "obesityRate": 37.2,
+      "hypertensionRate": 29.7,
+      "smokingRate": 15.7
+    },
+    "42009": {
+      "name": "Bedford",
+      "state": "PA",
+      "lon": -78.4903536318211,
+      "lat": 40.0066622728169,
+      "diabetesRate": 9.5,
+      "obesityRate": 35.3,
+      "hypertensionRate": 29.5,
+      "smokingRate": 19.5
+    },
+    "42011": {
+      "name": "Berks",
+      "state": "PA",
+      "lon": -75.9258093647672,
+      "lat": 40.4163199739645,
+      "diabetesRate": 9.8,
+      "obesityRate": 35,
+      "hypertensionRate": 28.9,
+      "smokingRate": 15.1
+    },
+    "42013": {
+      "name": "Blair",
+      "state": "PA",
+      "lon": -78.3485770904823,
+      "lat": 40.4809694312938,
+      "diabetesRate": 10.1,
+      "obesityRate": 36.2,
+      "hypertensionRate": 28.4,
+      "smokingRate": 20.1
+    },
+    "42015": {
+      "name": "Bradford",
+      "state": "PA",
+      "lon": -76.5155111278347,
+      "lat": 41.7887110958834,
+      "diabetesRate": 9.3,
+      "obesityRate": 34.9,
+      "hypertensionRate": 31.7,
+      "smokingRate": 17.1
+    },
+    "42017": {
+      "name": "Bucks",
+      "state": "PA",
+      "lon": -75.1067482285946,
+      "lat": 40.3368045168652,
+      "diabetesRate": 8.8,
+      "obesityRate": 30.4,
+      "hypertensionRate": 26,
+      "smokingRate": 15.8
+    },
+    "42019": {
+      "name": "Butler",
+      "state": "PA",
+      "lon": -79.9132626491296,
+      "lat": 40.9120032618258,
+      "diabetesRate": 7.8,
+      "obesityRate": 32.7,
+      "hypertensionRate": 27,
+      "smokingRate": 13.1
+    },
+    "42021": {
+      "name": "Cambria",
+      "state": "PA",
+      "lon": -78.7135019930571,
+      "lat": 40.4953756223316,
+      "diabetesRate": 9.7,
+      "obesityRate": 37.1,
+      "hypertensionRate": 29.4,
+      "smokingRate": 19.5
+    },
+    "42023": {
+      "name": "Cameron",
+      "state": "PA",
+      "lon": -78.2040372022551,
+      "lat": 41.4367312238399,
+      "diabetesRate": 10.6,
+      "obesityRate": 38,
+      "hypertensionRate": 31.7,
+      "smokingRate": 23
+    },
+    "42025": {
+      "name": "Carbon",
+      "state": "PA",
+      "lon": -75.7088963350179,
+      "lat": 40.9181345435535,
+      "diabetesRate": 9.5,
+      "obesityRate": 34.4,
+      "hypertensionRate": 29.4,
+      "smokingRate": 18
+    },
+    "42027": {
+      "name": "Centre",
+      "state": "PA",
+      "lon": -77.8198125369243,
+      "lat": 40.9187332372117,
+      "diabetesRate": 9.2,
+      "obesityRate": 34.7,
+      "hypertensionRate": 27.8,
+      "smokingRate": 18.1
+    },
+    "42029": {
+      "name": "Chester",
+      "state": "PA",
+      "lon": -75.7478952890845,
+      "lat": 39.9733449188581,
+      "diabetesRate": 7.9,
+      "obesityRate": 29.5,
+      "hypertensionRate": 25,
+      "smokingRate": 11.1
+    },
+    "42031": {
+      "name": "Clarion",
+      "state": "PA",
+      "lon": -79.4205861386886,
+      "lat": 41.1924265735214,
+      "diabetesRate": 9.4,
+      "obesityRate": 35.7,
+      "hypertensionRate": 30.6,
+      "smokingRate": 19.2
+    },
+    "42033": {
+      "name": "Clearfield",
+      "state": "PA",
+      "lon": -78.4742199350484,
+      "lat": 41.0000613695045,
+      "diabetesRate": 10.1,
+      "obesityRate": 36.9,
+      "hypertensionRate": 30.8,
+      "smokingRate": 20.1
+    },
+    "42035": {
+      "name": "Clinton",
+      "state": "PA",
+      "lon": -77.6387449615827,
+      "lat": 41.234143444052,
+      "diabetesRate": 9.4,
+      "obesityRate": 35.3,
+      "hypertensionRate": 30.1,
+      "smokingRate": 20.2
+    },
+    "42037": {
+      "name": "Columbia",
+      "state": "PA",
+      "lon": -76.4050002866586,
+      "lat": 41.0489838937578,
+      "diabetesRate": 9.5,
+      "obesityRate": 37.2,
+      "hypertensionRate": 29.4,
+      "smokingRate": 17.5
+    },
+    "42039": {
+      "name": "Crawford",
+      "state": "PA",
+      "lon": -80.1061210135006,
+      "lat": 41.6847591926548,
+      "diabetesRate": 9.5,
+      "obesityRate": 37.8,
+      "hypertensionRate": 30.5,
+      "smokingRate": 21.1
+    },
+    "42041": {
+      "name": "Cumberland",
+      "state": "PA",
+      "lon": -77.2651524741233,
+      "lat": 40.1635289562865,
+      "diabetesRate": 8.8,
+      "obesityRate": 33,
+      "hypertensionRate": 26.7,
+      "smokingRate": 14.6
+    },
+    "42043": {
+      "name": "Dauphin",
+      "state": "PA",
+      "lon": -76.7794808231038,
+      "lat": 40.4160182717579,
+      "diabetesRate": 10.6,
+      "obesityRate": 34.3,
+      "hypertensionRate": 30.5,
+      "smokingRate": 17.7
+    },
+    "42045": {
+      "name": "Delaware",
+      "state": "PA",
+      "lon": -75.3986194318231,
+      "lat": 39.9168344268692,
+      "diabetesRate": 9.5,
+      "obesityRate": 31.4,
+      "hypertensionRate": 30.2,
+      "smokingRate": 13.1
+    },
+    "42047": {
+      "name": "Elk",
+      "state": "PA",
+      "lon": -78.6489315131988,
+      "lat": 41.4251242334449,
+      "diabetesRate": 9.2,
+      "obesityRate": 37.8,
+      "hypertensionRate": 28.2,
+      "smokingRate": 17.7
+    },
+    "42049": {
+      "name": "Erie",
+      "state": "PA",
+      "lon": -80.0327592687448,
+      "lat": 41.9924719108558,
+      "diabetesRate": 9.8,
+      "obesityRate": 36.9,
+      "hypertensionRate": 29.1,
+      "smokingRate": 19
+    },
+    "42051": {
+      "name": "Fayette",
+      "state": "PA",
+      "lon": -79.6474418035071,
+      "lat": 39.920334883186,
+      "diabetesRate": 10.3,
+      "obesityRate": 34.8,
+      "hypertensionRate": 31.3,
+      "smokingRate": 21.4
+    },
+    "42053": {
+      "name": "Forest",
+      "state": "PA",
+      "lon": -79.236591575104,
+      "lat": 41.5129246402332,
+      "diabetesRate": 11.9,
+      "obesityRate": 40.4,
+      "hypertensionRate": 34.9,
+      "smokingRate": 22.4
+    },
+    "42055": {
+      "name": "Franklin",
+      "state": "PA",
+      "lon": -77.7214192027132,
+      "lat": 39.9273839009143,
+      "diabetesRate": 9.4,
+      "obesityRate": 39.2,
+      "hypertensionRate": 30.5,
+      "smokingRate": 19.8
+    },
+    "42057": {
+      "name": "Fulton",
+      "state": "PA",
+      "lon": -78.1128382889983,
+      "lat": 39.9253441914256,
+      "diabetesRate": 9,
+      "obesityRate": 36,
+      "hypertensionRate": 29.8,
+      "smokingRate": 18.4
+    },
+    "42059": {
+      "name": "Greene",
+      "state": "PA",
+      "lon": -80.2228180452951,
+      "lat": 39.8538038368739,
+      "diabetesRate": 9.7,
+      "obesityRate": 36,
+      "hypertensionRate": 30.2,
+      "smokingRate": 19.4
+    },
+    "42061": {
+      "name": "Huntingdon",
+      "state": "PA",
+      "lon": -77.9813106456289,
+      "lat": 40.4168369746766,
+      "diabetesRate": 9.4,
+      "obesityRate": 35.8,
+      "hypertensionRate": 31.8,
+      "smokingRate": 20.2
+    },
+    "42063": {
+      "name": "Indiana",
+      "state": "PA",
+      "lon": -79.0876599621691,
+      "lat": 40.6518464143536,
+      "diabetesRate": 9.6,
+      "obesityRate": 40.1,
+      "hypertensionRate": 30.5,
+      "smokingRate": 18.4
+    },
+    "42065": {
+      "name": "Jefferson",
+      "state": "PA",
+      "lon": -78.999583915939,
+      "lat": 41.1282655443833,
+      "diabetesRate": 9.8,
+      "obesityRate": 35.8,
+      "hypertensionRate": 30,
+      "smokingRate": 21.2
+    },
+    "42067": {
+      "name": "Juniata",
+      "state": "PA",
+      "lon": -77.4025903868781,
+      "lat": 40.5307250450208,
+      "diabetesRate": 9.7,
+      "obesityRate": 36.1,
+      "hypertensionRate": 29.2,
+      "smokingRate": 19.7
+    },
+    "42069": {
+      "name": "Lackawanna",
+      "state": "PA",
+      "lon": -75.6092611042511,
+      "lat": 41.4363694881254,
+      "diabetesRate": 9.5,
+      "obesityRate": 33.2,
+      "hypertensionRate": 27,
+      "smokingRate": 17.3
+    },
+    "42071": {
+      "name": "Lancaster",
+      "state": "PA",
+      "lon": -76.2478165964936,
+      "lat": 40.0424827406656,
+      "diabetesRate": 8.9,
+      "obesityRate": 35.7,
+      "hypertensionRate": 27.4,
+      "smokingRate": 16.1
+    },
+    "42073": {
+      "name": "Lawrence",
+      "state": "PA",
+      "lon": -80.3347356743559,
+      "lat": 40.9912321501165,
+      "diabetesRate": 9.6,
+      "obesityRate": 35.8,
+      "hypertensionRate": 29.7,
+      "smokingRate": 18.5
+    },
+    "42075": {
+      "name": "Lebanon",
+      "state": "PA",
+      "lon": -76.4575100228039,
+      "lat": 40.3672071517113,
+      "diabetesRate": 9.4,
+      "obesityRate": 37.3,
+      "hypertensionRate": 29.6,
+      "smokingRate": 16.1
+    },
+    "42077": {
+      "name": "Lehigh",
+      "state": "PA",
+      "lon": -75.592421171386,
+      "lat": 40.6126220041777,
+      "diabetesRate": 10.2,
+      "obesityRate": 34.3,
+      "hypertensionRate": 30.5,
+      "smokingRate": 16.6
+    },
+    "42079": {
+      "name": "Luzerne",
+      "state": "PA",
+      "lon": -75.9891245729524,
+      "lat": 41.1768635137354,
+      "diabetesRate": 10.1,
+      "obesityRate": 38.7,
+      "hypertensionRate": 29.7,
+      "smokingRate": 18.6
+    },
+    "42081": {
+      "name": "Lycoming",
+      "state": "PA",
+      "lon": -77.0646368861944,
+      "lat": 41.3434954609147,
+      "diabetesRate": 9.1,
+      "obesityRate": 35.6,
+      "hypertensionRate": 30.4,
+      "smokingRate": 16.6
+    },
+    "42083": {
+      "name": "McKean",
+      "state": "PA",
+      "lon": -78.5690193435198,
+      "lat": 41.8075917412225,
+      "diabetesRate": 9.6,
+      "obesityRate": 36.3,
+      "hypertensionRate": 31.3,
+      "smokingRate": 16.8
+    },
+    "42085": {
+      "name": "Mercer",
+      "state": "PA",
+      "lon": -80.257673199067,
+      "lat": 41.3023640884701,
+      "diabetesRate": 9.2,
+      "obesityRate": 35.7,
+      "hypertensionRate": 29.4,
+      "smokingRate": 18.7
+    },
+    "42087": {
+      "name": "Mifflin",
+      "state": "PA",
+      "lon": -77.6166496153272,
+      "lat": 40.6106049713377,
+      "diabetesRate": 10.1,
+      "obesityRate": 38.7,
+      "hypertensionRate": 30.7,
+      "smokingRate": 22.3
+    },
+    "42089": {
+      "name": "Monroe",
+      "state": "PA",
+      "lon": -75.3395824565919,
+      "lat": 41.0582037762285,
+      "diabetesRate": 10.3,
+      "obesityRate": 37.7,
+      "hypertensionRate": 29.2,
+      "smokingRate": 16.2
+    },
+    "42091": {
+      "name": "Montgomery",
+      "state": "PA",
+      "lon": -75.367276645398,
+      "lat": 40.2108461432027,
+      "diabetesRate": 8.5,
+      "obesityRate": 31.2,
+      "hypertensionRate": 27,
+      "smokingRate": 12.1
+    },
+    "42093": {
+      "name": "Montour",
+      "state": "PA",
+      "lon": -76.6587680247033,
+      "lat": 41.0276252587519,
+      "diabetesRate": 9.6,
+      "obesityRate": 35.3,
+      "hypertensionRate": 27.7,
+      "smokingRate": 17.8
+    },
+    "42095": {
+      "name": "Northampton",
+      "state": "PA",
+      "lon": -75.3074851332014,
+      "lat": 40.7545552605228,
+      "diabetesRate": 9.2,
+      "obesityRate": 33.7,
+      "hypertensionRate": 27.9,
+      "smokingRate": 15.4
+    },
+    "42097": {
+      "name": "Northumberland",
+      "state": "PA",
+      "lon": -76.7090293492606,
+      "lat": 40.8515832628888,
+      "diabetesRate": 9.6,
+      "obesityRate": 37.7,
+      "hypertensionRate": 31.8,
+      "smokingRate": 19.2
+    },
+    "42099": {
+      "name": "Perry",
+      "state": "PA",
+      "lon": -77.2622712474235,
+      "lat": 40.3984083146619,
+      "diabetesRate": 8.8,
+      "obesityRate": 34.9,
+      "hypertensionRate": 29.5,
+      "smokingRate": 18.8
+    },
+    "42101": {
+      "name": "Philadelphia",
+      "state": "PA",
+      "lon": -75.1342678683708,
+      "lat": 40.0073764238932,
+      "diabetesRate": 14.4,
+      "obesityRate": 34.5,
+      "hypertensionRate": 32,
+      "smokingRate": 18.6
+    },
+    "42103": {
+      "name": "Pike",
+      "state": "PA",
+      "lon": -75.0336159346126,
+      "lat": 41.3320909480683,
+      "diabetesRate": 9.2,
+      "obesityRate": 33.9,
+      "hypertensionRate": 29.7,
+      "smokingRate": 15.1
+    },
+    "42105": {
+      "name": "Potter",
+      "state": "PA",
+      "lon": -77.895884484401,
+      "lat": 41.7449106328318,
+      "diabetesRate": 9.5,
+      "obesityRate": 38.2,
+      "hypertensionRate": 31.2,
+      "smokingRate": 19.2
+    },
+    "42107": {
+      "name": "Schuylkill",
+      "state": "PA",
+      "lon": -76.216152351359,
+      "lat": 40.7056715728756,
+      "diabetesRate": 10,
+      "obesityRate": 39,
+      "hypertensionRate": 29.8,
+      "smokingRate": 20.4
+    },
+    "42109": {
+      "name": "Snyder",
+      "state": "PA",
+      "lon": -77.0702374046649,
+      "lat": 40.7699512544196,
+      "diabetesRate": 9.4,
+      "obesityRate": 36.5,
+      "hypertensionRate": 29.7,
+      "smokingRate": 16.4
+    },
+    "42111": {
+      "name": "Somerset",
+      "state": "PA",
+      "lon": -79.0282547237808,
+      "lat": 39.9725423472168,
+      "diabetesRate": 9.3,
+      "obesityRate": 36.6,
+      "hypertensionRate": 30.5,
+      "smokingRate": 19.7
+    },
+    "42113": {
+      "name": "Sullivan",
+      "state": "PA",
+      "lon": -76.5122542595733,
+      "lat": 41.446037851583,
+      "diabetesRate": 10.1,
+      "obesityRate": 36.6,
+      "hypertensionRate": 30.2,
+      "smokingRate": 23.2
+    },
+    "42115": {
+      "name": "Susquehanna",
+      "state": "PA",
+      "lon": -75.8007919927448,
+      "lat": 41.8212610713125,
+      "diabetesRate": 8.4,
+      "obesityRate": 33.2,
+      "hypertensionRate": 29.7,
+      "smokingRate": 15.9
+    },
+    "42117": {
+      "name": "Tioga",
+      "state": "PA",
+      "lon": -77.2544484368797,
+      "lat": 41.7723746925981,
+      "diabetesRate": 9.6,
+      "obesityRate": 38.8,
+      "hypertensionRate": 29.8,
+      "smokingRate": 19.1
+    },
+    "42119": {
+      "name": "Union",
+      "state": "PA",
+      "lon": -77.0619616361032,
+      "lat": 40.9630239654904,
+      "diabetesRate": 9.8,
+      "obesityRate": 35.3,
+      "hypertensionRate": 27.9,
+      "smokingRate": 19.2
+    },
+    "42121": {
+      "name": "Venango",
+      "state": "PA",
+      "lon": -79.7581868804174,
+      "lat": 41.4006288227586,
+      "diabetesRate": 9.5,
+      "obesityRate": 35.5,
+      "hypertensionRate": 30.1,
+      "smokingRate": 18.2
+    },
+    "42123": {
+      "name": "Warren",
+      "state": "PA",
+      "lon": -79.2738926761047,
+      "lat": 41.8144358607218,
+      "diabetesRate": 9,
+      "obesityRate": 34.6,
+      "hypertensionRate": 30.7,
+      "smokingRate": 20
+    },
+    "42125": {
+      "name": "Washington",
+      "state": "PA",
+      "lon": -80.2485444480046,
+      "lat": 40.1894077449089,
+      "diabetesRate": 8.9,
+      "obesityRate": 38.2,
+      "hypertensionRate": 29.5,
+      "smokingRate": 17.9
+    },
+    "42127": {
+      "name": "Wayne",
+      "state": "PA",
+      "lon": -75.3033288891875,
+      "lat": 41.6486390281983,
+      "diabetesRate": 10,
+      "obesityRate": 35.2,
+      "hypertensionRate": 29.4,
+      "smokingRate": 19.6
+    },
+    "42129": {
+      "name": "Westmoreland",
+      "state": "PA",
+      "lon": -79.4668481490652,
+      "lat": 40.3107799991622,
+      "diabetesRate": 8,
+      "obesityRate": 31.4,
+      "hypertensionRate": 27,
+      "smokingRate": 14.7
+    },
+    "42131": {
+      "name": "Wyoming",
+      "state": "PA",
+      "lon": -76.0164691320074,
+      "lat": 41.5183545389591,
+      "diabetesRate": 9.3,
+      "obesityRate": 35.8,
+      "hypertensionRate": 29.5,
+      "smokingRate": 19.6
+    },
+    "42133": {
+      "name": "York",
+      "state": "PA",
+      "lon": -76.7263869135604,
+      "lat": 39.91995594347,
+      "diabetesRate": 8.8,
+      "obesityRate": 35.3,
+      "hypertensionRate": 31,
+      "smokingRate": 17
+    },
     "44001": {
       "name": "Bristol",
       "state": "RI",
@@ -21703,6 +23573,16 @@
       "smokingRate": 13.7,
       "diabetesRate": 10.1,
       "obesityRate": 36.7
+    },
+    "48301": {
+      "name": "Loving",
+      "state": "TX",
+      "lon": -103.579939867014,
+      "lat": 31.8491416757447,
+      "diabetesRate": 9.5,
+      "obesityRate": 32.6,
+      "hypertensionRate": 25.3,
+      "smokingRate": 14.1
     },
     "48303": {
       "name": "Lubbock",

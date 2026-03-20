@@ -1,7 +1,20 @@
 #!/usr/bin/env node
 /**
  * Fetch health demographics data from CDC PLACES API (county-level).
- * Source: data.cdc.gov/resource/swc5-untb.json (PLACES: County Data)
+ *
+ * Primary source: data.cdc.gov/resource/swc5-untb.json
+ *   (PLACES: Local Data for Better Health, County Data, 2025 release)
+ *
+ * Fallback source: data.cdc.gov/resource/d3i6-k6z5.json
+ *   (PLACES: County Data GIS Friendly Format, 2024 release)
+ *   Used when the primary dataset is missing a county (e.g., Pennsylvania
+ *   counties are absent from the 2023 data year in the 2025 release).
+ *
+ * CKD source: data.cdc.gov/resource/duw2-7jbt.json
+ *   (PLACES: Local Data for Better Health, County Data, 2022 release)
+ *   The KIDNEY measureid was removed from the 2025 release; the 2022
+ *   release is the latest that still carries it.
+ *
  * Auth: None required (public API)
  * Format: JSON
  *
@@ -14,16 +27,30 @@
 
 const { fetchWithRetry, mergeDataFile, updateMetadata, reportError, CITIES, delay } = require('./utils');
 
-// CDC PLACES County-Level Data (SODA API)
+// CDC PLACES County-Level Data (SODA API) — 2025 release (primary)
 const CDC_PLACES_URL = 'https://data.cdc.gov/resource/swc5-untb.json';
 
-// Map CDC PLACES measure IDs to our field names
+// CDC PLACES County Data GIS Friendly — 2024 release (fallback for missing counties)
+const CDC_PLACES_GIS_URL = 'https://data.cdc.gov/resource/d3i6-k6z5.json';
+
+// CDC PLACES County Data — 2022 release (has KIDNEY measure, removed from 2025)
+const CDC_PLACES_2022_URL = 'https://data.cdc.gov/resource/duw2-7jbt.json';
+
+// Map CDC PLACES measure IDs to our field names (primary dataset, 2025 release)
+// Note: KIDNEY was removed from the 2025 release; fetched separately from 2022 release
 const MEASURES = {
     'DIABETES': 'diabetesRate',
     'OBESITY': 'obesityRate',
-    'KIDNEY': 'ckdRate',
     'BPHIGH': 'hypertensionRate',
     'CSMOKING': 'smokingRate'
+};
+
+// Map GIS-friendly column names to our field names (fallback dataset)
+const GIS_COLUMNS = {
+    'diabetes_adjprev': 'diabetesRate',
+    'obesity_adjprev': 'obesityRate',
+    'bphigh_adjprev': 'hypertensionRate',
+    'csmoking_adjprev': 'smokingRate'
 };
 
 // County FIPS for each transplant city (3-digit, zero-padded)
@@ -53,11 +80,93 @@ const CITY_COUNTY_FIPS = {
     'Palo Alto': '085'        // Santa Clara County, CA
 };
 
+/**
+ * Fetch from primary dataset (swc5-untb, 2025 release).
+ * Returns { diabetesRate, obesityRate, hypertensionRate, smokingRate } or null.
+ */
+async function fetchPrimary(locationId) {
+    const measureList = Object.keys(MEASURES).map(m => `'${m}'`).join(',');
+    const query = `$where=locationid='${locationId}' AND measureid in(${measureList}) AND data_value_type='Age-adjusted prevalence'&$select=measureid,data_value,year&$order=year DESC&$limit=50`;
+    const url = `${CDC_PLACES_URL}?${query}`;
+    const response = await fetchWithRetry(url);
+    const data = await response.json();
+
+    if (!data || data.length === 0) {
+        return null;
+    }
+
+    const cityData = {};
+    const seen = new Set();
+    for (const row of data) {
+        const fieldName = MEASURES[row.measureid];
+        if (fieldName && !seen.has(fieldName)) {
+            const val = parseFloat(row.data_value);
+            if (!isNaN(val)) {
+                cityData[fieldName] = val;
+                seen.add(fieldName);
+            }
+        }
+    }
+
+    return Object.keys(cityData).length > 0 ? cityData : null;
+}
+
+/**
+ * Fetch from GIS-friendly fallback dataset (d3i6-k6z5, 2024 release).
+ * Uses wide-format columns (e.g., diabetes_adjprev) instead of measureid rows.
+ * Returns { diabetesRate, obesityRate, hypertensionRate, smokingRate } or null.
+ */
+async function fetchGISFallback(locationId) {
+    const columns = Object.keys(GIS_COLUMNS).join(',');
+    const query = `$select=countyfips,${columns}&$where=countyfips='${locationId}'&$limit=1`;
+    const url = `${CDC_PLACES_GIS_URL}?${query}`;
+    const response = await fetchWithRetry(url);
+    const data = await response.json();
+
+    if (!data || data.length === 0) {
+        return null;
+    }
+
+    const row = data[0];
+    const cityData = {};
+    for (const [col, fieldName] of Object.entries(GIS_COLUMNS)) {
+        const val = parseFloat(row[col]);
+        if (!isNaN(val)) {
+            cityData[fieldName] = val;
+        }
+    }
+
+    return Object.keys(cityData).length > 0 ? cityData : null;
+}
+
+/**
+ * Fetch CKD (chronic kidney disease) rate from the 2022 release.
+ * The KIDNEY measureid was removed from the 2025 release, so we query
+ * the 2022 release (duw2-7jbt) which is the latest that still has it.
+ * Returns ckdRate value or null.
+ */
+async function fetchCKDRate(locationId) {
+    const query = `$where=locationid='${locationId}' AND measureid='KIDNEY' AND data_value_type='Age-adjusted prevalence'&$select=data_value,year&$order=year DESC&$limit=1`;
+    const url = `${CDC_PLACES_2022_URL}?${query}`;
+    const response = await fetchWithRetry(url);
+    const data = await response.json();
+
+    if (data && data.length > 0) {
+        const val = parseFloat(data[0].data_value);
+        if (!isNaN(val)) {
+            return val;
+        }
+    }
+    return null;
+}
+
 async function fetchHealthData() {
     console.log('Fetching health demographics from CDC PLACES API (county-level)...');
+    console.log('  Primary: swc5-untb (2025 release, 4 measures)');
+    console.log('  Fallback: d3i6-k6z5 (2024 GIS release, for missing counties)');
+    console.log('  CKD: duw2-7jbt (2022 release, KIDNEY measure)');
 
     const result = {};
-    const measureList = Object.keys(MEASURES).map(m => `'${m}'`).join(',');
 
     for (const cityInfo of CITIES) {
         const countyFips = CITY_COUNTY_FIPS[cityInfo.city];
@@ -71,35 +180,31 @@ async function fetchHealthData() {
         const locationId = stateFips + countyFips;
 
         try {
-            const query = `$where=locationid='${locationId}' AND measureid in(${measureList}) AND data_value_type='Age-adjusted prevalence'&$select=measureid,data_value,year&$order=year DESC&$limit=50`;
-            const url = `${CDC_PLACES_URL}?${query}`;
-            const response = await fetchWithRetry(url);
-            const data = await response.json();
+            // Try primary dataset first
+            let cityData = await fetchPrimary(locationId);
+            let source = 'primary';
 
-            if (data && data.length > 0) {
-                const cityData = {};
-                // Take the most recent value for each measure
-                const seen = new Set();
-                for (const row of data) {
-                    const fieldName = MEASURES[row.measureid];
-                    if (fieldName && !seen.has(fieldName)) {
-                        const val = parseFloat(row.data_value);
-                        if (!isNaN(val)) {
-                            cityData[fieldName] = val;
-                            seen.add(fieldName);
-                        }
-                    }
+            // Fall back to GIS-friendly dataset if primary returns nothing
+            // (e.g., Pennsylvania counties missing from 2023 data year)
+            if (!cityData) {
+                await delay(200);
+                cityData = await fetchGISFallback(locationId);
+                source = 'GIS fallback';
+            }
+
+            if (cityData) {
+                // Fetch CKD rate from 2022 release (KIDNEY removed from 2025)
+                await delay(200);
+                const ckdRate = await fetchCKDRate(locationId);
+                if (ckdRate !== null) {
+                    cityData.ckdRate = ckdRate;
                 }
 
                 const count = Object.keys(cityData).length;
-                if (count > 0) {
-                    result[cityInfo.city] = cityData;
-                    console.log(`  ${cityInfo.city} (${locationId}): ${count}/5 indicators`);
-                } else {
-                    console.warn(`  ${cityInfo.city} (${locationId}): no parseable values`);
-                }
+                result[cityInfo.city] = cityData;
+                console.log(`  ${cityInfo.city} (${locationId}): ${count}/5 indicators [${source}]`);
             } else {
-                console.warn(`  ${cityInfo.city} (${locationId}): no data returned`);
+                console.warn(`  ${cityInfo.city} (${locationId}): no data from primary or fallback`);
             }
 
             await delay(300);  // Respectful rate limiting for CDC API
@@ -112,7 +217,7 @@ async function fetchHealthData() {
     if (cityCount > 0) {
         // Deep merge: updates indicators per city while preserving any
         // additional fields not fetched by this script
-        mergeDataFile('health-demographics.json', result, 'CDC PLACES API (5 county-level indicators)');
+        mergeDataFile('health-demographics.json', result, 'CDC PLACES API (5 county-level indicators, multi-release)');
         updateMetadata('health-demographics', 'CDC PLACES API', 'fetched');
         console.log(`\nFetched health data for ${cityCount} cities.`);
     } else {

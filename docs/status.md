@@ -145,7 +145,7 @@ Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabili
 | 6A: OPO mapping (#122) | Partial | 55 OPOs, 248 centers mapped via `fetch-opo-service-areas.py`. County-level CMS data confirmed unavailable (searched eCFR, HRSA/OPTN, SRTR, CMS portal). See #138 for next steps |
 | 6A: Patient home location (#123) | ✅ Done | Nominatim geocoding, haversine distance on cards |
 | 6B: EPA monitor data (#125) | ✅ Done | `fetch-air-quality-monitors.js`, ~4000 per-monitor points |
-| 6B: CDC county data (#126) | ✅ Done | `fetch-health-data-counties.js`, 2,956 counties |
+| 6B: CDC county data (#126) | ✅ Done | `fetch-health-data-counties.js`, 3,144 counties (multi-release fallback) |
 | 6B: Interpolation service (#127) | ✅ Done | RBF/IDW engine, 24 layers, SpatialSurface cache, 19 pytest |
 | 6B: Interpolation API (#128) | ✅ Done | 6 endpoints on spatial router |
 | 6B: Heatmap overlay (#129) | ✅ Done | Leaflet heatmap via /spatial-grid, layer selector |

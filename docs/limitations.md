@@ -501,11 +501,11 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | File | Tier | Source | Vintage | Notes |
 |------|------|--------|---------|-------|
 | `hospital-quality.json` | **API + Manual** | CMS Provider Data API (centerReputation) + SRTR manual research (centerVolumes) | Mar 2026 (CMS); 2023–2024 (volumes) | CMS ratings are general hospital quality, not transplant-specific (L-017 DEFERRED). Volumes hand-researched from SRTR program-specific reports. |
-| `health-demographics.json` | **Partial API** | CDC SODA API (diabetesRate only) | Mar 2026 (diabetes) | Only `diabetesRate` live-fetched. Other 4 fields (obesityRate, ckdRate, hypertensionRate, smokingRate) are **preserved seed data** from initial project setup. |
+| `health-demographics.json` | **API** | CDC PLACES API (multi-release: swc5-untb 2025, d3i6-k6z5 2024 GIS, duw2-7jbt 2022) | Mar 2026 | All 5 indicators live-fetched for 22 cities (5/5 each). Primary source: 2025 release. PA counties (Pittsburgh, Philadelphia) use 2024 GIS fallback (PA absent from 2023 data year). CKD (KIDNEY) measure from 2022 release (removed from 2025). |
 | `cost-of-living.json` | **Seed (disputed)** | Claims BLS API but `metadata.json` says "skipped — no key" | Unknown | Portland value (43) is implausible. Likely seed data, not a real BLS fetch. 7 of 22 cities use fixed-ratio estimates from nearby cities (L-014). |
 | `donor-registration.json` | **Seed** | Labeled "UNOS / Hardcoded seed data" | Unknown | No fetch script exists (L-033 DEFERRED). `livingDonorProgramStrength` and `populationFactors` are round-number estimates. `stateRegistrationRates` are plausible but unverifiable. |
 | `air-quality.json` | **Seed** | EPA AQS fetch skipped (no API key) | Unknown | Static integers, never live-fetched. EPA API requires free registration for key. |
-| `traffic-fatalities.json` | **Seed** | NHTSA FARS API retired (L-045) | Unknown | Plausible values but permanently static. FARS CSV bulk download is an alternative but not implemented. |
+| `traffic-fatalities.json` | **API** | NHTSA FARS 2023 CSV bulk download | Mar 2026 | 17 states, per-capita fatality rates per 100k, trauma scores (0–100). Downloaded from `static.nhtsa.gov`, extracted ACCIDENT.CSV, summed FATALS by state FIPS. FARS 2024 not yet published (404). |
 
 ### Phase 6: Center-Level & Spatial Data
 
@@ -537,7 +537,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 1. **Core probability pipeline is real SRTR data** — national medians, city factors, mortality/delisting rates, and post-transplant outcomes all parsed from official January 2025 SRTR Excel releases.
 2. **Patient-level modifiers are literature-estimated** — blood type multipliers, cPRA/MELD/LAS effects, urgency/age mortality factors come from published literature, not SRTR-stratified data.
 3. **Historical trends are now real SRTR data** — `srtr-historical.json` contains 15-release time-series (2019–2025) parsed from official SRTR PSR archives. Trend charts can be cited as SRTR-sourced.
-4. **Several scoring-engine inputs are seed data** — air quality, traffic fatalities, donor registration, and most health demographics have never been live-fetched. These affect the location suitability score (frontend) but NOT the probabilistic simulation engine (backend).
+4. **Some scoring-engine inputs remain seed data** — air quality, cost of living, and donor registration have not yet been live-fetched. Health demographics (all 5 indicators) and traffic fatalities are now live-fetched. These affect the location suitability score (frontend) but NOT the probabilistic simulation engine (backend).
 5. **CDC cause-of-death data is from 2017** — drug intoxication distributions have shifted substantially since then (opioid crisis escalation).
 6. **Phase 6 center-level data is real SRTR data** — all ~248 center wait times, competing risks, and outcomes are parsed from the same SRTR PSR Excel files using the same pipeline as the 22-city data. Geographic coordinates are from Nominatim geocoding (automated, verifiable).
 7. **Spatial interpolation is derived, not new source data** — all 24 interpolation layers are computed from existing provenance-tracked data files. No new external data sources are introduced by the interpolation engine.
@@ -585,14 +585,14 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-039 | — | 2026-03-01 | False positive — Missouri already present in donor-registration.json and DEFAULTS |
 | L-022 | (batch10) | 2026-03-01 | Replaced wealth-correlated scores with transplant-support rubric (housing 30%, financial 25%, support groups 20%, caregiver 15%, health literacy 10%); researched 22 centers |
 | L-009 | ADR-010 | 2026-03-20 | PARTIALLY ADDRESSED — 55 OPOs cataloged, 248 centers mapped to OPOs via geographic proximity to OPO HQ (median 12.8 km). County-level CMS mapping confirmed unavailable as structured data after exhaustive search (eCFR, HRSA/OPTN, SRTR, CMS data portal). See #138 for next steps. |
-| L-012 | ADR-011 | 2026-03-20 | FIXED — 248 centers mapped to nearest county (2,956 CDC PLACES counties), ckdRate estimated via linear model |
+| L-012 | ADR-011 | 2026-03-20 | FIXED — 248 centers mapped to nearest county (2,956→3,144 CDC PLACES counties), ckdRate now live from 2022 KIDNEY measure (replaces linear model estimate) |
 | L-017 | ADR-012 | 2026-03-01 | DEFERRED — SRTR outcomes are HTML/PDF only, would need 132 manual data points |
 | L-033 | ADR-013 | 2026-03-01 | DEFERRED — no machine-readable API for donor registration rates |
 | L-041 | 0b59fc4 | 2026-03-05 | fetch-traffic.js switched to mergeDataFile + skip-on-empty guard |
 | L-042 | 909ff06 | 2026-03-05 | Added `\|\| 50` fallback to populationFactors/traumaScores lookups (found by unit tests) |
 | L-043 | 0b59fc4 | 2026-03-05 | Synced algorithm.js socioeconomic fallback with transplant-support rubric; removed orphan cities |
 | L-044 | 0b59fc4 | 2026-03-05 | Changed "50+ factors" → "40+ factors" in algorithm header |
-| L-045 | 822b778 | 2026-03-06 | MITIGATED — switched to GetFARSData + multi-year fallback; API still unreachable, seed data preserved, FIXME for CSV alternative |
+| L-045 | 822b778 | 2026-03-06 | FIXED — rewrote to FARS CSV bulk download from static.nhtsa.gov; FARS 2023 parsed (17 states, per-capita rates + trauma scores). API retirement no longer blocks data refresh. |
 | L-046 | 822b778 | 2026-03-06 | FIXED — multi-strategy CMS API (SQL/filter/legacy); filter strategy works, 22 cities fetched |
 | L-047 | 2b4d542 | 2026-03-06 | FIXED — onerror handlers + TransPlanCDN gate + guard clauses in map/chart init; yellow fallback banners |
 | L-048 | 2b4d542 | 2026-03-06 | FIXED — dynamic min/max from loaded COL data; FIXME fallbacks for empty data |
