@@ -1,0 +1,7 @@
+{
+  "_meta": {
+    "source": "EPA AQS API (per-monitor data)",
+    "note": "Seed file — run scripts/fetch-air-quality-monitors.js to populate with real data"
+  },
+  "monitors": {}
+}
