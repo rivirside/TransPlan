@@ -2,6 +2,8 @@
 sidebar_position: 3
 ---
 
+import HeatmapTable from '@site/src/components/HeatmapTable';
+
 # Competing Risks
 
 A transplant patient waiting on the list faces multiple possible outcomes, not just "transplant or keep waiting." TransPlan models three competing events.
@@ -69,6 +71,27 @@ In the API response, the breakdown is returned as:
 | Kidney | Lowest | Dialysis provides a survival bridge |
 | Pancreas | Low | Rare; primarily type 1 diabetics with kidney disease |
 | Intestine | Moderate | Very small candidate pool; significant morbidity risk |
+
+## Interactive: Competing Risk Rates by Organ
+
+Annual mortality and delisting rates vary substantially across organs. Heart and liver patients face the highest mortality risk while waiting, while kidney patients benefit from dialysis as a survival bridge.
+
+<HeatmapTable
+  rows={['Kidney', 'Liver', 'Heart', 'Lung', 'Pancreas', 'Intestine']}
+  columns={['Annual Mortality', 'Annual Delisting', 'Combined Annual Risk']}
+  data={[
+    [0.033, 0.034, 0.067],
+    [0.152, 0.121, 0.273],
+    [0.171, 0.131, 0.302],
+    [0.145, 0.098, 0.243],
+    [0.042, 0.065, 0.107],
+    [0.089, 0.102, 0.191],
+  ]}
+  formatCell={(v) => (v * 100).toFixed(1) + '%'}
+  colorScale="red"
+  title="Annual Competing Risk Rates by Organ (National Average)"
+  domain={[0, 0.31]}
+/>
 
 ## Data Sources
 

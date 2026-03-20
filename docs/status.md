@@ -41,7 +41,7 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 
 **Theme System (March 2026):** 6 themes — Default (dark nav, indigo accent, centered), Clinical (compact, uppercase, muted teal), Research (serif headings, editorial, warm tones), Government (USWDS-inspired, gov banner, bordered panels), **Windows XP Luna** (blue gradients, silver panels, 3D beveled borders, Tahoma), **2010s Flat** (Material blue, flat geometry, thin headings, Roboto). Windows XP Luna is the default theme. Theme switcher in page footer (both pages). Theme selection deferred to Phase 7. Design token system in CSS custom properties. Landing page has per-theme overrides.
 
-**Docusaurus Docs Site (March 2026):** Full documentation site in `docs-site/`. 20 pages, 7 sections. baseUrl configured for local dev (`/docs-site/build/`). Builds cleanly (`npm run build` in `docs-site/`). Comprehensive docs audit completed March 2026: all 20 pages updated to reflect Phase 3 M4, multi-page architecture, new API endpoints, current test counts, and deployment changes. Navbar has Home (→ `/`) and Open App (→ `/simulator.html`) links using `type: 'html'` to bypass Docusaurus baseUrl prepending. Pre-release info admonitions on intro, roadmap, and contributing pages.
+**Docusaurus Docs Site (March 2026):** Full documentation site in `docs-site/`. 22 pages (20 original + 2 validation), 8 sections. baseUrl configured for local dev (`/docs-site/build/`). Builds cleanly (`npm run build` in `docs-site/`). Comprehensive docs audit completed March 2026: all 20 pages updated to reflect Phase 3 M4, multi-page architecture, new API endpoints, current test counts, and deployment changes. Navbar has Home (→ `/`) and Open App (→ `/simulator.html`) links using `type: 'html'` to bypass Docusaurus baseUrl prepending. Pre-release info admonitions on intro, roadmap, and contributing pages. **MDX + Interactive Charts (March 2026):** 4 theory pages migrated from .md to .mdx with Recharts interactive visualizations — DistributionCurve (wait times by blood type + all organs), HeatmapTable (competing risks rates, scoring categories), TornadoChart (sensitivity parameter impact). 2 new validation pages: sensitivity analysis (tornado charts per organ) and SRTR ground-truth comparison (color-coded accuracy table). 4 custom React components in `docs-site/src/components/`.
 
 **Deployment (March 2026):** Primary deployment is **Vercel** (`vercel.json` at repo root, `outputDirectory: "."`). Vercel Analytics added to both `index.html` and `simulator.html`. GitHub Pages **disabled** — the `deploy-docs.yml` workflow was removed because it deployed only the docs with a mismatched baseUrl, causing a broken error page. When the project is open-sourced, GitHub Pages can be re-enabled with corrected config.
 
@@ -69,7 +69,7 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 | UI/UX redesign | ✅ Done | Design tokens, methodology accordion, SVG icons, responsive breakpoints |
 | Theme system | ✅ Done | 6 themes (Default/Clinical/Research/Government/WinXP/2010s Flat), XP Luna default |
 | Multi-page split | ✅ Done | Landing page (index.html) + simulator (simulator.html), info buttons, nav active state |
-| Docusaurus docs site | ✅ Done | 20 pages, 7 sections, TransPlan brand theme, baseUrl fixed for local dev |
+| Docusaurus docs site | ✅ Done | 22 pages, 8 sections (+ Validation), MDX + Recharts interactive charts, TransPlan brand theme |
 
 ### Phase 2 Progress
 
@@ -125,7 +125,7 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 | M2: Clayton Copula | ✅ Done | Correlated mortality/delisting draws, θ=1.0 (τ≈0.33), opt-in via `use_copula`, all 3 sim paths, 22+4 tests (ADR-025, #94) |
 | M3: MCMC Hierarchical Model | ✅ Done | PyMC NUTS, 92 params/organ, trace-as-cache, offline fitting, posterior uncertainty, 53 pytest (ADR-026, #95) |
 | M4: Shared Frailty + Bayesian HDI | ✅ Done | LKJ-Cholesky correlated mort/delist offsets, learned correlation, posterior-predictive CIs, 11 new tests (ADR-027, #96, #99) |
-| M5: Cross-Engine Validation & Quality | 🔄 Near-complete | Cross-engine validation, posterior checks, per-organ copula, strict convergence, 15-issue bug sprint, real SRTR historical data (#104). Remaining: API endpoints for cross-validate and posterior-checks |
+| M5: Cross-Engine Validation & Quality | 🔄 Near-complete | Cross-engine validation, posterior checks, per-organ copula, strict convergence, 15-issue bug sprint, real SRTR historical data (#104). Sensitivity analysis report (#109) and SRTR ground-truth comparison (#110) complete with interactive docs. Remaining: API endpoints for cross-validate and posterior-checks |
 
 ### What's NOT Done (Next Steps)
 
@@ -149,6 +149,7 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 |----------|--------|-------------|
 | Bug/Quality Sprint (March 2026) | ✅ 15 closed | #55, #56, #44, #57, #67, #68, #71, #66, #61, #54, #59, #101, #100, #102, #103 |
 | SRTR Historical Data | ✅ Closed | #104 — real 14-release time-series, automated GH Actions refresh |
+| Validation Reports | ✅ 2 closed | #109 (sensitivity analysis report), #110 (SRTR ground-truth comparison) — interactive MDX docs |
 | Phase 5 M1-M4 | ✅ 8 closed | #36-#42, #94, #95, #96, #99 — BBN, copula, MCMC, shared frailty |
 | M2b: COD Model Data Quality | 2 open / 6 closed | L-049–L-056 — 6 resolved, 2 remain (OPTN validation, OPO mapping) |
 | Code quality / tech debt | ~25 open | Various bugs, duplications, hardcoded values — see open issues |
@@ -163,10 +164,12 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 ```
 TransPlan/
   docs-site/              <- Docusaurus documentation site
-    docs/                 <- 20 markdown pages (intro, getting-started/, theory/, architecture/, api-reference/, contributing/, about/)
+    docs/                 <- 22 pages: intro, getting-started/, theory/ (4 MDX), architecture/, api-reference/, contributing/, about/, validation/ (2 MDX)
     src/css/custom.css    <- TransPlan brand theme
+    src/components/       <- React components: TornadoChart, ComparisonTable, DistributionCurve, HeatmapTable (Recharts)
+    static/data/          <- Generated JSON: sensitivity-results.json, srtr-comparison-results.json
     docusaurus.config.ts  <- Site config (baseUrl /docs-site/build/, blog disabled)
-    sidebars.ts           <- 7-section sidebar navigation
+    sidebars.ts           <- 8-section sidebar navigation (+ Validation)
   TransPlan.app/          <- macOS .app bundle (double-click to launch, no Terminal)
     Contents/Info.plist   <- App metadata, LSUIElement=true (background app)
     Contents/MacOS/launch <- Shell script: start uvicorn, open browser
@@ -214,6 +217,9 @@ TransPlan/
       climate-scores.json
       policy-tiers.json
       socioeconomic.json
+  docs/
+    sensitivity-report.md       <- Sensitivity analysis report (parameter dominance by organ)
+    srtr-ground-truth-comparison.md <- SRTR ground-truth comparison report (6 spot checks)
   scripts/                <- Node fetch scripts for GitHub Actions
     utils.js              <- Shared retry, write, city list
     fetch-traffic.js      <- NHTSA FARS CSV bulk download (state fatalities)
@@ -224,6 +230,8 @@ TransPlan/
     fetch-cod-data.js         <- CDC SODA (cause-of-death by state, donor-eligibility calibration)
     check-srtr-updates.js     <- SRTR website hash check
     validate-data.js          <- Post-fetch validation
+    run-sensitivity-report.py <- Sensitivity sweep: 6 organs × 3 profiles × 10 cities → JSON + markdown report
+    run-srtr-comparison.py    <- SRTR spot-check: 6 city/organ pairs → JSON + markdown report
     fetch-srtr-excel.py       <- Download SRTR PSR Excel files (6 organs)
     parse-srtr-reports.py     <- Parse Excel → wait-time-distributions.json + competing-risks.json + post-transplant-outcomes.json
   .github/workflows/

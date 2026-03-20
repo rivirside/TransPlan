@@ -2,9 +2,28 @@
 sidebar_position: 4
 ---
 
+import DistributionCurve from '@site/src/components/DistributionCurve';
+
 # Wait Time Distributions
 
 TransPlan models organ transplant wait times as log-normal distributions parameterized from SRTR data. This approach captures the key statistical properties of real-world transplant waiting periods.
+
+## Interactive: Kidney Wait Time Distribution by Blood Type
+
+Toggle between PDF (probability density) and CDF (cumulative probability) views. Notice how O blood types (longest waits) shift the distribution right, while AB types (shortest waits) shift it left.
+
+<DistributionCurve
+  median={27.4}
+  sigma={1.2}
+  title="Kidney Wait Time Distribution by Blood Type"
+  maxMonths={72}
+  bloodTypeMultipliers={{
+    "O+ (1.3x)": 1.3,
+    "A+ (0.9x)": 0.9,
+    "B+ (1.15x)": 1.15,
+    "AB+ (0.55x)": 0.55,
+  }}
+/>
 
 ## Why Log-Normal?
 
@@ -77,6 +96,25 @@ python ../scripts/parse-srtr-reports.py  # parses into wait-time-distributions.j
 ```
 
 The existing `data/wait-time-distributions.json` serves as a fallback if the download fails.
+
+## Interactive: All Organs Compared
+
+Each organ has a different national median wait time. Heart and lung have the shortest waits (highest acuity), while kidney has the longest.
+
+<DistributionCurve
+  median={27.4}
+  sigma={1.2}
+  title="Wait Time by Organ (O+ blood type, national median)"
+  maxMonths={72}
+  showCDF
+  bloodTypeMultipliers={{
+    "Kidney (27.4mo)": 1.0,
+    "Liver (4.6mo)": 0.168,
+    "Heart (2.2mo)": 0.080,
+    "Lung (1.0mo)": 0.036,
+    "Pancreas (8.5mo)": 0.310,
+  }}
+/>
 
 ## Comparison: Phase 1 vs Phase 2
 

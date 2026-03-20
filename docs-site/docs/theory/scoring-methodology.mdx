@@ -2,6 +2,8 @@
 sidebar_position: 1
 ---
 
+import HeatmapTable from '@site/src/components/HeatmapTable';
+
 # Scoring Methodology
 
 TransPlan's Phase 1 engine computes a weighted composite score (0 to 100) for each of 22 US cities based on a patient's profile.
@@ -88,6 +90,27 @@ score = Σ(category_score_i × weight_i)  for i in [1..8]
 ```
 
 Each category is internally normalized to [0, 100] before weighting. The composite score also falls in [0, 100].
+
+## Interactive: Category Weight Impact
+
+The heatmap below illustrates how each scoring category contributes to the final composite score across sample cities, using default weights.
+
+<HeatmapTable
+  rows={['Houston', 'Pittsburgh', 'Cleveland', 'Minneapolis', 'Nashville', 'Chicago']}
+  columns={['Med. Compat.', 'Wait Time', 'Donor Avail.', 'Hosp. Quality', 'Geo/Logistic', 'Health Demo.', 'Policy', 'Socioeconomic']}
+  data={[
+    [72, 45, 68, 85, 62, 58, 70, 65],
+    [78, 62, 72, 92, 55, 64, 72, 60],
+    [75, 58, 70, 95, 50, 60, 68, 58],
+    [74, 70, 75, 88, 48, 72, 74, 62],
+    [70, 52, 65, 80, 65, 55, 66, 63],
+    [76, 55, 71, 90, 45, 56, 70, 60],
+  ]}
+  formatCell={(v) => v.toFixed(0)}
+  colorScale="green"
+  title="Category Scores by City (Kidney, O+ Blood Type)"
+  domain={[40, 100]}
+/>
 
 ## Adjusting Weights
 

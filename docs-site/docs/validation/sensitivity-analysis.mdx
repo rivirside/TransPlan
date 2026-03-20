@@ -1,0 +1,157 @@
+---
+sidebar_position: 1
+---
+
+import TornadoChart from '@site/src/components/TornadoChart';
+import HeatmapTable from '@site/src/components/HeatmapTable';
+
+# Sensitivity Analysis
+
+This page presents the results of a systematic sensitivity analysis across all 6 organs. For each organ, we swept every tunable patient parameter from its minimum to maximum value and measured the impact on the primary outcome metric: probability of transplant within 24 months (p24).
+
+## Methods
+
+For each organ, three patient profiles were tested (standard, rare blood type, and extreme clinical score) across 10 representative cities. Each parameter was varied independently while holding all others at baseline. The resulting p24 values at each extreme were recorded, and the "swing" (difference between favorable and unfavorable extremes) quantifies each parameter's total influence.
+
+## Kidney
+
+cPRA dominates kidney transplant probability. A patient with cPRA 98% faces near-zero transplant probability at 24 months, while cPRA 0% roughly doubles the baseline probability. Urgency has a comparatively small effect.
+
+<TornadoChart
+  data={[
+    {
+      parameter: "cpra",
+      label: "cPRA (Sensitization)",
+      p24_at_low: 0.228,
+      p24_at_high: 0.014,
+      p24_baseline: 0.124,
+      swing: 0.214,
+    },
+    {
+      parameter: "urgency",
+      label: "Medical Urgency",
+      p24_at_low: 0.142,
+      p24_at_high: 0.112,
+      p24_baseline: 0.124,
+      swing: 0.030,
+    },
+  ]}
+  title="Kidney: Parameter Impact on P(transplant within 24mo)"
+  baselineLabel="Houston, O+ blood type, cPRA 30"
+/>
+
+## Liver
+
+MELD score is the dominant parameter for liver transplant probability. High MELD (35+) triggers emergency allocation priority, dramatically increasing transplant probability. Urgency has a moderate secondary effect.
+
+<TornadoChart
+  data={[
+    {
+      parameter: "meld",
+      label: "MELD Score",
+      p24_at_low: 0.480,
+      p24_at_high: 0.732,
+      p24_baseline: 0.572,
+      swing: 0.252,
+    },
+    {
+      parameter: "urgency",
+      label: "Medical Urgency",
+      p24_at_low: 0.548,
+      p24_at_high: 0.604,
+      p24_baseline: 0.572,
+      swing: 0.056,
+    },
+  ]}
+  title="Liver: Parameter Impact on P(transplant within 24mo)"
+  baselineLabel="Pittsburgh, O+ blood type, MELD 15"
+/>
+
+## Heart
+
+Urgency is the primary driver for heart transplant probability. Status 1A patients receive emergency priority allocation, while lower urgency patients face longer waits.
+
+<TornadoChart
+  data={[
+    {
+      parameter: "urgency",
+      label: "Medical Urgency",
+      p24_at_low: 0.920,
+      p24_at_high: 0.842,
+      p24_baseline: 0.888,
+      swing: 0.078,
+    },
+  ]}
+  title="Heart: Parameter Impact on P(transplant within 24mo)"
+  baselineLabel="Cleveland, O+ blood type, urgency 2"
+/>
+
+## Lung
+
+LAS (Lung Allocation Score) dominates lung transplant probability. High LAS indicates high medical urgency and triggers allocation priority. Medical urgency has a moderate secondary effect.
+
+<TornadoChart
+  data={[
+    {
+      parameter: "las",
+      label: "Lung Allocation Score",
+      p24_at_low: 0.856,
+      p24_at_high: 0.936,
+      p24_baseline: 0.892,
+      swing: 0.080,
+    },
+    {
+      parameter: "urgency",
+      label: "Medical Urgency",
+      p24_at_low: 0.908,
+      p24_at_high: 0.872,
+      p24_baseline: 0.892,
+      swing: 0.036,
+    },
+  ]}
+  title="Lung: Parameter Impact on P(transplant within 24mo)"
+  baselineLabel="Minneapolis, O+ blood type, LAS 40"
+/>
+
+## Cross-Organ Summary
+
+The dominant parameter for each organ aligns with clinical intuition:
+
+<HeatmapTable
+  rows={['Kidney', 'Liver', 'Heart', 'Lung', 'Pancreas', 'Intestine']}
+  columns={['Dominant Parameter', 'Swing (pp)', 'Secondary Parameter', 'Swing (pp)']}
+  data={[
+    [NaN, 21.4, NaN, 3.0],
+    [NaN, 25.2, NaN, 5.6],
+    [NaN, 7.8, NaN, NaN],
+    [NaN, 8.0, NaN, 3.6],
+    [NaN, 6.2, NaN, 2.8],
+    [NaN, 5.4, NaN, 2.1],
+  ]}
+  formatCell={(v) => isNaN(v) ? '---' : v.toFixed(1)}
+  colorScale="green"
+  domain={[0, 26]}
+/>
+
+| Organ | Dominant Parameter | Swing | Clinical Rationale |
+|-------|-------------------|-------|-------------------|
+| Kidney | cPRA | 21.4 pp | Highly sensitized patients need rare antigen-negative donors |
+| Liver | MELD | 25.2 pp | High MELD triggers emergency allocation priority |
+| Heart | Urgency | 7.8 pp | Status 1A/1B determines allocation tier |
+| Lung | LAS | 8.0 pp | LAS directly encodes medical urgency and survival benefit |
+| Pancreas | Urgency | 6.2 pp | Limited by small donor pool rather than a single clinical score |
+| Intestine | Urgency | 5.4 pp | Very small candidate pool; urgency is the primary differentiator |
+
+## Cross-Profile Consistency
+
+All three patient profiles (standard, rare blood type, extreme) showed the same parameter dominance ranking within each organ. This confirms the model responds to parameter variation in a clinically coherent way regardless of the baseline patient profile.
+
+## Full Data
+
+The complete sensitivity results (all 6 organs, 3 profiles, 10 cities) are available as JSON:
+
+```
+docs-site/static/data/sensitivity-results.json
+```
+
+See also: [Scoring Methodology](/theory/scoring-methodology) | [Monte Carlo Simulation](/theory/monte-carlo)

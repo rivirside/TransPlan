@@ -1,0 +1,4295 @@
+{
+  "kidney": {
+    "profiles": [
+      {
+        "label": "Standard (O+, cPRA 30)",
+        "patient": {
+          "organ": "kidney",
+          "blood_type": "O+",
+          "urgency": 2,
+          "cpra": 30,
+          "meld": null,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 30.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.124,
+                "p24_at_low": 0.228,
+                "p24_at_high": 0.014,
+                "swing": 0.214
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.124,
+                "p24_at_low": 0.142,
+                "p24_at_high": 0.112,
+                "swing": 0.03
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 30.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.16,
+                "p24_at_low": 0.242,
+                "p24_at_high": 0.028,
+                "swing": 0.214
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.16,
+                "p24_at_low": 0.152,
+                "p24_at_high": 0.156,
+                "swing": 0.004
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 30.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.266,
+                "p24_at_low": 0.404,
+                "p24_at_high": 0.046,
+                "swing": 0.358
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.266,
+                "p24_at_low": 0.25,
+                "p24_at_high": 0.206,
+                "swing": 0.044
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 30.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.206,
+                "p24_at_low": 0.258,
+                "p24_at_high": 0.034,
+                "swing": 0.224
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.206,
+                "p24_at_low": 0.166,
+                "p24_at_high": 0.204,
+                "swing": 0.038
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 30.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.196,
+                "p24_at_low": 0.28,
+                "p24_at_high": 0.024,
+                "swing": 0.256
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.196,
+                "p24_at_low": 0.228,
+                "p24_at_high": 0.254,
+                "swing": 0.026
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 30.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.266,
+                "p24_at_low": 0.46,
+                "p24_at_high": 0.058,
+                "swing": 0.402
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.266,
+                "p24_at_low": 0.3,
+                "p24_at_high": 0.298,
+                "swing": 0.002
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 30.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.204,
+                "p24_at_low": 0.336,
+                "p24_at_high": 0.032,
+                "swing": 0.304
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.204,
+                "p24_at_low": 0.228,
+                "p24_at_high": 0.214,
+                "swing": 0.014
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 30.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.14,
+                "p24_at_low": 0.214,
+                "p24_at_high": 0.016,
+                "swing": 0.198
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.14,
+                "p24_at_low": 0.104,
+                "p24_at_high": 0.116,
+                "swing": 0.012
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 30.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.306,
+                "p24_at_low": 0.438,
+                "p24_at_high": 0.05,
+                "swing": 0.388
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.306,
+                "p24_at_low": 0.29,
+                "p24_at_high": 0.376,
+                "swing": 0.086
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 30.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.082,
+                "p24_at_low": 0.158,
+                "p24_at_high": 0.008,
+                "swing": 0.15
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.082,
+                "p24_at_low": 0.092,
+                "p24_at_high": 0.058,
+                "swing": 0.034
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "cpra": 0.2708,
+          "urgency": 0.029
+        },
+        "dominant_parameters": [
+          "cpra",
+          "urgency"
+        ]
+      },
+      {
+        "label": "Rare (AB+, cPRA 0)",
+        "patient": {
+          "organ": "kidney",
+          "blood_type": "AB+",
+          "urgency": 1,
+          "cpra": 0,
+          "meld": null,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 0.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.466,
+                "p24_at_low": 0.484,
+                "p24_at_high": 0.078,
+                "swing": 0.406
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.466,
+                "p24_at_low": 0.526,
+                "p24_at_high": 0.462,
+                "swing": 0.064
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 0.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.502,
+                "p24_at_low": 0.53,
+                "p24_at_high": 0.092,
+                "swing": 0.438
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.502,
+                "p24_at_low": 0.52,
+                "p24_at_high": 0.514,
+                "swing": 0.006
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 0.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.648,
+                "p24_at_low": 0.626,
+                "p24_at_high": 0.15,
+                "swing": 0.476
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.648,
+                "p24_at_low": 0.638,
+                "p24_at_high": 0.586,
+                "swing": 0.052
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 0.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.532,
+                "p24_at_low": 0.536,
+                "p24_at_high": 0.112,
+                "swing": 0.424
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.532,
+                "p24_at_low": 0.568,
+                "p24_at_high": 0.556,
+                "swing": 0.012
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 0.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.586,
+                "p24_at_low": 0.596,
+                "p24_at_high": 0.144,
+                "swing": 0.452
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.586,
+                "p24_at_low": 0.564,
+                "p24_at_high": 0.564,
+                "swing": 0.0
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 0.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.73,
+                "p24_at_low": 0.664,
+                "p24_at_high": 0.214,
+                "swing": 0.45
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.73,
+                "p24_at_low": 0.692,
+                "p24_at_high": 0.64,
+                "swing": 0.052
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 0.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.596,
+                "p24_at_low": 0.56,
+                "p24_at_high": 0.122,
+                "swing": 0.438
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.596,
+                "p24_at_low": 0.592,
+                "p24_at_high": 0.606,
+                "swing": 0.014
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 0.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.406,
+                "p24_at_low": 0.416,
+                "p24_at_high": 0.068,
+                "swing": 0.348
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.406,
+                "p24_at_low": 0.42,
+                "p24_at_high": 0.388,
+                "swing": 0.032
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 0.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.728,
+                "p24_at_low": 0.728,
+                "p24_at_high": 0.22,
+                "swing": 0.508
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.728,
+                "p24_at_low": 0.716,
+                "p24_at_high": 0.682,
+                "swing": 0.034
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 0.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.39,
+                "p24_at_low": 0.382,
+                "p24_at_high": 0.056,
+                "swing": 0.326
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.39,
+                "p24_at_low": 0.416,
+                "p24_at_high": 0.416,
+                "swing": 0.0
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "cpra": 0.4266,
+          "urgency": 0.0266
+        },
+        "dominant_parameters": [
+          "cpra",
+          "urgency"
+        ]
+      },
+      {
+        "label": "Extreme (O-, cPRA 95)",
+        "patient": {
+          "organ": "kidney",
+          "blood_type": "O-",
+          "urgency": 3,
+          "cpra": 95,
+          "meld": null,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 95.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.048,
+                "p24_at_low": 0.204,
+                "p24_at_high": 0.016,
+                "swing": 0.188
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.048,
+                "p24_at_low": 0.076,
+                "p24_at_high": 0.05,
+                "swing": 0.026
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 95.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.086,
+                "p24_at_low": 0.222,
+                "p24_at_high": 0.022,
+                "swing": 0.2
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.086,
+                "p24_at_low": 0.066,
+                "p24_at_high": 0.06,
+                "swing": 0.006
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 95.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.128,
+                "p24_at_low": 0.352,
+                "p24_at_high": 0.038,
+                "swing": 0.314
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.128,
+                "p24_at_low": 0.122,
+                "p24_at_high": 0.11,
+                "swing": 0.012
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 95.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.088,
+                "p24_at_low": 0.258,
+                "p24_at_high": 0.03,
+                "swing": 0.228
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.088,
+                "p24_at_low": 0.112,
+                "p24_at_high": 0.09,
+                "swing": 0.022
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 95.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.094,
+                "p24_at_low": 0.292,
+                "p24_at_high": 0.042,
+                "swing": 0.25
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.094,
+                "p24_at_low": 0.082,
+                "p24_at_high": 0.07,
+                "swing": 0.012
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 95.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.16,
+                "p24_at_low": 0.388,
+                "p24_at_high": 0.044,
+                "swing": 0.344
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.16,
+                "p24_at_low": 0.142,
+                "p24_at_high": 0.154,
+                "swing": 0.012
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 95.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.09,
+                "p24_at_low": 0.312,
+                "p24_at_high": 0.024,
+                "swing": 0.288
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.09,
+                "p24_at_low": 0.08,
+                "p24_at_high": 0.1,
+                "swing": 0.02
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 95.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.048,
+                "p24_at_low": 0.202,
+                "p24_at_high": 0.01,
+                "swing": 0.192
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.048,
+                "p24_at_low": 0.052,
+                "p24_at_high": 0.046,
+                "swing": 0.006
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 95.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.154,
+                "p24_at_low": 0.408,
+                "p24_at_high": 0.066,
+                "swing": 0.342
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.154,
+                "p24_at_low": 0.164,
+                "p24_at_high": 0.158,
+                "swing": 0.006
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "cpra",
+                "label": "Kidney Sensitization (cPRA %)",
+                "baseline_value": 95.0,
+                "low_value": 0.0,
+                "high_value": 98.0,
+                "p24_baseline": 0.046,
+                "p24_at_low": 0.136,
+                "p24_at_high": 0.01,
+                "swing": 0.126
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.046,
+                "p24_at_low": 0.048,
+                "p24_at_high": 0.048,
+                "swing": 0.0
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "cpra": 0.2472,
+          "urgency": 0.0122
+        },
+        "dominant_parameters": [
+          "cpra",
+          "urgency"
+        ]
+      }
+    ],
+    "summary": {
+      "cross_profile_consistent": true,
+      "dominant_across_all_profiles": [
+        "urgency",
+        "cpra"
+      ]
+    }
+  },
+  "liver": {
+    "profiles": [
+      {
+        "label": "Standard (A+, MELD 20)",
+        "patient": {
+          "organ": "liver",
+          "blood_type": "A+",
+          "urgency": 2,
+          "cpra": null,
+          "meld": 20,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 20.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.82,
+                "p24_at_low": 0.638,
+                "p24_at_high": 0.942,
+                "swing": 0.304
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.82,
+                "p24_at_low": 0.79,
+                "p24_at_high": 0.786,
+                "swing": 0.004
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 20.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.808,
+                "p24_at_low": 0.67,
+                "p24_at_high": 0.978,
+                "swing": 0.308
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.808,
+                "p24_at_low": 0.818,
+                "p24_at_high": 0.84,
+                "swing": 0.022
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 20.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.862,
+                "p24_at_low": 0.756,
+                "p24_at_high": 0.968,
+                "swing": 0.212
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.862,
+                "p24_at_low": 0.876,
+                "p24_at_high": 0.828,
+                "swing": 0.048
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 20.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.82,
+                "p24_at_low": 0.648,
+                "p24_at_high": 0.932,
+                "swing": 0.284
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.82,
+                "p24_at_low": 0.846,
+                "p24_at_high": 0.776,
+                "swing": 0.07
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 20.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.866,
+                "p24_at_low": 0.734,
+                "p24_at_high": 0.966,
+                "swing": 0.232
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.866,
+                "p24_at_low": 0.856,
+                "p24_at_high": 0.868,
+                "swing": 0.012
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 20.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.9,
+                "p24_at_low": 0.788,
+                "p24_at_high": 0.974,
+                "swing": 0.186
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.9,
+                "p24_at_low": 0.914,
+                "p24_at_high": 0.886,
+                "swing": 0.028
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 20.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.826,
+                "p24_at_low": 0.748,
+                "p24_at_high": 0.938,
+                "swing": 0.19
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.826,
+                "p24_at_low": 0.858,
+                "p24_at_high": 0.818,
+                "swing": 0.04
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 20.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.77,
+                "p24_at_low": 0.636,
+                "p24_at_high": 0.94,
+                "swing": 0.304
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.77,
+                "p24_at_low": 0.786,
+                "p24_at_high": 0.746,
+                "swing": 0.04
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 20.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.902,
+                "p24_at_low": 0.842,
+                "p24_at_high": 0.99,
+                "swing": 0.148
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.902,
+                "p24_at_low": 0.918,
+                "p24_at_high": 0.902,
+                "swing": 0.016
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 20.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.738,
+                "p24_at_low": 0.584,
+                "p24_at_high": 0.932,
+                "swing": 0.348
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.738,
+                "p24_at_low": 0.784,
+                "p24_at_high": 0.748,
+                "swing": 0.036
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "meld": 0.2516,
+          "urgency": 0.0316
+        },
+        "dominant_parameters": [
+          "meld",
+          "urgency"
+        ]
+      },
+      {
+        "label": "Rare (AB+, MELD 10)",
+        "patient": {
+          "organ": "liver",
+          "blood_type": "AB+",
+          "urgency": 1,
+          "cpra": null,
+          "meld": 10,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 10.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.722,
+                "p24_at_low": 0.73,
+                "p24_at_high": 0.96,
+                "swing": 0.23
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.722,
+                "p24_at_low": 0.714,
+                "p24_at_high": 0.722,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 10.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.764,
+                "p24_at_low": 0.762,
+                "p24_at_high": 0.978,
+                "swing": 0.216
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.764,
+                "p24_at_low": 0.722,
+                "p24_at_high": 0.728,
+                "swing": 0.006
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 10.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.838,
+                "p24_at_low": 0.824,
+                "p24_at_high": 0.978,
+                "swing": 0.154
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.838,
+                "p24_at_low": 0.78,
+                "p24_at_high": 0.8,
+                "swing": 0.02
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 10.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.758,
+                "p24_at_low": 0.744,
+                "p24_at_high": 0.968,
+                "swing": 0.224
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.758,
+                "p24_at_low": 0.774,
+                "p24_at_high": 0.684,
+                "swing": 0.09
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 10.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.764,
+                "p24_at_low": 0.838,
+                "p24_at_high": 0.98,
+                "swing": 0.142
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.764,
+                "p24_at_low": 0.832,
+                "p24_at_high": 0.806,
+                "swing": 0.026
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 10.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.88,
+                "p24_at_low": 0.832,
+                "p24_at_high": 0.984,
+                "swing": 0.152
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.88,
+                "p24_at_low": 0.842,
+                "p24_at_high": 0.846,
+                "swing": 0.004
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 10.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.782,
+                "p24_at_low": 0.79,
+                "p24_at_high": 0.97,
+                "swing": 0.18
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.782,
+                "p24_at_low": 0.77,
+                "p24_at_high": 0.754,
+                "swing": 0.016
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 10.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.668,
+                "p24_at_low": 0.694,
+                "p24_at_high": 0.954,
+                "swing": 0.26
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.668,
+                "p24_at_low": 0.634,
+                "p24_at_high": 0.65,
+                "swing": 0.016
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 10.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.836,
+                "p24_at_low": 0.888,
+                "p24_at_high": 0.99,
+                "swing": 0.102
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.836,
+                "p24_at_low": 0.856,
+                "p24_at_high": 0.844,
+                "swing": 0.012
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 10.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.624,
+                "p24_at_low": 0.612,
+                "p24_at_high": 0.96,
+                "swing": 0.348
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.624,
+                "p24_at_low": 0.67,
+                "p24_at_high": 0.674,
+                "swing": 0.004
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "meld": 0.2008,
+          "urgency": 0.0202
+        },
+        "dominant_parameters": [
+          "meld",
+          "urgency"
+        ]
+      },
+      {
+        "label": "Extreme (O+, MELD 35)",
+        "patient": {
+          "organ": "liver",
+          "blood_type": "O+",
+          "urgency": 3,
+          "cpra": null,
+          "meld": 35,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 35.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.822,
+                "p24_at_low": 0.514,
+                "p24_at_high": 0.89,
+                "swing": 0.376
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.822,
+                "p24_at_low": 0.882,
+                "p24_at_high": 0.752,
+                "swing": 0.13
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 35.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.888,
+                "p24_at_low": 0.56,
+                "p24_at_high": 0.948,
+                "swing": 0.388
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.888,
+                "p24_at_low": 0.908,
+                "p24_at_high": 0.854,
+                "swing": 0.054
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 35.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.866,
+                "p24_at_low": 0.68,
+                "p24_at_high": 0.946,
+                "swing": 0.266
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.866,
+                "p24_at_low": 0.928,
+                "p24_at_high": 0.86,
+                "swing": 0.068
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 35.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.802,
+                "p24_at_low": 0.57,
+                "p24_at_high": 0.92,
+                "swing": 0.35
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.802,
+                "p24_at_low": 0.864,
+                "p24_at_high": 0.804,
+                "swing": 0.06
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 35.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.9,
+                "p24_at_low": 0.598,
+                "p24_at_high": 0.928,
+                "swing": 0.33
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.9,
+                "p24_at_low": 0.918,
+                "p24_at_high": 0.822,
+                "swing": 0.096
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 35.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.944,
+                "p24_at_low": 0.73,
+                "p24_at_high": 0.952,
+                "swing": 0.222
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.944,
+                "p24_at_low": 0.932,
+                "p24_at_high": 0.924,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 35.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.88,
+                "p24_at_low": 0.62,
+                "p24_at_high": 0.914,
+                "swing": 0.294
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.88,
+                "p24_at_low": 0.902,
+                "p24_at_high": 0.816,
+                "swing": 0.086
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 35.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.778,
+                "p24_at_low": 0.48,
+                "p24_at_high": 0.89,
+                "swing": 0.41
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.778,
+                "p24_at_low": 0.834,
+                "p24_at_high": 0.752,
+                "swing": 0.082
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 35.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.934,
+                "p24_at_low": 0.76,
+                "p24_at_high": 0.954,
+                "swing": 0.194
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.934,
+                "p24_at_low": 0.954,
+                "p24_at_high": 0.938,
+                "swing": 0.016
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "meld",
+                "label": "Liver Disease Severity (MELD)",
+                "baseline_value": 35.0,
+                "low_value": 7.0,
+                "high_value": 38.0,
+                "p24_baseline": 0.812,
+                "p24_at_low": 0.46,
+                "p24_at_high": 0.872,
+                "swing": 0.412
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.812,
+                "p24_at_low": 0.858,
+                "p24_at_high": 0.778,
+                "swing": 0.08
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "meld": 0.3242,
+          "urgency": 0.068
+        },
+        "dominant_parameters": [
+          "meld",
+          "urgency"
+        ]
+      }
+    ],
+    "summary": {
+      "cross_profile_consistent": true,
+      "dominant_across_all_profiles": [
+        "urgency",
+        "meld"
+      ]
+    }
+  },
+  "heart": {
+    "profiles": [
+      {
+        "label": "Standard (O+)",
+        "patient": {
+          "organ": "heart",
+          "blood_type": "O+",
+          "urgency": 2,
+          "cpra": null,
+          "meld": null,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.872,
+                "p24_at_low": 0.902,
+                "p24_at_high": 0.832,
+                "swing": 0.07
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.894,
+                "p24_at_low": 0.898,
+                "p24_at_high": 0.886,
+                "swing": 0.012
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.94,
+                "p24_at_low": 0.928,
+                "p24_at_high": 0.89,
+                "swing": 0.038
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.924,
+                "p24_at_low": 0.894,
+                "p24_at_high": 0.874,
+                "swing": 0.02
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.908,
+                "p24_at_low": 0.916,
+                "p24_at_high": 0.916,
+                "swing": 0.0
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.954,
+                "p24_at_low": 0.968,
+                "p24_at_high": 0.944,
+                "swing": 0.024
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.918,
+                "p24_at_low": 0.948,
+                "p24_at_high": 0.898,
+                "swing": 0.05
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.874,
+                "p24_at_low": 0.86,
+                "p24_at_high": 0.852,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.952,
+                "p24_at_low": 0.958,
+                "p24_at_high": 0.958,
+                "swing": 0.0
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.852,
+                "p24_at_low": 0.884,
+                "p24_at_high": 0.822,
+                "swing": 0.062
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "urgency": 0.0284
+        },
+        "dominant_parameters": [
+          "urgency"
+        ]
+      },
+      {
+        "label": "Rare (AB+)",
+        "patient": {
+          "organ": "heart",
+          "blood_type": "AB+",
+          "urgency": 1,
+          "cpra": null,
+          "meld": null,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.932,
+                "p24_at_low": 0.936,
+                "p24_at_high": 0.904,
+                "swing": 0.032
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.95,
+                "p24_at_low": 0.936,
+                "p24_at_high": 0.936,
+                "swing": 0.0
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.986,
+                "p24_at_low": 0.96,
+                "p24_at_high": 0.954,
+                "swing": 0.006
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.954,
+                "p24_at_low": 0.938,
+                "p24_at_high": 0.928,
+                "swing": 0.01
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.974,
+                "p24_at_low": 0.964,
+                "p24_at_high": 0.946,
+                "swing": 0.018
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.976,
+                "p24_at_low": 0.982,
+                "p24_at_high": 0.966,
+                "swing": 0.016
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.962,
+                "p24_at_low": 0.954,
+                "p24_at_high": 0.92,
+                "swing": 0.034
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.934,
+                "p24_at_low": 0.944,
+                "p24_at_high": 0.92,
+                "swing": 0.024
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.966,
+                "p24_at_low": 0.986,
+                "p24_at_high": 0.994,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.906,
+                "p24_at_low": 0.92,
+                "p24_at_high": 0.888,
+                "swing": 0.032
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "urgency": 0.018
+        },
+        "dominant_parameters": [
+          "urgency"
+        ]
+      },
+      {
+        "label": "Extreme (O-, high urgency)",
+        "patient": {
+          "organ": "heart",
+          "blood_type": "O-",
+          "urgency": 4,
+          "cpra": null,
+          "meld": null,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.826,
+                "p24_at_low": 0.9,
+                "p24_at_high": 0.86,
+                "swing": 0.04
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.884,
+                "p24_at_low": 0.912,
+                "p24_at_high": 0.878,
+                "swing": 0.034
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.926,
+                "p24_at_low": 0.926,
+                "p24_at_high": 0.89,
+                "swing": 0.036
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.886,
+                "p24_at_low": 0.91,
+                "p24_at_high": 0.856,
+                "swing": 0.054
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.9,
+                "p24_at_low": 0.94,
+                "p24_at_high": 0.91,
+                "swing": 0.03
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.948,
+                "p24_at_low": 0.956,
+                "p24_at_high": 0.936,
+                "swing": 0.02
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.902,
+                "p24_at_low": 0.928,
+                "p24_at_high": 0.862,
+                "swing": 0.066
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.834,
+                "p24_at_low": 0.858,
+                "p24_at_high": 0.856,
+                "swing": 0.002
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.95,
+                "p24_at_low": 0.944,
+                "p24_at_high": 0.95,
+                "swing": 0.006
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.812,
+                "p24_at_low": 0.822,
+                "p24_at_high": 0.856,
+                "swing": 0.034
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "urgency": 0.0322
+        },
+        "dominant_parameters": [
+          "urgency"
+        ]
+      }
+    ],
+    "summary": {
+      "cross_profile_consistent": true,
+      "dominant_across_all_profiles": [
+        "urgency"
+      ]
+    }
+  },
+  "lung": {
+    "profiles": [
+      {
+        "label": "Standard (B+, LAS 50)",
+        "patient": {
+          "organ": "lung",
+          "blood_type": "B+",
+          "urgency": 2,
+          "cpra": null,
+          "meld": null,
+          "las": 50.0
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 50.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.98,
+                "p24_at_low": 0.896,
+                "p24_at_high": 0.996,
+                "swing": 0.1
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.98,
+                "p24_at_low": 0.99,
+                "p24_at_high": 0.98,
+                "swing": 0.01
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 50.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.986,
+                "p24_at_low": 0.904,
+                "p24_at_high": 0.996,
+                "swing": 0.092
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.986,
+                "p24_at_low": 0.99,
+                "p24_at_high": 0.984,
+                "swing": 0.006
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 50.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.992,
+                "p24_at_low": 0.942,
+                "p24_at_high": 0.996,
+                "swing": 0.054
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.992,
+                "p24_at_low": 0.984,
+                "p24_at_high": 0.97,
+                "swing": 0.014
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 50.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.984,
+                "p24_at_low": 0.918,
+                "p24_at_high": 0.994,
+                "swing": 0.076
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.984,
+                "p24_at_low": 0.992,
+                "p24_at_high": 0.978,
+                "swing": 0.014
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 50.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.988,
+                "p24_at_low": 0.952,
+                "p24_at_high": 0.992,
+                "swing": 0.04
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.988,
+                "p24_at_low": 0.994,
+                "p24_at_high": 0.974,
+                "swing": 0.02
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 50.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.984,
+                "p24_at_low": 0.958,
+                "p24_at_high": 0.998,
+                "swing": 0.04
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.984,
+                "p24_at_low": 0.996,
+                "p24_at_high": 0.992,
+                "swing": 0.004
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 50.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.992,
+                "p24_at_low": 0.926,
+                "p24_at_high": 0.992,
+                "swing": 0.066
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.992,
+                "p24_at_low": 0.986,
+                "p24_at_high": 0.978,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 50.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.978,
+                "p24_at_low": 0.844,
+                "p24_at_high": 0.996,
+                "swing": 0.152
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.978,
+                "p24_at_low": 0.982,
+                "p24_at_high": 0.97,
+                "swing": 0.012
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 50.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.994,
+                "p24_at_low": 0.96,
+                "p24_at_high": 0.998,
+                "swing": 0.038
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.994,
+                "p24_at_low": 0.996,
+                "p24_at_high": 0.988,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 50.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.972,
+                "p24_at_low": 0.854,
+                "p24_at_high": 1.0,
+                "swing": 0.146
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.972,
+                "p24_at_low": 0.992,
+                "p24_at_high": 0.986,
+                "swing": 0.006
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "las": 0.0804,
+          "urgency": 0.0102
+        },
+        "dominant_parameters": [
+          "las",
+          "urgency"
+        ]
+      },
+      {
+        "label": "Rare (AB-, LAS 30)",
+        "patient": {
+          "organ": "lung",
+          "blood_type": "AB-",
+          "urgency": 1,
+          "cpra": null,
+          "meld": null,
+          "las": 30.0
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 30.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.9,
+                "p24_at_low": 0.906,
+                "p24_at_high": 0.996,
+                "swing": 0.09
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.9,
+                "p24_at_low": 0.906,
+                "p24_at_high": 0.872,
+                "swing": 0.034
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 30.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.936,
+                "p24_at_low": 0.948,
+                "p24_at_high": 0.998,
+                "swing": 0.05
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.936,
+                "p24_at_low": 0.932,
+                "p24_at_high": 0.932,
+                "swing": 0.0
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 30.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.968,
+                "p24_at_low": 0.95,
+                "p24_at_high": 1.0,
+                "swing": 0.05
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.968,
+                "p24_at_low": 0.968,
+                "p24_at_high": 0.942,
+                "swing": 0.026
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 30.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.934,
+                "p24_at_low": 0.934,
+                "p24_at_high": 0.996,
+                "swing": 0.062
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.934,
+                "p24_at_low": 0.93,
+                "p24_at_high": 0.906,
+                "swing": 0.024
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.952,
+                "p24_at_low": 0.966,
+                "p24_at_high": 0.914,
+                "swing": 0.052
+              },
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 30.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.952,
+                "p24_at_low": 0.954,
+                "p24_at_high": 1.0,
+                "swing": 0.046
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 30.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.98,
+                "p24_at_low": 0.97,
+                "p24_at_high": 1.0,
+                "swing": 0.03
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.98,
+                "p24_at_low": 0.978,
+                "p24_at_high": 0.962,
+                "swing": 0.016
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 30.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.954,
+                "p24_at_low": 0.966,
+                "p24_at_high": 0.992,
+                "swing": 0.026
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.954,
+                "p24_at_low": 0.926,
+                "p24_at_high": 0.932,
+                "swing": 0.006
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 30.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.908,
+                "p24_at_low": 0.892,
+                "p24_at_high": 0.996,
+                "swing": 0.104
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.908,
+                "p24_at_low": 0.9,
+                "p24_at_high": 0.862,
+                "swing": 0.038
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 30.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.98,
+                "p24_at_low": 0.956,
+                "p24_at_high": 1.0,
+                "swing": 0.044
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.98,
+                "p24_at_low": 0.974,
+                "p24_at_high": 0.968,
+                "swing": 0.006
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 30.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.878,
+                "p24_at_low": 0.868,
+                "p24_at_high": 0.994,
+                "swing": 0.126
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.878,
+                "p24_at_low": 0.876,
+                "p24_at_high": 0.874,
+                "swing": 0.002
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "las": 0.0628,
+          "urgency": 0.0204
+        },
+        "dominant_parameters": [
+          "las",
+          "urgency"
+        ]
+      },
+      {
+        "label": "Extreme (O+, LAS 80)",
+        "patient": {
+          "organ": "lung",
+          "blood_type": "O+",
+          "urgency": 3,
+          "cpra": null,
+          "meld": null,
+          "las": 80.0
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 80.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.99,
+                "p24_at_low": 0.854,
+                "p24_at_high": 0.994,
+                "swing": 0.14
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.99,
+                "p24_at_low": 0.996,
+                "p24_at_high": 0.984,
+                "swing": 0.012
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 80.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.996,
+                "p24_at_low": 0.926,
+                "p24_at_high": 0.996,
+                "swing": 0.07
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.996,
+                "p24_at_low": 0.998,
+                "p24_at_high": 1.0,
+                "swing": 0.002
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 80.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.996,
+                "p24_at_low": 0.938,
+                "p24_at_high": 0.992,
+                "swing": 0.054
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.996,
+                "p24_at_low": 0.996,
+                "p24_at_high": 0.998,
+                "swing": 0.002
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 80.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.998,
+                "p24_at_low": 0.87,
+                "p24_at_high": 0.994,
+                "swing": 0.124
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.998,
+                "p24_at_low": 0.99,
+                "p24_at_high": 0.992,
+                "swing": 0.002
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 80.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.994,
+                "p24_at_low": 0.918,
+                "p24_at_high": 0.994,
+                "swing": 0.076
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.994,
+                "p24_at_low": 0.998,
+                "p24_at_high": 0.992,
+                "swing": 0.006
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 80.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.998,
+                "p24_at_low": 0.966,
+                "p24_at_high": 1.0,
+                "swing": 0.034
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.998,
+                "p24_at_low": 1.0,
+                "p24_at_high": 0.992,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 80.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.99,
+                "p24_at_low": 0.93,
+                "p24_at_high": 0.996,
+                "swing": 0.066
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.99,
+                "p24_at_low": 0.994,
+                "p24_at_high": 0.986,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 80.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.992,
+                "p24_at_low": 0.844,
+                "p24_at_high": 0.994,
+                "swing": 0.15
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.992,
+                "p24_at_low": 0.994,
+                "p24_at_high": 0.986,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 80.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 1.0,
+                "p24_at_low": 0.96,
+                "p24_at_high": 0.994,
+                "swing": 0.034
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 1.0,
+                "p24_at_low": 0.996,
+                "p24_at_high": 1.0,
+                "swing": 0.004
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "las",
+                "label": "Lung Allocation Score (LAS)",
+                "baseline_value": 80.0,
+                "low_value": 20.0,
+                "high_value": 85.0,
+                "p24_baseline": 0.996,
+                "p24_at_low": 0.848,
+                "p24_at_high": 0.986,
+                "swing": 0.138
+              },
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 3.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.996,
+                "p24_at_low": 0.996,
+                "p24_at_high": 0.99,
+                "swing": 0.006
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "las": 0.0886,
+          "urgency": 0.0058
+        },
+        "dominant_parameters": [
+          "las",
+          "urgency"
+        ]
+      }
+    ],
+    "summary": {
+      "cross_profile_consistent": true,
+      "dominant_across_all_profiles": [
+        "urgency",
+        "las"
+      ]
+    }
+  },
+  "pancreas": {
+    "profiles": [
+      {
+        "label": "Standard (O+)",
+        "patient": {
+          "organ": "pancreas",
+          "blood_type": "O+",
+          "urgency": 2,
+          "cpra": null,
+          "meld": null,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.178,
+                "p24_at_low": 0.166,
+                "p24_at_high": 0.204,
+                "swing": 0.038
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.202,
+                "p24_at_low": 0.192,
+                "p24_at_high": 0.192,
+                "swing": 0.0
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.336,
+                "p24_at_low": 0.346,
+                "p24_at_high": 0.286,
+                "swing": 0.06
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.212,
+                "p24_at_low": 0.22,
+                "p24_at_high": 0.206,
+                "swing": 0.014
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.278,
+                "p24_at_low": 0.278,
+                "p24_at_high": 0.276,
+                "swing": 0.002
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.432,
+                "p24_at_low": 0.44,
+                "p24_at_high": 0.432,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.264,
+                "p24_at_low": 0.294,
+                "p24_at_high": 0.256,
+                "swing": 0.038
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.13,
+                "p24_at_low": 0.112,
+                "p24_at_high": 0.128,
+                "swing": 0.016
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.404,
+                "p24_at_low": 0.434,
+                "p24_at_high": 0.45,
+                "swing": 0.016
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.128,
+                "p24_at_low": 0.128,
+                "p24_at_high": 0.098,
+                "swing": 0.03
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "urgency": 0.0222
+        },
+        "dominant_parameters": [
+          "urgency"
+        ]
+      },
+      {
+        "label": "Rare (AB+)",
+        "patient": {
+          "organ": "pancreas",
+          "blood_type": "AB+",
+          "urgency": 1,
+          "cpra": null,
+          "meld": null,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.466,
+                "p24_at_low": 0.468,
+                "p24_at_high": 0.484,
+                "swing": 0.016
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.528,
+                "p24_at_low": 0.464,
+                "p24_at_high": 0.502,
+                "swing": 0.038
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.65,
+                "p24_at_low": 0.6,
+                "p24_at_high": 0.64,
+                "swing": 0.04
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.492,
+                "p24_at_low": 0.56,
+                "p24_at_high": 0.484,
+                "swing": 0.076
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.61,
+                "p24_at_low": 0.628,
+                "p24_at_high": 0.592,
+                "swing": 0.036
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.728,
+                "p24_at_low": 0.724,
+                "p24_at_high": 0.72,
+                "swing": 0.004
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.566,
+                "p24_at_low": 0.58,
+                "p24_at_high": 0.554,
+                "swing": 0.026
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.424,
+                "p24_at_low": 0.394,
+                "p24_at_high": 0.358,
+                "swing": 0.036
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.744,
+                "p24_at_low": 0.79,
+                "p24_at_high": 0.74,
+                "swing": 0.05
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.352,
+                "p24_at_low": 0.366,
+                "p24_at_high": 0.358,
+                "swing": 0.008
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "urgency": 0.033
+        },
+        "dominant_parameters": [
+          "urgency"
+        ]
+      },
+      {
+        "label": "Extreme (O-, high urgency)",
+        "patient": {
+          "organ": "pancreas",
+          "blood_type": "O-",
+          "urgency": 4,
+          "cpra": null,
+          "meld": null,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.134,
+                "p24_at_low": 0.146,
+                "p24_at_high": 0.154,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.186,
+                "p24_at_low": 0.184,
+                "p24_at_high": 0.17,
+                "swing": 0.014
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.282,
+                "p24_at_low": 0.278,
+                "p24_at_high": 0.268,
+                "swing": 0.01
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.166,
+                "p24_at_low": 0.186,
+                "p24_at_high": 0.158,
+                "swing": 0.028
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.272,
+                "p24_at_low": 0.266,
+                "p24_at_high": 0.276,
+                "swing": 0.01
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.396,
+                "p24_at_low": 0.392,
+                "p24_at_high": 0.434,
+                "swing": 0.042
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.246,
+                "p24_at_low": 0.274,
+                "p24_at_high": 0.252,
+                "swing": 0.022
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.1,
+                "p24_at_low": 0.12,
+                "p24_at_high": 0.14,
+                "swing": 0.02
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.414,
+                "p24_at_low": 0.444,
+                "p24_at_high": 0.406,
+                "swing": 0.038
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.09,
+                "p24_at_low": 0.082,
+                "p24_at_high": 0.102,
+                "swing": 0.02
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "urgency": 0.0212
+        },
+        "dominant_parameters": [
+          "urgency"
+        ]
+      }
+    ],
+    "summary": {
+      "cross_profile_consistent": true,
+      "dominant_across_all_profiles": [
+        "urgency"
+      ]
+    }
+  },
+  "intestine": {
+    "profiles": [
+      {
+        "label": "Standard (O+)",
+        "patient": {
+          "organ": "intestine",
+          "blood_type": "O+",
+          "urgency": 2,
+          "cpra": null,
+          "meld": null,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.506,
+                "p24_at_low": 0.502,
+                "p24_at_high": 0.51,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.554,
+                "p24_at_low": 0.536,
+                "p24_at_high": 0.534,
+                "swing": 0.002
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.604,
+                "p24_at_low": 0.662,
+                "p24_at_high": 0.61,
+                "swing": 0.052
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.538,
+                "p24_at_low": 0.542,
+                "p24_at_high": 0.512,
+                "swing": 0.03
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.63,
+                "p24_at_low": 0.608,
+                "p24_at_high": 0.572,
+                "swing": 0.036
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.712,
+                "p24_at_low": 0.672,
+                "p24_at_high": 0.686,
+                "swing": 0.014
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.596,
+                "p24_at_low": 0.652,
+                "p24_at_high": 0.572,
+                "swing": 0.08
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.424,
+                "p24_at_low": 0.46,
+                "p24_at_high": 0.408,
+                "swing": 0.052
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.712,
+                "p24_at_low": 0.744,
+                "p24_at_high": 0.694,
+                "swing": 0.05
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 2.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.458,
+                "p24_at_low": 0.444,
+                "p24_at_high": 0.42,
+                "swing": 0.024
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "urgency": 0.0348
+        },
+        "dominant_parameters": [
+          "urgency"
+        ]
+      },
+      {
+        "label": "Rare (AB+)",
+        "patient": {
+          "organ": "intestine",
+          "blood_type": "AB+",
+          "urgency": 1,
+          "cpra": null,
+          "meld": null,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.614,
+                "p24_at_low": 0.652,
+                "p24_at_high": 0.58,
+                "swing": 0.072
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.662,
+                "p24_at_low": 0.662,
+                "p24_at_high": 0.634,
+                "swing": 0.028
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.732,
+                "p24_at_low": 0.722,
+                "p24_at_high": 0.706,
+                "swing": 0.016
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.696,
+                "p24_at_low": 0.662,
+                "p24_at_high": 0.652,
+                "swing": 0.01
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.718,
+                "p24_at_low": 0.73,
+                "p24_at_high": 0.702,
+                "swing": 0.028
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.82,
+                "p24_at_low": 0.786,
+                "p24_at_high": 0.744,
+                "swing": 0.042
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.73,
+                "p24_at_low": 0.722,
+                "p24_at_high": 0.636,
+                "swing": 0.086
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.58,
+                "p24_at_low": 0.628,
+                "p24_at_high": 0.58,
+                "swing": 0.048
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.814,
+                "p24_at_low": 0.834,
+                "p24_at_high": 0.802,
+                "swing": 0.032
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 1.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.584,
+                "p24_at_low": 0.508,
+                "p24_at_high": 0.534,
+                "swing": 0.026
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "urgency": 0.0388
+        },
+        "dominant_parameters": [
+          "urgency"
+        ]
+      },
+      {
+        "label": "Extreme (O-, high urgency)",
+        "patient": {
+          "organ": "intestine",
+          "blood_type": "O-",
+          "urgency": 4,
+          "cpra": null,
+          "meld": null,
+          "las": null
+        },
+        "cities": [
+          {
+            "city": "Houston",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.444,
+                "p24_at_low": 0.504,
+                "p24_at_high": 0.428,
+                "swing": 0.076
+              }
+            ]
+          },
+          {
+            "city": "Pittsburgh",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.492,
+                "p24_at_low": 0.57,
+                "p24_at_high": 0.566,
+                "swing": 0.004
+              }
+            ]
+          },
+          {
+            "city": "Phoenix",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.616,
+                "p24_at_low": 0.646,
+                "p24_at_high": 0.618,
+                "swing": 0.028
+              }
+            ]
+          },
+          {
+            "city": "Cleveland",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.522,
+                "p24_at_low": 0.54,
+                "p24_at_high": 0.506,
+                "swing": 0.034
+              }
+            ]
+          },
+          {
+            "city": "Minneapolis",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.554,
+                "p24_at_low": 0.66,
+                "p24_at_high": 0.578,
+                "swing": 0.082
+              }
+            ]
+          },
+          {
+            "city": "Nashville",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.704,
+                "p24_at_low": 0.728,
+                "p24_at_high": 0.706,
+                "swing": 0.022
+              }
+            ]
+          },
+          {
+            "city": "New York",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.522,
+                "p24_at_low": 0.626,
+                "p24_at_high": 0.568,
+                "swing": 0.058
+              }
+            ]
+          },
+          {
+            "city": "Los Angeles",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.406,
+                "p24_at_low": 0.44,
+                "p24_at_high": 0.432,
+                "swing": 0.008
+              }
+            ]
+          },
+          {
+            "city": "Chicago",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.682,
+                "p24_at_low": 0.762,
+                "p24_at_high": 0.668,
+                "swing": 0.094
+              }
+            ]
+          },
+          {
+            "city": "San Francisco",
+            "impacts": [
+              {
+                "parameter": "urgency",
+                "label": "Medical Urgency",
+                "baseline_value": 4.0,
+                "low_value": 1.0,
+                "high_value": 4.0,
+                "p24_baseline": 0.448,
+                "p24_at_low": 0.42,
+                "p24_at_high": 0.384,
+                "swing": 0.036
+              }
+            ]
+          }
+        ],
+        "avg_parameter_swings": {
+          "urgency": 0.0442
+        },
+        "dominant_parameters": [
+          "urgency"
+        ]
+      }
+    ],
+    "summary": {
+      "cross_profile_consistent": true,
+      "dominant_across_all_profiles": [
+        "urgency"
+      ]
+    }
+  }
+}

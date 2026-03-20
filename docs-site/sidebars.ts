@@ -43,6 +43,14 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Validation',
+      items: [
+        'validation/sensitivity-analysis',
+        'validation/srtr-comparison',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Contributing',
       items: [
         'contributing/development-guide',
