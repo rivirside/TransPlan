@@ -62,15 +62,8 @@ EQUITY_DISCLAIMERS = [
 ]
 
 
-def _gini(values: np.ndarray) -> float:
-    """Compute Gini coefficient. 0 = perfect equality, 1 = total inequality."""
-    values = np.asarray(values, dtype=float)
-    if len(values) < 2 or np.sum(values) == 0:
-        return 0.0
-    s = np.sort(values)
-    n = len(s)
-    idx = np.arange(1, n + 1)
-    return float((2 * np.sum(idx * s) - (n + 1) * np.sum(s)) / (n * np.sum(s)))
+# Issue #64: Use shared implementation from stats_utils
+from services.stats_utils import gini as _gini
 
 
 def _simulate_profile_city(

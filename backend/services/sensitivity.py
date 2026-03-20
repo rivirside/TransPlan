@@ -86,6 +86,13 @@ def compute_sensitivity(
     Returns impacts sorted by magnitude (largest swing first).
     """
     start = time.perf_counter()
+
+    # Validate city name (#62)
+    from services.monte_carlo import CITIES
+    valid_cities = {c["city"] for c in CITIES}
+    if city not in valid_cities:
+        raise ValueError(f"Unknown city: '{city}'. Valid cities: {sorted(valid_cities)}")
+
     rng = np.random.default_rng()
     baseline_p24 = _p24_single_city(patient, city, n_iterations, rng)
     impacts: list[ParameterImpact] = []

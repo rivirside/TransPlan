@@ -71,6 +71,10 @@ class TestRateComputation:
 # -- Integration: competing risks in Monte Carlo --
 
 class TestCompetingRisksInSimulation:
+    @pytest.fixture(autouse=True)
+    def _ensure_data_loaded(self, data):
+        """Ensure data_loader singleton is initialized before simulate() calls."""
+
     @pytest.fixture
     def kidney_patient(self):
         return PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male", urgency=2)

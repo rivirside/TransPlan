@@ -87,9 +87,8 @@ class TestMultiplierEffects:
             donor_rate_multiplier=1.5, wait_time_multiplier=1.0,
             n_iterations=500,
         )
-        # With 50% more donors, p24 should generally increase
-        # Allow for Monte Carlo noise: delta should be >= -0.05
-        assert result.delta_p24 >= -0.05, f"More donors should not worsen p24 significantly: {result.delta_p24}"
+        # With 50% more donors, p24 should increase (paired-seed comparison removes noise)
+        assert result.delta_p24 > 0, f"More donors should improve p24: {result.delta_p24}"
 
     def test_fewer_donors_worsens_p24(self, kidney_patient):
         """donor_rate_multiplier < 1 should decrease p24 (fewer donors → longer waits)."""
@@ -98,8 +97,8 @@ class TestMultiplierEffects:
             donor_rate_multiplier=0.5, wait_time_multiplier=1.0,
             n_iterations=500,
         )
-        # With 50% fewer donors, p24 should generally decrease
-        assert result.delta_p24 <= 0.05, f"Fewer donors should not improve p24 significantly: {result.delta_p24}"
+        # With 50% fewer donors, p24 should decrease
+        assert result.delta_p24 < 0, f"Fewer donors should worsen p24: {result.delta_p24}"
 
     def test_longer_waits_worsen_p24(self, kidney_patient):
         """wait_time_multiplier > 1 should decrease p24 (longer base waits)."""
@@ -108,7 +107,7 @@ class TestMultiplierEffects:
             donor_rate_multiplier=1.0, wait_time_multiplier=1.5,
             n_iterations=500,
         )
-        assert result.delta_p24 <= 0.05, f"Longer waits should not improve p24 significantly: {result.delta_p24}"
+        assert result.delta_p24 < 0, f"Longer waits should worsen p24: {result.delta_p24}"
 
     def test_shorter_waits_improve_p24(self, kidney_patient):
         """wait_time_multiplier < 1 should increase p24 (shorter base waits)."""
@@ -117,7 +116,7 @@ class TestMultiplierEffects:
             donor_rate_multiplier=1.0, wait_time_multiplier=0.5,
             n_iterations=500,
         )
-        assert result.delta_p24 >= -0.05, f"Shorter waits should not worsen p24 significantly: {result.delta_p24}"
+        assert result.delta_p24 > 0, f"Shorter waits should improve p24: {result.delta_p24}"
 
     def test_baseline_multipliers_give_small_delta(self, kidney_patient):
         """With both multipliers at 1.0, delta should be near zero."""

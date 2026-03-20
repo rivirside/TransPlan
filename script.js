@@ -3280,16 +3280,22 @@ function _aggregateDimension(cities, dimKey) {
 
 // CATEGORY_LABELS is already declared in algorithm.js (loaded before script.js)
 
-const CATEGORY_WEIGHTS = {
-    medicalCompatibility: 25,
-    waitTime: 20,
-    donorAvailability: 18,
-    hospitalQuality: 15,
-    geographic: 10,
-    healthDemographics: 7,
-    policy: 3,
-    socioeconomic: 2
-};
+// Issue #69: Read current weights from TransPlanWeights (respects user customization).
+// Falls back to DEFAULT_WEIGHTS from algorithm.js if TransPlanWeights not available.
+function _getCurrentWeightsInt() {
+    var tw = window.TransPlanWeights;
+    if (tw) {
+        var custom = tw.getWeights();
+        if (custom) {
+            var result = {};
+            CATEGORY_KEYS.forEach(function(k) { result[k] = Math.round(custom[k] * 100); });
+            return result;
+        }
+    }
+    var result = {};
+    CATEGORY_KEYS.forEach(function(k) { result[k] = Math.round(DEFAULT_WEIGHTS[k] * 100); });
+    return result;
+}
 
 function openCityDetail(cityName) {
     var city = _currentResults ? _currentResults.find(function(c) { return c.city === cityName; }) : null;
@@ -3338,10 +3344,11 @@ function openCityDetail(cityName) {
         table.className = 'modal-score-table';
         table.innerHTML = '<thead><tr><th>Category</th><th class="num">Score</th><th class="num">Weight</th><th class="num">Contribution</th><th class="modal-score-bar-cell">Visual</th></tr></thead>';
         var tbody = document.createElement('tbody');
+        var currentWeights = _getCurrentWeightsInt();
         var keys = Object.keys(CATEGORY_LABELS);
         keys.forEach(function(key) {
             var raw = city.scoreBreakdown[key] || 0;
-            var weight = CATEGORY_WEIGHTS[key] || 0;
+            var weight = currentWeights[key] || 0;
             var contribution = (raw * weight / 100).toFixed(1);
             var tr = document.createElement('tr');
             tr.innerHTML = '<td class="cat-name">' + CATEGORY_LABELS[key] + '</td>' +
@@ -3791,9 +3798,10 @@ function openCityComparison() {
             return c.phase1 ? c.phase1.personalizedScore.toFixed(1) : '—';
         }), 'max');
 
+        var compareWeights = _getCurrentWeightsInt();
         var catKeys = Object.keys(CATEGORY_LABELS);
         catKeys.forEach(function(key) {
-            _addCompareRow(tbody, CATEGORY_LABELS[key] + ' (' + CATEGORY_WEIGHTS[key] + '%)', cities.map(function(c) {
+            _addCompareRow(tbody, CATEGORY_LABELS[key] + ' (' + compareWeights[key] + '%)', cities.map(function(c) {
                 if (!c.phase1 || !c.phase1.scoreBreakdown) return '—';
                 return c.phase1.scoreBreakdown[key] ? c.phase1.scoreBreakdown[key].toFixed(1) : '—';
             }), 'max');

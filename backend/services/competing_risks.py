@@ -50,15 +50,8 @@ def _ensure_loaded() -> None:
                 _RISKS, _CITY_ADJUSTMENTS = _load_risks()
 
 
-def _get_range_multiplier(value: int | float, ranges: dict[str, float]) -> float:
-    """Look up a multiplier from a range-keyed dict (e.g. '6-14': 0.5)."""
-    for range_key, multiplier in ranges.items():
-        parts = range_key.split("-")
-        if len(parts) == 2:
-            lo, hi = float(parts[0]), float(parts[1])
-            if lo <= value <= hi:
-                return multiplier
-    return 1.0
+# Issue #64: Use shared implementation from stats_utils
+from services.stats_utils import get_range_multiplier as _get_range_multiplier
 
 
 def get_annual_mortality_rate(

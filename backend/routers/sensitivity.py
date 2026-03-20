@@ -24,6 +24,8 @@ class SensitivityRequest(BaseModel):
 def run_sensitivity(request: SensitivityRequest) -> SensitivityResult:
     try:
         return compute_sensitivity(request.patient, request.city, request.iterations)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Sensitivity analysis failed for %s/%s", request.patient.organ, request.city)
         raise HTTPException(status_code=500, detail="Sensitivity analysis failed — see server logs") from e

@@ -55,6 +55,8 @@ def run_what_if(request: WhatIfRequest) -> WhatIfResult:
             wait_time_multiplier=request.wait_time_multiplier,
             n_iterations=request.iterations,
         )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("What-if analysis failed for %s/%s", request.patient.organ, request.city)
         raise HTTPException(status_code=500, detail="What-if analysis failed — see server logs") from e

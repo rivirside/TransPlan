@@ -55,19 +55,8 @@ def _ensure_loaded() -> None:
                 _DISTRIBUTIONS, _CITY_FACTORS = _load_distributions()
 
 
-def _get_range_multiplier(value: int | float, ranges: dict[str, float]) -> float:
-    """
-    Look up a multiplier from a range-keyed dict.
-    Keys like "0-20", "21-80", "81-97", "98-100".
-    Returns 1.0 if no matching range is found.
-    """
-    for range_key, multiplier in ranges.items():
-        parts = range_key.split("-")
-        if len(parts) == 2:
-            lo, hi = float(parts[0]), float(parts[1])
-            if lo <= value <= hi:
-                return multiplier
-    return 1.0
+# Issue #64: Use shared implementation from stats_utils
+from services.stats_utils import get_range_multiplier as _get_range_multiplier
 
 
 def _age_sex_multiplier(organ: str, age: int | None, sex: str | None) -> float:

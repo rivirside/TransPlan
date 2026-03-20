@@ -165,12 +165,15 @@ def compute_what_if(
     """
     start = time.perf_counter()
 
-    # Look up state for this city
-    state = "TN"  # default
+    # Validate city name against canonical list (#62)
+    state = None
     for c in CITIES:
         if c["city"] == city:
             state = c["state"]
             break
+    if state is None:
+        valid = sorted(c["city"] for c in CITIES)
+        raise ValueError(f"Unknown city: '{city}'. Valid cities: {valid}")
 
     # Use paired seeds for baseline vs adjusted comparison
     seed = np.random.SeedSequence()
