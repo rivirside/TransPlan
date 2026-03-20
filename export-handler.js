@@ -290,8 +290,6 @@
     if (!win) return;
 
     var doc = win.document;
-    doc.open();
-    doc.close();
 
     // Set title
     doc.title = 'TransPlan Report - ' + organ + ' - ' + ts;

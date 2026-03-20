@@ -268,6 +268,47 @@
         }
     }
 
+    function onDarkModeChange(isDark) {
+        var textColor = isDark ? '#e2e5ed' : '#1a1d2e';
+        var gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+        var borderColor = isDark ? '#333' : '#fff';
+
+        Object.keys(chartInstances).forEach(function (id) {
+            var chart = chartInstances[id];
+            if (!chart) return;
+
+            // Update legend text color
+            if (chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels) {
+                chart.options.plugins.legend.labels.color = textColor;
+            }
+
+            // Update donut border color
+            if (chart.config.type === 'doughnut' && chart.data.datasets[0]) {
+                chart.data.datasets[0].borderColor = borderColor;
+            }
+
+            // Update radar grid/tick colors
+            if (chart.config.type === 'radar' && chart.options.scales && chart.options.scales.r) {
+                chart.options.scales.r.grid.color = gridColor;
+                chart.options.scales.r.ticks.color = textColor;
+                chart.options.scales.r.pointLabels.color = textColor;
+            }
+
+            // Update bar chart axis colors
+            if (chart.config.type === 'bar') {
+                ['x', 'y'].forEach(function (axis) {
+                    if (chart.options.scales && chart.options.scales[axis]) {
+                        if (chart.options.scales[axis].ticks) chart.options.scales[axis].ticks.color = textColor;
+                        if (chart.options.scales[axis].title) chart.options.scales[axis].title.color = textColor;
+                        if (chart.options.scales[axis].grid) chart.options.scales[axis].grid.color = gridColor;
+                    }
+                });
+            }
+
+            chart.update();
+        });
+    }
+
     // Expose functions globally
     window.TransPlanCharts = {
         renderWeightsDonutChart,
@@ -275,7 +316,8 @@
         createComparisonChart,
         updateWeightsDonut: updateWeightsDonut,
         getChartImage: getChartImage,
-        getChartIds: getChartIds
+        getChartIds: getChartIds,
+        onDarkModeChange: onDarkModeChange
     };
 
     // Render donut chart on page load

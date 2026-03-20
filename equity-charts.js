@@ -294,6 +294,26 @@
     return Object.keys(instances);
   }
 
+  function onDarkModeChange(isDark) {
+    var textColor = isDark ? '#e2e5ed' : '#1a1d2e';
+    var gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+
+    Object.keys(instances).forEach(function (id) {
+      var chart = instances[id];
+      if (!chart) return;
+
+      ['x', 'y'].forEach(function (axis) {
+        if (chart.options.scales && chart.options.scales[axis]) {
+          if (chart.options.scales[axis].ticks) chart.options.scales[axis].ticks.color = textColor;
+          if (chart.options.scales[axis].title) chart.options.scales[axis].title.color = textColor;
+          if (chart.options.scales[axis].grid) chart.options.scales[axis].grid.color = gridColor;
+        }
+      });
+
+      chart.update();
+    });
+  }
+
   // Expose globally
   window.TransPlanEquityCharts = {
     renderBloodTypeDisparityChart: renderBloodTypeDisparityChart,
@@ -301,6 +321,7 @@
     renderGiniByCity: renderGiniByCity,
     destroyAll: destroyAll,
     getChartImage: getChartImage,
-    getChartIds: getChartIds
+    getChartIds: getChartIds,
+    onDarkModeChange: onDarkModeChange
   };
 })();

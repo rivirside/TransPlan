@@ -93,6 +93,10 @@ async function fetchAirQuality() {
     if (!email || !apiKey) {
         console.warn('EPA_EMAIL and EPA_API_KEY not set. Using seed data.');
         updateMetadata('air-quality', 'EPA AQS (skipped - no credentials)', 'skipped');
+        if (process.env.CI) {
+            console.error('ERROR: Missing credentials in CI environment. Set EPA_EMAIL and EPA_API_KEY.');
+            process.exit(1);
+        }
         return;
     }
 

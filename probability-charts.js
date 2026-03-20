@@ -417,6 +417,35 @@
     return Object.keys(instances);
   }
 
+  function onDarkModeChange(isDark) {
+    var textColor = isDark ? '#e2e5ed' : '#2c3e50';
+    var gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+
+    Object.keys(instances).forEach(function (id) {
+      var chart = instances[id];
+      if (!chart) return;
+
+      // Update title color
+      if (chart.options.plugins && chart.options.plugins.title) {
+        chart.options.plugins.title.color = textColor;
+      }
+      if (chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels) {
+        chart.options.plugins.legend.labels.color = textColor;
+      }
+
+      // Update axis colors
+      ['x', 'y'].forEach(function (axis) {
+        if (chart.options.scales && chart.options.scales[axis]) {
+          if (chart.options.scales[axis].ticks) chart.options.scales[axis].ticks.color = textColor;
+          if (chart.options.scales[axis].title) chart.options.scales[axis].title.color = textColor;
+          if (chart.options.scales[axis].grid) chart.options.scales[axis].grid.color = gridColor;
+        }
+      });
+
+      chart.update();
+    });
+  }
+
   // Expose globally
   window.TransPlanProbCharts = {
     renderCDFChart: renderCDFChart,
@@ -424,6 +453,7 @@
     renderTornadoChart: renderTornadoChart,
     destroyAll: destroyAll,
     getChartImage: getChartImage,
-    getChartIds: getChartIds
+    getChartIds: getChartIds,
+    onDarkModeChange: onDarkModeChange
   };
 })();

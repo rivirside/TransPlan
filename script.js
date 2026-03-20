@@ -552,7 +552,7 @@ let cityMarkersLayer;
 
 // Initialize map
 function initializeMap() {
-    if (!window.TransPlanCDN?.leaflet) {
+    if (!window.TransPlanCDN?.leaflet || typeof L === 'undefined') {
         const mapEl = document.getElementById('map');
         if (mapEl) {
             const notice = document.createElement('div');

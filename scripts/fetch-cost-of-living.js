@@ -46,6 +46,10 @@ async function fetchCostOfLiving() {
     if (!apiKey) {
         console.warn('BLS_API_KEY not set. Using seed data.');
         updateMetadata('cost-of-living', 'BLS API (skipped - no key)', 'skipped');
+        if (process.env.CI) {
+            console.error('ERROR: Missing credentials in CI environment. Set BLS_API_KEY.');
+            process.exit(1);
+        }
         return;
     }
 
