@@ -1,0 +1,1219 @@
+{
+  "_meta": {
+    "source": "SRTR PSR National Center-Level Summary Data (January 2025 release)",
+    "method": "Center-level wait time factors from Table B10 (all centers)",
+    "fetchedAt": "2026-03-20T20:20:28Z",
+    "totalCenters": 248
+  },
+  "center_wait_time_factors": {
+    "ALCH": {
+      "kidney": 0.3,
+      "liver": 0.89,
+      "heart": 3.0
+    },
+    "ALUA": {
+      "kidney": 0.85,
+      "liver": 1.85,
+      "heart": 1.18,
+      "lung": 2.5
+    },
+    "ALVA": {
+      "kidney": 1.98
+    },
+    "ARCH": {
+      "kidney": 0.36,
+      "heart": 2.32
+    },
+    "ARUA": {
+      "kidney": 0.3,
+      "liver": 0.72
+    },
+    "AZCH": {
+      "kidney": 0.3,
+      "liver": 1.59,
+      "heart": 1.36
+    },
+    "AZGS": {
+      "kidney": 1.62,
+      "liver": 0.3,
+      "heart": 0.91
+    },
+    "AZMC": {
+      "kidney": 0.3,
+      "liver": 0.37,
+      "heart": 0.59,
+      "pancreas": 0.3
+    },
+    "AZSJ": {
+      "kidney": 0.51,
+      "liver": 1.28,
+      "lung": 0.36
+    },
+    "AZUA": {
+      "kidney": 0.69,
+      "liver": 3.0,
+      "heart": 1.6,
+      "lung": 1.07,
+      "pancreas": 0.3
+    },
+    "CACH": {
+      "kidney": 0.59,
+      "liver": 1.83,
+      "heart": 2.59
+    },
+    "CACL": {
+      "kidney": 0.44,
+      "liver": 1.09,
+      "heart": 3.0,
+      "pancreas": 0.3,
+      "intestine": 0.3
+    },
+    "CACS": {
+      "kidney": 1.15,
+      "liver": 0.63,
+      "heart": 0.41,
+      "lung": 0.64,
+      "pancreas": 1.6
+    },
+    "CAGH": {
+      "kidney": 2.86,
+      "liver": 3.0,
+      "pancreas": 3.0
+    },
+    "CAIM": {
+      "kidney": 1.49
+    },
+    "CALA": {
+      "kidney": 3.0
+    },
+    "CALL": {
+      "kidney": 2.45,
+      "liver": 0.83,
+      "heart": 0.91,
+      "pancreas": 0.69
+    },
+    "CAMB": {
+      "kidney": 0.66,
+      "liver": 0.43,
+      "heart": 3.0
+    },
+    "CAPC": {
+      "kidney": 1.44,
+      "liver": 1.13,
+      "heart": 1.59,
+      "lung": 3.0,
+      "pancreas": 2.29,
+      "intestine": 3.0
+    },
+    "CAPM": {
+      "kidney": 3.0,
+      "liver": 3.0,
+      "heart": 0.3,
+      "pancreas": 0.3
+    },
+    "CARC": {
+      "kidney": 1.17,
+      "liver": 0.3
+    },
+    "CASD": {
+      "kidney": 1.17,
+      "liver": 1.09,
+      "heart": 0.36,
+      "lung": 0.64
+    },
+    "CASF": {
+      "kidney": 3.0,
+      "liver": 3.0,
+      "heart": 0.41,
+      "lung": 1.21,
+      "pancreas": 3.0
+    },
+    "CASH": {
+      "kidney": 2.55,
+      "heart": 0.59,
+      "pancreas": 3.0
+    },
+    "CASJ": {
+      "kidney": 1.48
+    },
+    "CASM": {
+      "kidney": 2.0,
+      "liver": 0.37
+    },
+    "CASU": {
+      "kidney": 3.0,
+      "liver": 1.37,
+      "heart": 0.3,
+      "lung": 1.93,
+      "pancreas": 0.3,
+      "intestine": 0.3
+    },
+    "CAUC": {
+      "kidney": 1.69,
+      "liver": 2.4,
+      "heart": 0.5,
+      "lung": 0.86,
+      "pancreas": 2.5,
+      "intestine": 3.0
+    },
+    "CAUH": {
+      "kidney": 2.77,
+      "liver": 2.17,
+      "heart": 0.77,
+      "lung": 3.0,
+      "pancreas": 2.5
+    },
+    "COCH": {
+      "kidney": 0.33,
+      "liver": 0.33,
+      "heart": 2.68
+    },
+    "COPM": {
+      "kidney": 0.96,
+      "liver": 3.0
+    },
+    "COSL": {
+      "kidney": 1.49,
+      "liver": 3.0
+    },
+    "COUC": {
+      "kidney": 0.69,
+      "liver": 0.57,
+      "heart": 0.3,
+      "lung": 0.79,
+      "pancreas": 2.5
+    },
+    "CTHH": {
+      "kidney": 0.76,
+      "liver": 2.78,
+      "heart": 0.77
+    },
+    "CTYN": {
+      "kidney": 1.28,
+      "liver": 3.0,
+      "heart": 1.36
+    },
+    "DCCH": {
+      "kidney": 0.43,
+      "heart": 2.64
+    },
+    "DCGU": {
+      "kidney": 0.72,
+      "liver": 1.26,
+      "pancreas": 2.46,
+      "intestine": 0.39
+    },
+    "DCGW": {
+      "kidney": 0.7,
+      "liver": 0.3
+    },
+    "DCWH": {
+      "kidney": 0.3,
+      "heart": 0.86
+    },
+    "DCWR": {
+      "kidney": 0.55
+    },
+    "DEAI": {
+      "kidney": 0.34,
+      "liver": 0.78,
+      "heart": 2.23
+    },
+    "DECC": {
+      "kidney": 1.2
+    },
+    "FLBC": {
+      "kidney": 0.51,
+      "liver": 1.41
+    },
+    "FLCC": {
+      "kidney": 1.33,
+      "liver": 1.39,
+      "heart": 0.32
+    },
+    "FLFH": {
+      "kidney": 0.88,
+      "liver": 0.67,
+      "heart": 0.59,
+      "lung": 1.07,
+      "pancreas": 0.51
+    },
+    "FLHM": {
+      "kidney": 1.85
+    },
+    "FLJM": {
+      "kidney": 0.3,
+      "liver": 0.78,
+      "heart": 3.0,
+      "lung": 0.64,
+      "pancreas": 0.73,
+      "intestine": 0.64
+    },
+    "FLLM": {
+      "kidney": 1.57,
+      "liver": 0.33,
+      "heart": 0.5
+    },
+    "FLMR": {
+      "kidney": 0.42,
+      "heart": 2.09
+    },
+    "FLSH": {
+      "kidney": 2.57
+    },
+    "FLSL": {
+      "kidney": 0.84,
+      "liver": 0.52,
+      "heart": 0.68,
+      "lung": 1.36,
+      "pancreas": 1.16
+    },
+    "FLTG": {
+      "kidney": 0.49,
+      "liver": 0.72,
+      "heart": 0.73,
+      "lung": 1.29,
+      "pancreas": 0.3
+    },
+    "FLUF": {
+      "kidney": 0.61,
+      "liver": 0.3,
+      "heart": 3.0,
+      "lung": 0.71
+    },
+    "GAEH": {
+      "kidney": 0.46,
+      "liver": 0.65,
+      "heart": 1.55
+    },
+    "GAEM": {
+      "kidney": 1.51,
+      "liver": 0.54,
+      "heart": 1.95,
+      "lung": 1.71,
+      "pancreas": 2.5
+    },
+    "GAMC": {
+      "kidney": 1.6
+    },
+    "GAPH": {
+      "kidney": 0.54,
+      "liver": 0.78,
+      "heart": 0.5,
+      "pancreas": 1.53
+    },
+    "HIQM": {
+      "kidney": 1.87,
+      "liver": 0.91
+    },
+    "IAIM": {
+      "kidney": 0.3
+    },
+    "IAIV": {
+      "kidney": 0.84,
+      "liver": 3.0,
+      "heart": 1.86,
+      "lung": 1.93,
+      "pancreas": 1.43
+    },
+    "IAVA": {
+      "kidney": 1.63
+    },
+    "ILCH": {
+      "kidney": 3.0,
+      "heart": 3.0
+    },
+    "ILCM": {
+      "kidney": 0.4,
+      "liver": 0.59,
+      "heart": 2.36,
+      "intestine": 3.0
+    },
+    "ILLU": {
+      "kidney": 0.41,
+      "liver": 0.5,
+      "heart": 3.0,
+      "lung": 2.71,
+      "pancreas": 2.5
+    },
+    "ILMM": {
+      "kidney": 1.26
+    },
+    "ILNM": {
+      "kidney": 0.68,
+      "liver": 0.63,
+      "heart": 1.0,
+      "lung": 0.3,
+      "pancreas": 1.69
+    },
+    "ILPL": {
+      "kidney": 0.99,
+      "liver": 0.7,
+      "pancreas": 1.17
+    },
+    "ILSF": {
+      "kidney": 2.0,
+      "heart": 3.0,
+      "pancreas": 0.44
+    },
+    "ILUC": {
+      "kidney": 0.73,
+      "liver": 0.63,
+      "heart": 0.3,
+      "lung": 3.0,
+      "pancreas": 0.77
+    },
+    "ILUI": {
+      "kidney": 0.65,
+      "liver": 0.78,
+      "pancreas": 0.46,
+      "intestine": 0.3
+    },
+    "ILVA": {
+      "kidney": 0.55
+    },
+    "INIM": {
+      "kidney": 0.84,
+      "liver": 0.61,
+      "heart": 3.0,
+      "lung": 0.43,
+      "pancreas": 0.61,
+      "intestine": 1.19
+    },
+    "INSV": {
+      "kidney": 1.36,
+      "heart": 3.0
+    },
+    "KSUK": {
+      "kidney": 0.47,
+      "liver": 3.0,
+      "heart": 0.77
+    },
+    "KYJH": {
+      "kidney": 1.2,
+      "liver": 2.2,
+      "heart": 1.64,
+      "lung": 1.57,
+      "pancreas": 2.5
+    },
+    "KYKC": {
+      "kidney": 0.3,
+      "heart": 2.91
+    },
+    "KYUK": {
+      "kidney": 1.58,
+      "liver": 2.57,
+      "heart": 2.36,
+      "lung": 1.36
+    },
+    "LACH": {
+      "kidney": 0.3,
+      "liver": 2.39
+    },
+    "LAOF": {
+      "kidney": 1.3,
+      "liver": 0.46,
+      "heart": 3.0,
+      "lung": 1.21,
+      "pancreas": 0.88
+    },
+    "LATU": {
+      "kidney": 2.58,
+      "liver": 1.37,
+      "pancreas": 0.3
+    },
+    "LAWK": {
+      "kidney": 2.95,
+      "liver": 3.0,
+      "pancreas": 2.5
+    },
+    "MABI": {
+      "kidney": 2.05,
+      "liver": 1.04,
+      "heart": 0.3,
+      "pancreas": 1.89
+    },
+    "MABS": {
+      "kidney": 0.97
+    },
+    "MABU": {
+      "kidney": 3.0
+    },
+    "MACH": {
+      "kidney": 0.3,
+      "liver": 0.5,
+      "heart": 3.0,
+      "lung": 3.0,
+      "intestine": 0.3
+    },
+    "MALC": {
+      "kidney": 2.04,
+      "liver": 0.85
+    },
+    "MAMG": {
+      "kidney": 3.0,
+      "liver": 3.0,
+      "heart": 0.45,
+      "lung": 1.29,
+      "pancreas": 2.5
+    },
+    "MANM": {
+      "kidney": 1.78,
+      "liver": 1.67,
+      "heart": 2.95
+    },
+    "MAPB": {
+      "kidney": 3.0,
+      "heart": 3.0,
+      "lung": 2.86
+    },
+    "MAUM": {
+      "kidney": 3.0,
+      "liver": 3.0,
+      "pancreas": 2.85
+    },
+    "MDJH": {
+      "kidney": 1.11,
+      "liver": 1.85,
+      "heart": 0.64,
+      "lung": 1.36,
+      "pancreas": 2.5
+    },
+    "MDUM": {
+      "kidney": 1.05,
+      "liver": 2.2,
+      "heart": 3.0,
+      "lung": 1.29,
+      "pancreas": 0.41
+    },
+    "MEMC": {
+      "kidney": 3.0
+    },
+    "MIBH": {
+      "kidney": 1.16,
+      "liver": 1.93
+    },
+    "MICH": {
+      "kidney": 0.3,
+      "liver": 0.67,
+      "heart": 3.0
+    },
+    "MIDV": {
+      "kidney": 0.3
+    },
+    "MIHF": {
+      "kidney": 1.2,
+      "liver": 0.93,
+      "heart": 0.73,
+      "lung": 3.0,
+      "pancreas": 0.62,
+      "intestine": 0.59
+    },
+    "MISJ": {
+      "kidney": 3.0
+    },
+    "MISM": {
+      "kidney": 0.98
+    },
+    "MIUM": {
+      "kidney": 0.82,
+      "liver": 0.46,
+      "heart": 1.82,
+      "lung": 1.43,
+      "pancreas": 2.5
+    },
+    "MNAN": {
+      "kidney": 1.76,
+      "heart": 0.45
+    },
+    "MNHC": {
+      "kidney": 1.31
+    },
+    "MNMC": {
+      "kidney": 0.56,
+      "liver": 0.93,
+      "heart": 0.95,
+      "lung": 0.93,
+      "pancreas": 1.7
+    },
+    "MNUM": {
+      "kidney": 0.85,
+      "liver": 0.41,
+      "heart": 0.82,
+      "lung": 1.14,
+      "pancreas": 2.5
+    },
+    "MOBH": {
+      "kidney": 0.68,
+      "liver": 0.41,
+      "heart": 0.5,
+      "lung": 0.86,
+      "pancreas": 0.4
+    },
+    "MOCG": {
+      "kidney": 0.3,
+      "liver": 3.0,
+      "heart": 3.0
+    },
+    "MOCH": {
+      "kidney": 0.3,
+      "liver": 0.41,
+      "heart": 2.55,
+      "lung": 1.79
+    },
+    "MOCM": {
+      "kidney": 1.1,
+      "liver": 0.3,
+      "heart": 3.0
+    },
+    "MOLH": {
+      "kidney": 0.53,
+      "liver": 1.91,
+      "heart": 0.3
+    },
+    "MORH": {
+      "kidney": 0.8
+    },
+    "MOSL": {
+      "kidney": 1.12,
+      "liver": 2.04
+    },
+    "MOUM": {
+      "kidney": 2.97
+    },
+    "MSUM": {
+      "kidney": 1.55,
+      "liver": 0.35,
+      "heart": 3.0
+    },
+    "NCBG": {
+      "kidney": 0.69,
+      "heart": 1.09,
+      "pancreas": 2.5
+    },
+    "NCCM": {
+      "kidney": 1.35,
+      "liver": 0.41,
+      "heart": 0.45
+    },
+    "NCDU": {
+      "kidney": 1.04,
+      "liver": 0.3,
+      "heart": 0.45,
+      "lung": 0.3,
+      "pancreas": 0.89,
+      "intestine": 1.69
+    },
+    "NCEC": {
+      "kidney": 1.64,
+      "pancreas": 1.68
+    },
+    "NCMH": {
+      "kidney": 1.81,
+      "liver": 1.63,
+      "heart": 2.27,
+      "lung": 2.14
+    },
+    "NDMC": {
+      "kidney": 0.96
+    },
+    "NDSL": {
+      "kidney": 0.56
+    },
+    "NEUN": {
+      "kidney": 0.31,
+      "liver": 0.57,
+      "heart": 0.77,
+      "lung": 1.14,
+      "pancreas": 1.05,
+      "intestine": 1.35
+    },
+    "NHDH": {
+      "kidney": 2.97
+    },
+    "NJBI": {
+      "kidney": 1.11,
+      "heart": 1.23,
+      "lung": 1.93
+    },
+    "NJHK": {
+      "kidney": 0.3,
+      "pancreas": 1.61
+    },
+    "NJLL": {
+      "kidney": 1.55,
+      "liver": 3.0
+    },
+    "NJRW": {
+      "kidney": 2.02,
+      "heart": 3.0
+    },
+    "NJSB": {
+      "kidney": 1.07,
+      "pancreas": 2.5
+    },
+    "NMAQ": {
+      "kidney": 1.11
+    },
+    "NMPH": {
+      "kidney": 2.4
+    },
+    "NVUM": {
+      "kidney": 0.39,
+      "pancreas": 0.3
+    },
+    "NYAM": {
+      "kidney": 1.44,
+      "pancreas": 0.39
+    },
+    "NYCC": {
+      "kidney": 0.53
+    },
+    "NYCP": {
+      "kidney": 0.51,
+      "liver": 0.59,
+      "heart": 1.64,
+      "lung": 2.07,
+      "pancreas": 1.11,
+      "intestine": 0.53
+    },
+    "NYDS": {
+      "kidney": 1.48
+    },
+    "NYEC": {
+      "kidney": 0.3
+    },
+    "NYFL": {
+      "kidney": 1.5,
+      "liver": 1.22,
+      "heart": 1.95,
+      "pancreas": 1.84
+    },
+    "NYMA": {
+      "kidney": 1.59,
+      "liver": 0.72,
+      "heart": 0.91,
+      "lung": 3.0,
+      "pancreas": 2.5
+    },
+    "NYMS": {
+      "kidney": 2.83,
+      "liver": 1.3,
+      "heart": 3.0,
+      "lung": 2.0,
+      "pancreas": 2.38,
+      "intestine": 1.03
+    },
+    "NYNS": {
+      "kidney": 0.99,
+      "liver": 0.5,
+      "heart": 0.68,
+      "lung": 3.0
+    },
+    "NYNY": {
+      "kidney": 0.61,
+      "liver": 1.04,
+      "heart": 3.0,
+      "pancreas": 2.5
+    },
+    "NYSB": {
+      "kidney": 0.95
+    },
+    "NYUC": {
+      "kidney": 0.3,
+      "liver": 0.57,
+      "heart": 0.59,
+      "lung": 0.64,
+      "pancreas": 2.5
+    },
+    "NYUM": {
+      "kidney": 2.14,
+      "pancreas": 2.5
+    },
+    "NYVA": {
+      "kidney": 1.68
+    },
+    "NYWC": {
+      "kidney": 1.33,
+      "liver": 0.61,
+      "heart": 0.3
+    },
+    "OHCC": {
+      "kidney": 0.3,
+      "liver": 0.39,
+      "heart": 3.0,
+      "lung": 1.36,
+      "pancreas": 1.61,
+      "intestine": 0.84
+    },
+    "OHCH": {
+      "kidney": 0.37,
+      "liver": 1.11,
+      "heart": 3.0,
+      "lung": 3.0
+    },
+    "OHCM": {
+      "kidney": 0.3,
+      "liver": 0.54,
+      "heart": 3.0,
+      "lung": 3.0,
+      "pancreas": 0.48,
+      "intestine": 0.95
+    },
+    "OHCO": {
+      "kidney": 0.3
+    },
+    "OHOU": {
+      "kidney": 0.58,
+      "liver": 0.61,
+      "heart": 0.82,
+      "lung": 0.5,
+      "pancreas": 0.44
+    },
+    "OHTC": {
+      "kidney": 0.64,
+      "heart": 0.3
+    },
+    "OHUC": {
+      "kidney": 0.3,
+      "liver": 0.3,
+      "heart": 3.0,
+      "pancreas": 0.95
+    },
+    "OHUH": {
+      "kidney": 0.66,
+      "liver": 3.0,
+      "heart": 1.64,
+      "lung": 1.93,
+      "pancreas": 2.5
+    },
+    "OKBC": {
+      "kidney": 0.92,
+      "liver": 1.13,
+      "heart": 2.95,
+      "lung": 2.0
+    },
+    "OKMD": {
+      "kidney": 0.66,
+      "liver": 0.3
+    },
+    "OKSJ": {
+      "kidney": 1.06
+    },
+    "ORGS": {
+      "kidney": 0.72
+    },
+    "ORUO": {
+      "kidney": 0.65,
+      "liver": 1.46,
+      "heart": 1.82
+    },
+    "ORVA": {
+      "kidney": 1.13,
+      "liver": 1.98
+    },
+    "PAAE": {
+      "kidney": 3.0,
+      "liver": 0.46,
+      "pancreas": 2.27
+    },
+    "PAAG": {
+      "kidney": 0.53,
+      "liver": 0.37,
+      "heart": 0.59,
+      "pancreas": 0.52
+    },
+    "PACH": {
+      "kidney": 0.3,
+      "liver": 0.93,
+      "heart": 2.41,
+      "lung": 3.0,
+      "pancreas": 1.12,
+      "intestine": 2.89
+    },
+    "PACP": {
+      "kidney": 0.84,
+      "liver": 0.43,
+      "heart": 3.0,
+      "lung": 3.0
+    },
+    "PAGM": {
+      "kidney": 1.98,
+      "liver": 3.0
+    },
+    "PAHE": {
+      "kidney": 1.54,
+      "liver": 3.0,
+      "heart": 1.91
+    },
+    "PAHH": {
+      "kidney": 1.56
+    },
+    "PALH": {
+      "kidney": 2.5
+    },
+    "PALV": {
+      "kidney": 0.62,
+      "pancreas": 1.57
+    },
+    "PAPH": {
+      "kidney": 1.5
+    },
+    "PAPT": {
+      "kidney": 1.08,
+      "liver": 0.83,
+      "heart": 0.55,
+      "lung": 0.57,
+      "pancreas": 2.5,
+      "intestine": 3.0
+    },
+    "PASC": {
+      "kidney": 0.47
+    },
+    "PATJ": {
+      "kidney": 2.32,
+      "liver": 1.93,
+      "heart": 3.0,
+      "lung": 0.36,
+      "pancreas": 2.5
+    },
+    "PATU": {
+      "kidney": 2.43,
+      "liver": 2.0,
+      "heart": 1.09,
+      "lung": 1.29
+    },
+    "PAUP": {
+      "kidney": 2.19,
+      "liver": 1.33,
+      "heart": 1.05,
+      "lung": 1.64,
+      "pancreas": 2.5
+    },
+    "PAVA": {
+      "kidney": 2.22,
+      "liver": 2.17
+    },
+    "PRSJ": {
+      "kidney": 2.02,
+      "liver": 0.48,
+      "pancreas": 0.3
+    },
+    "RIRH": {
+      "kidney": 2.01
+    },
+    "SCCH": {
+      "kidney": 0.5,
+      "heart": 3.0
+    },
+    "SCMU": {
+      "kidney": 0.7,
+      "liver": 1.02,
+      "heart": 0.82,
+      "lung": 0.93,
+      "pancreas": 0.89
+    },
+    "SDMK": {
+      "kidney": 3.0,
+      "liver": 3.0,
+      "pancreas": 2.5
+    },
+    "SDSV": {
+      "kidney": 1.08
+    },
+    "TNEM": {
+      "kidney": 1.89
+    },
+    "TNLB": {
+      "kidney": 0.3,
+      "liver": 0.39,
+      "heart": 1.0
+    },
+    "TNMH": {
+      "kidney": 1.05,
+      "liver": 0.74,
+      "pancreas": 1.32
+    },
+    "TNST": {
+      "kidney": 0.53,
+      "heart": 0.3
+    },
+    "TNUK": {
+      "kidney": 1.22
+    },
+    "TNVU": {
+      "kidney": 0.97,
+      "liver": 1.17,
+      "heart": 0.36,
+      "lung": 0.36,
+      "pancreas": 1.25
+    },
+    "TXAS": {
+      "kidney": 1.61,
+      "liver": 0.61,
+      "pancreas": 0.54
+    },
+    "TXBC": {
+      "kidney": 1.03,
+      "liver": 1.59,
+      "lung": 1.64
+    },
+    "TXCF": {
+      "kidney": 0.3
+    },
+    "TXCM": {
+      "kidney": 0.47,
+      "liver": 2.28,
+      "heart": 2.09
+    },
+    "TXDC": {
+      "kidney": 0.3
+    },
+    "TXDM": {
+      "kidney": 1.01
+    },
+    "TXDR": {
+      "kidney": 2.52
+    },
+    "TXFW": {
+      "kidney": 0.86
+    },
+    "TXHD": {
+      "kidney": 0.49,
+      "liver": 0.3,
+      "heart": 0.45,
+      "pancreas": 0.94
+    },
+    "TXHH": {
+      "kidney": 2.08,
+      "liver": 2.83,
+      "heart": 3.0,
+      "lung": 2.36
+    },
+    "TXHI": {
+      "kidney": 2.51,
+      "liver": 3.0,
+      "heart": 0.77,
+      "lung": 0.64
+    },
+    "TXHS": {
+      "kidney": 1.08,
+      "liver": 3.0,
+      "heart": 1.18,
+      "lung": 3.0,
+      "pancreas": 3.0
+    },
+    "TXJS": {
+      "kidney": 1.06,
+      "liver": 1.6,
+      "heart": 3.0
+    },
+    "TXLM": {
+      "kidney": 0.3
+    },
+    "TXLP": {
+      "kidney": 1.47
+    },
+    "TXMC": {
+      "kidney": 0.97,
+      "liver": 1.43
+    },
+    "TXMH": {
+      "kidney": 1.32,
+      "liver": 2.52,
+      "heart": 1.91,
+      "lung": 1.36,
+      "pancreas": 0.52
+    },
+    "TXPL": {
+      "kidney": 0.3
+    },
+    "TXPM": {
+      "kidney": 2.37
+    },
+    "TXSP": {
+      "kidney": 1.09,
+      "liver": 2.48,
+      "heart": 1.14,
+      "lung": 1.36
+    },
+    "TXSW": {
+      "kidney": 0.62,
+      "heart": 0.41,
+      "pancreas": 0.3
+    },
+    "TXTC": {
+      "kidney": 0.31,
+      "liver": 0.61,
+      "heart": 2.91,
+      "lung": 1.29
+    },
+    "TXTX": {
+      "kidney": 1.24,
+      "liver": 0.48,
+      "heart": 0.55,
+      "lung": 1.0,
+      "pancreas": 0.54
+    },
+    "TXUC": {
+      "kidney": 0.3,
+      "liver": 0.52
+    },
+    "TXVA": {
+      "kidney": 3.0,
+      "liver": 3.0,
+      "heart": 1.05
+    },
+    "UTLD": {
+      "kidney": 0.51,
+      "liver": 0.43,
+      "heart": 1.64,
+      "pancreas": 0.3
+    },
+    "UTMC": {
+      "kidney": 0.49,
+      "liver": 1.33,
+      "heart": 1.68,
+      "lung": 1.0,
+      "pancreas": 0.3
+    },
+    "UTPC": {
+      "kidney": 0.3,
+      "liver": 0.67,
+      "heart": 3.0
+    },
+    "VACH": {
+      "kidney": 0.3
+    },
+    "VAFH": {
+      "kidney": 0.93,
+      "heart": 0.68,
+      "lung": 1.0,
+      "pancreas": 1.65
+    },
+    "VAHD": {
+      "kidney": 0.85
+    },
+    "VAMC": {
+      "kidney": 0.59,
+      "liver": 1.0,
+      "heart": 1.05,
+      "pancreas": 2.5
+    },
+    "VANG": {
+      "kidney": 1.71,
+      "heart": 0.86,
+      "pancreas": 0.97
+    },
+    "VAUV": {
+      "kidney": 0.93,
+      "liver": 0.76,
+      "heart": 0.95,
+      "lung": 1.21,
+      "pancreas": 2.41
+    },
+    "VTMC": {
+      "kidney": 3.0
+    },
+    "WACH": {
+      "kidney": 0.52,
+      "liver": 0.93,
+      "heart": 3.0,
+      "intestine": 1.34
+    },
+    "WASH": {
+      "kidney": 1.15,
+      "heart": 3.0
+    },
+    "WASM": {
+      "kidney": 1.09,
+      "liver": 1.54
+    },
+    "WAUW": {
+      "kidney": 0.58,
+      "liver": 0.91,
+      "heart": 0.45,
+      "lung": 2.36
+    },
+    "WAVM": {
+      "kidney": 0.87
+    },
+    "WICH": {
+      "kidney": 0.36,
+      "liver": 3.0,
+      "heart": 3.0
+    },
+    "WISE": {
+      "kidney": 1.04,
+      "liver": 3.0,
+      "heart": 1.32,
+      "lung": 1.79,
+      "pancreas": 2.5
+    },
+    "WISL": {
+      "kidney": 1.07,
+      "liver": 3.0,
+      "heart": 1.09
+    },
+    "WIUW": {
+      "kidney": 0.48,
+      "liver": 0.59,
+      "heart": 0.59,
+      "lung": 0.57,
+      "pancreas": 0.3
+    },
+    "WVCA": {
+      "kidney": 0.3
+    },
+    "WVWU": {
+      "kidney": 0.95,
+      "heart": 0.3
+    },
+    "NJUH": {
+      "liver": 3.0
+    },
+    "ARBH": {
+      "heart": 1.23
+    },
+    "CASG": {
+      "heart": 0.64
+    },
+    "FLAC": {
+      "heart": 2.91
+    },
+    "FLJD": {
+      "heart": 3.0
+    },
+    "INLH": {
+      "heart": 0.82
+    },
+    "MISH": {
+      "heart": 1.41,
+      "lung": 1.36
+    },
+    "MNCM": {
+      "heart": 3.0
+    },
+    "NECH": {
+      "heart": 3.0
+    },
+    "OKCM": {
+      "heart": 3.0
+    },
+    "ORSV": {
+      "heart": 0.77
+    },
+    "PRCC": {
+      "heart": 3.0
+    },
+    "TNBM": {
+      "heart": 1.36
+    },
+    "TXCT": {
+      "heart": 2.91
+    },
+    "VAMV": {
+      "heart": 2.6
+    }
+  }
+}

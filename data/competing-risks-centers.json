@@ -1,0 +1,3286 @@
+{
+  "_meta": {
+    "source": "SRTR PSR National Center-Level Summary Data (January 2025 release)",
+    "method": "Center-level competing risks from Table B7 (all centers)",
+    "fetchedAt": "2026-03-20T20:20:30Z",
+    "totalCenters": 248
+  },
+  "center_adjustments": {
+    "ALCH": {
+      "kidney": {
+        "mortality_factor": 2.34,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 1.6,
+        "delisting_factor": 1.38
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "ALUA": {
+      "kidney": {
+        "mortality_factor": 0.93,
+        "delisting_factor": 1.41
+      },
+      "liver": {
+        "mortality_factor": 1.27,
+        "delisting_factor": 1.22
+      },
+      "heart": {
+        "mortality_factor": 1.08,
+        "delisting_factor": 0.76
+      },
+      "lung": {
+        "mortality_factor": 2.66,
+        "delisting_factor": 1.17
+      }
+    },
+    "ALVA": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.02
+      }
+    },
+    "ARCH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "ARUA": {
+      "kidney": {
+        "mortality_factor": 0.52,
+        "delisting_factor": 1.06
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.66
+      }
+    },
+    "AZCH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.14
+      },
+      "liver": {
+        "mortality_factor": 1.86,
+        "delisting_factor": 0.81
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "AZGS": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.13
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.9
+      },
+      "heart": {
+        "mortality_factor": 0.64,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "AZMC": {
+      "kidney": {
+        "mortality_factor": 0.44,
+        "delisting_factor": 0.7
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.73
+      },
+      "heart": {
+        "mortality_factor": 1.48,
+        "delisting_factor": 1.56
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "AZSJ": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.1
+      },
+      "liver": {
+        "mortality_factor": 0.86,
+        "delisting_factor": 1.49
+      },
+      "lung": {
+        "mortality_factor": 0.42,
+        "delisting_factor": 0.56
+      }
+    },
+    "AZUA": {
+      "kidney": {
+        "mortality_factor": 0.34,
+        "delisting_factor": 2.83
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.3
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "CACH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 2.44
+      }
+    },
+    "CACL": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 1.24,
+        "delisting_factor": 1.88
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.3
+      }
+    },
+    "CACS": {
+      "kidney": {
+        "mortality_factor": 1.18,
+        "delisting_factor": 0.67
+      },
+      "liver": {
+        "mortality_factor": 1.12,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 0.86,
+        "delisting_factor": 0.98
+      },
+      "lung": {
+        "mortality_factor": 0.92,
+        "delisting_factor": 1.22
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "CAGH": {
+      "kidney": {
+        "mortality_factor": 0.65,
+        "delisting_factor": 0.6
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.5
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "CAIM": {
+      "kidney": {
+        "mortality_factor": 1.45,
+        "delisting_factor": 0.3
+      }
+    },
+    "CALA": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "CALL": {
+      "kidney": {
+        "mortality_factor": 1.23,
+        "delisting_factor": 0.95
+      },
+      "liver": {
+        "mortality_factor": 1.03,
+        "delisting_factor": 1.12
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.37
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.96
+      }
+    },
+    "CAMB": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.93
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.3
+      }
+    },
+    "CAPC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.45,
+        "delisting_factor": 2.32
+      },
+      "heart": {
+        "mortality_factor": 1.39,
+        "delisting_factor": 0.97
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "CAPM": {
+      "kidney": {
+        "mortality_factor": 1.81,
+        "delisting_factor": 0.59
+      },
+      "liver": {
+        "mortality_factor": 1.14,
+        "delisting_factor": 1.09
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.41
+      }
+    },
+    "CARC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.69
+      },
+      "liver": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.3
+      }
+    },
+    "CASD": {
+      "kidney": {
+        "mortality_factor": 0.48,
+        "delisting_factor": 0.33
+      },
+      "liver": {
+        "mortality_factor": 0.57,
+        "delisting_factor": 0.92
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.53
+      },
+      "lung": {
+        "mortality_factor": 2.06,
+        "delisting_factor": 0.61
+      }
+    },
+    "CASF": {
+      "kidney": {
+        "mortality_factor": 1.17,
+        "delisting_factor": 0.4
+      },
+      "liver": {
+        "mortality_factor": 1.35,
+        "delisting_factor": 0.66
+      },
+      "heart": {
+        "mortality_factor": 0.33,
+        "delisting_factor": 0.81
+      },
+      "lung": {
+        "mortality_factor": 0.38,
+        "delisting_factor": 0.67
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "CASH": {
+      "kidney": {
+        "mortality_factor": 0.62,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "CASJ": {
+      "kidney": {
+        "mortality_factor": 0.52,
+        "delisting_factor": 0.47
+      }
+    },
+    "CASM": {
+      "kidney": {
+        "mortality_factor": 0.68,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.77,
+        "delisting_factor": 1.33
+      }
+    },
+    "CASU": {
+      "kidney": {
+        "mortality_factor": 1.21,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.41,
+        "delisting_factor": 1.31
+      },
+      "heart": {
+        "mortality_factor": 0.73,
+        "delisting_factor": 1.92
+      },
+      "lung": {
+        "mortality_factor": 0.54,
+        "delisting_factor": 3.0
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "CAUC": {
+      "kidney": {
+        "mortality_factor": 1.09,
+        "delisting_factor": 0.67
+      },
+      "liver": {
+        "mortality_factor": 1.72,
+        "delisting_factor": 1.23
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.91
+      },
+      "lung": {
+        "mortality_factor": 1.3,
+        "delisting_factor": 0.38
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.25
+      }
+    },
+    "CAUH": {
+      "kidney": {
+        "mortality_factor": 2.39,
+        "delisting_factor": 1.01
+      },
+      "liver": {
+        "mortality_factor": 1.16,
+        "delisting_factor": 1.54
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.17
+      },
+      "lung": {
+        "mortality_factor": 2.96,
+        "delisting_factor": 1.96
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "COCH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.94
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.48
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.77
+      }
+    },
+    "COPM": {
+      "kidney": {
+        "mortality_factor": 1.26,
+        "delisting_factor": 1.49
+      },
+      "liver": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 2.76
+      }
+    },
+    "COSL": {
+      "kidney": {
+        "mortality_factor": 0.6,
+        "delisting_factor": 0.82
+      },
+      "liver": {
+        "mortality_factor": 2.48,
+        "delisting_factor": 2.46
+      }
+    },
+    "COUC": {
+      "kidney": {
+        "mortality_factor": 0.58,
+        "delisting_factor": 1.06
+      },
+      "liver": {
+        "mortality_factor": 0.71,
+        "delisting_factor": 0.67
+      },
+      "heart": {
+        "mortality_factor": 0.96,
+        "delisting_factor": 1.18
+      },
+      "lung": {
+        "mortality_factor": 1.45,
+        "delisting_factor": 0.64
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.44
+      }
+    },
+    "CTHH": {
+      "kidney": {
+        "mortality_factor": 1.27,
+        "delisting_factor": 0.58
+      },
+      "liver": {
+        "mortality_factor": 0.72,
+        "delisting_factor": 0.62
+      },
+      "heart": {
+        "mortality_factor": 2.04,
+        "delisting_factor": 0.72
+      }
+    },
+    "CTYN": {
+      "kidney": {
+        "mortality_factor": 1.38,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 2.98,
+        "delisting_factor": 0.97
+      },
+      "heart": {
+        "mortality_factor": 1.2,
+        "delisting_factor": 0.3
+      }
+    },
+    "DCCH": {
+      "kidney": {
+        "mortality_factor": 2.45,
+        "delisting_factor": 1.12
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.3
+      }
+    },
+    "DCGU": {
+      "kidney": {
+        "mortality_factor": 1.24,
+        "delisting_factor": 0.5
+      },
+      "liver": {
+        "mortality_factor": 0.96,
+        "delisting_factor": 0.51
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.56
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.68
+      }
+    },
+    "DCGW": {
+      "kidney": {
+        "mortality_factor": 1.78,
+        "delisting_factor": 0.81
+      },
+      "liver": {
+        "mortality_factor": 0.72,
+        "delisting_factor": 0.94
+      }
+    },
+    "DCWR": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "DEAI": {
+      "kidney": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 1.96
+      },
+      "liver": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "DECC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.91
+      }
+    },
+    "FLCC": {
+      "kidney": {
+        "mortality_factor": 1.06,
+        "delisting_factor": 0.89
+      },
+      "liver": {
+        "mortality_factor": 1.05,
+        "delisting_factor": 1.37
+      },
+      "heart": {
+        "mortality_factor": 0.5,
+        "delisting_factor": 1.04
+      }
+    },
+    "FLFH": {
+      "kidney": {
+        "mortality_factor": 0.67,
+        "delisting_factor": 0.46
+      },
+      "liver": {
+        "mortality_factor": 1.45,
+        "delisting_factor": 0.75
+      },
+      "heart": {
+        "mortality_factor": 0.71,
+        "delisting_factor": 1.24
+      },
+      "lung": {
+        "mortality_factor": 1.75,
+        "delisting_factor": 1.55
+      }
+    },
+    "FLHM": {
+      "kidney": {
+        "mortality_factor": 1.15,
+        "delisting_factor": 3.0
+      }
+    },
+    "FLJM": {
+      "kidney": {
+        "mortality_factor": 0.78,
+        "delisting_factor": 1.6
+      },
+      "liver": {
+        "mortality_factor": 1.21,
+        "delisting_factor": 0.76
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 1.11
+      },
+      "lung": {
+        "mortality_factor": 1.06,
+        "delisting_factor": 1.17
+      },
+      "pancreas": {
+        "mortality_factor": 2.99,
+        "delisting_factor": 1.44
+      },
+      "intestine": {
+        "mortality_factor": 1.87,
+        "delisting_factor": 1.5
+      }
+    },
+    "FLLM": {
+      "kidney": {
+        "mortality_factor": 1.33,
+        "delisting_factor": 3.0
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.51
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.43
+      }
+    },
+    "FLMR": {
+      "kidney": {
+        "mortality_factor": 1.12,
+        "delisting_factor": 0.77
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.81
+      }
+    },
+    "FLSH": {
+      "kidney": {
+        "mortality_factor": 0.64,
+        "delisting_factor": 1.74
+      }
+    },
+    "FLSL": {
+      "kidney": {
+        "mortality_factor": 0.73,
+        "delisting_factor": 1.06
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.66
+      },
+      "heart": {
+        "mortality_factor": 0.87,
+        "delisting_factor": 0.3
+      },
+      "lung": {
+        "mortality_factor": 0.6,
+        "delisting_factor": 1.33
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.72
+      }
+    },
+    "FLTG": {
+      "kidney": {
+        "mortality_factor": 0.77,
+        "delisting_factor": 0.46
+      },
+      "liver": {
+        "mortality_factor": 0.88,
+        "delisting_factor": 0.87
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.11
+      },
+      "lung": {
+        "mortality_factor": 1.54,
+        "delisting_factor": 1.7
+      }
+    },
+    "FLUF": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.62
+      },
+      "heart": {
+        "mortality_factor": 0.59,
+        "delisting_factor": 2.06
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.43
+      }
+    },
+    "GAEH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 2.03,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.58
+      }
+    },
+    "GAEM": {
+      "kidney": {
+        "mortality_factor": 1.09,
+        "delisting_factor": 1.45
+      },
+      "liver": {
+        "mortality_factor": 1.23,
+        "delisting_factor": 0.98
+      },
+      "heart": {
+        "mortality_factor": 2.22,
+        "delisting_factor": 0.65
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.36
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "GAMC": {
+      "kidney": {
+        "mortality_factor": 1.42,
+        "delisting_factor": 1.19
+      }
+    },
+    "GAPH": {
+      "kidney": {
+        "mortality_factor": 0.49,
+        "delisting_factor": 0.79
+      },
+      "liver": {
+        "mortality_factor": 1.38,
+        "delisting_factor": 0.94
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.24
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.88
+      }
+    },
+    "HIQM": {
+      "kidney": {
+        "mortality_factor": 1.16,
+        "delisting_factor": 1.32
+      },
+      "liver": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.36
+      }
+    },
+    "IAIM": {
+      "kidney": {
+        "mortality_factor": 1.07,
+        "delisting_factor": 0.65
+      }
+    },
+    "IAIV": {
+      "kidney": {
+        "mortality_factor": 0.94,
+        "delisting_factor": 2.0
+      },
+      "liver": {
+        "mortality_factor": 2.71,
+        "delisting_factor": 3.0
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.71
+      },
+      "lung": {
+        "mortality_factor": 1.68,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.15
+      }
+    },
+    "IAVA": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.55
+      }
+    },
+    "ILCH": {
+      "kidney": {
+        "mortality_factor": 2.49,
+        "delisting_factor": 0.38
+      },
+      "heart": {
+        "mortality_factor": 1.29,
+        "delisting_factor": 1.35
+      }
+    },
+    "ILCM": {
+      "kidney": {
+        "mortality_factor": 1.23,
+        "delisting_factor": 0.56
+      },
+      "liver": {
+        "mortality_factor": 2.79,
+        "delisting_factor": 0.6
+      },
+      "heart": {
+        "mortality_factor": 1.05,
+        "delisting_factor": 0.74
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "ILLU": {
+      "kidney": {
+        "mortality_factor": 1.03,
+        "delisting_factor": 2.35
+      },
+      "liver": {
+        "mortality_factor": 0.77,
+        "delisting_factor": 0.89
+      },
+      "heart": {
+        "mortality_factor": 1.65,
+        "delisting_factor": 0.58
+      },
+      "lung": {
+        "mortality_factor": 0.86,
+        "delisting_factor": 0.76
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "ILMM": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.62
+      }
+    },
+    "ILNM": {
+      "kidney": {
+        "mortality_factor": 0.59,
+        "delisting_factor": 1.35
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.94
+      },
+      "heart": {
+        "mortality_factor": 0.63,
+        "delisting_factor": 1.33
+      },
+      "lung": {
+        "mortality_factor": 0.69,
+        "delisting_factor": 0.61
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "ILPL": {
+      "kidney": {
+        "mortality_factor": 0.78,
+        "delisting_factor": 1.43
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.58
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "ILSF": {
+      "kidney": {
+        "mortality_factor": 0.55,
+        "delisting_factor": 0.51
+      },
+      "heart": {
+        "mortality_factor": 2.67,
+        "delisting_factor": 3.0
+      }
+    },
+    "ILUC": {
+      "kidney": {
+        "mortality_factor": 2.03,
+        "delisting_factor": 0.51
+      },
+      "liver": {
+        "mortality_factor": 1.33,
+        "delisting_factor": 1.23
+      },
+      "heart": {
+        "mortality_factor": 0.43,
+        "delisting_factor": 0.61
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.89
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "ILUI": {
+      "kidney": {
+        "mortality_factor": 1.37,
+        "delisting_factor": 0.68
+      },
+      "liver": {
+        "mortality_factor": 0.36,
+        "delisting_factor": 0.94
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "ILVA": {
+      "kidney": {
+        "mortality_factor": 0.94,
+        "delisting_factor": 0.57
+      }
+    },
+    "INIM": {
+      "kidney": {
+        "mortality_factor": 0.69,
+        "delisting_factor": 1.21
+      },
+      "liver": {
+        "mortality_factor": 0.73,
+        "delisting_factor": 0.59
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 1.56
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 2.24,
+        "delisting_factor": 0.36
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "INSV": {
+      "kidney": {
+        "mortality_factor": 0.51,
+        "delisting_factor": 1.17
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.72
+      }
+    },
+    "KSUK": {
+      "kidney": {
+        "mortality_factor": 0.44,
+        "delisting_factor": 0.9
+      },
+      "liver": {
+        "mortality_factor": 1.07,
+        "delisting_factor": 0.56
+      },
+      "heart": {
+        "mortality_factor": 0.75,
+        "delisting_factor": 1.59
+      }
+    },
+    "KYJH": {
+      "kidney": {
+        "mortality_factor": 0.45,
+        "delisting_factor": 1.23
+      },
+      "liver": {
+        "mortality_factor": 0.8,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.71
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "KYKC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "KYUK": {
+      "kidney": {
+        "mortality_factor": 2.19,
+        "delisting_factor": 0.86
+      },
+      "liver": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.77
+      },
+      "heart": {
+        "mortality_factor": 1.02,
+        "delisting_factor": 0.72
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.13
+      }
+    },
+    "LACH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "LAOF": {
+      "kidney": {
+        "mortality_factor": 1.68,
+        "delisting_factor": 0.71
+      },
+      "liver": {
+        "mortality_factor": 1.23,
+        "delisting_factor": 1.12
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 2.44
+      },
+      "lung": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 3.0
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "LATU": {
+      "kidney": {
+        "mortality_factor": 0.79,
+        "delisting_factor": 1.27
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.21
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "LAWK": {
+      "kidney": {
+        "mortality_factor": 0.4,
+        "delisting_factor": 1.27
+      },
+      "liver": {
+        "mortality_factor": 1.02,
+        "delisting_factor": 1.32
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "MABI": {
+      "kidney": {
+        "mortality_factor": 0.96,
+        "delisting_factor": 1.1
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.77
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "MABS": {
+      "kidney": {
+        "mortality_factor": 0.64,
+        "delisting_factor": 1.47
+      }
+    },
+    "MABU": {
+      "kidney": {
+        "mortality_factor": 0.94,
+        "delisting_factor": 0.43
+      }
+    },
+    "MACH": {
+      "kidney": {
+        "mortality_factor": 2.06,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 2.15
+      },
+      "lung": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "MALC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.63,
+        "delisting_factor": 0.82
+      }
+    },
+    "MAMG": {
+      "kidney": {
+        "mortality_factor": 1.5,
+        "delisting_factor": 0.51
+      },
+      "liver": {
+        "mortality_factor": 1.15,
+        "delisting_factor": 0.99
+      },
+      "heart": {
+        "mortality_factor": 0.6,
+        "delisting_factor": 0.42
+      },
+      "lung": {
+        "mortality_factor": 0.69,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.65
+      }
+    },
+    "MANM": {
+      "kidney": {
+        "mortality_factor": 0.82,
+        "delisting_factor": 1.5
+      },
+      "liver": {
+        "mortality_factor": 0.93,
+        "delisting_factor": 3.0
+      },
+      "heart": {
+        "mortality_factor": 2.78,
+        "delisting_factor": 0.3
+      }
+    },
+    "MAPB": {
+      "kidney": {
+        "mortality_factor": 2.89,
+        "delisting_factor": 1.46
+      },
+      "heart": {
+        "mortality_factor": 2.89,
+        "delisting_factor": 1.52
+      },
+      "lung": {
+        "mortality_factor": 1.75,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.88
+      }
+    },
+    "MAUM": {
+      "kidney": {
+        "mortality_factor": 1.76,
+        "delisting_factor": 0.81
+      },
+      "liver": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.49
+      }
+    },
+    "MDJH": {
+      "kidney": {
+        "mortality_factor": 0.51,
+        "delisting_factor": 0.47
+      },
+      "liver": {
+        "mortality_factor": 1.79,
+        "delisting_factor": 0.72
+      },
+      "heart": {
+        "mortality_factor": 0.96,
+        "delisting_factor": 2.71
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.41
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "MDUM": {
+      "kidney": {
+        "mortality_factor": 2.16,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 1.09,
+        "delisting_factor": 0.86
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.66
+      },
+      "lung": {
+        "mortality_factor": 2.08,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "MEMC": {
+      "kidney": {
+        "mortality_factor": 1.17,
+        "delisting_factor": 0.54
+      }
+    },
+    "MIBH": {
+      "kidney": {
+        "mortality_factor": 0.32,
+        "delisting_factor": 0.87
+      },
+      "liver": {
+        "mortality_factor": 0.39,
+        "delisting_factor": 1.83
+      }
+    },
+    "MICH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.42
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "MIDV": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "MIHF": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.78
+      },
+      "liver": {
+        "mortality_factor": 0.68,
+        "delisting_factor": 0.53
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.36
+      },
+      "lung": {
+        "mortality_factor": 1.84,
+        "delisting_factor": 3.0
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "MISJ": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.64
+      }
+    },
+    "MISM": {
+      "kidney": {
+        "mortality_factor": 0.99,
+        "delisting_factor": 1.21
+      }
+    },
+    "MIUM": {
+      "kidney": {
+        "mortality_factor": 1.81,
+        "delisting_factor": 0.88
+      },
+      "liver": {
+        "mortality_factor": 0.72,
+        "delisting_factor": 0.55
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.45
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.61
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.88
+      }
+    },
+    "MNAN": {
+      "kidney": {
+        "mortality_factor": 1.15,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 1.83,
+        "delisting_factor": 0.64
+      }
+    },
+    "MNHC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "MNMC": {
+      "kidney": {
+        "mortality_factor": 0.99,
+        "delisting_factor": 0.77
+      },
+      "liver": {
+        "mortality_factor": 0.87,
+        "delisting_factor": 0.8
+      },
+      "heart": {
+        "mortality_factor": 0.42,
+        "delisting_factor": 1.47
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.31
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "MNUM": {
+      "kidney": {
+        "mortality_factor": 0.65,
+        "delisting_factor": 0.81
+      },
+      "liver": {
+        "mortality_factor": 1.34,
+        "delisting_factor": 0.52
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.44
+      },
+      "pancreas": {
+        "mortality_factor": 2.24,
+        "delisting_factor": 1.44
+      }
+    },
+    "MOBH": {
+      "kidney": {
+        "mortality_factor": 0.94,
+        "delisting_factor": 0.53
+      },
+      "liver": {
+        "mortality_factor": 0.38,
+        "delisting_factor": 0.93
+      },
+      "heart": {
+        "mortality_factor": 1.18,
+        "delisting_factor": 0.83
+      },
+      "lung": {
+        "mortality_factor": 1.28,
+        "delisting_factor": 0.85
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "MOCG": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.81
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 2.03
+      }
+    },
+    "MOCH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 1.4,
+        "delisting_factor": 0.6
+      },
+      "heart": {
+        "mortality_factor": 1.65,
+        "delisting_factor": 0.3
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.84
+      }
+    },
+    "MOCM": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.02
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.44
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "MOLH": {
+      "kidney": {
+        "mortality_factor": 0.71,
+        "delisting_factor": 1.62
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      },
+      "heart": {
+        "mortality_factor": 0.77,
+        "delisting_factor": 0.54
+      }
+    },
+    "MORH": {
+      "kidney": {
+        "mortality_factor": 0.32,
+        "delisting_factor": 2.49
+      }
+    },
+    "MOSL": {
+      "kidney": {
+        "mortality_factor": 1.54,
+        "delisting_factor": 0.7
+      },
+      "liver": {
+        "mortality_factor": 1.2,
+        "delisting_factor": 2.07
+      }
+    },
+    "MOUM": {
+      "kidney": {
+        "mortality_factor": 1.61,
+        "delisting_factor": 0.3
+      }
+    },
+    "MSUM": {
+      "kidney": {
+        "mortality_factor": 1.53,
+        "delisting_factor": 0.8
+      },
+      "liver": {
+        "mortality_factor": 0.73,
+        "delisting_factor": 0.95
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.35
+      }
+    },
+    "NCBG": {
+      "kidney": {
+        "mortality_factor": 0.83,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.22
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "NCCM": {
+      "kidney": {
+        "mortality_factor": 1.24,
+        "delisting_factor": 0.85
+      },
+      "liver": {
+        "mortality_factor": 1.97,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.11
+      }
+    },
+    "NCDU": {
+      "kidney": {
+        "mortality_factor": 1.93,
+        "delisting_factor": 0.88
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.76
+      },
+      "heart": {
+        "mortality_factor": 1.4,
+        "delisting_factor": 0.56
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.74
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.92
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "NCEC": {
+      "kidney": {
+        "mortality_factor": 1.2,
+        "delisting_factor": 1.2
+      }
+    },
+    "NCMH": {
+      "kidney": {
+        "mortality_factor": 1.15,
+        "delisting_factor": 0.68
+      },
+      "liver": {
+        "mortality_factor": 1.06,
+        "delisting_factor": 1.84
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 2.9
+      },
+      "lung": {
+        "mortality_factor": 2.96,
+        "delisting_factor": 2.62
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "NDMC": {
+      "kidney": {
+        "mortality_factor": 2.24,
+        "delisting_factor": 3.0
+      }
+    },
+    "NDSL": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "NEUN": {
+      "kidney": {
+        "mortality_factor": 0.55,
+        "delisting_factor": 0.68
+      },
+      "liver": {
+        "mortality_factor": 1.38,
+        "delisting_factor": 0.84
+      },
+      "heart": {
+        "mortality_factor": 1.61,
+        "delisting_factor": 0.3
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      },
+      "pancreas": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.64
+      },
+      "intestine": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 1.23
+      }
+    },
+    "NHDH": {
+      "kidney": {
+        "mortality_factor": 0.59,
+        "delisting_factor": 0.81
+      }
+    },
+    "NJBI": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 1.08,
+        "delisting_factor": 1.52
+      },
+      "lung": {
+        "mortality_factor": 2.75,
+        "delisting_factor": 1.22
+      }
+    },
+    "NJHK": {
+      "kidney": {
+        "mortality_factor": 0.36,
+        "delisting_factor": 0.82
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.44
+      }
+    },
+    "NJLL": {
+      "kidney": {
+        "mortality_factor": 2.43,
+        "delisting_factor": 0.93
+      },
+      "liver": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 1.87
+      }
+    },
+    "NJRW": {
+      "kidney": {
+        "mortality_factor": 0.74,
+        "delisting_factor": 1.23
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "NJSB": {
+      "kidney": {
+        "mortality_factor": 0.85,
+        "delisting_factor": 0.92
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "NMAQ": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.0
+      }
+    },
+    "NMPH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.91
+      }
+    },
+    "NVUM": {
+      "kidney": {
+        "mortality_factor": 0.93,
+        "delisting_factor": 1.02
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "NYAM": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.8
+      }
+    },
+    "NYCC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.47
+      }
+    },
+    "NYCP": {
+      "kidney": {
+        "mortality_factor": 0.9,
+        "delisting_factor": 0.66
+      },
+      "liver": {
+        "mortality_factor": 0.75,
+        "delisting_factor": 0.45
+      },
+      "heart": {
+        "mortality_factor": 0.63,
+        "delisting_factor": 0.78
+      },
+      "lung": {
+        "mortality_factor": 1.74,
+        "delisting_factor": 0.46
+      },
+      "pancreas": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 1.92
+      },
+      "intestine": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 2.25
+      }
+    },
+    "NYDS": {
+      "kidney": {
+        "mortality_factor": 1.11,
+        "delisting_factor": 0.34
+      }
+    },
+    "NYEC": {
+      "kidney": {
+        "mortality_factor": 0.82,
+        "delisting_factor": 0.75
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "NYFL": {
+      "kidney": {
+        "mortality_factor": 0.93,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 1.95,
+        "delisting_factor": 1.92
+      },
+      "heart": {
+        "mortality_factor": 1.42,
+        "delisting_factor": 0.75
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "NYMA": {
+      "kidney": {
+        "mortality_factor": 1.3,
+        "delisting_factor": 0.71
+      },
+      "liver": {
+        "mortality_factor": 0.39,
+        "delisting_factor": 1.36
+      },
+      "heart": {
+        "mortality_factor": 2.24,
+        "delisting_factor": 0.3
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.43
+      },
+      "pancreas": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 2.88
+      }
+    },
+    "NYMS": {
+      "kidney": {
+        "mortality_factor": 1.58,
+        "delisting_factor": 0.76
+      },
+      "liver": {
+        "mortality_factor": 1.79,
+        "delisting_factor": 1.02
+      },
+      "heart": {
+        "mortality_factor": 1.45,
+        "delisting_factor": 0.3
+      },
+      "lung": {
+        "mortality_factor": 1.13,
+        "delisting_factor": 1.0
+      },
+      "pancreas": {
+        "mortality_factor": 2.76,
+        "delisting_factor": 0.3
+      },
+      "intestine": {
+        "mortality_factor": 2.6,
+        "delisting_factor": 1.04
+      }
+    },
+    "NYNS": {
+      "kidney": {
+        "mortality_factor": 0.71,
+        "delisting_factor": 0.65
+      },
+      "liver": {
+        "mortality_factor": 0.75,
+        "delisting_factor": 1.1
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.76
+      },
+      "lung": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 1.79
+      }
+    },
+    "NYNY": {
+      "kidney": {
+        "mortality_factor": 1.15,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 1.02,
+        "delisting_factor": 1.06
+      },
+      "heart": {
+        "mortality_factor": 1.24,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "NYSB": {
+      "kidney": {
+        "mortality_factor": 1.29,
+        "delisting_factor": 0.3
+      }
+    },
+    "NYUC": {
+      "kidney": {
+        "mortality_factor": 0.35,
+        "delisting_factor": 0.75
+      },
+      "liver": {
+        "mortality_factor": 0.4,
+        "delisting_factor": 0.86
+      },
+      "heart": {
+        "mortality_factor": 2.06,
+        "delisting_factor": 0.6
+      },
+      "lung": {
+        "mortality_factor": 1.0,
+        "delisting_factor": 0.88
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.15
+      }
+    },
+    "NYUM": {
+      "kidney": {
+        "mortality_factor": 0.6,
+        "delisting_factor": 1.1
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "NYVA": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.68
+      }
+    },
+    "NYWC": {
+      "kidney": {
+        "mortality_factor": 1.87,
+        "delisting_factor": 1.19
+      },
+      "liver": {
+        "mortality_factor": 1.8,
+        "delisting_factor": 1.67
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.65
+      }
+    },
+    "OHCC": {
+      "kidney": {
+        "mortality_factor": 1.4,
+        "delisting_factor": 0.64
+      },
+      "liver": {
+        "mortality_factor": 1.04,
+        "delisting_factor": 0.79
+      },
+      "heart": {
+        "mortality_factor": 2.67,
+        "delisting_factor": 1.17
+      },
+      "lung": {
+        "mortality_factor": 1.13,
+        "delisting_factor": 1.4
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.96
+      }
+    },
+    "OHCH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.35
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "OHCM": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.84
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.67
+      },
+      "heart": {
+        "mortality_factor": 1.83,
+        "delisting_factor": 1.28
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "OHCO": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "OHOU": {
+      "kidney": {
+        "mortality_factor": 1.11,
+        "delisting_factor": 1.07
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.82
+      },
+      "heart": {
+        "mortality_factor": 0.99,
+        "delisting_factor": 1.39
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.88
+      }
+    },
+    "OHTC": {
+      "kidney": {
+        "mortality_factor": 1.24,
+        "delisting_factor": 1.13
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.55
+      }
+    },
+    "OHUC": {
+      "kidney": {
+        "mortality_factor": 0.58,
+        "delisting_factor": 0.53
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.74
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.81
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.88
+      }
+    },
+    "OHUH": {
+      "kidney": {
+        "mortality_factor": 0.41,
+        "delisting_factor": 0.74
+      },
+      "liver": {
+        "mortality_factor": 2.42,
+        "delisting_factor": 1.05
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.03
+      },
+      "lung": {
+        "mortality_factor": 2.75,
+        "delisting_factor": 0.3
+      }
+    },
+    "OKBC": {
+      "kidney": {
+        "mortality_factor": 1.64,
+        "delisting_factor": 0.6
+      },
+      "liver": {
+        "mortality_factor": 0.52,
+        "delisting_factor": 0.52
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.72
+      },
+      "lung": {
+        "mortality_factor": 1.2,
+        "delisting_factor": 1.06
+      }
+    },
+    "OKMD": {
+      "kidney": {
+        "mortality_factor": 0.99,
+        "delisting_factor": 0.45
+      },
+      "liver": {
+        "mortality_factor": 0.67,
+        "delisting_factor": 0.87
+      }
+    },
+    "OKSJ": {
+      "kidney": {
+        "mortality_factor": 0.89,
+        "delisting_factor": 1.22
+      }
+    },
+    "ORGS": {
+      "kidney": {
+        "mortality_factor": 0.51,
+        "delisting_factor": 0.3
+      }
+    },
+    "ORUO": {
+      "kidney": {
+        "mortality_factor": 0.5,
+        "delisting_factor": 0.46
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.43
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.81
+      }
+    },
+    "ORVA": {
+      "kidney": {
+        "mortality_factor": 0.46,
+        "delisting_factor": 1.67
+      },
+      "liver": {
+        "mortality_factor": 2.03,
+        "delisting_factor": 2.64
+      }
+    },
+    "PAAE": {
+      "kidney": {
+        "mortality_factor": 2.97,
+        "delisting_factor": 1.59
+      },
+      "liver": {
+        "mortality_factor": 2.28,
+        "delisting_factor": 1.58
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "PAAG": {
+      "kidney": {
+        "mortality_factor": 1.45,
+        "delisting_factor": 0.66
+      },
+      "liver": {
+        "mortality_factor": 1.1,
+        "delisting_factor": 0.84
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.72
+      }
+    },
+    "PACH": {
+      "kidney": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 1.28,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 2.39,
+        "delisting_factor": 1.26
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "PACP": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.38
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.16
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "PAGM": {
+      "kidney": {
+        "mortality_factor": 2.2,
+        "delisting_factor": 1.41
+      },
+      "liver": {
+        "mortality_factor": 1.49,
+        "delisting_factor": 0.32
+      }
+    },
+    "PAHE": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      },
+      "liver": {
+        "mortality_factor": 2.79,
+        "delisting_factor": 2.82
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.92
+      }
+    },
+    "PAHH": {
+      "kidney": {
+        "mortality_factor": 1.13,
+        "delisting_factor": 0.9
+      }
+    },
+    "PALH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "PALV": {
+      "kidney": {
+        "mortality_factor": 0.96,
+        "delisting_factor": 0.55
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "PAPH": {
+      "kidney": {
+        "mortality_factor": 1.36,
+        "delisting_factor": 1.24
+      }
+    },
+    "PAPT": {
+      "kidney": {
+        "mortality_factor": 1.02,
+        "delisting_factor": 1.08
+      },
+      "liver": {
+        "mortality_factor": 0.62,
+        "delisting_factor": 0.97
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.78
+      },
+      "lung": {
+        "mortality_factor": 1.19,
+        "delisting_factor": 0.52
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "intestine": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.23
+      }
+    },
+    "PASC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "PATJ": {
+      "kidney": {
+        "mortality_factor": 1.01,
+        "delisting_factor": 1.23
+      },
+      "liver": {
+        "mortality_factor": 2.15,
+        "delisting_factor": 0.65
+      },
+      "heart": {
+        "mortality_factor": 2.31,
+        "delisting_factor": 0.81
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.92
+      }
+    },
+    "PATU": {
+      "kidney": {
+        "mortality_factor": 2.4,
+        "delisting_factor": 1.43
+      },
+      "liver": {
+        "mortality_factor": 2.98,
+        "delisting_factor": 1.93
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.68
+      },
+      "lung": {
+        "mortality_factor": 1.82,
+        "delisting_factor": 0.54
+      }
+    },
+    "PAUP": {
+      "kidney": {
+        "mortality_factor": 0.85,
+        "delisting_factor": 1.31
+      },
+      "liver": {
+        "mortality_factor": 1.04,
+        "delisting_factor": 0.9
+      },
+      "heart": {
+        "mortality_factor": 1.33,
+        "delisting_factor": 0.47
+      },
+      "lung": {
+        "mortality_factor": 0.59,
+        "delisting_factor": 1.83
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.16
+      }
+    },
+    "PAVA": {
+      "kidney": {
+        "mortality_factor": 1.18,
+        "delisting_factor": 0.81
+      },
+      "liver": {
+        "mortality_factor": 0.59,
+        "delisting_factor": 2.04
+      }
+    },
+    "PRSJ": {
+      "kidney": {
+        "mortality_factor": 0.58,
+        "delisting_factor": 1.06
+      },
+      "liver": {
+        "mortality_factor": 0.64,
+        "delisting_factor": 0.83
+      }
+    },
+    "RIRH": {
+      "kidney": {
+        "mortality_factor": 1.49,
+        "delisting_factor": 0.3
+      }
+    },
+    "SCLA": {
+      "kidney": {
+        "mortality_factor": 0.36,
+        "delisting_factor": 1.81
+      }
+    },
+    "SCMU": {
+      "kidney": {
+        "mortality_factor": 1.05,
+        "delisting_factor": 0.64
+      },
+      "liver": {
+        "mortality_factor": 1.72,
+        "delisting_factor": 0.56
+      },
+      "heart": {
+        "mortality_factor": 0.48,
+        "delisting_factor": 0.51
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "SCPG": {
+      "kidney": {
+        "mortality_factor": 1.41,
+        "delisting_factor": 0.43
+      }
+    },
+    "SDMK": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.45
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "SDSV": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "TNEM": {
+      "kidney": {
+        "mortality_factor": 0.34,
+        "delisting_factor": 0.47
+      }
+    },
+    "TNLB": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.61
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.94
+      }
+    },
+    "TNMH": {
+      "kidney": {
+        "mortality_factor": 1.49,
+        "delisting_factor": 1.23
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.8
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "TNST": {
+      "kidney": {
+        "mortality_factor": 1.22,
+        "delisting_factor": 2.33
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "TNUK": {
+      "kidney": {
+        "mortality_factor": 0.86,
+        "delisting_factor": 1.18
+      }
+    },
+    "TNVU": {
+      "kidney": {
+        "mortality_factor": 0.99,
+        "delisting_factor": 0.66
+      },
+      "liver": {
+        "mortality_factor": 0.45,
+        "delisting_factor": 0.93
+      },
+      "heart": {
+        "mortality_factor": 1.01,
+        "delisting_factor": 0.93
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.86
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "TXAS": {
+      "kidney": {
+        "mortality_factor": 0.96,
+        "delisting_factor": 3.0
+      },
+      "liver": {
+        "mortality_factor": 0.88,
+        "delisting_factor": 0.69
+      }
+    },
+    "TXBC": {
+      "kidney": {
+        "mortality_factor": 0.47,
+        "delisting_factor": 1.58
+      },
+      "liver": {
+        "mortality_factor": 0.84,
+        "delisting_factor": 1.21
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.06
+      }
+    },
+    "TXCF": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "TXCM": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 1.24,
+        "delisting_factor": 0.54
+      },
+      "heart": {
+        "mortality_factor": 1.48,
+        "delisting_factor": 1.3
+      }
+    },
+    "TXDC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "TXDM": {
+      "kidney": {
+        "mortality_factor": 0.58,
+        "delisting_factor": 0.79
+      }
+    },
+    "TXDR": {
+      "kidney": {
+        "mortality_factor": 0.76,
+        "delisting_factor": 3.0
+      }
+    },
+    "TXDS": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.74
+      }
+    },
+    "TXFW": {
+      "kidney": {
+        "mortality_factor": 1.96,
+        "delisting_factor": 0.3
+      }
+    },
+    "TXHD": {
+      "kidney": {
+        "mortality_factor": 0.97,
+        "delisting_factor": 0.55
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.66
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.44
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "TXHH": {
+      "kidney": {
+        "mortality_factor": 1.53,
+        "delisting_factor": 0.35
+      },
+      "liver": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 1.12
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.89
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.95
+      }
+    },
+    "TXHI": {
+      "kidney": {
+        "mortality_factor": 1.7,
+        "delisting_factor": 1.07
+      },
+      "liver": {
+        "mortality_factor": 1.47,
+        "delisting_factor": 1.65
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.72
+      },
+      "lung": {
+        "mortality_factor": 0.9,
+        "delisting_factor": 1.39
+      }
+    },
+    "TXHS": {
+      "kidney": {
+        "mortality_factor": 0.74,
+        "delisting_factor": 1.19
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.08
+      },
+      "heart": {
+        "mortality_factor": 1.43,
+        "delisting_factor": 1.34
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.88
+      }
+    },
+    "TXJS": {
+      "kidney": {
+        "mortality_factor": 0.81,
+        "delisting_factor": 1.36
+      },
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "TXLP": {
+      "kidney": {
+        "mortality_factor": 0.55,
+        "delisting_factor": 0.3
+      }
+    },
+    "TXMC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.45
+      },
+      "liver": {
+        "mortality_factor": 0.45,
+        "delisting_factor": 1.16
+      }
+    },
+    "TXMH": {
+      "kidney": {
+        "mortality_factor": 1.48,
+        "delisting_factor": 0.61
+      },
+      "liver": {
+        "mortality_factor": 1.55,
+        "delisting_factor": 1.01
+      },
+      "heart": {
+        "mortality_factor": 0.44,
+        "delisting_factor": 0.94
+      },
+      "lung": {
+        "mortality_factor": 2.07,
+        "delisting_factor": 1.1
+      },
+      "pancreas": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.3
+      }
+    },
+    "TXPL": {
+      "kidney": {
+        "mortality_factor": 1.61,
+        "delisting_factor": 1.03
+      }
+    },
+    "TXPM": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "TXSP": {
+      "kidney": {
+        "mortality_factor": 0.62,
+        "delisting_factor": 3.0
+      },
+      "liver": {
+        "mortality_factor": 0.59,
+        "delisting_factor": 1.27
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.22
+      },
+      "lung": {
+        "mortality_factor": 2.89,
+        "delisting_factor": 0.43
+      }
+    },
+    "TXSW": {
+      "kidney": {
+        "mortality_factor": 1.05,
+        "delisting_factor": 0.64
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.7
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "TXTC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.67
+      },
+      "heart": {
+        "mortality_factor": 2.24,
+        "delisting_factor": 0.39
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.84
+      }
+    },
+    "TXTX": {
+      "kidney": {
+        "mortality_factor": 1.06,
+        "delisting_factor": 2.9
+      },
+      "liver": {
+        "mortality_factor": 0.74,
+        "delisting_factor": 0.96
+      },
+      "heart": {
+        "mortality_factor": 0.51,
+        "delisting_factor": 0.72
+      },
+      "lung": {
+        "mortality_factor": 1.01,
+        "delisting_factor": 0.45
+      }
+    },
+    "TXUC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.07
+      }
+    },
+    "TXVA": {
+      "kidney": {
+        "mortality_factor": 0.55,
+        "delisting_factor": 1.75
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.93
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "UTLD": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.08
+      },
+      "liver": {
+        "mortality_factor": 0.83,
+        "delisting_factor": 0.6
+      },
+      "heart": {
+        "mortality_factor": 1.02,
+        "delisting_factor": 0.3
+      }
+    },
+    "UTMC": {
+      "kidney": {
+        "mortality_factor": 1.86,
+        "delisting_factor": 0.57
+      },
+      "liver": {
+        "mortality_factor": 1.43,
+        "delisting_factor": 1.95
+      },
+      "heart": {
+        "mortality_factor": 0.85,
+        "delisting_factor": 1.19
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.95
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "UTPC": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.38
+      },
+      "heart": {
+        "mortality_factor": 1.74,
+        "delisting_factor": 3.0
+      }
+    },
+    "VACH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "VAFH": {
+      "kidney": {
+        "mortality_factor": 0.7,
+        "delisting_factor": 0.88
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.16
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.99
+      },
+      "pancreas": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 1.92
+      }
+    },
+    "VAHD": {
+      "kidney": {
+        "mortality_factor": 0.78,
+        "delisting_factor": 0.36
+      }
+    },
+    "VAMC": {
+      "kidney": {
+        "mortality_factor": 1.38,
+        "delisting_factor": 0.97
+      },
+      "liver": {
+        "mortality_factor": 1.18,
+        "delisting_factor": 0.61
+      },
+      "heart": {
+        "mortality_factor": 0.57,
+        "delisting_factor": 0.8
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.92
+      }
+    },
+    "VANG": {
+      "kidney": {
+        "mortality_factor": 0.88,
+        "delisting_factor": 0.94
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.87
+      }
+    },
+    "VAUV": {
+      "kidney": {
+        "mortality_factor": 0.8,
+        "delisting_factor": 1.04
+      },
+      "liver": {
+        "mortality_factor": 1.72,
+        "delisting_factor": 0.85
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.59
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.63
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.92
+      }
+    },
+    "VTMC": {
+      "kidney": {
+        "mortality_factor": 2.79,
+        "delisting_factor": 0.3
+      }
+    },
+    "WACH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.29
+      },
+      "heart": {
+        "mortality_factor": 1.45,
+        "delisting_factor": 2.54
+      }
+    },
+    "WASH": {
+      "kidney": {
+        "mortality_factor": 0.83,
+        "delisting_factor": 1.52
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.03
+      }
+    },
+    "WASM": {
+      "kidney": {
+        "mortality_factor": 0.62,
+        "delisting_factor": 1.27
+      },
+      "liver": {
+        "mortality_factor": 1.51,
+        "delisting_factor": 1.09
+      }
+    },
+    "WAUW": {
+      "kidney": {
+        "mortality_factor": 0.45,
+        "delisting_factor": 0.82
+      },
+      "liver": {
+        "mortality_factor": 0.92,
+        "delisting_factor": 0.57
+      },
+      "heart": {
+        "mortality_factor": 0.43,
+        "delisting_factor": 0.3
+      },
+      "lung": {
+        "mortality_factor": 1.15,
+        "delisting_factor": 0.3
+      }
+    },
+    "WAVM": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.81
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.88
+      }
+    },
+    "WICH": {
+      "kidney": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.14
+      },
+      "liver": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.02
+      }
+    },
+    "WISE": {
+      "kidney": {
+        "mortality_factor": 0.94,
+        "delisting_factor": 1.39
+      },
+      "liver": {
+        "mortality_factor": 1.33,
+        "delisting_factor": 2.88
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.28
+      },
+      "lung": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.89
+      }
+    },
+    "WISL": {
+      "kidney": {
+        "mortality_factor": 1.82,
+        "delisting_factor": 1.94
+      },
+      "liver": {
+        "mortality_factor": 1.72,
+        "delisting_factor": 1.98
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.35
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.88
+      }
+    },
+    "WIUW": {
+      "kidney": {
+        "mortality_factor": 0.91,
+        "delisting_factor": 0.71
+      },
+      "liver": {
+        "mortality_factor": 0.79,
+        "delisting_factor": 1.08
+      },
+      "heart": {
+        "mortality_factor": 1.12,
+        "delisting_factor": 0.79
+      },
+      "lung": {
+        "mortality_factor": 0.63,
+        "delisting_factor": 0.3
+      },
+      "pancreas": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.48
+      }
+    },
+    "WVCA": {
+      "kidney": {
+        "mortality_factor": 0.85,
+        "delisting_factor": 1.17
+      }
+    },
+    "WVWU": {
+      "kidney": {
+        "mortality_factor": 1.47,
+        "delisting_factor": 2.69
+      },
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 2.03
+      }
+    },
+    "NJUH": {
+      "liver": {
+        "mortality_factor": 0.33,
+        "delisting_factor": 1.28
+      }
+    },
+    "ARBH": {
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.97
+      }
+    },
+    "CASG": {
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.35
+      }
+    },
+    "DCWH": {
+      "heart": {
+        "mortality_factor": 1.33,
+        "delisting_factor": 1.41
+      }
+    },
+    "FLAC": {
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 1.52
+      }
+    },
+    "FLJD": {
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 2.22
+      }
+    },
+    "INLH": {
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 3.0
+      }
+    },
+    "MISH": {
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.66
+      },
+      "lung": {
+        "mortality_factor": 2.96,
+        "delisting_factor": 0.65
+      }
+    },
+    "MNCM": {
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 0.3
+      }
+    },
+    "ORSV": {
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "PRCC": {
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    },
+    "SCCH": {
+      "heart": {
+        "mortality_factor": 2.17,
+        "delisting_factor": 1.52
+      }
+    },
+    "TNBM": {
+      "heart": {
+        "mortality_factor": 2.39,
+        "delisting_factor": 0.42
+      }
+    },
+    "TXCT": {
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 1.35
+      }
+    },
+    "TXDL": {
+      "heart": {
+        "mortality_factor": 3.0,
+        "delisting_factor": 3.0
+      }
+    },
+    "VAMV": {
+      "heart": {
+        "mortality_factor": 0.3,
+        "delisting_factor": 0.3
+      }
+    }
+  }
+}

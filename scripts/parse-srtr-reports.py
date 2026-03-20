@@ -30,6 +30,11 @@ WAIT_TIME_OUT = os.path.join(DATA_DIR, "wait-time-distributions.json")
 COMPETING_OUT = os.path.join(DATA_DIR, "competing-risks.json")
 OUTCOMES_OUT = os.path.join(DATA_DIR, "post-transplant-outcomes.json")
 
+# Phase 6A: Center-level output files (all ~250 centers, not just 22 cities)
+CENTERS_WAIT_OUT = os.path.join(DATA_DIR, "wait-time-distributions-centers.json")
+CENTERS_COMPETING_OUT = os.path.join(DATA_DIR, "competing-risks-centers.json")
+CENTERS_OUTCOMES_OUT = os.path.join(DATA_DIR, "post-transplant-outcomes-centers.json")
+
 ORGAN_CODES = {
     "kidney": "KI",
     "liver": "LI",
@@ -1011,6 +1016,239 @@ def _default_blood_type_multipliers() -> dict:
     }
 
 
+# ---------- Phase 6A: Center-level extraction (all ~250 centers) ----------
+
+
+def _get_all_center_rows(sheet, col_indices: dict) -> dict:
+    """Extract named columns for ALL centers in a sheet. Returns {center_code: {col: value}}."""
+    ctr_col = _col_index(sheet, "CTR_CD")
+    if ctr_col < 0:
+        return {}
+    result = {}
+    for r in range(2, sheet.nrows):
+        code = str(sheet.cell_value(r, ctr_col)).strip()
+        if not code:
+            continue
+        row_data = {}
+        for key, col_idx in col_indices.items():
+            row_data[key] = _safe_float(sheet.cell_value(r, col_idx))
+        result[code] = row_data
+    return result
+
+
+def parse_all_centers_wait_times() -> dict:
+    """
+    Parse Table B10 for ALL centers (not just 22 cities).
+    Returns center-level wait time factors for every center in SRTR data.
+    Phase 6A issue #117.
+    """
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    result = {
+        "_meta": {
+            "source": "SRTR PSR National Center-Level Summary Data (January 2025 release)",
+            "method": "Center-level wait time factors from Table B10 (all centers)",
+            "fetchedAt": now,
+        }
+    }
+    center_factors = {}
+
+    for organ, code in ORGAN_CODES.items():
+        excel_path = os.path.join(RAW_DIR, f"csrs_final_tables_2511_{code}.xls")
+        if not os.path.exists(excel_path):
+            continue
+
+        wb = xlrd.open_workbook(excel_path)
+        sheet = _open_sheet(wb, B10_SHEET_NAMES)
+        if not sheet:
+            continue
+
+        ctr_cols = _build_col_map(sheet, B10_COLS)
+        nat_cols = _build_col_map(sheet, B10_NAT_COLS)
+        nat_data = _get_national_row(sheet, nat_cols)
+        nat_fit = fit_lognormal(
+            nat_data.get("p10") if nat_data else None,
+            nat_data.get("p25") if nat_data else None,
+            nat_data.get("p50") if nat_data else None,
+            nat_data.get("p75") if nat_data else None,
+        )
+        if not nat_fit:
+            continue
+        effective_median = round(math.exp(nat_fit[0]), 1)
+
+        all_rows = _get_all_center_rows(sheet, ctr_cols)
+        count = 0
+        for ctr_code, ctr_data in all_rows.items():
+            factor = _compute_city_factor(ctr_data, effective_median, nat_data)
+            if factor is not None:
+                if ctr_code not in center_factors:
+                    center_factors[ctr_code] = {}
+                center_factors[ctr_code][organ] = factor
+                count += 1
+        print(f"  {organ}: {count} centers with wait time factors")
+
+    result["center_wait_time_factors"] = center_factors
+    result["_meta"]["totalCenters"] = len(center_factors)
+    return result
+
+
+def parse_all_centers_outcomes() -> dict:
+    """
+    Parse Table B7 for ALL centers (not just 22 cities).
+    Returns center-level mortality and delisting factors.
+    Phase 6A issue #117.
+    """
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    result = {
+        "_meta": {
+            "source": "SRTR PSR National Center-Level Summary Data (January 2025 release)",
+            "method": "Center-level competing risks from Table B7 (all centers)",
+            "fetchedAt": now,
+        }
+    }
+    center_adjustments = {}
+
+    for organ, code in ORGAN_CODES.items():
+        excel_path = os.path.join(RAW_DIR, f"csrs_final_tables_2511_{code}.xls")
+        if not os.path.exists(excel_path):
+            continue
+
+        wb = xlrd.open_workbook(excel_path)
+        sheet = _open_sheet(wb, B7_SHEET_NAMES)
+        if not sheet:
+            continue
+
+        ctr_cols = _build_col_map(sheet, B7_COLS)
+        nat_cols = _build_col_map(sheet, B7_NAT_COLS)
+        nat_data = _get_national_row(sheet, nat_cols)
+        if not nat_data:
+            continue
+
+        nat_mortality = (nat_data.get("died_waitlist") or 0) / 100.0
+        nat_delisting = sum(
+            (nat_data.get(k) or 0) for k in ["removed_worsened", "removed_improved", "removed_refused", "removed_other"]
+        ) / 100.0
+
+        all_rows = _get_all_center_rows(sheet, ctr_cols)
+        count = 0
+        for ctr_code, ctr_data in all_rows.items():
+            ctr_mortality = (ctr_data.get("died_waitlist") or 0) / 100.0
+            ctr_delisting = sum(
+                (ctr_data.get(k) or 0) for k in ["removed_worsened", "removed_improved", "removed_refused", "removed_other"]
+            ) / 100.0
+
+            mort_factor = round(max(0.3, min((ctr_mortality / nat_mortality) if nat_mortality > 0 else 1.0, 3.0)), 2)
+            delist_factor = round(max(0.3, min((ctr_delisting / nat_delisting) if nat_delisting > 0 else 1.0, 3.0)), 2)
+
+            if ctr_code not in center_adjustments:
+                center_adjustments[ctr_code] = {}
+            center_adjustments[ctr_code][organ] = {
+                "mortality_factor": mort_factor,
+                "delisting_factor": delist_factor,
+            }
+            count += 1
+        print(f"  {organ}: {count} centers with competing risk factors")
+
+    result["center_adjustments"] = center_adjustments
+    result["_meta"]["totalCenters"] = len(center_adjustments)
+    return result
+
+
+def parse_all_centers_post_transplant() -> dict:
+    """
+    Parse C-series tables for ALL centers (not just 22 cities).
+    Returns center-level graft/patient survival.
+    Phase 6A issue #117.
+    """
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    result = {
+        "_meta": {
+            "source": "SRTR PSR National Center-Level Summary Data (January 2025 release)",
+            "method": "Center-level post-transplant outcomes from C-series tables (all centers)",
+            "fetchedAt": now,
+        }
+    }
+    center_outcomes = {}
+
+    for organ, code in ORGAN_CODES.items():
+        excel_path = os.path.join(RAW_DIR, f"csrs_final_tables_2511_{code}.xls")
+        if not os.path.exists(excel_path):
+            continue
+
+        wb = xlrd.open_workbook(excel_path)
+
+        # Graft survival
+        try:
+            gs_sheet = wb.sheet_by_name(GRAFT_SHEET)
+        except xlrd.biffh.XLRDError:
+            continue
+
+        gs_ctr_cols = _build_col_map(gs_sheet, GRAFT_COLS)
+
+        # Patient survival
+        try:
+            ps_sheet = wb.sheet_by_name(PATIENT_SHEET)
+            ps_ctr_cols = _build_col_map(ps_sheet, PATIENT_COLS)
+        except xlrd.biffh.XLRDError:
+            ps_sheet = None
+            ps_ctr_cols = {}
+
+        gs_all = _get_all_center_rows(gs_sheet, gs_ctr_cols)
+        ps_all = _get_all_center_rows(ps_sheet, ps_ctr_cols) if ps_sheet else {}
+
+        count = 0
+        for ctr_code, gs_data in gs_all.items():
+            n_1yr = gs_data.get("graft_n_1yr")
+            if n_1yr is not None and n_1yr < MIN_N_OUTCOMES:
+                continue
+
+            entry = {}
+            gs_1yr = gs_data.get("graft_survival_1yr")
+            gs_3yr = gs_data.get("graft_survival_3yr")
+            gs_hr = gs_data.get("graft_hr_1yr")
+            gs_hr_lo = gs_data.get("graft_hr_lo")
+            gs_hr_hi = gs_data.get("graft_hr_hi")
+
+            if gs_1yr is not None:
+                entry["graft_survival_1yr"] = round(gs_1yr, 1)
+            if gs_3yr is not None:
+                entry["graft_survival_3yr"] = round(gs_3yr, 1)
+            if gs_hr is not None:
+                entry["graft_hr_1yr"] = round(gs_hr, 3)
+            if gs_hr_lo is not None and gs_hr_hi is not None:
+                entry["graft_hr_1yr_ci"] = [round(gs_hr_lo, 3), round(gs_hr_hi, 3)]
+            if n_1yr is not None:
+                entry["n_1yr"] = int(n_1yr)
+
+            ps_data = ps_all.get(ctr_code)
+            if ps_data:
+                ps_1yr = ps_data.get("patient_survival_1yr")
+                ps_3yr = ps_data.get("patient_survival_3yr")
+                ps_hr = ps_data.get("patient_hr_1yr")
+                ps_hr_lo = ps_data.get("patient_hr_lo")
+                ps_hr_hi = ps_data.get("patient_hr_hi")
+                if ps_1yr is not None:
+                    entry["patient_survival_1yr"] = round(ps_1yr, 1)
+                if ps_3yr is not None:
+                    entry["patient_survival_3yr"] = round(ps_3yr, 1)
+                if ps_hr is not None:
+                    entry["patient_hr_1yr"] = round(ps_hr, 3)
+                if ps_hr_lo is not None and ps_hr_hi is not None:
+                    entry["patient_hr_1yr_ci"] = [round(ps_hr_lo, 3), round(ps_hr_hi, 3)]
+
+            entry["performance_rating"] = _performance_rating(gs_hr, gs_hr_lo, gs_hr_hi)
+
+            if ctr_code not in center_outcomes:
+                center_outcomes[ctr_code] = {}
+            center_outcomes[ctr_code][organ] = entry
+            count += 1
+
+        print(f"  {organ}: {count} centers with post-transplant outcomes")
+
+    result["center_outcomes"] = center_outcomes
+    result["_meta"]["totalCenters"] = len(center_outcomes)
+    return result
+
+
 def main():
     # Load center mapping
     with open(MAPPING_PATH) as f:
@@ -1040,7 +1278,7 @@ def main():
         print("\n  Skipping historical trends (no historical data in srtr-raw/historical/)")
         print("  Run: python scripts/fetch-srtr-excel.py --historical to download")
 
-    # Write output files
+    # Write city-level output files
     with open(WAIT_TIME_OUT, "w") as f:
         json.dump(wait_data, f, indent=2)
         f.write("\n")
@@ -1056,11 +1294,36 @@ def main():
         f.write("\n")
     print(f"Wrote {OUTCOMES_OUT}")
 
+    # Phase 6A: Center-level extraction (all ~250 centers)
+    if "--all-centers" in sys.argv or "--all" in sys.argv:
+        print("\n=== Phase 6A: Parsing ALL Center Wait Times (Table B10) ===")
+        centers_wait = parse_all_centers_wait_times()
+        with open(CENTERS_WAIT_OUT, "w") as f:
+            json.dump(centers_wait, f, indent=2)
+            f.write("\n")
+        print(f"Wrote {CENTERS_WAIT_OUT} ({centers_wait['_meta']['totalCenters']} centers)")
+
+        print("\n=== Phase 6A: Parsing ALL Center Competing Risks (Table B7) ===")
+        centers_competing = parse_all_centers_outcomes()
+        with open(CENTERS_COMPETING_OUT, "w") as f:
+            json.dump(centers_competing, f, indent=2)
+            f.write("\n")
+        print(f"Wrote {CENTERS_COMPETING_OUT} ({centers_competing['_meta']['totalCenters']} centers)")
+
+        print("\n=== Phase 6A: Parsing ALL Center Post-Transplant Outcomes ===")
+        centers_outcomes = parse_all_centers_post_transplant()
+        with open(CENTERS_OUTCOMES_OUT, "w") as f:
+            json.dump(centers_outcomes, f, indent=2)
+            f.write("\n")
+        print(f"Wrote {CENTERS_OUTCOMES_OUT} ({centers_outcomes['_meta']['totalCenters']} centers)")
+
     # Summary
     n_organs = len([k for k in wait_data if not k.startswith("_") and k != "city_wait_time_factors"])
     n_cities = len([k for k in wait_data.get("city_wait_time_factors", {}) if not k.startswith("_")])
     n_outcomes_cities = len(pt_outcomes.get("city_outcomes", {}))
     print(f"\nSummary: {n_organs} organs, {n_cities} cities with wait time factors, {n_outcomes_cities} cities with post-transplant outcomes")
+    if "--all-centers" in sys.argv or "--all" in sys.argv:
+        print(f"  Center-level: wait={centers_wait['_meta']['totalCenters']}, competing={centers_competing['_meta']['totalCenters']}, outcomes={centers_outcomes['_meta']['totalCenters']} centers")
 
 
 if __name__ == "__main__":
