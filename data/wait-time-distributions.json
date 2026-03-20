@@ -6,7 +6,7 @@
       "https://www.srtr.org/reports/program-specific-reports/",
       "SRTR PSR Technical Methods: https://www.srtr.org/about-the-data/technical-methods-for-the-program-specific-reports/"
     ],
-    "fetchedAt": "2026-03-19T16:58:31Z",
+    "fetchedAt": "2026-03-20T20:19:53Z",
     "notes": "Empirical center-level data from SRTR. Blood type and clinical multipliers retained from literature-derived estimates (Table B10 does not stratify by blood type)."
   },
   "kidney": {

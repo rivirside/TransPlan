@@ -12,7 +12,7 @@
 | Cost of living index | BLS CPI API | `scripts/fetch-cost-of-living.js` | Yes (weekly CI) | `data/cost-of-living.json` | Requires `BLS_API_KEY` |
 | Hospital quality metrics | CMS Provider Data API | `scripts/fetch-hospital-quality.js` | Yes (weekly CI) | `data/hospital-quality.json` | Multi-strategy query (SQL/filter/legacy) |
 | Health demographics (diabetes, obesity, etc.) | CDC SODA API | `scripts/fetch-health-data.js` | Yes (weekly CI) | `data/health-demographics.json` | Public, no key needed |
-| Traffic fatality rates | NHTSA FARS API | `scripts/fetch-traffic.js` | No (API retired) | `data/traffic-fatalities.json` | Seed data only; FIXME: CSV bulk download |
+| Traffic fatality rates | NHTSA FARS CSV bulk download | `scripts/fetch-traffic.js` | Yes (weekly CI) | `data/traffic-fatalities.json` | CSV from static.nhtsa.gov (L-045 fixed) |
 | Donor registration rates | Donate Life America reports | None | No | `data/donor-registration.json` | Manual; no API exists (L-033) |
 | SRTR transplant volumes | SRTR Program-Specific Reports | `scripts/check-srtr-updates.js` (hash check only) | Partial | `data/manual/srtr-reports.json` | Manual data entry from srtr.org; script checks for updates |
 | Center specializations | SRTR + center press releases | None | No | `data/manual/srtr-reports.json` | Manual curation |
@@ -99,6 +99,48 @@ Each zip contains 8 per-organ Excel files: `csrs_final_tables_{YYMM}_{organ}.xls
 
 ---
 
+## Phase 6 Data (Spatial Geographic Modeling)
+
+### Phase 6A: Center-Level Data
+
+| Data Point | Source | Processing | Automated? | Data File | Freshness |
+|------------|--------|-----------|------------|-----------|-----------|
+| All SRTR centers (~248) | SRTR PSR Excel files (6 organs) | `scripts/parse-srtr-reports.py --all-centers` | Semi (run manually) | `data/srtr-all-centers.json` | Biannual SRTR releases |
+| Center geographic coordinates | Nominatim geocoding + `srtr-center-mapping.json` + manual | Three-tier: (1) Nominatim automated for 200+, (2) city_mapping fallback, (3) manual coordinates for edge cases | No | `data/srtr-all-centers.json` | Static once geocoded; review when centers open/close |
+| Center-level wait time distributions | SRTR PSR Table B10 (all centers) | `scripts/parse-srtr-reports.py --all-centers` | Semi | `data/wait-time-distributions-centers.json` | Biannual SRTR releases |
+| Center-level competing risks | SRTR PSR Table B7 (all centers) | `scripts/parse-srtr-reports.py --all-centers` | Semi | `data/competing-risks-centers.json` | Biannual SRTR releases |
+| Center-level post-transplant outcomes | SRTR PSR Tables C5-C20 (all centers) | `scripts/parse-srtr-reports.py --all-centers` | Semi | `data/post-transplant-outcomes-centers.json` | Biannual SRTR releases |
+| Center-to-city mapping (22 focus cities) | Manual curation from SRTR center directory | None | No | `data/srtr-center-mapping.json` | Manual; update when centers change |
+
+### Phase 6B: Spatial Interpolation
+
+| Data Point | Source | Processing | Automated? | Data File | Notes |
+|------------|--------|-----------|------------|-----------|-------|
+| Interpolated spatial surfaces (24 layers) | Derived from center-level + city-level JSON data | `backend/services/spatial_interpolation.py` (RBF/IDW) | Runtime (computed on first query) | In-memory cache | Surfaces built from 20-233 data points depending on layer |
+| UNOS allocation circle analysis | Computed from center coordinates + haversine distances | `backend/services/allocation_geography.py` | Runtime | In-memory | 250nm/500nm circles per UNOS allocation policy |
+| Haversine distance (nautical miles) | Standard geodesic formula | `backend/utils.py` (`haversine_distance_nm`) | Runtime | N/A | Conversion: miles × 0.868976 = nautical miles |
+
+### Spatial Data Layers
+
+The interpolation engine supports 24 layers, derived from existing data files:
+
+| Layer | Source Data | Point Density | Notes |
+|-------|------------|---------------|-------|
+| `air_quality` | `data/air-quality.json` (22 cities) | ~20 points | City-level AQI values |
+| `cost_of_living` | `data/cost-of-living.json` (22 cities) | ~20 points | City-level CPI index |
+| `health_diabetesRate` | `data/health-demographics.json` | ~20 points | County-aggregated CDC PLACES |
+| `health_obesityRate` | `data/health-demographics.json` | ~20 points | County-aggregated CDC PLACES |
+| `health_ckdRate` | `data/health-demographics.json` | ~20 points | County-aggregated CDC PLACES |
+| `health_hypertensionRate` | `data/health-demographics.json` | ~20 points | County-aggregated CDC PLACES |
+| `health_smokingRate` | `data/health-demographics.json` | ~20 points | County-aggregated CDC PLACES |
+| `wait_time_factor_{organ}` | `data/wait-time-distributions-centers.json` | 100-233 points | Center-level SRTR Table B10 |
+| `mortality_factor_{organ}` | `data/competing-risks-centers.json` | 100-233 points | Center-level SRTR Table B7 |
+| `graft_survival_{organ}` | `data/post-transplant-outcomes-centers.json` | 80-200 points | Center-level SRTR C-series |
+
+**Data provenance note:** All spatial interpolation layers are derived from existing, provenance-tracked data files. No new external data sources are introduced by the interpolation engine itself. The accuracy of interpolated values depends on the density and spatial distribution of the underlying data points — city-level layers (~20 points) produce coarser surfaces than center-level layers (100-233 points).
+
+---
+
 ## Data Quality Notes
 
 - **No PHI:** All data is aggregate/population-level. No patient-identifiable information.
@@ -112,7 +154,7 @@ Each zip contains 8 per-organ Excel files: `csrs_final_tables_{YYMM}_{organ}.xls
 
 | Gap | Impact | Mitigation | Target Milestone |
 |-----|--------|-----------|-----------------|
-| FARS API retired | Traffic fatality data is stale | Seed data preserved; FIXME for CSV bulk download | Phase 1 (L-045) |
+| ~~FARS API retired~~ | ~~Traffic fatality data is stale~~ | **RESOLVED** — rewritten to CSV bulk download from static.nhtsa.gov | L-045 FIXED |
 | No SRTR API | Excel download is semi-manual | `fetch-srtr-excel.py` downloads files; `parse-srtr-reports.py` extracts data | M5 ✅ (semi-automated) |
 | No Donate Life API | Donor registration data is manual | Seed data; review annually | Deferred (L-033) |
 | Blood type stratification missing | SRTR Table B10 doesn't stratify by blood type | Literature-derived multipliers retained | Future: use OPTN ADR figure data |

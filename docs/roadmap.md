@@ -474,7 +474,7 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 **Key files:** `backend/services/mcmc_survival.py` (model restructured), `backend/services/mcmc_inference.py` (Bayesian HDI + frailty detection)
 **Completed:** March 2026. ADR-027. Issues #96, #99.
 
-### M5: Cross-Engine Validation & Model Quality (in progress)
+### M5: Cross-Engine Validation & Model Quality ✅ DONE
 
 > **Why:** Paper-grade validation that all three inference engines (MC, BBN, MCMC) agree on key predictions, and that MCMC posterior predictions match observed SRTR data. Also fixes known statistical issues.
 
@@ -553,17 +553,17 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 
 > **Why a separate phase?** This is the highest-ROI work. SRTR PSR Excel files already contain center-level statistics for ALL ~250 US transplant programs, but our parse script filters to 22 cities. Removing this filter and adding coordinates enables everything that follows.
 
-- [ ] **Extract SRTR center list** (#115): catalog all ~250 center codes, names, organs from Excel files
-- [ ] **Add geographic coordinates** (#116): lat/lon for all 22 cities + all ~250 centers (geocoding)
-- [ ] **Update parse script** (#117): remove 22-city whitelist, generate center-level data files
-- [ ] **Replace hardcoded CITIES** (#118): dynamic data loading in all backend services (monte_carlo, equity, sensitivity, what_if)
-- [ ] **Dynamic center dropdown** (#119): searchable dropdown with 250+ centers, grouped by state
+- [x] **Extract SRTR center list** (#115): 248 centers cataloged from SRTR PSR Excel files → `data/srtr-all-centers.json`
+- [x] **Add geographic coordinates** (#116): three-tier geocoding (Nominatim automated, city_mapping fallback, manual)
+- [x] **Update parse script** (#117): center-level data files for all ~248 centers (wait times, competing risks, outcomes)
+- [x] **Replace hardcoded CITIES** (#118): dynamic `_get_cities()` in all backend services with fallback
+- [x] **Dynamic center dropdown** (#119): API-first with hardcoded fallback in frontend
 - [ ] **Leaflet marker clustering** (#120): markercluster for 250+ map points
 - [ ] **Results pagination** (#121): top-20 default, filter by state/distance/organ, sortable columns
 - [ ] **OPO-to-center mapping** (#122): 57 OPOs → constituent centers, boundary data (extends #19)
 - [ ] **Patient home location** (#123): input city/zip/coords, distance to each center, travel burden scoring (extends #111)
 
-**Estimated effort:** 2-3 weeks. **Depends on:** Phase 5 M5 complete.
+**Status:** Core items (#115-#119) complete. Deferred: marker clustering (#120), pagination (#121), OPO mapping (#122), patient home (#123).
 
 ### Phase 6B: Spatial Interpolation (Epic #124)
 
@@ -573,13 +573,13 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 
 - [ ] **EPA monitor data** (#125): save per-monitor lat/lon + readings alongside city aggregates
 - [ ] **CDC county data** (#126): query all ~3,000 US counties from CDC PLACES (not just 20-22)
-- [ ] **Interpolation service** (#127): `backend/services/spatial_interpolation.py` — RBF/kriging surface builder + point queries
-- [ ] **Interpolation API** (#128): `GET /interpolated-value?lat=X&lon=Y&layer=air_quality`
+- [x] **Interpolation service** (#127): `backend/services/spatial_interpolation.py` — RBF/IDW surface builder + point queries, 24 layers, 19 pytest
+- [x] **Interpolation API** (#128): `GET /spatial-layers`, `/interpolated-value`, `/interpolated-profile` endpoints
 - [ ] **Heatmap overlay** (#129): Leaflet heatmap/choropleth showing interpolated surfaces on map
-- [ ] **Allocation circle modeling** (#130): 250nm/500nm donor pool circles per UNOS policy (extends #112)
+- [x] **Allocation circle modeling** (#130): 250nm/500nm UNOS circles, competition scoring, composite distance score, 13 pytest
 - [ ] **Patient-relative scoring** (#131): delta scores vs. current location ("air quality +15, cost -8")
 
-**Estimated effort:** 2-3 weeks after 6A. **Depends on:** Phase 6A coordinates and dynamic loading.
+**Status:** Core items (#127, #128, #130) complete. Remaining: EPA monitor data (#125), CDC county data (#126), heatmap overlay (#129).
 
 ### Phase 6C: Full Spatial Model & Geostatistical Inference (Epic #132)
 

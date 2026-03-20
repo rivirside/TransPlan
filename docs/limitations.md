@@ -454,6 +454,30 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **File:** `scripts/fit-mcmc-model.py` → `--strict` flag
 - **Fix:** `--strict` convergence gate implemented. Checks both R-hat and ESS bulk before allowing trace save.
 
+### L-063: Spatial interpolation uses sparse city-level data for some layers
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Details:** The RBF/IDW interpolation engine builds continuous surfaces from as few as ~20 data points for city-level layers (air quality, cost of living, health demographics). These surfaces are smooth but may not capture local variation. Center-level layers (wait times, mortality, outcomes) use 100-233 points and produce more reliable interpolations. The thin-plate spline RBF kernel can produce edge artifacts for query points far from any data center.
+- **Impact:** Interpolated values at locations far from any data point (e.g., rural Montana) may be unreliable, especially for city-level layers. Error increases with distance from nearest observation.
+- **File:** `backend/services/spatial_interpolation.py` → `_extract_layer_points()`
+- **Mitigation:** Could be resolved by Phase 6B #125 (EPA monitor data, ~4000 points) and #126 (CDC county data, ~3000 points). Phase 6C #134 would add kriging variance estimates to quantify interpolation uncertainty.
+
+### L-064: UNOS allocation circles use simplified center-level competition model
+- **Severity:** LOW
+- **Status:** OPEN
+- **Details:** The allocation circle model counts transplant centers within 250nm/500nm radii as a proxy for competition and donor pool access. The real UNOS allocation system is far more complex — it considers patient priority scores, organ acceptance rates, OPO boundaries, center listing practices, and match-run mechanics. The competition score is normalized against rough averages (e.g., ~15 kidney centers within 250nm for an average US metro) that are not empirically validated.
+- **Impact:** Distance score provides directional guidance (dense vs. sparse transplant geography) but should not be interpreted as a precise allocation prediction.
+- **File:** `backend/services/allocation_geography.py` → `allocation_circles()`, `distance_score()`
+- **Mitigation:** Document as directional proxy. Could improve with OPO-level data (#122) and center-specific acceptance rate data.
+
+### L-065: Frontend graceful degradation uses undocumented fallback data
+- **Severity:** LOW
+- **Status:** OPEN
+- **Details:** When the backend API is unavailable, `script.js` falls back to a hardcoded `cityData` mock result object and `cityStateMap` for the home center dropdown. These fallback values are legitimate graceful degradation but are not documented as such — there's no comment explaining they are intentional fallbacks or how they were derived. Similarly, `data-loader.js` DEFAULTS provide static fallback values for all data files.
+- **Impact:** No data quality impact (fallbacks only activate when API is down). Documentation gap only.
+- **File:** `script.js` → `cityData`, `cityStateMap`; `data-loader.js` → `DEFAULTS`
+- **Mitigation:** Add inline comments documenting these as intentional fallback data for graceful degradation.
+
 ---
 
 ## 9. Data Provenance
@@ -480,6 +504,15 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | `air-quality.json` | **Seed** | EPA AQS fetch skipped (no API key) | Unknown | Static integers, never live-fetched. EPA API requires free registration for key. |
 | `traffic-fatalities.json` | **Seed** | NHTSA FARS API retired (L-045) | Unknown | Plausible values but permanently static. FARS CSV bulk download is an alternative but not implemented. |
 
+### Phase 6: Center-Level & Spatial Data
+
+| File | Tier | Source | Vintage | Notes |
+|------|------|--------|---------|-------|
+| `srtr-all-centers.json` | **SRTR + Geocoded** | SRTR PSR Excel files (center names/codes) + Nominatim geocoding (coordinates) | Jan 2025 (SRTR); Mar 2026 (geocoding) | 248 centers with lat/lon, organ programs, state. Coordinates from three-tier geocoding. |
+| `wait-time-distributions-centers.json` | **SRTR** | SRTR PSR Table B10 (all centers) | Jan 2025 | Center-level wait time factors for 248 centers × 6 organs. Same parse pipeline as 22-city version. |
+| `competing-risks-centers.json` | **SRTR** | SRTR PSR Table B7 (all centers) | Jan 2025 | Center-level mortality/delisting for 248 centers × 6 organs. |
+| `post-transplant-outcomes-centers.json` | **SRTR** | SRTR PSR C-series (all centers) | Jan 2025 | Center-level graft/patient survival for 243 centers. Some centers lack C-series data. |
+
 ### Trend Analysis
 
 | File | Tier | Source | Vintage | Notes |
@@ -502,6 +535,8 @@ Each limitation has a severity, status, and category. When we fix one, change st
 3. **Historical trends are now real SRTR data** — `srtr-historical.json` contains 15-release time-series (2019–2025) parsed from official SRTR PSR archives. Trend charts can be cited as SRTR-sourced.
 4. **Several scoring-engine inputs are seed data** — air quality, traffic fatalities, donor registration, and most health demographics have never been live-fetched. These affect the location suitability score (frontend) but NOT the probabilistic simulation engine (backend).
 5. **CDC cause-of-death data is from 2017** — drug intoxication distributions have shifted substantially since then (opioid crisis escalation).
+6. **Phase 6 center-level data is real SRTR data** — all ~248 center wait times, competing risks, and outcomes are parsed from the same SRTR PSR Excel files using the same pipeline as the 22-city data. Geographic coordinates are from Nominatim geocoding (automated, verifiable).
+7. **Spatial interpolation is derived, not new source data** — all 24 interpolation layers are computed from existing provenance-tracked data files. No new external data sources are introduced by the interpolation engine.
 
 ---
 

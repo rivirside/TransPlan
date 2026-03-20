@@ -49,11 +49,7 @@ class TransPlanData:
 
     @property
     def wait_time_factors(self) -> dict[str, float]:
-        """
-        Per-city wait time relative factors.
-        FIXME (Milestone 2): Currently hardcoded in algorithm.js (cityWaitTimeFactors).
-        Move to data/wait-time-distributions.json in Milestone 2.
-        """
+        """Per-city wait time relative factors (from SRTR PSR Table B10)."""
         return self.srtr_reports.get("waitTimeFactors", {})
 
     @property

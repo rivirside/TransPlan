@@ -6,9 +6,9 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 5 M5 Near-Complete (Cross-Engine Validation & Bug/Quality Sprint)
+## Current State: Phase 6B In Progress (Spatial Geographic Modeling)
 
-Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. Phase 3 M1-M5 done. Phase 4 M1-M5 done. Phase 5 M1-M2 done. Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
+Phase 1 MVP complete (112 Jest tests, 62 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. Phase 3 M1-M5 done. Phase 4 M1-M5 done. Phase 5 M1-M5 done. **Phase 6A complete, Phase 6B in progress.** Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
 
 **Phase 4 complete (March 2026):** All 5 milestones done (ADR-021). M1 (Configurable Weights), M2 (Post-Transplant Outcomes), M3 (Historical Trends), M4 (Policy Scenario Engine), M5 (Validation & Reproducibility Pack). 112 Jest, 448 pytest.
 
@@ -21,6 +21,10 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 **Phase 5 M4 complete (March 2026):** Shared frailty via LKJ-Cholesky correlated city offsets (ADR-027). MCMC model now learns mortality ↔ delisting correlation from data via bivariate MvNormal with LKJ prior (η=2), replacing the fixed external copula for MCMC mode. Bayesian HDI replaces bootstrap CIs — posterior-predictive credible intervals computed from per-draw p24 values. 11 new tests. 538 pytest + 112 Jest = 650 total. Issues #96, #99.
 
 **Phase 5 M5 near-complete (March 2026):** Cross-engine validation, model quality checks, and comprehensive bug/quality sprint. (1) Cross-engine validation service (`services/cross_validation.py`): runs MC, BBN, and MCMC on the same patient and computes Spearman rank correlation, mean/max absolute probability differences, top-5 city overlap. (2) Per-organ copula θ (L-059 fix): organ-specific Clayton copula parameters (kidney=0.8 through heart=1.8) replace the single fixed θ=1.0 across all 4 simulation paths. (3) Strict convergence gate (L-062 fix): `--strict` flag on `fit-mcmc-model.py` requires R-hat < 1.01 and ESS > 400 before saving traces. (4) Posterior predictive checks (`services/posterior_checks.py`): compares MCMC posterior predictions against observed SRTR statistics (national medians, city factors, blood type multipliers, mortality/delisting rates, urgency monotonicity). 24 new tests (14 cross-validation + 10 posterior checks). (5) Bug/quality sprint: 15 issues closed across 3 tiers — thread safety (#55), exception handling (#56), centerReputation differentiation (#44), XSS audit (#57), nullish coalescing (#67), LAS float parsing (#68), dead code removal (#71), concurrent submission guard (#66), frozen dist introspection (#61), honest BBN uncertainty band (#54), per-organ BBN terciles (#59), BLS cost-of-living verified (#101), EPA air quality verified (#100), CDC PLACES expanded to 5 county-level indicators (#102), FARS CSV bulk download (#103). (6) #104: Real SRTR historical data (14 biannual releases 2019–2025) with automated GitHub Actions refresh — resolved by user.
+
+**Phase 6A complete (March 2026):** Center expansion from 22 cities to ~250 SRTR centers. (1) Extracted all center codes, names, coordinates, and organ programs from SRTR PSR Excel files → `data/srtr-all-centers.json` (248 centers). (2) Three-tier geocoding: Nominatim automated (200+), city_mapping fallback, manual coordinates. (3) Center-level data files: `wait-time-distributions-centers.json` (248), `competing-risks-centers.json` (248), `post-transplant-outcomes-centers.json` (243). (4) Dynamic CITIES loading: all backend services (`monte_carlo`, `equity`, `sensitivity`, `what_if`, `mcmc_inference`) now use `_get_cities()` with fallback, replacing hardcoded lists. (5) `GET /centers` endpoint with organ and focus_only filters. (6) Frontend dropdown tries API first, falls back to hardcoded cityStateMap. Issues #115-#119 closed.
+
+**Phase 6B in progress (March 2026):** Spatial interpolation and UNOS allocation geography. (1) RBF/IDW interpolation engine (`services/spatial_interpolation.py`): continuous geographic surfaces from center-level data (24 layers: air quality, cost of living, 5 health metrics, per-organ wait_time_factor/mortality_factor/graft_survival). (2) Spatial API endpoints: `GET /spatial-layers`, `GET /interpolated-value`, `GET /interpolated-profile`, `GET /allocation-circles`, `GET /distance-score`. (3) UNOS allocation circle modeling (`services/allocation_geography.py`): 250nm/500nm radius analysis, competition scoring, composite distance score (proximity 40% + competition 35% + donor pool 25%). (4) `haversine_distance_nm()` for UNOS-policy-aligned nautical mile calculations. 32 new pytest tests (19 spatial + 13 allocation). Issues #127, #128, #130 closed. Remaining: EPA monitor data (#125), CDC county data (#126), frontend heatmap overlay (#129).
 
 **M4 (Policy Scenario Engine):** 4 predefined UNOS policy scenarios with literature-backed parameters and per-city adjustments: (1) 2021 Kidney 250nm Circles — per-center-size donor/wait adjustments, (2) Continuous Distribution — stronger geography de-emphasis, (3) Increased DCD Utilization — +15% organ supply, (4) Broader HCV+ Acceptance — +6% donor pool for kidney/liver. Frontend policy scenario selector in probability tab. `POST /policy-scenario` endpoint, `GET /policy-scenarios` listing. 24 new pytest tests.
 
@@ -62,7 +66,7 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 | Fetch scripts (scripts/) | ✅ Done | All scripts use mergeDataFile, skip-on-empty guards added |
 | GitHub Actions | ✅ Done | Single sequential job, weekly cron + manual dispatch |
 | Socioeconomic data | ✅ Done | Transplant-support rubric replacing wealth-correlated scores |
-| Unit tests | ✅ Done | 112 tests (Jest), 562 tests (pytest) |
+| Unit tests | ✅ Done | 112 tests (Jest), 594 tests (pytest) |
 | CDN fallback | ✅ Done | Graceful degradation when Leaflet/Chart.js CDN unavailable |
 | CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
@@ -125,35 +129,54 @@ Phase 1 MVP complete (112 Jest tests, 59 limitations tracked). Phase 2 probabili
 | M2: Clayton Copula | ✅ Done | Correlated mortality/delisting draws, θ=1.0 (τ≈0.33), opt-in via `use_copula`, all 3 sim paths, 22+4 tests (ADR-025, #94) |
 | M3: MCMC Hierarchical Model | ✅ Done | PyMC NUTS, 92 params/organ, trace-as-cache, offline fitting, posterior uncertainty, 53 pytest (ADR-026, #95) |
 | M4: Shared Frailty + Bayesian HDI | ✅ Done | LKJ-Cholesky correlated mort/delist offsets, learned correlation, posterior-predictive CIs, 11 new tests (ADR-027, #96, #99) |
-| M5: Cross-Engine Validation & Quality | 🔄 Near-complete | Cross-engine validation, posterior checks, per-organ copula, strict convergence, 15-issue bug sprint, real SRTR historical data (#104). Sensitivity analysis report (#109) and SRTR ground-truth comparison (#110) complete with interactive docs. Remaining: API endpoints for cross-validate and posterior-checks |
+| M5: Cross-Engine Validation & Quality | ✅ Done | Cross-engine validation, posterior checks, per-organ copula, strict convergence, 15-issue bug sprint, real SRTR historical data (#104). Sensitivity analysis report (#109) and SRTR ground-truth comparison (#110) complete with interactive docs. |
+
+### Phase 6 Progress
+
+| Milestone | Status | Notes |
+|-----------|--------|-------|
+| 6A: Extract SRTR center list (#115) | ✅ Done | 248 centers cataloged from Excel files |
+| 6A: Add geographic coordinates (#116) | ✅ Done | Three-tier geocoding (Nominatim + city_mapping + manual) |
+| 6A: Update parse script (#117) | ✅ Done | Center-level data files for wait times, competing risks, outcomes |
+| 6A: Replace hardcoded CITIES (#118) | ✅ Done | Dynamic `_get_cities()` in all backend services |
+| 6A: Dynamic center dropdown (#119) | ✅ Done | API-first with hardcoded fallback |
+| 6A: Marker clustering (#120) | Deferred | Frontend enhancement — not blocking spatial work |
+| 6A: Results pagination (#121) | Deferred | Frontend enhancement — not blocking spatial work |
+| 6A: OPO mapping (#122) | Deferred | Extends existing #19, requires manual lookup |
+| 6A: Patient home location (#123) | Deferred | Extends existing #111, needs geocoding UI |
+| 6B: Interpolation service (#127) | ✅ Done | RBF/IDW engine, 24 layers, SpatialSurface cache, 19 pytest |
+| 6B: Interpolation API (#128) | ✅ Done | 4 new endpoints on spatial router |
+| 6B: Heatmap overlay (#129) | Open | Frontend Leaflet heatmap/choropleth |
+| 6B: Allocation circles (#130) | ✅ Done | 250nm/500nm UNOS circles, competition score, distance score, 13 pytest |
+| 6B: EPA monitor data (#125) | Open | Per-monitor lat/lon for finer spatial resolution |
+| 6B: CDC county data (#126) | Open | All ~3,000 US counties from CDC PLACES |
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 5 M5 NEAR-COMPLETE** — Cross-engine validation + bug/quality sprint, 562 pytest + 112 Jest = 674 total
-- **Bug/Quality Sprint** — 15 issues closed across 3 tiers (thread safety, error handling, data quality, code fixes)
-- **Data Quality Sprint** — 6/8 COD model issues resolved, 2 documented as comprehensive feature requests
-- **FARS API (L-045):** FIXED — rewritten to use FARS CSV bulk download from static.nhtsa.gov (#103)
-- **CDC PLACES (L-012):** health-demographics.json now has 5 real county-level indicators for 20/22 cities (#102)
-- **SRTR Historical (#104):** Real 14-release time-series (2019–2025) with automated GH Actions refresh
-- **Deferred to Phase 5:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
+- **Phase 6B remaining:** EPA monitor data (#125), CDC county data (#126), frontend heatmap overlay (#129)
+- **Phase 6A deferred:** Marker clustering (#120), results pagination (#121), OPO mapping (#122), patient home location (#123)
+- **Phase 6C (future):** Pre-computed raster grid (#133), kriging uncertainty (#134), spatial econometric models (#135)
+- **Phase 5 platform features:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
 - **Deferred (no API):** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21), theme selection (Phase 7, #3)
 - **Infrastructure:** CI pipeline (#29) ✅, Docker Compose (#30) ✅ — both shipped
-- See `docs/roadmap.md` for full phased plan (Phase 4 detailed, Phase 5 expanded)
+- See `docs/roadmap.md` for full phased plan
 - See `docs/ideas.md` for full SRS with architecture, governance, and regulatory details
 
 ## Issue Tracking
 
-**GitHub Issues** is the primary tracker for actionable work items (bugs, features, limitations). ~37 open, ~30+ closed:
+**GitHub Issues** is the primary tracker for actionable work items (bugs, features, limitations). ~10 open, ~105+ closed:
 
 | Category | Status | Description |
 |----------|--------|-------------|
-| Bug/Quality Sprint (March 2026) | ✅ 15 closed | #55, #56, #44, #57, #67, #68, #71, #66, #61, #54, #59, #101, #100, #102, #103 |
-| SRTR Historical Data | ✅ Closed | #104 — real 14-release time-series, automated GH Actions refresh |
-| Validation Reports | ✅ 2 closed | #109 (sensitivity analysis report), #110 (SRTR ground-truth comparison) — interactive MDX docs |
-| Phase 5 M1-M4 | ✅ 8 closed | #36-#42, #94, #95, #96, #99 — BBN, copula, MCMC, shared frailty |
-| M2b: COD Model Data Quality | 2 open / 6 closed | L-049–L-056 — 6 resolved, 2 remain (OPTN validation, OPO mapping) |
-| Code quality / tech debt | ~25 open | Various bugs, duplications, hardcoded values — see open issues |
-| Phase 5+ features | ~10 open | API access (#24), SDKs (#25), scenario builder (#26), bulk analysis (#27), widget (#28) |
+| Phase 6A: Center Expansion | ✅ 5 closed | #115-#119 — center list, geocoding, parse script, dynamic CITIES, dropdown |
+| Phase 6B: Spatial Interpolation | ✅ 3 closed / 3 open | #127, #128, #130 closed — interpolation engine, API, allocation circles. #125, #126, #129 open |
+| Phase 6A deferred | 4 open | #120 (marker clustering), #121 (pagination), #122 (OPO mapping), #123 (patient home) |
+| Bug/Quality Sprint (March 2026) | ✅ 30+ closed | Thread safety, error handling, data quality, code fixes — comprehensive sprint across 3 tiers |
+| Phase 5 M1-M5 | ✅ 8+ closed | #36-#42, #94, #95, #96, #99 — BBN, copula, MCMC, shared frailty, cross-validation |
+| M2b: COD Model Data Quality | 2 open / 6 closed | L-049–L-056 — 6 resolved, 2 remain (OPTN validation #11, OPO mapping #12) |
+| Pre-publication | 1 open | #107 (face validity review with transplant faculty) |
+| Phase 5+ platform features | 5 open | API access (#24), SDKs (#25), scenario builder (#26), bulk analysis (#27), widget (#28) |
+| Deferred | 4 open | OPO mapping (#19), SRTR outcomes (#20), donor reg (#21), theme selection (#3) |
 
 **Labels:** `phase:*`, `priority:*`, `limitation`, `cod-model`, `blocked`, `deferred`, `ui/ux`, `backend`, `frontend`, `data-quality`, `data-pipeline`, `milestone:m5`
 
@@ -176,7 +199,7 @@ TransPlan/
   start.command           <- Double-click to launch (macOS); auto-finds free ports
   stop.command            <- Double-click to stop a running session
   session.js              <- Local session UI (End Session button, same-origin health check)
-  api-client.js           <- Backend API client (POST /simulate + /sensitivity + /equity-analysis + /what-if, graceful fallback)
+  api-client.js           <- Backend API client (POST /simulate + /sensitivity + /equity-analysis + /what-if + GET /centers, graceful fallback)
   probability-charts.js   <- CDF curves, competing risks bar, tornado sensitivity chart (Chart.js)
   equity-charts.js        <- Blood type disparity, age bracket disparity, Gini by city charts (Chart.js)
   dark-mode.js            <- Dark mode toggle (auto-detect, localStorage persist, sun/moon button)
@@ -204,9 +227,13 @@ TransPlan/
     health-demographics.json
     hospital-quality.json
     traffic-fatalities.json
-    wait-time-distributions.json  <- Log-normal params from SRTR Table B10
-    competing-risks.json          <- Mortality/delisting from SRTR Table B7
-    post-transplant-outcomes.json <- Graft/patient survival from SRTR Tables C5-C20 (Phase 4 M2)
+    wait-time-distributions.json  <- Log-normal params from SRTR Table B10 (22 cities)
+    competing-risks.json          <- Mortality/delisting from SRTR Table B7 (22 cities)
+    post-transplant-outcomes.json <- Graft/patient survival from SRTR Tables C5-C20 (22 cities, Phase 4 M2)
+    srtr-all-centers.json         <- All ~248 SRTR centers with lat/lon, organs, state (Phase 6A)
+    wait-time-distributions-centers.json <- Center-level wait times (248 centers, Phase 6A)
+    competing-risks-centers.json  <- Center-level competing risks (248 centers, Phase 6A)
+    post-transplant-outcomes-centers.json <- Center-level outcomes (243 centers, Phase 6A)
     srtr-historical.json      <- Real SRTR 15-release time-series 2019–2025 (Phase 4 M3, #104 resolved)
     cause-of-death-by-region.json <- Organ recovery rates × state COD proportions (M2)
     srtr-center-mapping.json      <- SRTR center codes → 22 TransPlan cities
@@ -261,10 +288,14 @@ TransPlan/
       sensitivity.py      <- POST /sensitivity (tornado chart parameter analysis)
       equity.py           <- POST /equity-analysis (demographic equity analysis)
       what_if.py          <- POST /what-if (what-if scenario analysis with multipliers)
+      centers.py          <- GET /centers (all 248 centers or 22 focus cities, Phase 6A)
+      spatial.py          <- GET /spatial-layers, /interpolated-value, /interpolated-profile, /allocation-circles, /distance-score (Phase 6B)
     services/
-      data_loader.py      <- Loads data/*.json at startup
+      data_loader.py      <- Loads data/*.json at startup (20 files including Phase 6A center data)
       distributions.py    <- Log-normal wait time distributions (6 organs)
-      monte_carlo.py      <- Monte Carlo simulation engine (22 cities × 1000 iter)
+      monte_carlo.py      <- Monte Carlo simulation engine (22 cities × 1000 iter, dynamic CITIES loading)
+      spatial_interpolation.py <- RBF/IDW interpolation engine, 24 layers, SpatialSurface cache (Phase 6B)
+      allocation_geography.py  <- UNOS 250nm/500nm allocation circles, distance scoring (Phase 6B)
       competing_risks.py  <- Competing risks: mortality/delisting rates (6 organs)
       sensitivity.py      <- Sensitivity analysis: parameter impact on p_transplant_24mo
       equity.py           <- Demographic equity analysis (48 profiles × 22 cities, Gini coefficient)
@@ -282,7 +313,7 @@ TransPlan/
     routers/
       ...
       trends.py           <- GET /trends/{city}/{organ}, GET /trends/{organ} (Phase 4 M3)
-    tests/                <- pytest suite (562 tests)
+    tests/                <- pytest suite (594 tests)
       ...
       test_policy_scenarios.py <- 24 tests: scenario registry, filtering, per-city multipliers
       test_bias_audit.py       <- 19 tests: Cohen's d, Gini, dimension disparity, full audit
@@ -290,6 +321,8 @@ TransPlan/
       test_bayesian_network.py  <- 32 tests: DAG structure, inference validity, organ-specific (Phase 5 M1)
       test_bbn_cross_validation.py <- 10 tests: rank correlation, directional consistency, speed (Phase 5 M1)
       test_copula.py             <- 22 tests: marginal uniformity, Kendall's τ, edge cases, integration (Phase 5 M2)
+      test_spatial_interpolation.py <- 19 tests: RBF/IDW surfaces, layer extraction, edge cases (Phase 6B)
+      test_allocation_geography.py  <- 13 tests: centers within radius, allocation circles, distance score (Phase 6B)
       test_mcmc_survival.py      <- 38 tests: data loading, model building, posterior sampling, sanity (Phase 5 M3)
       test_mcmc_inference.py     <- 15 tests: result structure, clinical params, copula compat, error handling (Phase 5 M3)
   docs/
@@ -298,7 +331,7 @@ TransPlan/
     design.md             <- Read when touching UI/UX/CSS
     adr-log.md            <- Grep-searchable decision log
     roadmap.md            <- Phased development plan (5 phases)
-    limitations.md        <- Issue tracker (62 items, L-001 through L-062)
+    limitations.md        <- Issue tracker (65 items, L-001 through L-065)
     brand-bible.md        <- Grep-searchable visual identity
 ```
 
@@ -319,12 +352,12 @@ TransPlan/
 
 ## Known Limitations
 
-**62 tracked issues** in `docs/limitations.md`. Read when auditing data quality or planning future work.
+**65 tracked issues** in `docs/limitations.md`. Read when auditing data quality or planning future work.
 
 | Status | Count | Details |
 |--------|-------|---------|
 | FIXED | 48 | L-001–L-048 (all critical/high/medium from original audit), L-051–L-056 (COD model), L-058–L-059, L-062 |
-| OPEN | 4 | L-049 (OPTN cross-validation), L-050 (OPO boundaries), L-060 (patient-level MCMC), L-061 (informative priors) |
+| OPEN | 7 | L-049 (OPTN cross-validation), L-050 (OPO boundaries), L-060 (patient-level MCMC), L-061 (informative priors), L-063–L-065 (Phase 6 spatial) |
 | MITIGATED | 1 | L-057 (pancreas graft survival — falls back to patient survival) |
 | DEFERRED | 3 | L-009 (OPO), L-017 (SRTR outcomes), L-033 (donor reg fetch) |
 | WONT FIX | 2 | L-012 (county health, <0.5pt impact), L-039 (false positive) |
