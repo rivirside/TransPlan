@@ -2115,54 +2115,15 @@ document.getElementById('cpra').addEventListener('input', function() {
 function deriveDisplayMetrics(cityName, stateName, organType, formData, breakdown) {
     const urgency = typeof formData === 'object' ? formData.urgency : formData;
 
-    // --- Wait Time (derived from algorithm's wait time factors) ---
-    const baseWaitTimes = {
-        kidney: { min: 1.8, max: 4.2 },
-        liver: { min: 0.8, max: 2.5 },
-        heart: { min: 0.25, max: 0.8 },
-        lung: { min: 0.3, max: 0.9 },
-        pancreas: { min: 1.2, max: 3.5 },
-        intestine: { min: 0.6, max: 1.5 }
-    };
-    const cityWaitTimeFactors = {
-        "Minneapolis": 0.85, "Madison": 0.88, "Portland": 0.90,
-        "Pittsburgh": 0.87, "Baltimore": 0.95, "Cleveland": 0.92,
-        "Nashville": 0.89, "Durham": 0.91, "Rochester": 0.86,
-        "Omaha": 0.84, "Seattle": 0.93, "St. Louis": 0.90,
-        "Indianapolis": 0.91, "Chicago": 1.05, "Philadelphia": 1.08,
-        "Houston": 0.96, "Dallas": 0.94, "Miami": 0.98,
-        "Los Angeles": 1.15, "San Francisco": 1.18, "Palo Alto": 1.16,
-        "New York": 1.12
-    };
-    const base = baseWaitTimes[organType] || baseWaitTimes.kidney;
+    // --- Wait Time — uses shared constants from algorithm.js (#72, #73) ---
+    const cityWaitTimeFactors = (window.TransPlanData && window.TransPlanData.cityWaitTimeFactors) || {};
+    const cityFactors = cityWaitTimeFactors[cityName] || {};
+    const base = BASE_WAIT_TIMES[organType] || BASE_WAIT_TIMES.kidney;
     const avgWait = (base.min + base.max) / 2;
-    const cityFactor = cityWaitTimeFactors[cityName] || 1.0;
+    const cityFactor = cityFactors[organType] || 1.0;
     const cityWait = avgWait * cityFactor;
 
-    // Organ-specific wait multiplier (mirrors algorithm.js logic)
-    let waitMultiplier;
-    if (organType === 'kidney' && typeof formData === 'object' && formData.cpra > 0) {
-        const cpra = Number(formData.cpra);
-        if (cpra <= 20) waitMultiplier = 1.0;
-        else if (cpra <= 50) waitMultiplier = 1.0 + (cpra - 20) / 30 * 0.5;
-        else if (cpra <= 80) waitMultiplier = 1.5 + (cpra - 50) / 30 * 1.0;
-        else if (cpra <= 97) waitMultiplier = 2.5 + (cpra - 80) / 17 * 0.5;
-        else waitMultiplier = 3.0 + (cpra - 97) / 3 * 2.0;
-    } else if (organType === 'liver' && typeof formData === 'object' && formData.meld) {
-        const meld = Number(formData.meld);
-        if (meld >= 35) waitMultiplier = 0.15;
-        else if (meld >= 25) waitMultiplier = 0.4;
-        else if (meld >= 15) waitMultiplier = 1.0;
-        else waitMultiplier = 2.0;
-    } else if (organType === 'lung' && typeof formData === 'object' && formData.las) {
-        const las = Number(formData.las);
-        if (las >= 50) waitMultiplier = 0.3;
-        else if (las >= 35) waitMultiplier = 0.7;
-        else waitMultiplier = 1.2;
-    } else {
-        const urgencyFactors = { '1': 0.3, '2': 0.6, '3': 1.0, '4': 1.4 };
-        waitMultiplier = urgencyFactors[urgency] || 1.0;
-    }
+    const waitMultiplier = calculateWaitTimeMultiplier(organType, formData);
 
     const waitYears = Math.round(cityWait * waitMultiplier * 10) / 10;
     const waitMonths = Math.round(waitYears * 12);

@@ -11,34 +11,8 @@
 (function () {
   'use strict';
 
-  // ==================== CONSTANTS ====================
-
-  var DEFAULT_WEIGHTS = {
-    medicalCompatibility: 0.25,
-    waitTime: 0.20,
-    donorAvailability: 0.18,
-    hospitalQuality: 0.15,
-    geographic: 0.10,
-    healthDemographics: 0.07,
-    policy: 0.03,
-    socioeconomic: 0.02
-  };
-
-  var CATEGORY_LABELS = {
-    medicalCompatibility: 'Medical Compatibility',
-    waitTime: 'Wait Time',
-    donorAvailability: 'Donor Availability',
-    hospitalQuality: 'Hospital Quality',
-    geographic: 'Geographic',
-    healthDemographics: 'Health Demographics',
-    policy: 'Policy',
-    socioeconomic: 'Socioeconomic'
-  };
-
-  var CATEGORY_KEYS = [
-    'medicalCompatibility', 'waitTime', 'donorAvailability', 'hospitalQuality',
-    'geographic', 'healthDemographics', 'policy', 'socioeconomic'
-  ];
+  // Issue #73: Use canonical constants from algorithm.js (loaded before weight-config.js).
+  // DEFAULT_WEIGHTS, CATEGORY_LABELS, CATEGORY_KEYS are in the global scope.
 
   var WEIGHT_PRESETS = {
     balanced: {

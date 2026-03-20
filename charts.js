@@ -11,29 +11,9 @@
 (function () {
     'use strict';
 
-    const CATEGORY_LABELS = [
-        'Medical Compatibility',
-        'Wait Time',
-        'Donor Availability',
-        'Hospital Quality',
-        'Geographic',
-        'Health Demographics',
-        'Policy',
-        'Socioeconomic'
-    ];
-
-    const CATEGORY_KEYS = [
-        'medicalCompatibility',
-        'waitTime',
-        'donorAvailability',
-        'hospitalQuality',
-        'geographic',
-        'healthDemographics',
-        'policy',
-        'socioeconomic'
-    ];
-
-    const DEFAULT_CATEGORY_WEIGHTS = [25, 20, 18, 15, 10, 7, 3, 2];
+    // Issue #73: Use canonical constants from algorithm.js (loaded before charts.js)
+    const CATEGORY_LABELS_ARR = CATEGORY_KEYS.map(function(k) { return CATEGORY_LABELS[k]; });
+    const DEFAULT_CATEGORY_WEIGHTS = CATEGORY_KEYS.map(function(k) { return Math.round(DEFAULT_WEIGHTS[k] * 100); });
 
     /**
      * Get current category weights as integer percentages.
@@ -87,7 +67,7 @@
         chartInstances.weightsDonut = new Chart(canvas, {
             type: 'doughnut',
             data: {
-                labels: CATEGORY_LABELS,
+                labels: CATEGORY_LABELS_ARR,
                 datasets: [{
                     data: getCategoryWeights(),
                     backgroundColor: CHART_COLORS,
@@ -137,7 +117,7 @@
         chartInstances[canvasId] = new Chart(canvas, {
             type: 'radar',
             data: {
-                labels: CATEGORY_LABELS,
+                labels: CATEGORY_LABELS_ARR,
                 datasets: [{
                     label: cityName,
                     data: data,
@@ -209,7 +189,7 @@
         // reflect actual impact on the final score, not raw category scores
         const currentWeights = getCategoryWeights();
         const datasets = CATEGORY_KEYS.map((key, i) => ({
-            label: `${CATEGORY_LABELS[i]} (${currentWeights[i]}%)`,
+            label: `${CATEGORY_LABELS_ARR[i]} (${currentWeights[i]}%)`,
             data: topCities.map(c => {
                 const raw = c.scoreBreakdown?.[key] || 0;
                 return raw * currentWeights[i] / 100;
@@ -258,7 +238,7 @@
                             label: function (context) {
                                 const catIndex = context.datasetIndex;
                                 const rawScore = context.raw * 100 / (getCategoryWeights()[catIndex] || 1);
-                                return `${CATEGORY_LABELS[catIndex]}: ${rawScore.toFixed(0)}/100 (contributes ${context.raw.toFixed(1)} pts)`;
+                                return `${CATEGORY_LABELS_ARR[catIndex]}: ${rawScore.toFixed(0)}/100 (contributes ${context.raw.toFixed(1)} pts)`;
                             }
                         }
                     }
