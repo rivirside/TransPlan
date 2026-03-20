@@ -88,8 +88,8 @@ def compute_sensitivity(
     start = time.perf_counter()
 
     # Validate city name (#62)
-    from services.monte_carlo import CITIES
-    valid_cities = {c["city"] for c in CITIES}
+    from services.monte_carlo import _get_cities
+    valid_cities = {c["city"] for c in _get_cities()}
     if city not in valid_cities:
         raise ValueError(f"Unknown city: '{city}'. Valid cities: {sorted(valid_cities)}")
 

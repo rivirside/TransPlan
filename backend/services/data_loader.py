@@ -36,6 +36,14 @@ class TransPlanData:
     wait_time_distributions: dict = field(default_factory=dict)
     # Phase 5 M1: Competing risks (mortality/delisting rates, multipliers)
     competing_risks: dict = field(default_factory=dict)
+    # Phase 6A: All SRTR centers (~250) with coordinates and organ programs
+    all_centers: dict = field(default_factory=dict)
+    # Phase 6A: Center-to-city mapping for 22 focus cities
+    center_mapping: dict = field(default_factory=dict)
+    # Phase 6A: Center-level data (all ~250 centers)
+    center_wait_times: dict = field(default_factory=dict)
+    center_competing_risks: dict = field(default_factory=dict)
+    center_outcomes: dict = field(default_factory=dict)
     # freshness metadata keyed by logical name
     freshness: dict = field(default_factory=dict)
 
@@ -52,6 +60,26 @@ class TransPlanData:
     def center_volumes(self) -> dict[str, dict[str, int]]:
         """Shortcut to organ → city → annual volume."""
         return self.srtr_reports.get("centerVolumes", {})
+
+    @property
+    def cities(self) -> list[dict[str, str]]:
+        """
+        The 22 focus cities as [{city, state}, ...].
+        Derived from srtr-center-mapping.json at load time.
+        """
+        mapping = self.center_mapping.get("cities", {})
+        if not mapping:
+            return []
+        return [{"city": city, "state": info["state"]} for city, info in mapping.items()]
+
+    @property
+    def state_full_names(self) -> dict[str, str]:
+        """
+        State abbreviation → full name, derived from all_centers data.
+        Used for cause-of-death lookups.
+        """
+        centers = self.all_centers.get("centers", {})
+        return {c["state_abbr"]: c["state"] for c in centers.values() if "state_abbr" in c and "state" in c}
 
 
 _DATA: TransPlanData | None = None
@@ -96,6 +124,12 @@ def load_all() -> TransPlanData:
     data.historical_trends = _load_json(DATA_DIR / "srtr-historical.json", "historical_trends", data)
     data.wait_time_distributions = _load_json(DATA_DIR / "wait-time-distributions.json", "wait_time_distributions", data)
     data.competing_risks = _load_json(DATA_DIR / "competing-risks.json", "competing_risks", data)
+    # Phase 6A: All centers + center mapping + center-level data
+    data.all_centers = _load_json(DATA_DIR / "srtr-all-centers.json", "all_centers", data)
+    data.center_mapping = _load_json(DATA_DIR / "srtr-center-mapping.json", "center_mapping", data)
+    data.center_wait_times = _load_json(DATA_DIR / "wait-time-distributions-centers.json", "center_wait_times", data)
+    data.center_competing_risks = _load_json(DATA_DIR / "competing-risks-centers.json", "center_competing_risks", data)
+    data.center_outcomes = _load_json(DATA_DIR / "post-transplant-outcomes-centers.json", "center_outcomes", data)
 
     loaded = sum(1 for v in data.freshness.values() if v not in ("missing", "parse_error"))
     logger.info("TransPlan data loaded: %d/%d files OK", loaded, len(data.freshness))

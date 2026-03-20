@@ -18,7 +18,7 @@ from collections import defaultdict
 import numpy as np
 
 from models.schemas import CityEquity, EquityAnalysisResult, PatientProfile
-from services.monte_carlo import CITIES
+from services.monte_carlo import CITIES, _get_cities
 from services.sensitivity import _p24_single_city
 
 logger = logging.getLogger(__name__)
@@ -132,7 +132,7 @@ def compute_equity_analysis(
 
     logger.info(
         "Equity analysis: %s, %d profiles × %d cities × %d iter",
-        patient.organ, len(profiles), len(CITIES), n_iterations,
+        patient.organ, len(profiles), len(_get_cities()), n_iterations,
     )
 
     # --- Simulate all profiles × all cities ---
@@ -140,7 +140,7 @@ def compute_equity_analysis(
     city_results: dict[str, list] = defaultdict(list)
     all_p24_values = []
 
-    for city_info in CITIES:
+    for city_info in _get_cities():
         city = city_info["city"]
         for profile in profiles:
             p24, median_wait = _simulate_profile_city(
@@ -157,7 +157,7 @@ def compute_equity_analysis(
 
     # --- Compute per-city equity metrics ---
     city_equities = []
-    for city_info in CITIES:
+    for city_info in _get_cities():
         city = city_info["city"]
         state = city_info["state"]
         results = city_results[city]

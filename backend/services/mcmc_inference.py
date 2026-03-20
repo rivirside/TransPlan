@@ -30,7 +30,7 @@ from services.mcmc_survival import (
     sample_params_from_trace,
     trace_exists,
 )
-from services.monte_carlo import CITIES, _get_cod_multiplier
+from services.monte_carlo import CITIES, _get_cities, _get_cod_multiplier
 
 # Lazy import to avoid circular dependency
 _outcomes_builder = None
@@ -161,7 +161,7 @@ def simulate_mcmc(
 
     city_results: list[CityProbability] = []
 
-    for city_info in CITIES:
+    for city_info in _get_cities():
         city = city_info["city"]
         state = city_info["state"]
         cidx = city_to_idx.get(city)

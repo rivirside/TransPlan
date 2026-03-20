@@ -19,7 +19,7 @@ from services.competing_risks import get_annual_delisting_rate, get_annual_morta
 from services.copula import draw_correlated_competing_risks
 from services.distributions import get_wait_time_distribution, get_lognorm_params
 from config import COPULA_THETA, ORGAN_COPULA_THETA, SUPPLY_WAIT_ELASTICITY
-from services.monte_carlo import CITIES, _get_cod_multiplier
+from services.monte_carlo import CITIES, _get_cities, _get_cod_multiplier
 
 logger = logging.getLogger(__name__)
 
@@ -167,12 +167,13 @@ def compute_what_if(
 
     # Validate city name against canonical list (#62)
     state = None
-    for c in CITIES:
+    cities = _get_cities()
+    for c in cities:
         if c["city"] == city:
             state = c["state"]
             break
     if state is None:
-        valid = sorted(c["city"] for c in CITIES)
+        valid = sorted(c["city"] for c in cities)
         raise ValueError(f"Unknown city: '{city}'. Valid cities: {valid}")
 
     # Use paired seeds for baseline vs adjusted comparison

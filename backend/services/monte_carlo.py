@@ -31,8 +31,8 @@ from services.trends import get_city_trends
 
 logger = logging.getLogger(__name__)
 
-# 22 cities with state abbreviations — mirrors scripts/utils.js CITIES
-CITIES = [
+# Fallback 22 cities — used only when data_loader hasn't loaded yet (e.g. tests)
+_FALLBACK_CITIES = [
     {"city": "Pittsburgh", "state": "PA"},
     {"city": "Baltimore", "state": "MD"},
     {"city": "Philadelphia", "state": "PA"},
@@ -57,8 +57,8 @@ CITIES = [
     {"city": "Palo Alto", "state": "CA"},
 ]
 
-# State abbreviation to full name for cause-of-death data lookup
-_STATE_FULL_NAMES = {
+# Fallback state abbreviation to full name
+_FALLBACK_STATE_NAMES = {
     "PA": "Pennsylvania", "MD": "Maryland", "NY": "New York",
     "MN": "Minnesota", "WI": "Wisconsin", "IL": "Illinois",
     "OH": "Ohio", "MO": "Missouri", "IN": "Indiana",
@@ -66,6 +66,29 @@ _STATE_FULL_NAMES = {
     "FL": "Florida", "TX": "Texas", "OR": "Oregon",
     "WA": "Washington", "CA": "California",
 }
+
+
+def _get_cities() -> list[dict[str, str]]:
+    """Get city list from data_loader, falling back to hardcoded list."""
+    try:
+        cities = get_data().cities
+        return cities if cities else _FALLBACK_CITIES
+    except RuntimeError:
+        return _FALLBACK_CITIES
+
+
+# Module-level CITIES kept for backward compat (tests, imports).
+# Production code uses _get_cities() which loads from data files.
+CITIES = _FALLBACK_CITIES
+
+
+def _get_state_full_name(state_abbrev: str) -> str | None:
+    """Get full state name from data_loader, falling back to hardcoded map."""
+    try:
+        names = get_data().state_full_names
+        return names.get(state_abbrev) or _FALLBACK_STATE_NAMES.get(state_abbrev)
+    except RuntimeError:
+        return _FALLBACK_STATE_NAMES.get(state_abbrev)
 
 
 def _get_cod_multiplier(state_abbrev: str, organ: str, *, n_samples: int = 0, rng: np.random.Generator | None = None) -> float | np.ndarray:
@@ -94,7 +117,7 @@ def _get_cod_multiplier(state_abbrev: str, organ: str, *, n_samples: int = 0, rn
         return np.ones(n_samples) if n_samples > 0 else 1.0
 
     recovery_rates = cod.get("organRecoveryRates", {}).get(organ)
-    state_name = _STATE_FULL_NAMES.get(state_abbrev)
+    state_name = _get_state_full_name(state_abbrev)
     if not recovery_rates or not state_name:
         return np.ones(n_samples) if n_samples > 0 else 1.0
 
@@ -191,7 +214,7 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
     rng = np.random.default_rng()
     city_results: list[CityProbability] = []
 
-    for city_info in CITIES:
+    for city_info in _get_cities():
         city = city_info["city"]
         state = city_info["state"]
 
