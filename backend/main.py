@@ -26,6 +26,7 @@ from starlette.types import Scope
 
 from config import ALLOWED_ORIGINS, DATA_DIR, VERSION
 from routers import centers, equity, health, sensitivity, shutdown, simulate, spatial, trends, what_if
+from routers.api_v1 import include_v1_routers
 from services.data_loader import load_all
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
@@ -43,13 +44,21 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(
-    title="TransPlan Phase 2 API",
+    title="TransPlan API",
     version=VERSION,
     description=(
-        "Probabilistic transplant wait-time forecasting engine. "
-        "Monte Carlo simulation with competing risks modeling."
+        "Probabilistic transplant wait-time forecasting engine with Monte Carlo, "
+        "Bayesian, and MCMC inference. Provides per-city transplant probabilities, "
+        "competing risks, sensitivity analysis, equity audits, and spatial interpolation "
+        "across 248 US transplant centers.\n\n"
+        "**Public API:** All endpoints available under `/api/v1/` with rate limiting.\n"
+        "**Authentication:** Optional — set `TRANSPLAN_API_KEYS` env var and pass "
+        "`X-Api-Key` header for higher rate limits.\n\n"
+        "Contact: tomer@arizona.edu"
     ),
     lifespan=lifespan,
+    docs_url="/docs",
+    redoc_url="/redoc",
 )
 
 # CORS kept as fallback for separate frontend/backend dev setups
@@ -58,7 +67,7 @@ app.add_middleware(
     allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_origins=ALLOWED_ORIGINS,
     allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    allow_headers=["Content-Type", "X-Api-Key"],
 )
 
 # --- Global exception handlers (#86) ---
@@ -95,6 +104,9 @@ app.include_router(what_if.router, tags=["simulation"])
 app.include_router(trends.router, tags=["trends"])
 app.include_router(centers.router, tags=["centers"])
 app.include_router(spatial.router, tags=["spatial"])
+
+# Public REST API v1 — all endpoints under /api/v1/ with rate limiting (#24)
+include_v1_routers(app)
 
 
 # ---------------------------------------------------------------------------
