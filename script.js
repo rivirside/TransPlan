@@ -549,6 +549,12 @@ let costOfLivingLayer;
 let airQualityLayer;
 let insuranceCoverageLayer;
 let cityMarkersLayer;
+let spatialHeatmapLayer;
+
+// Pagination state
+let _paginationPage = 0;
+let _paginationPageSize = 20;
+let _paginationFilterState = '';
 
 // Initialize map
 function initializeMap() {
@@ -590,6 +596,7 @@ function initializeMap() {
     costOfLivingLayer = L.layerGroup();
     airQualityLayer = L.layerGroup();
     insuranceCoverageLayer = L.layerGroup();
+    spatialHeatmapLayer = L.layerGroup();
     cityMarkersLayer = L.layerGroup().addTo(map);
 
     // Create layer controls
@@ -598,6 +605,7 @@ function initializeMap() {
     // Initialize default layers
     createTrafficAccidentHeatmap();
     createTransplantCentersLayer();
+    setupSpatialHeatmapControls();
 }
 
 // Traffic accident fatalities data - combination of heatmap and state-level data
@@ -954,115 +962,142 @@ function createDonorRegistrationHeatmap() {
 function createTransplantCentersLayer() {
     transplantCentersLayer.clearLayers();
 
-    const transplantCenters = [
-        // Tier 1: Very High Volume Centers
-        { name: "UPMC", city: "Pittsburgh", state: "PA", coord: [40.4406, -79.9959], volume: "Very High", annualTransplants: 450, specialties: "All organs, pioneered liver & intestine" },
-        { name: "Mayo Clinic", city: "Rochester", state: "MN", coord: [44.0121, -92.4802], volume: "Very High", annualTransplants: 420, specialties: "All organs, integrated care" },
-        { name: "Cleveland Clinic", city: "Cleveland", state: "OH", coord: [41.4993, -81.6944], volume: "Very High", annualTransplants: 465, specialties: "Heart leader, all organs" },
-        { name: "UCLA Medical Center", city: "Los Angeles", state: "CA", coord: [34.0522, -118.2437], volume: "Very High", annualTransplants: 438, specialties: "Liver, kidney, multi-organ" },
-        { name: "Johns Hopkins", city: "Baltimore", state: "MD", coord: [39.2904, -76.6122], volume: "Very High", annualTransplants: 425, specialties: "All organs, research leader" },
-        { name: "Duke University Hospital", city: "Durham", state: "NC", coord: [35.9940, -78.8986], volume: "Very High", annualTransplants: 410, specialties: "Lung leader, heart, all organs" },
+    // Try to fetch all ~248 centers from backend API, fall back to hardcoded
+    _loadCentersForMap().then(centers => {
+        _renderCenterMarkers(centers);
+    });
+}
 
-        // Tier 2: High Volume Centers
-        { name: "UCSF Medical Center", city: "San Francisco", state: "CA", coord: [37.7749, -122.4194], volume: "High", annualTransplants: 385, specialties: "Liver excellence, all organs" },
-        { name: "Vanderbilt", city: "Nashville", state: "TN", coord: [36.1627, -86.7816], volume: "High", annualTransplants: 360, specialties: "Heart, lung, kidney" },
-        { name: "UW Health", city: "Madison", state: "WI", coord: [43.0731, -89.4012], volume: "High", annualTransplants: 345, specialties: "Kidney, pancreas leader" },
-        { name: "University of Minnesota", city: "Minneapolis", state: "MN", coord: [44.9778, -93.2650], volume: "High", annualTransplants: 370, specialties: "Pancreas pioneer, kidney" },
-        { name: "Northwestern Medicine", city: "Chicago", state: "IL", coord: [41.8781, -87.6298], volume: "High", annualTransplants: 355, specialties: "Kidney, liver, pancreas" },
-        { name: "Stanford Hospital", city: "Palo Alto", state: "CA", coord: [37.4419, -122.1430], volume: "High", annualTransplants: 340, specialties: "Heart, lung, innovation" },
-        { name: "Texas Heart Institute", city: "Houston", state: "TX", coord: [29.7604, -95.3698], volume: "High", annualTransplants: 368, specialties: "Heart leader, multi-organ" },
-        { name: "Penn Medicine", city: "Philadelphia", state: "PA", coord: [39.9526, -75.1652], volume: "High", annualTransplants: 350, specialties: "All organs, research" },
+async function _loadCentersForMap() {
+    // Try backend first for all ~248 centers
+    if (window.TransPlanAPI && window.TransPlanAPI.fetchCenters) {
+        try {
+            const result = await window.TransPlanAPI.fetchCenters({});
+            if (result && result.centers && result.centers.length > 10) {
+                return result.centers.map(c => ({
+                    name: c.name || c.code || '',
+                    city: c.city || '',
+                    state: c.state_abbr || c.state || '',
+                    coord: [c.lat, c.lon],
+                    organs: c.organs || [],
+                    organCount: c.organs ? c.organs.length : 0
+                }));
+            }
+        } catch (e) { /* fall through */ }
+    }
 
-        // Tier 3: Moderate Volume Centers
-        { name: "Baylor University Medical Center", city: "Dallas", state: "TX", coord: [32.7767, -96.7970], volume: "Moderate", annualTransplants: 285, specialties: "Liver, kidney" },
-        { name: "Nebraska Medicine", city: "Omaha", state: "NE", coord: [41.2565, -95.9345], volume: "Moderate", annualTransplants: 240, specialties: "Intestine, multi-organ" },
-        { name: "University of Miami", city: "Miami", state: "FL", coord: [25.7617, -80.1918], volume: "Moderate", annualTransplants: 265, specialties: "Kidney, pancreas, liver" },
-        { name: "Indiana University Health", city: "Indianapolis", state: "IN", coord: [39.7684, -86.1581], volume: "Moderate", annualTransplants: 255, specialties: "Kidney, liver" },
-        { name: "Barnes-Jewish Hospital", city: "St. Louis", state: "MO", coord: [38.6270, -90.1994], volume: "High", annualTransplants: 335, specialties: "Lung, all organs" },
-        { name: "University of Washington", city: "Seattle", state: "WA", coord: [47.6062, -122.3321], volume: "High", annualTransplants: 330, specialties: "Lung, kidney, liver" },
-        { name: "Emory University Hospital", city: "Atlanta", state: "GA", coord: [33.7490, -84.3880], volume: "High", annualTransplants: 315, specialties: "Liver, kidney, heart" },
-        { name: "University of Colorado", city: "Denver", state: "CO", coord: [39.7392, -104.9903], volume: "Moderate", annualTransplants: 290, specialties: "Kidney, liver, lung" },
-        { name: "NYU Langone", city: "New York", state: "NY", coord: [40.7128, -74.0060], volume: "High", annualTransplants: 340, specialties: "Liver, kidney, heart" },
-        { name: "Mount Sinai", city: "New York", state: "NY", coord: [40.7895, -73.9535], volume: "High", annualTransplants: 325, specialties: "Liver excellence, kidney" }
+    // Fallback: hardcoded 24 centers
+    return [
+        { name: "UPMC", city: "Pittsburgh", state: "PA", coord: [40.4406, -79.9959], organCount: 6 },
+        { name: "Mayo Clinic", city: "Rochester", state: "MN", coord: [44.0121, -92.4802], organCount: 6 },
+        { name: "Cleveland Clinic", city: "Cleveland", state: "OH", coord: [41.4993, -81.6944], organCount: 6 },
+        { name: "UCLA Medical Center", city: "Los Angeles", state: "CA", coord: [34.0522, -118.2437], organCount: 6 },
+        { name: "Johns Hopkins", city: "Baltimore", state: "MD", coord: [39.2904, -76.6122], organCount: 6 },
+        { name: "Duke University Hospital", city: "Durham", state: "NC", coord: [35.9940, -78.8986], organCount: 6 },
+        { name: "UCSF Medical Center", city: "San Francisco", state: "CA", coord: [37.7749, -122.4194], organCount: 5 },
+        { name: "Vanderbilt", city: "Nashville", state: "TN", coord: [36.1627, -86.7816], organCount: 4 },
+        { name: "UW Health", city: "Madison", state: "WI", coord: [43.0731, -89.4012], organCount: 4 },
+        { name: "University of Minnesota", city: "Minneapolis", state: "MN", coord: [44.9778, -93.2650], organCount: 4 },
+        { name: "Northwestern Medicine", city: "Chicago", state: "IL", coord: [41.8781, -87.6298], organCount: 4 },
+        { name: "Stanford Hospital", city: "Palo Alto", state: "CA", coord: [37.4419, -122.1430], organCount: 3 },
+        { name: "Texas Heart Institute", city: "Houston", state: "TX", coord: [29.7604, -95.3698], organCount: 4 },
+        { name: "Penn Medicine", city: "Philadelphia", state: "PA", coord: [39.9526, -75.1652], organCount: 5 },
+        { name: "Baylor University Medical Center", city: "Dallas", state: "TX", coord: [32.7767, -96.7970], organCount: 3 },
+        { name: "Nebraska Medicine", city: "Omaha", state: "NE", coord: [41.2565, -95.9345], organCount: 3 },
+        { name: "University of Miami", city: "Miami", state: "FL", coord: [25.7617, -80.1918], organCount: 4 },
+        { name: "Indiana University Health", city: "Indianapolis", state: "IN", coord: [39.7684, -86.1581], organCount: 3 },
+        { name: "Barnes-Jewish Hospital", city: "St. Louis", state: "MO", coord: [38.6270, -90.1994], organCount: 5 },
+        { name: "University of Washington", city: "Seattle", state: "WA", coord: [47.6062, -122.3321], organCount: 4 },
+        { name: "Emory University Hospital", city: "Atlanta", state: "GA", coord: [33.7490, -84.3880], organCount: 4 },
+        { name: "University of Colorado", city: "Denver", state: "CO", coord: [39.7392, -104.9903], organCount: 3 },
+        { name: "NYU Langone", city: "New York", state: "NY", coord: [40.7128, -74.0060], organCount: 4 },
+        { name: "Mount Sinai", city: "New York", state: "NY", coord: [40.7895, -73.9535], organCount: 3 }
     ];
+}
 
-    transplantCenters.forEach(center => {
-        // Size and color based on volume
+function _renderCenterMarkers(centers) {
+    transplantCentersLayer.clearLayers();
+
+    // Use marker clustering if available (handles 248+ points), otherwise plain group
+    const useCluster = window.TransPlanCDN && window.TransPlanCDN.leafletMarkerCluster;
+    const group = useCluster ? L.markerClusterGroup({
+        maxClusterRadius: 40,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        disableClusteringAtZoom: 8
+    }) : L.layerGroup();
+
+    centers.forEach(center => {
+        if (!center.coord || center.coord[0] == null || center.coord[1] == null) return;
+
+        const orgCount = center.organCount || 0;
         let size, color, borderColor;
-        if (center.volume === "Very High") {
-            size = 18;
-            color = '#e74c3c';
-            borderColor = '#c0392b';
-        } else if (center.volume === "High") {
-            size = 14;
-            color = '#3498db';
-            borderColor = '#2980b9';
+        if (orgCount >= 5) {
+            size = 14; color = '#e74c3c'; borderColor = '#c0392b';
+        } else if (orgCount >= 3) {
+            size = 10; color = '#3498db'; borderColor = '#2980b9';
         } else {
-            size = 10;
-            color = '#2ecc71';
-            borderColor = '#27ae60';
+            size = 8; color = '#2ecc71'; borderColor = '#27ae60';
         }
+
+        const markerDiv = document.createElement('div');
+        markerDiv.style.cssText = 'background:' + color + ';width:' + size + 'px;height:' + size + 'px;border-radius:50%;border:2px solid ' + borderColor + ';box-shadow:0 2px 6px rgba(0,0,0,0.3);';
 
         const icon = L.divIcon({
             className: 'transplant-center-marker',
-            html: `<div style="
-                background: ${color};
-                width: ${size}px;
-                height: ${size}px;
-                border-radius: 50%;
-                border: 3px solid ${borderColor};
-                box-shadow: 0 3px 8px rgba(0,0,0,0.4);
-                position: relative;
-            ">
-                <div style="
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    width: ${size - 6}px;
-                    height: ${size - 6}px;
-                    background: white;
-                    border-radius: 50%;
-                    opacity: 0.3;
-                "></div>
-            </div>`,
-            iconSize: [size + 6, size + 6]
+            html: markerDiv.outerHTML,
+            iconSize: [size + 4, size + 4]
         });
 
+        // Build popup safely using DOM
+        const popupDiv = document.createElement('div');
+        popupDiv.style.minWidth = '160px';
+        const nameEl = document.createElement('strong');
+        nameEl.textContent = center.name;
+        const locEl = document.createElement('em');
+        locEl.textContent = center.city + ', ' + center.state;
+        popupDiv.appendChild(nameEl);
+        popupDiv.appendChild(document.createElement('br'));
+        popupDiv.appendChild(locEl);
+        if (center.organs && center.organs.length > 0) {
+            popupDiv.appendChild(document.createElement('br'));
+            const progLabel = document.createElement('strong');
+            progLabel.textContent = 'Programs: ';
+            popupDiv.appendChild(progLabel);
+            popupDiv.appendChild(document.createTextNode(center.organs.join(', ')));
+        }
+
         L.marker(center.coord, { icon: icon })
-            .bindPopup(`
-                <div style="min-width: 200px;">
-                    <strong style="font-size: 1.1em; color: ${color};">${center.name}</strong><br>
-                    <em>${center.city}, ${center.state}</em><br>
-                    <hr style="margin: 8px 0; border: none; border-top: 1px solid #eee;">
-                    <strong>Volume:</strong> ${center.volume}<br>
-                    <strong>Annual Transplants:</strong> ~${center.annualTransplants}<br>
-                    <strong>Specialties:</strong><br>
-                    <em style="font-size: 0.9em;">${center.specialties}</em>
-                </div>
-            `)
-            .addTo(transplantCentersLayer);
+            .bindPopup(popupDiv)
+            .addTo(group);
     });
 
-    // Add legend
+    group.addTo(transplantCentersLayer);
+
+    // Update legend using DOM methods
     const legend = L.control({ position: 'topright' });
     legend.onAdd = function() {
         const div = L.DomUtil.create('div', 'map-legend');
-        div.innerHTML = `
-            <h4>Transplant Centers</h4>
-            <div class="legend-item">
-                <div style="width: 18px; height: 18px; background: #e74c3c; border: 2px solid #c0392b; border-radius: 50%;"></div>
-                <span>Very High Volume (&gt;400/yr)</span>
-            </div>
-            <div class="legend-item">
-                <div style="width: 14px; height: 14px; background: #3498db; border: 2px solid #2980b9; border-radius: 50%;"></div>
-                <span>High Volume (300-400/yr)</span>
-            </div>
-            <div class="legend-item">
-                <div style="width: 10px; height: 10px; background: #2ecc71; border: 2px solid #27ae60; border-radius: 50%;"></div>
-                <span>Moderate Volume (&lt;300/yr)</span>
-            </div>
-        `;
+        const title = document.createElement('h4');
+        title.textContent = 'Transplant Centers (' + centers.length + ')';
+        div.appendChild(title);
+
+        const items = [
+            { size: 14, bg: '#e74c3c', border: '#c0392b', text: '5-6 organ programs' },
+            { size: 10, bg: '#3498db', border: '#2980b9', text: '3-4 organ programs' },
+            { size: 8, bg: '#2ecc71', border: '#27ae60', text: '1-2 organ programs' }
+        ];
+        items.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'legend-item';
+            const dot = document.createElement('div');
+            dot.style.cssText = 'width:' + item.size + 'px;height:' + item.size + 'px;background:' + item.bg + ';border:2px solid ' + item.border + ';border-radius:50%;';
+            const label = document.createElement('span');
+            label.textContent = item.text;
+            row.appendChild(dot);
+            row.appendChild(label);
+            div.appendChild(row);
+        });
         return div;
     };
     addLayerLegend('transplantCenters', legend);
@@ -1900,6 +1935,56 @@ function setupLayerControls() {
     transplantCentersLayer.addTo(map);
 }
 
+// Phase 6B: Spatial heatmap overlay (fetches grid from backend)
+function setupSpatialHeatmapControls() {
+    var checkbox = document.getElementById('spatialHeatmapLayer');
+    var select = document.getElementById('spatialHeatmapSelect');
+    if (!checkbox || !select) return;
+
+    checkbox.addEventListener('change', function() {
+        select.disabled = !this.checked;
+        if (this.checked) {
+            loadSpatialHeatmap(select.value);
+        } else {
+            spatialHeatmapLayer.clearLayers();
+            map.removeLayer(spatialHeatmapLayer);
+        }
+    });
+
+    select.addEventListener('change', function() {
+        if (checkbox.checked) {
+            loadSpatialHeatmap(this.value);
+        }
+    });
+}
+
+async function loadSpatialHeatmap(layerName) {
+    if (!window.TransPlanCDN || !window.TransPlanCDN.leafletHeat) return;
+
+    spatialHeatmapLayer.clearLayers();
+
+    var base = window.TransPlanBackend || '';
+    try {
+        var url = base + '/spatial-grid?layer=' + encodeURIComponent(layerName) + '&resolution=35';
+        var response = await fetch(url, { signal: AbortSignal.timeout(10000) });
+        if (!response.ok) return;
+        var data = await response.json();
+        if (!data.points || data.points.length === 0) return;
+
+        var heat = L.heatLayer(data.points, {
+            radius: 25,
+            blur: 20,
+            maxZoom: 10,
+            max: 1.0,
+            gradient: { 0.0: '#313695', 0.25: '#4575b4', 0.5: '#fee090', 0.75: '#f46d43', 1.0: '#a50026' }
+        });
+        heat.addTo(spatialHeatmapLayer);
+        spatialHeatmapLayer.addTo(map);
+    } catch (e) {
+        console.warn('Spatial heatmap unavailable:', e.message);
+    }
+}
+
 // Update map with ranked cities
 function updateMapWithResults(cities, homeCenterCity) {
     cityMarkersLayer.clearLayers();
@@ -2063,6 +2148,7 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
         meld: parseInt(document.getElementById('meld')?.value) || 0,
         las: parseFloat(document.getElementById('las')?.value) || 0,
         homeCenter: document.getElementById('homeCenter')?.value || '',
+        patientLocation: document.getElementById('patientLocation')?.value || '',
         adjustForCauseOfDeath: document.getElementById('adjustCauseOfDeath')?.checked || false,
         useCopula: document.getElementById('useCopula')?.checked || false,
         inferenceMode: document.getElementById('inferenceMode')?.value || 'monte_carlo',
@@ -2078,7 +2164,19 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
         await loadAllData();
     }
 
+    // Phase 6A: Geocode patient location if provided
+    if (formData.patientLocation) {
+        var geo = await _geocodeLocation(formData.patientLocation);
+        if (geo) {
+            formData.patientLat = geo.lat;
+            formData.patientLon = geo.lon;
+            var helpEl = document.getElementById('patientLocationHelp');
+            if (helpEl) helpEl.textContent = 'Location found: ' + geo.display;
+        }
+    }
+
     // Phase 1: Calculate deterministic scores
+    _paginationPage = 0; // Reset pagination on new submission
     calculateResults(formData);
 
     // Phase 2: Call backend for simulation (Monte Carlo or Bayesian)
@@ -2316,11 +2414,27 @@ function displayResults(cities, formData) {
         updateMapWithResults(cities, formData.homeCenter);
     }
 
-    cities.forEach((city, index) => {
-        const rank = index + 1;
+    // Apply state filter if active
+    let filtered = cities;
+    if (_paginationFilterState) {
+        filtered = cities.filter(c => c.state === _paginationFilterState);
+    }
+
+    // Pagination
+    const pageSize = _paginationPageSize === 'all' ? filtered.length : parseInt(_paginationPageSize, 10);
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+    if (_paginationPage >= totalPages) _paginationPage = totalPages - 1;
+    const start = _paginationPage * pageSize;
+    const paged = filtered.slice(start, start + pageSize);
+
+    paged.forEach((city, index) => {
+        const rank = start + index + 1;
         const card = createCityCard(city, rank, formData, homeCenter);
         resultsContainer.appendChild(card);
     });
+
+    // Update pagination controls
+    _updatePaginationControls(filtered.length, totalPages, cities);
 
     resultsSection.style.display = 'block';
     resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2331,6 +2445,107 @@ function displayResults(cities, formData) {
             window.TransPlanCharts.createComparisonChart(cities);
         }
     }, 200);
+}
+
+function _updatePaginationControls(filteredCount, totalPages, allCities) {
+    var controls = document.getElementById('resultsControls');
+    if (!controls) return;
+
+    // Show controls if more than 10 results
+    controls.style.display = allCities.length > 10 ? 'flex' : 'none';
+
+    // Update page info
+    var pageInfo = document.getElementById('resultsPageInfo');
+    if (pageInfo) {
+        pageInfo.textContent = 'Page ' + (_paginationPage + 1) + '/' + totalPages +
+            ' (' + filteredCount + ' results)';
+    }
+
+    // Enable/disable buttons
+    var prevBtn = document.getElementById('resultsPrev');
+    var nextBtn = document.getElementById('resultsNext');
+    if (prevBtn) prevBtn.disabled = _paginationPage <= 0;
+    if (nextBtn) nextBtn.disabled = _paginationPage >= totalPages - 1;
+
+    // Populate state filter dropdown (once)
+    var stateSelect = document.getElementById('resultsFilterState');
+    if (stateSelect && stateSelect.options.length <= 1) {
+        var states = [];
+        allCities.forEach(function(c) {
+            if (c.state && states.indexOf(c.state) === -1) states.push(c.state);
+        });
+        states.sort();
+        states.forEach(function(s) {
+            var opt = document.createElement('option');
+            opt.value = s;
+            opt.textContent = s;
+            stateSelect.appendChild(opt);
+        });
+    }
+}
+
+// Set up pagination event handlers (called once on DOMContentLoaded)
+function _initPaginationHandlers() {
+    var prevBtn = document.getElementById('resultsPrev');
+    var nextBtn = document.getElementById('resultsNext');
+    var pageSizeSelect = document.getElementById('resultsPageSize');
+    var stateFilter = document.getElementById('resultsFilterState');
+
+    if (prevBtn) prevBtn.addEventListener('click', function() {
+        if (_paginationPage > 0) {
+            _paginationPage--;
+            if (_currentResults && _currentFormData) displayResults(_currentResults, _currentFormData);
+        }
+    });
+    if (nextBtn) nextBtn.addEventListener('click', function() {
+        _paginationPage++;
+        if (_currentResults && _currentFormData) displayResults(_currentResults, _currentFormData);
+    });
+    if (pageSizeSelect) pageSizeSelect.addEventListener('change', function() {
+        _paginationPageSize = this.value;
+        _paginationPage = 0;
+        if (_currentResults && _currentFormData) displayResults(_currentResults, _currentFormData);
+    });
+    if (stateFilter) stateFilter.addEventListener('change', function() {
+        _paginationFilterState = this.value;
+        _paginationPage = 0;
+        if (_currentResults && _currentFormData) displayResults(_currentResults, _currentFormData);
+    });
+}
+
+// Phase 6A: Geocode a location string using Nominatim
+async function _geocodeLocation(query) {
+    try {
+        var url = 'https://nominatim.openstreetmap.org/search?q=' +
+            encodeURIComponent(query + ', USA') +
+            '&format=json&limit=1&countrycodes=us';
+        var response = await fetch(url, {
+            headers: { 'User-Agent': 'TransPlan/1.0' },
+            signal: AbortSignal.timeout(5000)
+        });
+        var data = await response.json();
+        if (data && data.length > 0) {
+            return {
+                lat: parseFloat(data[0].lat),
+                lon: parseFloat(data[0].lon),
+                display: data[0].display_name.split(',').slice(0, 2).join(',')
+            };
+        }
+    } catch (e) {
+        console.warn('Geocoding failed:', e.message);
+    }
+    return null;
+}
+
+// Haversine distance in miles
+function _haversineMiles(lat1, lon1, lat2, lon2) {
+    var R = 3959; // Earth radius in miles
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function createCityCard(city, rank, formData, homeCenter) {
@@ -2398,6 +2613,13 @@ function createCityCard(city, rank, formData, homeCenter) {
                 <div class="metric-label">Center Quality</div>
                 <div class="metric-value good">${city.centersQuality}</div>
             </div>
+            ${formData.patientLat ? (() => {
+                const cityCoord = cityCoordinates[city.city];
+                if (!cityCoord) return '';
+                const dist = Math.round(_haversineMiles(formData.patientLat, formData.patientLon, cityCoord[0], cityCoord[1]));
+                const cls = dist < 200 ? 'good' : dist < 500 ? 'moderate' : 'poor';
+                return '<div class="metric"><div class="metric-label">Distance</div><div class="metric-value ' + cls + '">' + dist + ' mi</div></div>';
+            })() : ''}
         </div>
 
         ${city.scoreBreakdown ? `
@@ -3722,6 +3944,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (compareBtn) compareBtn.addEventListener('click', openCityComparison);
     var clearBtn = document.getElementById('compareClear');
     if (clearBtn) clearBtn.addEventListener('click', _clearCompareSelection);
+
+    // Phase 6B: Pagination event handlers
+    _initPaginationHandlers();
 
     // Wire weight slider re-scoring (Phase 4 M1)
     // When weights change, re-calculate Phase 1 scores instantly (no backend call)

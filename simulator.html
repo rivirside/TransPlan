@@ -166,6 +166,11 @@
                                 <small class="field-help">Select your current transplant center to see how other cities compare.</small>
                             </div>
                             <div class="form-group">
+                                <label for="patientLocation">Your Location</label>
+                                <input type="text" id="patientLocation" placeholder="City, State or ZIP code" autocomplete="off">
+                                <small class="field-help" id="patientLocationHelp">Enter your location to see distances to each center.</small>
+                            </div>
+                            <div class="form-group">
                                 <label class="overlay-toggle" for="adjustCauseOfDeath">
                                     <input type="checkbox" id="adjustCauseOfDeath">
                                     <span>Adjust for regional cause-of-death patterns</span>
@@ -539,12 +544,45 @@
                                 <input type="checkbox" id="insuranceCoverageLayer">
                                 <span>Insurance Acceptance Rates</span>
                             </label>
+                            <hr style="margin: 6px 0; border: none; border-top: 1px solid var(--border-primary, #e0e0e0);">
+                            <label class="overlay-toggle">
+                                <input type="checkbox" id="spatialHeatmapLayer">
+                                <span>Spatial Interpolation Heatmap</span>
+                            </label>
+                            <select id="spatialHeatmapSelect" style="margin-left: 24px; font-size: 0.85em; padding: 2px 4px;" disabled>
+                                <option value="health_diabetesRate">Diabetes Rate</option>
+                                <option value="health_obesityRate">Obesity Rate</option>
+                                <option value="health_hypertensionRate">Hypertension Rate</option>
+                                <option value="health_smokingRate">Smoking Rate</option>
+                                <option value="air_quality">Air Quality</option>
+                                <option value="cost_of_living">Cost of Living</option>
+                            </select>
                         </div>
                     </div>
                 </div>
 
                 <!-- Phase 1: Score View -->
                 <div id="panel-scores" class="results-panel active" role="tabpanel" aria-labelledby="tab-scores">
+                    <div id="resultsControls" class="results-controls" style="display: none;">
+                        <div class="results-controls-left">
+                            <label for="resultsPageSize">Show:</label>
+                            <select id="resultsPageSize">
+                                <option value="10">Top 10</option>
+                                <option value="20" selected>Top 20</option>
+                                <option value="50">Top 50</option>
+                                <option value="all">All</option>
+                            </select>
+                            <label for="resultsFilterState" style="margin-left: 12px;">State:</label>
+                            <select id="resultsFilterState">
+                                <option value="">All States</option>
+                            </select>
+                        </div>
+                        <div class="results-controls-right">
+                            <button id="resultsPrev" class="pagination-btn" disabled>&laquo; Prev</button>
+                            <span id="resultsPageInfo">Page 1</span>
+                            <button id="resultsNext" class="pagination-btn">Next &raquo;</button>
+                        </div>
+                    </div>
                     <div id="resultsContainer" class="results-container" aria-live="polite" aria-label="City ranking results">
                         <!-- Results will be inserted here -->
                     </div>
@@ -779,6 +817,10 @@
             onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leaflet=true;"></script>
     <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"
             onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leafletHeat=true;"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"
+            onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leafletMarkerCluster=true;"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"
             onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.chartjs=true;"></script>
     <script>
@@ -786,6 +828,7 @@
         window.TransPlanCDN = {
             leaflet: typeof L !== 'undefined' && typeof L.map === 'function',
             leafletHeat: typeof L !== 'undefined' && typeof L.heatLayer === 'function',
+            leafletMarkerCluster: typeof L !== 'undefined' && typeof L.markerClusterGroup === 'function',
             chartjs: typeof Chart !== 'undefined'
         };
     </script>

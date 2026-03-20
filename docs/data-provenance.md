@@ -112,32 +112,39 @@ Each zip contains 8 per-organ Excel files: `csrs_final_tables_{YYMM}_{organ}.xls
 | Center-level post-transplant outcomes | SRTR PSR Tables C5-C20 (all centers) | `scripts/parse-srtr-reports.py --all-centers` | Semi | `data/post-transplant-outcomes-centers.json` | Biannual SRTR releases |
 | Center-to-city mapping (22 focus cities) | Manual curation from SRTR center directory | None | No | `data/srtr-center-mapping.json` | Manual; update when centers change |
 
+### Phase 6B: Dense Spatial Data
+
+| Data Point | Source | API/Fetch Script | Automated? | Data File | Freshness |
+|------------|--------|-----------------|------------|-----------|-----------|
+| County-level health demographics (2,956 counties) | CDC PLACES API (SODA) | `scripts/fetch-health-data-counties.js` | Yes (weekly CI) | `data/health-demographics-counties.json` | Public, no key needed. 4 indicators: diabetes, obesity, hypertension, smoking. CKD not available in CDC PLACES. |
+| Per-monitor air quality data (~2,000-4,000 monitors) | EPA AQS annualData API | `scripts/fetch-air-quality-monitors.js` | Yes (weekly CI) | `data/air-quality-monitors.json` | Requires `EPA_EMAIL` + `EPA_API_KEY`. Lat/lon from existing annualData response fields. |
+
 ### Phase 6B: Spatial Interpolation
 
 | Data Point | Source | Processing | Automated? | Data File | Notes |
 |------------|--------|-----------|------------|-----------|-------|
-| Interpolated spatial surfaces (24 layers) | Derived from center-level + city-level JSON data | `backend/services/spatial_interpolation.py` (RBF/IDW) | Runtime (computed on first query) | In-memory cache | Surfaces built from 20-233 data points depending on layer |
+| Interpolated spatial surfaces (24 layers) | Derived from center-level + city-level + county-level + monitor-level JSON data | `backend/services/spatial_interpolation.py` (RBF/IDW) | Runtime (computed on first query) | In-memory cache | Auto-prefers dense sources (county/monitor) over city-level with fallback |
 | UNOS allocation circle analysis | Computed from center coordinates + haversine distances | `backend/services/allocation_geography.py` | Runtime | In-memory | 250nm/500nm circles per UNOS allocation policy |
 | Haversine distance (nautical miles) | Standard geodesic formula | `backend/utils.py` (`haversine_distance_nm`) | Runtime | N/A | Conversion: miles × 0.868976 = nautical miles |
 
 ### Spatial Data Layers
 
-The interpolation engine supports 24 layers, derived from existing data files:
+The interpolation engine supports 24 layers, derived from existing data files. The engine auto-prefers dense data sources when available, falling back to city-level aggregates:
 
 | Layer | Source Data | Point Density | Notes |
 |-------|------------|---------------|-------|
-| `air_quality` | `data/air-quality.json` (22 cities) | ~20 points | City-level AQI values |
-| `cost_of_living` | `data/cost-of-living.json` (22 cities) | ~20 points | City-level CPI index |
-| `health_diabetesRate` | `data/health-demographics.json` | ~20 points | County-aggregated CDC PLACES |
-| `health_obesityRate` | `data/health-demographics.json` | ~20 points | County-aggregated CDC PLACES |
-| `health_ckdRate` | `data/health-demographics.json` | ~20 points | County-aggregated CDC PLACES |
-| `health_hypertensionRate` | `data/health-demographics.json` | ~20 points | County-aggregated CDC PLACES |
-| `health_smokingRate` | `data/health-demographics.json` | ~20 points | County-aggregated CDC PLACES |
+| `air_quality` | `data/air-quality-monitors.json` (dense) → `data/air-quality.json` (fallback) | ~2,000-4,000 (dense) / ~20 (fallback) | Per-monitor EPA AQS data preferred; city-level fallback when monitors unavailable |
+| `cost_of_living` | `data/cost-of-living.json` (22 cities) | ~20 points | City-level CPI index (no dense source available) |
+| `health_diabetesRate` | `data/health-demographics-counties.json` (dense) → `data/health-demographics.json` (fallback) | ~2,956 (dense) / ~20 (fallback) | County-level CDC PLACES preferred |
+| `health_obesityRate` | `data/health-demographics-counties.json` (dense) → `data/health-demographics.json` (fallback) | ~2,956 (dense) / ~20 (fallback) | County-level CDC PLACES preferred |
+| `health_ckdRate` | `data/health-demographics.json` | ~20 points | City-level only — CKD not available in CDC PLACES |
+| `health_hypertensionRate` | `data/health-demographics-counties.json` (dense) → `data/health-demographics.json` (fallback) | ~2,956 (dense) / ~20 (fallback) | County-level CDC PLACES preferred |
+| `health_smokingRate` | `data/health-demographics-counties.json` (dense) → `data/health-demographics.json` (fallback) | ~2,956 (dense) / ~20 (fallback) | County-level CDC PLACES preferred |
 | `wait_time_factor_{organ}` | `data/wait-time-distributions-centers.json` | 100-233 points | Center-level SRTR Table B10 |
 | `mortality_factor_{organ}` | `data/competing-risks-centers.json` | 100-233 points | Center-level SRTR Table B7 |
 | `graft_survival_{organ}` | `data/post-transplant-outcomes-centers.json` | 80-200 points | Center-level SRTR C-series |
 
-**Data provenance note:** All spatial interpolation layers are derived from existing, provenance-tracked data files. No new external data sources are introduced by the interpolation engine itself. The accuracy of interpolated values depends on the density and spatial distribution of the underlying data points — city-level layers (~20 points) produce coarser surfaces than center-level layers (100-233 points).
+**Data provenance note:** All spatial interpolation layers are derived from existing, provenance-tracked data files. No new external data sources are introduced by the interpolation engine itself. The accuracy of interpolated values depends on the density and spatial distribution of the underlying data points. With Phase 6B dense data, health layers improved from ~20 to ~2,956 points (148x increase) and air quality from ~20 to ~2,000-4,000 points (100-200x increase).
 
 ---
 

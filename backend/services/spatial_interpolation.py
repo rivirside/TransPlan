@@ -47,6 +47,9 @@ def _extract_layer_points(layer_name: str) -> tuple[np.ndarray, np.ndarray] | No
     """
     Extract (coords, values) for a named data layer from loaded data.
 
+    Prefers dense data sources (county-level, monitor-level) when available,
+    falling back to city-level aggregates (~22 points).
+
     Returns:
         (coords, values) where coords is (N, 2) array of [lat, lon]
         and values is (N,) array. Returns None if insufficient data.
@@ -56,10 +59,20 @@ def _extract_layer_points(layer_name: str) -> tuple[np.ndarray, np.ndarray] | No
     values = []
 
     if layer_name == "air_quality":
-        for city, val in data.air_quality.items():
-            if city in _CITY_COORDS and isinstance(val, (int, float)):
-                points.append(_CITY_COORDS[city])
-                values.append(float(val))
+        # Prefer per-monitor data (~2000-4000 points) over city aggregates (~22)
+        monitors = data.air_quality_monitors.get("monitors", [])
+        if monitors:
+            for m in monitors:
+                lat, lon, score = m.get("lat"), m.get("lon"), m.get("score")
+                if lat is not None and lon is not None and score is not None:
+                    points.append((lat, lon))
+                    values.append(float(score))
+        else:
+            # Fallback: city-level aggregates
+            for city, val in data.air_quality.items():
+                if city in _CITY_COORDS and isinstance(val, (int, float)):
+                    points.append(_CITY_COORDS[city])
+                    values.append(float(val))
 
     elif layer_name == "cost_of_living":
         for city, val in data.cost_of_living.items():
@@ -70,29 +83,25 @@ def _extract_layer_points(layer_name: str) -> tuple[np.ndarray, np.ndarray] | No
     elif layer_name.startswith("health_"):
         # e.g. "health_diabetesRate", "health_obesityRate"
         metric = layer_name[len("health_"):]
-        for city, city_data in data.health_demographics.items():
-            if city in _CITY_COORDS and isinstance(city_data, dict):
-                val = city_data.get(metric)
-                if val is not None:
-                    points.append(_CITY_COORDS[city])
+        # Prefer county-level data (~3000 points) over city aggregates (~22)
+        counties = data.health_demographics_counties.get("counties", {})
+        if counties:
+            for fips, county in counties.items():
+                if not isinstance(county, dict):
+                    continue
+                lat, lon = county.get("lat"), county.get("lon")
+                val = county.get(metric)
+                if lat is not None and lon is not None and val is not None:
+                    points.append((lat, lon))
                     values.append(float(val))
-
-    elif layer_name == "donor_registration":
-        # State-level data, assign to cities by state
-        state_rates = data.donor_registration
-        state_to_cities = {}
-        for city, coords in _CITY_COORDS.items():
-            # Find the state for this city
-            for c in get_data().cities:
-                if c["city"] == city:
-                    state_to_cities.setdefault(c["state"], []).append(city)
-                    break
-        # Map state abbreviation to full name for lookup
-        for city, coords in _CITY_COORDS.items():
-            for state_name, rate in state_rates.items():
-                if isinstance(rate, (int, float)):
-                    # Check if this city's state matches
-                    pass  # Complex mapping; skip for now
+        if not points:
+            # Fallback: city-level aggregates
+            for city, city_data in data.health_demographics.items():
+                if city in _CITY_COORDS and isinstance(city_data, dict):
+                    val = city_data.get(metric)
+                    if val is not None:
+                        points.append(_CITY_COORDS[city])
+                        values.append(float(val))
 
     elif layer_name.startswith("wait_time_factor_"):
         organ = layer_name[len("wait_time_factor_"):]

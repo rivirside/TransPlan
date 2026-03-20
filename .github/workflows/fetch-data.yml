@@ -52,6 +52,14 @@ jobs:
         run: node scripts/fetch-health-data.js
         continue-on-error: true
 
+      - name: Fetch county-level health data (CDC PLACES — all US counties)
+        run: node scripts/fetch-health-data-counties.js
+        continue-on-error: true
+
+      - name: Fetch per-monitor air quality data (EPA AQS — all states)
+        run: node scripts/fetch-air-quality-monitors.js
+        continue-on-error: true
+
       - name: Fetch cause-of-death data (CDC SODA)
         run: node scripts/fetch-cod-data.js
         continue-on-error: true

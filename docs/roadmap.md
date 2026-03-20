@@ -558,12 +558,12 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 - [x] **Update parse script** (#117): center-level data files for all ~248 centers (wait times, competing risks, outcomes)
 - [x] **Replace hardcoded CITIES** (#118): dynamic `_get_cities()` in all backend services with fallback
 - [x] **Dynamic center dropdown** (#119): API-first with hardcoded fallback in frontend
-- [ ] **Leaflet marker clustering** (#120): markercluster for 250+ map points
-- [ ] **Results pagination** (#121): top-20 default, filter by state/distance/organ, sortable columns
+- [x] **Leaflet marker clustering** (#120): L.markerClusterGroup for 248+ center markers, fetches from backend API with hardcoded fallback
+- [x] **Results pagination** (#121): top-10/20/50/all page size, state filter, prev/next navigation
 - [ ] **OPO-to-center mapping** (#122): 57 OPOs → constituent centers, boundary data (extends #19)
-- [ ] **Patient home location** (#123): input city/zip/coords, distance to each center, travel burden scoring (extends #111)
+- [x] **Patient home location** (#123): Nominatim geocoding, haversine distance display on city cards
 
-**Status:** Core items (#115-#119) complete. Deferred: marker clustering (#120), pagination (#121), OPO mapping (#122), patient home (#123).
+**Status:** All items complete except OPO mapping (#122, deferred — requires OPO boundary data).
 
 ### Phase 6B: Spatial Interpolation (Epic #124)
 
@@ -571,15 +571,15 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 
 **Current data waste:** TransPlan discards ~99% of available spatial data. EPA AQS has ~4,000 monitors → averaged to 22 values. CDC PLACES has ~3,000 counties → only 20-22 queried. Building continuous surfaces from this data enables accurate scores at ANY location, not just 22 predefined cities.
 
-- [ ] **EPA monitor data** (#125): save per-monitor lat/lon + readings alongside city aggregates
-- [ ] **CDC county data** (#126): query all ~3,000 US counties from CDC PLACES (not just 20-22)
+- [x] **EPA monitor data** (#125): `scripts/fetch-air-quality-monitors.js` — per-monitor lat/lon + AQI scores across all 50 states, ~2000-4000 points
+- [x] **CDC county data** (#126): `scripts/fetch-health-data-counties.js` — 2,956 US counties with lat/lon + 4 health indicators from CDC PLACES
 - [x] **Interpolation service** (#127): `backend/services/spatial_interpolation.py` — RBF/IDW surface builder + point queries, 24 layers, 19 pytest
-- [x] **Interpolation API** (#128): `GET /spatial-layers`, `/interpolated-value`, `/interpolated-profile` endpoints
-- [ ] **Heatmap overlay** (#129): Leaflet heatmap/choropleth showing interpolated surfaces on map
+- [x] **Interpolation API** (#128): `GET /spatial-layers`, `/interpolated-value`, `/interpolated-profile`, `/spatial-grid` endpoints
+- [x] **Heatmap overlay** (#129): Leaflet heatmap via `/spatial-grid` endpoint, layer selector dropdown (6 layers)
 - [x] **Allocation circle modeling** (#130): 250nm/500nm UNOS circles, competition scoring, composite distance score, 13 pytest
-- [ ] **Patient-relative scoring** (#131): delta scores vs. current location ("air quality +15, cost -8")
+- [x] **Patient-relative scoring** (#131): `GET /location-delta` endpoint — per-layer delta comparison between patient home and any center
 
-**Status:** Core items (#127, #128, #130) complete. Remaining: EPA monitor data (#125), CDC county data (#126), heatmap overlay (#129).
+**Status:** All items complete. Phase 6B done. Interpolation now uses 2,956 health data points (was 22) and ~4,000 EPA monitor points (when fetched).
 
 ### Phase 6C: Full Spatial Model & Geostatistical Inference (Epic #132)
 

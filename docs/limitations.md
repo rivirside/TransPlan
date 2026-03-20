@@ -456,11 +456,11 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-063: Spatial interpolation uses sparse city-level data for some layers
 - **Severity:** MEDIUM
-- **Status:** OPEN
-- **Details:** The RBF/IDW interpolation engine builds continuous surfaces from as few as ~20 data points for city-level layers (air quality, cost of living, health demographics). These surfaces are smooth but may not capture local variation. Center-level layers (wait times, mortality, outcomes) use 100-233 points and produce more reliable interpolations. The thin-plate spline RBF kernel can produce edge artifacts for query points far from any data center.
-- **Impact:** Interpolated values at locations far from any data point (e.g., rural Montana) may be unreliable, especially for city-level layers. Error increases with distance from nearest observation.
+- **Status:** PARTIALLY FIXED
+- **Details:** The RBF/IDW interpolation engine builds continuous surfaces from as few as ~20 data points for city-level layers. With Phase 6B (#125, #126), health demographics now use ~2,956 county-level points (was ~20) and air quality uses ~2,000-4,000 monitor-level points (was ~20). The engine auto-prefers dense sources with fallback. Remaining sparse layers: `cost_of_living` (~20 points, no dense source) and `health_ckdRate` (~20 points, CKD not in CDC PLACES). Thin-plate spline RBF kernel can still produce edge artifacts for query points far from any data center.
+- **Impact:** Most layers now have 100-200x more data points. Cost of living and CKD rate remain city-level sparse. Edge artifacts possible at CONUS boundaries.
 - **File:** `backend/services/spatial_interpolation.py` → `_extract_layer_points()`
-- **Mitigation:** Could be resolved by Phase 6B #125 (EPA monitor data, ~4000 points) and #126 (CDC county data, ~3000 points). Phase 6C #134 would add kriging variance estimates to quantify interpolation uncertainty.
+- **Mitigation:** Phase 6C #134 would add kriging variance estimates to quantify interpolation uncertainty. Cost of living could be improved with BLS MSA-level data. CKD rate could potentially be derived from diabetes+hypertension proxy.
 
 ### L-064: UNOS allocation circles use simplified center-level competition model
 - **Severity:** LOW

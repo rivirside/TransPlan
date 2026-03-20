@@ -36,6 +36,9 @@ class TransPlanData:
     wait_time_distributions: dict = field(default_factory=dict)
     # Phase 5 M1: Competing risks (mortality/delisting rates, multipliers)
     competing_risks: dict = field(default_factory=dict)
+    # Phase 6B: Dense spatial data (county/monitor level)
+    health_demographics_counties: dict = field(default_factory=dict)
+    air_quality_monitors: dict = field(default_factory=dict)
     # Phase 6A: All SRTR centers (~250) with coordinates and organ programs
     all_centers: dict = field(default_factory=dict)
     # Phase 6A: Center-to-city mapping for 22 focus cities
@@ -120,6 +123,9 @@ def load_all() -> TransPlanData:
     data.historical_trends = _load_json(DATA_DIR / "srtr-historical.json", "historical_trends", data)
     data.wait_time_distributions = _load_json(DATA_DIR / "wait-time-distributions.json", "wait_time_distributions", data)
     data.competing_risks = _load_json(DATA_DIR / "competing-risks.json", "competing_risks", data)
+    # Phase 6B: Dense spatial data (county/monitor level)
+    data.health_demographics_counties = _load_json(DATA_DIR / "health-demographics-counties.json", "health_demographics_counties", data)
+    data.air_quality_monitors = _load_json(DATA_DIR / "air-quality-monitors.json", "air_quality_monitors", data)
     # Phase 6A: All centers + center mapping + center-level data
     data.all_centers = _load_json(DATA_DIR / "srtr-all-centers.json", "all_centers", data)
     data.center_mapping = _load_json(DATA_DIR / "srtr-center-mapping.json", "center_mapping", data)
