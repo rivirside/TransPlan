@@ -16,13 +16,11 @@ The BBN has 12 nodes arranged in a DAG:
 
 All CPTs are TabularCPD objects for pgmpy's BayesianNetwork.
 """
-import json
 import logging
-from pathlib import Path
 
 import numpy as np
 
-from config import DATA_DIR
+from services.data_loader import get_data
 
 logger = logging.getLogger(__name__)
 
@@ -76,38 +74,19 @@ COMPOUND_SUCCESS_STATES = ["success", "partial", "failure"]
 
 
 # ──────────────────────────────────────────────────────────────────────
-# Data loading (cached module-level)
+# Data access — delegates to the central data_loader singleton (#65)
 # ──────────────────────────────────────────────────────────────────────
 
-_cache: dict = {}
 
-
-def _load_data() -> dict:
-    """Load all data files needed for CPT construction. Cached."""
-    if _cache:
-        return _cache
-
-    def _read(filename: str) -> dict:
-        path = DATA_DIR / filename
-        try:
-            with open(path, "r", encoding="utf-8") as f:
-                raw = json.load(f)
-            return {k: v for k, v in raw.items() if k != "_meta"}
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            logger.warning("BBN parameterizer: could not load %s: %s", filename, e)
-            return {}
-
-    _cache["wait_time"] = _read("wait-time-distributions.json")
-    _cache["competing_risks"] = _read("competing-risks.json")
-    _cache["cod"] = _read("cause-of-death-by-region.json")
-    _cache["outcomes"] = _read("post-transplant-outcomes.json")
-
-    return _cache
-
-
-def clear_cache() -> None:
-    """Clear cached data (for testing)."""
-    _cache.clear()
+def _get_bbn_data() -> dict:
+    """Return dict with keys used by CPT builders, sourced from data_loader."""
+    d = get_data()
+    return {
+        "wait_time": d.wait_time_distributions,
+        "competing_risks": d.competing_risks,
+        "cod": d.cause_of_death,
+        "outcomes": d.post_transplant_outcomes,
+    }
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -133,7 +112,7 @@ def _normalize(arr: np.ndarray) -> np.ndarray:
 
 def _compute_cod_multiplier(organ: str, state_abbrev: str) -> float:
     """Deterministic COD multiplier for one organ × state. Returns ~1.0."""
-    data = _load_data()
+    data = _get_bbn_data()
     cod = data.get("cod", {})
     recovery_rates = cod.get("organRecoveryRates", {}).get(organ)
     state_name = _STATE_FULL_NAMES.get(state_abbrev)
@@ -173,7 +152,7 @@ def build_donor_supply_cpt() -> np.ndarray:
       - cod_factor: COD multiplier (more donors for this organ in this region)
     The composite is discretized into low/medium/high terciles.
     """
-    data = _load_data()
+    data = _get_bbn_data()
     wt = data.get("wait_time", {})
 
     n_o = len(ORGANS)
@@ -243,7 +222,7 @@ def build_wait_category_cpt() -> np.ndarray:
     """
     from scipy.stats import lognorm
 
-    data = _load_data()
+    data = _get_bbn_data()
     wt = data.get("wait_time", {})
     city_factors = wt.get("city_wait_time_factors", {})
     # Remove _notes key
@@ -311,7 +290,7 @@ def build_mortality_risk_cpt() -> np.ndarray:
     Shape: (3, n_organs, n_age_groups, n_urgency, n_regions)
     Axes:  [MortalityRisk states, Organ, AgeGroup, Urgency, Region]
     """
-    data = _load_data()
+    data = _get_bbn_data()
     cr = data.get("competing_risks", {})
     city_adj = cr.get("city_adjustments", {})
     age_mults = cr.get("age_mortality_multipliers", {})
@@ -386,7 +365,7 @@ def build_delisting_risk_cpt() -> np.ndarray:
     Shape: (3, n_organs, n_regions, 4)
     Axes:  [DelistingRisk states, Organ, Region, WaitCategory]
     """
-    data = _load_data()
+    data = _get_bbn_data()
     cr = data.get("competing_risks", {})
     city_adj = cr.get("city_adjustments", {})
 
@@ -512,7 +491,7 @@ def build_graft_survival_cpt() -> np.ndarray:
     Shape: (3, n_organs, n_regions)
     Axes:  [GraftSurvival states, Organ, Region]
     """
-    data = _load_data()
+    data = _get_bbn_data()
     outcomes = data.get("outcomes", {})
     city_outcomes = outcomes.get("city_outcomes", {})
 

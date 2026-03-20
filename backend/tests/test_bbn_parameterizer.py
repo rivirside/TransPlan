@@ -34,21 +34,22 @@ from services.bbn_parameterizer import (
     build_graft_survival_cpt,
     build_mortality_risk_cpt,
     build_wait_category_cpt,
-    clear_cache,
     _normalize,
 )
+from services.data_loader import get_data, load_all
 
 # ──────────────────────────────────────────────────────────────────────
 # Fixtures
 # ──────────────────────────────────────────────────────────────────────
 
 
-@pytest.fixture(autouse=True)
-def _clear_cache():
-    """Clear parameterizer cache before each test for isolation."""
-    clear_cache()
-    yield
-    clear_cache()
+@pytest.fixture(autouse=True, scope="module")
+def _ensure_data_loaded():
+    """Load data once for the entire test module."""
+    try:
+        get_data()
+    except RuntimeError:
+        load_all()
 
 
 # ──────────────────────────────────────────────────────────────────────

@@ -23,7 +23,6 @@ from services.bayesian_network import (
     reset_model,
     simulate_bbn,
 )
-from services.bbn_parameterizer import clear_cache
 from services.data_loader import get_data, load_all
 
 
@@ -45,10 +44,8 @@ def _ensure_data_loaded():
 def _reset():
     """Reset model cache between tests for isolation."""
     reset_model()
-    clear_cache()
     yield
     reset_model()
-    clear_cache()
 
 
 # ──────────────────────────────────────────────────────────────────────

@@ -16,7 +16,6 @@ from scipy.stats import spearmanr
 
 from models.schemas import PatientProfile
 from services.bayesian_network import reset_model, simulate_bbn
-from services.bbn_parameterizer import clear_cache
 from services.data_loader import get_data, load_all
 from services.monte_carlo import simulate as simulate_mc
 
@@ -37,10 +36,8 @@ def _ensure_data_loaded():
 @pytest.fixture(autouse=True)
 def _reset():
     reset_model()
-    clear_cache()
     yield
     reset_model()
-    clear_cache()
 
 
 def _make_patient(**kwargs) -> PatientProfile:
