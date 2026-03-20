@@ -74,8 +74,10 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-009: OPO (Organ Procurement Organization) boundaries are ignored
 - **Severity:** HIGH
-- **Status:** DEFERRED
+- **Status:** PARTIALLY ADDRESSED
 - **Details:** Pittsburgh and Philadelphia are both in Pennsylvania but served by different OPOs (CORE and Gift of Life) with meaningfully different operations. The algorithm uses state-level donor registration rates, treating all cities in a state as equivalent. OPO quality is one of the most cited factors in real transplant outcomes.
+- **Progress:** 55 US OPOs cataloged with names, regions, and primary states. All 248 SRTR centers mapped to their serving OPOs (95 auto, 152 geographic, 1 manual). Data in `data/opo-mapping.json`. County-level CMS mapping (42 CFR Part 486) not available as structured download — searched eCFR, HRSA/OPTN, SRTR, and CMS data.cms.gov; no public structured dataset exists.
+- **Fix remaining:** County-to-OPO mapping requires FOIA request to CMS, formal SRTR data request, or manual transcription from OPO certification letters. See GitHub #138.
 - **Fix complexity:** High — requires mapping cities to OPOs and sourcing OPO-level performance data.
 
 ---
@@ -98,10 +100,10 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-012: Health demographics are state-level data labeled as city data
 - **Severity:** MEDIUM
-- **Status:** WONT FIX
-- **Details:** `regionalHealthData` lists per-city values but Dallas (11.9%) and Houston (12.5%) show different diabetes rates despite both being Texas cities. These are clearly fabricated city-level numbers derived loosely from state averages.
-- **File:** `algorithm.js` lines 20-50
-- **Fix complexity:** High — would need county-level CDC data (PLACES dataset) for real city-level estimates.
+- **Status:** FIXED
+- **Details:** Originally, health data was fabricated city-level numbers derived from state averages. Now fixed: (1) 22 focus cities use real county-level CDC PLACES data via FIPS-code lookup (`fetch-health-data.js`). (2) All 248 SRTR centers mapped to nearest county from 2,956-county dataset (`generate-center-health-data.js`), median match distance 11.8 km. (3) CKD rate estimated via linear model (ckdRate = 9.0 + 0.5 × diabetesRate, R² ≈ 0.85) since CDC PLACES lacks county-level kidney measure. Dallas and Houston now show genuinely different rates reflecting Dallas County vs Harris County health data.
+- **File:** `data/health-demographics.json` (270 entries), `scripts/generate-center-health-data.js`, `scripts/fetch-health-data.js`
+- **Fix complexity:** Done.
 
 ### L-013: CDC fetch script only gets diabetes, will cause NaN cascade
 - **Severity:** CRITICAL
@@ -355,18 +357,19 @@ Each limitation has a severity, status, and category. When we fix one, change st
 ## 7. M2 Cause-of-Death Model (discovered 2026-03-08)
 
 ### L-049: Organ recovery rates from single study (PMC10329409)
-- **Severity:** HIGH
-- **Status:** OPEN
-- **Details:** The 6×4 organ recovery rate matrix comes entirely from one study (PMC10329409, 2023) analyzing OPTN data from 2005–2019. This 15-year window predates significant changes in donor utilization practices including expanded DCD (donation after circulatory death) donors, ex-vivo perfusion technology, and hepatitis C-positive donor acceptance. Recovery rates for hearts and lungs in particular have improved substantially since 2019.
-- **File:** `data/cause-of-death-by-region.json` → `organRecoveryRates`
-- **Fix:** Cross-validate with OPTN annual data reports or SRTR OPO-specific reports (Excel download). Consider modeling rates as Beta distributions with PMC10329409 counts as priors rather than fixed point estimates.
+- **Severity:** HIGH → MEDIUM (validated)
+- **Status:** MITIGATED
+- **Details:** The 6×4 organ recovery rate matrix comes from PMC10329409 (2023, OPTN data 2005–2019). Cross-validation against OPTN 2023 benchmarks (`scripts/validate-recovery-rates.py`) shows: kidney within 4.3%, liver within 3.8%, pancreas within 7.2% — all good. Heart underestimates by 17.3% (DCD heart program started 2020, not in study period). Lung underestimates by 19.3% (EVLP technology adoption). Intestine ±50% but tiny numbers (~100/year nationally). Heart and lung rates are conservative (underestimate modern utilization), which means our donor supply model slightly underpredicts — this is safe directionally (patients see slightly worse estimates than reality).
+- **File:** `data/cause-of-death-by-region.json` → `organRecoveryRates`, `scripts/validate-recovery-rates.py`
+- **Fix remaining:** Update heart and lung rates when next OPTN annual data report is available. Consider Beta distribution priors for stochastic modeling of rate uncertainty.
 
 ### L-050: State-level granularity instead of OPO/DSA boundaries
 - **Severity:** HIGH
-- **Status:** OPEN
+- **Status:** PARTIALLY ADDRESSED
 - **Details:** Organ procurement operates at the OPO (Organ Procurement Organization) / DSA (Donor Service Area) level — 56 OPOs in the US — but our cause-of-death data is aggregated at state level. OPO boundaries do not align with state lines. Pittsburgh (CORE) and Philadelphia (Gift of Life) are both in Pennsylvania but have very different donor pools and operational characteristics. This is the same granularity gap identified in L-009.
-- **File:** `data/cause-of-death-by-region.json` → `stateCauseOfDeathProportions`
-- **Fix:** SRTR OPO-specific reports contain donor counts by OPO; could replace state-level with OPO-level data using the existing SRTR Excel parsing infrastructure (Phase 2 M5).
+- **File:** `data/cause-of-death-by-region.json` → `stateCauseOfDeathProportions`, `data/opo-mapping.json`
+- **Progress:** 55 OPOs cataloged with OPTN codes, names, regions, and primary states. All 248 SRTR centers mapped to their serving OPOs via `scripts/fetch-opo-service-areas.py` (95 by single-OPO state, 152 by geographic proximity to OPO HQ, 1 manual override). Median distance to assigned OPO HQ: 12.8 km. Data in `data/opo-mapping.json`.
+- **Fix remaining:** CMS county-to-OPO mapping (42 CFR Part 486 Appendix) not available as structured data — exhaustively searched eCFR (42 CFR 486 Subpart G has rules but no county appendix), HRSA/OPTN (no member directory with service areas), SRTR (no OPO column in PSR Excel), and CMS data portal (no OPO service area dataset). County assignments live in CMS internal certification records and UNOS UNet system. Options: FOIA request to CMS, formal SRTR data request, or manual transcription from OPO certification letters. See GitHub #138. Current mapping is approximate for multi-OPO states. Add GeoJSON boundaries for map visualization. Aggregate COD data at OPO level.
 
 ### L-051: Static cause-of-death proportions with no automated refresh
 - **Severity:** MEDIUM
@@ -512,6 +515,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | `wait-time-distributions-centers.json` | **SRTR** | SRTR PSR Table B10 (all centers) | Jan 2025 | Center-level wait time factors for 248 centers × 6 organs. Same parse pipeline as 22-city version. |
 | `competing-risks-centers.json` | **SRTR** | SRTR PSR Table B7 (all centers) | Jan 2025 | Center-level mortality/delisting for 248 centers × 6 organs. |
 | `post-transplant-outcomes-centers.json` | **SRTR** | SRTR PSR C-series (all centers) | Jan 2025 | Center-level graft/patient survival for 243 centers. Some centers lack C-series data. |
+| `opo-mapping.json` | **Manual + Geographic** | OPTN member directory (OPO catalog) + haversine proximity to OPO HQ | Mar 2026 | 55 OPOs cataloged, 248 centers mapped to OPOs via `scripts/fetch-opo-service-areas.py`. Single-OPO states (95) auto-assigned; multi-OPO states (152) by nearest OPO HQ using geocoded headquarters coordinates; 1 manual override (KS→MOMA). Median distance to assigned OPO HQ: 12.8 km. County-level CMS mapping (42 CFR 486) confirmed unavailable as structured data after exhaustive search of eCFR, HRSA/OPTN, SRTR PSR Excel, and CMS data portal. Geographic proximity is approximate for the 18 multi-OPO states. See #138 for options to obtain authoritative county-to-OPO data. |
 
 ### Trend Analysis
 
@@ -580,8 +584,8 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-038 | (batch9) | 2026-03-01 | Removed Phoenix from traffic fallbacks (algorithm.js, data-loader.js, traffic-fatalities.json); removed Boston/Denver from socioeconomic.json + DEFAULTS; removed Milwaukee from traffic hotspots |
 | L-039 | — | 2026-03-01 | False positive — Missouri already present in donor-registration.json and DEFAULTS |
 | L-022 | (batch10) | 2026-03-01 | Replaced wealth-correlated scores with transplant-support rubric (housing 30%, financial 25%, support groups 20%, caregiver 15%, health literacy 10%); researched 22 centers |
-| L-009 | ADR-010 | 2026-03-01 | DEFERRED — OPO mapping requires 22→58 manual lookups, no API available |
-| L-012 | ADR-011 | 2026-03-01 | WONT FIX — 7% weight category, county-vs-state changes scores by <0.5 points |
+| L-009 | ADR-010 | 2026-03-20 | PARTIALLY ADDRESSED — 55 OPOs cataloged, 248 centers mapped to OPOs via geographic proximity to OPO HQ (median 12.8 km). County-level CMS mapping confirmed unavailable as structured data after exhaustive search (eCFR, HRSA/OPTN, SRTR, CMS data portal). See #138 for next steps. |
+| L-012 | ADR-011 | 2026-03-20 | FIXED — 248 centers mapped to nearest county (2,956 CDC PLACES counties), ckdRate estimated via linear model |
 | L-017 | ADR-012 | 2026-03-01 | DEFERRED — SRTR outcomes are HTML/PDF only, would need 132 manual data points |
 | L-033 | ADR-013 | 2026-03-01 | DEFERRED — no machine-readable API for donor registration rates |
 | L-041 | 0b59fc4 | 2026-03-05 | fetch-traffic.js switched to mergeDataFile + skip-on-empty guard |

@@ -35,7 +35,7 @@ Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabili
 - L-056: Sublinear supply-wait elasticity (0.65 exponent) replaces linear assumption
 - L-054: Intestine recovery rates replaced pancreas proxy with OTPD-derived COD-specific rates
 - L-052: Anoxia-NOS added as 5th COD category (9.2% of donors, estimated recovery rates, drowning-based state shares)
-- Remaining: L-049 (cross-validate OPTN), L-050 (OPO boundaries) — documented as comprehensive GitHub issues
+- L-049 mitigated (validated vs OPTN 2023), L-050 partially addressed (55 OPOs cataloged, 22 cities mapped)
 
 **Multi-Page Architecture (March 2026):** Split from single-page to landing + simulator. `index.html` = dense landing page (features table, how-it-works list, data sources). `simulator.html` = full simulation tool (form, results, modals, map, charts). No header/hero section — nav brand is the only title. Info buttons (ⓘ) on simulator form labels link to relevant docs pages. Docs URL resolution script detects local dev vs deployment.
 
@@ -106,8 +106,8 @@ Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabili
 | L-051: Automated CDC fetch script (#13) | ✅ Done | `fetch-cod-data.js` added to CI pipeline |
 | L-053: Stochastic COD multiplier (#15) | ✅ Done | Beta-distributed recovery rates, kappa=50, ~3.5% CV |
 | L-056: Supply-wait elasticity (#18) | ✅ Done | 0.65 exponent, sublinear donor→wait relationship |
-| L-049: Cross-validate OPTN rates (#11) | Open | Comprehensive issue with validation approach documented |
-| L-050: OPO boundary mapping (#12) | Open | City→OPO mapping documented, highest complexity |
+| L-049: Cross-validate OPTN rates (#11) | ✅ Mitigated | Validated against OPTN 2023; kidney/liver OK, heart/lung conservative (post-2019 tech) |
+| L-050: OPO boundary mapping (#12) | Partial | 55 OPOs cataloged, all 248 centers mapped to OPOs via geographic proximity |
 | L-052: Add anoxia COD category (#14) | ✅ Done | 5th COD category added (9.2% of donors), estimated recovery rates, state shares from drowning patterns |
 | L-054: Intestine-specific rates (#16) | ✅ Done | OTPD ratio × COD-specific clinical adjustments (trauma=0.030, cardio=0.003, drug=0.010, stroke=0.004) |
 
@@ -142,7 +142,7 @@ Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabili
 | 6A: Dynamic center dropdown (#119) | ✅ Done | API-first with hardcoded fallback |
 | 6A: Marker clustering (#120) | ✅ Done | L.markerClusterGroup for 248+ center markers |
 | 6A: Results pagination (#121) | ✅ Done | Top-10/20/50/all, state filter, prev/next |
-| 6A: OPO mapping (#122) | Deferred | Extends existing #19, requires OPO boundary data |
+| 6A: OPO mapping (#122) | Partial | 55 OPOs, 248 centers mapped via `fetch-opo-service-areas.py`. County-level CMS data confirmed unavailable (searched eCFR, HRSA/OPTN, SRTR, CMS portal). See #138 for next steps |
 | 6A: Patient home location (#123) | ✅ Done | Nominatim geocoding, haversine distance on cards |
 | 6B: EPA monitor data (#125) | ✅ Done | `fetch-air-quality-monitors.js`, ~4000 per-monitor points |
 | 6B: CDC county data (#126) | ✅ Done | `fetch-health-data-counties.js`, 2,956 counties |
@@ -154,10 +154,10 @@ Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabili
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 6A deferred:** OPO mapping (#122 — requires OPO boundary data)
+- **Phase 6A partial:** OPO mapping (#122 — 55 OPOs cataloged, 248 centers mapped; county-to-OPO data confirmed unavailable publicly, see #138)
 - **Phase 6C (future):** Pre-computed raster grid (#133), kriging uncertainty (#134), spatial econometric models (#135)
 - **Phase 5 platform features:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
-- **Deferred (no API):** OPO boundaries (#19), SRTR outcomes (#20), donor reg fetch (#21), theme selection (Phase 7, #3)
+- **Deferred (no API):** SRTR outcomes (#20), donor reg fetch (#21), theme selection (Phase 7, #3)
 - **Infrastructure:** CI pipeline (#29) ✅, Docker Compose (#30) ✅ — both shipped
 - See `docs/roadmap.md` for full phased plan
 - See `docs/ideas.md` for full SRS with architecture, governance, and regulatory details
@@ -172,10 +172,10 @@ Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabili
 | Phase 6B: Spatial Interpolation | ✅ 7 closed | #125-#131 — all items complete (interpolation, API, dense data, heatmap, allocation, delta scoring) |
 | Bug/Quality Sprint (March 2026) | ✅ 30+ closed | Thread safety, error handling, data quality, code fixes — comprehensive sprint across 3 tiers |
 | Phase 5 M1-M5 | ✅ 8+ closed | #36-#42, #94, #95, #96, #99 — BBN, copula, MCMC, shared frailty, cross-validation |
-| M2b: COD Model Data Quality | 2 open / 6 closed | L-049–L-056 — 6 resolved, 2 remain (OPTN validation #11, OPO mapping #12) |
+| M2b: COD Model Data Quality | 0 open / 8 closed | L-049–L-056 — all addressed (L-049 mitigated, L-050 partial, 6 fully resolved) |
 | Pre-publication | 1 open | #107 (face validity review with transplant faculty) |
-| Phase 5+ platform features | 5 open | API access (#24), SDKs (#25), scenario builder (#26), bulk analysis (#27), widget (#28) |
-| Deferred | 4 open | OPO mapping (#19), SRTR outcomes (#20), donor reg (#21), theme selection (#3) |
+| Phase 5+ platform features | 4 open / 1 closed | API access (#24 ✅), SDKs (#25), scenario builder (#26), bulk analysis (#27), widget (#28) |
+| Deferred | 3 open | SRTR outcomes (#20), donor reg (#21), theme selection (#3) |
 
 **Labels:** `phase:*`, `priority:*`, `limitation`, `cod-model`, `blocked`, `deferred`, `ui/ux`, `backend`, `frontend`, `data-quality`, `data-pipeline`, `milestone:m5`
 
@@ -258,6 +258,8 @@ TransPlan/
     fetch-cod-data.js         <- CDC SODA (cause-of-death by state, donor-eligibility calibration)
     fetch-health-data-counties.js <- CDC PLACES county-level health data (2,956 counties, Phase 6B)
     fetch-air-quality-monitors.js <- EPA AQS per-monitor air quality with lat/lon (Phase 6B)
+    build-opo-mapping.py       <- Build OPO catalog (55 OPOs, 22 focus city mappings)
+    fetch-opo-service-areas.py <- Map all 248 centers to OPOs (geographic proximity + manual overrides)
     check-srtr-updates.js     <- SRTR website hash check
     validate-data.js          <- Post-fetch validation
     run-sensitivity-report.py <- Sensitivity sweep: 6 organs × 3 profiles × 10 cities → JSON + markdown report
@@ -359,12 +361,12 @@ TransPlan/
 
 | Status | Count | Details |
 |--------|-------|---------|
-| FIXED | 48 | L-001–L-048 (all critical/high/medium from original audit), L-051–L-056 (COD model), L-058–L-059, L-062 |
-| OPEN | 6 | L-049 (OPTN cross-validation), L-050 (OPO boundaries), L-060 (patient-level MCMC), L-061 (informative priors), L-064–L-065 (Phase 6 spatial) |
-| PARTIALLY FIXED | 1 | L-063 (sparse spatial data — health now 2,956 pts, air quality ~4,000 pts; cost_of_living and ckdRate still sparse) |
-| MITIGATED | 1 | L-057 (pancreas graft survival — falls back to patient survival) |
-| DEFERRED | 3 | L-009 (OPO), L-017 (SRTR outcomes), L-033 (donor reg fetch) |
-| WONT FIX | 2 | L-012 (county health, <0.5pt impact), L-039 (false positive) |
+| FIXED | 49 | L-001–L-048 (all critical/high/medium from original audit), L-051–L-056 (COD model), L-058–L-059, L-062, L-012 (county health) |
+| OPEN | 4 | L-060 (patient-level MCMC), L-061 (informative priors), L-064–L-065 (Phase 6 spatial) |
+| PARTIALLY FIXED | 3 | L-009 (OPO — 55 OPOs cataloged), L-050 (OPO boundaries — center-to-OPO mapped), L-063 (sparse spatial data) |
+| MITIGATED | 2 | L-049 (OPTN cross-validation — kidney/liver OK, heart/lung conservative), L-057 (pancreas graft survival) |
+| DEFERRED | 2 | L-017 (SRTR outcomes), L-033 (donor reg fetch) |
+| WONT FIX | 1 | L-039 (false positive) |
 
 ## Documentation Tiers
 

@@ -1,0 +1,1970 @@
+{
+  "_meta": {
+    "description": "OPO mapping for TransPlan \u2014 all 248 SRTR centers mapped to OPOs",
+    "source": "OPTN member directory (OPO catalog) + geographic proximity to OPO HQ (center-to-OPO assignment for multi-OPO states)",
+    "totalOPOs": 55,
+    "note": "Centers in single-OPO states are auto-assigned. Centers in multi-OPO states are assigned to the nearest OPO by headquarters distance. This is approximate \u2014 actual OPO service areas are defined at county level by CMS (42 CFR Part 486 Appendix). County-level mapping not yet available as structured data.",
+    "totalCentersMapped": 248,
+    "mappingMethods": {
+      "single_state": 95,
+      "geographic": 152,
+      "manual": 1,
+      "unmapped": 0
+    },
+    "generatedAt": "2026-03-20T22:42:38.048958+00:00"
+  },
+  "opos": {
+    "ALOB": {
+      "name": "Legacy of Hope",
+      "states": [
+        "AL"
+      ],
+      "region": 3
+    },
+    "AROR": {
+      "name": "Arkansas Regional Organ Recovery Agency",
+      "states": [
+        "AR"
+      ],
+      "region": 11
+    },
+    "AZOB": {
+      "name": "Donor Network of Arizona",
+      "states": [
+        "AZ"
+      ],
+      "region": 5
+    },
+    "CADN": {
+      "name": "Donor Network West",
+      "states": [
+        "CA"
+      ],
+      "region": 5
+    },
+    "CAOP": {
+      "name": "OneLegacy",
+      "states": [
+        "CA"
+      ],
+      "region": 5
+    },
+    "CASD": {
+      "name": "Lifesharing",
+      "states": [
+        "CA"
+      ],
+      "region": 5
+    },
+    "CORS": {
+      "name": "Donor Alliance",
+      "states": [
+        "CO",
+        "WY"
+      ],
+      "region": 8
+    },
+    "CTOP": {
+      "name": "New England Organ Bank",
+      "states": [
+        "CT",
+        "ME",
+        "MA",
+        "NH",
+        "RI",
+        "VT"
+      ],
+      "region": 1
+    },
+    "DCTC": {
+      "name": "Washington Regional Transplant Community",
+      "states": [
+        "DC",
+        "MD",
+        "VA"
+      ],
+      "region": 2
+    },
+    "FLMP": {
+      "name": "LifeQuest Organ Recovery Services",
+      "states": [
+        "FL"
+      ],
+      "region": 3
+    },
+    "FLUF": {
+      "name": "LifeLink of Florida",
+      "states": [
+        "FL"
+      ],
+      "region": 3
+    },
+    "FLWC": {
+      "name": "Life Alliance Organ Recovery Agency",
+      "states": [
+        "FL"
+      ],
+      "region": 3
+    },
+    "GALL": {
+      "name": "LifeLink of Georgia",
+      "states": [
+        "GA"
+      ],
+      "region": 3
+    },
+    "HIOP": {
+      "name": "Legacy of Life Hawaii",
+      "states": [
+        "HI"
+      ],
+      "region": 6
+    },
+    "IAOP": {
+      "name": "Iowa Donor Network",
+      "states": [
+        "IA"
+      ],
+      "region": 8
+    },
+    "IDOP": {
+      "name": "Idaho Gift of Life",
+      "states": [
+        "ID",
+        "MT"
+      ],
+      "region": 6
+    },
+    "ILIP": {
+      "name": "Gift of Hope",
+      "states": [
+        "IL",
+        "IN"
+      ],
+      "region": 7
+    },
+    "INOP": {
+      "name": "Indiana Donor Network",
+      "states": [
+        "IN"
+      ],
+      "region": 10
+    },
+    "KYDA": {
+      "name": "Kentucky Organ Donor Affiliates",
+      "states": [
+        "KY"
+      ],
+      "region": 10
+    },
+    "LAOP": {
+      "name": "Louisiana Organ Procurement Agency",
+      "states": [
+        "LA"
+      ],
+      "region": 4
+    },
+    "MAOB": {
+      "name": "New England Organ Bank",
+      "states": [
+        "MA"
+      ],
+      "region": 1
+    },
+    "MDPC": {
+      "name": "The Living Legacy Foundation",
+      "states": [
+        "MD"
+      ],
+      "region": 2
+    },
+    "MIOP": {
+      "name": "Gift of Life Michigan",
+      "states": [
+        "MI"
+      ],
+      "region": 10
+    },
+    "MNOP": {
+      "name": "LifeSource",
+      "states": [
+        "MN",
+        "ND",
+        "SD"
+      ],
+      "region": 7
+    },
+    "MOMA": {
+      "name": "Mid-America Transplant",
+      "states": [
+        "MO",
+        "IL",
+        "AR"
+      ],
+      "region": 8
+    },
+    "MSOP": {
+      "name": "Mississippi Organ Recovery Agency",
+      "states": [
+        "MS"
+      ],
+      "region": 3
+    },
+    "NCCM": {
+      "name": "Carolina Donor Services",
+      "states": [
+        "NC"
+      ],
+      "region": 11
+    },
+    "NCNC": {
+      "name": "LifeShare of the Carolinas",
+      "states": [
+        "NC",
+        "SC"
+      ],
+      "region": 11
+    },
+    "NEOR": {
+      "name": "Nebraska Organ Recovery",
+      "states": [
+        "NE"
+      ],
+      "region": 8
+    },
+    "NJTO": {
+      "name": "NJ Sharing Network",
+      "states": [
+        "NJ"
+      ],
+      "region": 2
+    },
+    "NMOP": {
+      "name": "New Mexico Donor Services",
+      "states": [
+        "NM"
+      ],
+      "region": 5
+    },
+    "NVLV": {
+      "name": "Nevada Donor Network",
+      "states": [
+        "NV"
+      ],
+      "region": 5
+    },
+    "NYAP": {
+      "name": "Center for Donation & Transplant",
+      "states": [
+        "NY",
+        "VT"
+      ],
+      "region": 9
+    },
+    "NYCB": {
+      "name": "LiveOnNY",
+      "states": [
+        "NY"
+      ],
+      "region": 9
+    },
+    "NYFL": {
+      "name": "Finger Lakes Donor Recovery Network",
+      "states": [
+        "NY"
+      ],
+      "region": 2
+    },
+    "NYRT": {
+      "name": "ConnectLife",
+      "states": [
+        "NY"
+      ],
+      "region": 2
+    },
+    "OHLB": {
+      "name": "Lifebanc",
+      "states": [
+        "OH"
+      ],
+      "region": 10
+    },
+    "OHLC": {
+      "name": "Life Connection of Ohio",
+      "states": [
+        "OH"
+      ],
+      "region": 10
+    },
+    "OHLP": {
+      "name": "Lifeline of Ohio",
+      "states": [
+        "OH"
+      ],
+      "region": 10
+    },
+    "OKOP": {
+      "name": "LifeShare Transplant Donor Services",
+      "states": [
+        "OK"
+      ],
+      "region": 4
+    },
+    "ORUO": {
+      "name": "Pacific Northwest Transplant Bank",
+      "states": [
+        "OR"
+      ],
+      "region": 6
+    },
+    "PADV": {
+      "name": "Gift of Life Donor Program",
+      "states": [
+        "PA",
+        "NJ",
+        "DE"
+      ],
+      "region": 2
+    },
+    "PATF": {
+      "name": "Center for Organ Recovery & Education",
+      "states": [
+        "PA",
+        "WV"
+      ],
+      "region": 2
+    },
+    "PRLL": {
+      "name": "LifeLink of Puerto Rico",
+      "states": [
+        "PR"
+      ],
+      "region": 3
+    },
+    "SCOP": {
+      "name": "We Are Sharing Hope SC",
+      "states": [
+        "SC"
+      ],
+      "region": 11
+    },
+    "TNDS": {
+      "name": "Tennessee Donor Services",
+      "states": [
+        "TN",
+        "VA"
+      ],
+      "region": 11
+    },
+    "TXGC": {
+      "name": "LifeGift",
+      "states": [
+        "TX"
+      ],
+      "region": 4
+    },
+    "TXSA": {
+      "name": "Texas Organ Sharing Alliance",
+      "states": [
+        "TX"
+      ],
+      "region": 4
+    },
+    "TXSB": {
+      "name": "Southwest Transplant Alliance",
+      "states": [
+        "TX"
+      ],
+      "region": 4
+    },
+    "UTOP": {
+      "name": "DonorConnect",
+      "states": [
+        "UT"
+      ],
+      "region": 5
+    },
+    "VATB": {
+      "name": "LifeNet Health",
+      "states": [
+        "VA"
+      ],
+      "region": 11
+    },
+    "WALC": {
+      "name": "LifeCenter Northwest",
+      "states": [
+        "WA",
+        "AK"
+      ],
+      "region": 6
+    },
+    "WIDN": {
+      "name": "UW Organ and Tissue Donation",
+      "states": [
+        "WI"
+      ],
+      "region": 7
+    },
+    "WIUW": {
+      "name": "Versiti",
+      "states": [
+        "WI"
+      ],
+      "region": 7
+    },
+    "WVUO": {
+      "name": "CORE (WV)",
+      "states": [
+        "WV"
+      ],
+      "region": 2
+    }
+  },
+  "centerOpoMap": {
+    "ALCH": "ALOB",
+    "ALUA": "ALOB",
+    "ALVA": "ALOB",
+    "ARBH": "AROR",
+    "ARCH": "AROR",
+    "ARUA": "AROR",
+    "AZCH": "AZOB",
+    "AZGS": "AZOB",
+    "AZMC": "AZOB",
+    "AZSJ": "AZOB",
+    "AZUA": "AZOB",
+    "CACH": "CASD",
+    "CACL": "CAOP",
+    "CACS": "CAOP",
+    "CAGH": "CASD",
+    "CAIM": "CAOP",
+    "CALA": "CAOP",
+    "CALL": "CAOP",
+    "CAMB": "CADN",
+    "CAPC": "CADN",
+    "CAPM": "CADN",
+    "CARC": "CAOP",
+    "CASD": "CASD",
+    "CASF": "CADN",
+    "CASG": "CADN",
+    "CASH": "CASD",
+    "CASJ": "CAOP",
+    "CASM": "CADN",
+    "CASU": "CADN",
+    "CAUC": "CAOP",
+    "CAUH": "CAOP",
+    "COCH": "CORS",
+    "COPM": "CORS",
+    "COSL": "CORS",
+    "COUC": "CORS",
+    "CTHH": "CTOP",
+    "CTYN": "CTOP",
+    "DCCH": "DCTC",
+    "DCGU": "DCTC",
+    "DCGW": "DCTC",
+    "DCWH": "DCTC",
+    "DCWR": "DCTC",
+    "DEAI": "PADV",
+    "DECC": "PADV",
+    "FLAC": "FLUF",
+    "FLBC": "FLWC",
+    "FLCC": "FLWC",
+    "FLFH": "FLMP",
+    "FLHM": "FLMP",
+    "FLJD": "FLWC",
+    "FLJM": "FLWC",
+    "FLLM": "FLUF",
+    "FLMR": "FLWC",
+    "FLSH": "FLUF",
+    "FLSL": "FLMP",
+    "FLTG": "FLUF",
+    "FLUF": "FLMP",
+    "GAEH": "GALL",
+    "GAEM": "GALL",
+    "GAMC": "GALL",
+    "GAPH": "GALL",
+    "HIQM": "HIOP",
+    "IAIM": "IAOP",
+    "IAIV": "IAOP",
+    "IAVA": "IAOP",
+    "ILCH": "ILIP",
+    "ILCM": "ILIP",
+    "ILLU": "ILIP",
+    "ILMM": "MOMA",
+    "ILNM": "ILIP",
+    "ILPL": "ILIP",
+    "ILSF": "ILIP",
+    "ILUC": "ILIP",
+    "ILUI": "ILIP",
+    "ILVA": "MOMA",
+    "INIM": "INOP",
+    "INLH": "INOP",
+    "INSV": "INOP",
+    "KSUK": "MOMA",
+    "KYJH": "KYDA",
+    "KYKC": "KYDA",
+    "KYUK": "KYDA",
+    "LACH": "LAOP",
+    "LAOF": "LAOP",
+    "LATU": "LAOP",
+    "LAWK": "LAOP",
+    "MABI": "CTOP",
+    "MABS": "CTOP",
+    "MABU": "CTOP",
+    "MACH": "CTOP",
+    "MALC": "CTOP",
+    "MAMG": "CTOP",
+    "MANM": "CTOP",
+    "MAPB": "CTOP",
+    "MAUM": "CTOP",
+    "MDJH": "MDPC",
+    "MDUM": "MDPC",
+    "MEMC": "CTOP",
+    "MIBH": "MIOP",
+    "MICH": "MIOP",
+    "MIDV": "MIOP",
+    "MIHF": "MIOP",
+    "MISH": "MIOP",
+    "MISJ": "MIOP",
+    "MISM": "MIOP",
+    "MIUM": "MIOP",
+    "MNAN": "MNOP",
+    "MNCM": "MNOP",
+    "MNHC": "MNOP",
+    "MNMC": "MNOP",
+    "MNUM": "MNOP",
+    "MOBH": "MOMA",
+    "MOCG": "MOMA",
+    "MOCH": "MOMA",
+    "MOCM": "MOMA",
+    "MOLH": "MOMA",
+    "MORH": "MOMA",
+    "MOSL": "MOMA",
+    "MOUM": "MOMA",
+    "MSUM": "MSOP",
+    "NCBG": "NCNC",
+    "NCCM": "NCNC",
+    "NCDU": "NCCM",
+    "NCEC": "NCCM",
+    "NCMH": "NCCM",
+    "NDMC": "MNOP",
+    "NDSL": "MNOP",
+    "NECH": "NEOR",
+    "NEUN": "NEOR",
+    "NHDH": "CTOP",
+    "NJBI": "NJTO",
+    "NJHK": "NJTO",
+    "NJLL": "PADV",
+    "NJRW": "NJTO",
+    "NJSB": "NJTO",
+    "NJUH": "NJTO",
+    "NMAQ": "NMOP",
+    "NMPH": "NMOP",
+    "NVUM": "NVLV",
+    "NYAM": "NYAP",
+    "NYCC": "NYCB",
+    "NYCP": "NYCB",
+    "NYDS": "NYCB",
+    "NYEC": "NYRT",
+    "NYFL": "NYFL",
+    "NYMA": "NYCB",
+    "NYMS": "NYCB",
+    "NYNS": "NYCB",
+    "NYNY": "NYCB",
+    "NYSB": "NYCB",
+    "NYUC": "NYCB",
+    "NYUM": "NYFL",
+    "NYVA": "NYCB",
+    "NYWC": "NYCB",
+    "OHCC": "OHLB",
+    "OHCH": "OHLP",
+    "OHCM": "OHLP",
+    "OHCO": "OHLB",
+    "OHOU": "OHLP",
+    "OHTC": "OHLP",
+    "OHUC": "OHLP",
+    "OHUH": "OHLB",
+    "OKBC": "OKOP",
+    "OKCM": "OKOP",
+    "OKMD": "OKOP",
+    "OKSJ": "OKOP",
+    "ORGS": "ORUO",
+    "ORSV": "ORUO",
+    "ORUO": "ORUO",
+    "ORVA": "ORUO",
+    "PAAE": "PADV",
+    "PAAG": "PATF",
+    "PACH": "PATF",
+    "PACP": "PADV",
+    "PAGM": "PADV",
+    "PAHE": "PADV",
+    "PAHH": "PADV",
+    "PALH": "PADV",
+    "PALV": "PADV",
+    "PAPH": "PATF",
+    "PAPT": "PATF",
+    "PASC": "PADV",
+    "PATJ": "PADV",
+    "PATU": "PADV",
+    "PAUP": "PADV",
+    "PAVA": "PATF",
+    "PRCC": "PRLL",
+    "PRSJ": "PRLL",
+    "RIRH": "CTOP",
+    "SCCH": "SCOP",
+    "SCMU": "SCOP",
+    "SDMK": "MNOP",
+    "SDSV": "MNOP",
+    "TNBM": "TNDS",
+    "TNEM": "TNDS",
+    "TNLB": "TNDS",
+    "TNMH": "TNDS",
+    "TNST": "TNDS",
+    "TNUK": "TNDS",
+    "TNVU": "TNDS",
+    "TXAS": "TXSB",
+    "TXBC": "TXSA",
+    "TXCF": "TXSB",
+    "TXCM": "TXSB",
+    "TXCT": "TXSA",
+    "TXDC": "TXSA",
+    "TXDM": "TXSA",
+    "TXDR": "TXSA",
+    "TXFW": "TXSB",
+    "TXHD": "TXSB",
+    "TXHH": "TXGC",
+    "TXHI": "TXGC",
+    "TXHS": "TXSA",
+    "TXJS": "TXGC",
+    "TXLM": "TXSB",
+    "TXLP": "TXSA",
+    "TXMC": "TXSB",
+    "TXMH": "TXGC",
+    "TXPL": "TXSB",
+    "TXPM": "TXSB",
+    "TXSP": "TXSB",
+    "TXSW": "TXSB",
+    "TXTC": "TXGC",
+    "TXTX": "TXSB",
+    "TXUC": "TXSA",
+    "TXVA": "TXGC",
+    "UTLD": "UTOP",
+    "UTMC": "UTOP",
+    "UTPC": "UTOP",
+    "VACH": "VATB",
+    "VAFH": "DCTC",
+    "VAHD": "DCTC",
+    "VAMC": "VATB",
+    "VAMV": "VATB",
+    "VANG": "VATB",
+    "VAUV": "DCTC",
+    "VTMC": "NYAP",
+    "WACH": "WALC",
+    "WASH": "WALC",
+    "WASM": "WALC",
+    "WAUW": "WALC",
+    "WAVM": "WALC",
+    "WICH": "WIUW",
+    "WISE": "WIUW",
+    "WISL": "WIUW",
+    "WIUW": "WIDN",
+    "WVCA": "WVUO",
+    "WVWU": "WVUO"
+  },
+  "centerOpoDetails": {
+    "ALCH": {
+      "opo": "ALOB",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "ALUA": {
+      "opo": "ALOB",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "ALVA": {
+      "opo": "ALOB",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "ARBH": {
+      "opo": "AROR",
+      "method": "geographic",
+      "distance_km": 14.3
+    },
+    "ARCH": {
+      "opo": "AROR",
+      "method": "geographic",
+      "distance_km": 0.7
+    },
+    "ARUA": {
+      "opo": "AROR",
+      "method": "geographic",
+      "distance_km": 2.1
+    },
+    "AZCH": {
+      "opo": "AZOB",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "AZGS": {
+      "opo": "AZOB",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "AZMC": {
+      "opo": "AZOB",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "AZSJ": {
+      "opo": "AZOB",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "AZUA": {
+      "opo": "AZOB",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "CACH": {
+      "opo": "CASD",
+      "method": "geographic",
+      "distance_km": 9.2
+    },
+    "CACL": {
+      "opo": "CAOP",
+      "method": "geographic",
+      "distance_km": 7.2
+    },
+    "CACS": {
+      "opo": "CAOP",
+      "method": "geographic",
+      "distance_km": 19.5
+    },
+    "CAGH": {
+      "opo": "CASD",
+      "method": "geographic",
+      "distance_km": 21.5
+    },
+    "CAIM": {
+      "opo": "CAOP",
+      "method": "geographic",
+      "distance_km": 43.8
+    },
+    "CALA": {
+      "opo": "CAOP",
+      "method": "geographic",
+      "distance_km": 25.2
+    },
+    "CALL": {
+      "opo": "CAOP",
+      "method": "geographic",
+      "distance_km": 90.3
+    },
+    "CAMB": {
+      "opo": "CADN",
+      "method": "geographic",
+      "distance_km": 2.7
+    },
+    "CAPC": {
+      "opo": "CADN",
+      "method": "geographic",
+      "distance_km": 44.3
+    },
+    "CAPM": {
+      "opo": "CADN",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "CARC": {
+      "opo": "CAOP",
+      "method": "geographic",
+      "distance_km": 79.8
+    },
+    "CASD": {
+      "opo": "CASD",
+      "method": "geographic",
+      "distance_km": 4.5
+    },
+    "CASF": {
+      "opo": "CADN",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "CASG": {
+      "opo": "CADN",
+      "method": "geographic",
+      "distance_km": 120.9
+    },
+    "CASH": {
+      "opo": "CASD",
+      "method": "geographic",
+      "distance_km": 9.4
+    },
+    "CASJ": {
+      "opo": "CAOP",
+      "method": "geographic",
+      "distance_km": 46.1
+    },
+    "CASM": {
+      "opo": "CADN",
+      "method": "geographic",
+      "distance_km": 121.0
+    },
+    "CASU": {
+      "opo": "CADN",
+      "method": "geographic",
+      "distance_km": 44.3
+    },
+    "CAUC": {
+      "opo": "CAOP",
+      "method": "geographic",
+      "distance_km": 19.5
+    },
+    "CAUH": {
+      "opo": "CAOP",
+      "method": "geographic",
+      "distance_km": 19.5
+    },
+    "COCH": {
+      "opo": "CORS",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "COPM": {
+      "opo": "CORS",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "COSL": {
+      "opo": "CORS",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "COUC": {
+      "opo": "CORS",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "CTHH": {
+      "opo": "CTOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "CTYN": {
+      "opo": "CTOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "DCCH": {
+      "opo": "DCTC",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "DCGU": {
+      "opo": "DCTC",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "DCGW": {
+      "opo": "DCTC",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "DCWH": {
+      "opo": "DCTC",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "DCWR": {
+      "opo": "DCTC",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "DEAI": {
+      "opo": "PADV",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "DECC": {
+      "opo": "PADV",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "FLAC": {
+      "opo": "FLUF",
+      "method": "geographic",
+      "distance_km": 27.5
+    },
+    "FLBC": {
+      "opo": "FLWC",
+      "method": "geographic",
+      "distance_km": 38.3
+    },
+    "FLCC": {
+      "opo": "FLWC",
+      "method": "geographic",
+      "distance_km": 39.8
+    },
+    "FLFH": {
+      "opo": "FLMP",
+      "method": "geographic",
+      "distance_km": 42.9
+    },
+    "FLHM": {
+      "opo": "FLMP",
+      "method": "geographic",
+      "distance_km": 80.0
+    },
+    "FLJD": {
+      "opo": "FLWC",
+      "method": "geographic",
+      "distance_km": 28.7
+    },
+    "FLJM": {
+      "opo": "FLWC",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "FLLM": {
+      "opo": "FLUF",
+      "method": "geographic",
+      "distance_km": 27.9
+    },
+    "FLMR": {
+      "opo": "FLWC",
+      "method": "geographic",
+      "distance_km": 28.7
+    },
+    "FLSH": {
+      "opo": "FLUF",
+      "method": "geographic",
+      "distance_km": 540.2
+    },
+    "FLSL": {
+      "opo": "FLMP",
+      "method": "geographic",
+      "distance_km": 191.6
+    },
+    "FLTG": {
+      "opo": "FLUF",
+      "method": "geographic",
+      "distance_km": 1.5
+    },
+    "FLUF": {
+      "opo": "FLMP",
+      "method": "geographic",
+      "distance_km": 154.3
+    },
+    "GAEH": {
+      "opo": "GALL",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "GAEM": {
+      "opo": "GALL",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "GAMC": {
+      "opo": "GALL",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "GAPH": {
+      "opo": "GALL",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "HIQM": {
+      "opo": "HIOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "IAIM": {
+      "opo": "IAOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "IAIV": {
+      "opo": "IAOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "IAVA": {
+      "opo": "IAOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "ILCH": {
+      "opo": "ILIP",
+      "method": "geographic",
+      "distance_km": 19.3
+    },
+    "ILCM": {
+      "opo": "ILIP",
+      "method": "geographic",
+      "distance_km": 23.3
+    },
+    "ILLU": {
+      "opo": "ILIP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "ILMM": {
+      "opo": "MOMA",
+      "method": "geographic",
+      "distance_km": 139.7
+    },
+    "ILNM": {
+      "opo": "ILIP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "ILPL": {
+      "opo": "ILIP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "ILSF": {
+      "opo": "ILIP",
+      "method": "geographic",
+      "distance_km": 209.5
+    },
+    "ILUC": {
+      "opo": "ILIP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "ILUI": {
+      "opo": "ILIP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "ILVA": {
+      "opo": "MOMA",
+      "method": "geographic",
+      "distance_km": 174.4
+    },
+    "INIM": {
+      "opo": "INOP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "INLH": {
+      "opo": "INOP",
+      "method": "geographic",
+      "distance_km": 170.5
+    },
+    "INSV": {
+      "opo": "INOP",
+      "method": "geographic",
+      "distance_km": 2.0
+    },
+    "KSUK": {
+      "opo": "MOMA",
+      "method": "manual",
+      "distance_km": null
+    },
+    "KYJH": {
+      "opo": "KYDA",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "KYKC": {
+      "opo": "KYDA",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "KYUK": {
+      "opo": "KYDA",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "LACH": {
+      "opo": "LAOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "LAOF": {
+      "opo": "LAOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "LATU": {
+      "opo": "LAOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "LAWK": {
+      "opo": "LAOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MABI": {
+      "opo": "CTOP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "MABS": {
+      "opo": "CTOP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "MABU": {
+      "opo": "CTOP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "MACH": {
+      "opo": "CTOP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "MALC": {
+      "opo": "CTOP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "MAMG": {
+      "opo": "CTOP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "MANM": {
+      "opo": "CTOP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "MAPB": {
+      "opo": "CTOP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "MAUM": {
+      "opo": "CTOP",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "MDJH": {
+      "opo": "MDPC",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "MDUM": {
+      "opo": "MDPC",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "MEMC": {
+      "opo": "CTOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MIBH": {
+      "opo": "MIOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MICH": {
+      "opo": "MIOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MIDV": {
+      "opo": "MIOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MIHF": {
+      "opo": "MIOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MISH": {
+      "opo": "MIOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MISJ": {
+      "opo": "MIOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MISM": {
+      "opo": "MIOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MIUM": {
+      "opo": "MIOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MNAN": {
+      "opo": "MNOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MNCM": {
+      "opo": "MNOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MNHC": {
+      "opo": "MNOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MNMC": {
+      "opo": "MNOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MNUM": {
+      "opo": "MNOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MOBH": {
+      "opo": "MOMA",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MOCG": {
+      "opo": "MOMA",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MOCH": {
+      "opo": "MOMA",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MOCM": {
+      "opo": "MOMA",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MOLH": {
+      "opo": "MOMA",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MORH": {
+      "opo": "MOMA",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MOSL": {
+      "opo": "MOMA",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MOUM": {
+      "opo": "MOMA",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "MSUM": {
+      "opo": "MSOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "NCBG": {
+      "opo": "NCNC",
+      "method": "geographic",
+      "distance_km": 109.1
+    },
+    "NCCM": {
+      "opo": "NCNC",
+      "method": "geographic",
+      "distance_km": 2.6
+    },
+    "NCDU": {
+      "opo": "NCCM",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "NCEC": {
+      "opo": "NCCM",
+      "method": "geographic",
+      "distance_km": 141.7
+    },
+    "NCMH": {
+      "opo": "NCCM",
+      "method": "geographic",
+      "distance_km": 16.8
+    },
+    "NDMC": {
+      "opo": "MNOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "NDSL": {
+      "opo": "MNOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "NECH": {
+      "opo": "NEOR",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "NEUN": {
+      "opo": "NEOR",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "NHDH": {
+      "opo": "CTOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "NJBI": {
+      "opo": "NJTO",
+      "method": "geographic",
+      "distance_km": 11.6
+    },
+    "NJHK": {
+      "opo": "NJTO",
+      "method": "geographic",
+      "distance_km": 17.4
+    },
+    "NJLL": {
+      "opo": "PADV",
+      "method": "geographic",
+      "distance_km": 6.5
+    },
+    "NJRW": {
+      "opo": "NJTO",
+      "method": "geographic",
+      "distance_km": 40.7
+    },
+    "NJSB": {
+      "opo": "NJTO",
+      "method": "geographic",
+      "distance_km": 19.5
+    },
+    "NJUH": {
+      "opo": "NJTO",
+      "method": "geographic",
+      "distance_km": 9.7
+    },
+    "NMAQ": {
+      "opo": "NMOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "NMPH": {
+      "opo": "NMOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "NVUM": {
+      "opo": "NVLV",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "NYAM": {
+      "opo": "NYAP",
+      "method": "geographic",
+      "distance_km": 1.7
+    },
+    "NYCC": {
+      "opo": "NYCB",
+      "method": "geographic",
+      "distance_km": 25.3
+    },
+    "NYCP": {
+      "opo": "NYCB",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "NYDS": {
+      "opo": "NYCB",
+      "method": "geographic",
+      "distance_km": 8.2
+    },
+    "NYEC": {
+      "opo": "NYRT",
+      "method": "geographic",
+      "distance_km": 5.8
+    },
+    "NYFL": {
+      "opo": "NYFL",
+      "method": "geographic",
+      "distance_km": 3.7
+    },
+    "NYMA": {
+      "opo": "NYCB",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "NYMS": {
+      "opo": "NYCB",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "NYNS": {
+      "opo": "NYCB",
+      "method": "geographic",
+      "distance_km": 26.9
+    },
+    "NYNY": {
+      "opo": "NYCB",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "NYSB": {
+      "opo": "NYCB",
+      "method": "geographic",
+      "distance_km": 77.8
+    },
+    "NYUC": {
+      "opo": "NYCB",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "NYUM": {
+      "opo": "NYFL",
+      "method": "geographic",
+      "distance_km": 120.0
+    },
+    "NYVA": {
+      "opo": "NYCB",
+      "method": "geographic",
+      "distance_km": 18.1
+    },
+    "NYWC": {
+      "opo": "NYCB",
+      "method": "geographic",
+      "distance_km": 44.9
+    },
+    "OHCC": {
+      "opo": "OHLB",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "OHCH": {
+      "opo": "OHLP",
+      "method": "geographic",
+      "distance_km": 2.0
+    },
+    "OHCM": {
+      "opo": "OHLP",
+      "method": "geographic",
+      "distance_km": 157.9
+    },
+    "OHCO": {
+      "opo": "OHLB",
+      "method": "geographic",
+      "distance_km": 160.5
+    },
+    "OHOU": {
+      "opo": "OHLP",
+      "method": "geographic",
+      "distance_km": 4.3
+    },
+    "OHTC": {
+      "opo": "OHLP",
+      "method": "geographic",
+      "distance_km": 159.8
+    },
+    "OHUC": {
+      "opo": "OHLP",
+      "method": "geographic",
+      "distance_km": 158.2
+    },
+    "OHUH": {
+      "opo": "OHLB",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "OKBC": {
+      "opo": "OKOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "OKCM": {
+      "opo": "OKOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "OKMD": {
+      "opo": "OKOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "OKSJ": {
+      "opo": "OKOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "ORGS": {
+      "opo": "ORUO",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "ORSV": {
+      "opo": "ORUO",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "ORUO": {
+      "opo": "ORUO",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "ORVA": {
+      "opo": "ORUO",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "PAAE": {
+      "opo": "PADV",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "PAAG": {
+      "opo": "PATF",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "PACH": {
+      "opo": "PATF",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "PACP": {
+      "opo": "PADV",
+      "method": "geographic",
+      "distance_km": 2.6
+    },
+    "PAGM": {
+      "opo": "PADV",
+      "method": "geographic",
+      "distance_km": 166.1
+    },
+    "PAHE": {
+      "opo": "PADV",
+      "method": "geographic",
+      "distance_km": 132.9
+    },
+    "PAHH": {
+      "opo": "PADV",
+      "method": "geographic",
+      "distance_km": 150.0
+    },
+    "PALH": {
+      "opo": "PADV",
+      "method": "geographic",
+      "distance_km": 12.2
+    },
+    "PALV": {
+      "opo": "PADV",
+      "method": "geographic",
+      "distance_km": 74.5
+    },
+    "PAPH": {
+      "opo": "PATF",
+      "method": "geographic",
+      "distance_km": 188.4
+    },
+    "PAPT": {
+      "opo": "PATF",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "PASC": {
+      "opo": "PADV",
+      "method": "geographic",
+      "distance_km": 6.9
+    },
+    "PATJ": {
+      "opo": "PADV",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "PATU": {
+      "opo": "PADV",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "PAUP": {
+      "opo": "PADV",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "PAVA": {
+      "opo": "PATF",
+      "method": "geographic",
+      "distance_km": 2.9
+    },
+    "PRCC": {
+      "opo": "PRLL",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "PRSJ": {
+      "opo": "PRLL",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "RIRH": {
+      "opo": "CTOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "SCCH": {
+      "opo": "SCOP",
+      "method": "geographic",
+      "distance_km": 168.7
+    },
+    "SCMU": {
+      "opo": "SCOP",
+      "method": "geographic",
+      "distance_km": 167.7
+    },
+    "SDMK": {
+      "opo": "MNOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "SDSV": {
+      "opo": "MNOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "TNBM": {
+      "opo": "TNDS",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "TNEM": {
+      "opo": "TNDS",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "TNLB": {
+      "opo": "TNDS",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "TNMH": {
+      "opo": "TNDS",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "TNST": {
+      "opo": "TNDS",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "TNUK": {
+      "opo": "TNDS",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "TNVU": {
+      "opo": "TNDS",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "TXAS": {
+      "opo": "TXSB",
+      "method": "geographic",
+      "distance_km": 50.6
+    },
+    "TXBC": {
+      "opo": "TXSA",
+      "method": "geographic",
+      "distance_km": 7.3
+    },
+    "TXCF": {
+      "opo": "TXSB",
+      "method": "geographic",
+      "distance_km": 51.1
+    },
+    "TXCM": {
+      "opo": "TXSB",
+      "method": "geographic",
+      "distance_km": 5.3
+    },
+    "TXCT": {
+      "opo": "TXSA",
+      "method": "geographic",
+      "distance_km": 121.6
+    },
+    "TXDC": {
+      "opo": "TXSA",
+      "method": "geographic",
+      "distance_km": 215.4
+    },
+    "TXDM": {
+      "opo": "TXSA",
+      "method": "geographic",
+      "distance_km": 128.9
+    },
+    "TXDR": {
+      "opo": "TXSA",
+      "method": "geographic",
+      "distance_km": 356.0
+    },
+    "TXFW": {
+      "opo": "TXSB",
+      "method": "geographic",
+      "distance_km": 50.0
+    },
+    "TXHD": {
+      "opo": "TXSB",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "TXHH": {
+      "opo": "TXGC",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "TXHI": {
+      "opo": "TXGC",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "TXHS": {
+      "opo": "TXSA",
+      "method": "geographic",
+      "distance_km": 12.8
+    },
+    "TXJS": {
+      "opo": "TXGC",
+      "method": "geographic",
+      "distance_km": 76.0
+    },
+    "TXLM": {
+      "opo": "TXSB",
+      "method": "geographic",
+      "distance_km": 482.4
+    },
+    "TXLP": {
+      "opo": "TXSA",
+      "method": "geographic",
+      "distance_km": 809.1
+    },
+    "TXMC": {
+      "opo": "TXSB",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "TXMH": {
+      "opo": "TXGC",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "TXPL": {
+      "opo": "TXSB",
+      "method": "geographic",
+      "distance_km": 51.5
+    },
+    "TXPM": {
+      "opo": "TXSB",
+      "method": "geographic",
+      "distance_km": 1.2
+    },
+    "TXSP": {
+      "opo": "TXSB",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "TXSW": {
+      "opo": "TXSB",
+      "method": "geographic",
+      "distance_km": 193.5
+    },
+    "TXTC": {
+      "opo": "TXGC",
+      "method": "geographic",
+      "distance_km": 6.7
+    },
+    "TXTX": {
+      "opo": "TXSB",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "TXUC": {
+      "opo": "TXSA",
+      "method": "geographic",
+      "distance_km": 12.1
+    },
+    "TXVA": {
+      "opo": "TXGC",
+      "method": "geographic",
+      "distance_km": 6.8
+    },
+    "UTLD": {
+      "opo": "UTOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "UTMC": {
+      "opo": "UTOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "UTPC": {
+      "opo": "UTOP",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "VACH": {
+      "opo": "VATB",
+      "method": "geographic",
+      "distance_km": 28.8
+    },
+    "VAFH": {
+      "opo": "DCTC",
+      "method": "geographic",
+      "distance_km": 17.5
+    },
+    "VAHD": {
+      "opo": "DCTC",
+      "method": "geographic",
+      "distance_km": 151.5
+    },
+    "VAMC": {
+      "opo": "VATB",
+      "method": "geographic",
+      "distance_km": 149.7
+    },
+    "VAMV": {
+      "opo": "VATB",
+      "method": "geographic",
+      "distance_km": 150.0
+    },
+    "VANG": {
+      "opo": "VATB",
+      "method": "geographic",
+      "distance_km": 29.0
+    },
+    "VAUV": {
+      "opo": "DCTC",
+      "method": "geographic",
+      "distance_km": 160.4
+    },
+    "VTMC": {
+      "opo": "NYAP",
+      "method": "geographic",
+      "distance_km": 208.0
+    },
+    "WACH": {
+      "opo": "WALC",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "WASH": {
+      "opo": "WALC",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "WASM": {
+      "opo": "WALC",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "WAUW": {
+      "opo": "WALC",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "WAVM": {
+      "opo": "WALC",
+      "method": "single_state",
+      "distance_km": null
+    },
+    "WICH": {
+      "opo": "WIUW",
+      "method": "geographic",
+      "distance_km": 9.5
+    },
+    "WISE": {
+      "opo": "WIUW",
+      "method": "geographic",
+      "distance_km": 9.6
+    },
+    "WISL": {
+      "opo": "WIUW",
+      "method": "geographic",
+      "distance_km": 6.5
+    },
+    "WIUW": {
+      "opo": "WIDN",
+      "method": "geographic",
+      "distance_km": 0.0
+    },
+    "WVCA": {
+      "opo": "WVUO",
+      "method": "geographic",
+      "distance_km": 202.8
+    },
+    "WVWU": {
+      "opo": "WVUO",
+      "method": "geographic",
+      "distance_km": 2.7
+    }
+  },
+  "opoCenterCounts": {
+    "ALOB": 3,
+    "AROR": 3,
+    "AZOB": 5,
+    "CADN": 7,
+    "CAOP": 9,
+    "CASD": 4,
+    "CORS": 4,
+    "CTOP": 14,
+    "DCTC": 8,
+    "FLMP": 4,
+    "FLUF": 4,
+    "FLWC": 5,
+    "GALL": 4,
+    "HIOP": 1,
+    "IAOP": 3,
+    "ILIP": 8,
+    "INOP": 3,
+    "KYDA": 3,
+    "LAOP": 4,
+    "MDPC": 2,
+    "MIOP": 8,
+    "MNOP": 9,
+    "MOMA": 11,
+    "MSOP": 1,
+    "NCCM": 3,
+    "NCNC": 2,
+    "NEOR": 2,
+    "NJTO": 5,
+    "NMOP": 2,
+    "NVLV": 1,
+    "NYAP": 2,
+    "NYCB": 11,
+    "NYFL": 2,
+    "NYRT": 1,
+    "OHLB": 3,
+    "OHLP": 5,
+    "OKOP": 4,
+    "ORUO": 4,
+    "PADV": 14,
+    "PATF": 5,
+    "PRLL": 2,
+    "SCOP": 2,
+    "TNDS": 7,
+    "TXGC": 6,
+    "TXSA": 8,
+    "TXSB": 12,
+    "UTOP": 3,
+    "VATB": 4,
+    "WALC": 5,
+    "WIDN": 1,
+    "WIUW": 3,
+    "WVUO": 2
+  }
+}
