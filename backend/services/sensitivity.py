@@ -76,7 +76,7 @@ def _p24_single_city(
 def compute_sensitivity(
     patient: PatientProfile,
     city: str = "Nashville",
-    n_iterations: int = 300,
+    n_iterations: int = 1000,
 ) -> SensitivityResult:
     """
     Compute input sensitivity for p_transplant_24mo for a single city.

@@ -17,7 +17,7 @@ class SensitivityRequest(BaseModel):
         default="Nashville",
         description="City to run sensitivity analysis for (use top-ranked city from /simulate)",
     )
-    iterations: int = Field(default=300, ge=100, le=2000)
+    iterations: int = Field(default=1000, ge=100, le=5000)
 
 
 @router.post("/sensitivity", response_model=SensitivityResult)

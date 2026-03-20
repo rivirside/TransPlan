@@ -109,7 +109,7 @@ def _simulate_profile_city(
 
 def compute_equity_analysis(
     patient: PatientProfile,
-    n_iterations: int = 300,
+    n_iterations: int = 1000,
 ) -> EquityAnalysisResult:
     """
     Run equity analysis across 48 demographic profiles × 22 cities.

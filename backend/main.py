@@ -17,8 +17,10 @@ if _BACKEND_DIR not in sys.path:
     sys.path.insert(0, _BACKEND_DIR)
 
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.responses import PlainTextResponse
+from starlette.requests import Request
+from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.staticfiles import StaticFiles
 from starlette.types import Scope
 
@@ -58,6 +60,31 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
 )
+
+# --- Global exception handlers (#86) ---
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Return structured 422 JSON instead of raw Pydantic traces."""
+    errors = []
+    for err in exc.errors():
+        loc = " -> ".join(str(loc_part) for loc_part in err["loc"])
+        errors.append(f"{loc}: {err['msg']}")
+    return JSONResponse(
+        status_code=422,
+        content={"error": "validation_error", "detail": "; ".join(errors)},
+    )
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    """Catch-all: log full traceback server-side, return generic 500 to client."""
+    logger.exception("Unhandled exception on %s %s", request.method, request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content={"error": "internal_error", "detail": "An internal error occurred. See server logs."},
+    )
+
 
 app.include_router(health.router, tags=["ops"])
 app.include_router(shutdown.router, tags=["ops"])

@@ -14,7 +14,7 @@ router = APIRouter()
 class EquityAnalysisRequest(BaseModel):
     patient: PatientProfile
     iterations_per_profile: int = Field(
-        default=300, ge=100, le=1000,
+        default=1000, ge=100, le=5000,
         description="Monte Carlo iterations per demographic profile (lower = faster, less precise)"
     )
 
