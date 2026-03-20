@@ -12,7 +12,19 @@
       "intestine": 21
     },
     "extractedAt": "2026-03-20T19:56:06Z",
-    "notes": "Center codes use 2-letter state prefix + 2-letter institution code. Coordinates (lat/lon) to be added in issue #116."
+    "notes": "Center codes use 2-letter state prefix + 2-letter institution code. Coordinates (lat/lon) to be added in issue #116.",
+    "geocodedCount": 248,
+    "geocodeFailures": 0,
+    "geocodingProvenance": {
+      "automated": "geopy/Nominatim \u2014 133 centers geocoded from hospital name + state",
+      "city_mapping": "52 centers assigned city-level coordinates from srtr-center-mapping.json (not hospital-specific)",
+      "manual": "63 centers manually looked up from known hospital addresses",
+      "limitation": "Manual and city-mapping coordinates may be approximate (within 1-5km of actual hospital). City-mapping coordinates point to city center, not specific hospital. All coordinates should be verified and updated when a geocoding API with hospital-level accuracy becomes available (e.g., CMS Provider of Services file with lat/lon).",
+      "updatable": true,
+      "verificationNeeded": [
+        "city_mapping"
+      ]
+    }
   },
   "centers": {
     "ALCH": {
@@ -24,7 +36,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 33.5047,
+      "lon": -86.8056,
+      "geocode_source": "nominatim"
     },
     "ALUA": {
       "code": "ALUA",
@@ -36,7 +51,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 30.6983,
+      "lon": -88.0775,
+      "geocode_source": "nominatim"
     },
     "ALVA": {
       "code": "ALVA",
@@ -45,7 +63,10 @@
       "state": "Alabama",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 33.503,
+      "lon": -86.8104,
+      "geocode_source": "manual"
     },
     "ARBH": {
       "code": "ARBH",
@@ -54,7 +75,10 @@
       "state": "Arkansas",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 34.6574,
+      "lon": -92.4029,
+      "geocode_source": "nominatim"
     },
     "ARCH": {
       "code": "ARCH",
@@ -64,7 +88,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 34.7408,
+      "lon": -92.2916,
+      "geocode_source": "nominatim"
     },
     "ARUA": {
       "code": "ARUA",
@@ -74,7 +101,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 34.7496,
+      "lon": -92.3128,
+      "geocode_source": "manual"
     },
     "AZCH": {
       "code": "AZCH",
@@ -85,7 +115,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 33.4789,
+      "lon": -112.0411,
+      "geocode_source": "nominatim"
     },
     "AZGS": {
       "code": "AZGS",
@@ -97,7 +130,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 33.4647,
+      "lon": -112.0586,
+      "geocode_source": "nominatim"
     },
     "AZMC": {
       "code": "AZMC",
@@ -109,7 +145,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 33.6579,
+      "lon": -111.9548,
+      "geocode_source": "nominatim"
     },
     "AZSJ": {
       "code": "AZSJ",
@@ -120,7 +159,10 @@
         "kidney",
         "liver",
         "lung"
-      ]
+      ],
+      "lat": 33.472,
+      "lon": -112.084,
+      "geocode_source": "manual"
     },
     "AZUA": {
       "code": "AZUA",
@@ -133,7 +175,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 32.2412,
+      "lon": -110.9456,
+      "geocode_source": "nominatim"
     },
     "CACH": {
       "code": "CACH",
@@ -144,7 +189,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 32.7983,
+      "lon": -117.154,
+      "geocode_source": "manual"
     },
     "CACL": {
       "code": "CACL",
@@ -157,7 +205,10 @@
         "heart",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 34.0978,
+      "lon": -118.2986,
+      "geocode_source": "nominatim"
     },
     "CACS": {
       "code": "CACS",
@@ -170,7 +221,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 33.9425,
+      "lon": -118.4081,
+      "geocode_source": "city_mapping"
     },
     "CAGH": {
       "code": "CAGH",
@@ -181,7 +235,10 @@
         "kidney",
         "liver",
         "pancreas"
-      ]
+      ],
+      "lat": 32.8963,
+      "lon": -117.2426,
+      "geocode_source": "nominatim"
     },
     "CAIM": {
       "code": "CAIM",
@@ -190,7 +247,10 @@
       "state": "California",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 33.7866,
+      "lon": -117.8935,
+      "geocode_source": "manual"
     },
     "CALA": {
       "code": "CALA",
@@ -199,7 +259,10 @@
       "state": "California",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 33.8294,
+      "lon": -118.2948,
+      "geocode_source": "nominatim"
     },
     "CALL": {
       "code": "CALL",
@@ -211,7 +274,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 34.0491,
+      "lon": -117.2634,
+      "geocode_source": "nominatim"
     },
     "CAMB": {
       "code": "CAMB",
@@ -222,7 +288,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 37.7659,
+      "lon": -122.3908,
+      "geocode_source": "nominatim"
     },
     "CAPC": {
       "code": "CAPC",
@@ -236,7 +305,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 37.4419,
+      "lon": -122.143,
+      "geocode_source": "city_mapping"
     },
     "CAPM": {
       "code": "CAPM",
@@ -248,7 +320,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 37.7749,
+      "lon": -122.4194,
+      "geocode_source": "city_mapping"
     },
     "CARC": {
       "code": "CARC",
@@ -258,7 +333,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 33.9765,
+      "lon": -117.3826,
+      "geocode_source": "nominatim"
     },
     "CASD": {
       "code": "CASD",
@@ -270,7 +348,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 32.7555,
+      "lon": -117.1681,
+      "geocode_source": "manual"
     },
     "CASF": {
       "code": "CASF",
@@ -283,7 +364,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 37.7749,
+      "lon": -122.4194,
+      "geocode_source": "city_mapping"
     },
     "CASG": {
       "code": "CASG",
@@ -292,7 +376,10 @@
       "state": "California",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 38.5545,
+      "lon": -121.4555,
+      "geocode_source": "manual"
     },
     "CASH": {
       "code": "CASH",
@@ -303,7 +390,10 @@
         "kidney",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 32.7997,
+      "lon": -117.1544,
+      "geocode_source": "nominatim"
     },
     "CASJ": {
       "code": "CASJ",
@@ -312,7 +402,10 @@
       "state": "California",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 33.7821,
+      "lon": -117.864,
+      "geocode_source": "nominatim"
     },
     "CASM": {
       "code": "CASM",
@@ -322,7 +415,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 38.5527,
+      "lon": -121.4518,
+      "geocode_source": "nominatim"
     },
     "CASU": {
       "code": "CASU",
@@ -336,7 +432,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 37.4419,
+      "lon": -122.143,
+      "geocode_source": "city_mapping"
     },
     "CAUC": {
       "code": "CAUC",
@@ -350,7 +449,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 33.9425,
+      "lon": -118.4081,
+      "geocode_source": "city_mapping"
     },
     "CAUH": {
       "code": "CAUH",
@@ -363,7 +465,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 33.9425,
+      "lon": -118.4081,
+      "geocode_source": "city_mapping"
     },
     "COCH": {
       "code": "COCH",
@@ -374,7 +479,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 39.7452,
+      "lon": -104.9678,
+      "geocode_source": "nominatim"
     },
     "COPM": {
       "code": "COPM",
@@ -384,7 +492,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 39.6703,
+      "lon": -105.0181,
+      "geocode_source": "manual"
     },
     "COSL": {
       "code": "COSL",
@@ -394,7 +505,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 39.7472,
+      "lon": -104.967,
+      "geocode_source": "nominatim"
     },
     "COUC": {
       "code": "COUC",
@@ -407,7 +521,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 39.7448,
+      "lon": -104.8411,
+      "geocode_source": "manual"
     },
     "CTHH": {
       "code": "CTHH",
@@ -418,7 +535,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 41.7541,
+      "lon": -72.6794,
+      "geocode_source": "nominatim"
     },
     "CTYN": {
       "code": "CTYN",
@@ -429,7 +549,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 41.3046,
+      "lon": -72.9356,
+      "geocode_source": "nominatim"
     },
     "DCCH": {
       "code": "DCCH",
@@ -439,7 +562,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 38.9304,
+      "lon": -77.0137,
+      "geocode_source": "manual"
     },
     "DCGU": {
       "code": "DCGU",
@@ -451,7 +577,10 @@
         "liver",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 38.9074,
+      "lon": -77.0727,
+      "geocode_source": "manual"
     },
     "DCGW": {
       "code": "DCGW",
@@ -461,7 +590,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 38.9014,
+      "lon": -77.0506,
+      "geocode_source": "nominatim"
     },
     "DCWH": {
       "code": "DCWH",
@@ -471,7 +603,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 38.9287,
+      "lon": -77.0148,
+      "geocode_source": "nominatim"
     },
     "DCWR": {
       "code": "DCWR",
@@ -480,7 +615,10 @@
       "state": "District of Columbia",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 38.9843,
+      "lon": -77.0959,
+      "geocode_source": "manual"
     },
     "DEAI": {
       "code": "DEAI",
@@ -491,7 +629,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 39.8003,
+      "lon": -75.5075,
+      "geocode_source": "manual"
     },
     "DECC": {
       "code": "DECC",
@@ -500,7 +641,10 @@
       "state": "Delaware",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 39.6873,
+      "lon": -75.6649,
+      "geocode_source": "manual"
     },
     "FLAC": {
       "code": "FLAC",
@@ -509,7 +653,10 @@
       "state": "Florida",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 27.7629,
+      "lon": -82.6398,
+      "geocode_source": "nominatim"
     },
     "FLBC": {
       "code": "FLBC",
@@ -519,7 +666,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 26.1027,
+      "lon": -80.1412,
+      "geocode_source": "nominatim"
     },
     "FLCC": {
       "code": "FLCC",
@@ -530,7 +680,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 26.0826,
+      "lon": -80.3679,
+      "geocode_source": "nominatim"
     },
     "FLFH": {
       "code": "FLFH",
@@ -543,7 +696,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 28.9151,
+      "lon": -81.2852,
+      "geocode_source": "nominatim"
     },
     "FLHM": {
       "code": "FLHM",
@@ -552,7 +708,10 @@
       "state": "Florida",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 29.2001,
+      "lon": -81.0573,
+      "geocode_source": "nominatim"
     },
     "FLJD": {
       "code": "FLJD",
@@ -561,7 +720,10 @@
       "state": "Florida",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 26.0196,
+      "lon": -80.1799,
+      "geocode_source": "manual"
     },
     "FLJM": {
       "code": "FLJM",
@@ -575,7 +737,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 25.7617,
+      "lon": -80.1918,
+      "geocode_source": "city_mapping"
     },
     "FLLM": {
       "code": "FLLM",
@@ -586,7 +751,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 27.9599,
+      "lon": -82.7413,
+      "geocode_source": "nominatim"
     },
     "FLMR": {
       "code": "FLMR",
@@ -596,7 +764,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 26.0196,
+      "lon": -80.1799,
+      "geocode_source": "nominatim"
     },
     "FLSH": {
       "code": "FLSH",
@@ -605,7 +776,10 @@
       "state": "Florida",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 30.4777,
+      "lon": -87.2115,
+      "geocode_source": "nominatim"
     },
     "FLSL": {
       "code": "FLSL",
@@ -618,7 +792,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 30.2605,
+      "lon": -81.4448,
+      "geocode_source": "nominatim"
     },
     "FLTG": {
       "code": "FLTG",
@@ -631,7 +808,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 27.9375,
+      "lon": -82.4589,
+      "geocode_source": "nominatim"
     },
     "FLUF": {
       "code": "FLUF",
@@ -644,7 +824,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 29.6402,
+      "lon": -82.3446,
+      "geocode_source": "nominatim"
     },
     "GAEH": {
       "code": "GAEH",
@@ -655,7 +838,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 33.7893,
+      "lon": -84.3212,
+      "geocode_source": "manual"
     },
     "GAEM": {
       "code": "GAEM",
@@ -668,7 +854,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 33.7922,
+      "lon": -84.3221,
+      "geocode_source": "nominatim"
     },
     "GAMC": {
       "code": "GAMC",
@@ -677,7 +866,10 @@
       "state": "Georgia",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 33.4735,
+      "lon": -82.009,
+      "geocode_source": "manual"
     },
     "GAPH": {
       "code": "GAPH",
@@ -689,7 +881,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 33.4527,
+      "lon": -84.5082,
+      "geocode_source": "nominatim"
     },
     "HIQM": {
       "code": "HIQM",
@@ -699,7 +894,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 21.3081,
+      "lon": -157.8539,
+      "geocode_source": "nominatim"
     },
     "IAIM": {
       "code": "IAIM",
@@ -708,7 +906,10 @@
       "state": "Iowa",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 41.5898,
+      "lon": -93.6348,
+      "geocode_source": "nominatim"
     },
     "IAIV": {
       "code": "IAIV",
@@ -721,7 +922,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 41.6601,
+      "lon": -91.5468,
+      "geocode_source": "manual"
     },
     "IAVA": {
       "code": "IAVA",
@@ -730,7 +934,10 @@
       "state": "Iowa",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 41.6592,
+      "lon": -91.5485,
+      "geocode_source": "manual"
     },
     "ILCH": {
       "code": "ILCH",
@@ -740,7 +947,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 41.7218,
+      "lon": -87.7302,
+      "geocode_source": "nominatim"
     },
     "ILCM": {
       "code": "ILCM",
@@ -752,7 +962,10 @@
         "liver",
         "heart",
         "intestine"
-      ]
+      ],
+      "lat": 41.8454,
+      "lon": -87.9083,
+      "geocode_source": "nominatim"
     },
     "ILLU": {
       "code": "ILLU",
@@ -765,7 +978,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 41.8781,
+      "lon": -87.6298,
+      "geocode_source": "city_mapping"
     },
     "ILMM": {
       "code": "ILMM",
@@ -774,7 +990,10 @@
       "state": "Illinois",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 39.8102,
+      "lon": -89.6546,
+      "geocode_source": "nominatim"
     },
     "ILNM": {
       "code": "ILNM",
@@ -787,7 +1006,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 41.8781,
+      "lon": -87.6298,
+      "geocode_source": "city_mapping"
     },
     "ILPL": {
       "code": "ILPL",
@@ -798,7 +1020,10 @@
         "kidney",
         "liver",
         "pancreas"
-      ]
+      ],
+      "lat": 41.8781,
+      "lon": -87.6298,
+      "geocode_source": "city_mapping"
     },
     "ILSF": {
       "code": "ILSF",
@@ -809,7 +1034,10 @@
         "kidney",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 40.7024,
+      "lon": -89.59,
+      "geocode_source": "nominatim"
     },
     "ILUC": {
       "code": "ILUC",
@@ -822,7 +1050,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 41.8781,
+      "lon": -87.6298,
+      "geocode_source": "city_mapping"
     },
     "ILUI": {
       "code": "ILUI",
@@ -834,7 +1065,10 @@
         "liver",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 41.8781,
+      "lon": -87.6298,
+      "geocode_source": "city_mapping"
     },
     "ILVA": {
       "code": "ILVA",
@@ -843,7 +1077,10 @@
       "state": "Illinois",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 40.0797,
+      "lon": -89.4337,
+      "geocode_source": "nominatim"
     },
     "INIM": {
       "code": "INIM",
@@ -857,7 +1094,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 39.7684,
+      "lon": -86.1581,
+      "geocode_source": "city_mapping"
     },
     "INLH": {
       "code": "INLH",
@@ -866,7 +1106,10 @@
       "state": "Indiana",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 41.093,
+      "lon": -85.1438,
+      "geocode_source": "manual"
     },
     "INSV": {
       "code": "INSV",
@@ -876,7 +1119,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 39.785,
+      "lon": -86.166,
+      "geocode_source": "manual"
     },
     "KSUK": {
       "code": "KSUK",
@@ -887,7 +1133,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 39.0571,
+      "lon": -94.6095,
+      "geocode_source": "nominatim"
     },
     "KYJH": {
       "code": "KYJH",
@@ -900,7 +1149,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 38.2503,
+      "lon": -85.7502,
+      "geocode_source": "nominatim"
     },
     "KYKC": {
       "code": "KYKC",
@@ -910,7 +1162,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 38.2484,
+      "lon": -85.7497,
+      "geocode_source": "nominatim"
     },
     "KYUK": {
       "code": "KYUK",
@@ -922,7 +1177,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 38.0316,
+      "lon": -84.5037,
+      "geocode_source": "manual"
     },
     "LACH": {
       "code": "LACH",
@@ -932,7 +1190,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 30.0064,
+      "lon": -90.1926,
+      "geocode_source": "nominatim"
     },
     "LAOF": {
       "code": "LAOF",
@@ -945,7 +1206,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 29.9611,
+      "lon": -90.1457,
+      "geocode_source": "nominatim"
     },
     "LATU": {
       "code": "LATU",
@@ -956,7 +1220,10 @@
         "kidney",
         "liver",
         "pancreas"
-      ]
+      ],
+      "lat": 29.9559,
+      "lon": -90.0763,
+      "geocode_source": "nominatim"
     },
     "LAWK": {
       "code": "LAWK",
@@ -967,7 +1234,10 @@
         "kidney",
         "liver",
         "pancreas"
-      ]
+      ],
+      "lat": 32.4849,
+      "lon": -93.7787,
+      "geocode_source": "nominatim"
     },
     "MABI": {
       "code": "MABI",
@@ -979,7 +1249,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 42.3386,
+      "lon": -71.1046,
+      "geocode_source": "manual"
     },
     "MABS": {
       "code": "MABS",
@@ -988,7 +1261,10 @@
       "state": "Massachusetts",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 42.1215,
+      "lon": -72.603,
+      "geocode_source": "nominatim"
     },
     "MABU": {
       "code": "MABU",
@@ -997,7 +1273,10 @@
       "state": "Massachusetts",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 42.3342,
+      "lon": -71.0746,
+      "geocode_source": "nominatim"
     },
     "MACH": {
       "code": "MACH",
@@ -1011,7 +1290,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 42.3372,
+      "lon": -71.1057,
+      "geocode_source": "nominatim"
     },
     "MALC": {
       "code": "MALC",
@@ -1021,7 +1303,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 42.4846,
+      "lon": -71.2042,
+      "geocode_source": "nominatim"
     },
     "MAMG": {
       "code": "MAMG",
@@ -1034,7 +1319,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 42.3629,
+      "lon": -71.0688,
+      "geocode_source": "nominatim"
     },
     "MANM": {
       "code": "MANM",
@@ -1045,7 +1333,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 42.3496,
+      "lon": -71.0634,
+      "geocode_source": "nominatim"
     },
     "MAPB": {
       "code": "MAPB",
@@ -1057,7 +1348,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 42.3356,
+      "lon": -71.106,
+      "geocode_source": "nominatim"
     },
     "MAUM": {
       "code": "MAUM",
@@ -1068,7 +1362,10 @@
         "kidney",
         "liver",
         "pancreas"
-      ]
+      ],
+      "lat": 42.2852,
+      "lon": -71.7897,
+      "geocode_source": "nominatim"
     },
     "MDJH": {
       "code": "MDJH",
@@ -1081,7 +1378,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 39.2904,
+      "lon": -76.6122,
+      "geocode_source": "city_mapping"
     },
     "MDUM": {
       "code": "MDUM",
@@ -1094,7 +1394,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 39.2904,
+      "lon": -76.6122,
+      "geocode_source": "city_mapping"
     },
     "MEMC": {
       "code": "MEMC",
@@ -1103,7 +1406,10 @@
       "state": "Maine",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 43.6532,
+      "lon": -70.2763,
+      "geocode_source": "nominatim"
     },
     "MIBH": {
       "code": "MIBH",
@@ -1113,7 +1419,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 42.6174,
+      "lon": -83.0937,
+      "geocode_source": "nominatim"
     },
     "MICH": {
       "code": "MICH",
@@ -1124,7 +1433,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 42.3519,
+      "lon": -83.0548,
+      "geocode_source": "nominatim"
     },
     "MIDV": {
       "code": "MIDV",
@@ -1133,7 +1445,10 @@
       "state": "Michigan",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 42.9641,
+      "lon": -85.6571,
+      "geocode_source": "manual"
     },
     "MIHF": {
       "code": "MIHF",
@@ -1147,7 +1462,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 42.3679,
+      "lon": -83.0855,
+      "geocode_source": "nominatim"
     },
     "MISH": {
       "code": "MISH",
@@ -1157,7 +1475,10 @@
       "organs": [
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 42.8039,
+      "lon": -86.0829,
+      "geocode_source": "nominatim"
     },
     "MISJ": {
       "code": "MISJ",
@@ -1166,7 +1487,10 @@
       "state": "Michigan",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 42.4204,
+      "lon": -82.9137,
+      "geocode_source": "nominatim"
     },
     "MISM": {
       "code": "MISM",
@@ -1175,7 +1499,10 @@
       "state": "Michigan",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 42.9651,
+      "lon": -85.6663,
+      "geocode_source": "manual"
     },
     "MIUM": {
       "code": "MIUM",
@@ -1188,7 +1515,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 42.2836,
+      "lon": -83.7312,
+      "geocode_source": "nominatim"
     },
     "MNAN": {
       "code": "MNAN",
@@ -1198,7 +1528,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 44.9778,
+      "lon": -93.265,
+      "geocode_source": "city_mapping"
     },
     "MNCM": {
       "code": "MNCM",
@@ -1207,7 +1540,10 @@
       "state": "Minnesota",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 45.5392,
+      "lon": -94.1561,
+      "geocode_source": "nominatim"
     },
     "MNHC": {
       "code": "MNHC",
@@ -1216,7 +1552,10 @@
       "state": "Minnesota",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 44.9778,
+      "lon": -93.265,
+      "geocode_source": "city_mapping"
     },
     "MNMC": {
       "code": "MNMC",
@@ -1229,7 +1568,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 44.0121,
+      "lon": -92.4802,
+      "geocode_source": "city_mapping"
     },
     "MNUM": {
       "code": "MNUM",
@@ -1242,7 +1584,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 44.9778,
+      "lon": -93.265,
+      "geocode_source": "city_mapping"
     },
     "MOBH": {
       "code": "MOBH",
@@ -1255,7 +1600,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 38.627,
+      "lon": -90.1994,
+      "geocode_source": "city_mapping"
     },
     "MOCG": {
       "code": "MOCG",
@@ -1266,7 +1614,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 38.6258,
+      "lon": -90.2385,
+      "geocode_source": "nominatim"
     },
     "MOCH": {
       "code": "MOCH",
@@ -1278,7 +1629,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 38.6378,
+      "lon": -90.2649,
+      "geocode_source": "nominatim"
     },
     "MOCM": {
       "code": "MOCM",
@@ -1289,7 +1643,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 39.0844,
+      "lon": -94.5775,
+      "geocode_source": "nominatim"
     },
     "MOLH": {
       "code": "MOLH",
@@ -1300,7 +1657,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 39.0483,
+      "lon": -94.5911,
+      "geocode_source": "nominatim"
     },
     "MORH": {
       "code": "MORH",
@@ -1309,7 +1669,10 @@
       "state": "Missouri",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 39.0099,
+      "lon": -94.5597,
+      "geocode_source": "nominatim"
     },
     "MOSL": {
       "code": "MOSL",
@@ -1319,7 +1682,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 38.627,
+      "lon": -90.1994,
+      "geocode_source": "city_mapping"
     },
     "MOUM": {
       "code": "MOUM",
@@ -1328,7 +1694,10 @@
       "state": "Missouri",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 38.9402,
+      "lon": -92.3276,
+      "geocode_source": "manual"
     },
     "MSUM": {
       "code": "MSUM",
@@ -1339,7 +1708,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 32.3309,
+      "lon": -90.1723,
+      "geocode_source": "nominatim"
     },
     "NCBG": {
       "code": "NCBG",
@@ -1350,7 +1722,10 @@
         "kidney",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 36.0898,
+      "lon": -80.2677,
+      "geocode_source": "nominatim"
     },
     "NCCM": {
       "code": "NCCM",
@@ -1361,7 +1736,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 35.2038,
+      "lon": -80.8387,
+      "geocode_source": "nominatim"
     },
     "NCDU": {
       "code": "NCDU",
@@ -1375,7 +1753,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 35.994,
+      "lon": -78.8986,
+      "geocode_source": "city_mapping"
     },
     "NCEC": {
       "code": "NCEC",
@@ -1385,7 +1766,10 @@
       "organs": [
         "kidney",
         "pancreas"
-      ]
+      ],
+      "lat": 35.608,
+      "lon": -77.4014,
+      "geocode_source": "nominatim"
     },
     "NCMH": {
       "code": "NCMH",
@@ -1398,7 +1782,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 35.9086,
+      "lon": -79.0527,
+      "geocode_source": "manual"
     },
     "NDMC": {
       "code": "NDMC",
@@ -1407,7 +1794,10 @@
       "state": "North Dakota",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 46.8137,
+      "lon": -100.7647,
+      "geocode_source": "manual"
     },
     "NDSL": {
       "code": "NDSL",
@@ -1416,7 +1806,10 @@
       "state": "North Dakota",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 46.8455,
+      "lon": -96.8768,
+      "geocode_source": "nominatim"
     },
     "NECH": {
       "code": "NECH",
@@ -1425,7 +1818,10 @@
       "state": "Nebraska",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 41.2608,
+      "lon": -96.0418,
+      "geocode_source": "nominatim"
     },
     "NEUN": {
       "code": "NEUN",
@@ -1439,7 +1835,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 41.2565,
+      "lon": -95.9345,
+      "geocode_source": "city_mapping"
     },
     "NHDH": {
       "code": "NHDH",
@@ -1448,7 +1847,10 @@
       "state": "New Hampshire",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 43.6387,
+      "lon": -72.2854,
+      "geocode_source": "manual"
     },
     "NJBI": {
       "code": "NJBI",
@@ -1459,7 +1861,10 @@
         "kidney",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 40.7103,
+      "lon": -74.2126,
+      "geocode_source": "nominatim"
     },
     "NJHK": {
       "code": "NJHK",
@@ -1469,7 +1874,10 @@
       "organs": [
         "kidney",
         "pancreas"
-      ]
+      ],
+      "lat": 40.8837,
+      "lon": -74.0559,
+      "geocode_source": "nominatim"
     },
     "NJLL": {
       "code": "NJLL",
@@ -1480,7 +1888,10 @@
         "kidney",
         "liver",
         "pancreas"
-      ]
+      ],
+      "lat": 39.9269,
+      "lon": -75.0969,
+      "geocode_source": "nominatim"
     },
     "NJRW": {
       "code": "NJRW",
@@ -1491,7 +1902,10 @@
         "kidney",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 40.4953,
+      "lon": -74.4496,
+      "geocode_source": "nominatim"
     },
     "NJSB": {
       "code": "NJSB",
@@ -1501,7 +1915,10 @@
       "organs": [
         "kidney",
         "pancreas"
-      ]
+      ],
+      "lat": 40.7635,
+      "lon": -74.3048,
+      "geocode_source": "nominatim"
     },
     "NJUH": {
       "code": "NJUH",
@@ -1510,7 +1927,10 @@
       "state": "New Jersey",
       "organs": [
         "liver"
-      ]
+      ],
+      "lat": 40.7405,
+      "lon": -74.1912,
+      "geocode_source": "nominatim"
     },
     "NMAQ": {
       "code": "NMAQ",
@@ -1519,7 +1939,10 @@
       "state": "New Mexico",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 35.0862,
+      "lon": -106.6337,
+      "geocode_source": "manual"
     },
     "NMPH": {
       "code": "NMPH",
@@ -1528,7 +1951,10 @@
       "state": "New Mexico",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 35.0809,
+      "lon": -106.6341,
+      "geocode_source": "nominatim"
     },
     "NVUM": {
       "code": "NVUM",
@@ -1538,7 +1964,10 @@
       "organs": [
         "kidney",
         "pancreas"
-      ]
+      ],
+      "lat": 36.1467,
+      "lon": -115.1557,
+      "geocode_source": "manual"
     },
     "NYAM": {
       "code": "NYAM",
@@ -1548,7 +1977,10 @@
       "organs": [
         "kidney",
         "pancreas"
-      ]
+      ],
+      "lat": 42.6533,
+      "lon": -73.7772,
+      "geocode_source": "nominatim"
     },
     "NYCC": {
       "code": "NYCC",
@@ -1557,7 +1989,10 @@
       "state": "New York",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 40.754,
+      "lon": -73.7107,
+      "geocode_source": "manual"
     },
     "NYCP": {
       "code": "NYCP",
@@ -1571,7 +2006,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 40.7128,
+      "lon": -74.006,
+      "geocode_source": "city_mapping"
     },
     "NYDS": {
       "code": "NYDS",
@@ -1580,7 +2018,10 @@
       "state": "New York",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 40.6553,
+      "lon": -73.9445,
+      "geocode_source": "manual"
     },
     "NYEC": {
       "code": "NYEC",
@@ -1589,7 +2030,10 @@
       "state": "New York",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 42.9263,
+      "lon": -78.8325,
+      "geocode_source": "nominatim"
     },
     "NYFL": {
       "code": "NYFL",
@@ -1601,7 +2045,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 43.1257,
+      "lon": -77.6266,
+      "geocode_source": "manual"
     },
     "NYMA": {
       "code": "NYMA",
@@ -1614,7 +2061,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 40.7128,
+      "lon": -74.006,
+      "geocode_source": "city_mapping"
     },
     "NYMS": {
       "code": "NYMS",
@@ -1628,7 +2078,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 40.7128,
+      "lon": -74.006,
+      "geocode_source": "city_mapping"
     },
     "NYNS": {
       "code": "NYNS",
@@ -1640,7 +2093,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 40.7758,
+      "lon": -73.6978,
+      "geocode_source": "manual"
     },
     "NYNY": {
       "code": "NYNY",
@@ -1652,7 +2108,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 40.7128,
+      "lon": -74.006,
+      "geocode_source": "city_mapping"
     },
     "NYSB": {
       "code": "NYSB",
@@ -1661,7 +2120,10 @@
       "state": "New York",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 40.9082,
+      "lon": -73.1188,
+      "geocode_source": "manual"
     },
     "NYUC": {
       "code": "NYUC",
@@ -1674,7 +2136,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 40.7128,
+      "lon": -74.006,
+      "geocode_source": "city_mapping"
     },
     "NYUM": {
       "code": "NYUM",
@@ -1684,7 +2149,10 @@
       "organs": [
         "kidney",
         "pancreas"
-      ]
+      ],
+      "lat": 43.0408,
+      "lon": -76.1391,
+      "geocode_source": "nominatim"
     },
     "NYVA": {
       "code": "NYVA",
@@ -1693,7 +2161,10 @@
       "state": "New York",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 40.8583,
+      "lon": -73.909,
+      "geocode_source": "manual"
     },
     "NYWC": {
       "code": "NYWC",
@@ -1704,7 +2175,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 41.0874,
+      "lon": -73.8067,
+      "geocode_source": "nominatim"
     },
     "OHCC": {
       "code": "OHCC",
@@ -1718,7 +2192,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 41.4993,
+      "lon": -81.6944,
+      "geocode_source": "city_mapping"
     },
     "OHCH": {
       "code": "OHCH",
@@ -1730,7 +2207,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 39.9521,
+      "lon": -82.979,
+      "geocode_source": "nominatim"
     },
     "OHCM": {
       "code": "OHCM",
@@ -1744,7 +2224,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 39.1409,
+      "lon": -84.5023,
+      "geocode_source": "nominatim"
     },
     "OHCO": {
       "code": "OHCO",
@@ -1753,7 +2236,10 @@
       "state": "Ohio",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 41.62,
+      "lon": -83.617,
+      "geocode_source": "nominatim"
     },
     "OHOU": {
       "code": "OHOU",
@@ -1766,7 +2252,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 39.9976,
+      "lon": -83.017,
+      "geocode_source": "manual"
     },
     "OHTC": {
       "code": "OHTC",
@@ -1776,7 +2265,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 39.1208,
+      "lon": -84.5111,
+      "geocode_source": "nominatim"
     },
     "OHUC": {
       "code": "OHUC",
@@ -1788,7 +2280,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 39.1377,
+      "lon": -84.5031,
+      "geocode_source": "nominatim"
     },
     "OHUH": {
       "code": "OHUH",
@@ -1801,7 +2296,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 41.4993,
+      "lon": -81.6944,
+      "geocode_source": "city_mapping"
     },
     "OKBC": {
       "code": "OKBC",
@@ -1813,7 +2311,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 35.5295,
+      "lon": -97.5765,
+      "geocode_source": "nominatim"
     },
     "OKCM": {
       "code": "OKCM",
@@ -1822,7 +2323,10 @@
       "state": "Oklahoma",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 35.4824,
+      "lon": -97.4965,
+      "geocode_source": "manual"
     },
     "OKMD": {
       "code": "OKMD",
@@ -1832,7 +2336,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 35.4813,
+      "lon": -97.5011,
+      "geocode_source": "nominatim"
     },
     "OKSJ": {
       "code": "OKSJ",
@@ -1841,7 +2348,10 @@
       "state": "Oklahoma",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 36.134,
+      "lon": -95.9689,
+      "geocode_source": "nominatim"
     },
     "ORGS": {
       "code": "ORGS",
@@ -1850,7 +2360,10 @@
       "state": "Oregon",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 45.5152,
+      "lon": -122.6784,
+      "geocode_source": "city_mapping"
     },
     "ORSV": {
       "code": "ORSV",
@@ -1859,7 +2372,10 @@
       "state": "Oregon",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 45.5319,
+      "lon": -122.6886,
+      "geocode_source": "manual"
     },
     "ORUO": {
       "code": "ORUO",
@@ -1870,7 +2386,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 45.5152,
+      "lon": -122.6784,
+      "geocode_source": "city_mapping"
     },
     "ORVA": {
       "code": "ORVA",
@@ -1880,7 +2399,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 45.4953,
+      "lon": -122.6842,
+      "geocode_source": "manual"
     },
     "PAAE": {
       "code": "PAAE",
@@ -1891,7 +2413,10 @@
         "kidney",
         "liver",
         "pancreas"
-      ]
+      ],
+      "lat": 39.9526,
+      "lon": -75.1652,
+      "geocode_source": "city_mapping"
     },
     "PAAG": {
       "code": "PAAG",
@@ -1903,7 +2428,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 40.4406,
+      "lon": -79.9959,
+      "geocode_source": "city_mapping"
     },
     "PACH": {
       "code": "PACH",
@@ -1917,7 +2445,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 40.4406,
+      "lon": -79.9959,
+      "geocode_source": "city_mapping"
     },
     "PACP": {
       "code": "PACP",
@@ -1929,7 +2460,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 39.9477,
+      "lon": -75.195,
+      "geocode_source": "nominatim"
     },
     "PAGM": {
       "code": "PAGM",
@@ -1939,7 +2473,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 40.9681,
+      "lon": -76.6046,
+      "geocode_source": "nominatim"
     },
     "PAHE": {
       "code": "PAHE",
@@ -1950,7 +2487,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 40.2654,
+      "lon": -76.6732,
+      "geocode_source": "nominatim"
     },
     "PAHH": {
       "code": "PAHH",
@@ -1959,7 +2499,10 @@
       "state": "Pennsylvania",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 40.2608,
+      "lon": -76.8821,
+      "geocode_source": "manual"
     },
     "PALH": {
       "code": "PALH",
@@ -1968,7 +2511,10 @@
       "state": "Pennsylvania",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 40.0039,
+      "lon": -75.2918,
+      "geocode_source": "manual"
     },
     "PALV": {
       "code": "PALV",
@@ -1978,7 +2524,10 @@
       "organs": [
         "kidney",
         "pancreas"
-      ]
+      ],
+      "lat": 40.565,
+      "lon": -75.5219,
+      "geocode_source": "nominatim"
     },
     "PAPH": {
       "code": "PAPH",
@@ -1987,7 +2536,10 @@
       "state": "Pennsylvania",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 42.1338,
+      "lon": -80.0873,
+      "geocode_source": "nominatim"
     },
     "PAPT": {
       "code": "PAPT",
@@ -2001,7 +2553,10 @@
         "lung",
         "pancreas",
         "intestine"
-      ]
+      ],
+      "lat": 40.4406,
+      "lon": -79.9959,
+      "geocode_source": "city_mapping"
     },
     "PASC": {
       "code": "PASC",
@@ -2010,7 +2565,10 @@
       "state": "Pennsylvania",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 40.0063,
+      "lon": -75.1256,
+      "geocode_source": "nominatim"
     },
     "PATJ": {
       "code": "PATJ",
@@ -2023,7 +2581,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 39.9526,
+      "lon": -75.1652,
+      "geocode_source": "city_mapping"
     },
     "PATU": {
       "code": "PATU",
@@ -2035,7 +2596,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 39.9526,
+      "lon": -75.1652,
+      "geocode_source": "city_mapping"
     },
     "PAUP": {
       "code": "PAUP",
@@ -2048,7 +2612,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 39.9526,
+      "lon": -75.1652,
+      "geocode_source": "city_mapping"
     },
     "PAVA": {
       "code": "PAVA",
@@ -2058,7 +2625,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 40.4468,
+      "lon": -79.9621,
+      "geocode_source": "nominatim"
     },
     "PRCC": {
       "code": "PRCC",
@@ -2067,7 +2637,10 @@
       "state": "Puerto Rico",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 18.4001,
+      "lon": -66.058,
+      "geocode_source": "manual"
     },
     "PRSJ": {
       "code": "PRSJ",
@@ -2078,7 +2651,10 @@
         "kidney",
         "liver",
         "pancreas"
-      ]
+      ],
+      "lat": 18.4096,
+      "lon": -66.0511,
+      "geocode_source": "nominatim"
     },
     "RIRH": {
       "code": "RIRH",
@@ -2087,7 +2663,10 @@
       "state": "Rhode Island",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 41.8111,
+      "lon": -71.409,
+      "geocode_source": "nominatim"
     },
     "SCCH": {
       "code": "SCCH",
@@ -2097,7 +2676,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 32.7845,
+      "lon": -79.9485,
+      "geocode_source": "manual"
     },
     "SCMU": {
       "code": "SCMU",
@@ -2110,7 +2692,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 32.7902,
+      "lon": -79.9576,
+      "geocode_source": "nominatim"
     },
     "SDMK": {
       "code": "SDMK",
@@ -2121,7 +2706,10 @@
         "kidney",
         "liver",
         "pancreas"
-      ]
+      ],
+      "lat": 43.5343,
+      "lon": -96.7138,
+      "geocode_source": "nominatim"
     },
     "SDSV": {
       "code": "SDSV",
@@ -2130,7 +2718,10 @@
       "state": "South Dakota",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 42.8857,
+      "lon": -97.3905,
+      "geocode_source": "manual"
     },
     "TNBM": {
       "code": "TNBM",
@@ -2139,7 +2730,10 @@
       "state": "Tennessee",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 36.023,
+      "lon": -88.4124,
+      "geocode_source": "nominatim"
     },
     "TNEM": {
       "code": "TNEM",
@@ -2148,7 +2742,10 @@
       "state": "Tennessee",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 35.0503,
+      "lon": -85.3113,
+      "geocode_source": "manual"
     },
     "TNLB": {
       "code": "TNLB",
@@ -2159,7 +2756,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 35.1565,
+      "lon": -90.0298,
+      "geocode_source": "manual"
     },
     "TNMH": {
       "code": "TNMH",
@@ -2170,7 +2770,10 @@
         "kidney",
         "liver",
         "pancreas"
-      ]
+      ],
+      "lat": 35.1374,
+      "lon": -90.0267,
+      "geocode_source": "manual"
     },
     "TNST": {
       "code": "TNST",
@@ -2180,7 +2783,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 36.1627,
+      "lon": -86.7816,
+      "geocode_source": "city_mapping"
     },
     "TNUK": {
       "code": "TNUK",
@@ -2189,7 +2795,10 @@
       "state": "Tennessee",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 35.9539,
+      "lon": -83.9324,
+      "geocode_source": "manual"
     },
     "TNVU": {
       "code": "TNVU",
@@ -2202,7 +2811,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 36.1627,
+      "lon": -86.7816,
+      "geocode_source": "city_mapping"
     },
     "TXAS": {
       "code": "TXAS",
@@ -2213,7 +2825,10 @@
         "kidney",
         "liver",
         "pancreas"
-      ]
+      ],
+      "lat": 32.741,
+      "lon": -97.336,
+      "geocode_source": "manual"
     },
     "TXBC": {
       "code": "TXBC",
@@ -2224,7 +2839,10 @@
         "kidney",
         "liver",
         "lung"
-      ]
+      ],
+      "lat": 29.4567,
+      "lon": -98.5586,
+      "geocode_source": "manual"
     },
     "TXCF": {
       "code": "TXCF",
@@ -2233,7 +2851,10 @@
       "state": "Texas",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 32.7366,
+      "lon": -97.3411,
+      "geocode_source": "nominatim"
     },
     "TXCM": {
       "code": "TXCM",
@@ -2244,7 +2865,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 32.8095,
+      "lon": -96.8375,
+      "geocode_source": "nominatim"
     },
     "TXCT": {
       "code": "TXCT",
@@ -2253,7 +2877,10 @@
       "state": "Texas",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 30.3051,
+      "lon": -97.7461,
+      "geocode_source": "nominatim"
     },
     "TXDC": {
       "code": "TXDC",
@@ -2262,7 +2889,10 @@
       "state": "Texas",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 27.7487,
+      "lon": -97.3865,
+      "geocode_source": "nominatim"
     },
     "TXDM": {
       "code": "TXDM",
@@ -2271,7 +2901,10 @@
       "state": "Texas",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 30.3735,
+      "lon": -97.7262,
+      "geocode_source": "manual"
     },
     "TXDR": {
       "code": "TXDR",
@@ -2280,7 +2913,10 @@
       "state": "Texas",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 26.2308,
+      "lon": -98.2379,
+      "geocode_source": "manual"
     },
     "TXFW": {
       "code": "TXFW",
@@ -2289,7 +2925,10 @@
       "state": "Texas",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 32.7574,
+      "lon": -97.3316,
+      "geocode_source": "manual"
     },
     "TXHD": {
       "code": "TXHD",
@@ -2301,7 +2940,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 32.7767,
+      "lon": -96.797,
+      "geocode_source": "city_mapping"
     },
     "TXHH": {
       "code": "TXHH",
@@ -2313,7 +2955,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 29.7604,
+      "lon": -95.3698,
+      "geocode_source": "city_mapping"
     },
     "TXHI": {
       "code": "TXHI",
@@ -2325,7 +2970,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 29.7604,
+      "lon": -95.3698,
+      "geocode_source": "city_mapping"
     },
     "TXHS": {
       "code": "TXHS",
@@ -2338,7 +2986,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 29.5142,
+      "lon": -98.5764,
+      "geocode_source": "nominatim"
     },
     "TXJS": {
       "code": "TXJS",
@@ -2350,7 +3001,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 29.312,
+      "lon": -94.7763,
+      "geocode_source": "nominatim"
     },
     "TXLM": {
       "code": "TXLM",
@@ -2359,7 +3013,10 @@
       "state": "Texas",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 33.5769,
+      "lon": -101.8921,
+      "geocode_source": "nominatim"
     },
     "TXLP": {
       "code": "TXLP",
@@ -2368,7 +3025,10 @@
       "state": "Texas",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 31.77,
+      "lon": -106.4983,
+      "geocode_source": "nominatim"
     },
     "TXMC": {
       "code": "TXMC",
@@ -2379,7 +3039,10 @@
         "kidney",
         "liver",
         "pancreas"
-      ]
+      ],
+      "lat": 32.7767,
+      "lon": -96.797,
+      "geocode_source": "city_mapping"
     },
     "TXMH": {
       "code": "TXMH",
@@ -2392,7 +3055,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 29.7604,
+      "lon": -95.3698,
+      "geocode_source": "city_mapping"
     },
     "TXPL": {
       "code": "TXPL",
@@ -2401,7 +3067,10 @@
       "state": "Texas",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 32.7357,
+      "lon": -97.3451,
+      "geocode_source": "nominatim"
     },
     "TXPM": {
       "code": "TXPM",
@@ -2410,7 +3079,10 @@
       "state": "Texas",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 32.7856,
+      "lon": -96.8047,
+      "geocode_source": "manual"
     },
     "TXSP": {
       "code": "TXSP",
@@ -2422,7 +3094,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 32.7767,
+      "lon": -96.797,
+      "geocode_source": "city_mapping"
     },
     "TXSW": {
       "code": "TXSW",
@@ -2433,7 +3108,10 @@
         "kidney",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 31.1076,
+      "lon": -97.3754,
+      "geocode_source": "manual"
     },
     "TXTC": {
       "code": "TXTC",
@@ -2445,7 +3123,10 @@
         "liver",
         "heart",
         "lung"
-      ]
+      ],
+      "lat": 29.7068,
+      "lon": -95.4011,
+      "geocode_source": "nominatim"
     },
     "TXTX": {
       "code": "TXTX",
@@ -2458,7 +3139,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 32.7767,
+      "lon": -96.797,
+      "geocode_source": "city_mapping"
     },
     "TXUC": {
       "code": "TXUC",
@@ -2468,7 +3152,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 29.5122,
+      "lon": -98.5674,
+      "geocode_source": "manual"
     },
     "TXVA": {
       "code": "TXVA",
@@ -2479,7 +3166,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 29.7019,
+      "lon": -95.3889,
+      "geocode_source": "nominatim"
     },
     "UTLD": {
       "code": "UTLD",
@@ -2491,7 +3181,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 40.6596,
+      "lon": -111.8912,
+      "geocode_source": "nominatim"
     },
     "UTMC": {
       "code": "UTMC",
@@ -2504,7 +3197,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 40.7713,
+      "lon": -111.8389,
+      "geocode_source": "manual"
     },
     "UTPC": {
       "code": "UTPC",
@@ -2515,7 +3211,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 40.7713,
+      "lon": -111.8389,
+      "geocode_source": "nominatim"
     },
     "VACH": {
       "code": "VACH",
@@ -2524,7 +3223,10 @@
       "state": "Virginia",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 36.8622,
+      "lon": -76.302,
+      "geocode_source": "nominatim"
     },
     "VAFH": {
       "code": "VAFH",
@@ -2536,7 +3238,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 38.8574,
+      "lon": -77.2285,
+      "geocode_source": "nominatim"
     },
     "VAHD": {
       "code": "VAHD",
@@ -2545,7 +3250,10 @@
       "state": "Virginia",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 37.6033,
+      "lon": -77.5415,
+      "geocode_source": "nominatim"
     },
     "VAMC": {
       "code": "VAMC",
@@ -2557,7 +3265,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 37.5407,
+      "lon": -77.431,
+      "geocode_source": "manual"
     },
     "VAMV": {
       "code": "VAMV",
@@ -2566,7 +3277,10 @@
       "state": "Virginia",
       "organs": [
         "heart"
-      ]
+      ],
+      "lat": 37.4963,
+      "lon": -77.4656,
+      "geocode_source": "nominatim"
     },
     "VANG": {
       "code": "VANG",
@@ -2577,7 +3291,10 @@
         "kidney",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 36.8625,
+      "lon": -76.3038,
+      "geocode_source": "nominatim"
     },
     "VAUV": {
       "code": "VAUV",
@@ -2590,7 +3307,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 38.0309,
+      "lon": -78.5005,
+      "geocode_source": "manual"
     },
     "VTMC": {
       "code": "VTMC",
@@ -2599,7 +3319,10 @@
       "state": "Vermont",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 44.4788,
+      "lon": -73.1981,
+      "geocode_source": "manual"
     },
     "WACH": {
       "code": "WACH",
@@ -2611,7 +3334,10 @@
         "liver",
         "heart",
         "intestine"
-      ]
+      ],
+      "lat": 47.6631,
+      "lon": -122.2825,
+      "geocode_source": "nominatim"
     },
     "WASH": {
       "code": "WASH",
@@ -2621,7 +3347,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 47.6731,
+      "lon": -117.4107,
+      "geocode_source": "manual"
     },
     "WASM": {
       "code": "WASM",
@@ -2631,7 +3360,10 @@
       "organs": [
         "kidney",
         "liver"
-      ]
+      ],
+      "lat": 47.6062,
+      "lon": -122.3321,
+      "geocode_source": "city_mapping"
     },
     "WAUW": {
       "code": "WAUW",
@@ -2644,7 +3376,10 @@
         "heart",
         "lung",
         "intestine"
-      ]
+      ],
+      "lat": 47.6062,
+      "lon": -122.3321,
+      "geocode_source": "city_mapping"
     },
     "WAVM": {
       "code": "WAVM",
@@ -2653,7 +3388,10 @@
       "state": "Washington",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 47.6102,
+      "lon": -122.3279,
+      "geocode_source": "nominatim"
     },
     "WICH": {
       "code": "WICH",
@@ -2664,7 +3402,10 @@
         "kidney",
         "liver",
         "heart"
-      ]
+      ],
+      "lat": 43.0422,
+      "lon": -88.0235,
+      "geocode_source": "nominatim"
     },
     "WISE": {
       "code": "WISE",
@@ -2677,7 +3418,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 43.0414,
+      "lon": -88.0246,
+      "geocode_source": "nominatim"
     },
     "WISL": {
       "code": "WISL",
@@ -2689,7 +3433,10 @@
         "liver",
         "heart",
         "pancreas"
-      ]
+      ],
+      "lat": 42.99,
+      "lon": -87.9504,
+      "geocode_source": "nominatim"
     },
     "WIUW": {
       "code": "WIUW",
@@ -2702,7 +3449,10 @@
         "heart",
         "lung",
         "pancreas"
-      ]
+      ],
+      "lat": 43.0731,
+      "lon": -89.4012,
+      "geocode_source": "city_mapping"
     },
     "WVCA": {
       "code": "WVCA",
@@ -2711,7 +3461,10 @@
       "state": "West Virginia",
       "organs": [
         "kidney"
-      ]
+      ],
+      "lat": 38.3301,
+      "lon": -81.6027,
+      "geocode_source": "nominatim"
     },
     "WVWU": {
       "code": "WVWU",
@@ -2721,7 +3474,10 @@
       "organs": [
         "kidney",
         "heart"
-      ]
+      ],
+      "lat": 39.6534,
+      "lon": -79.9573,
+      "geocode_source": "nominatim"
     }
   }
 }
