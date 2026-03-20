@@ -93,12 +93,12 @@
         },
         donorRegistration: {
             stateRegistrationRates: {
-                "Montana": 82, "Alaska": 75, "Minnesota": 68, "Oregon": 58,
-                "Washington": 56, "Wisconsin": 54, "New York": 52, "Massachusetts": 51,
-                "Pennsylvania": 42, "Ohio": 41, "Maryland": 40, "Illinois": 48,
-                "California": 45, "North Carolina": 37, "Tennessee": 31,
-                "Texas": 30, "Florida": 68, "Georgia": 28, "Indiana": 36,
-                "Nebraska": 47, "Missouri": 32, "Iowa": 50
+                "Pennsylvania": 48, "Maryland": 44, "New York": 15,
+                "Minnesota": 56, "Wisconsin": 57, "Illinois": 36,
+                "Ohio": 59, "Missouri": 51, "Indiana": 53,
+                "Nebraska": 44, "Tennessee": 39, "North Carolina": 57,
+                "Florida": 50, "Texas": 32, "Oregon": 55,
+                "Washington": 59, "California": 37
             },
             livingDonorProgramStrength: {
                 "Minneapolis": 95, "Madison": 92, "Pittsburgh": 94,

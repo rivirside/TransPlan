@@ -142,7 +142,7 @@ Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabili
 | 6A: Dynamic center dropdown (#119) | ✅ Done | API-first with hardcoded fallback |
 | 6A: Marker clustering (#120) | ✅ Done | L.markerClusterGroup for 248+ center markers |
 | 6A: Results pagination (#121) | ✅ Done | Top-10/20/50/all, state filter, prev/next |
-| 6A: OPO mapping (#122) | Partial | 55 OPOs, 248 centers mapped via `fetch-opo-service-areas.py`. County-level CMS data confirmed unavailable (searched eCFR, HRSA/OPTN, SRTR, CMS portal). See #138 for next steps |
+| 6A: OPO mapping (#122) | ✅ Done | 60 OPOs, 3,225 counties, 248 centers — authoritative HRSA county-to-OPO mapping. Replaces proximity heuristic. #138 resolved |
 | 6A: Patient home location (#123) | ✅ Done | Nominatim geocoding, haversine distance on cards |
 | 6B: EPA monitor data (#125) | ✅ Done | `fetch-air-quality-monitors.js`, ~4000 per-monitor points |
 | 6B: CDC county data (#126) | ✅ Done | `fetch-health-data-counties.js`, 3,144 counties (multi-release fallback) |
@@ -154,7 +154,7 @@ Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabili
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 6A partial:** OPO mapping (#122 — 55 OPOs cataloged, 248 centers mapped; county-to-OPO data confirmed unavailable publicly, see #138)
+- **Phase 6A complete:** OPO mapping (#122) resolved with authoritative HRSA county-to-OPO data (#138 closed)
 - **Phase 6C (future):** Pre-computed raster grid (#133), kriging uncertainty (#134), spatial econometric models (#135)
 - **Phase 5 platform features:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
 - **Deferred (no API):** SRTR outcomes (#20), donor reg fetch (#21), theme selection (Phase 7, #3)

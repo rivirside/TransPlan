@@ -47,7 +47,7 @@ const MOCK_TRANSPLANT_DATA = {
     },
     donorRegistration: {
         stateRegistrationRates: {
-            "Minnesota": 68, "Ohio": 41, "Texas": 30, "New York": 52, "Florida": 68
+            "Minnesota": 56, "Ohio": 59, "Texas": 32, "New York": 15, "Florida": 50
         },
         populationFactors: {
             "Minneapolis": 72, "Cleveland": 70, "Houston": 88, "New York": 100, "Miami": 80, "Rochester": 60
@@ -416,7 +416,7 @@ describe('calculateDonorAvailabilityScore', () => {
     });
 
     test('higher registration rate state scores higher', () => {
-        // Minnesota=68, Texas=30
+        // Minnesota=56, Texas=32
         const mn = calculateDonorAvailabilityScore('Minneapolis', 'Minnesota', 'kidney');
         const tx = calculateDonorAvailabilityScore('Houston', 'Texas', 'kidney');
         expect(mn).toBeGreaterThan(tx);

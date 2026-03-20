@@ -209,17 +209,19 @@ function calculateDonorAvailabilityScore(city, state, organType, formData) {
     const trafficData = window.TransPlanData?.trafficFatalities;
 
     // State donor registration rate (39% of category — raised from 35% after L-008 traffic weight reduction)
+    // Source: Donate Life America 2019 Annual Report (2018 data)
+    // DDR = % of DMV applicants who say "Yes"; EDDR used as proxy where DDR is NA
     const stateRegistrationRates = donorData?.stateRegistrationRates || {
-        "Montana": 82, "Alaska": 75, "Minnesota": 68, "Oregon": 58,
-        "Washington": 56, "Wisconsin": 54, "New York": 52, "Massachusetts": 51,
-        "Pennsylvania": 42, "Ohio": 41, "Maryland": 40, "Illinois": 48,
-        "California": 45, "North Carolina": 37, "Tennessee": 31,
-        "Texas": 30, "Florida": 68, "Georgia": 28, "Indiana": 36,
-        "Nebraska": 47, "Missouri": 32, "Iowa": 50
+        "Pennsylvania": 48, "Maryland": 44, "New York": 15,
+        "Minnesota": 56, "Wisconsin": 57, "Illinois": 36,
+        "Ohio": 59, "Missouri": 51, "Indiana": 53,
+        "Nebraska": 44, "Tennessee": 39, "North Carolina": 57,
+        "Florida": 50, "Texas": 32, "Oregon": 55,
+        "Washington": 59, "California": 37
     };
 
     const regRate = stateRegistrationRates[state] || 35;
-    score += (regRate / 82) * 100 * 0.39; // Normalized to best state
+    score += (regRate / 69) * 100 * 0.39; // Normalized to best state (Colorado DDR=69%)
 
     // Population density for deceased donor pool (25% of category — unchanged)
     const populationFactors = donorData?.populationFactors || {
