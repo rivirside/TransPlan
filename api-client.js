@@ -333,6 +333,32 @@
     }
   }
 
+  /**
+   * Fetch the list of transplant centers from GET /centers.
+   * @param {Object} [options] - Query options
+   * @param {string} [options.organ] - Filter by organ program
+   * @param {boolean} [options.focusOnly] - Return only 22 focus cities
+   * @returns {Promise<Object|null>} {centers: [...], total: N} or null
+   */
+  async function fetchCenters(options) {
+    var base = getBaseUrl();
+    var params = [];
+    if (options && options.organ) params.push('organ=' + encodeURIComponent(options.organ));
+    if (options && options.focusOnly) params.push('focus_only=true');
+    var url = base + '/centers' + (params.length ? '?' + params.join('&') : '');
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, 5000);
+    try {
+      var response = await fetch(url, { method: 'GET', signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (!response.ok) return null;
+      return await response.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      return null;
+    }
+  }
+
   // Expose globally
   window.TransPlanAPI = {
     simulate: simulate,
@@ -342,6 +368,7 @@
     policyScenarios: policyScenarios,
     policyScenario: policyScenario,
     isBackendAvailable: isBackendAvailable,
-    normalizeFormData: normalizeFormData
+    normalizeFormData: normalizeFormData,
+    fetchCenters: fetchCenters
   };
 })();

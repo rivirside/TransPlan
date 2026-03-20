@@ -2006,18 +2006,37 @@ const stateAbbreviations = {
     "Washington": "WA", "California": "CA"
 };
 
-// Populate Home Center dropdown from cityStateMap
-(function populateHomeCenterDropdown() {
+// Populate Home Center dropdown — tries API first, falls back to hardcoded cityStateMap
+(async function populateHomeCenterDropdown() {
     const select = document.getElementById('homeCenter');
     if (!select) return;
-    Object.entries(cityStateMap)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .forEach(([city, state]) => {
-            const option = document.createElement('option');
-            option.value = city;
-            option.textContent = city + ', ' + (stateAbbreviations[state] || state);
-            select.appendChild(option);
-        });
+
+    function populate(entries) {
+        entries
+            .sort((a, b) => a.city.localeCompare(b.city))
+            .forEach(({ city, state }) => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city + ', ' + (stateAbbreviations[state] || state);
+                select.appendChild(option);
+            });
+    }
+
+    // Try dynamic loading from backend API
+    if (window.TransPlanAPI && window.TransPlanAPI.fetchCenters) {
+        try {
+            const data = await window.TransPlanAPI.fetchCenters({ focusOnly: true });
+            if (data && data.cities && data.cities.length > 0) {
+                populate(data.cities);
+                return;
+            }
+        } catch (e) { /* fall through */ }
+    }
+
+    // Fallback: use hardcoded cityStateMap
+    populate(
+        Object.entries(cityStateMap).map(([city, state]) => ({ city, state }))
+    );
 })();
 
 document.getElementById('transplantForm').addEventListener('submit', async function(e) {
