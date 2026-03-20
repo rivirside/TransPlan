@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetchedAt": "2026-03-19T05:41:18.207Z",
+    "fetchedAt": "2026-03-20T23:33:44.594Z",
     "source": "BLS API v2"
   },
   "New York": 107,
@@ -15,8 +15,6 @@
   "Minneapolis": 95,
   "St. Louis": 89,
   "Baltimore": 110,
-  "Pittsburgh": 86,
-  "Portland": 106,
   "Cleveland": 91,
   "Madison": 94,
   "Rochester": 86,
@@ -24,5 +22,7 @@
   "Nashville": 102,
   "Omaha": 81,
   "Indianapolis": 74,
-  "Palo Alto": 118
+  "Palo Alto": 118,
+  "Portland": 106,
+  "Pittsburgh": 86
 }
