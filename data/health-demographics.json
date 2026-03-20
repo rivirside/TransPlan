@@ -1,7 +1,12 @@
 {
   "_meta": {
     "fetchedAt": "2026-03-19T17:10:09.937Z",
-    "source": "CDC PLACES API (5 county-level indicators)"
+    "source": "CDC PLACES API (5 county-level indicators)",
+    "centersAdded": 248,
+    "centersTotal": 248,
+    "countyMatchMethod": "nearest-county haversine lookup from 2,956 CDC PLACES counties",
+    "ckdEstimation": "linear model: ckdRate = 9.0 + 0.5 × diabetesRate (R² ≈ 0.85 on 22-city ground truth)",
+    "generatedAt": "2026-03-20T22:08:16.220Z"
   },
   "Pittsburgh": {
     "diabetesRate": 10.2,
@@ -156,5 +161,1741 @@
     "ckdRate": 11.9,
     "hypertensionRate": 25.7,
     "smokingRate": 8.2
+  },
+  "Children's of Alabama": {
+    "diabetesRate": 13.5,
+    "obesityRate": 37.6,
+    "hypertensionRate": 40,
+    "smokingRate": 14.1,
+    "ckdRate": 15.8
+  },
+  "University of Alabama Hospital": {
+    "diabetesRate": 14.1,
+    "obesityRate": 39,
+    "hypertensionRate": 39.6,
+    "smokingRate": 15.7,
+    "ckdRate": 16.1
+  },
+  "Birmingham VA Medical Center": {
+    "diabetesRate": 13.5,
+    "obesityRate": 37.6,
+    "hypertensionRate": 40,
+    "smokingRate": 14.1,
+    "ckdRate": 15.8
+  },
+  "Baptist Medical Center": {
+    "diabetesRate": 11.5,
+    "obesityRate": 40.6,
+    "hypertensionRate": 39.5,
+    "smokingRate": 13.6,
+    "ckdRate": 14.8
+  },
+  "Arkansas Children's Hospital": {
+    "diabetesRate": 11.5,
+    "obesityRate": 40.6,
+    "hypertensionRate": 39.5,
+    "smokingRate": 13.6,
+    "ckdRate": 14.8
+  },
+  "UAMS Medical Center": {
+    "diabetesRate": 11.5,
+    "obesityRate": 40.6,
+    "hypertensionRate": 39.5,
+    "smokingRate": 13.6,
+    "ckdRate": 14.8
+  },
+  "Phoenix Children's Hospital": {
+    "diabetesRate": 9.6,
+    "obesityRate": 30.6,
+    "hypertensionRate": 28.6,
+    "smokingRate": 11,
+    "ckdRate": 13.8
+  },
+  "Banner-University Medical Center Phoenix": {
+    "diabetesRate": 9.6,
+    "obesityRate": 30.6,
+    "hypertensionRate": 28.6,
+    "smokingRate": 11,
+    "ckdRate": 13.8
+  },
+  "Mayo Clinic Hospital": {
+    "diabetesRate": 9.6,
+    "obesityRate": 30.6,
+    "hypertensionRate": 28.6,
+    "smokingRate": 11,
+    "ckdRate": 13.8
+  },
+  "St. Joseph's Hospital and Medical Center": {
+    "diabetesRate": 9.6,
+    "obesityRate": 30.6,
+    "hypertensionRate": 28.6,
+    "smokingRate": 11,
+    "ckdRate": 13.8
+  },
+  "Banner University Medical Center-Tucson": {
+    "diabetesRate": 13.2,
+    "obesityRate": 34.8,
+    "hypertensionRate": 31.3,
+    "smokingRate": 12,
+    "ckdRate": 15.6
+  },
+  "Rady Children's Hospital and Health Center": {
+    "diabetesRate": 9.4,
+    "obesityRate": 25.4,
+    "hypertensionRate": 27.4,
+    "smokingRate": 10.1,
+    "ckdRate": 13.7
+  },
+  "Childrens Hospital Los Angeles": {
+    "diabetesRate": 11.6,
+    "obesityRate": 26.4,
+    "hypertensionRate": 28.4,
+    "smokingRate": 11.3,
+    "ckdRate": 14.8
+  },
+  "Cedars-Sinai Medical Center": {
+    "diabetesRate": 11.6,
+    "obesityRate": 26.4,
+    "hypertensionRate": 28.4,
+    "smokingRate": 11.3,
+    "ckdRate": 14.8
+  },
+  "Scripps Green Hospital": {
+    "diabetesRate": 9.4,
+    "obesityRate": 25.4,
+    "hypertensionRate": 27.4,
+    "smokingRate": 10.1,
+    "ckdRate": 13.7
+  },
+  "University of California Irvine Medical Center": {
+    "diabetesRate": 10.1,
+    "obesityRate": 23.9,
+    "hypertensionRate": 26.4,
+    "smokingRate": 9.3,
+    "ckdRate": 14.1
+  },
+  "Harbor UCLA Medical Center": {
+    "diabetesRate": 10.1,
+    "obesityRate": 23.9,
+    "hypertensionRate": 26.4,
+    "smokingRate": 9.3,
+    "ckdRate": 14.1
+  },
+  "Loma Linda University Medical Center": {
+    "diabetesRate": 10.1,
+    "obesityRate": 23.9,
+    "hypertensionRate": 26.4,
+    "smokingRate": 9.3,
+    "ckdRate": 14.1
+  },
+  "UCSF Medical Center at Mission Bay": {
+    "diabetesRate": 9.3,
+    "obesityRate": 17.1,
+    "hypertensionRate": 25.1,
+    "smokingRate": 8.8,
+    "ckdRate": 13.7
+  },
+  "Lucile Salter Packard Children's Hospital at Stanford": {
+    "diabetesRate": 9,
+    "obesityRate": 22,
+    "hypertensionRate": 25.7,
+    "smokingRate": 8,
+    "ckdRate": 13.5
+  },
+  "California Pacific Medical Center": {
+    "diabetesRate": 9.3,
+    "obesityRate": 17.1,
+    "hypertensionRate": 25.1,
+    "smokingRate": 8.8,
+    "ckdRate": 13.7
+  },
+  "Riverside Community Hospital": {
+    "diabetesRate": 10.1,
+    "obesityRate": 23.9,
+    "hypertensionRate": 26.4,
+    "smokingRate": 9.3,
+    "ckdRate": 14.1
+  },
+  "University of California San Diego Medical Center": {
+    "diabetesRate": 9.4,
+    "obesityRate": 25.4,
+    "hypertensionRate": 27.4,
+    "smokingRate": 10.1,
+    "ckdRate": 13.7
+  },
+  "University of California San Francisco Medical Center": {
+    "diabetesRate": 9.3,
+    "obesityRate": 17.1,
+    "hypertensionRate": 25.1,
+    "smokingRate": 8.8,
+    "ckdRate": 13.7
+  },
+  "Sutter Meidcal Center Sacramento": {
+    "diabetesRate": 10.3,
+    "obesityRate": 29.5,
+    "hypertensionRate": 28.9,
+    "smokingRate": 11.8,
+    "ckdRate": 14.2
+  },
+  "Sharp Memorial Hospital": {
+    "diabetesRate": 9.4,
+    "obesityRate": 25.4,
+    "hypertensionRate": 27.4,
+    "smokingRate": 10.1,
+    "ckdRate": 13.7
+  },
+  "Saint Joseph Hospital": {
+    "diabetesRate": 10.1,
+    "obesityRate": 23.9,
+    "hypertensionRate": 26.4,
+    "smokingRate": 9.3,
+    "ckdRate": 14.1
+  },
+  "University of California Davis Medical Center": {
+    "diabetesRate": 10.3,
+    "obesityRate": 29.5,
+    "hypertensionRate": 28.9,
+    "smokingRate": 11.8,
+    "ckdRate": 14.2
+  },
+  "Stanford Health Care": {
+    "diabetesRate": 9,
+    "obesityRate": 22,
+    "hypertensionRate": 25.7,
+    "smokingRate": 8,
+    "ckdRate": 13.5
+  },
+  "University of California at Los Angeles Medical Center": {
+    "diabetesRate": 11.6,
+    "obesityRate": 26.4,
+    "hypertensionRate": 28.4,
+    "smokingRate": 11.3,
+    "ckdRate": 14.8
+  },
+  "Keck Hospital of USC": {
+    "diabetesRate": 11.6,
+    "obesityRate": 26.4,
+    "hypertensionRate": 28.4,
+    "smokingRate": 11.3,
+    "ckdRate": 14.8
+  },
+  "Children's Hospital Colorado": {
+    "diabetesRate": 7.8,
+    "obesityRate": 21.6,
+    "hypertensionRate": 23.2,
+    "smokingRate": 10.2,
+    "ckdRate": 12.9
+  },
+  "Centura Porter Adventist Hospital": {
+    "diabetesRate": 7.8,
+    "obesityRate": 21.6,
+    "hypertensionRate": 23.2,
+    "smokingRate": 10.2,
+    "ckdRate": 12.9
+  },
+  "Presbyterian/St Luke's Medical Center": {
+    "diabetesRate": 7.8,
+    "obesityRate": 21.6,
+    "hypertensionRate": 23.2,
+    "smokingRate": 10.2,
+    "ckdRate": 12.9
+  },
+  "University of Colorado Hospital/Health Science Center": {
+    "diabetesRate": 7.8,
+    "obesityRate": 21.6,
+    "hypertensionRate": 23.2,
+    "smokingRate": 10.2,
+    "ckdRate": 12.9
+  },
+  "Hartford Hospital": {
+    "diabetesRate": 9.2,
+    "obesityRate": 32.4,
+    "hypertensionRate": 29,
+    "smokingRate": 11.1,
+    "ckdRate": 13.6
+  },
+  "Yale New Haven Hospital": {
+    "diabetesRate": 9.2,
+    "obesityRate": 33.9,
+    "hypertensionRate": 30,
+    "smokingRate": 11.3,
+    "ckdRate": 13.6
+  },
+  "Children's National Medical Center": {
+    "diabetesRate": 8.5,
+    "obesityRate": 25.1,
+    "hypertensionRate": 30.3,
+    "smokingRate": 9.5,
+    "ckdRate": 13.3
+  },
+  "Georgetown University Medical Center": {
+    "diabetesRate": 8.5,
+    "obesityRate": 25.2,
+    "hypertensionRate": 27.2,
+    "smokingRate": 7,
+    "ckdRate": 13.3
+  },
+  "George Washington University Hospital": {
+    "diabetesRate": 8.5,
+    "obesityRate": 25.1,
+    "hypertensionRate": 30.3,
+    "smokingRate": 9.5,
+    "ckdRate": 13.3
+  },
+  "Washington Hospital Center": {
+    "diabetesRate": 8.5,
+    "obesityRate": 25.1,
+    "hypertensionRate": 30.3,
+    "smokingRate": 9.5,
+    "ckdRate": 13.3
+  },
+  "Walter Reed National Military Medical Center at Bethesda": {
+    "diabetesRate": 8.5,
+    "obesityRate": 25.1,
+    "hypertensionRate": 30.3,
+    "smokingRate": 9.5,
+    "ckdRate": 13.3
+  },
+  "Alfred I DuPont Hospital for Children": {
+    "diabetesRate": 10.7,
+    "obesityRate": 33.4,
+    "hypertensionRate": 32.1,
+    "smokingRate": 11.8,
+    "ckdRate": 14.4
+  },
+  "Christiana Care Health Services": {
+    "diabetesRate": 10.7,
+    "obesityRate": 33.4,
+    "hypertensionRate": 32.1,
+    "smokingRate": 11.8,
+    "ckdRate": 14.4
+  },
+  "Johns Hopkins All Children's Hospital": {
+    "diabetesRate": 9.8,
+    "obesityRate": 31.7,
+    "hypertensionRate": 29.5,
+    "smokingRate": 12.7,
+    "ckdRate": 13.9
+  },
+  "Broward Health Medical Center": {
+    "diabetesRate": 11.4,
+    "obesityRate": 30.4,
+    "hypertensionRate": 32.1,
+    "smokingRate": 11.8,
+    "ckdRate": 14.7
+  },
+  "Cleveland Clinic Florida Weston": {
+    "diabetesRate": 11.4,
+    "obesityRate": 30.4,
+    "hypertensionRate": 32.1,
+    "smokingRate": 11.8,
+    "ckdRate": 14.7
+  },
+  "Florida Hospital Medical Center": {
+    "diabetesRate": 10.3,
+    "obesityRate": 33.2,
+    "hypertensionRate": 31.9,
+    "smokingRate": 14.3,
+    "ckdRate": 14.2
+  },
+  "Halifax Medical Center": {
+    "diabetesRate": 10.3,
+    "obesityRate": 33.2,
+    "hypertensionRate": 31.9,
+    "smokingRate": 14.3,
+    "ckdRate": 14.2
+  },
+  "Memorial Regional Hospital/Joe DiMaggio Children's Hospital": {
+    "diabetesRate": 11.4,
+    "obesityRate": 30.4,
+    "hypertensionRate": 32.1,
+    "smokingRate": 11.8,
+    "ckdRate": 14.7
+  },
+  "Jackson Memorial Hospital University of Miami School of Medicine": {
+    "diabetesRate": 13.3,
+    "obesityRate": 29.3,
+    "hypertensionRate": 30.3,
+    "smokingRate": 11.4,
+    "ckdRate": 15.7
+  },
+  "Largo Medical Center": {
+    "diabetesRate": 9.8,
+    "obesityRate": 31.7,
+    "hypertensionRate": 29.5,
+    "smokingRate": 12.7,
+    "ckdRate": 13.9
+  },
+  "Memorial Regional Hospital": {
+    "diabetesRate": 11.4,
+    "obesityRate": 30.4,
+    "hypertensionRate": 32.1,
+    "smokingRate": 11.8,
+    "ckdRate": 14.7
+  },
+  "Sacred Heart Hospital Pensacola": {
+    "diabetesRate": 11.4,
+    "obesityRate": 36.4,
+    "hypertensionRate": 36.1,
+    "smokingRate": 14.8,
+    "ckdRate": 14.7
+  },
+  "Mayo Clinic Florida": {
+    "diabetesRate": 11.8,
+    "obesityRate": 34.3,
+    "hypertensionRate": 33.7,
+    "smokingRate": 14,
+    "ckdRate": 14.9
+  },
+  "Tampa General Hospital": {
+    "diabetesRate": 11.5,
+    "obesityRate": 31.5,
+    "hypertensionRate": 32.7,
+    "smokingRate": 12.1,
+    "ckdRate": 14.8
+  },
+  "UF Health Shands Hospital": {
+    "diabetesRate": 11.2,
+    "obesityRate": 33.4,
+    "hypertensionRate": 32.7,
+    "smokingRate": 12.7,
+    "ckdRate": 14.6
+  },
+  "Children's Healthcare of Atlanta at Egleston": {
+    "diabetesRate": 12.3,
+    "obesityRate": 31.5,
+    "hypertensionRate": 36.3,
+    "smokingRate": 11.4,
+    "ckdRate": 15.2
+  },
+  "Emory University Hospital": {
+    "diabetesRate": 12.3,
+    "obesityRate": 31.5,
+    "hypertensionRate": 36.3,
+    "smokingRate": 11.4,
+    "ckdRate": 15.2
+  },
+  "AU Medical Center, Inc.": {
+    "diabetesRate": 15.9,
+    "obesityRate": 37.2,
+    "hypertensionRate": 41,
+    "smokingRate": 16.8,
+    "ckdRate": 17
+  },
+  "Piedmont Hospital": {
+    "diabetesRate": 10,
+    "obesityRate": 30.6,
+    "hypertensionRate": 31.2,
+    "smokingRate": 9.8,
+    "ckdRate": 14
+  },
+  "The Queen's Medical Center": {
+    "diabetesRate": 10.5,
+    "obesityRate": 26,
+    "hypertensionRate": 27.9,
+    "smokingRate": 10.3,
+    "ckdRate": 14.3
+  },
+  "Iowa Methodist Medical Center": {
+    "diabetesRate": 9.6,
+    "obesityRate": 36.9,
+    "hypertensionRate": 30.1,
+    "smokingRate": 13.3,
+    "ckdRate": 13.8
+  },
+  "University of Iowa Hospitals and Clinics Transplant Programs": {
+    "diabetesRate": 9.7,
+    "obesityRate": 32.8,
+    "hypertensionRate": 30.8,
+    "smokingRate": 12.3,
+    "ckdRate": 13.9
+  },
+  "The Iowa City VA Health Care System": {
+    "diabetesRate": 9.7,
+    "obesityRate": 32.8,
+    "hypertensionRate": 30.8,
+    "smokingRate": 12.3,
+    "ckdRate": 13.9
+  },
+  "Advocate Christ Medical Center": {
+    "diabetesRate": 10.7,
+    "obesityRate": 31,
+    "hypertensionRate": 28.9,
+    "smokingRate": 11.2,
+    "ckdRate": 14.4
+  },
+  "Ann & Robert H. Lurie Children's Hospital of Chicago": {
+    "diabetesRate": 10.7,
+    "obesityRate": 31,
+    "hypertensionRate": 28.9,
+    "smokingRate": 11.2,
+    "ckdRate": 14.4
+  },
+  "Loyola University Medical Center": {
+    "diabetesRate": 10.7,
+    "obesityRate": 31,
+    "hypertensionRate": 28.9,
+    "smokingRate": 11.2,
+    "ckdRate": 14.4
+  },
+  "Memorial Medical Center": {
+    "diabetesRate": 9.8,
+    "obesityRate": 39.6,
+    "hypertensionRate": 32.2,
+    "smokingRate": 13.5,
+    "ckdRate": 13.9
+  },
+  "Northwestern Memorial Hospital": {
+    "diabetesRate": 10.7,
+    "obesityRate": 31,
+    "hypertensionRate": 28.9,
+    "smokingRate": 11.2,
+    "ckdRate": 14.4
+  },
+  "Rush University Medical Center": {
+    "diabetesRate": 10.7,
+    "obesityRate": 31,
+    "hypertensionRate": 28.9,
+    "smokingRate": 11.2,
+    "ckdRate": 14.4
+  },
+  "OSF Saint Francis Medical Center": {
+    "diabetesRate": 10.9,
+    "obesityRate": 35.1,
+    "hypertensionRate": 33.3,
+    "smokingRate": 14.3,
+    "ckdRate": 14.5
+  },
+  "University of Chicago Medical Center": {
+    "diabetesRate": 10.7,
+    "obesityRate": 31,
+    "hypertensionRate": 28.9,
+    "smokingRate": 11.2,
+    "ckdRate": 14.4
+  },
+  "University of Illinois Medical Center": {
+    "diabetesRate": 10.7,
+    "obesityRate": 31,
+    "hypertensionRate": 28.9,
+    "smokingRate": 11.2,
+    "ckdRate": 14.4
+  },
+  "": {
+    "diabetesRate": 9.9,
+    "obesityRate": 38.9,
+    "hypertensionRate": 31.8,
+    "smokingRate": 15.7,
+    "ckdRate": 14
+  },
+  "Indiana University Health": {
+    "diabetesRate": 12.8,
+    "obesityRate": 38.4,
+    "hypertensionRate": 38,
+    "smokingRate": 15.2,
+    "ckdRate": 15.4
+  },
+  "Lutheran Hospital of Fort Wayne": {
+    "diabetesRate": 11.8,
+    "obesityRate": 39.5,
+    "hypertensionRate": 34.5,
+    "smokingRate": 14.7,
+    "ckdRate": 14.9
+  },
+  "St Vincent Hospital and Health Care Center": {
+    "diabetesRate": 12.8,
+    "obesityRate": 38.4,
+    "hypertensionRate": 38,
+    "smokingRate": 15.2,
+    "ckdRate": 15.4
+  },
+  "University of Kansas Hospital": {
+    "diabetesRate": 13.9,
+    "obesityRate": 40.7,
+    "hypertensionRate": 35.9,
+    "smokingRate": 17.7,
+    "ckdRate": 16
+  },
+  "Jewish Hospital": {
+    "diabetesRate": 10.6,
+    "obesityRate": 37.4,
+    "hypertensionRate": 34.7,
+    "smokingRate": 15.1,
+    "ckdRate": 14.3
+  },
+  "Norton Children's Hospital": {
+    "diabetesRate": 10.6,
+    "obesityRate": 37.4,
+    "hypertensionRate": 34.7,
+    "smokingRate": 15.1,
+    "ckdRate": 14.3
+  },
+  "University of Kentucky Medical Center": {
+    "diabetesRate": 11.7,
+    "obesityRate": 39.9,
+    "hypertensionRate": 36.3,
+    "smokingRate": 20.5,
+    "ckdRate": 14.9
+  },
+  "Children's Hospital": {
+    "diabetesRate": 11.3,
+    "obesityRate": 37.2,
+    "hypertensionRate": 37.4,
+    "smokingRate": 14.9,
+    "ckdRate": 14.7
+  },
+  "Ochsner Foundation Hospital": {
+    "diabetesRate": 11.3,
+    "obesityRate": 37.2,
+    "hypertensionRate": 37.4,
+    "smokingRate": 14.9,
+    "ckdRate": 14.7
+  },
+  "Tulane Medical Center": {
+    "diabetesRate": 14.4,
+    "obesityRate": 34.2,
+    "hypertensionRate": 39,
+    "smokingRate": 15.2,
+    "ckdRate": 16.2
+  },
+  "Willis-Knighton Medical Center": {
+    "diabetesRate": 14.5,
+    "obesityRate": 42.3,
+    "hypertensionRate": 42.5,
+    "smokingRate": 18.6,
+    "ckdRate": 16.3
+  },
+  "Beth Israel Deaconess Medical Center": {
+    "diabetesRate": 10.1,
+    "obesityRate": 25.2,
+    "hypertensionRate": 29.4,
+    "smokingRate": 11.6,
+    "ckdRate": 14.1
+  },
+  "Baystate Medical Center": {
+    "diabetesRate": 10.5,
+    "obesityRate": 35.2,
+    "hypertensionRate": 31.2,
+    "smokingRate": 15.2,
+    "ckdRate": 14.3
+  },
+  "Boston Medical Center": {
+    "diabetesRate": 10.1,
+    "obesityRate": 25.2,
+    "hypertensionRate": 29.4,
+    "smokingRate": 11.6,
+    "ckdRate": 14.1
+  },
+  "Boston Children's Hospital": {
+    "diabetesRate": 10.1,
+    "obesityRate": 25.2,
+    "hypertensionRate": 29.4,
+    "smokingRate": 11.6,
+    "ckdRate": 14.1
+  },
+  "Lahey Clinic Medical Center": {
+    "diabetesRate": 7.7,
+    "obesityRate": 23.8,
+    "hypertensionRate": 25.6,
+    "smokingRate": 9.3,
+    "ckdRate": 12.9
+  },
+  "Massachusetts General Hospital": {
+    "diabetesRate": 10.1,
+    "obesityRate": 25.2,
+    "hypertensionRate": 29.4,
+    "smokingRate": 11.6,
+    "ckdRate": 14.1
+  },
+  "Tufts Medical Center": {
+    "diabetesRate": 10.1,
+    "obesityRate": 25.2,
+    "hypertensionRate": 29.4,
+    "smokingRate": 11.6,
+    "ckdRate": 14.1
+  },
+  "Brigham and Women's Hospital": {
+    "diabetesRate": 10.1,
+    "obesityRate": 25.2,
+    "hypertensionRate": 29.4,
+    "smokingRate": 11.6,
+    "ckdRate": 14.1
+  },
+  "UMass Memorial Medical Center": {
+    "diabetesRate": 9,
+    "obesityRate": 32.5,
+    "hypertensionRate": 29.9,
+    "smokingRate": 12.5,
+    "ckdRate": 13.5
+  },
+  "Johns Hopkins Hospital": {
+    "diabetesRate": 13.7,
+    "obesityRate": 38.8,
+    "hypertensionRate": 39.6,
+    "smokingRate": 16,
+    "ckdRate": 15.9
+  },
+  "University of Maryland Medical System": {
+    "diabetesRate": 13.7,
+    "obesityRate": 38.8,
+    "hypertensionRate": 39.6,
+    "smokingRate": 16,
+    "ckdRate": 15.9
+  },
+  "Maine Medical Center": {
+    "diabetesRate": 7.4,
+    "obesityRate": 26.7,
+    "hypertensionRate": 27.8,
+    "smokingRate": 11.1,
+    "ckdRate": 12.7
+  },
+  "William Beaumont Hospital": {
+    "diabetesRate": 9.6,
+    "obesityRate": 37.3,
+    "hypertensionRate": 33.5,
+    "smokingRate": 15.4,
+    "ckdRate": 13.8
+  },
+  "Children's Hospital of Michigan": {
+    "diabetesRate": 12.5,
+    "obesityRate": 37.3,
+    "hypertensionRate": 37.1,
+    "smokingRate": 17.2,
+    "ckdRate": 15.3
+  },
+  "Helen DeVos Children's Hospital": {
+    "diabetesRate": 9.6,
+    "obesityRate": 34.9,
+    "hypertensionRate": 30.8,
+    "smokingRate": 13.2,
+    "ckdRate": 13.8
+  },
+  "Henry Ford Hospital": {
+    "diabetesRate": 12.5,
+    "obesityRate": 37.3,
+    "hypertensionRate": 37.1,
+    "smokingRate": 17.2,
+    "ckdRate": 15.3
+  },
+  "Spectrum Health": {
+    "diabetesRate": 8.5,
+    "obesityRate": 33.2,
+    "hypertensionRate": 29.3,
+    "smokingRate": 12.1,
+    "ckdRate": 13.3
+  },
+  "St John Hospital and Medical Center": {
+    "diabetesRate": 9.6,
+    "obesityRate": 37.3,
+    "hypertensionRate": 33.5,
+    "smokingRate": 15.4,
+    "ckdRate": 13.8
+  },
+  "Mercy Health Saint Mary?s": {
+    "diabetesRate": 9.6,
+    "obesityRate": 34.9,
+    "hypertensionRate": 30.8,
+    "smokingRate": 13.2,
+    "ckdRate": 13.8
+  },
+  "University of Michigan Medical Center": {
+    "diabetesRate": 8.6,
+    "obesityRate": 29,
+    "hypertensionRate": 28.3,
+    "smokingRate": 10.8,
+    "ckdRate": 13.3
+  },
+  "Abbott Northwestern Hospital": {
+    "diabetesRate": 9.8,
+    "obesityRate": 32.3,
+    "hypertensionRate": 28.6,
+    "smokingRate": 12.8,
+    "ckdRate": 13.9
+  },
+  "Children's Minnesota": {
+    "diabetesRate": 9.3,
+    "obesityRate": 41.2,
+    "hypertensionRate": 28.9,
+    "smokingRate": 15.9,
+    "ckdRate": 13.7
+  },
+  "Hennepin County Medical Center": {
+    "diabetesRate": 9.8,
+    "obesityRate": 32.3,
+    "hypertensionRate": 28.6,
+    "smokingRate": 12.8,
+    "ckdRate": 13.9
+  },
+  "Rochester Methodist Hospital (Mayo Clinic)": {
+    "diabetesRate": 8.4,
+    "obesityRate": 36.5,
+    "hypertensionRate": 27.4,
+    "smokingRate": 11.4,
+    "ckdRate": 13.2
+  },
+  "University of Minnesota Medical Center, Fairview": {
+    "diabetesRate": 9.8,
+    "obesityRate": 32.3,
+    "hypertensionRate": 28.6,
+    "smokingRate": 12.8,
+    "ckdRate": 13.9
+  },
+  "Barnes-Jewish Hospital": {
+    "diabetesRate": 12.7,
+    "obesityRate": 37,
+    "hypertensionRate": 36.6,
+    "smokingRate": 16.6,
+    "ckdRate": 15.4
+  },
+  "Cardinal Glennon Children's Hospital": {
+    "diabetesRate": 12.7,
+    "obesityRate": 37,
+    "hypertensionRate": 36.6,
+    "smokingRate": 16.6,
+    "ckdRate": 15.4
+  },
+  "St. Louis Children's Hospital": {
+    "diabetesRate": 12.7,
+    "obesityRate": 37,
+    "hypertensionRate": 36.6,
+    "smokingRate": 16.6,
+    "ckdRate": 15.4
+  },
+  "Children's Mercy Hospital": {
+    "diabetesRate": 13.9,
+    "obesityRate": 40.7,
+    "hypertensionRate": 35.9,
+    "smokingRate": 17.7,
+    "ckdRate": 16
+  },
+  "St Luke's Hospital of Kansas City": {
+    "diabetesRate": 13.9,
+    "obesityRate": 40.7,
+    "hypertensionRate": 35.9,
+    "smokingRate": 17.7,
+    "ckdRate": 16
+  },
+  "Research Medical Center": {
+    "diabetesRate": 11,
+    "obesityRate": 37.2,
+    "hypertensionRate": 33.4,
+    "smokingRate": 16,
+    "ckdRate": 14.5
+  },
+  "SSM Health Saint Louis University Hospital": {
+    "diabetesRate": 12.7,
+    "obesityRate": 37,
+    "hypertensionRate": 36.6,
+    "smokingRate": 16.6,
+    "ckdRate": 15.4
+  },
+  "University of Missouri Hospital and Clinics": {
+    "diabetesRate": 10.1,
+    "obesityRate": 31.6,
+    "hypertensionRate": 32,
+    "smokingRate": 13.5,
+    "ckdRate": 14.1
+  },
+  "University of Mississippi Medical Center": {
+    "diabetesRate": 10.7,
+    "obesityRate": 36.4,
+    "hypertensionRate": 37.5,
+    "smokingRate": 13.1,
+    "ckdRate": 14.4
+  },
+  "Wake Forest Baptist Medical Center": {
+    "diabetesRate": 11,
+    "obesityRate": 41.5,
+    "hypertensionRate": 33.7,
+    "smokingRate": 13.8,
+    "ckdRate": 14.5
+  },
+  "Carolinas Medical Center": {
+    "diabetesRate": 10.1,
+    "obesityRate": 29.5,
+    "hypertensionRate": 31.3,
+    "smokingRate": 10.7,
+    "ckdRate": 14.1
+  },
+  "Duke University Hospital": {
+    "diabetesRate": 10.4,
+    "obesityRate": 36.5,
+    "hypertensionRate": 32.8,
+    "smokingRate": 11,
+    "ckdRate": 14.2
+  },
+  "Vidant Medical Center": {
+    "diabetesRate": 12,
+    "obesityRate": 40.8,
+    "hypertensionRate": 35.5,
+    "smokingRate": 15,
+    "ckdRate": 15
+  },
+  "University of North Carolina Hospitals": {
+    "diabetesRate": 9,
+    "obesityRate": 29.5,
+    "hypertensionRate": 29.8,
+    "smokingRate": 10.3,
+    "ckdRate": 13.5
+  },
+  "Sanford Bismarck Medical Center": {
+    "diabetesRate": 8.1,
+    "obesityRate": 35.5,
+    "hypertensionRate": 27.6,
+    "smokingRate": 12.1,
+    "ckdRate": 13.1
+  },
+  "Sanford Medical Center Fargo": {
+    "diabetesRate": 9.3,
+    "obesityRate": 34.1,
+    "hypertensionRate": 30.1,
+    "smokingRate": 14.6,
+    "ckdRate": 13.7
+  },
+  "Children's Hospital & Medical Center": {
+    "diabetesRate": 9.3,
+    "obesityRate": 36.9,
+    "hypertensionRate": 29.4,
+    "smokingRate": 13.5,
+    "ckdRate": 13.7
+  },
+  "The Nebraska Medical Center": {
+    "diabetesRate": 9.3,
+    "obesityRate": 36.9,
+    "hypertensionRate": 29.4,
+    "smokingRate": 13.5,
+    "ckdRate": 13.7
+  },
+  "Mary Hitchcock Memorial Hospital": {
+    "diabetesRate": 6.9,
+    "obesityRate": 28.7,
+    "hypertensionRate": 25.8,
+    "smokingRate": 11.5,
+    "ckdRate": 12.5
+  },
+  "Newark Beth Israel Medical Center": {
+    "diabetesRate": 11,
+    "obesityRate": 29.4,
+    "hypertensionRate": 29.8,
+    "smokingRate": 12.3,
+    "ckdRate": 14.5
+  },
+  "Hackensack University Medical Center": {
+    "diabetesRate": 8,
+    "obesityRate": 25.4,
+    "hypertensionRate": 28.1,
+    "smokingRate": 8.4,
+    "ckdRate": 13
+  },
+  "Our Lady of Lourdes Medical Center": {
+    "diabetesRate": 9.9,
+    "obesityRate": 29.6,
+    "hypertensionRate": 30.3,
+    "smokingRate": 13.1,
+    "ckdRate": 14
+  },
+  "Robert Wood Johnson University Hospital": {
+    "diabetesRate": 10.3,
+    "obesityRate": 29.7,
+    "hypertensionRate": 30.4,
+    "smokingRate": 10.1,
+    "ckdRate": 14.2
+  },
+  "Saint Barnabas Medical Center": {
+    "diabetesRate": 11,
+    "obesityRate": 29.4,
+    "hypertensionRate": 29.8,
+    "smokingRate": 12.3,
+    "ckdRate": 14.5
+  },
+  "University Hospital": {
+    "diabetesRate": 11,
+    "obesityRate": 29.4,
+    "hypertensionRate": 29.8,
+    "smokingRate": 12.3,
+    "ckdRate": 14.5
+  },
+  "University Hospital, University of New Mexico Health Sciences Center": {
+    "diabetesRate": 10.2,
+    "obesityRate": 33.2,
+    "hypertensionRate": 30.4,
+    "smokingRate": 12.2,
+    "ckdRate": 14.1
+  },
+  "Presbyterian Hospital": {
+    "diabetesRate": 10.2,
+    "obesityRate": 33.2,
+    "hypertensionRate": 30.4,
+    "smokingRate": 12.2,
+    "ckdRate": 14.1
+  },
+  "University Medical Center of Southern Nevada": {
+    "diabetesRate": 11.1,
+    "obesityRate": 31.2,
+    "hypertensionRate": 32,
+    "smokingRate": 14.8,
+    "ckdRate": 14.6
+  },
+  "Albany Medical Center Hospital": {
+    "diabetesRate": 8.4,
+    "obesityRate": 30.9,
+    "hypertensionRate": 29.8,
+    "smokingRate": 11.4,
+    "ckdRate": 13.2
+  },
+  "Long Island Jewish Medical Center-Cohen Children's Medical Center": {
+    "diabetesRate": 8.3,
+    "obesityRate": 28.3,
+    "hypertensionRate": 27.4,
+    "smokingRate": 8.7,
+    "ckdRate": 13.2
+  },
+  "NY Presbyterian Hospital/Columbia Univ. Medical Center": {
+    "diabetesRate": 10.8,
+    "obesityRate": 27.8,
+    "hypertensionRate": 29.2,
+    "smokingRate": 10.4,
+    "ckdRate": 14.4
+  },
+  "State University of New York, Downstate Medical Center": {
+    "diabetesRate": 11.1,
+    "obesityRate": 25,
+    "hypertensionRate": 28.8,
+    "smokingRate": 12.2,
+    "ckdRate": 14.6
+  },
+  "Erie County Medical Center": {
+    "diabetesRate": 9.1,
+    "obesityRate": 33,
+    "hypertensionRate": 29,
+    "smokingRate": 12.8,
+    "ckdRate": 13.6
+  },
+  "Strong Memorial Hospital, University of Rochester Medical Center": {
+    "diabetesRate": 9.6,
+    "obesityRate": 31.8,
+    "hypertensionRate": 30.1,
+    "smokingRate": 12.1,
+    "ckdRate": 13.8
+  },
+  "Montefiore Medical Center": {
+    "diabetesRate": 10.8,
+    "obesityRate": 27.8,
+    "hypertensionRate": 29.2,
+    "smokingRate": 10.4,
+    "ckdRate": 14.4
+  },
+  "Mount Sinai Medical Center": {
+    "diabetesRate": 10.8,
+    "obesityRate": 27.8,
+    "hypertensionRate": 29.2,
+    "smokingRate": 10.4,
+    "ckdRate": 14.4
+  },
+  "North Shore University Hospital/Northwell Health": {
+    "diabetesRate": 8.3,
+    "obesityRate": 28.3,
+    "hypertensionRate": 27.4,
+    "smokingRate": 8.7,
+    "ckdRate": 13.2
+  },
+  "New York-Presbyterian Hospital/Weill Cornell Medical Center": {
+    "diabetesRate": 10.8,
+    "obesityRate": 27.8,
+    "hypertensionRate": 29.2,
+    "smokingRate": 10.4,
+    "ckdRate": 14.4
+  },
+  "University Hospital of State University of New York at Stony Brook": {
+    "diabetesRate": 8.3,
+    "obesityRate": 29.7,
+    "hypertensionRate": 27.6,
+    "smokingRate": 9.7,
+    "ckdRate": 13.2
+  },
+  "New York University Medical Center": {
+    "diabetesRate": 10.8,
+    "obesityRate": 27.8,
+    "hypertensionRate": 29.2,
+    "smokingRate": 10.4,
+    "ckdRate": 14.4
+  },
+  "State University of New York Upstate Medical University": {
+    "diabetesRate": 9.3,
+    "obesityRate": 37.4,
+    "hypertensionRate": 31.9,
+    "smokingRate": 12.4,
+    "ckdRate": 13.7
+  },
+  "James J. Peters VA Medical Center": {
+    "diabetesRate": 14.8,
+    "obesityRate": 33.7,
+    "hypertensionRate": 34.6,
+    "smokingRate": 13.4,
+    "ckdRate": 16.4
+  },
+  "Westchester Medical Center": {
+    "diabetesRate": 8.8,
+    "obesityRate": 25.9,
+    "hypertensionRate": 25.7,
+    "smokingRate": 9.3,
+    "ckdRate": 13.4
+  },
+  "The Cleveland Clinic Foundation": {
+    "diabetesRate": 11.3,
+    "obesityRate": 35.4,
+    "hypertensionRate": 34.2,
+    "smokingRate": 15.2,
+    "ckdRate": 14.7
+  },
+  "Nationwide Children's Hospital": {
+    "diabetesRate": 11.8,
+    "obesityRate": 33.7,
+    "hypertensionRate": 33,
+    "smokingRate": 14,
+    "ckdRate": 14.9
+  },
+  "Children's Hospital Medical Center": {
+    "diabetesRate": 11.9,
+    "obesityRate": 35.8,
+    "hypertensionRate": 33.9,
+    "smokingRate": 14.3,
+    "ckdRate": 15
+  },
+  "University of Toledo Medical Center": {
+    "diabetesRate": 12.2,
+    "obesityRate": 36.2,
+    "hypertensionRate": 33.8,
+    "smokingRate": 16.8,
+    "ckdRate": 15.1
+  },
+  "Ohio State University Medical Center": {
+    "diabetesRate": 11.8,
+    "obesityRate": 33.7,
+    "hypertensionRate": 33,
+    "smokingRate": 14,
+    "ckdRate": 14.9
+  },
+  "The Christ Hospital": {
+    "diabetesRate": 11.9,
+    "obesityRate": 35.8,
+    "hypertensionRate": 33.9,
+    "smokingRate": 14.3,
+    "ckdRate": 15
+  },
+  "University of Cincinnati  Medical Center": {
+    "diabetesRate": 11.9,
+    "obesityRate": 35.8,
+    "hypertensionRate": 33.9,
+    "smokingRate": 14.3,
+    "ckdRate": 15
+  },
+  "University Hospitals of Cleveland": {
+    "diabetesRate": 11.3,
+    "obesityRate": 35.4,
+    "hypertensionRate": 34.2,
+    "smokingRate": 15.2,
+    "ckdRate": 14.7
+  },
+  "Integris Baptist Medical Center": {
+    "diabetesRate": 12,
+    "obesityRate": 37.9,
+    "hypertensionRate": 35.9,
+    "smokingRate": 14.5,
+    "ckdRate": 15
+  },
+  "Children's Hospital of Oklahoma": {
+    "diabetesRate": 12,
+    "obesityRate": 37.9,
+    "hypertensionRate": 35.9,
+    "smokingRate": 14.5,
+    "ckdRate": 15
+  },
+  "OU Medical Center": {
+    "diabetesRate": 12,
+    "obesityRate": 37.9,
+    "hypertensionRate": 35.9,
+    "smokingRate": 14.5,
+    "ckdRate": 15
+  },
+  "St John Medical Center": {
+    "diabetesRate": 10.8,
+    "obesityRate": 35.9,
+    "hypertensionRate": 33.8,
+    "smokingRate": 15,
+    "ckdRate": 14.4
+  },
+  "Legacy Good Samaritan Hospital and Medical Center": {
+    "diabetesRate": 9.1,
+    "obesityRate": 28.5,
+    "hypertensionRate": 27.7,
+    "smokingRate": 11.7,
+    "ckdRate": 13.6
+  },
+  "St Vincent Hospital and Medical Center": {
+    "diabetesRate": 9.1,
+    "obesityRate": 28.5,
+    "hypertensionRate": 27.7,
+    "smokingRate": 11.7,
+    "ckdRate": 13.6
+  },
+  "Oregon Health & Science University": {
+    "diabetesRate": 9.1,
+    "obesityRate": 28.5,
+    "hypertensionRate": 27.7,
+    "smokingRate": 11.7,
+    "ckdRate": 13.6
+  },
+  "VA Portland Health Care System": {
+    "diabetesRate": 9.1,
+    "obesityRate": 28.5,
+    "hypertensionRate": 27.7,
+    "smokingRate": 11.7,
+    "ckdRate": 13.6
+  },
+  "Albert Einstein Medical Center": {
+    "diabetesRate": 9.9,
+    "obesityRate": 29.6,
+    "hypertensionRate": 30.3,
+    "smokingRate": 13.1,
+    "ckdRate": 14
+  },
+  "Allegheny General Hospital": {
+    "diabetesRate": 12.5,
+    "obesityRate": 43.9,
+    "hypertensionRate": 38.2,
+    "smokingRate": 19.3,
+    "ckdRate": 15.3
+  },
+  "UPMC Children's Hospital of Pittsburgh": {
+    "diabetesRate": 12.5,
+    "obesityRate": 43.9,
+    "hypertensionRate": 38.2,
+    "smokingRate": 19.3,
+    "ckdRate": 15.3
+  },
+  "Children's Hospital of Philadelphia": {
+    "diabetesRate": 9.9,
+    "obesityRate": 29.6,
+    "hypertensionRate": 30.3,
+    "smokingRate": 13.1,
+    "ckdRate": 14
+  },
+  "Geisinger Medical Center": {
+    "diabetesRate": 9.3,
+    "obesityRate": 30.8,
+    "hypertensionRate": 31.6,
+    "smokingRate": 15.3,
+    "ckdRate": 13.7
+  },
+  "Penn State Milton S Hershey Medical Center": {
+    "diabetesRate": 8.5,
+    "obesityRate": 37.4,
+    "hypertensionRate": 29.8,
+    "smokingRate": 11,
+    "ckdRate": 13.3
+  },
+  "Pinnacle Health System at Harrisburg Hospital": {
+    "diabetesRate": 8.5,
+    "obesityRate": 37.4,
+    "hypertensionRate": 29.8,
+    "smokingRate": 11,
+    "ckdRate": 13.3
+  },
+  "The Lankenau Hospital": {
+    "diabetesRate": 8.9,
+    "obesityRate": 31.5,
+    "hypertensionRate": 33.2,
+    "smokingRate": 12.1,
+    "ckdRate": 13.5
+  },
+  "Lehigh Valley Hospital": {
+    "diabetesRate": 7,
+    "obesityRate": 26,
+    "hypertensionRate": 25.6,
+    "smokingRate": 8.9,
+    "ckdRate": 12.5
+  },
+  "UPMC Hamot": {
+    "diabetesRate": 10,
+    "obesityRate": 36.7,
+    "hypertensionRate": 31.6,
+    "smokingRate": 15.5,
+    "ckdRate": 14
+  },
+  "University of Pittsburgh Medical Center": {
+    "diabetesRate": 12.5,
+    "obesityRate": 43.9,
+    "hypertensionRate": 38.2,
+    "smokingRate": 19.3,
+    "ckdRate": 15.3
+  },
+  "St. Christopher's Hospital for Children": {
+    "diabetesRate": 9.9,
+    "obesityRate": 29.6,
+    "hypertensionRate": 30.3,
+    "smokingRate": 13.1,
+    "ckdRate": 14
+  },
+  "Thomas Jefferson University Hospital": {
+    "diabetesRate": 9.9,
+    "obesityRate": 29.6,
+    "hypertensionRate": 30.3,
+    "smokingRate": 13.1,
+    "ckdRate": 14
+  },
+  "Temple University Hospital": {
+    "diabetesRate": 9.9,
+    "obesityRate": 29.6,
+    "hypertensionRate": 30.3,
+    "smokingRate": 13.1,
+    "ckdRate": 14
+  },
+  "Hospital of the University of Pennsylvania": {
+    "diabetesRate": 9.9,
+    "obesityRate": 29.6,
+    "hypertensionRate": 30.3,
+    "smokingRate": 13.1,
+    "ckdRate": 14
+  },
+  "VA Pittsburgh Healthcare System": {
+    "diabetesRate": 12.5,
+    "obesityRate": 43.9,
+    "hypertensionRate": 38.2,
+    "smokingRate": 19.3,
+    "ckdRate": 15.3
+  },
+  "Cardiovascular Center of Puerto Rico and the Caribbean": {
+    "diabetesRate": 13.3,
+    "obesityRate": 29.3,
+    "hypertensionRate": 30.3,
+    "smokingRate": 11.4,
+    "ckdRate": 15.7
+  },
+  "Auxilio Mutuo Hospital": {
+    "diabetesRate": 13.3,
+    "obesityRate": 29.3,
+    "hypertensionRate": 30.3,
+    "smokingRate": 11.4,
+    "ckdRate": 15.7
+  },
+  "Rhode Island Hospital": {
+    "diabetesRate": 7.9,
+    "obesityRate": 26,
+    "hypertensionRate": 27.4,
+    "smokingRate": 10.6,
+    "ckdRate": 13
+  },
+  "MUSC Children's Hospital": {
+    "diabetesRate": 10,
+    "obesityRate": 29.9,
+    "hypertensionRate": 29.4,
+    "smokingRate": 10.6,
+    "ckdRate": 14
+  },
+  "Medical University of South Carolina": {
+    "diabetesRate": 10,
+    "obesityRate": 29.9,
+    "hypertensionRate": 29.4,
+    "smokingRate": 10.6,
+    "ckdRate": 14
+  },
+  "Avera McKennan Hospital": {
+    "diabetesRate": 10,
+    "obesityRate": 37.1,
+    "hypertensionRate": 30.5,
+    "smokingRate": 14.1,
+    "ckdRate": 14
+  },
+  "Sanford Health/USD Medical Center": {
+    "diabetesRate": 9.4,
+    "obesityRate": 38.8,
+    "hypertensionRate": 29.5,
+    "smokingRate": 14.5,
+    "ckdRate": 13.7
+  },
+  "Baptist Memorial Hospital": {
+    "diabetesRate": 12.4,
+    "obesityRate": 43.1,
+    "hypertensionRate": 37,
+    "smokingRate": 20.7,
+    "ckdRate": 15.2
+  },
+  "Erlanger Medical Center": {
+    "diabetesRate": 11,
+    "obesityRate": 34.5,
+    "hypertensionRate": 34.6,
+    "smokingRate": 15.7,
+    "ckdRate": 14.5
+  },
+  "Le Bonheur Children's Medical Center": {
+    "diabetesRate": 14.6,
+    "obesityRate": 39.6,
+    "hypertensionRate": 41,
+    "smokingRate": 17.3,
+    "ckdRate": 16.3
+  },
+  "Methodist University Hospital": {
+    "diabetesRate": 14.6,
+    "obesityRate": 39.6,
+    "hypertensionRate": 41,
+    "smokingRate": 17.3,
+    "ckdRate": 16.3
+  },
+  "Saint Thomas Hospital": {
+    "diabetesRate": 11.7,
+    "obesityRate": 32.5,
+    "hypertensionRate": 34.4,
+    "smokingRate": 14.2,
+    "ckdRate": 14.9
+  },
+  "University of Tennessee Medical Center at Knoxville": {
+    "diabetesRate": 11.1,
+    "obesityRate": 34.1,
+    "hypertensionRate": 34.9,
+    "smokingRate": 15.7,
+    "ckdRate": 14.6
+  },
+  "Vanderbilt University Medical Center": {
+    "diabetesRate": 11.7,
+    "obesityRate": 32.5,
+    "hypertensionRate": 34.4,
+    "smokingRate": 14.2,
+    "ckdRate": 14.9
+  },
+  "Baylor  Scott and White All Saints Medical Center-Fort Worth": {
+    "diabetesRate": 11.4,
+    "obesityRate": 33.1,
+    "hypertensionRate": 31.1,
+    "smokingRate": 12.6,
+    "ckdRate": 14.7
+  },
+  "University Hospital, University of Texas Health Science Center": {
+    "diabetesRate": 13.8,
+    "obesityRate": 34.2,
+    "hypertensionRate": 33.5,
+    "smokingRate": 12.3,
+    "ckdRate": 15.9
+  },
+  "Cook Children's Medical Center": {
+    "diabetesRate": 11.4,
+    "obesityRate": 33.1,
+    "hypertensionRate": 31.1,
+    "smokingRate": 12.6,
+    "ckdRate": 14.7
+  },
+  "Children's Medical Center of Dallas": {
+    "diabetesRate": 12.5,
+    "obesityRate": 35.7,
+    "hypertensionRate": 33.5,
+    "smokingRate": 12.5,
+    "ckdRate": 15.3
+  },
+  "Seton Medical Center Austin": {
+    "diabetesRate": 9.5,
+    "obesityRate": 30.1,
+    "hypertensionRate": 28,
+    "smokingRate": 9.3,
+    "ckdRate": 13.8
+  },
+  "Driscoll Children's Hospital": {
+    "diabetesRate": 14.5,
+    "obesityRate": 40,
+    "hypertensionRate": 34,
+    "smokingRate": 13.4,
+    "ckdRate": 16.3
+  },
+  "North Austin Medical Center": {
+    "diabetesRate": 9.5,
+    "obesityRate": 30.1,
+    "hypertensionRate": 28,
+    "smokingRate": 9.3,
+    "ckdRate": 13.8
+  },
+  "Doctor's Hospital at Renaissance": {
+    "diabetesRate": 17.7,
+    "obesityRate": 45,
+    "hypertensionRate": 34.1,
+    "smokingRate": 13.8,
+    "ckdRate": 17.9
+  },
+  "Texas Health Harris Methodist Fort Worth Hospital": {
+    "diabetesRate": 11.4,
+    "obesityRate": 33.1,
+    "hypertensionRate": 31.1,
+    "smokingRate": 12.6,
+    "ckdRate": 14.7
+  },
+  "Medical City Dallas Hospital": {
+    "diabetesRate": 12.5,
+    "obesityRate": 35.7,
+    "hypertensionRate": 33.5,
+    "smokingRate": 12.5,
+    "ckdRate": 15.3
+  },
+  "Memorial Hermann Hospital, University of Texas at Houston": {
+    "diabetesRate": 13.2,
+    "obesityRate": 37.1,
+    "hypertensionRate": 32.9,
+    "smokingRate": 12.6,
+    "ckdRate": 15.6
+  },
+  "CHI St. Luke's Health Baylor College of Medicine Medical Center": {
+    "diabetesRate": 13.2,
+    "obesityRate": 37.1,
+    "hypertensionRate": 32.9,
+    "smokingRate": 12.6,
+    "ckdRate": 15.6
+  },
+  "Methodist Specialty and Transplant Hospital": {
+    "diabetesRate": 13.8,
+    "obesityRate": 34.2,
+    "hypertensionRate": 33.5,
+    "smokingRate": 12.3,
+    "ckdRate": 15.9
+  },
+  "University of Texas Medical Branch at Galveston": {
+    "diabetesRate": 10.8,
+    "obesityRate": 33.8,
+    "hypertensionRate": 32.7,
+    "smokingRate": 12.3,
+    "ckdRate": 14.4
+  },
+  "Covenant Medical Center": {
+    "diabetesRate": 12,
+    "obesityRate": 37.1,
+    "hypertensionRate": 31.9,
+    "smokingRate": 13.7,
+    "ckdRate": 15
+  },
+  "Las Palmas Medical Center": {
+    "diabetesRate": 15.3,
+    "obesityRate": 34.4,
+    "hypertensionRate": 33,
+    "smokingRate": 12.5,
+    "ckdRate": 16.7
+  },
+  "Methodist Dallas Medical Center": {
+    "diabetesRate": 12.5,
+    "obesityRate": 35.7,
+    "hypertensionRate": 33.5,
+    "smokingRate": 12.5,
+    "ckdRate": 15.3
+  },
+  "Houston Methodist Hospital": {
+    "diabetesRate": 13.2,
+    "obesityRate": 37.1,
+    "hypertensionRate": 32.9,
+    "smokingRate": 12.6,
+    "ckdRate": 15.6
+  },
+  "Medical City Fort Worth": {
+    "diabetesRate": 11.4,
+    "obesityRate": 33.1,
+    "hypertensionRate": 31.1,
+    "smokingRate": 12.6,
+    "ckdRate": 14.7
+  },
+  "Parkland Health and Hospital System": {
+    "diabetesRate": 12.5,
+    "obesityRate": 35.7,
+    "hypertensionRate": 33.5,
+    "smokingRate": 12.5,
+    "ckdRate": 15.3
+  },
+  "UT Southwestern Medical Center/": {
+    "diabetesRate": 12.5,
+    "obesityRate": 35.7,
+    "hypertensionRate": 33.5,
+    "smokingRate": 12.5,
+    "ckdRate": 15.3
+  },
+  "Scott and White Memorial Hospital": {
+    "diabetesRate": 13,
+    "obesityRate": 43.5,
+    "hypertensionRate": 34.1,
+    "smokingRate": 13.6,
+    "ckdRate": 15.5
+  },
+  "Texas Children's Hospital": {
+    "diabetesRate": 13.2,
+    "obesityRate": 37.1,
+    "hypertensionRate": 32.9,
+    "smokingRate": 12.6,
+    "ckdRate": 15.6
+  },
+  "Baylor University Medical Center": {
+    "diabetesRate": 12.5,
+    "obesityRate": 35.7,
+    "hypertensionRate": 33.5,
+    "smokingRate": 12.5,
+    "ckdRate": 15.3
+  },
+  "University Children?s Health": {
+    "diabetesRate": 13.8,
+    "obesityRate": 34.2,
+    "hypertensionRate": 33.5,
+    "smokingRate": 12.3,
+    "ckdRate": 15.9
+  },
+  "Michael E. DeBakey VA Medical Center": {
+    "diabetesRate": 13.2,
+    "obesityRate": 37.1,
+    "hypertensionRate": 32.9,
+    "smokingRate": 12.6,
+    "ckdRate": 15.6
+  },
+  "Intermountain Medical Center": {
+    "diabetesRate": 8.7,
+    "obesityRate": 29.9,
+    "hypertensionRate": 28.1,
+    "smokingRate": 8.3,
+    "ckdRate": 13.4
+  },
+  "University of Utah Medical Center": {
+    "diabetesRate": 8.7,
+    "obesityRate": 29.9,
+    "hypertensionRate": 28.1,
+    "smokingRate": 8.3,
+    "ckdRate": 13.4
+  },
+  "Primary Children's Hospital": {
+    "diabetesRate": 8.7,
+    "obesityRate": 29.9,
+    "hypertensionRate": 28.1,
+    "smokingRate": 8.3,
+    "ckdRate": 13.4
+  },
+  "Children's Hospital of the King's Daughters": {
+    "diabetesRate": 14.9,
+    "obesityRate": 41,
+    "hypertensionRate": 39.3,
+    "smokingRate": 16.7,
+    "ckdRate": 16.5
+  },
+  "Inova Fairfax Hospital": {
+    "diabetesRate": 9.5,
+    "obesityRate": 23.8,
+    "hypertensionRate": 27.2,
+    "smokingRate": 8,
+    "ckdRate": 13.8
+  },
+  "Henrico Doctors' Hospital": {
+    "diabetesRate": 13.5,
+    "obesityRate": 38.3,
+    "hypertensionRate": 37.6,
+    "smokingRate": 14.6,
+    "ckdRate": 15.8
+  },
+  "Medical College of Virginia Hospitals": {
+    "diabetesRate": 10.8,
+    "obesityRate": 32.5,
+    "hypertensionRate": 33.3,
+    "smokingRate": 11.4,
+    "ckdRate": 14.4
+  },
+  "Hunter Holmes McGuire Veterans Administration Medical Center": {
+    "diabetesRate": 13.5,
+    "obesityRate": 38.3,
+    "hypertensionRate": 37.6,
+    "smokingRate": 14.6,
+    "ckdRate": 15.8
+  },
+  "Sentara Norfolk General Hospital": {
+    "diabetesRate": 14.9,
+    "obesityRate": 41,
+    "hypertensionRate": 39.3,
+    "smokingRate": 16.7,
+    "ckdRate": 16.5
+  },
+  "University of Virginia Health Sciences Center": {
+    "diabetesRate": 11.5,
+    "obesityRate": 35.2,
+    "hypertensionRate": 33,
+    "smokingRate": 12.3,
+    "ckdRate": 14.8
+  },
+  "The University of Vermont Medical Center": {
+    "diabetesRate": 6.2,
+    "obesityRate": 23.6,
+    "hypertensionRate": 24.3,
+    "smokingRate": 9.2,
+    "ckdRate": 12.1
+  },
+  "Seattle Children's Hospital": {
+    "diabetesRate": 8.3,
+    "obesityRate": 32,
+    "hypertensionRate": 29.5,
+    "smokingRate": 10.7,
+    "ckdRate": 13.2
+  },
+  "Providence Sacred Heart Medical Center & Children's Hospital": {
+    "diabetesRate": 9.1,
+    "obesityRate": 34.8,
+    "hypertensionRate": 28.5,
+    "smokingRate": 12,
+    "ckdRate": 13.6
+  },
+  "Swedish Medical Center": {
+    "diabetesRate": 8.3,
+    "obesityRate": 32,
+    "hypertensionRate": 29.5,
+    "smokingRate": 10.7,
+    "ckdRate": 13.2
+  },
+  "University of Washington Medical Center": {
+    "diabetesRate": 8.3,
+    "obesityRate": 32,
+    "hypertensionRate": 29.5,
+    "smokingRate": 10.7,
+    "ckdRate": 13.2
+  },
+  "Virginia Mason Medical Center": {
+    "diabetesRate": 8.3,
+    "obesityRate": 32,
+    "hypertensionRate": 29.5,
+    "smokingRate": 10.7,
+    "ckdRate": 13.2
+  },
+  "Children's Hospital of Wisconsin": {
+    "diabetesRate": 12.4,
+    "obesityRate": 38.8,
+    "hypertensionRate": 34.1,
+    "smokingRate": 14.9,
+    "ckdRate": 15.2
+  },
+  "Froedtert Memorial Lutheran Hospital": {
+    "diabetesRate": 12.4,
+    "obesityRate": 38.8,
+    "hypertensionRate": 34.1,
+    "smokingRate": 14.9,
+    "ckdRate": 15.2
+  },
+  "Aurora St. Luke's Medical Center": {
+    "diabetesRate": 12.4,
+    "obesityRate": 38.8,
+    "hypertensionRate": 34.1,
+    "smokingRate": 14.9,
+    "ckdRate": 15.2
+  },
+  "University of Wisconsin Hospital and Clinics": {
+    "diabetesRate": 8.1,
+    "obesityRate": 33.4,
+    "hypertensionRate": 25.5,
+    "smokingRate": 10.4,
+    "ckdRate": 13.1
+  },
+  "Charleston Area Medical Center": {
+    "diabetesRate": 12.4,
+    "obesityRate": 40.3,
+    "hypertensionRate": 39.9,
+    "smokingRate": 19.6,
+    "ckdRate": 15.2
+  },
+  "West Virginia University Hospital": {
+    "diabetesRate": 12.1,
+    "obesityRate": 34.2,
+    "hypertensionRate": 35.1,
+    "smokingRate": 15.6,
+    "ckdRate": 15.1
   }
 }
