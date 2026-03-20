@@ -543,6 +543,84 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 
 ---
 
+## Phase 6: Spatial Geographic Modeling
+
+> **Goal:** Transform TransPlan from discrete city-level scoring to continuous spatial modeling. Expand from 22 hand-picked cities to all ~250 SRTR transplant centers. Build interpolated geographic surfaces. Model UNOS allocation geography.
+>
+> **Why three sub-phases?** The ROI curve flattens sharply. Phase 6A captures ~80% of accuracy gain for ~20% of effort by using data we already download but discard. Phase 6B adds ~10% more via new data acquisition and interpolation infrastructure. Phase 6C adds the final ~10% with research-grade geostatistics. Each phase builds on the prior — 6B needs the coordinates and dynamic loading from 6A; 6C needs the interpolation engine from 6B.
+
+### Phase 6A: Center Expansion & Geographic Foundation (Epic #114)
+
+> **Why a separate phase?** This is the highest-ROI work. SRTR PSR Excel files already contain center-level statistics for ALL ~250 US transplant programs, but our parse script filters to 22 cities. Removing this filter and adding coordinates enables everything that follows.
+
+- [ ] **Extract SRTR center list** (#115): catalog all ~250 center codes, names, organs from Excel files
+- [ ] **Add geographic coordinates** (#116): lat/lon for all 22 cities + all ~250 centers (geocoding)
+- [ ] **Update parse script** (#117): remove 22-city whitelist, generate center-level data files
+- [ ] **Replace hardcoded CITIES** (#118): dynamic data loading in all backend services (monte_carlo, equity, sensitivity, what_if)
+- [ ] **Dynamic center dropdown** (#119): searchable dropdown with 250+ centers, grouped by state
+- [ ] **Leaflet marker clustering** (#120): markercluster for 250+ map points
+- [ ] **Results pagination** (#121): top-20 default, filter by state/distance/organ, sortable columns
+- [ ] **OPO-to-center mapping** (#122): 57 OPOs → constituent centers, boundary data (extends #19)
+- [ ] **Patient home location** (#123): input city/zip/coords, distance to each center, travel burden scoring (extends #111)
+
+**Estimated effort:** 2-3 weeks. **Depends on:** Phase 5 M5 complete.
+
+### Phase 6B: Spatial Interpolation (Epic #124)
+
+> **Why a separate phase?** Requires new data acquisition (full county datasets, monitor-level data) and new infrastructure (interpolation engine, surface caching). Phase 6A is a prerequisite — we need coordinates and dynamic loading before spatial surfaces make sense.
+
+**Current data waste:** TransPlan discards ~99% of available spatial data. EPA AQS has ~4,000 monitors → averaged to 22 values. CDC PLACES has ~3,000 counties → only 20-22 queried. Building continuous surfaces from this data enables accurate scores at ANY location, not just 22 predefined cities.
+
+- [ ] **EPA monitor data** (#125): save per-monitor lat/lon + readings alongside city aggregates
+- [ ] **CDC county data** (#126): query all ~3,000 US counties from CDC PLACES (not just 20-22)
+- [ ] **Interpolation service** (#127): `backend/services/spatial_interpolation.py` — RBF/kriging surface builder + point queries
+- [ ] **Interpolation API** (#128): `GET /interpolated-value?lat=X&lon=Y&layer=air_quality`
+- [ ] **Heatmap overlay** (#129): Leaflet heatmap/choropleth showing interpolated surfaces on map
+- [ ] **Allocation circle modeling** (#130): 250nm/500nm donor pool circles per UNOS policy (extends #112)
+- [ ] **Patient-relative scoring** (#131): delta scores vs. current location ("air quality +15, cost -8")
+
+**Estimated effort:** 2-3 weeks after 6A. **Depends on:** Phase 6A coordinates and dynamic loading.
+
+### Phase 6C: Full Spatial Model & Geostatistical Inference (Epic #132)
+
+> **Why a separate phase?** This is research-grade work — highest effort, lowest marginal gain. Adds ~10% accuracy for ~40% of total effort. Pursue when 6A+6B are stable and if targeting publication in health geography / medical informatics journals.
+
+- [ ] **Pre-computed raster grid** (#133): 10km resolution, CONUS-wide, ~80,000 cells × N layers
+- [ ] **Kriging uncertainty** (#134): variance estimates at every prediction point, confidence intervals on interpolated values
+- [ ] **Spatial econometric models** (#135): spatial lag model for center competition effects (wait times influenced by demand at nearby centers)
+
+**Estimated effort:** 3-5 weeks after 6B. **Depends on:** Phase 6B interpolation engine.
+
+### Phase 6 Dependency Graph
+```
+Phase 6A: Center Expansion ──────────────────────────────┐
+  ├── Extract center list (#115)                          │
+  ├── Add coordinates (#116)                              │
+  ├── Update parse script (#117)                          │
+  ├── Replace hardcoded CITIES (#118)                     │
+  ├── Dynamic dropdown (#119)                             │
+  ├── Marker clustering (#120)                            │
+  ├── Results pagination (#121)                           │
+  ├── OPO mapping (#122)                                  │
+  └── Patient home location (#123)                        │
+                                                          ▼
+Phase 6B: Spatial Interpolation ─────────────────────────┐
+  ├── EPA monitor data (#125)                             │
+  ├── CDC county data (#126)                              │
+  ├── Interpolation service (#127)                        │
+  ├── Interpolation API (#128)                            │
+  ├── Heatmap overlay (#129)                              │
+  ├── Allocation circles (#130)                           │
+  └── Patient-relative scoring (#131)                     │
+                                                          ▼
+Phase 6C: Full Spatial Model
+  ├── Pre-computed raster grid (#133)
+  ├── Kriging uncertainty (#134)
+  └── Spatial econometric models (#135)
+```
+
+---
+
 ## Architecture Decision: Stack Migration
 
 The SRS (docs/ideas.md) specifies a target architecture of:
