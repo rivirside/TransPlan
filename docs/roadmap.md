@@ -178,9 +178,10 @@
 - [x] 2 new backend schema tests (default False, accepted True) — 165 total pytest
 - [x] ADR-017 documenting multiplier approach and rationale
 
-### M2b: COD Model Data Quality Improvements (L-049 through L-056)
+### M2b: COD Model Data Quality Improvements (L-049 through L-056) — ✅ ALL CORE ITEMS DONE
 
 > **Goal:** Upgrade the M2 cause-of-death multiplier from static single-paper seed data to a multi-source, automatable, stochastic model. Can be worked independently of M3–M6.
+> **Status:** All 8 limitations (L-049 through L-056) resolved. Remaining items are optional enhancements.
 
 #### Tier 1: OPO Geographic Mapping (L-050) — ✅ SUFFICIENTLY ADDRESSED
 - [x] Authoritative county-to-OPO mapping from HRSA Data Warehouse (3,225 counties → 60 OPOs)
@@ -188,20 +189,19 @@
 - [x] `data/opo-mapping.json` updated with `countyToOpo` section and multi-OPO overlap tracking
 - [ ] *Optional future:* Aggregate county-level CDC data to OPO level using HRSA mapping (low priority — state-level COD proportions are well-mitigated by L-053 stochastic sampling and L-056 sublinear elasticity)
 
-#### Tier 2: Automated CDC SODA Fetch (L-051)
-- [ ] New `scripts/fetch-cause-of-death.js` using data.cdc.gov SODA API
-- [ ] Endpoint: NCHS Leading Causes of Death (`bi63-dtpu`) — state-level, annual
-- [ ] Map SODA categories to our 4+ categories (note: "Unintentional injuries" lumps trauma + drug OD)
-- [ ] Supplement with Provisional Drug Overdose Death dataset for separate drug_intox signal
-- [ ] Add to GitHub Actions weekly fetch job
-- [ ] FIXME: CDC WONDER programmatic API blocks state filtering by policy — web-only for ICD-10 granularity
+#### Tier 2: Automated CDC SODA Fetch (L-051, L-055) — ✅ FIXED
+- [x] `scripts/fetch-cod-data.js` using data.cdc.gov SODA API (bi63-dtpu + xkb8-kh2a)
+- [x] All 50 states + DC with donor-eligibility calibration weights (Nelder-Mead optimization)
+- [x] Added to GitHub Actions weekly fetch job
+- [x] L-055 resolved: expanded from 17 to 51 state COD proportions
+- *Note:* CDC WONDER programmatic API blocks state filtering by policy — SODA approach bypasses this
 
-#### Tier 3: Stochastic Multiplier (L-053)
-- [ ] Extract sample sizes from PMC10329409 for each recovery rate cell
-- [ ] Model recovery rates as Beta(α, β) distributions using study counts as priors
-- [ ] Backend: sample multiplier per-iteration in Monte Carlo loop instead of fixed ratio
-- [ ] Frontend: show COD adjustment as confidence range on score cards (e.g., "±2.3 pts")
-- [ ] Update sensitivity analysis to include COD uncertainty as a tornado parameter
+#### Tier 3: Stochastic Multiplier (L-053) — ✅ FIXED
+- [x] Recovery rates modeled as `Beta(rate×κ, (1-rate)×κ)` distributions with κ=50 (~3.5% CV)
+- [x] Backend: `_get_cod_multiplier()` samples stochastic multiplier per Monte Carlo iteration
+- [x] Applied across all simulation paths (MC, what-if, sensitivity, MCMC)
+- [ ] *Optional future:* Frontend confidence range on score cards (e.g., "±2.3 pts")
+- [ ] *Optional future:* COD uncertainty as a tornado parameter in sensitivity analysis
 
 #### Tier 4: Expanded Categories & Cross-Validation (L-049, L-052) — ✅ L-049 VALIDATED
 - [x] Add anoxia-NOS as 5th cause-of-death category (L-052 FIXED — see M2 above)
@@ -209,7 +209,8 @@
 - [x] 15/30 organ×COD cells updated where drift >10%: kidney↑ (DCD, perfusion), pancreas↓ (declining), heart/lung↓ (conservative selection)
 - [x] All 6 organs within 7% of OPTN 2023 benchmarks (weighted average validation)
 - [x] `scripts/validate-recovery-rates.py` updated with OPTN 2023 benchmarks and COD weights
-- [ ] *Optional future:* Sub-linear supply→wait scaling (L-056): calibrate elasticity against SRTR historical wait times
+- [x] L-056 FIXED: sub-linear elasticity (ε=0.65) implemented via `SUPPLY_WAIT_ELASTICITY` config
+- [ ] *Optional future:* Calibrate ε against SRTR historical wait times (validate 0.65 assumption)
 
 #### API Landscape (as of March 2026)
 
@@ -335,7 +336,7 @@
 
 **Phase 1: Literature Review (before coding)**
 - [ ] Research SRTR historical wait times before/after 2021 kidney allocation policy change
-- [ ] Estimate empirical supply-to-wait elasticity from real data (validate/update 0.65 assumption)
+- [ ] Estimate empirical supply-to-wait elasticity from real data (validate/update 0.65 assumption — L-056 core implementation already done)
 - [ ] Review transplant policy papers: OPTN continuous distribution, regional sharing rules, DCD expansion
 - [ ] Document causal model assumptions as a formal DAG (directed acyclic graph)
 
