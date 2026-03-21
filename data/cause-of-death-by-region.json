@@ -1,7 +1,7 @@
 {
   "_meta": {
     "fetchedAt": "2026-03-20T23:37:32.187Z",
-    "source": "Organ recovery rates: PMC10329409 Table 2 (2023). State proportions: CDC 2017 mortality data (data.cdc.gov bi63-dtpu + xkb8-kh2a) with donor-eligibility calibration.",
+    "source": "Organ recovery rates: PMC10329409 Table 2 (2023), cross-validated against OPTN 2023 national data (hrsa.unos.org, March 2026). 15 of 30 cells updated where OPTN 2023 drift >10% from PMC 2005-2019 averages. State proportions: CDC 2017 mortality data (data.cdc.gov bi63-dtpu + xkb8-kh2a) with donor-eligibility calibration.",
     "notes": "Intestine rates from OPTN 2023 OTPD ratio (intestine/pancreas=0.104) with COD-specific clinical adjustments (see GitHub #16). Anoxia-NOS recovery rates estimated from PMC10329409 OR 0.848 vs trauma (see GitHub #14); state shares from CDC drowning rate patterns. Proportions represent share of potential brain-dead donors by cause among donor-eligible deaths. Calibration weights (trauma=0.31, cardiovascular=0.062, drug_intox=0.721, stroke=0.175) fitted via Nelder-Mead optimization.",
     "calibration": "Weights represent fraction of general-population deaths in each category that result in donor-eligible brain death."
   },
@@ -9,37 +9,37 @@
     "heart": {
       "trauma": 0.488,
       "cardiovascular": 0.151,
-      "drug_intox": 0.369,
-      "stroke": 0.157,
-      "anoxia": 0.39
+      "drug_intox": 0.282,
+      "stroke": 0.121,
+      "anoxia": 0.298
     },
     "lung": {
       "trauma": 0.28,
       "cardiovascular": 0.094,
-      "drug_intox": 0.204,
+      "drug_intox": 0.165,
       "stroke": 0.19,
-      "anoxia": 0.22
+      "anoxia": 0.178
     },
     "liver": {
       "trauma": 0.797,
       "cardiovascular": 0.654,
-      "drug_intox": 0.78,
+      "drug_intox": 0.679,
       "stroke": 0.737,
-      "anoxia": 0.74
+      "anoxia": 0.645
     },
     "kidney": {
       "trauma": 0.896,
       "cardiovascular": 0.686,
-      "drug_intox": 0.824,
-      "stroke": 0.668,
-      "anoxia": 0.82
+      "drug_intox": 0.949,
+      "stroke": 0.916,
+      "anoxia": 0.945
     },
     "pancreas": {
-      "trauma": 0.246,
+      "trauma": 0.172,
       "cardiovascular": 0.048,
-      "drug_intox": 0.095,
-      "stroke": 0.053,
-      "anoxia": 0.15
+      "drug_intox": 0.049,
+      "stroke": 0.025,
+      "anoxia": 0.077
     },
     "intestine": {
       "trauma": 0.03,

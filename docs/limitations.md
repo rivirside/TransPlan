@@ -359,19 +359,20 @@ Each limitation has a severity, status, and category. When we fix one, change st
 ## 7. M2 Cause-of-Death Model (discovered 2026-03-08)
 
 ### L-049: Organ recovery rates from single study (PMC10329409)
-- **Severity:** HIGH → MEDIUM (validated)
-- **Status:** MITIGATED
-- **Details:** The 6×4 organ recovery rate matrix comes from PMC10329409 (2023, OPTN data 2005–2019). Cross-validation against OPTN 2023 benchmarks (`scripts/validate-recovery-rates.py`) shows: kidney within 4.3%, liver within 3.8%, pancreas within 7.2% — all good. Heart underestimates by 17.3% (DCD heart program started 2020, not in study period). Lung underestimates by 19.3% (EVLP technology adoption). Intestine ±50% but tiny numbers (~100/year nationally). Heart and lung rates are conservative (underestimate modern utilization), which means our donor supply model slightly underpredicts — this is safe directionally (patients see slightly worse estimates than reality).
+- **Severity:** HIGH → LOW (cross-validated)
+- **Status:** VALIDATED (March 2026)
+- **Details:** The 6×5 organ recovery rate matrix originated from PMC10329409 (Sundaram et al. 2023, OPTN data 2005–2019). In March 2026, all 30 organ×COD cells were cross-validated against OPTN 2023 national data (hrsa.unos.org, "Deceased Donors Recovered by Cause of Death", 16,336 total donors). 15 of 30 cells were updated where drift exceeded 10%: kidney rates increased (expanded DCD, machine perfusion, HCV+ acceptance), pancreas rates decreased (declining transplant volumes, shift to islet cell), heart stroke/anoxia/drug_intox rates decreased (more conservative selection), lung/liver anoxia/drug_intox rates decreased. Weighted-average validation: kidney 0.920 vs OPTN 0.947 (−2.9%), liver 0.713 vs 0.671 (+6.3%), heart 0.270 vs 0.285 (−5.3%), lung 0.193 vs 0.201 (−4.0%), pancreas 0.076 vs 0.075 (+1.3%). All within 7% of OPTN benchmarks. Cardiovascular rates unchanged (no OPTN equivalent category); drug_intox/anoxia split preserved from PMC ratio (OPTN lumps both as ANOXIA).
 - **File:** `data/cause-of-death-by-region.json` → `organRecoveryRates`, `scripts/validate-recovery-rates.py`
-- **Fix remaining:** Update heart and lung rates when next OPTN annual data report is available. Consider Beta distribution priors for stochastic modeling of rate uncertainty.
+- **Remaining:** Re-run validation annually when new OPTN reports are released. Consider Beta distribution priors for stochastic modeling of rate uncertainty (L-053 already applies kappa=50 stochastic sampling).
 
 ### L-050: State-level granularity instead of OPO/DSA boundaries
-- **Severity:** HIGH
-- **Status:** PARTIALLY ADDRESSED
+- **Severity:** HIGH → LOW (sufficiently addressed)
+- **Status:** SUFFICIENTLY ADDRESSED (March 2026)
 - **Details:** Organ procurement operates at the OPO (Organ Procurement Organization) / DSA (Donor Service Area) level — 56 OPOs in the US — but our cause-of-death data is aggregated at state level. OPO boundaries do not align with state lines. Pittsburgh (CORE) and Philadelphia (Gift of Life) are both in Pennsylvania but have very different donor pools and operational characteristics. This is the same granularity gap identified in L-009.
 - **File:** `data/cause-of-death-by-region.json` → `stateCauseOfDeathProportions`, `data/opo-mapping.json`
-- **Progress:** 55 OPOs cataloged with OPTN codes, names, regions, and primary states. All 248 SRTR centers mapped to their serving OPOs via `scripts/fetch-opo-service-areas.py` (95 by single-OPO state, 152 by geographic proximity to OPO HQ, 1 manual override). Median distance to assigned OPO HQ: 12.8 km. Data in `data/opo-mapping.json`.
-- **Fix remaining:** CMS county-to-OPO mapping (42 CFR Part 486 Appendix) not available as structured data — exhaustively searched eCFR (42 CFR 486 Subpart G has rules but no county appendix), HRSA/OPTN (no member directory with service areas), SRTR (no OPO column in PSR Excel), and CMS data portal (no OPO service area dataset). County assignments live in CMS internal certification records and UNOS UNet system. Options: FOIA request to CMS, formal SRTR data request, or manual transcription from OPO certification letters. See GitHub #138. Current mapping is approximate for multi-OPO states. Add GeoJSON boundaries for map visualization. Aggregate COD data at OPO level.
+- **Resolution:** OPO geographic mapping is now authoritative via HRSA Data Warehouse Excel file (`data.hrsa.gov`). `data/opo-mapping.json` contains: 60 OPOs with OPTN codes, 3,225 county FIPS → OPO assignments (with 98 multi-OPO overlap counties noted), and all 248 SRTR centers mapped to OPOs via `hrsa_county` method with 40 corrections from prior proximity-based mapping. Script: `scripts/build-opo-mapping-hrsa.py`. See GitHub #138 (closed).
+- **Remaining gap:** `stateCauseOfDeathProportions` remains at state level (CDC mortality data is state-aggregated). OPO-level COD proportions would require either county-level CDC WONDER data (blocked by programmatic API policy) or SRTR OPO-specific donor COD reports. This gap is well-mitigated by: (1) Beta-distribution stochastic sampling (L-053, kappa=50, ~3.5% CV), (2) sublinear supply-wait elasticity (L-056), and (3) most project states having only 1–2 cities, making state ≈ OPO a reasonable proxy.
+- **Future:** Optional enhancement — aggregate county-level CDC data to OPO level using the HRSA county-to-OPO mapping. Low priority given existing mitigations.
 
 ### L-051: Static cause-of-death proportions with no automated refresh
 - **Severity:** MEDIUM

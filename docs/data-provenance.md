@@ -48,6 +48,8 @@
 | City mortality/delisting adjustments (22 cities) | SRTR PSR Table B7 center / national ratios | `scripts/parse-srtr-reports.py` | Semi | `data/competing-risks.json` | Biannual SRTR releases |
 | SRTR center-to-city mapping | SRTR center directory | None | No | `data/srtr-center-mapping.json` | Manual; update when centers change |
 | SRTR raw Excel files | SRTR PSR National Summary Data | `scripts/fetch-srtr-excel.py` | Semi | `data/srtr-raw/` (gitignored) | Biannual; re-downloadable |
+| Organ recovery rates (6 organs × 5 COD) | PMC10329409 (Sundaram 2023, OPTN 2005–2019), cross-validated against OPTN 2023 national data (hrsa.unos.org, March 2026) | `scripts/validate-recovery-rates.py` | No (manual cross-validation) | `data/cause-of-death-by-region.json` → `organRecoveryRates` | 15/30 cells updated where OPTN 2023 drift >10%. Re-validate annually. |
+| State COD proportions (51 states) | CDC 2017 mortality data (data.cdc.gov bi63-dtpu + xkb8-kh2a) | `scripts/fetch-cod-data.js` | Yes (weekly CI) | `data/cause-of-death-by-region.json` → `stateCauseOfDeathProportions` | Donor-eligibility calibration via Nelder-Mead weights |
 
 ---
 
@@ -116,7 +118,8 @@ Each zip contains 8 per-organ Excel files: `csrs_final_tables_{YYMM}_{organ}.xls
 
 | Data Point | Source | API/Fetch Script | Automated? | Data File | Freshness |
 |------------|--------|-----------------|------------|-----------|-----------|
-| County-level health demographics (2,956 counties) | CDC PLACES API (SODA) | `scripts/fetch-health-data-counties.js` | Yes (weekly CI) | `data/health-demographics-counties.json` | Public, no key needed. 4 indicators: diabetes, obesity, hypertension, smoking. CKD not available in CDC PLACES. |
+| OPO county-to-OPO mapping (3,225 counties → 60 OPOs) | HRSA Data Warehouse Excel (`data.hrsa.gov`) | `scripts/build-opo-mapping-hrsa.py` | No (one-time parse) | `data/opo-mapping.json` | Authoritative county FIPS → OPO assignments. 248 centers mapped. 98 multi-OPO overlap counties noted. |
+| County-level health demographics (3,144 counties) | CDC PLACES API (SODA) | `scripts/fetch-health-data-counties.js` | Yes (weekly CI) | `data/health-demographics-counties.json` | Public, no key needed. Multi-release fallback (2025 + 2024 GIS for PA). 4 indicators: diabetes, obesity, hypertension, smoking. CKD not available in CDC PLACES. |
 | Per-monitor air quality data (~2,000-4,000 monitors) | EPA AQS annualData API | `scripts/fetch-air-quality-monitors.js` | Yes (weekly CI) | `data/air-quality-monitors.json` | Requires `EPA_EMAIL` + `EPA_API_KEY`. Lat/lon from existing annualData response fields. |
 
 ### Phase 6B: Spatial Interpolation
@@ -164,5 +167,7 @@ The interpolation engine supports 24 layers, derived from existing data files. T
 | ~~FARS API retired~~ | ~~Traffic fatality data is stale~~ | **RESOLVED** — rewritten to CSV bulk download from static.nhtsa.gov | L-045 FIXED |
 | No SRTR API | Excel download is semi-manual | `fetch-srtr-excel.py` downloads files; `parse-srtr-reports.py` extracts data | M5 ✅ (semi-automated) |
 | ~~No Donate Life API~~ | ~~Donor registration data is manual~~ | **RESOLVED** — `stateRegistrationRates` from DLA 2019 Annual Report (2018 DDR). `livingDonorProgramStrength` and `populationFactors` remain manually curated by design (no public dataset). | L-033 partially resolved |
+| ~~County-to-OPO mapping unavailable~~ | ~~OPO geography approximate~~ | **RESOLVED** — HRSA Data Warehouse Excel provides authoritative 3,225 county → 60 OPO assignments. `scripts/build-opo-mapping-hrsa.py`. | L-050 sufficiently addressed |
+| ~~Organ recovery rates from single study~~ | ~~PMC10329409 may not reflect current trends~~ | **RESOLVED** — cross-validated against OPTN 2023 national data. 15/30 cells updated. All organs within 7% of OPTN benchmarks. `scripts/validate-recovery-rates.py`. | L-049 validated |
 | Blood type stratification missing | SRTR Table B10 doesn't stratify by blood type | Literature-derived multipliers retained | Future: use OPTN ADR figure data |
 | City factors duplicated | In both algorithm.js and wait-time-distributions.json | FIXME: single source of truth in data file | M6 (frontend integration) |

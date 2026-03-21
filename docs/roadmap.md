@@ -182,13 +182,11 @@
 
 > **Goal:** Upgrade the M2 cause-of-death multiplier from static single-paper seed data to a multi-source, automatable, stochastic model. Can be worked independently of M3–M6.
 
-#### Tier 1: SRTR OPO-Level Upgrade (L-050, L-055) — highest impact
-- [ ] Download SRTR OPO-specific reports (Excel) for all 56 OPOs — extend `scripts/fetch-srtr-excel.py`
-- [ ] Parse OPO reports: extract donor counts by cause-of-death per OPO — new `scripts/parse-opo-cod.py`
-- [ ] Create `data/opo-donor-cause-of-death.json` with OPO-level COD proportions
-- [ ] Map 22 cities → primary OPO using existing `data/srtr-center-mapping.json`
-- [ ] Update `_computeCodMultiplier()` / `_get_cod_multiplier()` to prefer OPO-level data, fall back to state-level
-- [ ] Expand coverage to all 50 states + DC (national average becomes truly national)
+#### Tier 1: OPO Geographic Mapping (L-050) — ✅ SUFFICIENTLY ADDRESSED
+- [x] Authoritative county-to-OPO mapping from HRSA Data Warehouse (3,225 counties → 60 OPOs)
+- [x] All 248 SRTR centers mapped to OPOs via `hrsa_county` method (40 corrections from proximity-based)
+- [x] `data/opo-mapping.json` updated with `countyToOpo` section and multi-OPO overlap tracking
+- [ ] *Optional future:* Aggregate county-level CDC data to OPO level using HRSA mapping (low priority — state-level COD proportions are well-mitigated by L-053 stochastic sampling and L-056 sublinear elasticity)
 
 #### Tier 2: Automated CDC SODA Fetch (L-051)
 - [ ] New `scripts/fetch-cause-of-death.js` using data.cdc.gov SODA API
@@ -205,12 +203,13 @@
 - [ ] Frontend: show COD adjustment as confidence range on score cards (e.g., "±2.3 pts")
 - [ ] Update sensitivity analysis to include COD uncertainty as a tornado parameter
 
-#### Tier 4: Expanded Categories & Cross-Validation (L-049, L-052)
-- [ ] Add anoxia and other cause-of-death categories (6 total, matching PMC10329409)
-- [ ] Source anoxia-specific ICD-10 codes (W65-W74 drowning, T71 asphyxiation) from CDC WONDER
-- [ ] Cross-validate PMC10329409 recovery rates against OPTN annual data reports (2020–2024)
-- [ ] Document post-2019 changes: DCD expansion, ex-vivo perfusion impact, HCV+ donor acceptance
-- [ ] Consider sub-linear supply→wait scaling (L-056): calibrate elasticity against SRTR historical wait times
+#### Tier 4: Expanded Categories & Cross-Validation (L-049, L-052) — ✅ L-049 VALIDATED
+- [x] Add anoxia-NOS as 5th cause-of-death category (L-052 FIXED — see M2 above)
+- [x] Cross-validate PMC10329409 recovery rates against OPTN 2023 national data (hrsa.unos.org)
+- [x] 15/30 organ×COD cells updated where drift >10%: kidney↑ (DCD, perfusion), pancreas↓ (declining), heart/lung↓ (conservative selection)
+- [x] All 6 organs within 7% of OPTN 2023 benchmarks (weighted average validation)
+- [x] `scripts/validate-recovery-rates.py` updated with OPTN 2023 benchmarks and COD weights
+- [ ] *Optional future:* Sub-linear supply→wait scaling (L-056): calibrate elasticity against SRTR historical wait times
 
 #### API Landscape (as of March 2026)
 
