@@ -57,9 +57,13 @@ class TestSpatialSurface:
 
     def test_idw_at_known_point(self):
         """IDW should exactly reproduce values at data points."""
-        surface = SpatialSurface("air_quality", method="idw")
-        val = surface.query(40.4406, -79.9959)
-        assert abs(val - 77) < 0.1  # IDW is exact at data points
+        # Use cost_of_living (city-level only, no dense alternative) so
+        # _CITY_COORDS are guaranteed to be exact data points.
+        # air_quality uses ~2000+ EPA monitors, making city-center coords
+        # interpolated rather than exact.
+        surface = SpatialSurface("cost_of_living", method="idw")
+        val = surface.query(40.4406, -79.9959)  # Pittsburgh = 86
+        assert abs(val - 86) < 0.1  # IDW is exact at data points
 
     def test_interpolation_between_cities(self):
         """Value between two cities should be between their values."""

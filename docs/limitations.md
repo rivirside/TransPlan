@@ -514,7 +514,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 | File | Tier | Source | Vintage | Notes |
 |------|------|--------|---------|-------|
-| `srtr-all-centers.json` | **SRTR + Geocoded** | SRTR PSR Excel files (center names/codes) + Nominatim geocoding (coordinates) | Jan 2025 (SRTR); Mar 2026 (geocoding) | 248 centers with lat/lon, organ programs, state. Coordinates from three-tier geocoding. |
+| `srtr-all-centers.json` | **SRTR + Geocoded** | SRTR PSR Excel files (center names/codes) + Nominatim/manual geocoding (coordinates) | Jan 2025 (SRTR); Mar 2026 (geocoding verified) | 248 centers with hospital-specific lat/lon. All coordinates verified March 2026: 133 Nominatim, 32 nominatim_verified (upgraded from city-center), 83 manual_verified. No city_mapping sources remain (#136). |
 | `wait-time-distributions-centers.json` | **SRTR** | SRTR PSR Table B10 (all centers) | Jan 2025 | Center-level wait time factors for 248 centers × 6 organs. Same parse pipeline as 22-city version. |
 | `competing-risks-centers.json` | **SRTR** | SRTR PSR Table B7 (all centers) | Jan 2025 | Center-level mortality/delisting for 248 centers × 6 organs. |
 | `post-transplant-outcomes-centers.json` | **SRTR** | SRTR PSR C-series (all centers) | Jan 2025 | Center-level graft/patient survival for 243 centers. Some centers lack C-series data. |
@@ -542,7 +542,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 3. **Historical trends are now real SRTR data** — `srtr-historical.json` contains 15-release time-series (2019–2025) parsed from official SRTR PSR archives. Trend charts can be cited as SRTR-sourced.
 4. **All scoring-engine inputs now have real data sources** — health demographics (CDC PLACES), traffic fatalities (NHTSA FARS), air quality (EPA AQS), cost of living (BLS CPI), and donor registration (DLA 2018 report) are all sourced from authoritative providers. `livingDonorProgramStrength` and `populationFactors` in donor-registration.json remain manual estimates. These affect the location suitability score (frontend) but NOT the probabilistic simulation engine (backend).
 5. **CDC cause-of-death data is from 2017** — drug intoxication distributions have shifted substantially since then (opioid crisis escalation).
-6. **Phase 6 center-level data is real SRTR data** — all ~248 center wait times, competing risks, and outcomes are parsed from the same SRTR PSR Excel files using the same pipeline as the 22-city data. Geographic coordinates are from Nominatim geocoding (automated, verifiable).
+6. **Phase 6 center-level data is real SRTR data** — all ~248 center wait times, competing risks, and outcomes are parsed from the same SRTR PSR Excel files using the same pipeline as the 22-city data. Geographic coordinates verified March 2026: all 248 centers have hospital-specific coordinates (Nominatim + manual Google Maps lookup). No city-center approximations remain (#136).
 7. **Spatial interpolation is derived, not new source data** — all 24 interpolation layers are computed from existing provenance-tracked data files. No new external data sources are introduced by the interpolation engine.
 
 ---

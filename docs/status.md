@@ -136,7 +136,7 @@ Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabili
 | Milestone | Status | Notes |
 |-----------|--------|-------|
 | 6A: Extract SRTR center list (#115) | ✅ Done | 248 centers cataloged from Excel files |
-| 6A: Add geographic coordinates (#116) | ✅ Done | Three-tier geocoding (Nominatim + city_mapping + manual) |
+| 6A: Add geographic coordinates (#116) | ✅ Done | All 248 hospital-specific coords verified (#136). No city-center approximations remain. |
 | 6A: Update parse script (#117) | ✅ Done | Center-level data files for wait times, competing risks, outcomes |
 | 6A: Replace hardcoded CITIES (#118) | ✅ Done | Dynamic `_get_cities()` in all backend services |
 | 6A: Dynamic center dropdown (#119) | ✅ Done | API-first with hardcoded fallback |

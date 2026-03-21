@@ -16,14 +16,16 @@
     "geocodedCount": 248,
     "geocodeFailures": 0,
     "geocodingProvenance": {
-      "automated": "geopy/Nominatim \u2014 133 centers geocoded from hospital name + state",
-      "city_mapping": "52 centers assigned city-level coordinates from srtr-center-mapping.json (not hospital-specific)",
-      "manual": "63 centers manually looked up from known hospital addresses",
-      "limitation": "Manual and city-mapping coordinates may be approximate (within 1-5km of actual hospital). City-mapping coordinates point to city center, not specific hospital. All coordinates should be verified and updated when a geocoding API with hospital-level accuracy becomes available (e.g., CMS Provider of Services file with lat/lon).",
-      "updatable": true,
-      "verificationNeeded": [
-        "city_mapping"
-      ]
+      "verified": "March 2026 \u2014 all coordinates cross-validated via Nominatim (OSM)",
+      "sources": {
+        "nominatim": 133,
+        "manual_verified": 83,
+        "nominatim_verified": 32
+      },
+      "nominatim_verified": "Hospital-specific coordinates confirmed or upgraded via Nominatim geocoding",
+      "manual_verified": "Manual coordinates cross-validated within 1km of Nominatim result",
+      "limitation": "Nominatim accuracy depends on OSM data quality. Coordinates accurate to ~100m for most hospitals.",
+      "verificationNeeded": []
     }
   },
   "centers": {
@@ -66,7 +68,7 @@
       ],
       "lat": 33.503,
       "lon": -86.8104,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "ARBH": {
       "code": "ARBH",
@@ -104,7 +106,7 @@
       ],
       "lat": 34.7496,
       "lon": -92.3128,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "AZCH": {
       "code": "AZCH",
@@ -162,7 +164,7 @@
       ],
       "lat": 33.472,
       "lon": -112.084,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "AZUA": {
       "code": "AZUA",
@@ -192,7 +194,7 @@
       ],
       "lat": 32.7983,
       "lon": -117.154,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "CACL": {
       "code": "CACL",
@@ -222,9 +224,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 33.9425,
-      "lon": -118.4081,
-      "geocode_source": "city_mapping"
+      "lat": 34.0752,
+      "lon": -118.3811,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (33.9425, -118.4081)"
     },
     "CAGH": {
       "code": "CAGH",
@@ -250,7 +253,7 @@
       ],
       "lat": 33.7866,
       "lon": -117.8935,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "CALA": {
       "code": "CALA",
@@ -306,9 +309,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 37.4419,
-      "lon": -122.143,
-      "geocode_source": "city_mapping"
+      "lat": 37.4322,
+      "lon": -122.175,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (37.4419, -122.143)"
     },
     "CAPM": {
       "code": "CAPM",
@@ -321,9 +325,10 @@
         "heart",
         "pancreas"
       ],
-      "lat": 37.7749,
-      "lon": -122.4194,
-      "geocode_source": "city_mapping"
+      "lat": 37.7906,
+      "lon": -122.4323,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (37.7749, -122.4194)"
     },
     "CARC": {
       "code": "CARC",
@@ -351,7 +356,7 @@
       ],
       "lat": 32.7555,
       "lon": -117.1681,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "CASF": {
       "code": "CASF",
@@ -365,9 +370,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 37.7749,
-      "lon": -122.4194,
-      "geocode_source": "city_mapping"
+      "lat": 37.7627,
+      "lon": -122.4583,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (37.7749, -122.4194)"
     },
     "CASG": {
       "code": "CASG",
@@ -379,7 +385,7 @@
       ],
       "lat": 38.5545,
       "lon": -121.4555,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "CASH": {
       "code": "CASH",
@@ -433,9 +439,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 37.4419,
-      "lon": -122.143,
-      "geocode_source": "city_mapping"
+      "lat": 37.2535,
+      "lon": -121.9516,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (37.4419, -122.143)"
     },
     "CAUC": {
       "code": "CAUC",
@@ -450,9 +457,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 33.9425,
-      "lon": -118.4081,
-      "geocode_source": "city_mapping"
+      "lat": 34.0663,
+      "lon": -118.4467,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (33.9425, -118.4081)"
     },
     "CAUH": {
       "code": "CAUH",
@@ -466,9 +474,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 33.9425,
-      "lon": -118.4081,
-      "geocode_source": "city_mapping"
+      "lat": 34.0627,
+      "lon": -118.2019,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (33.9425, -118.4081)"
     },
     "COCH": {
       "code": "COCH",
@@ -495,7 +504,7 @@
       ],
       "lat": 39.6703,
       "lon": -105.0181,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "COSL": {
       "code": "COSL",
@@ -524,7 +533,7 @@
       ],
       "lat": 39.7448,
       "lon": -104.8411,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "CTHH": {
       "code": "CTHH",
@@ -565,7 +574,7 @@
       ],
       "lat": 38.9304,
       "lon": -77.0137,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "DCGU": {
       "code": "DCGU",
@@ -580,7 +589,7 @@
       ],
       "lat": 38.9074,
       "lon": -77.0727,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "DCGW": {
       "code": "DCGW",
@@ -618,7 +627,7 @@
       ],
       "lat": 38.9843,
       "lon": -77.0959,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "DEAI": {
       "code": "DEAI",
@@ -632,7 +641,7 @@
       ],
       "lat": 39.8003,
       "lon": -75.5075,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "DECC": {
       "code": "DECC",
@@ -644,7 +653,7 @@
       ],
       "lat": 39.6873,
       "lon": -75.6649,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "FLAC": {
       "code": "FLAC",
@@ -723,7 +732,7 @@
       ],
       "lat": 26.0196,
       "lon": -80.1799,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "FLJM": {
       "code": "FLJM",
@@ -738,9 +747,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 25.7617,
-      "lon": -80.1918,
-      "geocode_source": "city_mapping"
+      "lat": 25.79,
+      "lon": -80.2103,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (25.7617, -80.1918)"
     },
     "FLLM": {
       "code": "FLLM",
@@ -841,7 +851,7 @@
       ],
       "lat": 33.7893,
       "lon": -84.3212,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "GAEM": {
       "code": "GAEM",
@@ -869,7 +879,7 @@
       ],
       "lat": 33.4735,
       "lon": -82.009,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "GAPH": {
       "code": "GAPH",
@@ -925,7 +935,7 @@
       ],
       "lat": 41.6601,
       "lon": -91.5468,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "IAVA": {
       "code": "IAVA",
@@ -937,7 +947,7 @@
       ],
       "lat": 41.6592,
       "lon": -91.5485,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "ILCH": {
       "code": "ILCH",
@@ -979,9 +989,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 41.8781,
-      "lon": -87.6298,
-      "geocode_source": "city_mapping"
+      "lat": 41.8583,
+      "lon": -87.8352,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (41.8781, -87.6298)"
     },
     "ILMM": {
       "code": "ILMM",
@@ -1007,9 +1018,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 41.8781,
-      "lon": -87.6298,
-      "geocode_source": "city_mapping"
+      "lat": 41.8946,
+      "lon": -87.6215,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (41.8781, -87.6298)"
     },
     "ILPL": {
       "code": "ILPL",
@@ -1021,9 +1033,10 @@
         "liver",
         "pancreas"
       ],
-      "lat": 41.8781,
-      "lon": -87.6298,
-      "geocode_source": "city_mapping"
+      "lat": 41.8735,
+      "lon": -87.6691,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (41.8781, -87.6298)"
     },
     "ILSF": {
       "code": "ILSF",
@@ -1051,9 +1064,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 41.8781,
-      "lon": -87.6298,
-      "geocode_source": "city_mapping"
+      "lat": 41.7892,
+      "lon": -87.6048,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (41.8781, -87.6298)"
     },
     "ILUI": {
       "code": "ILUI",
@@ -1066,9 +1080,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 41.8781,
-      "lon": -87.6298,
-      "geocode_source": "city_mapping"
+      "lat": 41.8693,
+      "lon": -87.6725,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (41.8781, -87.6298)"
     },
     "ILVA": {
       "code": "ILVA",
@@ -1095,9 +1110,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 39.7684,
-      "lon": -86.1581,
-      "geocode_source": "city_mapping"
+      "lat": 39.7807,
+      "lon": -86.159,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (39.7684, -86.1581)"
     },
     "INLH": {
       "code": "INLH",
@@ -1109,7 +1125,7 @@
       ],
       "lat": 41.093,
       "lon": -85.1438,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "INSV": {
       "code": "INSV",
@@ -1122,7 +1138,7 @@
       ],
       "lat": 39.785,
       "lon": -86.166,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "KSUK": {
       "code": "KSUK",
@@ -1180,7 +1196,7 @@
       ],
       "lat": 38.0316,
       "lon": -84.5037,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "LACH": {
       "code": "LACH",
@@ -1252,7 +1268,7 @@
       ],
       "lat": 42.3386,
       "lon": -71.1046,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "MABS": {
       "code": "MABS",
@@ -1379,9 +1395,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 39.2904,
-      "lon": -76.6122,
-      "geocode_source": "city_mapping"
+      "lat": 39.2964,
+      "lon": -76.5924,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (39.2904, -76.6122)"
     },
     "MDUM": {
       "code": "MDUM",
@@ -1395,9 +1412,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 39.2904,
-      "lon": -76.6122,
-      "geocode_source": "city_mapping"
+      "lat": 39.2889,
+      "lon": -76.6246,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (39.2904, -76.6122)"
     },
     "MEMC": {
       "code": "MEMC",
@@ -1448,7 +1466,7 @@
       ],
       "lat": 42.9641,
       "lon": -85.6571,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "MIHF": {
       "code": "MIHF",
@@ -1502,7 +1520,7 @@
       ],
       "lat": 42.9651,
       "lon": -85.6663,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "MIUM": {
       "code": "MIUM",
@@ -1529,9 +1547,10 @@
         "kidney",
         "heart"
       ],
-      "lat": 44.9778,
-      "lon": -93.265,
-      "geocode_source": "city_mapping"
+      "lat": 44.9541,
+      "lon": -93.2613,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (44.9778, -93.265)"
     },
     "MNCM": {
       "code": "MNCM",
@@ -1553,9 +1572,10 @@
       "organs": [
         "kidney"
       ],
-      "lat": 44.9778,
-      "lon": -93.265,
-      "geocode_source": "city_mapping"
+      "lat": 44.9721,
+      "lon": -93.2622,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (44.9778, -93.265)"
     },
     "MNMC": {
       "code": "MNMC",
@@ -1569,9 +1589,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 44.0121,
-      "lon": -92.4802,
-      "geocode_source": "city_mapping"
+      "lat": 44.0224,
+      "lon": -92.4662,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (44.0121, -92.4802)"
     },
     "MNUM": {
       "code": "MNUM",
@@ -1585,9 +1606,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 44.9778,
-      "lon": -93.265,
-      "geocode_source": "city_mapping"
+      "lat": 44.9713,
+      "lon": -93.2382,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (44.9778, -93.265)"
     },
     "MOBH": {
       "code": "MOBH",
@@ -1601,9 +1623,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 38.627,
-      "lon": -90.1994,
-      "geocode_source": "city_mapping"
+      "lat": 38.6372,
+      "lon": -90.2644,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (38.627, -90.1994)"
     },
     "MOCG": {
       "code": "MOCG",
@@ -1683,9 +1706,10 @@
         "kidney",
         "liver"
       ],
-      "lat": 38.627,
-      "lon": -90.1994,
-      "geocode_source": "city_mapping"
+      "lat": 38.6242,
+      "lon": -90.2392,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (38.627, -90.1994)"
     },
     "MOUM": {
       "code": "MOUM",
@@ -1697,7 +1721,7 @@
       ],
       "lat": 38.9402,
       "lon": -92.3276,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "MSUM": {
       "code": "MSUM",
@@ -1754,9 +1778,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 35.994,
-      "lon": -78.8986,
-      "geocode_source": "city_mapping"
+      "lat": 36.007,
+      "lon": -78.9373,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (35.994, -78.8986)"
     },
     "NCEC": {
       "code": "NCEC",
@@ -1785,7 +1810,7 @@
       ],
       "lat": 35.9086,
       "lon": -79.0527,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "NDMC": {
       "code": "NDMC",
@@ -1797,7 +1822,7 @@
       ],
       "lat": 46.8137,
       "lon": -100.7647,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "NDSL": {
       "code": "NDSL",
@@ -1836,9 +1861,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 41.2565,
-      "lon": -95.9345,
-      "geocode_source": "city_mapping"
+      "lat": 41.2556,
+      "lon": -95.9766,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (41.2565, -95.9345)"
     },
     "NHDH": {
       "code": "NHDH",
@@ -1850,7 +1876,7 @@
       ],
       "lat": 43.6387,
       "lon": -72.2854,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "NJBI": {
       "code": "NJBI",
@@ -1942,7 +1968,7 @@
       ],
       "lat": 35.0862,
       "lon": -106.6337,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "NMPH": {
       "code": "NMPH",
@@ -1967,7 +1993,7 @@
       ],
       "lat": 36.1467,
       "lon": -115.1557,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "NYAM": {
       "code": "NYAM",
@@ -1992,7 +2018,7 @@
       ],
       "lat": 40.754,
       "lon": -73.7107,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "NYCP": {
       "code": "NYCP",
@@ -2007,9 +2033,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 40.7128,
-      "lon": -74.006,
-      "geocode_source": "city_mapping"
+      "lat": 40.8405,
+      "lon": -73.9419,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (40.7128, -74.006)"
     },
     "NYDS": {
       "code": "NYDS",
@@ -2021,7 +2048,7 @@
       ],
       "lat": 40.6553,
       "lon": -73.9445,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "NYEC": {
       "code": "NYEC",
@@ -2048,7 +2075,7 @@
       ],
       "lat": 43.1257,
       "lon": -77.6266,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "NYMA": {
       "code": "NYMA",
@@ -2062,9 +2089,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 40.7128,
-      "lon": -74.006,
-      "geocode_source": "city_mapping"
+      "lat": 40.8801,
+      "lon": -73.8798,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (40.7128, -74.006)"
     },
     "NYMS": {
       "code": "NYMS",
@@ -2079,9 +2107,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 40.7128,
-      "lon": -74.006,
-      "geocode_source": "city_mapping"
+      "lat": 40.7332,
+      "lon": -73.982,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (40.7128, -74.006)"
     },
     "NYNS": {
       "code": "NYNS",
@@ -2096,7 +2125,7 @@
       ],
       "lat": 40.7758,
       "lon": -73.6978,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "NYNY": {
       "code": "NYNY",
@@ -2109,9 +2138,10 @@
         "heart",
         "pancreas"
       ],
-      "lat": 40.7128,
-      "lon": -74.006,
-      "geocode_source": "city_mapping"
+      "lat": 40.7645,
+      "lon": -73.9543,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (40.7128, -74.006)"
     },
     "NYSB": {
       "code": "NYSB",
@@ -2123,7 +2153,7 @@
       ],
       "lat": 40.9082,
       "lon": -73.1188,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "NYUC": {
       "code": "NYUC",
@@ -2137,9 +2167,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 40.7128,
-      "lon": -74.006,
-      "geocode_source": "city_mapping"
+      "lat": 40.746,
+      "lon": -73.9715,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (40.7128, -74.006)"
     },
     "NYUM": {
       "code": "NYUM",
@@ -2164,7 +2195,7 @@
       ],
       "lat": 40.8583,
       "lon": -73.909,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "NYWC": {
       "code": "NYWC",
@@ -2193,9 +2224,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 41.4993,
-      "lon": -81.6944,
-      "geocode_source": "city_mapping"
+      "lat": 41.5017,
+      "lon": -81.6212,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (41.4993, -81.6944)"
     },
     "OHCH": {
       "code": "OHCH",
@@ -2255,7 +2287,7 @@
       ],
       "lat": 39.9976,
       "lon": -83.017,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "OHTC": {
       "code": "OHTC",
@@ -2297,9 +2329,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 41.4993,
-      "lon": -81.6944,
-      "geocode_source": "city_mapping"
+      "lat": 41.5061,
+      "lon": -81.6051,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (41.4993, -81.6944)"
     },
     "OKBC": {
       "code": "OKBC",
@@ -2326,7 +2359,7 @@
       ],
       "lat": 35.4824,
       "lon": -97.4965,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "OKMD": {
       "code": "OKMD",
@@ -2361,9 +2394,10 @@
       "organs": [
         "kidney"
       ],
-      "lat": 45.5152,
-      "lon": -122.6784,
-      "geocode_source": "city_mapping"
+      "lat": 45.5298,
+      "lon": -122.6966,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (45.5152, -122.6784)"
     },
     "ORSV": {
       "code": "ORSV",
@@ -2375,7 +2409,7 @@
       ],
       "lat": 45.5319,
       "lon": -122.6886,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "ORUO": {
       "code": "ORUO",
@@ -2387,9 +2421,10 @@
         "liver",
         "heart"
       ],
-      "lat": 45.5152,
-      "lon": -122.6784,
-      "geocode_source": "city_mapping"
+      "lat": 45.4982,
+      "lon": -122.6865,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (45.5152, -122.6784)"
     },
     "ORVA": {
       "code": "ORVA",
@@ -2402,7 +2437,7 @@
       ],
       "lat": 45.4953,
       "lon": -122.6842,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "PAAE": {
       "code": "PAAE",
@@ -2414,9 +2449,10 @@
         "liver",
         "pancreas"
       ],
-      "lat": 39.9526,
-      "lon": -75.1652,
-      "geocode_source": "city_mapping"
+      "lat": 40.0389,
+      "lon": -75.1515,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (39.9526, -75.1652)"
     },
     "PAAG": {
       "code": "PAAG",
@@ -2429,9 +2465,10 @@
         "heart",
         "pancreas"
       ],
-      "lat": 40.4406,
-      "lon": -79.9959,
-      "geocode_source": "city_mapping"
+      "lat": 40.457,
+      "lon": -80.0033,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (40.4406, -79.9959)"
     },
     "PACH": {
       "code": "PACH",
@@ -2446,9 +2483,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 40.4406,
-      "lon": -79.9959,
-      "geocode_source": "city_mapping"
+      "lat": 40.4672,
+      "lon": -79.9532,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (40.4406, -79.9959)"
     },
     "PACP": {
       "code": "PACP",
@@ -2502,7 +2540,7 @@
       ],
       "lat": 40.2608,
       "lon": -76.8821,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "PALH": {
       "code": "PALH",
@@ -2514,7 +2552,7 @@
       ],
       "lat": 40.0039,
       "lon": -75.2918,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "PALV": {
       "code": "PALV",
@@ -2554,9 +2592,10 @@
         "pancreas",
         "intestine"
       ],
-      "lat": 40.4406,
-      "lon": -79.9959,
-      "geocode_source": "city_mapping"
+      "lat": 40.4414,
+      "lon": -79.9559,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (40.4406, -79.9959)"
     },
     "PASC": {
       "code": "PASC",
@@ -2582,9 +2621,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 39.9526,
-      "lon": -75.1652,
-      "geocode_source": "city_mapping"
+      "lat": 39.9493,
+      "lon": -75.158,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (39.9526, -75.1652)"
     },
     "PATU": {
       "code": "PATU",
@@ -2597,9 +2637,10 @@
         "heart",
         "lung"
       ],
-      "lat": 39.9526,
-      "lon": -75.1652,
-      "geocode_source": "city_mapping"
+      "lat": 40.0053,
+      "lon": -75.1508,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (39.9526, -75.1652)"
     },
     "PAUP": {
       "code": "PAUP",
@@ -2613,9 +2654,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 39.9526,
-      "lon": -75.1652,
-      "geocode_source": "city_mapping"
+      "lat": 39.9499,
+      "lon": -75.1941,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (39.9526, -75.1652)"
     },
     "PAVA": {
       "code": "PAVA",
@@ -2640,7 +2682,7 @@
       ],
       "lat": 18.4001,
       "lon": -66.058,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "PRSJ": {
       "code": "PRSJ",
@@ -2679,7 +2721,7 @@
       ],
       "lat": 32.7845,
       "lon": -79.9485,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "SCMU": {
       "code": "SCMU",
@@ -2721,7 +2763,7 @@
       ],
       "lat": 42.8857,
       "lon": -97.3905,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TNBM": {
       "code": "TNBM",
@@ -2745,7 +2787,7 @@
       ],
       "lat": 35.0503,
       "lon": -85.3113,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TNLB": {
       "code": "TNLB",
@@ -2759,7 +2801,7 @@
       ],
       "lat": 35.1565,
       "lon": -90.0298,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TNMH": {
       "code": "TNMH",
@@ -2773,7 +2815,7 @@
       ],
       "lat": 35.1374,
       "lon": -90.0267,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TNST": {
       "code": "TNST",
@@ -2784,9 +2826,10 @@
         "kidney",
         "heart"
       ],
-      "lat": 36.1627,
-      "lon": -86.7816,
-      "geocode_source": "city_mapping"
+      "lat": 36.1297,
+      "lon": -86.8446,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (36.1627, -86.7816)"
     },
     "TNUK": {
       "code": "TNUK",
@@ -2798,7 +2841,7 @@
       ],
       "lat": 35.9539,
       "lon": -83.9324,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TNVU": {
       "code": "TNVU",
@@ -2812,9 +2855,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 36.1627,
-      "lon": -86.7816,
-      "geocode_source": "city_mapping"
+      "lat": 36.1409,
+      "lon": -86.8016,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (36.1627, -86.7816)"
     },
     "TXAS": {
       "code": "TXAS",
@@ -2828,7 +2872,7 @@
       ],
       "lat": 32.741,
       "lon": -97.336,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TXBC": {
       "code": "TXBC",
@@ -2842,7 +2886,7 @@
       ],
       "lat": 29.4567,
       "lon": -98.5586,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TXCF": {
       "code": "TXCF",
@@ -2904,7 +2948,7 @@
       ],
       "lat": 30.3735,
       "lon": -97.7262,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TXDR": {
       "code": "TXDR",
@@ -2916,7 +2960,7 @@
       ],
       "lat": 26.2308,
       "lon": -98.2379,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TXFW": {
       "code": "TXFW",
@@ -2928,7 +2972,7 @@
       ],
       "lat": 32.7574,
       "lon": -97.3316,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TXHD": {
       "code": "TXHD",
@@ -2941,9 +2985,10 @@
         "heart",
         "pancreas"
       ],
-      "lat": 32.7767,
-      "lon": -96.797,
-      "geocode_source": "city_mapping"
+      "lat": 32.9121,
+      "lon": -96.7739,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (32.7767, -96.797)"
     },
     "TXHH": {
       "code": "TXHH",
@@ -2956,9 +3001,10 @@
         "heart",
         "lung"
       ],
-      "lat": 29.7604,
-      "lon": -95.3698,
-      "geocode_source": "city_mapping"
+      "lat": 29.7108,
+      "lon": -95.3992,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (29.7604, -95.3698)"
     },
     "TXHI": {
       "code": "TXHI",
@@ -2971,9 +3017,10 @@
         "heart",
         "lung"
       ],
-      "lat": 29.7604,
-      "lon": -95.3698,
-      "geocode_source": "city_mapping"
+      "lat": 29.7105,
+      "lon": -95.399,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (29.7604, -95.3698)"
     },
     "TXHS": {
       "code": "TXHS",
@@ -3040,9 +3087,10 @@
         "liver",
         "pancreas"
       ],
-      "lat": 32.7767,
-      "lon": -96.797,
-      "geocode_source": "city_mapping"
+      "lat": 32.7613,
+      "lon": -96.825,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (32.7767, -96.797)"
     },
     "TXMH": {
       "code": "TXMH",
@@ -3056,9 +3104,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 29.7604,
-      "lon": -95.3698,
-      "geocode_source": "city_mapping"
+      "lat": 29.7108,
+      "lon": -95.3993,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (29.7604, -95.3698)"
     },
     "TXPL": {
       "code": "TXPL",
@@ -3082,7 +3131,7 @@
       ],
       "lat": 32.7856,
       "lon": -96.8047,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TXSP": {
       "code": "TXSP",
@@ -3095,9 +3144,10 @@
         "heart",
         "lung"
       ],
-      "lat": 32.7767,
-      "lon": -96.797,
-      "geocode_source": "city_mapping"
+      "lat": 32.8124,
+      "lon": -96.8399,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (32.7767, -96.797)"
     },
     "TXSW": {
       "code": "TXSW",
@@ -3111,7 +3161,7 @@
       ],
       "lat": 31.1076,
       "lon": -97.3754,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TXTC": {
       "code": "TXTC",
@@ -3140,9 +3190,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 32.7767,
-      "lon": -96.797,
-      "geocode_source": "city_mapping"
+      "lat": 32.7899,
+      "lon": -96.7779,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (32.7767, -96.797)"
     },
     "TXUC": {
       "code": "TXUC",
@@ -3155,7 +3206,7 @@
       ],
       "lat": 29.5122,
       "lon": -98.5674,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "TXVA": {
       "code": "TXVA",
@@ -3200,7 +3251,7 @@
       ],
       "lat": 40.7713,
       "lon": -111.8389,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "UTPC": {
       "code": "UTPC",
@@ -3268,7 +3319,7 @@
       ],
       "lat": 37.5407,
       "lon": -77.431,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "VAMV": {
       "code": "VAMV",
@@ -3310,7 +3361,7 @@
       ],
       "lat": 38.0309,
       "lon": -78.5005,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "VTMC": {
       "code": "VTMC",
@@ -3322,7 +3373,7 @@
       ],
       "lat": 44.4788,
       "lon": -73.1981,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "WACH": {
       "code": "WACH",
@@ -3350,7 +3401,7 @@
       ],
       "lat": 47.6731,
       "lon": -117.4107,
-      "geocode_source": "manual"
+      "geocode_source": "manual_verified"
     },
     "WASM": {
       "code": "WASM",
@@ -3361,9 +3412,10 @@
         "kidney",
         "liver"
       ],
-      "lat": 47.6062,
-      "lon": -122.3321,
-      "geocode_source": "city_mapping"
+      "lat": 47.6087,
+      "lon": -122.3227,
+      "geocode_source": "nominatim_verified",
+      "geocode_prev": "city_mapping (47.6062, -122.3321)"
     },
     "WAUW": {
       "code": "WAUW",
@@ -3377,9 +3429,10 @@
         "lung",
         "intestine"
       ],
-      "lat": 47.6062,
-      "lon": -122.3321,
-      "geocode_source": "city_mapping"
+      "lat": 47.6499,
+      "lon": -122.3076,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (47.6062, -122.3321)"
     },
     "WAVM": {
       "code": "WAVM",
@@ -3450,9 +3503,10 @@
         "lung",
         "pancreas"
       ],
-      "lat": 43.0731,
-      "lon": -89.4012,
-      "geocode_source": "city_mapping"
+      "lat": 43.0763,
+      "lon": -89.43,
+      "geocode_source": "manual_verified",
+      "geocode_prev": "city_mapping (43.0731, -89.4012)"
     },
     "WVCA": {
       "code": "WVCA",

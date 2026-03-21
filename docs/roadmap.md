@@ -554,7 +554,7 @@ M4 (Policy) ──── literature review (weeks 2-4) ────────�
 > **Why a separate phase?** This is the highest-ROI work. SRTR PSR Excel files already contain center-level statistics for ALL ~250 US transplant programs, but our parse script filters to 22 cities. Removing this filter and adding coordinates enables everything that follows.
 
 - [x] **Extract SRTR center list** (#115): 248 centers cataloged from SRTR PSR Excel files → `data/srtr-all-centers.json`
-- [x] **Add geographic coordinates** (#116): three-tier geocoding (Nominatim automated, city_mapping fallback, manual)
+- [x] **Add geographic coordinates** (#116): Nominatim + manual geocoding. All 248 centers verified March 2026 — hospital-specific coordinates, no city-center approximations remain (#136)
 - [x] **Update parse script** (#117): center-level data files for all ~248 centers (wait times, competing risks, outcomes)
 - [x] **Replace hardcoded CITIES** (#118): dynamic `_get_cities()` in all backend services with fallback
 - [x] **Dynamic center dropdown** (#119): API-first with hardcoded fallback in frontend

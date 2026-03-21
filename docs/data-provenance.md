@@ -108,7 +108,7 @@ Each zip contains 8 per-organ Excel files: `csrs_final_tables_{YYMM}_{organ}.xls
 | Data Point | Source | Processing | Automated? | Data File | Freshness |
 |------------|--------|-----------|------------|-----------|-----------|
 | All SRTR centers (~248) | SRTR PSR Excel files (6 organs) | `scripts/parse-srtr-reports.py --all-centers` | Semi (run manually) | `data/srtr-all-centers.json` | Biannual SRTR releases |
-| Center geographic coordinates | Nominatim geocoding + `srtr-center-mapping.json` + manual | Three-tier: (1) Nominatim automated for 200+, (2) city_mapping fallback, (3) manual coordinates for edge cases | No | `data/srtr-all-centers.json` | Static once geocoded; review when centers open/close |
+| Center geographic coordinates | Nominatim (OSM) + manual lookup (Google Maps, March 2026) | `scripts/geocode-centers.py` (initial), `scripts/verify-geocoding.py` (verification) | No | `data/srtr-all-centers.json` | All 248 centers verified March 2026. Sources: 133 nominatim, 32 nominatim_verified (upgraded from city-center), 83 manual_verified (cross-validated or Google Maps). No city_mapping sources remain. |
 | Center-level wait time distributions | SRTR PSR Table B10 (all centers) | `scripts/parse-srtr-reports.py --all-centers` | Semi | `data/wait-time-distributions-centers.json` | Biannual SRTR releases |
 | Center-level competing risks | SRTR PSR Table B7 (all centers) | `scripts/parse-srtr-reports.py --all-centers` | Semi | `data/competing-risks-centers.json` | Biannual SRTR releases |
 | Center-level post-transplant outcomes | SRTR PSR Tables C5-C20 (all centers) | `scripts/parse-srtr-reports.py --all-centers` | Semi | `data/post-transplant-outcomes-centers.json` | Biannual SRTR releases |
