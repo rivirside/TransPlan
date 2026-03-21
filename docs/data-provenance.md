@@ -13,7 +13,7 @@
 | Hospital quality metrics | CMS Provider Data API | `scripts/fetch-hospital-quality.js` | Yes (weekly CI) | `data/hospital-quality.json` | Multi-strategy query (SQL/filter/legacy) |
 | Health demographics (diabetes, obesity, etc.) | CDC SODA API | `scripts/fetch-health-data.js` | Yes (weekly CI) | `data/health-demographics.json` | Public, no key needed |
 | Traffic fatality rates | NHTSA FARS CSV bulk download | `scripts/fetch-traffic.js` | Yes (weekly CI) | `data/traffic-fatalities.json` | CSV from static.nhtsa.gov (L-045 fixed) |
-| Donor registration rates | Donate Life America reports | None | No | `data/donor-registration.json` | Manual; no API exists (L-033) |
+| Donor registration rates | Donate Life America 2019 Annual Report (2018 DDR) | Manual extraction from PDF (p.27) | No (report-based) | `data/donor-registration.json` | `stateRegistrationRates` from DLA DDR/EDDR. `livingDonorProgramStrength` and `populationFactors` remain manually curated (no public dataset). |
 | SRTR transplant volumes | SRTR Program-Specific Reports | `scripts/check-srtr-updates.js` (hash check only) | Partial | `data/manual/srtr-reports.json` | Manual data entry from srtr.org; script checks for updates |
 | Center specializations | SRTR + center press releases | None | No | `data/manual/srtr-reports.json` | Manual curation |
 | Climate comfort scores | Derived from NOAA/historical data | None | No | `data/manual/climate-scores.json` | Static; changes rarely |
@@ -163,6 +163,6 @@ The interpolation engine supports 24 layers, derived from existing data files. T
 |-----|--------|-----------|-----------------|
 | ~~FARS API retired~~ | ~~Traffic fatality data is stale~~ | **RESOLVED** — rewritten to CSV bulk download from static.nhtsa.gov | L-045 FIXED |
 | No SRTR API | Excel download is semi-manual | `fetch-srtr-excel.py` downloads files; `parse-srtr-reports.py` extracts data | M5 ✅ (semi-automated) |
-| No Donate Life API | Donor registration data is manual | Seed data; review annually | Deferred (L-033) |
+| ~~No Donate Life API~~ | ~~Donor registration data is manual~~ | **RESOLVED** — `stateRegistrationRates` from DLA 2019 Annual Report (2018 DDR). `livingDonorProgramStrength` and `populationFactors` remain manually curated by design (no public dataset). | L-033 partially resolved |
 | Blood type stratification missing | SRTR Table B10 doesn't stratify by blood type | Literature-derived multipliers retained | Future: use OPTN ADR figure data |
 | City factors duplicated | In both algorithm.js and wait-time-distributions.json | FIXME: single source of truth in data file | M6 (frontend integration) |

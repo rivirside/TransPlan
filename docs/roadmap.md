@@ -653,7 +653,7 @@ This avoids a premature rewrite while keeping the path open.
 | CDC COD | fetch-cod-data.js | ✅ Works (50 states + DC, public) | Weekly (CI) |
 | SRTR | check-srtr-updates.js | Hash check only | Bimonthly (CI) |
 | SRTR Historical | fetch-srtr-historical.yml | ✅ Works (GH Actions automated) | After SRTR Jan/Jul releases |
-| Donor Registration | (none) | Deferred (L-033) | Manual |
+| Donor Registration | Manual (DLA 2019 Annual Report PDF) | `stateRegistrationRates` from DLA DDR (2018 data) | Report-based |
 
 **Automation:** GitHub Actions runs weekly on Monday 6am UTC. Manual trigger available via `workflow_dispatch`. All scripts use `continue-on-error` so one failure doesn't block others. Single commit at end.
 
@@ -663,6 +663,6 @@ This avoids a premature rewrite while keeping the path open.
 
 | ID | Issue | Blocker |
 |----|-------|---------|
-| L-009 | OPO boundary mapping | No API; 22 cities → 58 OPOs manual lookup |
+| L-009 | ~~OPO boundary mapping~~ | **RESOLVED** — HRSA Data Warehouse Excel (3,225 counties → 60 OPOs) |
 | L-017 | SRTR program-specific outcomes | HTML/PDF reports only; 132 manual data points |
-| L-033 | Donor registration fetch script | Donate Life America has no API |
+| L-033 | ~~Donor registration fetch script~~ | **PARTIALLY RESOLVED** — `stateRegistrationRates` from DLA report; `livingDonorProgramStrength` and `populationFactors` remain manual by design |

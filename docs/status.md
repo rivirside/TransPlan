@@ -157,7 +157,7 @@ Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabili
 - **Phase 6A complete:** OPO mapping (#122) resolved with authoritative HRSA county-to-OPO data (#138 closed)
 - **Phase 6C (future):** Pre-computed raster grid (#133), kriging uncertainty (#134), spatial econometric models (#135)
 - **Phase 5 platform features:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
-- **Deferred (no API):** SRTR outcomes (#20), donor reg fetch (#21), theme selection (Phase 7, #3)
+- **Deferred (no API):** SRTR outcomes (#20), theme selection (Phase 7, #3). Donor reg (#21) partially resolved — `stateRegistrationRates` from DLA report; `livingDonorProgramStrength` and `populationFactors` remain manual by design
 - **Infrastructure:** CI pipeline (#29) ✅, Docker Compose (#30) ✅ — both shipped
 - See `docs/roadmap.md` for full phased plan
 - See `docs/ideas.md` for full SRS with architecture, governance, and regulatory details
@@ -363,9 +363,10 @@ TransPlan/
 |--------|-------|---------|
 | FIXED | 49 | L-001–L-048 (all critical/high/medium from original audit), L-051–L-056 (COD model), L-058–L-059, L-062, L-012 (county health) |
 | OPEN | 4 | L-060 (patient-level MCMC), L-061 (informative priors), L-064–L-065 (Phase 6 spatial) |
-| PARTIALLY FIXED | 3 | L-009 (OPO — 55 OPOs cataloged), L-050 (OPO boundaries — center-to-OPO mapped), L-063 (sparse spatial data) |
+| PARTIALLY FIXED | 3 | L-009 (OPO — now HRSA-authoritative, #138 resolved), L-050 (OPO boundaries — center-to-OPO mapped), L-063 (sparse spatial data) |
 | MITIGATED | 2 | L-049 (OPTN cross-validation — kidney/liver OK, heart/lung conservative), L-057 (pancreas graft survival) |
-| DEFERRED | 2 | L-017 (SRTR outcomes), L-033 (donor reg fetch) |
+| DEFERRED | 1 | L-017 (SRTR outcomes) |
+| PARTIALLY RESOLVED | 1 | L-033 (donor reg — `stateRegistrationRates` from DLA report; `livingDonorProgramStrength`/`populationFactors` manual by design) |
 | WONT FIX | 1 | L-039 (false positive) |
 
 ## Documentation Tiers

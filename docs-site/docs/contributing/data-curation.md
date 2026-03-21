@@ -14,7 +14,7 @@ This guide explains how to maintain and update TransPlan's data files.
 
 ### Automated (GitHub Actions)
 
-Several data files are updated weekly by GitHub Actions and should not be manually edited unless correcting an obvious error. `data/air-quality.json` is sourced from the EPA AQS API via `scripts/fetch-air-quality.js`. `data/cost-of-living.json` comes from BLS API v2 via `scripts/fetch-cost-of-living.js`. `data/hospital-quality.json` is pulled from CMS Provider Data through `scripts/fetch-hospital-quality.js`. `data/health-demographics.json` and `data/donor-registration.json` are both sourced from the CDC SODA API via `scripts/fetch-health-data.js`. `data/traffic-fatalities.json` was originally sourced from NHTSA FARS, though this API has been retired and the data now serves as seed data only.
+Several data files are updated weekly by GitHub Actions and should not be manually edited unless correcting an obvious error. `data/air-quality.json` is sourced from the EPA AQS API via `scripts/fetch-air-quality.js`. `data/cost-of-living.json` comes from BLS API v2 via `scripts/fetch-cost-of-living.js`. `data/hospital-quality.json` is pulled from CMS Provider Data through `scripts/fetch-hospital-quality.js`. `data/health-demographics.json` is sourced from the CDC PLACES API (multi-release fallback) via `scripts/fetch-health-data.js`. `data/traffic-fatalities.json` is sourced from NHTSA FARS CSV bulk downloads via `scripts/fetch-traffic.js`. `data/donor-registration.json` has `stateRegistrationRates` from the Donate Life America 2019 Annual Report (2018 Donor Designation Rate by state); `livingDonorProgramStrength` and `populationFactors` are manually curated (no public dataset exists for these).
 
 ### Manual (Hand-curated)
 

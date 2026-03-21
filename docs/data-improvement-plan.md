@@ -17,7 +17,7 @@
 | `srtr-historical.json` | SRTR PSR (14 releases) | Real | `fetch-srtr-historical.yml` (GH Actions) | 2019-2025 biannual time series |
 | `hospital-quality.json` | CMS + manual | Mixed | `fetch-hospital-quality.js` (partial) | centerReputation is manual; centerVolumes partially manual |
 | `cause-of-death-by-region.json` | PMC10329409 + CDC SODA | Mixed | `fetch-cod-data.js` (CDC part) | Recovery rates from 2023 paper, state proportions from CDC |
-| `donor-registration.json` | UNOS/Donate Life America | Seed | None | No public API available |
+| `donor-registration.json` | Donate Life America 2019 Annual Report | Report | Manual PDF extraction | `stateRegistrationRates` from DLA DDR (2018). `livingDonorProgramStrength` and `populationFactors` remain manual. |
 | `manual/srtr-reports.json` | SRTR + center reports | Mixed | None | waitTimeFactors now redundant with SRTR parse pipeline |
 | `manual/climate-scores.json` | Manual curation | Seed | None | No climate-transplant API exists |
 | `manual/policy-tiers.json` | Research literature | Seed | None | Based on state organ donation laws |
@@ -50,9 +50,11 @@ All critical data files now use real sources:
 
 ### P2: Medium (moderate effort, moderate impact)
 
-3. **donor-registration.json**
-   - Donate Life America publishes state-level registration stats annually
-   - No API; would need annual manual update or lightweight scraper
+3. **donor-registration.json** — PARTIALLY RESOLVED
+   - `stateRegistrationRates` now from DLA 2019 Annual Report (2018 DDR, page 27)
+   - `livingDonorProgramStrength`: manual scores ranking center living donor programs (no public dataset exists)
+   - `populationFactors`: manual composite of metro population, donor pool density, healthcare infrastructure
+   - Both manual fields are **manual by design** — review annually for accuracy
    - Weight: 3% of total score (low urgency)
 
 4. **hospital-quality.json centerReputation**

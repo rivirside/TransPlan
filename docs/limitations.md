@@ -246,10 +246,12 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-033: No fetch script for donor-registration.json
 - **Severity:** HIGH
-- **Status:** DEFERRED
-- **Details:** There is no `fetch-donor-registration.js` in the scripts/ directory. The `donor-registration.json` file is permanent seed data that can never be refreshed by the automated pipeline. This file contains stateRegistrationRates, livingDonorProgramStrength, and populationFactors — three critical inputs to the Donor Availability category (18% weight).
-- **File:** Missing: `scripts/fetch-donor-registration.js`
-- **Fix:** Create a fetch script sourcing state registration rates from Donate Life America or HRSA. livingDonorProgramStrength and populationFactors may need to remain manually curated.
+- **Status:** PARTIALLY RESOLVED
+- **Details:** `stateRegistrationRates` now sourced from Donate Life America 2019 Annual Report (2018 Donor Designation Rate by state, page 27). DDR available for 38 states; EDDR used as proxy for 13 states without DDR data. Added `stateDesignations`, `ndlrRegistrations`, and `eddr` fields from the same report. Two sub-fields remain manually curated by design:
+  - `livingDonorProgramStrength`: 22-city scores (80–95 range) — no public dataset ranks transplant center living donor programs
+  - `populationFactors`: city-level population adjustment scores — composite of metro population, donor pool density, and healthcare infrastructure; no single API provides this
+- **File:** `data/donor-registration.json`
+- **Fix remaining:** DLA report is 2018 vintage; re-extract when DLA publishes newer data. `livingDonorProgramStrength` and `populationFactors` are manual by design — review annually for accuracy.
 
 ### L-034: srtr-reports.json is loaded but never read by algorithm
 - **Severity:** MEDIUM
@@ -587,7 +589,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | L-009 | ADR-010 | 2026-03-20 | FIXED — Authoritative county-to-OPO mapping from HRSA Data Warehouse Excel (3,225 counties → 60 OPOs). 248 centers mapped via county FIPS lookup. 40 assignments corrected from prior proximity method. Resolves #138. |
 | L-012 | ADR-011 | 2026-03-20 | FIXED — 248 centers mapped to nearest county (2,956→3,144 CDC PLACES counties), ckdRate now live from 2022 KIDNEY measure (replaces linear model estimate) |
 | L-017 | ADR-012 | 2026-03-01 | DEFERRED — SRTR outcomes are HTML/PDF only, would need 132 manual data points |
-| L-033 | ADR-013 | 2026-03-01 | DEFERRED — no machine-readable API for donor registration rates |
+| L-033 | ADR-013 | 2026-03-20 | PARTIALLY RESOLVED — `stateRegistrationRates` from DLA 2019 Annual Report (2018 DDR). `livingDonorProgramStrength` and `populationFactors` remain manually curated by design (no public dataset). |
 | L-041 | 0b59fc4 | 2026-03-05 | fetch-traffic.js switched to mergeDataFile + skip-on-empty guard |
 | L-042 | 909ff06 | 2026-03-05 | Added `\|\| 50` fallback to populationFactors/traumaScores lookups (found by unit tests) |
 | L-043 | 0b59fc4 | 2026-03-05 | Synced algorithm.js socioeconomic fallback with transplant-support rubric; removed orphan cities |
