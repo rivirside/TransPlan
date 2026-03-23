@@ -748,7 +748,7 @@
 
             var contactCity = contact.city || '';
             var preview = [contactCity, center.state_abbr || center.state].filter(Boolean).join(', ');
-            makeCollapsible(card, false, preview);
+            makeCollapsible(card, true, 'Address, phone, website, and interactive map');
             return card;
         }
 
@@ -906,7 +906,7 @@
             scrollWrap.appendChild(table);
             card.appendChild(scrollWrap);
             var organPreview = organs.map(function(o) { return o.charAt(0).toUpperCase() + o.slice(1); }).join(' · ');
-            makeCollapsible(card, true, organPreview);
+            makeCollapsible(card, true, 'Survival rates, wait times, and transplant volume by organ');
             return card;
         }
 
@@ -973,7 +973,7 @@
             var waitingCount = firstOrganData.currently_waiting;
             var firstOrganName = organs[0].charAt(0).toUpperCase() + organs[0].slice(1);
             var wlPreview = firstOrganName + (waitingCount != null ? ' · ' + waitingCount.toLocaleString() + ' waiting' : '');
-            makeCollapsible(card, true, wlPreview);
+            makeCollapsible(card, true, 'Patients waiting, added, transplanted, and removed by organ');
             return card;
         }
 
@@ -1037,7 +1037,7 @@
             }
 
             card.appendChild(list);
-            makeCollapsible(card, false, nearbyCenters.length + ' within 250 mi');
+            makeCollapsible(card, true, 'Other transplant programs within 250 miles');
             return card;
         }
 
