@@ -73,37 +73,28 @@
         .organ-badge--pancreas  { background: #fff7ed; color: #9a3412; }
         .organ-badge--intestine { background: #dcfce7; color: #166534; }
 
-        /* --- Quick Links --- */
-        .quick-links {
+        /* --- Quick Links (inline in header) --- */
+        .center-actions {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-            padding: 1rem;
-            background: var(--surface-raised, #f9fafb);
-            border: 1px solid var(--border, #e5e7eb);
-            border-radius: 3px;
+            gap: 0.2rem 1rem;
+            margin-top: 0.75rem;
         }
         .quick-link {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.88rem;
+            gap: 0.25rem;
+            font-size: 0.82rem;
             font-weight: 500;
             text-decoration: none;
-            color: var(--accent, #6366f1);
-            background: var(--surface, #fff);
-            border: 1px solid var(--border, #e5e7eb);
-            transition: box-shadow 0.15s ease, border-color 0.15s ease;
+            color: var(--text-muted, #6b7280);
         }
         .quick-link:hover {
-            border-color: var(--accent, #6366f1);
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+            color: var(--accent, #6366f1);
+            text-decoration: underline;
         }
         .quick-link-icon {
-            font-size: 1rem;
+            font-size: 0.85rem;
         }
 
         /* --- Two-Column Layout --- */
@@ -481,8 +472,9 @@
             return span;
         }
 
-        // --- Build header section ---
-        function buildHeader(center) {
+        // --- Build header section (includes inline action links) ---
+        function buildHeader(data) {
+            var center = data.center;
             var header = document.createElement('div');
             header.className = 'center-header';
 
@@ -509,57 +501,33 @@
             });
             header.appendChild(badges);
 
-            return header;
-        }
+            // Inline action links
+            var actions = document.createElement('div');
+            actions.className = 'center-actions';
 
-        // --- Build quick links bar ---
-        function buildQuickLinks(data) {
-            var bar = document.createElement('div');
-            bar.className = 'quick-links';
+            var backLink = document.createElement('a');
+            backLink.className = 'quick-link';
+            backLink.href = 'centers.html';
+            backLink.textContent = '\u2190 Center Explorer';
+            actions.appendChild(backLink);
 
-            // View on SRTR
             var srtrLink = document.createElement('a');
             srtrLink.className = 'quick-link';
             srtrLink.href = data.srtr_url || ('https://www.srtr.org/interactive-report?center=' + centerCode + '&type=TX1&organ=KI');
             srtrLink.target = '_blank';
             srtrLink.rel = 'noopener';
-            var srtrIcon = document.createElement('span');
-            srtrIcon.className = 'quick-link-icon';
-            srtrIcon.setAttribute('aria-hidden', 'true');
-            srtrIcon.textContent = '\uD83D\uDD17';
-            srtrLink.appendChild(srtrIcon);
-            var srtrText = document.createTextNode(' View on SRTR');
-            srtrLink.appendChild(srtrText);
-            bar.appendChild(srtrLink);
+            srtrLink.textContent = '\u2197 View on SRTR';
+            actions.appendChild(srtrLink);
 
-            // Compare in Simulator
             var simLink = document.createElement('a');
             simLink.className = 'quick-link';
-            var city = data.center.city || '';
+            var city = center.city || '';
             simLink.href = 'simulator.html' + (city ? '?homeCenter=' + encodeURIComponent(city) : '');
-            var simIcon = document.createElement('span');
-            simIcon.className = 'quick-link-icon';
-            simIcon.setAttribute('aria-hidden', 'true');
-            simIcon.textContent = '\u2696\uFE0F';
-            simLink.appendChild(simIcon);
-            var simText = document.createTextNode(' Compare in Simulator');
-            simLink.appendChild(simText);
-            bar.appendChild(simLink);
+            simLink.textContent = '\u2696 Compare in Simulator';
+            actions.appendChild(simLink);
 
-            // Back to Center Explorer
-            var backLink = document.createElement('a');
-            backLink.className = 'quick-link';
-            backLink.href = 'centers.html';
-            var backIcon = document.createElement('span');
-            backIcon.className = 'quick-link-icon';
-            backIcon.setAttribute('aria-hidden', 'true');
-            backIcon.textContent = '\u2190';
-            backLink.appendChild(backIcon);
-            var backText = document.createTextNode(' Back to Center Explorer');
-            backLink.appendChild(backText);
-            bar.appendChild(backLink);
-
-            return bar;
+            header.appendChild(actions);
+            return header;
         }
 
         // --- Build map section ---
@@ -876,11 +844,8 @@
             // Update page title
             document.title = 'TransplantMatch - ' + (center.name || centerCode);
 
-            // Header
-            detailContainer.appendChild(buildHeader(center));
-
-            // Quick links
-            detailContainer.appendChild(buildQuickLinks(data));
+            // Header (includes inline action links)
+            detailContainer.appendChild(buildHeader(data));
 
             // Two-column layout
             var content = document.createElement('div');
