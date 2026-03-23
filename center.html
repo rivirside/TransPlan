@@ -776,7 +776,7 @@
             // Header
             var thead = document.createElement('thead');
             var headerRow = document.createElement('tr');
-            var headers = ['Organ', 'Wait', 'Mortality', 'Delisting', '1-yr Graft / Patient', '3-yr Graft / Patient', 'Vol./yr'];
+            var headers = ['Organ', 'Wait', 'Mortality', 'Delisting', '1-yr Graft', '1-yr Patient', '3-yr Graft', '3-yr Patient', 'HR [95% CI]', 'Vol./yr'];
             headers.forEach(function(text) {
                 var th = document.createElement('th');
                 th.textContent = text;
@@ -847,52 +847,40 @@
                 }
                 row.appendChild(delistTd);
 
-                // 1-yr graft + patient survival
-                var survTd = document.createElement('td');
+                // 1-yr graft survival
                 var organOutcome = outcomes[organ] || {};
-                if (organOutcome.graft_survival_1yr !== undefined) {
-                    survTd.textContent = organOutcome.graft_survival_1yr.toFixed(1) + '%';
-                    if (organOutcome.patient_survival_1yr !== undefined) {
-                        var patSub = document.createElement('div');
-                        patSub.style.cssText = 'font-size:0.73rem;color:var(--text-muted,#9ca3af);margin-top:0.1rem;';
-                        patSub.textContent = organOutcome.patient_survival_1yr.toFixed(1) + '%';
-                        survTd.appendChild(patSub);
-                    }
-                    if (organOutcome.graft_hr_1yr !== undefined) {
-                        var hrSub = document.createElement('div');
-                        hrSub.style.cssText = 'font-size:0.67rem;color:var(--text-muted,#9ca3af);margin-top:0.15rem;font-variant-numeric:tabular-nums;';
-                        var hrText = 'HR ' + organOutcome.graft_hr_1yr.toFixed(2);
-                        if (organOutcome.graft_hr_1yr_ci) {
-                            hrText += ' [' + organOutcome.graft_hr_1yr_ci[0].toFixed(2) + '\u2013' + organOutcome.graft_hr_1yr_ci[1].toFixed(2) + ']';
-                        }
-                        hrSub.textContent = hrText;
-                        survTd.appendChild(hrSub);
-                    }
-                } else {
-                    var noSurv = document.createElement('span');
-                    noSurv.className = 'no-data';
-                    noSurv.textContent = '\u2014';
-                    survTd.appendChild(noSurv);
-                }
-                row.appendChild(survTd);
+                var graft1Td = document.createElement('td');
+                graft1Td.textContent = organOutcome.graft_survival_1yr !== undefined ? organOutcome.graft_survival_1yr.toFixed(1) + '%' : '\u2014';
+                row.appendChild(graft1Td);
 
-                // 3-yr graft + patient survival
-                var surv3Td = document.createElement('td');
-                if (organOutcome.graft_survival_3yr !== undefined) {
-                    surv3Td.textContent = organOutcome.graft_survival_3yr.toFixed(1) + '%';
-                    if (organOutcome.patient_survival_3yr !== undefined) {
-                        var patSub3 = document.createElement('div');
-                        patSub3.style.cssText = 'font-size:0.73rem;color:var(--text-muted,#9ca3af);margin-top:0.1rem;';
-                        patSub3.textContent = organOutcome.patient_survival_3yr.toFixed(1) + '%';
-                        surv3Td.appendChild(patSub3);
+                // 1-yr patient survival
+                var pat1Td = document.createElement('td');
+                pat1Td.textContent = organOutcome.patient_survival_1yr !== undefined ? organOutcome.patient_survival_1yr.toFixed(1) + '%' : '\u2014';
+                row.appendChild(pat1Td);
+
+                // 3-yr graft survival
+                var graft3Td = document.createElement('td');
+                graft3Td.textContent = organOutcome.graft_survival_3yr !== undefined ? organOutcome.graft_survival_3yr.toFixed(1) + '%' : '\u2014';
+                row.appendChild(graft3Td);
+
+                // 3-yr patient survival
+                var pat3Td = document.createElement('td');
+                pat3Td.textContent = organOutcome.patient_survival_3yr !== undefined ? organOutcome.patient_survival_3yr.toFixed(1) + '%' : '\u2014';
+                row.appendChild(pat3Td);
+
+                // Hazard ratio with 95% CI
+                var hrTd = document.createElement('td');
+                hrTd.style.cssText = 'font-variant-numeric:tabular-nums;white-space:nowrap;';
+                if (organOutcome.graft_hr_1yr !== undefined) {
+                    var hrText = organOutcome.graft_hr_1yr.toFixed(2);
+                    if (organOutcome.graft_hr_1yr_ci) {
+                        hrText += ' [' + organOutcome.graft_hr_1yr_ci[0].toFixed(2) + '\u2013' + organOutcome.graft_hr_1yr_ci[1].toFixed(2) + ']';
                     }
+                    hrTd.textContent = hrText;
                 } else {
-                    var noSurv3 = document.createElement('span');
-                    noSurv3.className = 'no-data';
-                    noSurv3.textContent = '\u2014';
-                    surv3Td.appendChild(noSurv3);
+                    hrTd.textContent = '\u2014';
                 }
-                row.appendChild(surv3Td);
+                row.appendChild(hrTd);
 
                 // Annual volume
                 var volTd = document.createElement('td');
