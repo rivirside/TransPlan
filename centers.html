@@ -35,7 +35,7 @@
             flex: 1;
             padding: 0.65rem 1rem;
             border: 1px solid var(--border, #d1d5db);
-            border-radius: 8px;
+            border-radius: 3px;
             font-size: 1rem;
             background: var(--surface, #fff);
             color: var(--text, #111827);
@@ -49,7 +49,7 @@
         .sort-select {
             padding: 0.65rem 0.75rem;
             border: 1px solid var(--border, #d1d5db);
-            border-radius: 8px;
+            border-radius: 3px;
             font-size: 0.9rem;
             background: var(--surface, #fff);
             color: var(--text, #111827);
@@ -66,30 +66,25 @@
             display: inline-flex;
             align-items: center;
             gap: 0.35rem;
-            padding: 0.4rem 0.85rem;
-            border-radius: 9999px;
-            border: 2px solid var(--border, #d1d5db);
+            padding: 0.35rem 0.7rem;
+            border-radius: 3px;
+            border: 1px solid var(--border, #d1d5db);
             background: var(--surface, #fff);
             color: var(--text, #374151);
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: border-color 0.15s ease;
             user-select: none;
         }
         .filter-chip:hover {
             border-color: var(--text-muted, #9ca3af);
         }
         .filter-chip.active {
-            color: #fff;
-            border-color: transparent;
+            background: var(--color-primary-50, #eef2ff);
+            border-color: var(--color-primary, #4f46e5);
+            color: var(--color-primary-800, #3730a3);
         }
-        .filter-chip[data-organ="kidney"].active  { background: #e74c3c; }
-        .filter-chip[data-organ="liver"].active    { background: #8e44ad; }
-        .filter-chip[data-organ="heart"].active    { background: #e91e63; }
-        .filter-chip[data-organ="lung"].active     { background: #2196f3; }
-        .filter-chip[data-organ="pancreas"].active { background: #ff9800; }
-        .filter-chip[data-organ="intestine"].active{ background: #4caf50; }
 
         .results-info {
             font-size: 0.9rem;
@@ -119,13 +114,11 @@
         .center-card {
             background: var(--surface, #fff);
             border: 1px solid var(--border, #e5e7eb);
-            border-radius: 12px;
-            padding: 1.25rem;
-            transition: box-shadow 0.15s ease, transform 0.15s ease;
+            border-radius: 3px;
+            padding: 1rem;
         }
         .center-card:hover {
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            transform: translateY(-2px);
+            border-color: var(--color-primary-200, #c7d2fe);
         }
         .center-card-name {
             font-size: 1.05rem;
@@ -147,19 +140,19 @@
         }
         .organ-badge {
             display: inline-block;
-            padding: 0.2rem 0.6rem;
-            border-radius: 9999px;
-            font-size: 0.72rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 2px;
+            font-size: 0.7rem;
             font-weight: 600;
-            color: #fff;
-            text-transform: capitalize;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
         }
-        .organ-badge--kidney    { background: #e74c3c; }
-        .organ-badge--liver     { background: #8e44ad; }
-        .organ-badge--heart     { background: #e91e63; }
-        .organ-badge--lung      { background: #2196f3; }
-        .organ-badge--pancreas  { background: #ff9800; }
-        .organ-badge--intestine { background: #4caf50; }
+        .organ-badge--kidney    { background: #fde8e8; color: #991b1b; }
+        .organ-badge--liver     { background: #f3e8ff; color: #6b21a8; }
+        .organ-badge--heart     { background: #fce7f3; color: #9d174d; }
+        .organ-badge--lung      { background: #dbeafe; color: #1e40af; }
+        .organ-badge--pancreas  { background: #fff7ed; color: #9a3412; }
+        .organ-badge--intestine { background: #dcfce7; color: #166534; }
 
         .center-card-link {
             display: inline-flex;
