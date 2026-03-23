@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransplantMatch - Center Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        .explorer-header {
+            text-align: center;
+            padding: 2.5rem 1rem 1rem;
+        }
+        .explorer-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .explorer-header p {
+            color: var(--text-muted, #6b7280);
+            margin-bottom: 1.5rem;
+        }
+
+        .explorer-controls {
+            max-width: 900px;
+            margin: 0 auto 1.5rem;
+            padding: 0 1rem;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .search-bar input {
+            flex: 1;
+            padding: 0.65rem 1rem;
+            border: 1px solid var(--border, #d1d5db);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--surface, #fff);
+            color: var(--text, #111827);
+        }
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--accent, #6366f1);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .sort-select {
+            padding: 0.65rem 0.75rem;
+            border: 1px solid var(--border, #d1d5db);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: var(--surface, #fff);
+            color: var(--text, #111827);
+            cursor: pointer;
+        }
+
+        .filter-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.4rem 0.85rem;
+            border-radius: 9999px;
+            border: 2px solid var(--border, #d1d5db);
+            background: var(--surface, #fff);
+            color: var(--text, #374151);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+        .filter-chip:hover {
+            border-color: var(--text-muted, #9ca3af);
+        }
+        .filter-chip.active {
+            color: #fff;
+            border-color: transparent;
+        }
+        .filter-chip[data-organ="kidney"].active  { background: #e74c3c; }
+        .filter-chip[data-organ="liver"].active    { background: #8e44ad; }
+        .filter-chip[data-organ="heart"].active    { background: #e91e63; }
+        .filter-chip[data-organ="lung"].active     { background: #2196f3; }
+        .filter-chip[data-organ="pancreas"].active { background: #ff9800; }
+        .filter-chip[data-organ="intestine"].active{ background: #4caf50; }
+
+        .results-info {
+            font-size: 0.9rem;
+            color: var(--text-muted, #6b7280);
+            margin-bottom: 1rem;
+        }
+
+        .centers-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            max-width: 1100px;
+            margin: 0 auto 3rem;
+            padding: 0 1rem;
+        }
+        @media (min-width: 640px) {
+            .centers-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 960px) {
+            .centers-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .center-card {
+            background: var(--surface, #fff);
+            border: 1px solid var(--border, #e5e7eb);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: box-shadow 0.15s ease, transform 0.15s ease;
+        }
+        .center-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+        .center-card-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+            color: var(--text, #111827);
+            line-height: 1.3;
+        }
+        .center-card-location {
+            font-size: 0.88rem;
+            color: var(--text-muted, #6b7280);
+            margin-bottom: 0.75rem;
+        }
+        .center-card-organs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-bottom: 1rem;
+        }
+        .organ-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #fff;
+            text-transform: capitalize;
+        }
+        .organ-badge--kidney    { background: #e74c3c; }
+        .organ-badge--liver     { background: #8e44ad; }
+        .organ-badge--heart     { background: #e91e63; }
+        .organ-badge--lung      { background: #2196f3; }
+        .organ-badge--pancreas  { background: #ff9800; }
+        .organ-badge--intestine { background: #4caf50; }
+
+        .center-card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--accent, #6366f1);
+            text-decoration: none;
+        }
+        .center-card-link:hover {
+            text-decoration: underline;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted, #6b7280);
+        }
+        .no-results-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted, #6b7280);
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav" aria-label="Site navigation">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <span class="nav-brand-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <span class="nav-brand-text">TransplantMatch</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="simulator.html" class="nav-link">Simulator</a>
+                <div class="nav-dropdown">
+                    <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">▾</span></button>
+                    <div class="nav-dropdown-menu" role="menu">
+                        <a href="centers.html" class="nav-dropdown-item active" role="menuitem">Center Explorer</a>
+                        <a href="education.html" class="nav-dropdown-item" role="menuitem">Education</a>
+                        <a href="support.html" class="nav-dropdown-item" role="menuitem">Patient Support</a>
+                    </div>
+                </div>
+                <a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="explorer-header">
+            <h1>Center Explorer</h1>
+            <p>Search and filter 248 U.S. transplant centers by name, location, or organ program.</p>
+        </div>
+
+        <div class="explorer-controls">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search by center name, city, or state..." aria-label="Search transplant centers">
+                <select id="sort-select" class="sort-select" aria-label="Sort centers">
+                    <option value="name">Sort: Name</option>
+                    <option value="state">Sort: State</option>
+                    <option value="programs">Sort: Programs</option>
+                </select>
+            </div>
+            <div class="filter-chips" id="filter-chips" role="group" aria-label="Filter by organ type">
+                <button class="filter-chip" data-organ="kidney" type="button">
+                    <span aria-hidden="true">&#9679;</span> Kidney
+                </button>
+                <button class="filter-chip" data-organ="liver" type="button">
+                    <span aria-hidden="true">&#9679;</span> Liver
+                </button>
+                <button class="filter-chip" data-organ="heart" type="button">
+                    <span aria-hidden="true">&#9679;</span> Heart
+                </button>
+                <button class="filter-chip" data-organ="lung" type="button">
+                    <span aria-hidden="true">&#9679;</span> Lung
+                </button>
+                <button class="filter-chip" data-organ="pancreas" type="button">
+                    <span aria-hidden="true">&#9679;</span> Pancreas
+                </button>
+                <button class="filter-chip" data-organ="intestine" type="button">
+                    <span aria-hidden="true">&#9679;</span> Intestine
+                </button>
+            </div>
+            <div class="results-info" id="results-info" aria-live="polite">Loading centers...</div>
+        </div>
+
+        <div id="centers-grid" class="centers-grid">
+            <div class="loading-state">Loading transplant centers...</div>
+        </div>
+    </main>
+
+    <footer id="disclaimer-full" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-disclaimer">
+                <h3>Disclaimer</h3>
+                <p><strong>This tool is for educational and exploratory purposes only.</strong> TransplantMatch is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
+                <p><strong>Scores are relative comparisons</strong> based on publicly available regional statistics. They are not clinical assessments.</p>
+                <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant.</p>
+            </div>
+            <div class="footer-meta">
+                <div class="footer-links">
+                    <a href="simulator.html">Simulator</a>
+                    <a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>
+                </div>
+                <p class="footer-copy">TransplantMatch is under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
+                <p class="footer-copy">Contact: <a href="mailto:tomer@arizona.edu">tomer@arizona.edu</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="session.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        var allCenters = [];
+        var activeOrgans = new Set();
+        var currentSort = 'name';
+
+        var searchInput = document.getElementById('search-input');
+        var sortSelect = document.getElementById('sort-select');
+        var filterChipsContainer = document.getElementById('filter-chips');
+        var resultsInfo = document.getElementById('results-info');
+        var centersGrid = document.getElementById('centers-grid');
+
+        // --- Data loading ---
+        async function loadCenters() {
+            // Try API first
+            try {
+                var resp = await fetch('/centers');
+                if (resp.ok) {
+                    var data = await resp.json();
+                    return data.centers || [];
+                }
+            } catch (e) {}
+            // Fallback: load JSON directly
+            try {
+                var resp = await fetch('data/srtr-all-centers.json');
+                if (resp.ok) {
+                    var data = await resp.json();
+                    return Object.values(data.centers || {});
+                }
+            } catch (e) {}
+            return [];
+        }
+
+        // --- Filtering & sorting ---
+        function getFilteredCenters() {
+            var query = searchInput.value.trim().toLowerCase();
+            var filtered = allCenters.filter(function(c) {
+                // Text search
+                if (query) {
+                    var name = (c.name || '').toLowerCase();
+                    var city = (c.city || '').toLowerCase();
+                    var state = (c.state || '').toLowerCase();
+                    var stateAbbr = (c.state_abbr || '').toLowerCase();
+                    if (name.indexOf(query) === -1 &&
+                        city.indexOf(query) === -1 &&
+                        state.indexOf(query) === -1 &&
+                        stateAbbr.indexOf(query) === -1) {
+                        return false;
+                    }
+                }
+                // Organ filter (OR logic)
+                if (activeOrgans.size > 0) {
+                    var organs = c.organs || [];
+                    var hasAny = false;
+                    activeOrgans.forEach(function(o) {
+                        if (organs.indexOf(o) !== -1) hasAny = true;
+                    });
+                    if (!hasAny) return false;
+                }
+                return true;
+            });
+
+            // Sort
+            filtered.sort(function(a, b) {
+                if (currentSort === 'name') {
+                    return (a.name || '').localeCompare(b.name || '');
+                } else if (currentSort === 'state') {
+                    var s = (a.state || '').localeCompare(b.state || '');
+                    if (s !== 0) return s;
+                    return (a.name || '').localeCompare(b.name || '');
+                } else if (currentSort === 'programs') {
+                    return (b.organs || []).length - (a.organs || []).length;
+                }
+                return 0;
+            });
+
+            return filtered;
+        }
+
+        // --- Rendering ---
+        function renderCenters() {
+            var filtered = getFilteredCenters();
+
+            // Update count
+            resultsInfo.textContent = 'Showing ' + filtered.length + ' of ' + allCenters.length + ' centers';
+
+            // Clear grid
+            while (centersGrid.firstChild) {
+                centersGrid.removeChild(centersGrid.firstChild);
+            }
+
+            if (filtered.length === 0) {
+                var noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                var icon = document.createElement('div');
+                icon.className = 'no-results-icon';
+                icon.textContent = '\uD83D\uDD0D';
+                noResults.appendChild(icon);
+                var msg = document.createElement('p');
+                msg.textContent = 'No centers match your search. Try adjusting your filters.';
+                noResults.appendChild(msg);
+                centersGrid.appendChild(noResults);
+                return;
+            }
+
+            filtered.forEach(function(center) {
+                var card = document.createElement('div');
+                card.className = 'center-card';
+
+                var nameEl = document.createElement('div');
+                nameEl.className = 'center-card-name';
+                nameEl.textContent = center.name || 'Unknown Center';
+                card.appendChild(nameEl);
+
+                var locEl = document.createElement('div');
+                locEl.className = 'center-card-location';
+                var parts = [];
+                if (center.city) parts.push(center.city);
+                if (center.state) parts.push(center.state);
+                else if (center.state_abbr) parts.push(center.state_abbr);
+                locEl.textContent = parts.join(', ') || 'Location unavailable';
+                card.appendChild(locEl);
+
+                var organsEl = document.createElement('div');
+                organsEl.className = 'center-card-organs';
+                (center.organs || []).forEach(function(organ) {
+                    var badge = document.createElement('span');
+                    badge.className = 'organ-badge organ-badge--' + organ;
+                    badge.textContent = organ;
+                    organsEl.appendChild(badge);
+                });
+                card.appendChild(organsEl);
+
+                var link = document.createElement('a');
+                link.className = 'center-card-link';
+                link.href = 'center.html?code=' + encodeURIComponent(center.code || '');
+                link.textContent = 'View Details';
+                var arrow = document.createElement('span');
+                arrow.setAttribute('aria-hidden', 'true');
+                arrow.textContent = '\u2192';
+                link.appendChild(arrow);
+                card.appendChild(link);
+
+                centersGrid.appendChild(card);
+            });
+        }
+
+        // --- Event listeners ---
+        searchInput.addEventListener('keyup', function() {
+            renderCenters();
+        });
+
+        sortSelect.addEventListener('change', function() {
+            currentSort = sortSelect.value;
+            renderCenters();
+        });
+
+        filterChipsContainer.addEventListener('click', function(e) {
+            var chip = e.target.closest('.filter-chip');
+            if (!chip) return;
+            var organ = chip.getAttribute('data-organ');
+            if (!organ) return;
+            if (activeOrgans.has(organ)) {
+                activeOrgans.delete(organ);
+                chip.classList.remove('active');
+            } else {
+                activeOrgans.add(organ);
+                chip.classList.add('active');
+            }
+            renderCenters();
+        });
+
+        // --- Init ---
+        loadCenters().then(function(centers) {
+            allCenters = centers;
+            renderCenters();
+        }).catch(function() {
+            resultsInfo.textContent = 'Failed to load center data.';
+            while (centersGrid.firstChild) {
+                centersGrid.removeChild(centersGrid.firstChild);
+            }
+        });
+    })();
+    </script>
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

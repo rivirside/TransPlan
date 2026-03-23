@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransplantMatch - Center Detail</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        .center-detail {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem 3rem;
+        }
+
+        /* --- Loading & Error States --- */
+        .loading-state, .error-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--text-muted, #6b7280);
+        }
+        .error-state h2 {
+            font-size: 1.5rem;
+            color: var(--text, #111827);
+            margin-bottom: 0.5rem;
+        }
+        .error-state p {
+            margin-bottom: 1.5rem;
+        }
+        .error-state a {
+            color: var(--accent, #6366f1);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .error-state a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Header Section --- */
+        .center-header {
+            margin-bottom: 1.5rem;
+        }
+        .center-header h1 {
+            font-size: 1.75rem;
+            color: var(--text, #111827);
+            margin-bottom: 0.35rem;
+            line-height: 1.25;
+        }
+        .center-location {
+            font-size: 1rem;
+            color: var(--text-muted, #6b7280);
+            margin-bottom: 0.75rem;
+        }
+        .center-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+        .organ-badge {
+            display: inline-block;
+            padding: 0.25rem 0.7rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #fff;
+            text-transform: capitalize;
+        }
+        .organ-badge--kidney    { background: #e74c3c; }
+        .organ-badge--liver     { background: #8e44ad; }
+        .organ-badge--heart     { background: #e91e63; }
+        .organ-badge--lung      { background: #2196f3; }
+        .organ-badge--pancreas  { background: #ff9800; }
+        .organ-badge--intestine { background: #4caf50; }
+
+        /* --- Quick Links --- */
+        .quick-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--surface-raised, #f9fafb);
+            border: 1px solid var(--border, #e5e7eb);
+            border-radius: 10px;
+        }
+        .quick-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--accent, #6366f1);
+            background: var(--surface, #fff);
+            border: 1px solid var(--border, #e5e7eb);
+            transition: box-shadow 0.15s ease, border-color 0.15s ease;
+        }
+        .quick-link:hover {
+            border-color: var(--accent, #6366f1);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+        }
+        .quick-link-icon {
+            font-size: 1rem;
+        }
+
+        /* --- Two-Column Layout --- */
+        .center-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 768px) {
+            .center-content {
+                grid-template-columns: 65% 35%;
+            }
+        }
+
+        /* --- Section Card --- */
+        .section-card {
+            background: var(--surface, #fff);
+            border: 1px solid var(--border, #e5e7eb);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-card h2 {
+            font-size: 1.1rem;
+            color: var(--text, #111827);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-light, #f3f4f6);
+        }
+
+        /* --- Map --- */
+        .map-container {
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border, #e5e7eb);
+        }
+
+        /* --- Organ Programs Table --- */
+        .programs-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+        .programs-table th {
+            text-align: left;
+            padding: 0.6rem 0.75rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: var(--text-muted, #6b7280);
+            border-bottom: 2px solid var(--border, #e5e7eb);
+        }
+        .programs-table td {
+            padding: 0.65rem 0.75rem;
+            border-bottom: 1px solid var(--border-light, #f3f4f6);
+            color: var(--text-2, #4a4f65);
+        }
+        .programs-table tr:last-child td {
+            border-bottom: none;
+        }
+        .programs-table .organ-name {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        .organ-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .organ-dot--kidney    { background: #e74c3c; }
+        .organ-dot--liver     { background: #8e44ad; }
+        .organ-dot--heart     { background: #e91e63; }
+        .organ-dot--lung      { background: #2196f3; }
+        .organ-dot--pancreas  { background: #ff9800; }
+        .organ-dot--intestine { background: #4caf50; }
+
+        .factor-good { color: #16a34a; }
+        .factor-neutral { color: var(--text-2, #4a4f65); }
+        .factor-caution { color: #d97706; }
+        .factor-high { color: #dc2626; }
+
+        .rating-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        .rating-badge--better_than_expected { background: #d1fae5; color: #065f46; }
+        .rating-badge--as_expected { background: #e0e7ff; color: #3730a3; }
+        .rating-badge--worse_than_expected { background: #fee2e2; color: #991b1b; }
+        .rating-badge--insufficient_data { background: #f3f4f6; color: #6b7280; }
+
+        .no-data {
+            color: var(--text-muted, #9ca3af);
+            font-style: italic;
+            font-size: 0.85rem;
+        }
+
+        /* --- Nearby Centers --- */
+        .nearby-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .nearby-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid var(--border-light, #f3f4f6);
+            gap: 0.75rem;
+        }
+        .nearby-item:last-child {
+            border-bottom: none;
+        }
+        .nearby-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .nearby-name {
+            font-weight: 500;
+            font-size: 0.88rem;
+            color: var(--accent, #6366f1);
+            text-decoration: none;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .nearby-name:hover {
+            text-decoration: underline;
+        }
+        .nearby-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted, #6b7280);
+            margin-top: 0.15rem;
+        }
+        .nearby-distance {
+            font-size: 0.8rem;
+            color: var(--text-muted, #6b7280);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .nearby-organ-count {
+            font-size: 0.75rem;
+            color: var(--text-3, #9ca3af);
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 767px) {
+            .center-header h1 {
+                font-size: 1.35rem;
+            }
+            .quick-links {
+                flex-direction: column;
+            }
+            .programs-table {
+                font-size: 0.82rem;
+            }
+            .programs-table th, .programs-table td {
+                padding: 0.5rem 0.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav" aria-label="Site navigation">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <span class="nav-brand-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <span class="nav-brand-text">TransplantMatch</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="simulator.html" class="nav-link">Simulator</a>
+                <div class="nav-dropdown">
+                    <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">▾</span></button>
+                    <div class="nav-dropdown-menu" role="menu">
+                        <a href="centers.html" class="nav-dropdown-item" role="menuitem">Center Explorer</a>
+                        <a href="education.html" class="nav-dropdown-item" role="menuitem">Education</a>
+                        <a href="support.html" class="nav-dropdown-item" role="menuitem">Patient Support</a>
+                    </div>
+                </div>
+                <a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="center-detail" id="center-detail">
+            <div class="loading-state" id="loading-state">Loading center data...</div>
+        </div>
+    </main>
+
+    <footer id="disclaimer-full" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-disclaimer">
+                <h3>Disclaimer</h3>
+                <p><strong>This tool is for educational and exploratory purposes only.</strong> TransplantMatch is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
+                <p><strong>Scores are relative comparisons</strong> based on publicly available regional statistics. They are not clinical assessments.</p>
+                <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant.</p>
+            </div>
+            <div class="footer-meta">
+                <div class="footer-links">
+                    <a href="simulator.html">Simulator</a>
+                    <a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>
+                </div>
+                <p class="footer-copy">TransplantMatch is under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
+                <p class="footer-copy">Contact: <a href="mailto:tomer@arizona.edu">tomer@arizona.edu</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="session.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        var detailContainer = document.getElementById('center-detail');
+        var loadingState = document.getElementById('loading-state');
+
+        // --- Parse center code from URL ---
+        var params = new URLSearchParams(window.location.search);
+        var centerCode = params.get('code');
+
+        if (!centerCode) {
+            showError('No center code specified', 'Please provide a center code in the URL (e.g., center.html?code=ALUA).');
+            return;
+        }
+
+        // --- Data loading ---
+        async function loadCenterDetail(code) {
+            // Try API
+            try {
+                var resp = await fetch('/centers/' + encodeURIComponent(code));
+                if (resp.ok) return await resp.json();
+            } catch (e) {}
+            // Fallback: load from static JSON
+            try {
+                var resp = await fetch('data/srtr-all-centers.json');
+                if (resp.ok) {
+                    var data = await resp.json();
+                    var center = data.centers[code];
+                    if (center) return { center: center, wait_time_factors: {}, competing_risks: {}, outcomes: {}, nearby_centers: [], srtr_url: 'https://www.srtr.org/transplant-centers/' + code + '/' };
+                }
+            } catch (e) {}
+            return null;
+        }
+
+        // --- Error display ---
+        function showError(title, message) {
+            while (detailContainer.firstChild) {
+                detailContainer.removeChild(detailContainer.firstChild);
+            }
+            var errorDiv = document.createElement('div');
+            errorDiv.className = 'error-state';
+
+            var h2 = document.createElement('h2');
+            h2.textContent = title;
+            errorDiv.appendChild(h2);
+
+            var p = document.createElement('p');
+            p.textContent = message;
+            errorDiv.appendChild(p);
+
+            var link = document.createElement('a');
+            link.href = 'centers.html';
+            link.textContent = 'Back to Center Explorer';
+            errorDiv.appendChild(link);
+
+            detailContainer.appendChild(errorDiv);
+        }
+
+        // --- Format factor value with color class ---
+        function formatFactor(value, label) {
+            if (value === undefined || value === null) return null;
+            var num = parseFloat(value);
+            if (isNaN(num)) return null;
+
+            var span = document.createElement('span');
+            var text = num.toFixed(2) + '\u00d7';
+            span.textContent = text;
+
+            // Color coding: below 1 = good, near 1 = neutral, above 1.5 = caution, above 2 = high
+            if (label === 'wait' || label === 'mortality' || label === 'delisting') {
+                if (num < 0.85) {
+                    span.className = 'factor-good';
+                } else if (num <= 1.15) {
+                    span.className = 'factor-neutral';
+                } else if (num <= 2.0) {
+                    span.className = 'factor-caution';
+                } else {
+                    span.className = 'factor-high';
+                }
+            }
+
+            return span;
+        }
+
+        // --- Format performance rating ---
+        function formatRating(rating) {
+            if (!rating) return null;
+            var span = document.createElement('span');
+            var cleanRating = rating.replace(/_/g, ' ');
+            span.className = 'rating-badge rating-badge--' + rating;
+            span.textContent = cleanRating;
+            return span;
+        }
+
+        // --- Build header section ---
+        function buildHeader(center) {
+            var header = document.createElement('div');
+            header.className = 'center-header';
+
+            var h1 = document.createElement('h1');
+            h1.textContent = center.name || 'Unknown Center';
+            header.appendChild(h1);
+
+            var loc = document.createElement('div');
+            loc.className = 'center-location';
+            var parts = [];
+            if (center.city) parts.push(center.city);
+            if (center.state) parts.push(center.state);
+            else if (center.state_abbr) parts.push(center.state_abbr);
+            loc.textContent = parts.length > 0 ? parts.join(', ') : 'Location unavailable';
+            header.appendChild(loc);
+
+            var badges = document.createElement('div');
+            badges.className = 'center-badges';
+            (center.organs || []).forEach(function(organ) {
+                var badge = document.createElement('span');
+                badge.className = 'organ-badge organ-badge--' + organ;
+                badge.textContent = organ;
+                badges.appendChild(badge);
+            });
+            header.appendChild(badges);
+
+            return header;
+        }
+
+        // --- Build quick links bar ---
+        function buildQuickLinks(data) {
+            var bar = document.createElement('div');
+            bar.className = 'quick-links';
+
+            // View on SRTR
+            var srtrLink = document.createElement('a');
+            srtrLink.className = 'quick-link';
+            srtrLink.href = data.srtr_url || ('https://www.srtr.org/transplant-centers/' + centerCode + '/');
+            srtrLink.target = '_blank';
+            srtrLink.rel = 'noopener';
+            var srtrIcon = document.createElement('span');
+            srtrIcon.className = 'quick-link-icon';
+            srtrIcon.setAttribute('aria-hidden', 'true');
+            srtrIcon.textContent = '\uD83D\uDD17';
+            srtrLink.appendChild(srtrIcon);
+            var srtrText = document.createTextNode(' View on SRTR');
+            srtrLink.appendChild(srtrText);
+            bar.appendChild(srtrLink);
+
+            // Compare in Simulator
+            var simLink = document.createElement('a');
+            simLink.className = 'quick-link';
+            var city = data.center.city || '';
+            simLink.href = 'simulator.html' + (city ? '?homeCenter=' + encodeURIComponent(city) : '');
+            var simIcon = document.createElement('span');
+            simIcon.className = 'quick-link-icon';
+            simIcon.setAttribute('aria-hidden', 'true');
+            simIcon.textContent = '\u2696\uFE0F';
+            simLink.appendChild(simIcon);
+            var simText = document.createTextNode(' Compare in Simulator');
+            simLink.appendChild(simText);
+            bar.appendChild(simLink);
+
+            // Back to Center Explorer
+            var backLink = document.createElement('a');
+            backLink.className = 'quick-link';
+            backLink.href = 'centers.html';
+            var backIcon = document.createElement('span');
+            backIcon.className = 'quick-link-icon';
+            backIcon.setAttribute('aria-hidden', 'true');
+            backIcon.textContent = '\u2190';
+            backLink.appendChild(backIcon);
+            var backText = document.createTextNode(' Back to Center Explorer');
+            backLink.appendChild(backText);
+            bar.appendChild(backLink);
+
+            return bar;
+        }
+
+        // --- Build map section ---
+        function buildMap(center) {
+            var card = document.createElement('div');
+            card.className = 'section-card';
+
+            var h2 = document.createElement('h2');
+            h2.textContent = 'Location';
+            card.appendChild(h2);
+
+            var mapDiv = document.createElement('div');
+            mapDiv.className = 'map-container';
+            mapDiv.id = 'center-map';
+            card.appendChild(mapDiv);
+
+            // Initialize map after DOM insertion
+            setTimeout(function() {
+                var lat = center.lat;
+                var lon = center.lon;
+                if (lat && lon) {
+                    var map = L.map('center-map').setView([lat, lon], 11);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; OpenStreetMap contributors',
+                        maxZoom: 18
+                    }).addTo(map);
+                    L.marker([lat, lon]).addTo(map)
+                        .bindPopup(center.name || 'Transplant Center')
+                        .openPopup();
+                } else {
+                    mapDiv.style.display = 'flex';
+                    mapDiv.style.alignItems = 'center';
+                    mapDiv.style.justifyContent = 'center';
+                    mapDiv.style.background = 'var(--surface-sunken, #f1f3f7)';
+                    var noMap = document.createElement('span');
+                    noMap.className = 'no-data';
+                    noMap.textContent = 'No coordinates available for this center.';
+                    mapDiv.appendChild(noMap);
+                }
+            }, 0);
+
+            return card;
+        }
+
+        // --- Build organ programs table ---
+        function buildProgramsTable(data) {
+            var card = document.createElement('div');
+            card.className = 'section-card';
+
+            var h2 = document.createElement('h2');
+            h2.textContent = 'Organ Programs';
+            card.appendChild(h2);
+
+            var organs = data.center.organs || [];
+            if (organs.length === 0) {
+                var noData = document.createElement('p');
+                noData.className = 'no-data';
+                noData.textContent = 'No organ program data available.';
+                card.appendChild(noData);
+                return card;
+            }
+
+            var table = document.createElement('table');
+            table.className = 'programs-table';
+
+            // Header
+            var thead = document.createElement('thead');
+            var headerRow = document.createElement('tr');
+            var headers = ['Organ', 'Wait Time', 'Mortality', 'Delisting', 'Rating'];
+            headers.forEach(function(text) {
+                var th = document.createElement('th');
+                th.textContent = text;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // Body
+            var tbody = document.createElement('tbody');
+            var waitFactors = data.wait_time_factors || {};
+            var riskFactors = data.competing_risks || {};
+            var outcomes = data.outcomes || {};
+
+            organs.forEach(function(organ) {
+                var row = document.createElement('tr');
+
+                // Organ name with color dot
+                var organTd = document.createElement('td');
+                var organName = document.createElement('span');
+                organName.className = 'organ-name';
+                var dot = document.createElement('span');
+                dot.className = 'organ-dot organ-dot--' + organ;
+                organName.appendChild(dot);
+                var nameText = document.createTextNode(organ);
+                organName.appendChild(nameText);
+                organTd.appendChild(organName);
+                row.appendChild(organTd);
+
+                // Wait time factor
+                var waitTd = document.createElement('td');
+                var waitVal = waitFactors[organ];
+                var waitSpan = formatFactor(waitVal, 'wait');
+                if (waitSpan) {
+                    waitTd.appendChild(waitSpan);
+                } else {
+                    var noWait = document.createElement('span');
+                    noWait.className = 'no-data';
+                    noWait.textContent = '\u2014';
+                    waitTd.appendChild(noWait);
+                }
+                row.appendChild(waitTd);
+
+                // Mortality factor
+                var mortTd = document.createElement('td');
+                var organRisk = riskFactors[organ] || {};
+                var mortSpan = formatFactor(organRisk.mortality_factor, 'mortality');
+                if (mortSpan) {
+                    mortTd.appendChild(mortSpan);
+                } else {
+                    var noMort = document.createElement('span');
+                    noMort.className = 'no-data';
+                    noMort.textContent = '\u2014';
+                    mortTd.appendChild(noMort);
+                }
+                row.appendChild(mortTd);
+
+                // Delisting factor
+                var delistTd = document.createElement('td');
+                var delistSpan = formatFactor(organRisk.delisting_factor, 'delisting');
+                if (delistSpan) {
+                    delistTd.appendChild(delistSpan);
+                } else {
+                    var noDelist = document.createElement('span');
+                    noDelist.className = 'no-data';
+                    noDelist.textContent = '\u2014';
+                    delistTd.appendChild(noDelist);
+                }
+                row.appendChild(delistTd);
+
+                // Performance rating
+                var ratingTd = document.createElement('td');
+                var organOutcome = outcomes[organ] || {};
+                var ratingSpan = formatRating(organOutcome.performance_rating);
+                if (ratingSpan) {
+                    ratingTd.appendChild(ratingSpan);
+                } else {
+                    var noRating = document.createElement('span');
+                    noRating.className = 'no-data';
+                    noRating.textContent = '\u2014';
+                    ratingTd.appendChild(noRating);
+                }
+                row.appendChild(ratingTd);
+
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(tbody);
+            card.appendChild(table);
+            return card;
+        }
+
+        // --- Build nearby centers list ---
+        function buildNearbyCenters(nearbyCenters) {
+            var card = document.createElement('div');
+            card.className = 'section-card';
+
+            var h2 = document.createElement('h2');
+            h2.textContent = 'Nearby Centers';
+            card.appendChild(h2);
+
+            if (!nearbyCenters || nearbyCenters.length === 0) {
+                var noData = document.createElement('p');
+                noData.className = 'no-data';
+                noData.textContent = 'No nearby centers found within radius.';
+                card.appendChild(noData);
+                return card;
+            }
+
+            var list = document.createElement('ul');
+            list.className = 'nearby-list';
+
+            var displayCount = Math.min(nearbyCenters.length, 10);
+            for (var i = 0; i < displayCount; i++) {
+                var nc = nearbyCenters[i];
+
+                var item = document.createElement('li');
+                item.className = 'nearby-item';
+
+                var info = document.createElement('div');
+                info.className = 'nearby-info';
+
+                var nameLink = document.createElement('a');
+                nameLink.className = 'nearby-name';
+                nameLink.href = 'center.html?code=' + encodeURIComponent(nc.code || '');
+                nameLink.textContent = nc.name || 'Unknown';
+                nameLink.title = nc.name || '';
+                info.appendChild(nameLink);
+
+                var meta = document.createElement('div');
+                meta.className = 'nearby-meta';
+                var metaParts = [];
+                if (nc.state_abbr) metaParts.push(nc.state_abbr);
+                var organCount = (nc.organs || []).length;
+                if (organCount > 0) metaParts.push(organCount + ' organ program' + (organCount !== 1 ? 's' : ''));
+                meta.textContent = metaParts.join(' \u00B7 ');
+                info.appendChild(meta);
+
+                item.appendChild(info);
+
+                var dist = document.createElement('div');
+                dist.className = 'nearby-distance';
+                if (nc.distance_miles !== undefined) {
+                    dist.textContent = nc.distance_miles + ' mi';
+                }
+                item.appendChild(dist);
+
+                list.appendChild(item);
+            }
+
+            card.appendChild(list);
+            return card;
+        }
+
+        // --- Render the page ---
+        function render(data) {
+            while (detailContainer.firstChild) {
+                detailContainer.removeChild(detailContainer.firstChild);
+            }
+
+            var center = data.center;
+
+            // Update page title
+            document.title = 'TransplantMatch - ' + (center.name || centerCode);
+
+            // Header
+            detailContainer.appendChild(buildHeader(center));
+
+            // Quick links
+            detailContainer.appendChild(buildQuickLinks(data));
+
+            // Two-column layout
+            var content = document.createElement('div');
+            content.className = 'center-content';
+
+            // Left column: main content
+            var mainCol = document.createElement('div');
+            mainCol.appendChild(buildProgramsTable(data));
+            content.appendChild(mainCol);
+
+            // Right column: sidebar
+            var sidebar = document.createElement('div');
+            sidebar.appendChild(buildMap(center));
+            sidebar.appendChild(buildNearbyCenters(data.nearby_centers));
+            content.appendChild(sidebar);
+
+            detailContainer.appendChild(content);
+        }
+
+        // --- Init ---
+        loadCenterDetail(centerCode).then(function(data) {
+            if (!data || !data.center) {
+                showError('Center Not Found', 'No transplant center found with code "' + centerCode + '".');
+                return;
+            }
+            render(data);
+        }).catch(function(err) {
+            showError('Error Loading Data', 'Something went wrong while loading center data. Please try again.');
+        });
+    })();
+    </script>
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

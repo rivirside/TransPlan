@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransplantMatch - Transplant Education</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        .edu-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: var(--space-7) var(--space-5);
+        }
+        .edu-header {
+            margin-bottom: var(--space-7);
+        }
+        .edu-header h1 {
+            font-size: var(--fs-3xl);
+            font-weight: 700;
+            color: var(--text-1);
+            margin-bottom: var(--space-2);
+        }
+        .edu-header p {
+            font-size: var(--fs-lg);
+            color: var(--text-2);
+            line-height: 1.6;
+        }
+
+        .edu-section {
+            margin-bottom: var(--space-6);
+        }
+        .edu-section h2 {
+            font-size: var(--fs-xl);
+            font-weight: 700;
+            color: var(--text-1);
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-2);
+            border-bottom: 2px solid var(--color-primary-100);
+        }
+
+        details {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-3);
+            transition: box-shadow var(--transition-base);
+        }
+        details:hover {
+            box-shadow: var(--shadow-sm);
+        }
+        details[open] {
+            box-shadow: var(--shadow-md);
+        }
+        summary {
+            padding: var(--space-4) var(--space-5);
+            font-weight: 600;
+            font-size: var(--fs-md);
+            color: var(--text-1);
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-3);
+            user-select: none;
+        }
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        summary::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid var(--text-3);
+            border-bottom: 2px solid var(--text-3);
+            transform: rotate(-45deg);
+            transition: transform var(--transition-fast);
+            flex-shrink: 0;
+        }
+        details[open] summary::after {
+            transform: rotate(45deg);
+        }
+        .details-content {
+            padding: 0 var(--space-5) var(--space-5);
+            color: var(--text-2);
+            line-height: 1.7;
+        }
+        .details-content p {
+            margin-bottom: var(--space-3);
+        }
+        .details-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Steps list */
+        .step-list {
+            list-style: none;
+            padding: 0;
+        }
+        .step-list li {
+            display: flex;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        .step-list li:last-child {
+            margin-bottom: 0;
+        }
+        .step-num {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            background: var(--color-primary-100);
+            color: var(--color-primary-700);
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            font-size: var(--fs-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .step-list strong {
+            color: var(--text-1);
+        }
+
+        /* Glossary */
+        .glossary-list {
+            margin: 0;
+            padding: 0;
+        }
+        .glossary-list dt {
+            font-weight: 700;
+            color: var(--text-1);
+            font-size: var(--fs-base);
+            margin-top: var(--space-4);
+            padding-bottom: var(--space-1);
+        }
+        .glossary-list dt:first-child {
+            margin-top: 0;
+        }
+        .glossary-list dd {
+            margin-left: 0;
+            padding-left: var(--space-5);
+            border-left: 3px solid var(--color-primary-100);
+            color: var(--text-2);
+            line-height: 1.6;
+            margin-bottom: var(--space-2);
+        }
+
+        /* Resource links */
+        .resource-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: var(--space-3);
+        }
+        .resource-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            color: var(--color-primary);
+            font-weight: 600;
+            font-size: var(--fs-sm);
+            transition: all var(--transition-fast);
+        }
+        .resource-link:hover {
+            border-color: var(--color-primary-200);
+            box-shadow: var(--shadow-sm);
+            color: var(--color-primary-dark);
+        }
+        .resource-link svg {
+            flex-shrink: 0;
+            color: var(--text-muted);
+        }
+
+        /* SRTR guide highlights */
+        .srtr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-3);
+            margin-top: var(--space-3);
+        }
+        .srtr-item {
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--space-3) var(--space-4);
+        }
+        .srtr-item strong {
+            display: block;
+            color: var(--text-1);
+            font-size: var(--fs-sm);
+            margin-bottom: var(--space-1);
+        }
+        .srtr-item span {
+            font-size: var(--fs-xs);
+            color: var(--text-3);
+            line-height: 1.5;
+        }
+
+        /* Factor list (waitlist section) */
+        .factor-list {
+            list-style: none;
+            padding: 0;
+            margin: var(--space-3) 0;
+        }
+        .factor-list li {
+            padding: var(--space-2) 0;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: baseline;
+            gap: var(--space-2);
+        }
+        .factor-list li:last-child {
+            border-bottom: none;
+        }
+        .factor-list li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--color-primary-300);
+            border-radius: var(--radius-full);
+            flex-shrink: 0;
+            margin-top: 6px;
+        }
+
+        /* Dark mode adjustments */
+        [data-dark="true"] .step-num {
+            background: var(--color-primary-900);
+            color: var(--color-primary-200);
+        }
+        [data-dark="true"] .glossary-list dd {
+            border-left-color: var(--color-primary-800);
+        }
+        [data-dark="true"] .edu-header h2,
+        [data-dark="true"] .edu-section h2 {
+            border-bottom-color: var(--color-primary-800);
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav" aria-label="Site navigation">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <span class="nav-brand-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <span class="nav-brand-text">TransplantMatch</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="simulator.html" class="nav-link">Simulator</a>
+                <div class="nav-dropdown">
+                    <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
+                    <div class="nav-dropdown-menu" role="menu">
+                        <a href="centers.html" class="nav-dropdown-item" role="menuitem">Center Explorer</a>
+                        <a href="education.html" class="nav-dropdown-item active" role="menuitem">Education</a>
+                        <a href="support.html" class="nav-dropdown-item" role="menuitem">Patient Support</a>
+                    </div>
+                </div>
+                <a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="edu-container">
+            <div class="edu-header">
+                <h1>Transplant Education</h1>
+                <p>Understanding the organ transplant process, allocation system, and how to read the data that informs your decisions.</p>
+            </div>
+
+            <!-- Section 1: How Organ Transplant Works -->
+            <div class="edu-section">
+                <h2>The Transplant Process</h2>
+                <details open>
+                    <summary>How Organ Transplant Works</summary>
+                    <div class="details-content">
+                        <ol class="step-list">
+                            <li>
+                                <span class="step-num">1</span>
+                                <div>
+                                    <strong>Evaluation</strong>
+                                    <p>Your medical team refers you to a transplant center where specialists assess whether you are a candidate for transplant. This includes blood work, imaging, cardiac testing, and psychosocial evaluation. The process typically takes several weeks.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">2</span>
+                                <div>
+                                    <strong>Listing</strong>
+                                    <p>Once approved, your transplant center registers you on the national waiting list managed by the United Network for Organ Sharing (UNOS). You can be listed at more than one center simultaneously, known as multiple listing.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">3</span>
+                                <div>
+                                    <strong>Waiting</strong>
+                                    <p>While on the waitlist, your medical team monitors your health and updates your status. Wait times vary dramatically by organ type, blood type, geographic region, and medical urgency. During this time, staying healthy and reachable is critical.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">4</span>
+                                <div>
+                                    <strong>Transplant</strong>
+                                    <p>When a compatible organ becomes available, the transplant team notifies you and the surgery is performed, often within hours. The organ is matched based on medical compatibility, urgency, wait time, and geographic proximity to the donor.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">5</span>
+                                <div>
+                                    <strong>Recovery</strong>
+                                    <p>After surgery, you will spend time in the hospital for monitoring, followed by a structured outpatient recovery. Lifelong immunosuppressive medications are required to prevent rejection. Regular follow-up visits track graft function and overall health.</p>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Section 2: Understanding the Waitlist -->
+            <div class="edu-section">
+                <h2>Allocation &amp; Waitlist</h2>
+                <details>
+                    <summary>Understanding the Waitlist</summary>
+                    <div class="details-content">
+                        <p>Organ allocation in the United States is managed by UNOS under contract with the federal government through the Organ Procurement and Transplantation Network (OPTN). Allocation policies aim to balance medical urgency, fairness, and efficient use of donated organs.</p>
+                        <p>Several factors affect your position and likelihood of receiving an organ:</p>
+                        <ul class="factor-list">
+                            <li><strong>Organ type</strong> &mdash; Each organ has its own allocation system with different prioritization criteria.</li>
+                            <li><strong>Blood type</strong> &mdash; ABO compatibility between donor and recipient is required. Blood type O patients often wait longest because O organs are compatible with all recipients.</li>
+                            <li><strong>Medical urgency</strong> &mdash; Sicker patients generally receive higher priority, though the specific scoring varies by organ.</li>
+                            <li><strong>Time on the waiting list</strong> &mdash; Accumulated wait time is a factor, especially for kidney allocation.</li>
+                            <li><strong>Geographic proximity</strong> &mdash; Organs are offered first to patients near the donor hospital, then in widening geographic circles. Recent policy changes have shifted toward broader sharing based on distance rather than fixed regions.</li>
+                        </ul>
+                        <p><strong>Organ-specific scoring systems:</strong></p>
+                        <ul class="factor-list">
+                            <li><strong>MELD (Model for End-Stage Liver Disease)</strong> &mdash; Used for liver allocation. A score from 6 to 40 based on lab values (bilirubin, INR, creatinine, sodium). Higher scores indicate greater illness severity and higher priority.</li>
+                            <li><strong>LAS (Lung Allocation Score)</strong> &mdash; Used for lung allocation. Combines urgency (expected survival without transplant) and benefit (expected post-transplant survival). Scores range from 0 to 100.</li>
+                            <li><strong>cPRA (Calculated Panel Reactive Antibodies)</strong> &mdash; Used in kidney allocation. Measures how sensitized a patient is to donor antigens. Higher cPRA (0-100%) means fewer compatible donors but also earns additional priority points.</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Section 3: Key Terms Glossary -->
+            <div class="edu-section">
+                <h2>Key Terms</h2>
+                <details>
+                    <summary>Key Terms Glossary</summary>
+                    <div class="details-content">
+                        <dl class="glossary-list">
+                            <dt>UNOS</dt>
+                            <dd>United Network for Organ Sharing. The private nonprofit that manages the U.S. organ transplant system under federal contract. Maintains the national waiting list and develops allocation policies.</dd>
+
+                            <dt>OPTN</dt>
+                            <dd>Organ Procurement and Transplantation Network. The federal framework established by Congress in 1984 to oversee organ transplantation. UNOS has operated OPTN under contract since its inception.</dd>
+
+                            <dt>SRTR</dt>
+                            <dd>Scientific Registry of Transplant Recipients. Provides statistical analyses of transplant program performance, including wait times, patient and graft survival, and organ offer acceptance rates. Their reports are a key tool for comparing transplant centers.</dd>
+
+                            <dt>OPO</dt>
+                            <dd>Organ Procurement Organization. Regional organizations responsible for coordinating organ donation in their designated service areas. There are 56 OPOs in the United States.</dd>
+
+                            <dt>DSA</dt>
+                            <dd>Donation Service Area. The geographic region served by a single OPO. Historically, organs were first offered within the donor's DSA before expanding to wider regions. Recent policy changes have moved toward distance-based allocation circles.</dd>
+
+                            <dt>MELD</dt>
+                            <dd>Model for End-Stage Liver Disease. A numerical score (6-40) used to prioritize liver transplant candidates based on how urgently they need a transplant. Calculated from bilirubin, INR, creatinine, and sodium lab values.</dd>
+
+                            <dt>LAS</dt>
+                            <dd>Lung Allocation Score. A composite score (0-100) for lung transplant prioritization that balances expected benefit of transplant against urgency of the patient's condition.</dd>
+
+                            <dt>cPRA</dt>
+                            <dd>Calculated Panel Reactive Antibodies. A percentage (0-100%) indicating how sensitized a kidney transplant candidate is to potential donors. Highly sensitized patients (high cPRA) receive additional allocation priority to offset their smaller compatible donor pool.</dd>
+
+                            <dt>DCD</dt>
+                            <dd>Donation after Circulatory Death. Organ donation that occurs after cardiac death rather than brain death. DCD donors are an increasing source of transplantable organs, though with some differences in organ viability compared to brain-dead donors.</dd>
+
+                            <dt>HCV+</dt>
+                            <dd>Hepatitis C Virus Positive. Refers to donors who test positive for hepatitis C. Advances in direct-acting antiviral treatments have made HCV+ organs viable for many recipients, expanding the donor pool significantly.</dd>
+
+                            <dt>Graft Survival</dt>
+                            <dd>The length of time a transplanted organ continues to function after transplant. Measured at standard intervals (1-year, 3-year, 5-year). A key outcome metric for comparing transplant center performance.</dd>
+
+                            <dt>Waitlist Mortality</dt>
+                            <dd>The rate at which patients die while waiting for a transplant. A critical metric for understanding the gap between organ supply and demand, and for evaluating regional differences in access.</dd>
+                        </dl>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Section 4: Official Resources -->
+            <div class="edu-section">
+                <h2>Official Resources</h2>
+                <details>
+                    <summary>Authoritative Data Sources &amp; Patient Information</summary>
+                    <div class="details-content">
+                        <div class="resource-links">
+                            <a href="https://unos.org" target="_blank" rel="noopener" class="resource-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                UNOS (unos.org)
+                            </a>
+                            <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener" class="resource-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                OPTN (optn.transplant.hrsa.gov)
+                            </a>
+                            <a href="https://www.srtr.org" target="_blank" rel="noopener" class="resource-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                SRTR (srtr.org)
+                            </a>
+                            <a href="https://www.organdonor.gov" target="_blank" rel="noopener" class="resource-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                organdonor.gov
+                            </a>
+                            <a href="https://www.donatelife.net" target="_blank" rel="noopener" class="resource-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                Donate Life (donatelife.net)
+                            </a>
+                            <a href="https://www.medicare.gov/coverage/organ-transplants" target="_blank" rel="noopener" class="resource-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                Medicare Transplant Info
+                            </a>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Section 5: Reading Your SRTR Report -->
+            <div class="edu-section">
+                <h2>Understanding Center Data</h2>
+                <details>
+                    <summary>Reading Your SRTR Report</summary>
+                    <div class="details-content">
+                        <p>The Scientific Registry of Transplant Recipients (SRTR) publishes Program-Specific Reports (PSRs) for every transplant center in the United States. These reports are the primary way to compare center performance using standardized metrics.</p>
+                        <p>Key elements of a center-level SRTR report:</p>
+                        <div class="srtr-grid">
+                            <div class="srtr-item">
+                                <strong>Wait Times</strong>
+                                <span>Median time from listing to transplant at that center, broken down by organ type and blood type.</span>
+                            </div>
+                            <div class="srtr-item">
+                                <strong>Patient Survival</strong>
+                                <span>1-year and 3-year post-transplant survival rates compared to expected national averages.</span>
+                            </div>
+                            <div class="srtr-item">
+                                <strong>Graft Survival</strong>
+                                <span>How long transplanted organs continue functioning, compared to the national benchmark.</span>
+                            </div>
+                            <div class="srtr-item">
+                                <strong>Transplant Volume</strong>
+                                <span>Number of transplants performed per year. Higher volume often correlates with better outcomes.</span>
+                            </div>
+                            <div class="srtr-item">
+                                <strong>Organ Offer Acceptance</strong>
+                                <span>How often a center accepts organ offers versus declining them. Higher acceptance can mean shorter wait times.</span>
+                            </div>
+                            <div class="srtr-item">
+                                <strong>Waitlist Outcomes</strong>
+                                <span>Rates of transplant, death, and removal from the waitlist compared to national expectations.</span>
+                            </div>
+                        </div>
+                        <p style="margin-top: var(--space-4);">SRTR reports rate each center as performing "better than expected," "as expected," or "worse than expected" compared to a risk-adjusted national average. No single metric tells the full story, so it is important to consider all dimensions together and discuss the data with your transplant team.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </main>
+
+    <footer id="disclaimer-full" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-disclaimer">
+                <h3>Disclaimer</h3>
+                <p><strong>This tool is for educational and exploratory purposes only.</strong> TransplantMatch is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
+                <p><strong>Scores are relative comparisons</strong> based on publicly available regional statistics. They are not clinical assessments.</p>
+                <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant.</p>
+            </div>
+            <div class="footer-meta">
+                <div class="footer-links">
+                    <a href="simulator.html">Simulator</a>
+                    <a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>
+                </div>
+                <p class="footer-copy">TransplantMatch is under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
+                <p class="footer-copy">Contact: <a href="mailto:tomer@arizona.edu">tomer@arizona.edu</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

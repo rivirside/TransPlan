@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransplantMatch - Patient Support</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        .support-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: var(--space-7) var(--space-5);
+        }
+        .support-header {
+            margin-bottom: var(--space-7);
+        }
+        .support-header h1 {
+            font-size: var(--fs-3xl);
+            font-weight: 700;
+            color: var(--text-1);
+            margin-bottom: var(--space-2);
+        }
+        .support-header p {
+            font-size: var(--fs-lg);
+            color: var(--text-2);
+            line-height: 1.6;
+        }
+
+        .support-section {
+            margin-bottom: var(--space-8);
+        }
+        .support-section h2 {
+            font-size: var(--fs-xl);
+            font-weight: 700;
+            color: var(--text-1);
+            margin-bottom: var(--space-5);
+            padding-bottom: var(--space-2);
+            border-bottom: 2px solid var(--color-primary-100);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-4);
+        }
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 480px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .support-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+            transition: box-shadow var(--transition-base), border-color var(--transition-base);
+        }
+        .support-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--color-primary-200);
+        }
+        .support-card h3 {
+            font-size: var(--fs-md);
+            font-weight: 600;
+            color: var(--text-1);
+            line-height: 1.3;
+        }
+        .support-card p {
+            font-size: var(--fs-sm);
+            color: var(--text-2);
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+        .support-card .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            color: var(--color-primary);
+            text-decoration: none;
+            padding: var(--space-2) var(--space-4);
+            border: 1px solid var(--color-primary-200);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+            align-self: flex-start;
+        }
+        .support-card .card-link:hover {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+        .support-card .card-link svg {
+            flex-shrink: 0;
+        }
+
+        /* Section icon decoration */
+        .section-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--color-primary-50);
+            color: var(--color-primary);
+            border-radius: var(--radius-md);
+            margin-right: var(--space-2);
+            vertical-align: middle;
+        }
+
+        /* Dark mode adjustments */
+        [data-dark="true"] .support-section h2 {
+            border-bottom-color: var(--color-primary-800);
+        }
+        [data-dark="true"] .support-card .card-link {
+            border-color: var(--color-primary-700);
+        }
+        [data-dark="true"] .support-card .card-link:hover {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+        [data-dark="true"] .section-icon {
+            background: var(--color-primary-900);
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav" aria-label="Site navigation">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <span class="nav-brand-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <span class="nav-brand-text">TransplantMatch</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="simulator.html" class="nav-link">Simulator</a>
+                <div class="nav-dropdown">
+                    <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
+                    <div class="nav-dropdown-menu" role="menu">
+                        <a href="centers.html" class="nav-dropdown-item" role="menuitem">Center Explorer</a>
+                        <a href="education.html" class="nav-dropdown-item" role="menuitem">Education</a>
+                        <a href="support.html" class="nav-dropdown-item active" role="menuitem">Patient Support</a>
+                    </div>
+                </div>
+                <a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="support-container">
+            <div class="support-header">
+                <h1>Patient Support Resources</h1>
+                <p>Organizations, financial assistance programs, travel support, and peer communities for transplant patients and their families.</p>
+            </div>
+
+            <!-- National Organizations -->
+            <section class="support-section">
+                <h2>
+                    <span class="section-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </span>
+                    National Organizations
+                </h2>
+                <div class="card-grid">
+                    <div class="support-card">
+                        <h3>National Kidney Foundation</h3>
+                        <p>Education, advocacy, and support for kidney disease patients, including transplant recipients and living donors.</p>
+                        <a href="https://www.kidney.org" target="_blank" rel="noopener" class="card-link">
+                            Visit kidney.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                    <div class="support-card">
+                        <h3>American Liver Foundation</h3>
+                        <p>Resources, support groups, and education for patients with liver disease and liver transplant recipients.</p>
+                        <a href="https://www.liverfoundation.org" target="_blank" rel="noopener" class="card-link">
+                            Visit liverfoundation.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                    <div class="support-card">
+                        <h3>American Lung Association</h3>
+                        <p>Lung health information, advocacy, and patient programs including support for lung transplant candidates.</p>
+                        <a href="https://www.lung.org" target="_blank" rel="noopener" class="card-link">
+                            Visit lung.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                    <div class="support-card">
+                        <h3>American Heart Association</h3>
+                        <p>Heart and cardiovascular health resources, research funding, and patient support for heart transplant recipients.</p>
+                        <a href="https://www.heart.org" target="_blank" rel="noopener" class="card-link">
+                            Visit heart.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                    <div class="support-card">
+                        <h3>Transplant Recipients International Organization</h3>
+                        <p>Peer support, advocacy, and educational resources run by and for transplant recipients and donor families.</p>
+                        <a href="https://www.trioweb.org" target="_blank" rel="noopener" class="card-link">
+                            Visit trioweb.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Financial Assistance -->
+            <section class="support-section">
+                <h2>
+                    <span class="section-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </span>
+                    Financial Assistance
+                </h2>
+                <div class="card-grid">
+                    <div class="support-card">
+                        <h3>National Living Donor Assistance Center</h3>
+                        <p>Reimbursement for travel, lodging, meals, and lost wages for living organ donors to reduce financial barriers to donation.</p>
+                        <a href="https://www.livingdonorassistance.org" target="_blank" rel="noopener" class="card-link">
+                            Visit livingdonorassistance.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                    <div class="support-card">
+                        <h3>HealthWell Foundation</h3>
+                        <p>Financial assistance for underinsured patients to cover copays, premiums, and other out-of-pocket medical expenses including transplant medications.</p>
+                        <a href="https://www.healthwellfoundation.org" target="_blank" rel="noopener" class="card-link">
+                            Visit healthwellfoundation.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                    <div class="support-card">
+                        <h3>Patient Advocate Foundation</h3>
+                        <p>Case management, insurance appeals assistance, and copay relief for patients navigating complex healthcare coverage issues.</p>
+                        <a href="https://www.patientadvocate.org" target="_blank" rel="noopener" class="card-link">
+                            Visit patientadvocate.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                    <div class="support-card">
+                        <h3>Help Hope Live</h3>
+                        <p>Community-based fundraising for transplant-related expenses including surgery, medications, and travel. Provides fiscal sponsorship for tax-deductible donations.</p>
+                        <a href="https://www.helphopelive.org" target="_blank" rel="noopener" class="card-link">
+                            Visit helphopelive.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Travel & Lodging -->
+            <section class="support-section">
+                <h2>
+                    <span class="section-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                    </span>
+                    Travel &amp; Lodging
+                </h2>
+                <div class="card-grid">
+                    <div class="support-card">
+                        <h3>National Patient Travel Center</h3>
+                        <p>Arranges free or discounted air travel for patients who need to travel long distances for medical treatment, including transplant evaluation and surgery.</p>
+                        <a href="https://www.patienttravel.org" target="_blank" rel="noopener" class="card-link">
+                            Visit patienttravel.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                    <div class="support-card">
+                        <h3>Joe's House</h3>
+                        <p>Online resource for finding affordable lodging near hospitals and treatment centers for cancer and transplant patients and their families.</p>
+                        <a href="https://www.joeshouse.org" target="_blank" rel="noopener" class="card-link">
+                            Visit joeshouse.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                    <div class="support-card">
+                        <h3>Ronald McDonald House Charities</h3>
+                        <p>Free or low-cost housing near hospitals for families of children receiving medical treatment, including pediatric transplant patients.</p>
+                        <a href="https://www.rmhc.org" target="_blank" rel="noopener" class="card-link">
+                            Visit rmhc.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Peer Support -->
+            <section class="support-section">
+                <h2>
+                    <span class="section-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </span>
+                    Peer Support
+                </h2>
+                <div class="card-grid">
+                    <div class="support-card">
+                        <h3>Transplant Living</h3>
+                        <p>UNOS patient-facing website with information about life before, during, and after transplant, including personal stories from recipients and donor families.</p>
+                        <a href="https://www.transplantliving.org" target="_blank" rel="noopener" class="card-link">
+                            Visit transplantliving.org
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                    <div class="support-card">
+                        <h3>Reddit r/transplant</h3>
+                        <p>Active online community where transplant patients, donors, and caregivers share experiences, ask questions, and offer peer support.</p>
+                        <a href="https://www.reddit.com/r/transplant" target="_blank" rel="noopener" class="card-link">
+                            Visit reddit.com/r/transplant
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer id="disclaimer-full" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-disclaimer">
+                <h3>Disclaimer</h3>
+                <p><strong>This tool is for educational and exploratory purposes only.</strong> TransplantMatch is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
+                <p><strong>Scores are relative comparisons</strong> based on publicly available regional statistics. They are not clinical assessments.</p>
+                <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant.</p>
+            </div>
+            <div class="footer-meta">
+                <div class="footer-links">
+                    <a href="simulator.html">Simulator</a>
+                    <a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>
+                </div>
+                <p class="footer-copy">TransplantMatch is under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
+                <p class="footer-copy">Contact: <a href="mailto:tomer@arizona.edu">tomer@arizona.edu</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

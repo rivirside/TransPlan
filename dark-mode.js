@@ -137,6 +137,20 @@
         navToggle.setAttribute('aria-expanded', String(isOpen));
       });
     }
+    // Resources dropdown — click toggle for accessibility (#155)
+    document.querySelectorAll('.nav-dropdown-trigger').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!expanded));
+      });
+    });
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function () {
+      document.querySelectorAll('.nav-dropdown-trigger').forEach(function (btn) {
+        btn.setAttribute('aria-expanded', 'false');
+      });
+    });
   }
 
   if (document.readyState === 'loading') {
