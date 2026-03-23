@@ -252,6 +252,42 @@
             color: var(--text-3, #9ca3af);
         }
 
+        /* --- Waitlist Stats --- */
+        .waitlist-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .waitlist-stat {
+            background: var(--surface-raised, #f9fafb);
+            border: 1px solid var(--border-light, #f3f4f6);
+            border-radius: 2px;
+            padding: 0.5rem 0.65rem;
+        }
+        .waitlist-stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            color: var(--text, #111827);
+            line-height: 1.1;
+        }
+        .waitlist-stat-label {
+            font-size: 0.73rem;
+            color: var(--text-muted, #6b7280);
+            margin-top: 0.15rem;
+        }
+        .waitlist-organ-select {
+            font-size: 0.82rem;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid var(--border, #e5e7eb);
+            border-radius: 2px;
+            background: var(--surface, #fff);
+            color: var(--text-2, #374151);
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
         /* --- Contact Card --- */
         .contact-card {
             background: var(--surface, #fff);
@@ -488,7 +524,13 @@
             if (center.city) parts.push(center.city);
             if (center.state) parts.push(center.state);
             else if (center.state_abbr) parts.push(center.state_abbr);
-            loc.textContent = parts.length > 0 ? parts.join(', ') : 'Location unavailable';
+            loc.appendChild(document.createTextNode(parts.length > 0 ? parts.join(', ') : 'Location unavailable'));
+            if (center.code) {
+                var codeTag = document.createElement('span');
+                codeTag.style.cssText = 'font-size:0.72rem;font-family:monospace;background:var(--surface-raised,#f3f4f6);border:1px solid var(--border,#e5e7eb);border-radius:2px;padding:0.05rem 0.35rem;margin-left:0.5rem;color:var(--text-muted,#6b7280);vertical-align:middle;';
+                codeTag.textContent = center.code;
+                loc.appendChild(codeTag);
+            }
             header.appendChild(loc);
 
             var badges = document.createElement('div');
@@ -596,7 +638,7 @@
             // Header
             var thead = document.createElement('thead');
             var headerRow = document.createElement('tr');
-            var headers = ['Organ', 'Wait Time', 'Mortality', 'Delisting', 'Rating'];
+            var headers = ['Organ', 'Wait', 'Mortality', 'Delisting', '1-yr Survival', 'Vol./yr'];
             headers.forEach(function(text) {
                 var th = document.createElement('th');
                 th.textContent = text;
@@ -667,25 +709,108 @@
                 }
                 row.appendChild(delistTd);
 
-                // Performance rating
-                var ratingTd = document.createElement('td');
+                // 1-yr graft survival %
+                var survTd = document.createElement('td');
                 var organOutcome = outcomes[organ] || {};
-                var ratingSpan = formatRating(organOutcome.performance_rating);
-                if (ratingSpan) {
-                    ratingTd.appendChild(ratingSpan);
+                if (organOutcome.graft_survival_1yr !== undefined) {
+                    var survSpan = document.createElement('span');
+                    survSpan.className = 'rating-badge rating-badge--' + (organOutcome.performance_rating || 'as_expected');
+                    survSpan.textContent = organOutcome.graft_survival_1yr.toFixed(1) + '%';
+                    survTd.appendChild(survSpan);
+                    if (organOutcome.graft_survival_3yr !== undefined) {
+                        var sub3 = document.createElement('div');
+                        sub3.style.cssText = 'font-size:0.73rem;color:var(--text-muted,#9ca3af);margin-top:0.1rem;';
+                        sub3.textContent = organOutcome.graft_survival_3yr.toFixed(1) + '% @ 3yr';
+                        survTd.appendChild(sub3);
+                    }
                 } else {
-                    var noRating = document.createElement('span');
-                    noRating.className = 'no-data';
-                    noRating.textContent = '\u2014';
-                    ratingTd.appendChild(noRating);
+                    var noSurv = document.createElement('span');
+                    noSurv.className = 'no-data';
+                    noSurv.textContent = '\u2014';
+                    survTd.appendChild(noSurv);
                 }
-                row.appendChild(ratingTd);
+                row.appendChild(survTd);
+
+                // Annual volume
+                var volTd = document.createElement('td');
+                if (organOutcome.n_1yr !== undefined) {
+                    var volSpan = document.createElement('span');
+                    volSpan.style.fontVariantNumeric = 'tabular-nums';
+                    volSpan.textContent = organOutcome.n_1yr.toLocaleString();
+                    volTd.appendChild(volSpan);
+                } else {
+                    var noVol = document.createElement('span');
+                    noVol.className = 'no-data';
+                    noVol.textContent = '\u2014';
+                    volTd.appendChild(noVol);
+                }
+                row.appendChild(volTd);
 
                 tbody.appendChild(row);
             });
 
             table.appendChild(tbody);
             card.appendChild(table);
+            return card;
+        }
+
+        // --- Build waitlist card ---
+        function buildWaitlistCard(data) {
+            var waitlist = data.waitlist_overview || {};
+            var organs = Object.keys(waitlist);
+            if (organs.length === 0) return null;
+
+            var card = document.createElement('div');
+            card.className = 'section-card';
+
+            var h2 = document.createElement('h2');
+            h2.textContent = 'Waitlist Activity';
+            card.appendChild(h2);
+
+            // Organ selector
+            var select = document.createElement('select');
+            select.className = 'waitlist-organ-select';
+            organs.forEach(function(organ) {
+                var opt = document.createElement('option');
+                opt.value = organ;
+                opt.textContent = organ.charAt(0).toUpperCase() + organ.slice(1);
+                select.appendChild(opt);
+            });
+            card.appendChild(select);
+
+            // Stats grid (updated on select change)
+            var grid = document.createElement('div');
+            grid.className = 'waitlist-grid';
+            card.appendChild(grid);
+
+            function renderGrid(organ) {
+                while (grid.firstChild) grid.removeChild(grid.firstChild);
+                var w = waitlist[organ] || {};
+                var stats = [
+                    { value: w.currently_waiting, label: 'Currently waiting' },
+                    { value: w.added_last_year, label: 'Added last year' },
+                    { value: w.transplanted_cadaveric, label: 'Transplanted (deceased donor)' },
+                    { value: w.transplanted_living, label: 'Transplanted (living donor)' },
+                ];
+                stats.forEach(function(s) {
+                    if (s.value === undefined || s.value === null) return;
+                    var stat = document.createElement('div');
+                    stat.className = 'waitlist-stat';
+                    var val = document.createElement('div');
+                    val.className = 'waitlist-stat-value';
+                    val.textContent = Number(s.value).toLocaleString();
+                    stat.appendChild(val);
+                    var lbl = document.createElement('div');
+                    lbl.className = 'waitlist-stat-label';
+                    lbl.textContent = s.label;
+                    stat.appendChild(lbl);
+                    grid.appendChild(stat);
+                });
+            }
+
+            renderGrid(organs[0]);
+            select.addEventListener('change', function() { renderGrid(select.value); });
+
             return card;
         }
 
@@ -860,6 +985,8 @@
             var sidebar = document.createElement('div');
             var contactCard = buildContactCard(data);
             if (contactCard) sidebar.appendChild(contactCard);
+            var waitlistCard = buildWaitlistCard(data);
+            if (waitlistCard) sidebar.appendChild(waitlistCard);
             sidebar.appendChild(buildMap(center));
             sidebar.appendChild(buildNearbyCenters(data.nearby_centers));
             content.appendChild(sidebar);

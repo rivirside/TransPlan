@@ -22,10 +22,11 @@ _CONTACT_CACHE: dict[str, tuple[dict, float]] = {}  # code → (contact_dict, fe
 _CACHE_TTL_SECONDS = 60 * 60 * 24  # 24 hours
 
 
-def _fetch_live_contact(code: str) -> dict | None:
-    """Try to fetch fresh contact info from the SRTR report API.
+def _fetch_live_srtr(code: str) -> dict | None:
+    """Fetch contact info + waitlist/volume summary from the SRTR report API.
 
-    Returns a contact dict on success, None on any failure.
+    Returns a dict with 'contact' and 'waitlist' keys on success, None on failure.
+    Cached in-memory for 24 hours.
     """
     cached, ts = _CONTACT_CACHE.get(code, ({}, 0.0))
     if cached and (time.time() - ts) < _CACHE_TTL_SECONDS:
@@ -42,9 +43,11 @@ def _fetch_live_contact(code: str) -> dict | None:
     try:
         with urllib.request.urlopen(req, timeout=5) as resp:
             data: dict[str, Any] = json.loads(resp.read())
+
         detail = data.get("centerDetail", {})
         if not detail:
             return None
+
         contact = {
             "code": code,
             "address": detail.get("address", "").strip(),
@@ -54,10 +57,29 @@ def _fetch_live_contact(code: str) -> dict | None:
             "phone": detail.get("phoneNumber", "").strip(),
             "website": (detail.get("url") or "").strip(),
         }
-        _CONTACT_CACHE[code] = (contact, time.time())
-        return contact
+
+        # Parse waitlist overview per organ
+        # SRTR uses "{organ}Data" keys inside waitlistOverview
+        organ_map = {"kiData": "kidney", "liData": "liver", "hrData": "heart",
+                     "luData": "lung", "paData": "pancreas", "kpData": "kidney-pancreas"}
+        waitlist: dict[str, Any] = {}
+        for srtr_organ, our_organ in organ_map.items():
+            wla = data.get("waitlistOverview", {}).get(srtr_organ, {})
+            if wla:
+                waitlist[our_organ] = {
+                    "currently_waiting": wla.get("wla_end_nc2"),
+                    "added_last_year": wla.get("wla_addcen_nc2"),
+                    "transplanted_cadaveric": wla.get("wla_remtxc_nc2"),
+                    "transplanted_living": wla.get("wla_remtxl_nc2"),
+                    "removed_died": wla.get("wla_remdied_nc2"),
+                    "removed_deteriorated": wla.get("wla_remdet_nc2"),
+                }
+
+        result = {"contact": contact, "waitlist": waitlist}
+        _CONTACT_CACHE[code] = (result, time.time())
+        return result
     except Exception as exc:
-        logger.debug("Live contact fetch failed for %s: %s", code, exc)
+        logger.debug("Live SRTR fetch failed for %s: %s", code, exc)
         return None
 
 
@@ -140,11 +162,15 @@ def get_center_detail(
         center_oc = oc_data.get("center_outcomes", {})
         outcomes = center_oc.get(code_key, {})
 
-    # Contact info: try live SRTR API first, fall back to static file
+    # Contact info + waitlist: try live SRTR API first, fall back to static file
     contact_live = True
-    contact = _fetch_live_contact(code_key)
-    if contact is None:
+    srtr_live = _fetch_live_srtr(code_key)
+    if srtr_live:
+        contact = srtr_live["contact"]
+        waitlist_overview = srtr_live["waitlist"]
+    else:
         contact_live = False
+        waitlist_overview = {}
         cc_data = getattr(data, 'center_contacts', None)
         if cc_data:
             contact = cc_data.get("contacts", {}).get(code_key, {})
@@ -177,6 +203,7 @@ def get_center_detail(
         "center": center,
         "contact": contact,
         "contact_live": contact_live,
+        "waitlist_overview": waitlist_overview,
         "wait_time_factors": wait_factors,
         "competing_risks": risk_factors,
         "outcomes": outcomes,
