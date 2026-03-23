@@ -166,7 +166,7 @@ body {
   font-size: var(--fs-sm);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1100;
   border-bottom: 2px solid var(--color-primary-900);
 }
 
@@ -1543,6 +1543,12 @@ body {
   color: var(--text-2);
   font-weight: 500;
 }
+.compare-hint {
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  font-style: italic;
+  font-weight: 400;
+}
 
 .btn-compare {
   padding: var(--space-2) var(--space-4);
@@ -1709,6 +1715,12 @@ body {
 .results-container {
   display: grid;
   gap: var(--space-5);
+}
+.results-container.collapsed {
+  max-height: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 /* --- Results tabs --- */

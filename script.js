@@ -1991,7 +1991,9 @@ function updateMapWithResults(cities, homeCenterCity) {
 
     cities.forEach((city, index) => {
         const rank = index + 1;
-        const coord = cityCoordinates[city.city];
+        // Use coordinates from result data (248-center scoring), fall back to hardcoded (#145)
+        const coord = (city.lat && city.lon) ? [city.lat, city.lon]
+            : cityCoordinates[city.city] || null;
         const isHome = homeCenterCity && city.city === homeCenterCity;
 
         if (coord) {
@@ -2107,10 +2109,10 @@ const stateAbbreviations = {
             });
     }
 
-    // Try dynamic loading from backend API
+    // Try dynamic loading from backend API — fetch ALL centers (#148)
     if (window.TransPlanAPI && window.TransPlanAPI.fetchCenters) {
         try {
-            const data = await window.TransPlanAPI.fetchCenters({ focusOnly: true });
+            const data = await window.TransPlanAPI.fetchCenters({});
             if (data && data.cities && data.cities.length > 0) {
                 populate(data.cities);
                 return;
@@ -2528,6 +2530,15 @@ function _initPaginationHandlers() {
         _paginationFilterState = this.value;
         _paginationPage = 0;
         if (_currentResults && _currentFormData) displayResults(_currentResults, _currentFormData);
+    });
+
+    // Collapse/expand results cards (#153)
+    var collapseBtn = document.getElementById('collapseResultsBtn');
+    if (collapseBtn) collapseBtn.addEventListener('click', function() {
+        var container = document.getElementById('resultsContainer');
+        if (!container) return;
+        var collapsed = container.classList.toggle('collapsed');
+        collapseBtn.textContent = collapsed ? 'Expand ▼' : 'Collapse ▲';
     });
 }
 

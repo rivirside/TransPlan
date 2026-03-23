@@ -255,7 +255,8 @@
         if (!banner) return;
 
         // Determine last update: prefer metadata.lastFullFetch, fall back to
-        // the most recent fetchedAt from any individual source
+        // the most recent fetchedAt from any individual source, then fall back
+        // to _meta.fetchedAt timestamps embedded in individual data files.
         let lastFetch = metadata?.lastFullFetch;
         if (!lastFetch && metadata?.sources) {
             const dates = Object.values(metadata.sources)
@@ -264,6 +265,20 @@
                 .sort()
                 .reverse();
             if (dates.length) lastFetch = dates[0];
+        }
+        // Fall back to _meta.fetchedAt from loaded data files (#147)
+        if (!lastFetch && window.TransPlanData) {
+            const fileDates = [];
+            for (const [key, val] of Object.entries(window.TransPlanData)) {
+                if (key.startsWith('_')) continue;
+                if (val && val._meta && val._meta.fetchedAt) {
+                    fileDates.push(val._meta.fetchedAt);
+                }
+            }
+            if (fileDates.length) {
+                fileDates.sort().reverse();
+                lastFetch = fileDates[0];
+            }
         }
 
         const lastUpdate = lastFetch

@@ -252,13 +252,14 @@
                 <!-- Compare bar (appears when 2+ cities selected) -->
                 <div id="compareBar" class="compare-bar" style="display:none">
                     <span id="compareCount">0 selected</span>
+                    <span class="compare-hint">Use checkboxes on city cards to select 2–3 cities for side-by-side comparison</span>
                     <button id="compareBtn" class="btn-compare" disabled>Compare Selected</button>
                     <button id="compareClear" class="btn-compare-clear">Clear</button>
                 </div>
 
                 <!-- Backend unavailable notice -->
                 <div id="simulation-unavailable" class="simulation-unavailable-banner" style="display: none;" role="alert">
-                    Monte Carlo simulation unavailable. Showing location scores only. Start the backend with <code>./start.command</code> for probability estimates.
+                    Showing location scores only. Advanced simulation features (probability estimates, equity analysis, and policy scenarios) are available when the full application is running.
                 </div>
 
                 <div class="map-section">
@@ -316,7 +317,7 @@
                                 <input type="checkbox" id="spatialHeatmapLayer">
                                 <span>Spatial Interpolation Heatmap</span>
                             </label>
-                            <select id="spatialHeatmapSelect" style="margin-left: 24px; font-size: 0.85em; padding: 2px 4px;" disabled>
+                            <select id="spatialHeatmapSelect" style="margin-left: 24px; font-size: 0.85em; padding: 2px 4px;" disabled title="Enable Spatial Interpolation Heatmap above to choose a layer">
                                 <option value="health_diabetesRate">Diabetes Rate</option>
                                 <option value="health_obesityRate">Obesity Rate</option>
                                 <option value="health_hypertensionRate">Hypertension Rate</option>
@@ -345,6 +346,7 @@
                             </select>
                         </div>
                         <div class="results-controls-right">
+                            <button id="collapseResultsBtn" class="pagination-btn" title="Collapse all result cards">Collapse ▲</button>
                             <button id="resultsPrev" class="pagination-btn" disabled>&laquo; Prev</button>
                             <span id="resultsPageInfo">Page 1</span>
                             <button id="resultsNext" class="pagination-btn">Next &raquo;</button>
