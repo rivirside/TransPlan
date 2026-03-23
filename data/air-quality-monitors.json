@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "fetchedAt": "2026-03-20T23:36:58.350Z",
-    "source": "EPA AQS API (2742 monitors, ozone + PM2.5, all states)"
+    "fetchedAt": "2026-03-23T07:09:31.941Z",
+    "source": "EPA AQS API (2749 monitors, ozone + PM2.5, all states)"
   },
   "monitors": [
     {
@@ -867,6 +867,69 @@
       "pollutant": "ozone",
       "state": "California",
       "value": 0.0362
+    },
+    {
+      "lat": 32.631242,
+      "lon": -117.059088,
+      "score": 79,
+      "aqi": 42,
+      "pollutant": "ozone",
+      "state": "California",
+      "value": 0.0458
+    },
+    {
+      "lat": 32.842318,
+      "lon": -116.768293,
+      "score": 77,
+      "aqi": 46,
+      "pollutant": "ozone",
+      "state": "California",
+      "value": 0.0492
+    },
+    {
+      "lat": 33.217046,
+      "lon": -117.396249,
+      "score": 79,
+      "aqi": 42,
+      "pollutant": "ozone",
+      "state": "California",
+      "value": 0.0453
+    },
+    {
+      "lat": 32.578165,
+      "lon": -116.921374,
+      "score": 79,
+      "aqi": 43,
+      "pollutant": "ozone",
+      "state": "California",
+      "value": 0.0459
+    },
+    {
+      "lat": 32.845709,
+      "lon": -117.123964,
+      "score": 79,
+      "aqi": 43,
+      "pollutant": "ozone",
+      "state": "California",
+      "value": 0.0467
+    },
+    {
+      "lat": 32.789565,
+      "lon": -116.944308,
+      "score": 78,
+      "aqi": 45,
+      "pollutant": "ozone",
+      "state": "California",
+      "value": 0.0482
+    },
+    {
+      "lat": 32.710177,
+      "lon": -117.142665,
+      "score": 81,
+      "aqi": 39,
+      "pollutant": "ozone",
+      "state": "California",
+      "value": 0.0423
     },
     {
       "lat": 36.30815,
