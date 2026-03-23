@@ -858,6 +858,16 @@
                         patSub.textContent = organOutcome.patient_survival_1yr.toFixed(1) + '%';
                         survTd.appendChild(patSub);
                     }
+                    if (organOutcome.graft_hr_1yr !== undefined) {
+                        var hrSub = document.createElement('div');
+                        hrSub.style.cssText = 'font-size:0.67rem;color:var(--text-muted,#9ca3af);margin-top:0.15rem;font-variant-numeric:tabular-nums;';
+                        var hrText = 'HR ' + organOutcome.graft_hr_1yr.toFixed(2);
+                        if (organOutcome.graft_hr_1yr_ci) {
+                            hrText += ' [' + organOutcome.graft_hr_1yr_ci[0].toFixed(2) + '\u2013' + organOutcome.graft_hr_1yr_ci[1].toFixed(2) + ']';
+                        }
+                        hrSub.textContent = hrText;
+                        survTd.appendChild(hrSub);
+                    }
                 } else {
                     var noSurv = document.createElement('span');
                     noSurv.className = 'no-data';
