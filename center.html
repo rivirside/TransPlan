@@ -261,6 +261,61 @@
             color: var(--text-3, #9ca3af);
         }
 
+        /* --- Contact Card --- */
+        .contact-card {
+            background: var(--surface, #fff);
+            border: 1px solid var(--border, #e5e7eb);
+            border-radius: 3px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .contact-card h2 {
+            font-size: 1.1rem;
+            color: var(--text, #111827);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-light, #f3f4f6);
+        }
+        .contact-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+        .contact-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: flex-start;
+            font-size: 0.88rem;
+        }
+        .contact-icon {
+            flex-shrink: 0;
+            width: 1.1rem;
+            color: var(--text-muted, #6b7280);
+            margin-top: 0.05rem;
+        }
+        .contact-value {
+            color: var(--text-2, #374151);
+            flex: 1;
+            line-height: 1.4;
+        }
+        .contact-value a {
+            color: var(--accent, #6366f1);
+            text-decoration: none;
+            word-break: break-all;
+        }
+        .contact-value a:hover {
+            text-decoration: underline;
+        }
+        .contact-stale {
+            margin-top: 0.75rem;
+            padding: 0.4rem 0.6rem;
+            background: var(--surface-raised, #fefce8);
+            border: 1px solid #fde68a;
+            border-radius: 2px;
+            font-size: 0.78rem;
+            color: #92400e;
+        }
+
         /* --- Responsive --- */
         @media (max-width: 767px) {
             .center-header h1 {
@@ -360,7 +415,7 @@
                 if (resp.ok) {
                     var data = await resp.json();
                     var center = data.centers[code];
-                    if (center) return { center: center, wait_time_factors: {}, competing_risks: {}, outcomes: {}, nearby_centers: [], srtr_url: 'https://www.srtr.org/transplant-centers/' + code + '/' };
+                    if (center) return { center: center, contact: {}, contact_live: false, wait_time_factors: {}, competing_risks: {}, outcomes: {}, nearby_centers: [], srtr_url: 'https://www.srtr.org/interactive-report?center=' + code + '&type=TX1&organ=KI' };
                 }
             } catch (e) {}
             return null;
@@ -465,7 +520,7 @@
             // View on SRTR
             var srtrLink = document.createElement('a');
             srtrLink.className = 'quick-link';
-            srtrLink.href = data.srtr_url || ('https://www.srtr.org/transplant-centers/' + centerCode + '/');
+            srtrLink.href = data.srtr_url || ('https://www.srtr.org/interactive-report?center=' + centerCode + '&type=TX1&organ=KI');
             srtrLink.target = '_blank';
             srtrLink.rel = 'noopener';
             var srtrIcon = document.createElement('span');
@@ -666,6 +721,88 @@
             return card;
         }
 
+        // --- Build contact card ---
+        function buildContactCard(data) {
+            var contact = data.contact || {};
+            var live = data.contact_live !== false;
+
+            var addressParts = [];
+            if (contact.address) addressParts.push(contact.address);
+            var cityState = [contact.city, contact.state].filter(Boolean).join(', ');
+            if (cityState) addressParts.push(cityState);
+            if (contact.zip) addressParts[addressParts.length - 1] += ' ' + contact.zip;
+            var fullAddress = addressParts.join('\n');
+
+            if (!fullAddress && !contact.phone && !contact.website) return null;
+
+            var card = document.createElement('div');
+            card.className = 'contact-card';
+
+            var h2 = document.createElement('h2');
+            h2.textContent = 'Contact';
+            card.appendChild(h2);
+
+            var rows = document.createElement('div');
+            rows.className = 'contact-rows';
+
+            function addRow(icon, content) {
+                var row = document.createElement('div');
+                row.className = 'contact-row';
+
+                var iconEl = document.createElement('span');
+                iconEl.className = 'contact-icon';
+                iconEl.setAttribute('aria-hidden', 'true');
+                iconEl.textContent = icon;
+                row.appendChild(iconEl);
+
+                var val = document.createElement('div');
+                val.className = 'contact-value';
+                val.appendChild(content);
+                row.appendChild(val);
+                rows.appendChild(row);
+            }
+
+            if (fullAddress) {
+                var addrEl = document.createElement('span');
+                fullAddress.split('\n').forEach(function(line, i) {
+                    if (i > 0) addrEl.appendChild(document.createElement('br'));
+                    addrEl.appendChild(document.createTextNode(line));
+                });
+                addRow('\u25BE', addrEl);
+            }
+
+            if (contact.phone) {
+                var phoneLink = document.createElement('a');
+                phoneLink.href = 'tel:+1' + contact.phone.replace(/\D/g, '');
+                phoneLink.textContent = contact.phone;
+                addRow('\u2706', phoneLink);
+            }
+
+            if (contact.website) {
+                var siteLink = document.createElement('a');
+                siteLink.href = contact.website;
+                siteLink.target = '_blank';
+                siteLink.rel = 'noopener noreferrer';
+                try {
+                    siteLink.textContent = new URL(contact.website).hostname.replace(/^www\./, '');
+                } catch (e) {
+                    siteLink.textContent = contact.website;
+                }
+                addRow('\u25A1', siteLink);
+            }
+
+            card.appendChild(rows);
+
+            if (!live) {
+                var stale = document.createElement('div');
+                stale.className = 'contact-stale';
+                stale.textContent = 'Live data fetch failed \u2014 showing cached data which may be out of date.';
+                card.appendChild(stale);
+            }
+
+            return card;
+        }
+
         // --- Build nearby centers list ---
         function buildNearbyCenters(nearbyCenters) {
             var card = document.createElement('div');
@@ -756,6 +893,8 @@
 
             // Right column: sidebar
             var sidebar = document.createElement('div');
+            var contactCard = buildContactCard(data);
+            if (contactCard) sidebar.appendChild(contactCard);
             sidebar.appendChild(buildMap(center));
             sidebar.appendChild(buildNearbyCenters(data.nearby_centers));
             content.appendChild(sidebar);

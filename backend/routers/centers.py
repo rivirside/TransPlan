@@ -1,7 +1,12 @@
 """GET /centers — List all transplant centers and focus cities.
 GET /centers/{code} — Detail for a single center (#160).
 """
+import json
 import logging
+import time
+import urllib.error
+import urllib.request
+from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 
@@ -10,6 +15,50 @@ from utils import haversine_distance
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+# --- Live contact fetch with in-memory cache ---
+_SRTR_API = "https://reportapi.srtr.org/psr/{code}TX1"
+_CONTACT_CACHE: dict[str, tuple[dict, float]] = {}  # code → (contact_dict, fetched_at)
+_CACHE_TTL_SECONDS = 60 * 60 * 24  # 24 hours
+
+
+def _fetch_live_contact(code: str) -> dict | None:
+    """Try to fetch fresh contact info from the SRTR report API.
+
+    Returns a contact dict on success, None on any failure.
+    """
+    cached, ts = _CONTACT_CACHE.get(code, ({}, 0.0))
+    if cached and (time.time() - ts) < _CACHE_TTL_SECONDS:
+        return cached
+
+    url = _SRTR_API.format(code=code)
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "TransPlan/1.0 (patient decision support tool)",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data: dict[str, Any] = json.loads(resp.read())
+        detail = data.get("centerDetail", {})
+        if not detail:
+            return None
+        contact = {
+            "code": code,
+            "address": detail.get("address", "").strip(),
+            "city": detail.get("city", "").strip(),
+            "state": detail.get("state", "").strip(),
+            "zip": detail.get("zipCode", "").strip(),
+            "phone": detail.get("phoneNumber", "").strip(),
+            "website": (detail.get("url") or "").strip(),
+        }
+        _CONTACT_CACHE[code] = (contact, time.time())
+        return contact
+    except Exception as exc:
+        logger.debug("Live contact fetch failed for %s: %s", code, exc)
+        return None
 
 
 @router.get("/centers")
@@ -57,7 +106,8 @@ def get_center_detail(
     """Return detailed data for a single transplant center (#160).
 
     Includes basic info, organ-specific wait time factors, competing risks
-    adjustments, post-transplant outcomes, and nearby centers.
+    adjustments, post-transplant outcomes, nearby centers, and contact info.
+    Contact info is fetched live from SRTR with fallback to cached static data.
     """
     data = get_data()
     all_centers = data.all_centers.get("centers", {})
@@ -90,6 +140,17 @@ def get_center_detail(
         center_oc = oc_data.get("center_outcomes", {})
         outcomes = center_oc.get(code_key, {})
 
+    # Contact info: try live SRTR API first, fall back to static file
+    contact_live = True
+    contact = _fetch_live_contact(code_key)
+    if contact is None:
+        contact_live = False
+        cc_data = getattr(data, 'center_contacts', None)
+        if cc_data:
+            contact = cc_data.get("contacts", {}).get(code_key, {})
+        else:
+            contact = {}
+
     # Nearby centers within radius
     nearby = []
     if center.get("lat") and center.get("lon"):
@@ -114,9 +175,11 @@ def get_center_detail(
 
     return {
         "center": center,
+        "contact": contact,
+        "contact_live": contact_live,
         "wait_time_factors": wait_factors,
         "competing_risks": risk_factors,
         "outcomes": outcomes,
         "nearby_centers": nearby[:20],  # cap at 20 nearest
-        "srtr_url": f"https://www.srtr.org/transplant-centers/{code_key}/",
+        "srtr_url": f"https://www.srtr.org/interactive-report?center={code_key}&type=TX1&organ=KI",
     }
