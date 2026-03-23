@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TransplantMatch - Data-Driven Transplant Location Analysis</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
     <script src="dark-mode.js"></script>
 </head>
 <body class="landing-page">
@@ -96,8 +99,17 @@
             </div>
         </section>
 
+        <!-- Centers Map -->
+        <section class="section section-alt">
+            <div class="section-inner" style="max-width: 1100px;">
+                <h2 class="section-title">248 Transplant Centers Nationwide</h2>
+                <p style="text-align: center; color: var(--text-2); margin-bottom: var(--space-6);">Click any center to see details. Zoom and pan to explore.</p>
+                <div id="landing-map" style="height: 420px; border-radius: var(--radius-md); border: 1px solid var(--border); overflow: hidden;"></div>
+            </div>
+        </section>
+
         <!-- How It Works -->
-        <section id="how-it-works" class="section section-alt">
+        <section id="how-it-works" class="section">
             <div class="section-inner">
                 <h2 class="section-title">How It Works</h2>
                 <div class="steps-flow">
@@ -171,6 +183,55 @@
         </div>
     </footer>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script>
+    (function() {
+        'use strict';
+        if (typeof L === 'undefined' || !document.getElementById('landing-map')) return;
+
+        var map = L.map('landing-map', { scrollWheelZoom: false }).setView([39.8, -98.6], 4);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '\u00a9 OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+        map.on('click', function() { map.scrollWheelZoom.enable(); });
+
+        (async function() {
+            var centers = [];
+            try {
+                var r = await fetch('/centers');
+                if (r.ok) { var d = await r.json(); centers = d.centers || []; }
+            } catch (e) {}
+            if (!centers.length) {
+                try {
+                    var r2 = await fetch('data/srtr-all-centers.json');
+                    if (r2.ok) { var d2 = await r2.json(); centers = Object.values(d2.centers || {}); }
+                } catch (e) {}
+            }
+            if (!centers.length) return;
+
+            var cluster = typeof L.markerClusterGroup === 'function'
+                ? L.markerClusterGroup({ maxClusterRadius: 50, showCoverageOnHover: false, disableClusteringAtZoom: 7 })
+                : L.layerGroup();
+
+            centers.forEach(function(c) {
+                if (!c.lat || !c.lon) return;
+                var m = L.circleMarker([c.lat, c.lon], {
+                    radius: 6, fillColor: '#5B6FE6', color: '#3844AB',
+                    weight: 2, opacity: 1, fillOpacity: 0.8
+                });
+                var loc = [c.state_abbr || c.state || ''];
+                var popup = '<strong>' + (c.name || 'Unknown') + '</strong><br>'
+                    + '<em>' + loc.join('') + '</em><br>'
+                    + '<a href="center.html?code=' + encodeURIComponent(c.code || '') + '" style="color:#5B6FE6">View Details \u2192</a>';
+                m.bindPopup(popup);
+                m.addTo(cluster);
+            });
+            cluster.addTo(map);
+        })();
+    })();
+    </script>
     <script src="session.js"></script>
     <!-- Vercel Analytics -->
     <script>
