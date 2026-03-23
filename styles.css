@@ -2880,6 +2880,83 @@ body {
   }
 }
 
+/* Travel subsidy analysis (#141) */
+.travel-subsidy-section {
+  margin-top: var(--space-4);
+}
+.travel-subsidy-desc {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  line-height: 1.5;
+  margin: 0 0 var(--space-3) 0;
+}
+.travel-subsidy-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.travel-subsidy-summary-table,
+.travel-subsidy-city-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: var(--space-3);
+}
+.travel-subsidy-summary-table th,
+.travel-subsidy-city-table th {
+  text-align: left;
+  padding: var(--space-2) var(--space-2);
+  background: var(--surface);
+  border-bottom: 2px solid var(--border-color, #ddd);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.travel-subsidy-summary-table td,
+.travel-subsidy-city-table td {
+  padding: var(--space-2) var(--space-2);
+  border-bottom: 1px solid var(--border-light);
+}
+.travel-subsidy-summary-table .subsidy-label {
+  font-weight: 700;
+  color: var(--text-1);
+}
+.travel-subsidy-summary-table .delta-positive,
+.travel-subsidy-city-table .delta-positive {
+  color: var(--color-success, #16a34a);
+  font-weight: 600;
+}
+.travel-subsidy-summary-table .delta-neutral,
+.travel-subsidy-city-table .delta-neutral {
+  color: var(--text-3);
+}
+.travel-subsidy-note {
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  font-style: italic;
+  margin-top: var(--space-1);
+}
+.travel-subsidy-city-detail {
+  margin-top: var(--space-3);
+}
+.travel-subsidy-city-detail h5,
+.travel-subsidy-table-container h5 {
+  font-size: var(--fs-base);
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 0 0 var(--space-2) 0;
+}
+.disclaimer-text {
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  line-height: 1.4;
+  margin-bottom: var(--space-1);
+}
+
 @media (max-width: 640px) {
   .what-if-controls {
     grid-template-columns: 1fr;

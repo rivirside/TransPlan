@@ -394,6 +394,49 @@
     }
   }
 
+  /**
+   * Run travel subsidy multi-price-point comparison via POST /travel-subsidy-analysis.
+   * @param {Object} formData - Raw form data from the frontend
+   * @param {Array<string>} [cities] - Optional city list (empty = all 22)
+   * @param {number} [iterations] - Monte Carlo iterations per city (default 500)
+   * @returns {Promise<Object|null>} TravelSubsidyAnalysisResult or null
+   */
+  async function travelSubsidyAnalysis(formData, cities, iterations) {
+    var base = getBaseUrl();
+    var controller = new AbortController();
+    // Longer timeout — this runs 4 tiers × N cities
+    var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS * 4);
+
+    try {
+      var body = {
+        patient: normalizeFormData(formData),
+        cities: cities || [],
+        iterations: iterations || 500
+      };
+      var response = await fetch(base + '/travel-subsidy-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        console.warn('TransPlan Travel Subsidy API error:', response.status, response.statusText);
+        return null;
+      }
+
+      return await response.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        console.warn('TransPlan Travel Subsidy API timeout');
+      }
+      return null;
+    }
+  }
+
   // Expose globally
   window.TransPlanAPI = {
     simulate: simulate,
@@ -403,6 +446,7 @@
     whatIf: whatIf,
     policyScenarios: policyScenarios,
     policyScenario: policyScenario,
+    travelSubsidyAnalysis: travelSubsidyAnalysis,
     isBackendAvailable: isBackendAvailable,
     normalizeFormData: normalizeFormData,
     fetchCenters: fetchCenters

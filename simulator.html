@@ -426,6 +426,26 @@
                             <div id="policyScenarioResults" class="what-if-results" style="display:none" aria-live="polite"></div>
                         </div>
 
+                        <!-- Travel Subsidy Analysis (#141) -->
+                        <div class="travel-subsidy-section" id="travelSubsidySection">
+                            <h4>Travel Financial Assistance Analysis</h4>
+                            <p class="travel-subsidy-desc">
+                                What if every transplant candidate received financial assistance for travel and relocation?
+                                Compare how different subsidy amounts affect system-wide transplant success rates and equity.
+                            </p>
+                            <div class="travel-subsidy-controls">
+                                <button type="button" id="travelSubsidyRunBtn" class="btn btn-secondary">
+                                    Run Subsidy Comparison
+                                </button>
+                                <span id="travelSubsidySpinner" class="spinner" style="display:none" aria-label="Analyzing subsidy scenarios…"></span>
+                            </div>
+                            <div id="travelSubsidyResults" style="display:none" aria-live="polite">
+                                <div id="travelSubsidyTable" class="travel-subsidy-table-container"></div>
+                                <div id="travelSubsidyCityDetail" class="travel-subsidy-city-detail"></div>
+                                <div id="travelSubsidyDisclaimers" class="equity-disclaimers"></div>
+                            </div>
+                        </div>
+
                         <hr style="margin: 1.5rem 0; border-color: var(--border-color, #ddd);">
                         <h4>Manual Multipliers</h4>
                         <div class="what-if-controls">

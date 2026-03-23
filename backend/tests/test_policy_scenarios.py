@@ -14,11 +14,14 @@ from services.policy_scenarios import (
 # --- Scenario Registry ---
 
 class TestScenarioRegistry:
-    def test_four_scenarios_defined(self):
-        assert len(SCENARIOS) == 4
+    def test_eight_scenarios_defined(self):
+        assert len(SCENARIOS) == 8
 
     def test_scenario_ids(self):
-        expected = {"kidney_250nm", "continuous_distribution", "increased_dcd", "hcv_positive_donors"}
+        expected = {
+            "kidney_250nm", "continuous_distribution", "increased_dcd", "hcv_positive_donors",
+            "travel_assistance_5k", "travel_assistance_10k", "travel_assistance_20k", "travel_assistance_50k",
+        }
         assert set(SCENARIOS.keys()) == expected
 
     def test_all_scenarios_have_required_fields(self):
@@ -40,7 +43,7 @@ class TestScenarioRegistry:
 class TestListScenarios:
     def test_list_all(self):
         result = list_scenarios()
-        assert len(result) == 4
+        assert len(result) == 8
 
     def test_filter_by_kidney(self):
         result = list_scenarios(organ="kidney")
@@ -64,8 +67,9 @@ class TestListScenarios:
     def test_filter_by_pancreas(self):
         result = list_scenarios(organ="pancreas")
         ids = {s.id for s in result}
-        # Only continuous_distribution applies to all organs
+        # continuous_distribution and all travel_assistance apply to all organs
         assert "continuous_distribution" in ids
+        assert "travel_assistance_20k" in ids
         # DCD excludes pancreas
         assert "increased_dcd" not in ids
 

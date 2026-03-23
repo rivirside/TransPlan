@@ -2857,6 +2857,8 @@ function renderProbabilityView(simResult, formData) {
         _initWhatIfSliders(simResult, formData);
         // Phase 4 M4: Policy scenario selector
         _initPolicyScenarios(simResult, formData);
+        // Travel subsidy analysis (#141)
+        _initTravelSubsidy(simResult, formData);
     }, 200);
 }
 
@@ -3061,6 +3063,212 @@ function _runPolicyScenario(simResult, formData) {
             + 'donor ' + (result.donor_rate_multiplier || 1.0).toFixed(2) + '\u00d7, '
             + 'wait ' + (result.wait_time_multiplier || 1.0).toFixed(2) + '\u00d7';
         resultsDiv.insertBefore(multInfo, resultsDiv.children[1]);
+    });
+}
+
+
+/**
+ * Initialize the travel subsidy analysis section (#141).
+ */
+function _initTravelSubsidy(simResult, formData) {
+    var section = document.getElementById('travelSubsidySection');
+    if (!section || !window.TransPlanAPI || !window.TransPlanAPI.travelSubsidyAnalysis) {
+        if (section) section.style.display = 'none';
+        return;
+    }
+    if (!simResult || !simResult.cities) {
+        if (section) section.style.display = 'none';
+        return;
+    }
+
+    var runBtn = document.getElementById('travelSubsidyRunBtn');
+    if (!runBtn) return;
+
+    runBtn.onclick = function () {
+        _runTravelSubsidyAnalysis(formData);
+    };
+}
+
+
+/**
+ * Execute travel subsidy multi-price-point comparison (#141).
+ */
+function _runTravelSubsidyAnalysis(formData) {
+    var runBtn = document.getElementById('travelSubsidyRunBtn');
+    var spinner = document.getElementById('travelSubsidySpinner');
+    var resultsDiv = document.getElementById('travelSubsidyResults');
+    var tableDiv = document.getElementById('travelSubsidyTable');
+    var cityDetailDiv = document.getElementById('travelSubsidyCityDetail');
+    var disclaimersDiv = document.getElementById('travelSubsidyDisclaimers');
+
+    if (!formData) return;
+
+    if (runBtn) {
+        runBtn.disabled = true;
+        runBtn.textContent = 'Analyzing 4 price points\u2026';
+    }
+    if (spinner) spinner.style.display = '';
+
+    window.TransPlanAPI.travelSubsidyAnalysis(formData, [], 500).then(function (result) {
+        if (runBtn) {
+            runBtn.disabled = false;
+            runBtn.textContent = 'Run Subsidy Comparison';
+        }
+        if (spinner) spinner.style.display = 'none';
+
+        if (!result || !result.tiers || !result.tiers.length) {
+            if (tableDiv) {
+                tableDiv.textContent = '';
+                var errMsg = _el('div', 'what-if-error');
+                errMsg.textContent = 'Travel subsidy analysis could not be completed. Ensure the backend is running.';
+                tableDiv.appendChild(errMsg);
+            }
+            if (resultsDiv) resultsDiv.style.display = '';
+            return;
+        }
+
+        // Render results
+        if (resultsDiv) resultsDiv.style.display = '';
+
+        // --- Summary comparison table ---
+        if (tableDiv) {
+            tableDiv.textContent = '';
+
+            var heading = _el('h5', '');
+            heading.textContent = 'System-Wide Impact by Subsidy Amount';
+            tableDiv.appendChild(heading);
+
+            var table = _el('table', 'travel-subsidy-summary-table');
+            var thead = _el('thead', '');
+            var headerRow = _el('tr', '');
+            ['Subsidy', 'Avg P(Tx \u2264 24mo)', 'With Subsidy', '\u0394 P24', 'Avg Wait', 'With Subsidy'].forEach(function (h) {
+                var th = _el('th', '');
+                th.textContent = h;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            var tbody = _el('tbody', '');
+            result.tiers.forEach(function (tier) {
+                var row = _el('tr', '');
+
+                var labelCell = _el('td', 'subsidy-label');
+                labelCell.textContent = tier.label;
+                row.appendChild(labelCell);
+
+                var baseP24Cell = _el('td', '');
+                baseP24Cell.textContent = (tier.system_avg_baseline_p24 * 100).toFixed(1) + '%';
+                row.appendChild(baseP24Cell);
+
+                var adjP24Cell = _el('td', '');
+                adjP24Cell.textContent = (tier.system_avg_adjusted_p24 * 100).toFixed(1) + '%';
+                row.appendChild(adjP24Cell);
+
+                var deltaCell = _el('td', tier.system_delta_p24 > 0 ? 'delta-positive' : 'delta-neutral');
+                deltaCell.textContent = (tier.system_delta_p24 > 0 ? '+' : '') + (tier.system_delta_p24 * 100).toFixed(2) + ' pp';
+                row.appendChild(deltaCell);
+
+                var baseWaitCell = _el('td', '');
+                baseWaitCell.textContent = tier.system_avg_baseline_wait.toFixed(1) + ' mo';
+                row.appendChild(baseWaitCell);
+
+                var adjWaitCell = _el('td', '');
+                adjWaitCell.textContent = tier.system_avg_adjusted_wait.toFixed(1) + ' mo';
+                row.appendChild(adjWaitCell);
+
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+            tableDiv.appendChild(table);
+
+            // Marginal efficiency note
+            if (result.tiers.length >= 2) {
+                var firstDelta = result.tiers[0].system_delta_p24;
+                var lastDelta = result.tiers[result.tiers.length - 1].system_delta_p24;
+                var firstAmount = result.tiers[0].subsidy_amount;
+                var lastAmount = result.tiers[result.tiers.length - 1].subsidy_amount;
+                if (lastDelta > 0 && firstDelta > 0) {
+                    var efficiency = (firstDelta / firstAmount) / (lastDelta / lastAmount);
+                    var note = _el('p', 'travel-subsidy-note');
+                    note.textContent = result.tiers[0].label + ' is '
+                        + efficiency.toFixed(1) + '\u00d7 more cost-efficient per dollar than '
+                        + result.tiers[result.tiers.length - 1].label
+                        + ' (diminishing returns).';
+                    tableDiv.appendChild(note);
+                }
+            }
+        }
+
+        // --- Per-city detail (top 5 most improved + bottom 5) ---
+        if (cityDetailDiv && result.tiers.length > 0) {
+            cityDetailDiv.textContent = '';
+            // Use the $20K tier as the reference for city-level detail
+            var refTier = result.tiers.find(function (t) { return t.subsidy_amount === 20000; })
+                || result.tiers[result.tiers.length - 1];
+
+            var cityHeading = _el('h5', '');
+            cityHeading.textContent = 'Per-City Impact (' + refTier.label + ' Subsidy)';
+            cityDetailDiv.appendChild(cityHeading);
+
+            var sorted = refTier.cities.slice().sort(function (a, b) {
+                return b.delta_p24 - a.delta_p24;
+            });
+
+            var cityTable = _el('table', 'travel-subsidy-city-table');
+            var cThead = _el('thead', '');
+            var cHeaderRow = _el('tr', '');
+            ['City', 'Baseline P24', 'With Subsidy', '\u0394 P24', 'Wait \u0394'].forEach(function (h) {
+                var th = _el('th', '');
+                th.textContent = h;
+                cHeaderRow.appendChild(th);
+            });
+            cThead.appendChild(cHeaderRow);
+            cityTable.appendChild(cThead);
+
+            var cTbody = _el('tbody', '');
+            sorted.forEach(function (c) {
+                var row = _el('tr', '');
+
+                var cityCell = _el('td', '');
+                cityCell.textContent = c.city + ', ' + c.state;
+                row.appendChild(cityCell);
+
+                var bCell = _el('td', '');
+                bCell.textContent = (c.baseline_p24 * 100).toFixed(1) + '%';
+                row.appendChild(bCell);
+
+                var aCell = _el('td', '');
+                aCell.textContent = (c.adjusted_p24 * 100).toFixed(1) + '%';
+                row.appendChild(aCell);
+
+                var dCell = _el('td', c.delta_p24 > 0 ? 'delta-positive' : 'delta-neutral');
+                dCell.textContent = (c.delta_p24 > 0 ? '+' : '') + (c.delta_p24 * 100).toFixed(2) + ' pp';
+                row.appendChild(dCell);
+
+                var wCell = _el('td', '');
+                var waitDelta = c.adjusted_median_wait - c.baseline_median_wait;
+                wCell.textContent = (waitDelta < 0 ? '' : '+') + waitDelta.toFixed(1) + ' mo';
+                row.appendChild(wCell);
+
+                cTbody.appendChild(row);
+            });
+            cityTable.appendChild(cTbody);
+            cityDetailDiv.appendChild(cityTable);
+        }
+
+        // --- Disclaimers ---
+        if (disclaimersDiv && result.disclaimers) {
+            disclaimersDiv.textContent = '';
+            var dHeading = _el('h5', '');
+            dHeading.textContent = 'Disclaimers';
+            disclaimersDiv.appendChild(dHeading);
+            result.disclaimers.forEach(function (d) {
+                var p = _el('p', 'disclaimer-text');
+                p.textContent = d;
+                disclaimersDiv.appendChild(p);
+            });
+        }
     });
 }
 
