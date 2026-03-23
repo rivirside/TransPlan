@@ -776,7 +776,7 @@
             // Header
             var thead = document.createElement('thead');
             var headerRow = document.createElement('tr');
-            var headers = ['Organ', 'Wait', 'Mortality', 'Delisting', '1-yr Survival', '3-yr Survival', 'Vol./yr'];
+            var headers = ['Organ', 'Wait', 'Mortality', 'Delisting', '1-yr Graft / Patient', '3-yr Graft / Patient', 'Vol./yr'];
             headers.forEach(function(text) {
                 var th = document.createElement('th');
                 th.textContent = text;
@@ -847,11 +847,17 @@
                 }
                 row.appendChild(delistTd);
 
-                // 1-yr graft survival %
+                // 1-yr graft + patient survival
                 var survTd = document.createElement('td');
                 var organOutcome = outcomes[organ] || {};
                 if (organOutcome.graft_survival_1yr !== undefined) {
                     survTd.textContent = organOutcome.graft_survival_1yr.toFixed(1) + '%';
+                    if (organOutcome.patient_survival_1yr !== undefined) {
+                        var patSub = document.createElement('div');
+                        patSub.style.cssText = 'font-size:0.73rem;color:var(--text-muted,#9ca3af);margin-top:0.1rem;';
+                        patSub.textContent = organOutcome.patient_survival_1yr.toFixed(1) + '%';
+                        survTd.appendChild(patSub);
+                    }
                 } else {
                     var noSurv = document.createElement('span');
                     noSurv.className = 'no-data';
@@ -860,13 +866,16 @@
                 }
                 row.appendChild(survTd);
 
-                // 3-yr graft survival %
+                // 3-yr graft + patient survival
                 var surv3Td = document.createElement('td');
                 if (organOutcome.graft_survival_3yr !== undefined) {
-                    var surv3Span = document.createElement('span');
-                    surv3Span.textContent = organOutcome.graft_survival_3yr.toFixed(1) + '%';
-                    surv3Span.style.color = 'var(--text-2,#4a4f65)';
-                    surv3Td.appendChild(surv3Span);
+                    surv3Td.textContent = organOutcome.graft_survival_3yr.toFixed(1) + '%';
+                    if (organOutcome.patient_survival_3yr !== undefined) {
+                        var patSub3 = document.createElement('div');
+                        patSub3.style.cssText = 'font-size:0.73rem;color:var(--text-muted,#9ca3af);margin-top:0.1rem;';
+                        patSub3.textContent = organOutcome.patient_survival_3yr.toFixed(1) + '%';
+                        surv3Td.appendChild(patSub3);
+                    }
                 } else {
                     var noSurv3 = document.createElement('span');
                     noSurv3.className = 'no-data';
@@ -940,6 +949,8 @@
                     { value: w.added_last_year, label: 'Added last year' },
                     { value: w.transplanted_cadaveric, label: 'Transplanted (deceased donor)' },
                     { value: w.transplanted_living, label: 'Transplanted (living donor)' },
+                    { value: w.removed_died, label: 'Died while waiting' },
+                    { value: w.removed_deteriorated, label: 'Removed (too ill)' },
                 ];
                 stats.forEach(function(s) {
                     if (s.value === undefined || s.value === null) return;
