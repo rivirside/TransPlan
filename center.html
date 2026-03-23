@@ -118,15 +118,33 @@
             user-select: none;
         }
         .section-card h2:hover { color: var(--accent, #6366f1); }
+        .section-card h2:hover .section-toggle { border-color: var(--accent, #6366f1); color: var(--accent, #6366f1); }
         .section-toggle {
-            font-size: 0.75rem;
-            color: var(--text-muted, #9ca3af);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            color: var(--text-muted, #6b7280);
+            background: var(--surface-raised, #f9fafb);
+            border: 1px solid var(--border, #e5e7eb);
+            border-radius: 4px;
+            padding: 0.1rem 0.45rem;
             flex-shrink: 0;
-            transition: transform 0.15s;
+            transition: color 0.1s, border-color 0.1s;
         }
         .section-card.collapsed h2 { margin-bottom: 0; border-bottom-color: transparent; }
         .section-card.collapsed .section-body { display: none; }
-        .section-card.collapsed .section-toggle { transform: rotate(-90deg); }
+        .section-card.collapsed .section-toggle { background: transparent; }
+        .section-title-group { display: flex; align-items: baseline; gap: 0.6rem; min-width: 0; overflow: hidden; }
+        .section-preview {
+            font-size: 0.73rem;
+            font-weight: 400;
+            color: var(--text-muted, #9ca3af);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: none;
+        }
+        .section-card.collapsed .section-preview { display: inline; }
 
         /* horizontal scroll wrapper for wide tables */
         .table-scroll { overflow-x: auto; }
@@ -177,12 +195,12 @@
             display: inline-block;
             flex-shrink: 0;
         }
-        .organ-dot--kidney    { background: #e74c3c; }
-        .organ-dot--liver     { background: #8e44ad; }
-        .organ-dot--heart     { background: #e91e63; }
-        .organ-dot--lung      { background: #2196f3; }
-        .organ-dot--pancreas  { background: #ff9800; }
-        .organ-dot--intestine { background: #4caf50; }
+        .organ-dot--kidney,
+        .organ-dot--liver,
+        .organ-dot--heart,
+        .organ-dot--lung,
+        .organ-dot--pancreas,
+        .organ-dot--intestine { background: var(--text-muted, #9ca3af); }
 
         .factor-good { color: #16a34a; }
         .factor-neutral { color: var(--text-2, #4a4f65); }
@@ -311,14 +329,17 @@
         }
         .contact-rows {
             display: flex;
-            flex-direction: column;
-            gap: 0.65rem;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0.5rem 2rem;
+            align-items: center;
         }
         .contact-row {
             display: flex;
-            gap: 0.6rem;
-            align-items: flex-start;
+            gap: 0.45rem;
+            align-items: center;
             font-size: 0.88rem;
+            white-space: nowrap;
         }
         .contact-icon {
             flex-shrink: 0;
@@ -479,7 +500,7 @@
         }
 
         // --- Make a section-card collapsible ---
-        function makeCollapsible(card, defaultOpen) {
+        function makeCollapsible(card, defaultOpen, previewText) {
             var h2 = card.querySelector('h2');
             if (!h2) return;
 
@@ -489,16 +510,30 @@
             while (h2.nextSibling) body.appendChild(h2.nextSibling);
             card.appendChild(body);
 
+            // Wrap h2's text content + optional preview in a title group
+            var titleGroup = document.createElement('span');
+            titleGroup.className = 'section-title-group';
+            while (h2.firstChild) titleGroup.appendChild(h2.firstChild);
+            h2.appendChild(titleGroup);
+
+            if (previewText) {
+                var preview = document.createElement('span');
+                preview.className = 'section-preview';
+                preview.textContent = previewText;
+                titleGroup.appendChild(preview);
+            }
+
             // Add toggle indicator
             var toggle = document.createElement('span');
             toggle.className = 'section-toggle';
-            toggle.textContent = '\u25BE';
+            toggle.textContent = defaultOpen ? '\u2212' : '+';
             h2.appendChild(toggle);
 
             if (!defaultOpen) card.classList.add('collapsed');
 
             h2.addEventListener('click', function() {
-                card.classList.toggle('collapsed');
+                var nowCollapsed = card.classList.toggle('collapsed');
+                toggle.textContent = nowCollapsed ? '+' : '\u2212';
             });
         }
 
@@ -512,18 +547,7 @@
             var text = num.toFixed(2) + '\u00d7';
             span.textContent = text;
 
-            // Color coding: below 1 = good, near 1 = neutral, above 1.5 = caution, above 2 = high
-            if (label === 'wait' || label === 'mortality' || label === 'delisting') {
-                if (num < 0.85) {
-                    span.className = 'factor-good';
-                } else if (num <= 1.15) {
-                    span.className = 'factor-neutral';
-                } else if (num <= 2.0) {
-                    span.className = 'factor-caution';
-                } else {
-                    span.className = 'factor-high';
-                }
-            }
+            span.className = 'factor-neutral';
 
             return span;
         }
@@ -603,7 +627,7 @@
         }
 
         // --- Build map section ---
-        function buildMap(center) {
+        function buildMap(center, contact) {
             var card = document.createElement('div');
             card.className = 'section-card';
 
@@ -641,7 +665,9 @@
                 }
             }, 0);
 
-            makeCollapsible(card, false);
+            var contactCity = (contact && contact.city) ? contact.city : '';
+            var mapPreview = [contactCity, center.state_abbr || center.state].filter(Boolean).join(', ');
+            makeCollapsible(card, false, mapPreview);
             return card;
         }
 
@@ -744,10 +770,7 @@
                 var survTd = document.createElement('td');
                 var organOutcome = outcomes[organ] || {};
                 if (organOutcome.graft_survival_1yr !== undefined) {
-                    var survSpan = document.createElement('span');
-                    survSpan.className = 'rating-badge rating-badge--' + (organOutcome.performance_rating || 'as_expected');
-                    survSpan.textContent = organOutcome.graft_survival_1yr.toFixed(1) + '%';
-                    survTd.appendChild(survSpan);
+                    survTd.textContent = organOutcome.graft_survival_1yr.toFixed(1) + '%';
                 } else {
                     var noSurv = document.createElement('span');
                     noSurv.className = 'no-data';
@@ -794,7 +817,8 @@
             scrollWrap.className = 'table-scroll';
             scrollWrap.appendChild(table);
             card.appendChild(scrollWrap);
-            makeCollapsible(card, true);
+            var organPreview = organs.map(function(o) { return o.charAt(0).toUpperCase() + o.slice(1); }).join(' · ');
+            makeCollapsible(card, true, organPreview);
             return card;
         }
 
@@ -855,7 +879,11 @@
             renderGrid(organs[0]);
             select.addEventListener('change', function() { renderGrid(select.value); });
 
-            makeCollapsible(card, true);
+            var firstOrganData = waitlist[organs[0]] || {};
+            var waitingCount = firstOrganData.currently_waiting;
+            var firstOrganName = organs[0].charAt(0).toUpperCase() + organs[0].slice(1);
+            var wlPreview = firstOrganName + (waitingCount != null ? ' · ' + waitingCount.toLocaleString() + ' waiting' : '');
+            makeCollapsible(card, true, wlPreview);
             return card;
         }
 
@@ -1000,7 +1028,7 @@
             }
 
             card.appendChild(list);
-            makeCollapsible(card, false);
+            makeCollapsible(card, false, nearbyCenters.length + ' within 250 mi');
             return card;
         }
 
@@ -1018,13 +1046,13 @@
             // Header (includes inline action links)
             detailContainer.appendChild(buildHeader(data));
 
-            // Single column — order: Programs, Waitlist, Contact, Map, Nearby
+            // Single column — order: Contact, Programs, Waitlist, Map, Nearby
+            var contactCard = buildContactCard(data);
+            if (contactCard) detailContainer.appendChild(contactCard);
             detailContainer.appendChild(buildProgramsTable(data));
             var waitlistCard = buildWaitlistCard(data);
             if (waitlistCard) detailContainer.appendChild(waitlistCard);
-            var contactCard = buildContactCard(data);
-            if (contactCard) detailContainer.appendChild(contactCard);
-            detailContainer.appendChild(buildMap(center));
+            detailContainer.appendChild(buildMap(center, data.contact));
             detailContainer.appendChild(buildNearbyCenters(data.nearby_centers));
         }
 
