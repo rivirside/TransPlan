@@ -1087,7 +1087,7 @@
     },
     "ILVA": {
       "code": "ILVA",
-      "name": "",
+      "name": "Edward Hines Jr. Veterans Administration Medical Center",
       "state_abbr": "IL",
       "state": "Illinois",
       "organs": [
@@ -1095,7 +1095,8 @@
       ],
       "lat": 40.0797,
       "lon": -89.4337,
-      "geocode_source": "nominatim"
+      "geocode_source": "nominatim",
+      "city": "Hines"
     },
     "INIM": {
       "code": "INIM",

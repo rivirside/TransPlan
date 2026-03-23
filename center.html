@@ -97,33 +97,39 @@
             font-size: 0.85rem;
         }
 
-        /* --- Two-Column Layout --- */
-        .center-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-        @media (min-width: 768px) {
-            .center-content {
-                grid-template-columns: 65% 35%;
-            }
-        }
-
         /* --- Section Card --- */
         .section-card {
             background: var(--surface, #fff);
             border: 1px solid var(--border, #e5e7eb);
             border-radius: 3px;
             padding: 1.25rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
         .section-card h2 {
-            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.05rem;
             color: var(--text, #111827);
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
             border-bottom: 1px solid var(--border-light, #f3f4f6);
+            cursor: pointer;
+            user-select: none;
         }
+        .section-card h2:hover { color: var(--accent, #6366f1); }
+        .section-toggle {
+            font-size: 0.75rem;
+            color: var(--text-muted, #9ca3af);
+            flex-shrink: 0;
+            transition: transform 0.15s;
+        }
+        .section-card.collapsed h2 { margin-bottom: 0; border-bottom-color: transparent; }
+        .section-card.collapsed .section-body { display: none; }
+        .section-card.collapsed .section-toggle { transform: rotate(-90deg); }
+
+        /* horizontal scroll wrapper for wide tables */
+        .table-scroll { overflow-x: auto; }
 
         /* --- Map --- */
         .map-container {
@@ -472,6 +478,30 @@
             detailContainer.appendChild(errorDiv);
         }
 
+        // --- Make a section-card collapsible ---
+        function makeCollapsible(card, defaultOpen) {
+            var h2 = card.querySelector('h2');
+            if (!h2) return;
+
+            // Wrap everything after h2 in .section-body
+            var body = document.createElement('div');
+            body.className = 'section-body';
+            while (h2.nextSibling) body.appendChild(h2.nextSibling);
+            card.appendChild(body);
+
+            // Add toggle indicator
+            var toggle = document.createElement('span');
+            toggle.className = 'section-toggle';
+            toggle.textContent = '\u25BE';
+            h2.appendChild(toggle);
+
+            if (!defaultOpen) card.classList.add('collapsed');
+
+            h2.addEventListener('click', function() {
+                card.classList.toggle('collapsed');
+            });
+        }
+
         // --- Format factor value with color class ---
         function formatFactor(value, label) {
             if (value === undefined || value === null) return null;
@@ -611,6 +641,7 @@
                 }
             }, 0);
 
+            makeCollapsible(card, false);
             return card;
         }
 
@@ -638,7 +669,7 @@
             // Header
             var thead = document.createElement('thead');
             var headerRow = document.createElement('tr');
-            var headers = ['Organ', 'Wait', 'Mortality', 'Delisting', '1-yr Survival', 'Vol./yr'];
+            var headers = ['Organ', 'Wait', 'Mortality', 'Delisting', '1-yr Survival', '3-yr Survival', 'Vol./yr'];
             headers.forEach(function(text) {
                 var th = document.createElement('th');
                 th.textContent = text;
@@ -717,12 +748,6 @@
                     survSpan.className = 'rating-badge rating-badge--' + (organOutcome.performance_rating || 'as_expected');
                     survSpan.textContent = organOutcome.graft_survival_1yr.toFixed(1) + '%';
                     survTd.appendChild(survSpan);
-                    if (organOutcome.graft_survival_3yr !== undefined) {
-                        var sub3 = document.createElement('div');
-                        sub3.style.cssText = 'font-size:0.73rem;color:var(--text-muted,#9ca3af);margin-top:0.1rem;';
-                        sub3.textContent = organOutcome.graft_survival_3yr.toFixed(1) + '% @ 3yr';
-                        survTd.appendChild(sub3);
-                    }
                 } else {
                     var noSurv = document.createElement('span');
                     noSurv.className = 'no-data';
@@ -730,6 +755,21 @@
                     survTd.appendChild(noSurv);
                 }
                 row.appendChild(survTd);
+
+                // 3-yr graft survival %
+                var surv3Td = document.createElement('td');
+                if (organOutcome.graft_survival_3yr !== undefined) {
+                    var surv3Span = document.createElement('span');
+                    surv3Span.textContent = organOutcome.graft_survival_3yr.toFixed(1) + '%';
+                    surv3Span.style.color = 'var(--text-2,#4a4f65)';
+                    surv3Td.appendChild(surv3Span);
+                } else {
+                    var noSurv3 = document.createElement('span');
+                    noSurv3.className = 'no-data';
+                    noSurv3.textContent = '\u2014';
+                    surv3Td.appendChild(noSurv3);
+                }
+                row.appendChild(surv3Td);
 
                 // Annual volume
                 var volTd = document.createElement('td');
@@ -750,7 +790,11 @@
             });
 
             table.appendChild(tbody);
-            card.appendChild(table);
+            var scrollWrap = document.createElement('div');
+            scrollWrap.className = 'table-scroll';
+            scrollWrap.appendChild(table);
+            card.appendChild(scrollWrap);
+            makeCollapsible(card, true);
             return card;
         }
 
@@ -811,6 +855,7 @@
             renderGrid(organs[0]);
             select.addEventListener('change', function() { renderGrid(select.value); });
 
+            makeCollapsible(card, true);
             return card;
         }
 
@@ -955,6 +1000,7 @@
             }
 
             card.appendChild(list);
+            makeCollapsible(card, false);
             return card;
         }
 
@@ -972,26 +1018,14 @@
             // Header (includes inline action links)
             detailContainer.appendChild(buildHeader(data));
 
-            // Two-column layout
-            var content = document.createElement('div');
-            content.className = 'center-content';
-
-            // Left column: main content
-            var mainCol = document.createElement('div');
-            mainCol.appendChild(buildProgramsTable(data));
-            content.appendChild(mainCol);
-
-            // Right column: sidebar
-            var sidebar = document.createElement('div');
-            var contactCard = buildContactCard(data);
-            if (contactCard) sidebar.appendChild(contactCard);
+            // Single column — order: Programs, Waitlist, Contact, Map, Nearby
+            detailContainer.appendChild(buildProgramsTable(data));
             var waitlistCard = buildWaitlistCard(data);
-            if (waitlistCard) sidebar.appendChild(waitlistCard);
-            sidebar.appendChild(buildMap(center));
-            sidebar.appendChild(buildNearbyCenters(data.nearby_centers));
-            content.appendChild(sidebar);
-
-            detailContainer.appendChild(content);
+            if (waitlistCard) detailContainer.appendChild(waitlistCard);
+            var contactCard = buildContactCard(data);
+            if (contactCard) detailContainer.appendChild(contactCard);
+            detailContainer.appendChild(buildMap(center));
+            detailContainer.appendChild(buildNearbyCenters(data.nearby_centers));
         }
 
         // --- Init ---
