@@ -223,7 +223,13 @@
                     <option value="name">Sort: Name</option>
                     <option value="state">Sort: State</option>
                     <option value="programs">Sort: Programs</option>
+                    <option value="distance">Sort: Distance</option>
                 </select>
+            </div>
+            <div class="search-bar" style="margin-top: 0; gap: 0.5rem;">
+                <input type="text" id="zip-input" placeholder="Zip code (e.g. 85721)" aria-label="Find nearest centers by zip code" maxlength="5" pattern="[0-9]{5}" inputmode="numeric" style="max-width: 170px; flex: 0 0 auto;">
+                <button type="button" id="locate-btn" class="filter-chip" style="white-space: nowrap; cursor: pointer; flex: 0 0 auto;">&#x1F4CD; My Location</button>
+                <span id="location-status" style="font-size: 0.82rem; color: var(--text-muted); align-self: center;"></span>
             </div>
             <div class="filter-chips" id="filter-chips" role="group" aria-label="Filter by organ type">
                 <button class="filter-chip" data-organ="kidney" type="button">
@@ -280,6 +286,25 @@
         var allCenters = [];
         var activeOrgans = new Set();
         var currentSort = 'name';
+        var userLat = null;
+        var userLon = null;
+
+        function haversine(lat1, lon1, lat2, lon2) {
+            var R = 3959, toRad = Math.PI / 180;
+            lat1 *= toRad; lon1 *= toRad; lat2 *= toRad; lon2 *= toRad;
+            var dlat = lat2 - lat1, dlon = lon2 - lon1;
+            var a = Math.sin(dlat/2)*Math.sin(dlat/2) + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dlon/2)*Math.sin(dlon/2);
+            return R * 2 * Math.asin(Math.sqrt(a));
+        }
+
+        async function geocodeZip(zip) {
+            var url = 'https://nominatim.openstreetmap.org/search?postalcode=' + encodeURIComponent(zip) + '&country=US&format=json&limit=1';
+            var r = await fetch(url, { headers: { 'User-Agent': 'TransPlan/1.0' } });
+            if (!r.ok) return null;
+            var results = await r.json();
+            if (!results.length) return null;
+            return { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) };
+        }
 
         var searchInput = document.getElementById('search-input');
         var sortSelect = document.getElementById('sort-select');
@@ -337,9 +362,20 @@
                 return true;
             });
 
+            // Compute distances
+            if (userLat !== null && userLon !== null) {
+                filtered.forEach(function(c) {
+                    c._distance = (c.lat && c.lon) ? haversine(userLat, userLon, c.lat, c.lon) : Infinity;
+                });
+            } else {
+                filtered.forEach(function(c) { c._distance = undefined; });
+            }
+
             // Sort
             filtered.sort(function(a, b) {
-                if (currentSort === 'name') {
+                if (currentSort === 'distance' && userLat !== null) {
+                    return (a._distance || Infinity) - (b._distance || Infinity);
+                } else if (currentSort === 'name') {
                     return (a.name || '').localeCompare(b.name || '');
                 } else if (currentSort === 'state') {
                     var s = (a.state || '').localeCompare(b.state || '');
@@ -398,6 +434,13 @@
                 locEl.textContent = parts.join(', ') || 'Location unavailable';
                 card.appendChild(locEl);
 
+                if (center._distance !== undefined && center._distance !== Infinity) {
+                    var distEl = document.createElement('div');
+                    distEl.style.cssText = 'font-size:0.82rem;color:var(--accent,#6366f1);font-weight:600;margin-bottom:0.25rem;';
+                    distEl.textContent = Math.round(center._distance) + ' mi away';
+                    card.appendChild(distEl);
+                }
+
                 var organsEl = document.createElement('div');
                 organsEl.className = 'center-card-organs';
                 (center.organs || []).forEach(function(organ) {
@@ -445,6 +488,47 @@
                 chip.classList.add('active');
             }
             renderCenters();
+        });
+
+        // --- Zip code / geolocation ---
+        var zipInput = document.getElementById('zip-input');
+        var locateBtn = document.getElementById('locate-btn');
+        var locationStatus = document.getElementById('location-status');
+
+        zipInput.addEventListener('input', function() {
+            var zip = zipInput.value.trim();
+            if (zip.length === 5 && /^\d{5}$/.test(zip)) {
+                locationStatus.textContent = 'Looking up...';
+                geocodeZip(zip).then(function(coords) {
+                    if (coords) {
+                        userLat = coords.lat; userLon = coords.lon;
+                        currentSort = 'distance'; sortSelect.value = 'distance';
+                        locationStatus.textContent = 'Sorted by distance';
+                        renderCenters();
+                    } else {
+                        locationStatus.textContent = 'Zip not found';
+                    }
+                }).catch(function() { locationStatus.textContent = 'Lookup failed'; });
+            } else if (zip.length === 0) {
+                userLat = null; userLon = null;
+                locationStatus.textContent = '';
+                if (currentSort === 'distance') { currentSort = 'name'; sortSelect.value = 'name'; }
+                renderCenters();
+            }
+        });
+
+        locateBtn.addEventListener('click', function() {
+            if (!navigator.geolocation) { locationStatus.textContent = 'Not supported'; return; }
+            locationStatus.textContent = 'Getting location...';
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                userLat = pos.coords.latitude; userLon = pos.coords.longitude;
+                currentSort = 'distance'; sortSelect.value = 'distance';
+                locationStatus.textContent = 'Sorted by distance';
+                zipInput.value = '';
+                renderCenters();
+            }, function() {
+                locationStatus.textContent = 'Location denied';
+            }, { timeout: 10000 });
         });
 
         // --- Init ---
