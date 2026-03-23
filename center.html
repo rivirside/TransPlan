@@ -327,19 +327,27 @@
             padding-bottom: 0.5rem;
             border-bottom: 1px solid var(--border-light, #f3f4f6);
         }
+        .contact-map-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 1.5rem;
+            align-items: stretch;
+        }
+        @media (max-width: 640px) {
+            .contact-map-grid { grid-template-columns: 1fr; }
+        }
+        .contact-map-grid { min-height: 220px; }
+        .contact-map-grid .map-container { height: 220px; }
         .contact-rows {
             display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            gap: 0.5rem 2rem;
-            align-items: center;
+            flex-direction: column;
+            gap: 0.6rem;
         }
         .contact-row {
             display: flex;
             gap: 0.45rem;
-            align-items: center;
+            align-items: flex-start;
             font-size: 0.88rem;
-            white-space: nowrap;
         }
         .contact-icon {
             flex-shrink: 0;
@@ -626,26 +634,99 @@
             return header;
         }
 
-        // --- Build map section ---
-        function buildMap(center, contact) {
+        // --- Build combined contact + map section ---
+        function buildContactAndMap(data, center) {
+            var contact = data.contact || {};
+            var live = data.contact_live !== false;
+
+            var addressParts = [];
+            if (contact.address) addressParts.push(contact.address);
+            var cityState = [contact.city, contact.state].filter(Boolean).join(', ');
+            if (cityState) addressParts.push(cityState);
+            if (contact.zip) addressParts[addressParts.length - 1] += ' ' + contact.zip;
+            var fullAddress = addressParts.join('\n');
+
             var card = document.createElement('div');
             card.className = 'section-card';
 
             var h2 = document.createElement('h2');
-            h2.textContent = 'Location';
+            h2.textContent = 'Contact & Location';
             card.appendChild(h2);
 
+            var grid = document.createElement('div');
+            grid.className = 'contact-map-grid';
+
+            // --- Left: contact info ---
+            var left = document.createElement('div');
+
+            var rows = document.createElement('div');
+            rows.className = 'contact-rows';
+
+            function addRow(icon, content) {
+                var row = document.createElement('div');
+                row.className = 'contact-row';
+                var iconEl = document.createElement('span');
+                iconEl.className = 'contact-icon';
+                iconEl.setAttribute('aria-hidden', 'true');
+                iconEl.textContent = icon;
+                row.appendChild(iconEl);
+                var val = document.createElement('div');
+                val.className = 'contact-value';
+                val.appendChild(content);
+                row.appendChild(val);
+                rows.appendChild(row);
+            }
+
+            if (fullAddress) {
+                var addrEl = document.createElement('span');
+                fullAddress.split('\n').forEach(function(line, i) {
+                    if (i > 0) addrEl.appendChild(document.createElement('br'));
+                    addrEl.appendChild(document.createTextNode(line));
+                });
+                addRow('\u25BE', addrEl);
+            }
+            if (contact.phone) {
+                var phoneLink = document.createElement('a');
+                phoneLink.href = 'tel:+1' + contact.phone.replace(/\D/g, '');
+                phoneLink.textContent = contact.phone;
+                addRow('\u2706', phoneLink);
+            }
+            if (contact.website) {
+                var siteLink = document.createElement('a');
+                siteLink.href = contact.website;
+                siteLink.target = '_blank';
+                siteLink.rel = 'noopener noreferrer';
+                try {
+                    siteLink.textContent = new URL(contact.website).hostname.replace(/^www\./, '');
+                } catch (e) { siteLink.textContent = contact.website; }
+                addRow('\u25A1', siteLink);
+            }
+
+            left.appendChild(rows);
+
+            if (!live) {
+                var stale = document.createElement('div');
+                stale.className = 'contact-stale';
+                stale.style.marginTop = '0.75rem';
+                stale.textContent = 'Live data fetch failed \u2014 cached data may be out of date.';
+                left.appendChild(stale);
+            }
+
+            grid.appendChild(left);
+
+            // --- Right: map ---
             var mapDiv = document.createElement('div');
             mapDiv.className = 'map-container';
             mapDiv.id = 'center-map';
-            card.appendChild(mapDiv);
+            grid.appendChild(mapDiv);
 
-            // Initialize map after DOM insertion
+            card.appendChild(grid);
+
             setTimeout(function() {
                 var lat = center.lat;
                 var lon = center.lon;
                 if (lat && lon) {
-                    var map = L.map('center-map').setView([lat, lon], 11);
+                    var map = L.map('center-map').setView([lat, lon], 12);
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         attribution: '&copy; OpenStreetMap contributors',
                         maxZoom: 18
@@ -665,9 +746,9 @@
                 }
             }, 0);
 
-            var contactCity = (contact && contact.city) ? contact.city : '';
-            var mapPreview = [contactCity, center.state_abbr || center.state].filter(Boolean).join(', ');
-            makeCollapsible(card, false, mapPreview);
+            var contactCity = contact.city || '';
+            var preview = [contactCity, center.state_abbr || center.state].filter(Boolean).join(', ');
+            makeCollapsible(card, false, preview);
             return card;
         }
 
@@ -887,87 +968,6 @@
             return card;
         }
 
-        // --- Build contact card ---
-        function buildContactCard(data) {
-            var contact = data.contact || {};
-            var live = data.contact_live !== false;
-
-            var addressParts = [];
-            if (contact.address) addressParts.push(contact.address);
-            var cityState = [contact.city, contact.state].filter(Boolean).join(', ');
-            if (cityState) addressParts.push(cityState);
-            if (contact.zip) addressParts[addressParts.length - 1] += ' ' + contact.zip;
-            var fullAddress = addressParts.join('\n');
-
-            if (!fullAddress && !contact.phone && !contact.website) return null;
-
-            var card = document.createElement('div');
-            card.className = 'contact-card';
-
-            var h2 = document.createElement('h2');
-            h2.textContent = 'Contact';
-            card.appendChild(h2);
-
-            var rows = document.createElement('div');
-            rows.className = 'contact-rows';
-
-            function addRow(icon, content) {
-                var row = document.createElement('div');
-                row.className = 'contact-row';
-
-                var iconEl = document.createElement('span');
-                iconEl.className = 'contact-icon';
-                iconEl.setAttribute('aria-hidden', 'true');
-                iconEl.textContent = icon;
-                row.appendChild(iconEl);
-
-                var val = document.createElement('div');
-                val.className = 'contact-value';
-                val.appendChild(content);
-                row.appendChild(val);
-                rows.appendChild(row);
-            }
-
-            if (fullAddress) {
-                var addrEl = document.createElement('span');
-                fullAddress.split('\n').forEach(function(line, i) {
-                    if (i > 0) addrEl.appendChild(document.createElement('br'));
-                    addrEl.appendChild(document.createTextNode(line));
-                });
-                addRow('\u25BE', addrEl);
-            }
-
-            if (contact.phone) {
-                var phoneLink = document.createElement('a');
-                phoneLink.href = 'tel:+1' + contact.phone.replace(/\D/g, '');
-                phoneLink.textContent = contact.phone;
-                addRow('\u2706', phoneLink);
-            }
-
-            if (contact.website) {
-                var siteLink = document.createElement('a');
-                siteLink.href = contact.website;
-                siteLink.target = '_blank';
-                siteLink.rel = 'noopener noreferrer';
-                try {
-                    siteLink.textContent = new URL(contact.website).hostname.replace(/^www\./, '');
-                } catch (e) {
-                    siteLink.textContent = contact.website;
-                }
-                addRow('\u25A1', siteLink);
-            }
-
-            card.appendChild(rows);
-
-            if (!live) {
-                var stale = document.createElement('div');
-                stale.className = 'contact-stale';
-                stale.textContent = 'Live data fetch failed \u2014 showing cached data which may be out of date.';
-                card.appendChild(stale);
-            }
-
-            return card;
-        }
 
         // --- Build nearby centers list ---
         function buildNearbyCenters(nearbyCenters) {
@@ -1046,13 +1046,11 @@
             // Header (includes inline action links)
             detailContainer.appendChild(buildHeader(data));
 
-            // Single column — order: Contact, Programs, Waitlist, Map, Nearby
-            var contactCard = buildContactCard(data);
-            if (contactCard) detailContainer.appendChild(contactCard);
+            // Single column — order: Programs, Waitlist, Contact+Map, Nearby
             detailContainer.appendChild(buildProgramsTable(data));
             var waitlistCard = buildWaitlistCard(data);
             if (waitlistCard) detailContainer.appendChild(waitlistCard);
-            detailContainer.appendChild(buildMap(center, data.contact));
+            detailContainer.appendChild(buildContactAndMap(data, center));
             detailContainer.appendChild(buildNearbyCenters(data.nearby_centers));
         }
 
