@@ -359,9 +359,45 @@
     }
   }
 
+  /**
+   * Call POST /score on the backend — comprehensive center-level scoring.
+   * Returns 248 centers with 8-category breakdown, or null on failure.
+   */
+  async function scoreAll(formData) {
+    var base = getBaseUrl();
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
+
+    try {
+      var body = normalizeFormData(formData);
+      var response = await fetch(base + '/score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        console.warn('TransPlan scoring API error:', response.status);
+        return null;
+      }
+
+      return await response.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        console.warn('TransPlan scoring API timeout after', API_TIMEOUT_MS, 'ms');
+      }
+      return null;
+    }
+  }
+
   // Expose globally
   window.TransPlanAPI = {
     simulate: simulate,
+    scoreAll: scoreAll,
     sensitivity: sensitivity,
     equityAnalysis: equityAnalysis,
     whatIf: whatIf,

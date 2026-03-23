@@ -13,12 +13,17 @@
   // --- Determine initial state (before DOM ready) ---
   var stored = localStorage.getItem(STORAGE_KEY); // 'true', 'false', or null
   var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  var isDark = stored !== null ? stored === 'true' : prefersDark;
+  // Default to light mode — user must explicitly toggle to dark
+  var isDark = stored === 'true';
 
   // Apply immediately to prevent flash
   if (isDark) {
     document.documentElement.setAttribute(ATTR, 'true');
   }
+
+  // Clean up legacy theme system (removed in redesign)
+  document.documentElement.removeAttribute('data-theme');
+  localStorage.removeItem('transplan-theme');
 
   // --- Listen for OS preference changes (only if user hasn't overridden) ---
   if (window.matchMedia) {
@@ -121,9 +126,22 @@
   };
 
   // Build toggle on DOM ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', buildToggle);
-  } else {
+  function initNav() {
     buildToggle();
+    // Mobile hamburger menu
+    var navToggle = document.querySelector('.nav-toggle');
+    var navLinks = document.querySelector('.nav-links');
+    if (navToggle && navLinks) {
+      navToggle.addEventListener('click', function () {
+        var isOpen = navLinks.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', String(isOpen));
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initNav);
+  } else {
+    initNav();
   }
 })();

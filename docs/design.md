@@ -6,37 +6,52 @@
 
 TransPlan is a medical information tool. The design prioritizes **clarity, trust, and accessibility** over flashiness. Users are transplant patients or caregivers making life-altering decisions - the interface should feel calm, authoritative, and easy to scan.
 
-## Design System
+## Design System (Phase 7 — March 2026)
 
-All visual properties are defined as CSS custom properties (design tokens) in `:root` at the top of `styles.css`. Always use tokens instead of hardcoded values.
+Single polished design. No themes. All visual properties in CSS custom properties in `:root` at the top of `styles.css`.
 
 ### Token Categories
-- **Colors**: `--color-primary`, `--text-1` through `--text-muted`, `--surface`, `--bg`, `--border`, `--success/warning/danger`
-- **Spacing**: `--space-1` (4px) through `--space-10` (64px), 8px base grid
-- **Shadows**: `--shadow-sm`, `--shadow-md`, `--shadow-lg`
-- **Radii**: `--radius-sm` (6px), `--radius-md` (10px), `--radius-lg` (16px), `--radius-full` (pill)
-- **Typography**: `--fs-xs` (0.75rem) through `--fs-3xl` (2.25rem), ~1.25 ratio
+- **Colors**: Indigo primary scale (`--color-primary-50` through `--color-primary-900`), violet accent scale, blue-gray neutrals
+- **Spacing**: `--space-1` (4px) through `--space-10` (64px), 4px base grid
+- **Shadows**: `--shadow-xs` through `--shadow-xl` (subtle depth, not dramatic)
+- **Radii**: `--radius-xs` (4px), `--radius-sm` (6px), `--radius-md` (8px), `--radius-lg` (12px), `--radius-full` (pill)
+- **Typography**: System font stack (`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, ...`). Base size 15px (`--fs-base: 0.9375rem`). Scale from `--fs-xs` (0.75rem) through `--fs-4xl` (2.75rem)
+
+### Dark Mode
+Light mode is default. User can toggle via moon/sun button in nav. Stored in `localStorage('transplan-dark')`. Dark mode inverts neutral/surface/text tokens via `[data-dark="true"]` CSS. OS preference auto-detection disabled — explicit user toggle only.
 
 ## Layout Structure
 
-The page is a single vertical scroll with distinct sections:
+### Landing Page (index.html)
+```
+[Nav]             - Sticky dark indigo bar: Logo | Simulator | Docs | Dark toggle
+[Hero]            - Centered: headline, description, CTA button + ghost link
+[Features]        - 3x2 card grid (icon + title inline, description below)
+[How It Works]    - 4-step horizontal flow with numbered circles
+[Data Trust]      - Centered: "Powered by Trusted Public Data" + 6 source badges
+[CTA]             - "Ready to explore?" + Launch Simulator button
+[Disclaimer]      - Yellow banner
+[Footer]          - Disclaimer text + links + contact
+```
 
+### Simulator Page (simulator.html)
 ```
-[Header]          - Gradient header with curved bottom edge
-[Main card]       - White floating card overlapping header
-  [About]         - Info card with disclaimer banner
-  [Form]          - Health profile input (fieldsets + grid)
-  [Methodology]   - Accordion list + donut chart + example calc
-  [Results]       - Hidden until form submit, then:
-    [Freshness]   - Data freshness banner
-    [Tabs]        - Location Scores / Simulation Probabilities toggle
-    [Map]         - Leaflet interactive map + overlay controls
-    [City Cards]  - Ranked cards with radar charts (scores tab)
-    [Prob Cards]  - Probability cards with competing risks (prob tab)
-    [Charts]      - Comparison bar / CDF curves / competing risks
-    [Data Sources]- Attribution
-[Footer]          - Disclaimer card
+[Nav]             - Same as landing (Home active on landing, Simulator active here)
+[App Layout]      - CSS Grid: 340px sidebar + 1fr main content
+  [Sidebar]       - Sticky, scrollable:
+    Disclaimer    - Compact one-liner with link
+    Form          - 4 fieldsets, single-column layout
+    Submit button - Full-width indigo
+    Method link   - "How our algorithm works →"
+  [Main Content]  - Scrollable:
+    Empty state   - Heart icon + instructions (hidden after submit)
+    Results       - Data freshness, tabs (Scores/Probs/Equity), map, city cards, charts
+    Methodology   - Collapsed <details> at bottom
+[Footer]          - Disclaimer
+[Modals]          - City detail + comparison (unchanged)
 ```
+
+Responsive: sidebar collapses to top panel at ≤1024px, single column at ≤768px with hamburger nav.
 
 ## Color Palette
 
@@ -64,9 +79,11 @@ The page is a single vertical scroll with distinct sections:
 
 ## Typography
 
-- **Font stack**: System fonts only (`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, ...`)
-- **No custom fonts** - fast loading, native feel
-- **Scale** (~1.25 ratio): `--fs-xs` (0.75rem) → `--fs-3xl` (2.25rem)
+- **Font stack**: System fonts (`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif`)
+- **No custom fonts** — no Google Fonts dependency, fast loading, native feel
+- **Base size**: 15px (`--fs-base: 0.9375rem`) — up from 13px in Phase 6
+- **Scale**: `--fs-xs` (0.75rem) → `--fs-4xl` (2.75rem)
+- **Line height**: 1.55 (body)
 - **Anti-aliasing**: `-webkit-font-smoothing: antialiased`
 
 ## Component Details

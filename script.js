@@ -2175,9 +2175,9 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
         }
     }
 
-    // Phase 1: Calculate deterministic scores
+    // Phase 1: Calculate deterministic scores (tries backend API, falls back to local)
     _paginationPage = 0; // Reset pagination on new submission
-    calculateResults(formData);
+    await calculateResults(formData);
 
     // Phase 2: Call backend for simulation (Monte Carlo or Bayesian)
     let simResult = null;
@@ -2327,10 +2327,41 @@ function generateCityFactors(cityName, stateName, organType, breakdown) {
     return factors;
 }
 
-function calculateResults(formData) {
+async function calculateResults(formData) {
     const organ = formData.organ;
 
-    // Use comprehensive algorithm to dynamically score all cities
+    // Try backend scoring API first (248 centers)
+    if (window.TransPlanAPI && window.TransPlanAPI.scoreAll) {
+        try {
+            const result = await window.TransPlanAPI.scoreAll(formData);
+            if (result && result.centers && result.centers.length > 0) {
+                const cities = result.centers.map(function(c) {
+                    return {
+                        city: c.name,
+                        state: c.state,
+                        stateAbbr: c.state_abbr,
+                        centerCode: c.code,
+                        lat: c.lat,
+                        lon: c.lon,
+                        score: c.total,
+                        personalizedScore: c.total,
+                        scoreBreakdown: c.breakdown,
+                        waitTime: null,
+                        donorRate: null,
+                        matchRate: null,
+                        centersQuality: null,
+                        factors: []
+                    };
+                });
+                displayResults(cities, formData);
+                return;
+            }
+        } catch (err) {
+            console.warn('Backend scoring failed, falling back to local scoring:', err.message);
+        }
+    }
+
+    // Fallback: local scoring for 22 cities
     if (typeof calculateComprehensiveScore === 'function') {
         const cities = Object.entries(cityStateMap).map(([cityName, stateName]) => {
             const result = calculateComprehensiveScore(formData, cityName, stateName, organ, formData.weights);
@@ -2347,22 +2378,6 @@ function calculateResults(formData) {
                 centersQuality: metrics.centersQuality,
                 factors: metrics.factors
             };
-        });
-
-        cities.sort((a, b) => b.personalizedScore - a.personalizedScore);
-        displayResults(cities, formData);
-    } else {
-        // Fallback to mock data with simple multipliers
-        const cities = JSON.parse(JSON.stringify(cityData[organ]));
-        const bloodMultiplier = bloodTypeMultipliers[formData.bloodType];
-        const ageMultiplier = getAgeMultiplier(formData.age);
-        const sexMultiplier = sexMultipliers[formData.sex];
-        const urgencyMultiplier = urgencyMultipliers[formData.urgency];
-
-        cities.forEach(city => {
-            const baseScore = city.score;
-            city.personalizedScore = baseScore * bloodMultiplier * ageMultiplier * sexMultiplier * urgencyMultiplier;
-            city.personalizedScore = Math.min(100, city.personalizedScore);
         });
 
         cities.sort((a, b) => b.personalizedScore - a.personalizedScore);
@@ -2437,6 +2452,9 @@ function displayResults(cities, formData) {
     _updatePaginationControls(filtered.length, totalPages, cities);
 
     resultsSection.style.display = 'block';
+    // Hide empty state when results appear
+    var emptyState = document.getElementById('emptyState');
+    if (emptyState) emptyState.style.display = 'none';
     resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     // Render comparison bar chart

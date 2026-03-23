@@ -4,21 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TransplantMatch - Find Your Best Location</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leafletCss=true;" />
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="themes.css">
     <script src="dark-mode.js"></script>
 </head>
 <body>
-    <div class="gov-banner" aria-label="Tool information banner">
-        <div class="gov-banner-inner">
-            <span class="gov-banner-text">An unofficial public data exploration tool using SRTR, OPTN, and CDC datasets</span>
-        </div>
-    </div>
     <nav class="site-nav" aria-label="Site navigation">
         <div class="nav-inner">
             <a href="/" class="nav-brand">
@@ -27,24 +18,19 @@
                 </span>
                 <span class="nav-brand-text">TransplantMatch</span>
             </a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
             <div class="nav-links">
                 <a href="/" class="nav-link">Home</a>
                 <a href="simulator.html" class="nav-link nav-link--active">Simulator</a>
-                <a href="#methodology" class="nav-link">Methodology</a>
-                <a href="#disclaimer-full" class="nav-link">Disclaimer</a>
                 <a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>
             </div>
         </div>
     </nav>
-    <div class="container">
-        <main>
-            <section class="info-card">
-                <h2>About This Tool</h2>
-                <div class="disclaimer-banner">
-                    <strong>Important:</strong> This tool is for <strong>educational and exploratory purposes only</strong>. It does not predict actual transplant outcomes. Scores reflect regional data trends, not individual clinical assessments. Always consult your transplant team before making any decisions. See <a href="#disclaimer-full">full disclaimer</a> below.
-                </div>
-                <p>TransplantMatch compares US cities across regional transplant data, donor availability, wait times, and health demographics to help you explore which locations may align with your transplant needs.</p>
-            </section>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-disclaimer">
+                <strong>Educational tool only.</strong> Not a clinical assessment. <a href="#disclaimer-full">Full disclaimer</a>
+            </div>
 
             <section class="form-section">
                 <h2>Your Health Profile</h2>
@@ -224,237 +210,18 @@
                     <button type="submit" class="submit-btn">Find Best Locations</button>
                 </form>
             </section>
+            <a href="#methodology" class="sidebar-methodology-link">How our algorithm works &rarr;</a>
+        </aside>
 
-            <section class="methodology-section" id="methodology">
-                <h2>How Our Algorithm Works <a class="info-btn" data-doc-path="/theory/scoring-methodology" title="Full scoring methodology documentation" target="_blank" rel="noopener" aria-label="Documentation: Scoring methodology"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></a></h2>
-
-                <div class="methodology-intro">
-                    <p>TransplantMatch uses a multi-factor algorithm that analyzes <strong>40+ data points</strong> across 8 major categories to generate a <strong>relative location suitability score</strong> for each city. These scores reflect regional data trends and are <em>not</em> clinical predictions. Our scoring system is weighted based on publicly available transplant research and regional statistics.</p>
+        <main class="main-content">
+            <div class="main-empty-state" id="emptyState">
+                <div class="empty-state-icon" aria-hidden="true">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                 </div>
+                <h2>Find Your Best Transplant Location</h2>
+                <p>Fill in your health profile and click <strong>Find Best Locations</strong> to see personalized results with maps, scores, and simulation probabilities.</p>
+            </div>
 
-                <div class="methodology-list">
-                    <details class="methodology-item">
-                        <summary>
-                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><path d="M22 10a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/></svg></span>
-                            <span class="method-title">Medical Compatibility</span>
-                            <span class="method-bar"><span class="method-bar-fill" style="width:100%"></span></span>
-                            <span class="method-pct">25%</span>
-                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                        </summary>
-                        <div class="methodology-item-content">
-                            <ul>
-                                <li><strong>Blood type matching:</strong> AB+ (universal recipient) scores highest, O- (limited options) faces most challenges</li>
-                                <li><strong>Age-based prioritization:</strong> Pediatric patients (&lt;18) receive priority; outcomes decline after 65</li>
-                                <li><strong>Organ size matching:</strong> Height/weight ratios critical for heart and lung transplants</li>
-                                <li><strong>Sex considerations:</strong> Body size matching relevant for heart and lung transplants; minimal factor for other organs</li>
-                                <li><strong>Antibody sensitivity (cPRA):</strong> Panel Reactive Antibody level affects kidney wait time; highly sensitized patients (cPRA &gt;80%) face significantly longer waits</li>
-                            </ul>
-                        </div>
-                    </details>
-
-                    <details class="methodology-item">
-                        <summary>
-                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
-                            <span class="method-title">Wait Time &amp; Competition</span>
-                            <span class="method-bar"><span class="method-bar-fill" style="width:80%"></span></span>
-                            <span class="method-pct">20%</span>
-                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                        </summary>
-                        <div class="methodology-item-content">
-                            <ul>
-                                <li><strong>UNOS regional wait times:</strong> Varies by region (Southwest: 3.8 yrs vs Midwest: 2.1 yrs for kidneys)</li>
-                                <li><strong>Waitlist size:</strong> Fewer competing patients = faster transplant</li>
-                                <li><strong>Medical urgency:</strong> Status 1 (critical) patients prioritized over Status 3 (stable). Organ-specific scores (cPRA for kidney, MELD for liver, LAS for lung) replace generic urgency when provided</li>
-                                <li><strong>Annual death rates on waitlist:</strong> Higher in regions with long waits</li>
-                                <li><strong>Transplant volume:</strong> High-volume centers process lists faster</li>
-                            </ul>
-                        </div>
-                    </details>
-
-                    <details class="methodology-item">
-                        <summary>
-                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></span>
-                            <span class="method-title">Donor Availability</span>
-                            <span class="method-bar"><span class="method-bar-fill" style="width:72%"></span></span>
-                            <span class="method-pct">18%</span>
-                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                        </summary>
-                        <div class="methodology-item-content">
-                            <ul>
-                                <li><strong>State registration rates:</strong> Montana (82%) vs Mississippi (22%)</li>
-                                <li><strong>Deceased donor events:</strong> Traffic fatality rates are one proxy among several for regional donor availability (only ~20-25% of modern donors come from motor vehicle accidents)</li>
-                                <li><strong>Living donor programs:</strong> Strength of paired exchange and altruistic programs</li>
-                                <li><strong>Population density:</strong> Larger metro areas = larger potential donor pools</li>
-                                <li><strong>Donor demographics:</strong> Age, health status of regional population</li>
-                            </ul>
-                        </div>
-                    </details>
-
-                    <details class="methodology-item">
-                        <summary>
-                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
-                            <span class="method-title">Hospital Quality</span>
-                            <span class="method-bar"><span class="method-bar-fill" style="width:60%"></span></span>
-                            <span class="method-pct">15%</span>
-                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                        </summary>
-                        <div class="methodology-item-content">
-                            <ul>
-                                <li><strong>Annual transplant volume:</strong> Volume-outcome relationship proven in research (data from SRTR program-specific reports)</li>
-                                <li><strong>Center reputation:</strong> UPMC, Cleveland Clinic, Mayo score highest</li>
-                                <li><strong>Organ specialization:</strong> Duke leads in lungs, Minneapolis in pancreas</li>
-                                <li><strong>Insurance acceptance:</strong> Medicaid and uninsured patients face access barriers that vary by center</li>
-                            </ul>
-                        </div>
-                    </details>
-
-                    <details class="methodology-item">
-                        <summary>
-                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
-                            <span class="method-title">Geographic &amp; Logistical</span>
-                            <span class="method-bar"><span class="method-bar-fill" style="width:40%"></span></span>
-                            <span class="method-pct">10%</span>
-                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                        </summary>
-                        <div class="methodology-item-content">
-                            <ul>
-                                <li><strong>Cost of living:</strong> Impacts ability to afford relocation and post-transplant care</li>
-                                <li><strong>Climate:</strong> Moderate temperatures aid recovery; extreme weather creates challenges</li>
-                                <li><strong>Air quality:</strong> Critical for lung recipients; poor air quality in LA vs excellent in Madison</li>
-                                <li><strong>Housing availability:</strong> Need to live near center for 3-6 months post-transplant</li>
-                                <li><strong>Transportation access:</strong> Proximity to center for frequent follow-ups</li>
-                            </ul>
-                        </div>
-                    </details>
-
-                    <details class="methodology-item">
-                        <summary>
-                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
-                            <span class="method-title">Health Demographics</span>
-                            <span class="method-bar"><span class="method-bar-fill" style="width:28%"></span></span>
-                            <span class="method-pct">7%</span>
-                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                        </summary>
-                        <div class="methodology-item-content">
-                            <ul>
-                                <li><strong>Diabetes prevalence:</strong> High rates (Miami 12.8%) damage potential donor kidneys</li>
-                                <li><strong>Obesity rates:</strong> Affects donor organ quality and surgical outcomes</li>
-                                <li><strong>Chronic kidney disease:</strong> Reduces kidney donor pool in affected regions</li>
-                                <li><strong>Hypertension:</strong> Impacts heart and kidney donor quality</li>
-                                <li><strong>Smoking rates:</strong> Tennessee (22.8%) vs California (13.5%) affects lung donors</li>
-                                <li class="method-note"><em>Note: Uses state-level CDC BRFSS data with city-level adjustments. County-level granularity (CDC PLACES) would change scores by &lt;0.5 points given this category's 7% weight.</em></li>
-                            </ul>
-                        </div>
-                    </details>
-
-                    <details class="methodology-item">
-                        <summary>
-                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
-                            <span class="method-title">Policy &amp; Legal</span>
-                            <span class="method-bar"><span class="method-bar-fill" style="width:12%"></span></span>
-                            <span class="method-pct">3%</span>
-                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                        </summary>
-                        <div class="methodology-item-content">
-                            <ul>
-                                <li><strong>Donation laws:</strong> States with strong DMV-based registration and first-person consent laws score higher</li>
-                                <li><strong>First-person consent:</strong> Some states require family cannot override donor card</li>
-                                <li><strong>Medicaid expansion:</strong> Affects post-transplant medication coverage</li>
-                                <li><strong>Insurance mandates:</strong> State requirements for transplant coverage</li>
-                                <li><strong>DMV enrollment:</strong> Automatic registry at license renewal boosts donor rates</li>
-                            </ul>
-                        </div>
-                    </details>
-
-                    <details class="methodology-item">
-                        <summary>
-                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-                            <span class="method-title">Socioeconomic</span>
-                            <span class="method-bar"><span class="method-bar-fill" style="width:8%"></span></span>
-                            <span class="method-pct">2%</span>
-                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                        </summary>
-                        <div class="methodology-item-content">
-                            <ul>
-                                <li><strong>Patient housing (30%):</strong> Dedicated transplant hospitality houses, on-site temporary housing (e.g., Gift of Life Transplant House, Transplant House of Cleveland)</li>
-                                <li><strong>Financial assistance (25%):</strong> Transplant financial counselors, charity care, fundraising support programs</li>
-                                <li><strong>Support groups (20%):</strong> Peer mentorship, survivor support groups, transplant-specific community programs</li>
-                                <li><strong>Caregiver resources (15%):</strong> Caregiver housing, training programs (e.g., Nebraska Medicine's cooperative care model), respite support</li>
-                                <li><strong>Health literacy (10%):</strong> Patient education programs, multilingual services, transplant coordinator counseling</li>
-                            </ul>
-                        </div>
-                    </details>
-                </div>
-
-                <div class="methodology-weights-chart">
-                    <h3>Category Weights</h3>
-                    <div class="chart-container chart-container-small">
-                        <canvas id="weightsDonutChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="methodology-calculation">
-                    <h3>Example Calculation</h3>
-                    <div class="calc-example">
-                        <p><strong>Patient Profile:</strong> 45-year-old female, blood type A+, needs kidney, Status 2 urgency</p>
-                        <p><strong>City:</strong> Pittsburgh, PA</p>
-
-                        <div class="calc-breakdown">
-                            <div class="calc-row">
-                                <span>Medical Compatibility (A+ blood type, age 45, female):</span>
-                                <span><strong>95/100</strong> × 25% = 23.75</span>
-                            </div>
-                            <div class="calc-row">
-                                <span>Wait Time (1.8 years, Status 2):</span>
-                                <span><strong>92/100</strong> × 20% = 18.40</span>
-                            </div>
-                            <div class="calc-row">
-                                <span>Donor Availability (PA 42% registration, trauma network):</span>
-                                <span><strong>88/100</strong> × 18% = 15.84</span>
-                            </div>
-                            <div class="calc-row">
-                                <span>Hospital Quality (UPMC, 350 kidney transplants/year):</span>
-                                <span><strong>100/100</strong> × 15% = 15.00</span>
-                            </div>
-                            <div class="calc-row">
-                                <span>Geographic (affordable COL, moderate climate):</span>
-                                <span><strong>83/100</strong> × 10% = 8.30</span>
-                            </div>
-                            <div class="calc-row">
-                                <span>Health Demographics (low diabetes, moderate obesity):</span>
-                                <span><strong>85/100</strong> × 7% = 5.95</span>
-                            </div>
-                            <div class="calc-row">
-                                <span>Policy (PA strong opt-in laws):</span>
-                                <span><strong>88/100</strong> × 3% = 2.64</span>
-                            </div>
-                            <div class="calc-row">
-                                <span>Socioeconomic (good support systems):</span>
-                                <span><strong>83/100</strong> × 2% = 1.66</span>
-                            </div>
-                            <div class="calc-total">
-                                <span><strong>TOTAL LOCATION SUITABILITY SCORE:</strong></span>
-                                <span><strong>91.54/100</strong></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="methodology-footer">
-                    <h3>Data Sources & Validation</h3>
-                    <ul>
-                        <li>SRTR (Scientific Registry of Transplant Recipients): Center-specific transplant volumes and program data (2023-2024)</li>
-                        <li>UNOS/OPTN: National transplant registry, wait time estimates by organ type</li>
-                        <li>BLS (Bureau of Labor Statistics): Consumer Price Index for metro area cost of living</li>
-                        <li>NHTSA FARS: Traffic fatality rates by state (one component of donor availability)</li>
-                        <li>EPA AQS: Ozone and PM2.5 air quality measurements, converted via AQI breakpoints</li>
-                        <li>CDC BRFSS: Chronic disease prevalence (diabetes, obesity, CKD, hypertension, smoking)</li>
-                        <li>State DMV/Registry data: Donor registration rates by state</li>
-                        <li>Census Bureau: Population density, socioeconomic demographics</li>
-                    </ul>
-                    <p class="methodology-note"><strong>Data Updates:</strong> Regional data is refreshed weekly via automated pipelines where APIs are available. Some data sources (SRTR program reports, policy tiers) are manually curated and updated less frequently. Check the data freshness banner in results for current status.</p>
-                </div>
-            </section>
 
             <!-- Loading spinner overlay -->
             <div id="simulationSpinner" class="simulation-spinner" style="display: none;">
@@ -759,8 +526,242 @@
                     </ul>
                 </div>
             </section>
-        </main>
 
+            <!-- Methodology — collapsed by default, below results -->
+            <details class="methodology-collapsed" id="methodology">
+                <summary class="methodology-collapsed-summary">How Our Algorithm Works</summary>
+                <div class="methodology-collapsed-content">
+                <h2>How Our Algorithm Works <a class="info-btn" data-doc-path="/theory/scoring-methodology" title="Full scoring methodology documentation" target="_blank" rel="noopener" aria-label="Documentation: Scoring methodology"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></a></h2>
+
+                <div class="methodology-intro">
+                    <p>TransplantMatch uses a multi-factor algorithm that analyzes <strong>40+ data points</strong> across 8 major categories to generate a <strong>relative location suitability score</strong> for each city. These scores reflect regional data trends and are <em>not</em> clinical predictions. Our scoring system is weighted based on publicly available transplant research and regional statistics.</p>
+                </div>
+
+                <div class="methodology-list">
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><path d="M22 10a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/></svg></span>
+                            <span class="method-title">Medical Compatibility</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:100%"></span></span>
+                            <span class="method-pct">25%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Blood type matching:</strong> AB+ (universal recipient) scores highest, O- (limited options) faces most challenges</li>
+                                <li><strong>Age-based prioritization:</strong> Pediatric patients (&lt;18) receive priority; outcomes decline after 65</li>
+                                <li><strong>Organ size matching:</strong> Height/weight ratios critical for heart and lung transplants</li>
+                                <li><strong>Sex considerations:</strong> Body size matching relevant for heart and lung transplants; minimal factor for other organs</li>
+                                <li><strong>Antibody sensitivity (cPRA):</strong> Panel Reactive Antibody level affects kidney wait time; highly sensitized patients (cPRA &gt;80%) face significantly longer waits</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+                            <span class="method-title">Wait Time &amp; Competition</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:80%"></span></span>
+                            <span class="method-pct">20%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>UNOS regional wait times:</strong> Varies by region (Southwest: 3.8 yrs vs Midwest: 2.1 yrs for kidneys)</li>
+                                <li><strong>Waitlist size:</strong> Fewer competing patients = faster transplant</li>
+                                <li><strong>Medical urgency:</strong> Status 1 (critical) patients prioritized over Status 3 (stable). Organ-specific scores (cPRA for kidney, MELD for liver, LAS for lung) replace generic urgency when provided</li>
+                                <li><strong>Annual death rates on waitlist:</strong> Higher in regions with long waits</li>
+                                <li><strong>Transplant volume:</strong> High-volume centers process lists faster</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></span>
+                            <span class="method-title">Donor Availability</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:72%"></span></span>
+                            <span class="method-pct">18%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>State registration rates:</strong> Montana (82%) vs Mississippi (22%)</li>
+                                <li><strong>Deceased donor events:</strong> Traffic fatality rates are one proxy among several for regional donor availability (only ~20-25% of modern donors come from motor vehicle accidents)</li>
+                                <li><strong>Living donor programs:</strong> Strength of paired exchange and altruistic programs</li>
+                                <li><strong>Population density:</strong> Larger metro areas = larger potential donor pools</li>
+                                <li><strong>Donor demographics:</strong> Age, health status of regional population</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+                            <span class="method-title">Hospital Quality</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:60%"></span></span>
+                            <span class="method-pct">15%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Annual transplant volume:</strong> Volume-outcome relationship proven in research (data from SRTR program-specific reports)</li>
+                                <li><strong>Center reputation:</strong> UPMC, Cleveland Clinic, Mayo score highest</li>
+                                <li><strong>Organ specialization:</strong> Duke leads in lungs, Minneapolis in pancreas</li>
+                                <li><strong>Insurance acceptance:</strong> Medicaid and uninsured patients face access barriers that vary by center</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+                            <span class="method-title">Geographic &amp; Logistical</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:40%"></span></span>
+                            <span class="method-pct">10%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Cost of living:</strong> Impacts ability to afford relocation and post-transplant care</li>
+                                <li><strong>Climate:</strong> Moderate temperatures aid recovery; extreme weather creates challenges</li>
+                                <li><strong>Air quality:</strong> Critical for lung recipients; poor air quality in LA vs excellent in Madison</li>
+                                <li><strong>Housing availability:</strong> Need to live near center for 3-6 months post-transplant</li>
+                                <li><strong>Transportation access:</strong> Proximity to center for frequent follow-ups</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+                            <span class="method-title">Health Demographics</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:28%"></span></span>
+                            <span class="method-pct">7%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Diabetes prevalence:</strong> High rates (Miami 12.8%) damage potential donor kidneys</li>
+                                <li><strong>Obesity rates:</strong> Affects donor organ quality and surgical outcomes</li>
+                                <li><strong>Chronic kidney disease:</strong> Reduces kidney donor pool in affected regions</li>
+                                <li><strong>Hypertension:</strong> Impacts heart and kidney donor quality</li>
+                                <li><strong>Smoking rates:</strong> Tennessee (22.8%) vs California (13.5%) affects lung donors</li>
+                                <li class="method-note"><em>Note: Uses state-level CDC BRFSS data with city-level adjustments. County-level granularity (CDC PLACES) would change scores by &lt;0.5 points given this category's 7% weight.</em></li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+                            <span class="method-title">Policy &amp; Legal</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:12%"></span></span>
+                            <span class="method-pct">3%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Donation laws:</strong> States with strong DMV-based registration and first-person consent laws score higher</li>
+                                <li><strong>First-person consent:</strong> Some states require family cannot override donor card</li>
+                                <li><strong>Medicaid expansion:</strong> Affects post-transplant medication coverage</li>
+                                <li><strong>Insurance mandates:</strong> State requirements for transplant coverage</li>
+                                <li><strong>DMV enrollment:</strong> Automatic registry at license renewal boosts donor rates</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="methodology-item">
+                        <summary>
+                            <span class="method-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                            <span class="method-title">Socioeconomic</span>
+                            <span class="method-bar"><span class="method-bar-fill" style="width:8%"></span></span>
+                            <span class="method-pct">2%</span>
+                            <svg class="method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="methodology-item-content">
+                            <ul>
+                                <li><strong>Patient housing (30%):</strong> Dedicated transplant hospitality houses, on-site temporary housing (e.g., Gift of Life Transplant House, Transplant House of Cleveland)</li>
+                                <li><strong>Financial assistance (25%):</strong> Transplant financial counselors, charity care, fundraising support programs</li>
+                                <li><strong>Support groups (20%):</strong> Peer mentorship, survivor support groups, transplant-specific community programs</li>
+                                <li><strong>Caregiver resources (15%):</strong> Caregiver housing, training programs (e.g., Nebraska Medicine's cooperative care model), respite support</li>
+                                <li><strong>Health literacy (10%):</strong> Patient education programs, multilingual services, transplant coordinator counseling</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="methodology-weights-chart">
+                    <h3>Category Weights</h3>
+                    <div class="chart-container chart-container-small">
+                        <canvas id="weightsDonutChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="methodology-calculation">
+                    <h3>Example Calculation</h3>
+                    <div class="calc-example">
+                        <p><strong>Patient Profile:</strong> 45-year-old female, blood type A+, needs kidney, Status 2 urgency</p>
+                        <p><strong>City:</strong> Pittsburgh, PA</p>
+
+                        <div class="calc-breakdown">
+                            <div class="calc-row">
+                                <span>Medical Compatibility (A+ blood type, age 45, female):</span>
+                                <span><strong>95/100</strong> × 25% = 23.75</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Wait Time (1.8 years, Status 2):</span>
+                                <span><strong>92/100</strong> × 20% = 18.40</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Donor Availability (PA 42% registration, trauma network):</span>
+                                <span><strong>88/100</strong> × 18% = 15.84</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Hospital Quality (UPMC, 350 kidney transplants/year):</span>
+                                <span><strong>100/100</strong> × 15% = 15.00</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Geographic (affordable COL, moderate climate):</span>
+                                <span><strong>83/100</strong> × 10% = 8.30</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Health Demographics (low diabetes, moderate obesity):</span>
+                                <span><strong>85/100</strong> × 7% = 5.95</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Policy (PA strong opt-in laws):</span>
+                                <span><strong>88/100</strong> × 3% = 2.64</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Socioeconomic (good support systems):</span>
+                                <span><strong>83/100</strong> × 2% = 1.66</span>
+                            </div>
+                            <div class="calc-total">
+                                <span><strong>TOTAL LOCATION SUITABILITY SCORE:</strong></span>
+                                <span><strong>91.54/100</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="methodology-footer">
+                    <h3>Data Sources & Validation</h3>
+                    <ul>
+                        <li>SRTR (Scientific Registry of Transplant Recipients): Center-specific transplant volumes and program data (2023-2024)</li>
+                        <li>UNOS/OPTN: National transplant registry, wait time estimates by organ type</li>
+                        <li>BLS (Bureau of Labor Statistics): Consumer Price Index for metro area cost of living</li>
+                        <li>NHTSA FARS: Traffic fatality rates by state (one component of donor availability)</li>
+                        <li>EPA AQS: Ozone and PM2.5 air quality measurements, converted via AQI breakpoints</li>
+                        <li>CDC BRFSS: Chronic disease prevalence (diabetes, obesity, CKD, hypertension, smoking)</li>
+                        <li>State DMV/Registry data: Donor registration rates by state</li>
+                        <li>Census Bureau: Population density, socioeconomic demographics</li>
+                    </ul>
+                    <p class="methodology-note"><strong>Data Updates:</strong> Regional data is refreshed weekly via automated pipelines where APIs are available. Some data sources (SRTR program reports, policy tiers) are manually curated and updated less frequently. Check the data freshness banner in results for current status.</p>
+                </div>
+                </div>
+            </details>
+        </main>
     </div>
 
     <footer id="disclaimer-full" class="site-footer">
@@ -781,7 +782,6 @@
                 </div>
                 <p class="footer-copy">TransplantMatch is a project under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
                 <p class="footer-copy">Interested in learning more? Contact <a href="mailto:tomer@arizona.edu">tomer@arizona.edu</a></p>
-                <div id="theme-switcher-mount"></div>
             </div>
         </div>
     </footer>
@@ -843,7 +843,6 @@
     <script src="export-handler.js"></script>
     <script src="url-sharing.js"></script>
     <script src="session.js"></script>
-    <script src="theme-switcher.js"></script>
     <script>
     /* Resolve info button hrefs for local dev vs GitHub Pages */
     (function() {

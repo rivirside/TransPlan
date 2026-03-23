@@ -6,9 +6,11 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 6B Complete (Spatial Geographic Modeling)
+## Current State: Phase 7 In Progress (UI Overhaul + Center Expansion)
 
-Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabilistic engine: M1-M7 done. Phase 3 M1-M5 done. Phase 4 M1-M5 done. Phase 5 M1-M5 done. **Phase 6A+6B complete.** Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable.
+Phase 1-6B complete. **Phase 7 active:** UI overhaul (sidebar layout, landing page redesign, theme removal) + center expansion (248-center backend scoring). Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Sidebar layout: form on left (340px sticky), results/map on right. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable (falls back to 22-city local scoring).
+
+**Phase 7 (March 2026):** UI overhaul — removed all 6 themes (themes.css, theme-switcher.js deleted), replaced with single polished light-mode design. System fonts (no Google Fonts dependency), 15px base font, soft radii, restored shadows. Simulator restructured: sidebar layout with form on left, results/map on right, methodology collapsed below results. Landing page redesigned: hero + feature card grid + 4-step flow + data trust badges + CTA. Nav simplified to Home | Simulator | Docs + dark mode toggle. Mobile hamburger menu added. Center expansion: `POST /score` endpoint scores all 248 SRTR centers using center-level data + spatial RBF interpolation. Frontend calls backend scoring API with 22-city local fallback. 19 new pytest tests. 224 Jest + 613+ pytest.
 
 **Phase 4 complete (March 2026):** All 5 milestones done (ADR-021). M1 (Configurable Weights), M2 (Post-Transplant Outcomes), M3 (Historical Trends), M4 (Policy Scenario Engine), M5 (Validation & Reproducibility Pack). 112 Jest, 448 pytest.
 
@@ -70,9 +72,10 @@ Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabili
 | CDN fallback | ✅ Done | Graceful degradation when Leaflet/Chart.js CDN unavailable |
 | CMS API fix | ✅ Done | Multi-strategy query (SQL/filter/legacy); filter works for 22 cities |
 | Browser testing | ✅ Done | All 6 organs, edge cases, map overlays — zero console errors |
-| UI/UX redesign | ✅ Done | Design tokens, methodology accordion, SVG icons, responsive breakpoints |
-| Theme system | ✅ Done | 6 themes (Default/Clinical/Research/Government/WinXP/2010s Flat), XP Luna default |
-| Multi-page split | ✅ Done | Landing page (index.html) + simulator (simulator.html), info buttons, nav active state |
+| UI/UX redesign | ✅ Done | Phase 7: sidebar layout, system fonts, 15px base, soft radii, restored shadows. Landing page: hero + feature cards + steps + CTA |
+| Theme system | ✅ Removed | All 6 themes deleted (Phase 7). Single polished light-mode design. Dark mode toggle preserved |
+| Multi-page split | ✅ Done | Landing page (index.html) + simulator (simulator.html), sidebar layout on simulator |
+| Center expansion scoring | ✅ Done | `POST /score` endpoint: 8-category scoring for 248 SRTR centers via backend API, 22-city local fallback |
 | Docusaurus docs site | ✅ Done | 22 pages, 8 sections (+ Validation), MDX + Recharts interactive charts, TransPlan brand theme |
 
 ### Phase 2 Progress
@@ -154,10 +157,10 @@ Phase 1 MVP complete (112 Jest tests, 65 limitations tracked). Phase 2 probabili
 
 ### What's NOT Done (Next Steps)
 
-- **Phase 6A complete:** OPO mapping (#122) resolved with authoritative HRSA county-to-OPO data (#138 closed)
+- **Phase 7 polish (in progress):** Dark mode needs more tuning for landing page sections (step cards, trust badges, CTA). Print styles need updating for sidebar layout.
 - **Phase 6C (future):** Pre-computed raster grid (#133), kriging uncertainty (#134), spatial econometric models (#135)
-- **Phase 5 platform features:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
-- **Deferred (no API):** SRTR outcomes (#20), theme selection (Phase 7, #3). Donor reg (#21) partially resolved — `stateRegistrationRates` from DLA report; `livingDonorProgramStrength` and `populationFactors` remain manual by design
+- **Platform features:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
+- **Deferred:** SRTR outcomes API (#20), donor reg (#21) partially resolved
 - **Infrastructure:** CI pipeline (#29) ✅, Docker Compose (#30) ✅ — both shipped
 - See `docs/roadmap.md` for full phased plan
 - See `docs/ideas.md` for full SRS with architecture, governance, and regulatory details
@@ -198,21 +201,21 @@ TransPlan/
   start.command           <- Double-click to launch (macOS); auto-finds free ports
   stop.command            <- Double-click to stop a running session
   session.js              <- Local session UI (End Session button, same-origin health check)
-  api-client.js           <- Backend API client (POST /simulate + /sensitivity + /equity-analysis + /what-if + GET /centers, graceful fallback)
+  api-client.js           <- Backend API client (POST /simulate + /score + /sensitivity + /equity-analysis + /what-if + GET /centers, graceful fallback)
   probability-charts.js   <- CDF curves, competing risks bar, tornado sensitivity chart (Chart.js)
   equity-charts.js        <- Blood type disparity, age bracket disparity, Gini by city charts (Chart.js)
   dark-mode.js            <- Dark mode toggle (auto-detect, localStorage persist, sun/moon button)
   url-sharing.js          <- URL query param encode/decode for shareable form state
   export-handler.js       <- PDF report, CSV, JSON, chart PNG export
-  index.html              <- Landing page (features table, how-it-works list, data sources)
-  simulator.html          <- Simulation tool (form, 3-tab results, modals, map, methodology)
-  algorithm.js            <- Scoring engine (8 categories, 22 cities)
-  script.js               <- UI, map, form, results display, probability card rendering
+  index.html              <- Landing page (hero, feature cards, steps flow, data trust badges, CTA)
+  simulator.html          <- Simulation tool (sidebar form, 3-tab results, modals, map, collapsed methodology)
+  algorithm.js            <- Frontend scoring engine (8 categories, 22 cities — fallback when backend unavailable)
+  script.js               <- UI, map, form, results display — calls POST /score for 248 centers with local fallback
   data-loader.js          <- Runtime JSON loader with fallbacks
   charts.js               <- Chart.js radar/bar/donut charts
-  styles.css              <- All CSS: design tokens (tight spacing, no shadows), nav, landing, accordion, responsive
-  themes.css              <- Theme overrides: clinical, research, government (+ landing page per-theme)
-  theme-switcher.js       <- Footer-mounted theme picker (6 themes: Default/Clinical/Research/Government/WinXP/2010s Flat)
+  styles.css              <- All CSS: design tokens (system fonts, 15px base, soft radii, shadows), sidebar layout, landing page, dark mode, responsive
+  (themes.css deleted)    <- 6 themes removed in Phase 7 UI overhaul
+  (theme-switcher.js deleted) <- Theme picker removed in Phase 7
   package.json            <- Node deps (xml2js, jest)
   README.md               <- User-facing docs
   weight-config.js          <- Scoring weight sliders, presets, normalization, re-score trigger (Phase 4 M1)
@@ -285,11 +288,12 @@ TransPlan/
     config.py             <- DATA_DIR, SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY, ALLOWED_ORIGINS
     requirements.txt      <- Python dependencies
     models/
-      schemas.py          <- Pydantic: PatientProfile, SimulationResult, etc.
+      schemas.py          <- Pydantic: PatientProfile, SimulationResult, CenterScore, ScoringResult, etc.
     routers/
       health.py           <- GET /health (data freshness)
       shutdown.py         <- POST /shutdown (graceful local session end)
       simulate.py         <- POST /simulate (Monte Carlo or Bayesian inference, dispatch via ?inference_mode=)
+      score.py            <- POST /score (8-category comprehensive scoring for 248 centers, Phase 7)
       sensitivity.py      <- POST /sensitivity (tornado chart parameter analysis)
       equity.py           <- POST /equity-analysis (demographic equity analysis)
       what_if.py          <- POST /what-if (what-if scenario analysis with multipliers)
@@ -297,6 +301,7 @@ TransPlan/
       spatial.py          <- GET /spatial-layers, /interpolated-value, /interpolated-profile, /allocation-circles, /distance-score, /spatial-grid, /location-delta (Phase 6B)
     services/
       data_loader.py      <- Loads data/*.json at startup (22 files including Phase 6A center data + Phase 6B dense spatial data)
+      scoring.py          <- 8-category comprehensive scoring for 248 centers using center-level + spatial data (Phase 7)
       distributions.py    <- Log-normal wait time distributions (6 organs)
       monte_carlo.py      <- Monte Carlo simulation engine (22 cities × 1000 iter, dynamic CITIES loading)
       spatial_interpolation.py <- RBF/IDW interpolation engine, 24 layers, SpatialSurface cache (Phase 6B)

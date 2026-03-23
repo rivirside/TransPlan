@@ -140,16 +140,16 @@
 - [x] 22 sensitivity tests + 19 Brier score tests (161 total pytest)
 - [x] Documentation updates (status.md, roadmap.md)
 
-### FR-7: Probability Outputs & Visualization (Partial)
+### FR-7: Probability Outputs & Visualization ✅
 - [x] CDF curves with confidence intervals (M6)
-- [ ] Ranked output: boost vs. current location
+- [x] Ranked output: boost vs. current location — Phase 3 M1 home center comparison badges
 - [x] Visual comparison panels (side-by-side probability curves) — M3 comparison table
 - [x] Exportable chart images — Phase 3 M5
 
-### FR-4: Configurable Weights
-- [ ] Research mode: allow users to adjust category weights
-- [ ] Patient mode: locked weights (clinically validated defaults)
-- [ ] Audit trail for weight changes
+### FR-4: Configurable Weights ✅
+- [x] Research mode: allow users to adjust category weights
+- [x] Patient mode: locked weights (clinically validated defaults)
+- [x] Audit trail for weight changes
 
 ---
 
@@ -274,21 +274,21 @@
 >
 > **Scoping decision (2026-03-16):** Original Phase 4 listed ~15 features (~1500+ hours). Scoped down to 5 milestones that build on existing infrastructure and directly support the publication goal. API access, SDKs, bulk analysis, and embeddable widgets deferred to Phase 5. See ADR-021 for full rationale.
 
-### M1: Configurable Scoring Weights (FR-4) — #22
+### M1: Configurable Scoring Weights (FR-4) — #22 ✅ DONE
 
 > **Why:** Enables ablation studies ("what if we remove category X?") essential for any publication. Highest-demand researcher feature.
 
-- [ ] **Research mode**: weight sliders in Advanced Settings panel (8 categories, sum to 100%)
-- [ ] **Patient mode**: locked defaults with explanation tooltip
-- [ ] **Presets**: "Balanced" (current defaults), "Clinical Focus" (medical 35% + hospital 25%), "Speed" (wait time 30% + donor 25%), "Quality of Life" (geographic 20% + socio 15%)
-- [ ] Frontend: instant re-scoring for Phase 1 scores (no backend needed)
-- [ ] Backend: `custom_weights` field on `PatientProfile`, `POST /simulate` re-weights Monte Carlo city scoring
-- [ ] Validation: weights must sum to 100%, each clamped [0, 100%], error message if invalid
-- [ ] Weight change audit trail (session-level, logged to console/export)
-- [ ] Tests: weight edge cases (all on one category, zero weight, preset switching)
+- [x] **Research mode**: weight sliders in Advanced Settings panel (8 categories, sum to 100%)
+- [x] **Patient mode**: locked defaults with explanation tooltip
+- [x] **Presets**: "Balanced" (current defaults), "Clinical Focus" (medical 35% + hospital 25%), "Speed" (wait time 30% + donor 25%), "Quality of Life" (geographic 20% + socio 15%)
+- [x] Frontend: instant re-scoring for Phase 1 scores (no backend needed)
+- [x] Backend: `custom_weights` field on `PatientProfile`, `POST /simulate` re-weights Monte Carlo city scoring
+- [x] Validation: weights must sum to 100%, each clamped [0, 100%], error message if invalid
+- [x] Weight change audit trail (session-level, logged to console/export)
+- [x] Tests: weight edge cases (all on one category, zero weight, preset switching)
 
-**Key files:** `algorithm.js` (weights), `script.js` (form UI), `backend/models/schemas.py`, `backend/services/monte_carlo.py`
-**Depends on:** Nothing — fully independent, start immediately.
+**Key files:** `weight-config.js`, `algorithm.js`, `script.js`, `backend/models/schemas.py`, `backend/services/monte_carlo.py`
+**Completed:** March 2026. GitHub issue #22. 14 Jest + 10 pytest.
 
 ### M2: Post-Transplant Outcomes Model ✅ DONE
 
@@ -330,68 +330,68 @@
 **Key files:** `scripts/fetch-srtr-excel.py`, `scripts/parse-srtr-reports.py`, `backend/services/trends.py`, `backend/routers/trends.py`, `script.js`, `styles.css`
 **Completed:** March 2026. ADR-022.
 
-### M4: Policy Scenario Engine (FR-9 upgrade) — #23
+### M4: Policy Scenario Engine (FR-9 upgrade) — #23 ✅ DONE
 
 > **Why:** The hardest but most novel feature. Upgrades Phase 3 what-if sliders from raw multipliers to real UNOS policy scenarios with literature-backed elasticities. This is what makes TransPlan a research-grade tool.
 
 **Phase 1: Literature Review (before coding)**
-- [ ] Research SRTR historical wait times before/after 2021 kidney allocation policy change
-- [ ] Estimate empirical supply-to-wait elasticity from real data (validate/update 0.65 assumption — L-056 core implementation already done)
-- [ ] Review transplant policy papers: OPTN continuous distribution, regional sharing rules, DCD expansion
-- [ ] Document causal model assumptions as a formal DAG (directed acyclic graph)
+- [x] Research SRTR historical wait times before/after 2021 kidney allocation policy change
+- [x] Estimate empirical supply-to-wait elasticity from real data (validate/update 0.65 assumption — L-056 core implementation already done)
+- [x] Review transplant policy papers: OPTN continuous distribution, regional sharing rules, DCD expansion
+- [x] Document causal model assumptions as a formal DAG (directed acyclic graph)
 
 **Phase 2: Predefined Scenarios**
-- [ ] **2021 Kidney 250nm circles**: donor pool +15-25% for small centers, -5% for large (geography-dependent)
-- [ ] **Continuous distribution**: points-based allocation, reduces geographic advantage (distance matters less)
-- [ ] **Increased DCD utilization**: organ supply +10-20% (expanded donation after circulatory death)
-- [ ] **Broader HCV+ acceptance**: donor pool +5-8% (hepatitis C positive donors with DAA treatment)
-- [ ] Each scenario maps to concrete per-city parameter adjustments (not just global multipliers)
+- [x] **2021 Kidney 250nm circles**: donor pool +15-25% for small centers, -5% for large (geography-dependent)
+- [x] **Continuous distribution**: points-based allocation, reduces geographic advantage (distance matters less)
+- [x] **Increased DCD utilization**: organ supply +10-20% (expanded donation after circulatory death)
+- [x] **Broader HCV+ acceptance**: donor pool +5-8% (hepatitis C positive donors with DAA treatment)
+- [x] Each scenario maps to concrete per-city parameter adjustments (not just global multipliers)
 
 **Phase 3: Implementation**
-- [ ] Upgrade `POST /what-if` to accept structured `PolicyScenario` objects (not just raw multipliers)
-- [ ] New schema: `PolicyScenario` with name, description, per-city adjustments, literature references
-- [ ] Paired-seed comparison (baseline vs. scenario) — reuse Phase 3 M5 infrastructure
-- [ ] Frontend: scenario selector dropdown (predefined) + custom parameter builder
-- [ ] Side-by-side results: baseline vs scenario, delta highlighting, ranking changes
-- [ ] Tests: scenario application correctness, per-city vs global adjustments, edge cases
+- [x] Upgrade `POST /what-if` to accept structured `PolicyScenario` objects (not just raw multipliers)
+- [x] New schema: `PolicyScenario` with name, description, per-city adjustments, literature references
+- [x] Paired-seed comparison (baseline vs. scenario) — reuse Phase 3 M5 infrastructure
+- [x] Frontend: scenario selector dropdown (predefined) + custom parameter builder
+- [x] Side-by-side results: baseline vs scenario, delta highlighting, ranking changes
+- [x] Tests: scenario application correctness, per-city vs global adjustments, edge cases
 
-**Key files:** `backend/services/what_if.py`, `backend/models/schemas.py`, `api-client.js`, `script.js`
-**Depends on:** Literature review (Weeks 2-4). Can research while M1-M2 are being coded.
+**Key files:** `backend/services/policy_scenarios.py`, `backend/routers/what_if.py`, `backend/models/schemas.py`, `api-client.js`, `script.js`
+**Completed:** March 2026. GitHub issue #23. 24 pytest.
 
-### M5: Validation & Reproducibility Pack — NEW
+### M5: Validation & Reproducibility Pack ✅ DONE
 
 > **Why:** This is what makes the model publishable. Retrospective validation against real outcomes, demographic bias audits, and reproducible Jupyter notebooks are standard requirements for medical informatics publications.
 
-- [ ] **Retrospective validation**: run model against historical SRTR cohorts, compare predicted vs actual wait times and outcomes
-- [ ] **Bias audit**: run equity analysis with expanded demographic profiles, document disparity patterns and magnitudes
-- [ ] **Calibration curves**: predicted P(transplant by X months) vs observed rates (extending Phase 2 M7 Brier scores)
-- [ ] **Jupyter notebooks** (3-5): one per major model component (wait times, competing risks, COD multiplier, outcomes, trends)
-- [ ] **Validation report**: auto-generated document with Brier scores, calibration plots, fairness metrics, sensitivity results
-- [ ] **Ablation study**: use M1 configurable weights to systematically test category importance
-- [ ] Export validation artifacts for paper supplementary materials (tables, figures, data)
-- [ ] **Reproducibility**: document exact software versions, data file hashes, RNG seeds for all validation runs
+- [x] **Retrospective validation**: run model against historical SRTR cohorts, compare predicted vs actual wait times and outcomes
+- [x] **Bias audit**: run equity analysis with expanded demographic profiles, document disparity patterns and magnitudes
+- [x] **Calibration curves**: predicted P(transplant by X months) vs observed rates (extending Phase 2 M7 Brier scores)
+- [x] **Jupyter notebooks** (6): wait-time distributions, competing risks, COD multiplier, post-transplant outcomes, historical trends, equity analysis
+- [x] **Validation report**: auto-generated document with Brier scores, calibration plots, fairness metrics, sensitivity results
+- [x] **Ablation study**: use M1 configurable weights to systematically test category importance
+- [x] Export validation artifacts for paper supplementary materials (tables, figures, data)
+- [x] **Reproducibility**: document exact software versions, data file hashes, RNG seeds for all validation runs
 
-**Key files:** New `notebooks/` directory, `backend/services/brier_score.py` (extend), `backend/services/equity.py` (extend)
-**Depends on:** M1-M4 stabilized. This is the capstone milestone.
+**Key files:** `notebooks/` (6 ipynb), `backend/services/brier_score.py`, `backend/services/equity.py`, `scripts/run-clinical-backtest.py`
+**Completed:** March 2026. 6 Jupyter notebooks, 19 pytest (bias audit), 39 figures.
 
 ### Documentation
 - [x] User-facing "How It Works" page — Docusaurus docs site (completed Phase 2)
 - [x] Technical implementation guide — architecture docs in docs-site/
 - [x] FAQ page with transplant disclaimers — docs-site/docs/about/faq.md
-- [ ] Jupyter notebooks for model documentation — Phase 4 M5
+- [x] Jupyter notebooks for model documentation — 6 notebooks in `notebooks/` (Phase 4 M5)
 - [x] CSV/JSON data export — Phase 3 M5
 - [x] PDF reports with disclaimers — Phase 3 M5 (browser print-to-PDF)
 - [ ] Clinical export format for provider discussions
 
-### Phase 4 Dependency Graph
+### Phase 4 Dependency Graph — ALL COMPLETE
 ```
-M1 (Weights) ──────────── independent ─────────────────┐
+M1 (Weights) ──── ✅ DONE ─────────────────────────────┐
                                                         │
-M2 (Outcomes) ── SRTR C-series ── ✅ DONE ──────────────┼──→ M5 (Validation)
+M2 (Outcomes) ── ✅ DONE ──────────────────────────────┼──→ M5 (Validation) ── ✅ DONE
                                                         │
-M3 (Trends) ──── multi-year SRTR ── ✅ DONE ───────────┤
+M3 (Trends) ──── ✅ DONE ─────────────────────────────┤
                                                         │
-M4 (Policy) ──── literature review (weeks 2-4) ────────┘
+M4 (Policy) ──── ✅ DONE ─────────────────────────────┘
 ```
 
 ---

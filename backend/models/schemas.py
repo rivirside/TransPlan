@@ -103,6 +103,30 @@ class SimulationResult(BaseModel):
     )
 
 
+class CenterScore(BaseModel):
+    """Comprehensive suitability score for a single transplant center."""
+    code: str = Field(description="SRTR center code")
+    name: str = Field(description="Center name")
+    state: str = Field(description="Full state name")
+    state_abbr: str = Field(description="Two-letter state abbreviation")
+    lat: float
+    lon: float
+    total: float = Field(..., ge=0, le=100, description="Weighted total score")
+    breakdown: dict[str, float] = Field(
+        description="Per-category scores: medicalCompatibility, waitTime, donorAvailability, "
+                    "hospitalQuality, geographic, healthDemographics, policy, socioeconomic"
+    )
+    rank: int = Field(..., ge=1)
+
+
+class ScoringResult(BaseModel):
+    """Response for POST /score endpoint."""
+    patient: PatientProfile
+    centers: list[CenterScore]
+    total_centers: int
+    elapsed_seconds: float
+
+
 class ParameterImpact(BaseModel):
     parameter: str = Field(description="Parameter key: 'cpra', 'meld', 'las', 'urgency'")
     label: str = Field(description="Human-readable parameter name")

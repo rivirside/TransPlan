@@ -4,19 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TransplantMatch - Data-Driven Transplant Location Analysis</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="themes.css">
     <script src="dark-mode.js"></script>
 </head>
-<body>
-    <div class="gov-banner" aria-label="Tool information banner">
-        <div class="gov-banner-inner">
-            <span class="gov-banner-text">An unofficial public data exploration tool using SRTR, OPTN, and CDC datasets</span>
-        </div>
-    </div>
+<body class="landing-page">
     <nav class="site-nav" aria-label="Site navigation">
         <div class="nav-inner">
             <a href="/" class="nav-brand">
@@ -25,81 +16,139 @@
                 </span>
                 <span class="nav-brand-text">TransplantMatch</span>
             </a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
             <div class="nav-links">
                 <a href="simulator.html" class="nav-link">Simulator</a>
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#disclaimer-full" class="nav-link">Disclaimer</a>
                 <a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>
-                <a href="mailto:tomer@arizona.edu" class="nav-link">Contact</a>
             </div>
         </div>
     </nav>
 
-    <main class="landing-main">
-        <div class="landing-welcome">
-            <h1>TransplantMatch: Transplant Location Analysis Tool</h1>
-            <p>Compare <strong>22 US cities</strong> across 8 scoring categories, run Monte Carlo simulations, and analyze demographic equity to explore transplant center locations.</p>
-            <p class="landing-actions"><a href="simulator.html" class="landing-cta">&raquo; Launch Simulator</a> | <a href="#features">Features</a> | <a href="#how-it-works">How It Works</a> | <a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a></p>
-        </div>
-
-        <hr>
-
-        <section id="features" class="landing-features">
-            <h2 class="landing-section-title">Features</h2>
-            <table class="features-table">
-                <thead>
-                    <tr><th>Capability</th><th>Description</th></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Multi-Factor Scoring</strong></td>
-                        <td>8 weighted categories analyze 40+ data points across 22 US cities to generate relative suitability scores for your specific organ transplant needs.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Wait Time Forecasting</strong></td>
-                        <td>1,000-iteration Monte Carlo simulation models transplant probability over time, with competing risks of mortality and waitlist removal.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Equity Analysis</strong></td>
-                        <td>48-profile demographic matrix evaluates fairness across blood types, age brackets, and sex. Gini coefficient measures outcome equality per city.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Interactive Map</strong></td>
-                        <td>Explore transplant center locations, regional health demographics, donor registration rates, and policy tiers with 10 data overlays.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>What-If Scenarios</strong></td>
-                        <td>Adjust donor rate and wait time multipliers to see how policy changes would affect transplant probabilities via real-time re-simulation.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Export &amp; Reports</strong></td>
-                        <td>Download results as PDF, CSV, or JSON. Export charts as PNG images. Share results via URL parameters.</td>
-                    </tr>
-                </tbody>
-            </table>
+    <main>
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-inner">
+                <h1>Find Your Best<br>Transplant Location</h1>
+                <p class="hero-sub">Compare 248 transplant centers across 8 scoring categories, run Monte Carlo simulations, and analyze demographic equity — all powered by public SRTR, OPTN, and CDC data.</p>
+                <div class="hero-actions">
+                    <a href="simulator.html" class="btn btn-primary btn-lg">Launch Simulator</a>
+                    <a href="#how-it-works" class="btn btn-ghost">How it works</a>
+                </div>
+            </div>
         </section>
 
-        <hr>
-
-        <section id="how-it-works" class="landing-how-it-works">
-            <h2 class="landing-section-title">How It Works</h2>
-            <ol class="steps-list">
-                <li><strong>Enter Your Health Profile</strong> &mdash; Organ type, blood type, age, and optional clinical inputs (cPRA, MELD, LAS).</li>
-                <li><strong>Algorithm Scores 22 Cities</strong> &mdash; Multi-factor analysis across medical compatibility, wait times, donor availability, and 5 more categories.</li>
-                <li><strong>Run Monte Carlo Simulation</strong> &mdash; 1,000 iterations estimate transplant probability at 6, 12, 24, and 36 months per city.</li>
-                <li><strong>Compare and Analyze</strong> &mdash; Side-by-side comparison, detailed breakdowns, equity analysis, and print-friendly reports.</li>
-            </ol>
+        <!-- Features -->
+        <section id="features" class="section">
+            <div class="section-inner">
+                <h2 class="section-title">What TransplantMatch Does</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-card-title">
+                            <div class="feature-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></div>
+                            <h3>Multi-Factor Scoring</h3>
+                        </div>
+                        <p>8 weighted categories analyze 40+ data points to generate relative suitability scores for your specific organ transplant needs.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-title">
+                            <div class="feature-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                            <h3>Wait Time Forecasting</h3>
+                        </div>
+                        <p>1,000-iteration Monte Carlo simulation models transplant probability over time with competing risks of mortality and waitlist removal.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-title">
+                            <div class="feature-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                            <h3>Equity Analysis</h3>
+                        </div>
+                        <p>48-profile demographic matrix evaluates fairness across blood types, age brackets, and sex. Gini coefficient measures per-city equality.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-title">
+                            <div class="feature-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></div>
+                            <h3>Interactive Map</h3>
+                        </div>
+                        <p>Explore 248 transplant centers with 10 data overlays including health demographics, donor registration, and spatial heatmaps.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-title">
+                            <div class="feature-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h5l3-9 4 18 3-9h5"/></svg></div>
+                            <h3>What-If Scenarios</h3>
+                        </div>
+                        <p>Adjust donor rates and wait time multipliers to see how UNOS policy changes would affect transplant probabilities via real-time re-simulation.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-title">
+                            <div class="feature-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+                            <h3>Export &amp; Reports</h3>
+                        </div>
+                        <p>Download results as PDF, CSV, or JSON. Export charts as PNG images. Share results via URL parameters.</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <hr>
-
-        <section class="landing-data-sources">
-            <h2 class="landing-section-title">Data Sources</h2>
-            <p>TransplantMatch uses publicly available datasets from <strong>SRTR</strong>, <strong>OPTN</strong>, <strong>CDC</strong>, <strong>CMS</strong>, <strong>EPA</strong>, and the <strong>Bureau of Labor Statistics</strong>. Data is refreshed weekly via automated pipelines where APIs are available.</p>
+        <!-- How It Works -->
+        <section id="how-it-works" class="section section-alt">
+            <div class="section-inner">
+                <h2 class="section-title">How It Works</h2>
+                <div class="steps-flow">
+                    <div class="step-card">
+                        <span class="step-number">1</span>
+                        <h3>Enter Your Profile</h3>
+                        <p>Organ type, blood type, age, and optional clinical inputs like cPRA, MELD, or LAS scores.</p>
+                    </div>
+                    <div class="step-card">
+                        <span class="step-number">2</span>
+                        <h3>Algorithm Scores Centers</h3>
+                        <p>Multi-factor analysis across medical compatibility, wait times, donor availability, and 5 more categories.</p>
+                    </div>
+                    <div class="step-card">
+                        <span class="step-number">3</span>
+                        <h3>Run Simulation</h3>
+                        <p>1,000 Monte Carlo iterations estimate transplant probability at 6, 12, 24, and 36 months per center.</p>
+                    </div>
+                    <div class="step-card">
+                        <span class="step-number">4</span>
+                        <h3>Compare &amp; Analyze</h3>
+                        <p>Side-by-side comparison, detailed breakdowns, equity analysis, and exportable reports.</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <div class="disclaimer-banner">
-            <p><strong>Disclaimer:</strong> This tool is for <strong>educational and exploratory purposes only</strong>. It does not predict actual transplant outcomes. Scores reflect regional data trends, not individual clinical assessments. Always consult your transplant team before making any decisions.</p>
+        <!-- Data Trust -->
+        <section class="section">
+            <div class="section-inner" style="text-align: center;">
+                <h2 class="section-title">Powered by Trusted Public Data</h2>
+                <p class="trust-description">TransplantMatch uses publicly available datasets refreshed weekly via automated pipelines.</p>
+                <div class="trust-sources">
+                    <span class="trust-badge">SRTR</span>
+                    <span class="trust-badge">OPTN</span>
+                    <span class="trust-badge">CDC</span>
+                    <span class="trust-badge">CMS</span>
+                    <span class="trust-badge">EPA</span>
+                    <span class="trust-badge">BLS</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="section section-cta">
+            <div class="section-inner" style="text-align: center;">
+                <h2>Ready to explore your options?</h2>
+                <p>Free, open-source, and no account required.</p>
+                <a href="simulator.html" class="btn btn-primary btn-lg">Launch Simulator</a>
+            </div>
+        </section>
+
+        <!-- Disclaimer -->
+        <div class="section">
+            <div class="section-inner">
+                <div class="disclaimer-banner">
+                    <p><strong>Disclaimer:</strong> This tool is for <strong>educational and exploratory purposes only</strong>. It does not predict actual transplant outcomes. Scores reflect regional data trends, not individual clinical assessments. Always consult your transplant team before making any decisions.</p>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -116,15 +165,13 @@
                     <a href="simulator.html">Simulator</a>
                     <a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>
                 </div>
-                <p class="footer-copy">TransplantMatch is a project under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
-                <p class="footer-copy">Interested in learning more? Contact <a href="mailto:tomer@arizona.edu">tomer@arizona.edu</a></p>
-                <div id="theme-switcher-mount"></div>
+                <p class="footer-copy">TransplantMatch is under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
+                <p class="footer-copy">Contact: <a href="mailto:tomer@arizona.edu">tomer@arizona.edu</a></p>
             </div>
         </div>
     </footer>
 
     <script src="session.js"></script>
-    <script src="theme-switcher.js"></script>
     <!-- Vercel Analytics -->
     <script>
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
