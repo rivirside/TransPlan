@@ -116,6 +116,8 @@
                     <button type="button" class="pill" data-organ="liver">Liver</button>
                     <button type="button" class="pill" data-organ="heart">Heart</button>
                     <button type="button" class="pill" data-organ="lung">Lung</button>
+                    <button type="button" class="pill" data-organ="pancreas">Pancreas</button>
+                    <button type="button" class="pill" data-organ="intestine">Intestine</button>
                 </div>
             </div>
 
@@ -201,7 +203,12 @@
         estBtn.addEventListener('click', function() {
             if (!selectedOrgan || !selectedBlood) return;
 
-            var organData = distData[selectedOrgan];
+            // Fallback estimates for organs without full distribution data
+            var fallbacks = {
+                pancreas: { national_median_months: 12, log_sigma: 1.2, blood_type_multipliers: {} },
+                intestine: { national_median_months: 6, log_sigma: 1.3, blood_type_multipliers: {} }
+            };
+            var organData = distData[selectedOrgan] || fallbacks[selectedOrgan];
             if (!organData) { resultEl.style.display = 'none'; return; }
 
             var nationalMedian = organData.national_median_months;
