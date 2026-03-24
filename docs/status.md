@@ -155,30 +155,55 @@ Phase 1-6B complete. **Phase 7 active:** UI overhaul (sidebar layout, landing pa
 | 6B: Allocation circles (#130) | ✅ Done | 250nm/500nm UNOS circles, competition score, distance score, 13 pytest |
 | 6B: Patient-relative scoring (#131) | ✅ Done | GET /location-delta, per-layer delta comparison |
 
+### Phase 7 Patient Resources & Tools (March 2026)
+
+| Feature | Status | Issue |
+|---------|--------|-------|
+| Center detail page overhaul | ✅ Done | #161 — collapsible sections, patient survival, hazard ratios, waitlist mortality, contact+map merged card |
+| Landing page interactive map | ✅ Done | #154 — Leaflet + MarkerCluster showing all 248 centers |
+| Zip code nearest-center search | ✅ Done | #143 — Nominatim geocoding + haversine, "X mi away" badges |
+| Find My Centers wizard | ✅ Done | #170 — location + organ + blood type → composite-scored ranked list |
+| Wait Time Estimator | ✅ Done | #171 — organ + blood type → log-normal IQR estimate |
+| Center Comparison tool | ✅ Done | #165 — side-by-side up to 3 centers, URL-shareable |
+| FAQ page | ✅ Done | #169 — 10 collapsible Q&A with native details/summary |
+| Transplant Journey Checklist | ✅ Done | #164 — 34 items, 5 phases, localStorage persistence, progress bar |
+| Organ-Specific Guides | ✅ Done | #166 — kidney, liver, heart, lung, pancreas with allocation scoring |
+| Post-Transplant Medication Guide | ✅ Done | #167 — added to education.html (immunosuppressants, adherence, rejection) |
+| Caregiver & Family Resources | ✅ Done | #168 — added to support.html (travel, work, burnout) |
+| Insurance & Coverage Navigator | ✅ Done | #163 — added to support.html (Medicare, Medicaid, private, Rx costs) |
+| Advocacy & Give Back page | ✅ Done | #172-178 — 6 articles: organ donor, bone marrow, blood, living donor, volunteer, fundraise |
+| Scoring data gaps fixed | ✅ Done | #140 — policy/socioeconomic extended to all 50 states, climate+traffic use spatial interpolation |
+| Dark mode polish | ✅ Done | #139 — verified all landing page components have proper contrast |
+| Nav standardization | ✅ Done | 10-item Resources dropdown consistent across all 13 pages |
+| Cross-page links | ✅ Done | Education, support, FAQ, organ guides, tools all interlinked |
+| Donation banner | ✅ Done | Dismissible bottom banner (GitHub Sponsors, Buy Me a Coffee, Ko-fi) on all pages |
+| SEO files | ✅ Done | robots.txt, sitemap.xml, llms.txt, llms-full.txt |
+
 ### What's NOT Done (Next Steps)
 
-- **Phase 7 polish (in progress):** Dark mode needs more tuning for landing page sections (step cards, trust badges, CTA). Print styles need updating for sidebar layout.
 - **Phase 6C (future):** Pre-computed raster grid (#133), kriging uncertainty (#134), spatial econometric models (#135)
-- **Platform features:** API access (#24), SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
-- **Deferred:** SRTR outcomes API (#20), donor reg (#21) partially resolved
-- **Infrastructure:** CI pipeline (#29) ✅, Docker Compose (#30) ✅ — both shipped
+- **Validation:** Face validity review with transplant faculty (#107), cross-iteration model comparison (#137)
+- **Platform features:** SDKs (#25), scenario builder UI (#26), bulk analysis (#27), widget (#28)
+- **Data:** Physician/staff directory (#162 — requires per-hospital scraping)
+- **Deferred:** SRTR outcomes API (#20), geographic accessibility model (#142), coverage gap analysis (#113)
 - See `docs/roadmap.md` for full phased plan
 - See `docs/ideas.md` for full SRS with architecture, governance, and regulatory details
 
 ## Issue Tracking
 
-**GitHub Issues** is the primary tracker for actionable work items (bugs, features, limitations). ~10 open, ~105+ closed:
+**GitHub Issues** is the primary tracker for actionable work items (bugs, features, limitations). ~14 open, ~165+ closed:
 
 | Category | Status | Description |
 |----------|--------|-------------|
+| Phase 7: Patient Resources | ✅ 19 closed | #139, #143, #154, #161, #163-178 — tools (find-centers, wait-estimator, compare), content pages (FAQ, checklist, organ guides, advocacy), scoring data gaps, nav/SEO |
 | Phase 6A: Center Expansion | ✅ 8 closed / 1 deferred | #115-#121, #123 closed. #122 (OPO mapping) deferred |
-| Phase 6B: Spatial Interpolation | ✅ 7 closed | #125-#131 — all items complete (interpolation, API, dense data, heatmap, allocation, delta scoring) |
-| Bug/Quality Sprint (March 2026) | ✅ 30+ closed | Thread safety, error handling, data quality, code fixes — comprehensive sprint across 3 tiers |
+| Phase 6B: Spatial Interpolation | ✅ 7 closed | #125-#131 — all items complete |
+| Bug/Quality Sprint (March 2026) | ✅ 30+ closed | Thread safety, error handling, data quality, code fixes |
 | Phase 5 M1-M5 | ✅ 8+ closed | #36-#42, #94, #95, #96, #99 — BBN, copula, MCMC, shared frailty, cross-validation |
-| M2b: COD Model Data Quality | 0 open / 8 closed | L-049–L-056 — all addressed (L-049 mitigated, L-050 partial, 6 fully resolved) |
+| M2b: COD Model Data Quality | 0 open / 8 closed | L-049–L-056 — all addressed |
 | Pre-publication | 1 open | #107 (face validity review with transplant faculty) |
 | Phase 5+ platform features | 4 open / 1 closed | API access (#24 ✅), SDKs (#25), scenario builder (#26), bulk analysis (#27), widget (#28) |
-| Deferred | 3 open | SRTR outcomes (#20), donor reg (#21), theme selection (#3) |
+| Research/Deferred | 7 open | SRTR outcomes (#20), spatial models (#132-135), model validation (#137), accessibility model (#142), physician directory (#162) |
 
 **Labels:** `phase:*`, `priority:*`, `limitation`, `cod-model`, `blocked`, `deferred`, `ui/ux`, `backend`, `frontend`, `data-quality`, `data-pipeline`, `milestone:m5`
 
@@ -207,8 +232,16 @@ TransPlan/
   dark-mode.js            <- Dark mode toggle (auto-detect, localStorage persist, sun/moon button)
   url-sharing.js          <- URL query param encode/decode for shareable form state
   export-handler.js       <- PDF report, CSV, JSON, chart PNG export
-  index.html              <- Landing page (hero, feature cards, steps flow, data trust badges, CTA)
+  index.html              <- Landing page (hero, feature cards, 248-center map, steps flow, data trust badges, CTA)
   simulator.html          <- Simulation tool (sidebar form, 3-tab results, modals, map, collapsed methodology)
+  find-centers.html       <- Find My Centers wizard (zip + organ + blood type → ranked results)
+  wait-estimator.html     <- Wait Time Estimator (organ + blood type → median IQR range)
+  compare.html            <- Side-by-side center comparison (up to 3, URL-shareable)
+  organ-guides.html       <- Organ-specific transplant guides (kidney, liver, heart, lung, pancreas)
+  faq.html                <- Frequently asked questions (10 collapsible Q&A)
+  checklist.html          <- Transplant journey checklist (34 items, 5 phases, localStorage)
+  advocacy.html           <- Advocacy & Give Back (6 articles: donor, marrow, blood, living, volunteer, fundraise)
+  donation-banner.js      <- Dismissible donation banner (GitHub Sponsors, Buy Me a Coffee, Ko-fi)
   algorithm.js            <- Frontend scoring engine (8 categories, 22 cities — fallback when backend unavailable)
   script.js               <- UI, map, form, results display — calls POST /score for 248 centers with local fallback
   data-loader.js          <- Runtime JSON loader with fallbacks
