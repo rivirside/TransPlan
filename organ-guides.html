@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransplantMatch - Organ-Specific Transplant Guides</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        .guide-container { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.25rem 3rem; }
+        .guide-header { margin-bottom: 2rem; }
+        .guide-header h1 { font-size: 2rem; font-weight: 700; color: var(--text-1); margin-bottom: 0.5rem; }
+        .guide-header p { font-size: 1.05rem; color: var(--text-2); line-height: 1.6; }
+
+        .organ-nav {
+            display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;
+            position: sticky; top: 0; background: var(--bg, #f8f9fb); padding: 0.75rem 0; z-index: 10;
+            border-bottom: 1px solid var(--border-light, #f3f4f6);
+        }
+        .organ-nav a {
+            padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;
+            text-decoration: none; color: var(--text-2); border: 1px solid var(--border, #d1d5db);
+            background: var(--surface, #fff); transition: all 0.15s;
+        }
+        .organ-nav a:hover { border-color: var(--accent, #6366f1); color: var(--accent, #6366f1); }
+
+        .organ-section {
+            background: var(--surface, #fff); border: 1px solid var(--border, #e5e7eb);
+            border-radius: 6px; padding: 1.75rem; margin-bottom: 1.5rem;
+        }
+        .organ-section h2 {
+            font-size: 1.35rem; font-weight: 700; color: var(--text-1); margin: 0 0 0.5rem;
+            padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent, #6366f1);
+        }
+        .organ-section h3 { font-size: 1rem; font-weight: 600; color: var(--text-1); margin: 1.25rem 0 0.5rem; }
+        .organ-section p { color: var(--text-2); line-height: 1.65; margin: 0 0 0.75rem; font-size: 0.92rem; }
+        .organ-section ul { margin: 0.5rem 0 0.75rem; padding-left: 1.5rem; color: var(--text-2); font-size: 0.92rem; }
+        .organ-section li { margin-bottom: 0.35rem; line-height: 1.5; }
+        .organ-section a { color: var(--accent, #6366f1); }
+        .organ-explore {
+            display: inline-block; margin-top: 0.75rem; padding: 0.4rem 0.9rem;
+            border: 1px solid var(--accent, #6366f1); border-radius: 6px; color: var(--accent, #6366f1);
+            text-decoration: none; font-size: 0.85rem; font-weight: 500;
+        }
+        .organ-explore:hover { background: var(--accent, #6366f1); color: #fff; }
+    </style>
+</head>
+<body>
+    <nav class="site-nav" aria-label="Site navigation">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <span class="nav-brand-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <span class="nav-brand-text">TransplantMatch</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="simulator.html" class="nav-link">Simulator</a>
+                <div class="nav-dropdown">
+                    <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">&#x25BE;</span></button>
+                    <div class="nav-dropdown-menu" role="menu">
+                        <a href="centers.html" class="nav-dropdown-item" role="menuitem">Center Explorer</a>
+                        <a href="compare.html" class="nav-dropdown-item" role="menuitem">Compare Centers</a>
+                        <a href="organ-guides.html" class="nav-dropdown-item active" role="menuitem">Organ Guides</a>
+                        <a href="education.html" class="nav-dropdown-item" role="menuitem">Education</a>
+                        <a href="support.html" class="nav-dropdown-item" role="menuitem">Patient Support</a>
+                        <a href="faq.html" class="nav-dropdown-item" role="menuitem">FAQ</a>
+                        <a href="checklist.html" class="nav-dropdown-item" role="menuitem">Checklist</a>
+                    </div>
+                </div>
+                <a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="guide-container">
+            <div class="guide-header">
+                <h1>Organ-Specific Transplant Guides</h1>
+                <p>Each organ has unique allocation rules, scoring systems, and considerations. Learn what matters most for your transplant type.</p>
+            </div>
+
+            <div class="organ-nav">
+                <a href="#kidney">Kidney</a>
+                <a href="#liver">Liver</a>
+                <a href="#heart">Heart</a>
+                <a href="#lung">Lung</a>
+                <a href="#pancreas">Pancreas</a>
+            </div>
+
+            <!-- KIDNEY -->
+            <div class="organ-section" id="kidney">
+                <h2>Kidney Transplant</h2>
+                <p>Kidney transplant is the most common solid organ transplant in the United States, with over 27,000 performed annually. Patients with end-stage renal disease (ESRD) can receive a kidney from a living or deceased donor.</p>
+
+                <h3>Allocation Scoring: cPRA</h3>
+                <p>Calculated Panel Reactive Antibodies (cPRA) measures how sensitized you are to donor antigens. A cPRA of 80% means you're incompatible with 80% of potential donors. Highly sensitized patients (cPRA 98-100%) receive additional priority points.</p>
+
+                <h3>Living Donor Option</h3>
+                <p>Kidney is unique in that living donation is common and often preferred. A living donor kidney typically lasts longer (15-20 years vs. 10-15 for deceased donor) and can be transplanted before starting dialysis (preemptive transplant).</p>
+                <ul>
+                    <li>Paired kidney exchange programs can help if your living donor is incompatible</li>
+                    <li>ABO-incompatible transplants are increasingly performed with desensitization protocols</li>
+                    <li>The National Kidney Registry facilitates multi-center paired exchanges</li>
+                </ul>
+
+                <h3>Key Considerations</h3>
+                <ul>
+                    <li><strong>Dialysis bridge:</strong> Most patients start dialysis while waiting; peritoneal dialysis or hemodialysis</li>
+                    <li><strong>Wait time:</strong> Median 3-5 years for deceased donor; varies significantly by region and blood type</li>
+                    <li><strong>Multiple listing:</strong> Especially valuable for kidney due to long wait times</li>
+                    <li><strong>Pediatric priority:</strong> Children receive additional allocation priority</li>
+                </ul>
+
+                <a href="centers.html?organ=kidney" class="organ-explore">Explore Kidney Transplant Centers</a>
+            </div>
+
+            <!-- LIVER -->
+            <div class="organ-section" id="liver">
+                <h2>Liver Transplant</h2>
+                <p>Liver transplant is performed for end-stage liver disease, acute liver failure, and certain liver cancers. About 9,000 liver transplants are performed annually in the U.S.</p>
+
+                <h3>Allocation Scoring: MELD/PELD</h3>
+                <p>The Model for End-Stage Liver Disease (MELD) score predicts 90-day mortality without transplant using three lab values: bilirubin, INR (clotting), and creatinine. Scores range from 6-40; higher scores mean greater urgency and receive priority. Pediatric patients use the PELD (Pediatric End-Stage Liver Disease) score.</p>
+                <ul>
+                    <li>MELD exception points may be granted for conditions not well-captured by lab values (e.g., hepatocellular carcinoma)</li>
+                    <li>Status 1A designation for acute liver failure requiring ICU care</li>
+                    <li>MELD 3.0 (updated formula) incorporates sex-based differences and albumin</li>
+                </ul>
+
+                <h3>Living Donor Option</h3>
+                <p>Living donor liver transplant uses a portion of a healthy donor's liver. The donor's liver regenerates to near-normal size within weeks. This option can reduce wait time significantly but involves major surgery for the donor.</p>
+
+                <h3>Key Considerations</h3>
+                <ul>
+                    <li><strong>No dialysis equivalent:</strong> Unlike kidneys, there is no long-term mechanical support for liver failure</li>
+                    <li><strong>Cancer criteria:</strong> Patients with hepatocellular carcinoma must meet Milan criteria (or receive exceptions) to be listed</li>
+                    <li><strong>Alcohol-related disease:</strong> Many centers require a sobriety period; policies vary by center</li>
+                    <li><strong>Split-liver transplant:</strong> One deceased donor liver can be split for two recipients (often an adult and a child)</li>
+                </ul>
+
+                <a href="centers.html?organ=liver" class="organ-explore">Explore Liver Transplant Centers</a>
+            </div>
+
+            <!-- HEART -->
+            <div class="organ-section" id="heart">
+                <h2>Heart Transplant</h2>
+                <p>Heart transplant is performed for end-stage heart failure when all other treatments have been exhausted. About 4,500 heart transplants are performed annually in the U.S.</p>
+
+                <h3>Allocation System: Status Tiers</h3>
+                <p>Heart allocation uses a tiered urgency system (Status 1-6) based on the level of medical support required:</p>
+                <ul>
+                    <li><strong>Status 1-2:</strong> Highest urgency — patients on mechanical circulatory support (ECMO, biventricular assist devices) or with life-threatening arrhythmias</li>
+                    <li><strong>Status 3:</strong> Patients on left ventricular assist device (LVAD) with complications or on multiple IV inotropes</li>
+                    <li><strong>Status 4:</strong> Patients on stable LVAD or single IV inotrope</li>
+                    <li><strong>Status 5-6:</strong> Stable outpatients with varying levels of medical support</li>
+                </ul>
+
+                <h3>Bridge Therapy</h3>
+                <p>Ventricular Assist Devices (VADs) can support heart function while waiting for transplant. LVADs have become increasingly reliable and some patients live with them for years. However, they carry risks of infection, bleeding, and stroke.</p>
+
+                <h3>Key Considerations</h3>
+                <ul>
+                    <li><strong>No living donor option:</strong> Heart transplant requires a deceased donor</li>
+                    <li><strong>Size matching:</strong> Donor and recipient heart sizes must be compatible</li>
+                    <li><strong>Distance-based allocation:</strong> Hearts are offered within 250 nautical miles first, expanding outward</li>
+                    <li><strong>Shorter cold ischemia time:</strong> Hearts must be transplanted within 4-6 hours of recovery</li>
+                </ul>
+
+                <a href="centers.html?organ=heart" class="organ-explore">Explore Heart Transplant Centers</a>
+            </div>
+
+            <!-- LUNG -->
+            <div class="organ-section" id="lung">
+                <h2>Lung Transplant</h2>
+                <p>Lung transplant treats end-stage pulmonary diseases including COPD, pulmonary fibrosis, cystic fibrosis, and pulmonary hypertension. About 2,700 lung transplants are performed annually in the U.S.</p>
+
+                <h3>Allocation Scoring: LAS</h3>
+                <p>The Lung Allocation Score (LAS) balances two factors: urgency (predicted survival without transplant) and utility (predicted survival with transplant). Scores range from 0-100; higher LAS means higher priority. The LAS considers diagnosis, functional status, oxygen requirements, and other clinical data.</p>
+
+                <h3>Transplant Types</h3>
+                <ul>
+                    <li><strong>Bilateral (double) lung:</strong> Most common; recommended for cystic fibrosis and younger patients</li>
+                    <li><strong>Single lung:</strong> Used for some COPD and fibrosis patients; shorter surgery, one organ benefits two patients</li>
+                    <li><strong>Living donor lobar:</strong> Rare; two living donors each donate a lobe (primarily pediatric)</li>
+                </ul>
+
+                <h3>Key Considerations</h3>
+                <ul>
+                    <li><strong>Size matching critical:</strong> Lung size must match the recipient's chest cavity</li>
+                    <li><strong>Infection risk:</strong> Lungs are uniquely exposed to the environment, making infection the leading cause of early mortality</li>
+                    <li><strong>Chronic rejection:</strong> Bronchiolitis obliterans syndrome (BOS) affects many lung recipients over time</li>
+                    <li><strong>Rehabilitation:</strong> Pre- and post-transplant pulmonary rehabilitation is essential</li>
+                </ul>
+
+                <a href="centers.html?organ=lung" class="organ-explore">Explore Lung Transplant Centers</a>
+            </div>
+
+            <!-- PANCREAS -->
+            <div class="organ-section" id="pancreas">
+                <h2>Pancreas Transplant</h2>
+                <p>Pancreas transplant is primarily performed for Type 1 diabetes patients, often simultaneously with a kidney transplant (SPK). About 1,000 pancreas transplants are performed annually in the U.S.</p>
+
+                <h3>Transplant Types</h3>
+                <ul>
+                    <li><strong>SPK (Simultaneous Pancreas-Kidney):</strong> Most common; for diabetic patients with kidney failure. One surgery, best outcomes.</li>
+                    <li><strong>PAK (Pancreas After Kidney):</strong> For patients who already received a kidney transplant and still need a pancreas</li>
+                    <li><strong>PTA (Pancreas Transplant Alone):</strong> For patients with severe, uncontrolled diabetes but preserved kidney function</li>
+                </ul>
+
+                <h3>Key Considerations</h3>
+                <ul>
+                    <li><strong>Insulin independence:</strong> A successful pancreas transplant eliminates the need for insulin injections</li>
+                    <li><strong>Trade-off:</strong> Lifelong immunosuppression vs. insulin therapy — discussed carefully with your team</li>
+                    <li><strong>Islet cell transplant:</strong> An alternative for some patients; infuses donor islet cells into the liver (less invasive but may require multiple infusions)</li>
+                    <li><strong>Limited centers:</strong> Fewer centers perform pancreas transplants compared to kidney or liver</li>
+                </ul>
+
+                <a href="centers.html?organ=pancreas" class="organ-explore">Explore Pancreas Transplant Centers</a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer id="disclaimer-full" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-disclaimer">
+                <h3>Disclaimer</h3>
+                <p><strong>This tool is for educational and exploratory purposes only.</strong> TransplantMatch is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
+                <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant.</p>
+            </div>
+            <div class="footer-meta">
+                <div class="footer-links">
+                    <a href="simulator.html">Simulator</a>
+                    <a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>
+                </div>
+                <p class="footer-copy">TransplantMatch is under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="session.js"></script>
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
