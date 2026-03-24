@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransplantMatch - Advocacy &amp; Give Back</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        .advocacy-container { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.25rem 3rem; }
+        .advocacy-header { margin-bottom: 2rem; }
+        .advocacy-header h1 { font-size: 2rem; font-weight: 700; color: var(--text-1); margin-bottom: 0.5rem; }
+        .advocacy-header p { font-size: 1.05rem; color: var(--text-2); line-height: 1.6; }
+
+        .advocacy-section {
+            background: var(--surface, #fff); border: 1px solid var(--border, #e5e7eb);
+            border-radius: 6px; padding: 1.75rem; margin-bottom: 1.5rem;
+        }
+        .advocacy-section h2 {
+            font-size: 1.25rem; font-weight: 700; color: var(--text-1); margin: 0 0 0.75rem;
+        }
+        .advocacy-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text-1); margin: 1.25rem 0 0.4rem; }
+        .advocacy-section p { color: var(--text-2); line-height: 1.65; margin: 0 0 0.75rem; font-size: 0.92rem; }
+        .advocacy-section ul { margin: 0.5rem 0 0.75rem; padding-left: 1.5rem; color: var(--text-2); font-size: 0.92rem; }
+        .advocacy-section li { margin-bottom: 0.35rem; line-height: 1.5; }
+        .advocacy-section a { color: var(--accent, #6366f1); }
+        .cta-btn {
+            display: inline-block; margin-top: 0.75rem; padding: 0.55rem 1.25rem;
+            background: var(--accent, #6366f1); color: #fff; border-radius: 6px;
+            text-decoration: none; font-size: 0.9rem; font-weight: 600;
+            transition: background 0.15s;
+        }
+        .cta-btn:hover { background: #4f46e5; color: #fff; }
+        .stat-highlight {
+            display: inline-block; background: var(--surface-raised, #f1f3f7); border-radius: 6px;
+            padding: 0.75rem 1.25rem; margin: 0.5rem 0; font-size: 0.85rem; color: var(--text-2);
+        }
+        .stat-highlight strong { font-size: 1.1rem; color: var(--accent, #6366f1); }
+    </style>
+</head>
+<body>
+    <nav class="site-nav" aria-label="Site navigation">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <span class="nav-brand-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <span class="nav-brand-text">TransplantMatch</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="simulator.html" class="nav-link">Simulator</a>
+                <div class="nav-dropdown">
+                    <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">&#x25BE;</span></button>
+                    <div class="nav-dropdown-menu" role="menu">
+                        <a href="find-centers.html" class="nav-dropdown-item" role="menuitem">Find My Centers</a>
+                        <a href="wait-estimator.html" class="nav-dropdown-item" role="menuitem">Wait Estimator</a>
+                        <a href="centers.html" class="nav-dropdown-item" role="menuitem">Center Explorer</a>
+                        <a href="compare.html" class="nav-dropdown-item" role="menuitem">Compare Centers</a>
+                        <a href="organ-guides.html" class="nav-dropdown-item" role="menuitem">Organ Guides</a>
+                        <a href="education.html" class="nav-dropdown-item" role="menuitem">Education</a>
+                        <a href="support.html" class="nav-dropdown-item" role="menuitem">Patient Support</a>
+                        <a href="advocacy.html" class="nav-dropdown-item active" role="menuitem">Give Back</a>
+                        <a href="faq.html" class="nav-dropdown-item" role="menuitem">FAQ</a>
+                        <a href="checklist.html" class="nav-dropdown-item" role="menuitem">Checklist</a>
+                    </div>
+                </div>
+                <a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="advocacy-container">
+            <div class="advocacy-header">
+                <h1>Advocacy &amp; Give Back</h1>
+                <p>Whether you're a patient, caregiver, or community member, there are many ways to help save lives and support the transplant community.</p>
+            </div>
+
+            <!-- Organ Donor Registration -->
+            <div class="advocacy-section" id="organ-donor">
+                <h2>Become an Organ Donor</h2>
+                <p>One organ donor can save up to 8 lives and improve up to 75 more through tissue donation. Despite this, over 100,000 people in the U.S. are waiting for a transplant at any given time, and 17 people die each day waiting.</p>
+
+                <div class="stat-highlight">
+                    <strong>100,000+</strong> people are on the U.S. transplant waiting list right now.
+                </div>
+
+                <h3>How to Register</h3>
+                <p>Organ donation registration takes less than 2 minutes. You can register through your state's DMV when getting or renewing your driver's license, or online through the national registry.</p>
+                <ul>
+                    <li>Registration is free and legally binding in all 50 states</li>
+                    <li>You can specify which organs and tissues you wish to donate</li>
+                    <li>Your medical care is never affected by your donor status</li>
+                    <li>All major religions support organ donation as an act of compassion</li>
+                    <li>There is no age limit — donors have ranged from newborns to people in their 90s</li>
+                </ul>
+
+                <h3>Common Myths</h3>
+                <ul>
+                    <li><strong>Myth: Doctors won't try to save my life if I'm a donor.</strong> — Your care team's only job is to save your life. The transplant team is completely separate and is not involved until all life-saving efforts have been exhausted.</li>
+                    <li><strong>Myth: I'm too old or sick to donate.</strong> — Medical professionals evaluate each potential donor case individually. Many conditions that seem disqualifying are not.</li>
+                    <li><strong>Myth: An open-casket funeral isn't possible.</strong> — Organ and tissue donation does not affect the appearance of the body for funeral services.</li>
+                </ul>
+
+                <a href="https://www.organdonor.gov/sign-up" target="_blank" rel="noopener" class="cta-btn">Register as an Organ Donor</a>
+            </div>
+
+            <!-- Bone Marrow Registry -->
+            <div class="advocacy-section" id="bone-marrow">
+                <h2>Join the Bone Marrow Registry</h2>
+                <p>Every year, thousands of patients with blood cancers (leukemia, lymphoma) and other diseases need a bone marrow or stem cell transplant from an unrelated donor. Finding a match depends on having a large, diverse registry.</p>
+
+                <div class="stat-highlight">
+                    <strong>Every 3 minutes</strong> someone in the U.S. is diagnosed with a blood cancer.
+                </div>
+
+                <h3>How It Works</h3>
+                <p>Be The Match (operated by the National Marrow Donor Program) maintains the world's largest bone marrow registry. Joining is simple:</p>
+                <ul>
+                    <li><strong>Swab your cheek:</strong> Order a free kit online — it arrives in a few days. Swab the inside of your cheeks and mail it back.</li>
+                    <li><strong>Wait for a match:</strong> Your HLA type is added to the registry. If you match a patient, Be The Match contacts you.</li>
+                    <li><strong>Donate:</strong> Most donations (80%) use peripheral blood stem cells (similar to a blood donation) — not surgical bone marrow extraction.</li>
+                </ul>
+
+                <h3>Who Can Join</h3>
+                <ul>
+                    <li>Ages 18-40 are most needed (younger donors produce better outcomes)</li>
+                    <li>Diverse donors are especially needed — patients are most likely to match someone of their own ethnic background</li>
+                    <li>The registry especially needs Black, Hispanic, Asian, and multiracial donors</li>
+                </ul>
+
+                <a href="https://bethematch.org/support-the-cause/donate-bone-marrow/join-the-marrow-registry/" target="_blank" rel="noopener" class="cta-btn">Join Be The Match Registry</a>
+            </div>
+
+            <!-- Blood Donation -->
+            <div class="advocacy-section" id="blood-donation">
+                <h2>Donate Blood</h2>
+                <p>Transplant patients rely heavily on blood donations — both during surgery and throughout their recovery. A single transplant surgery can require 10 or more units of blood. Blood banks often face shortages, especially during holidays and summer.</p>
+
+                <div class="stat-highlight">
+                    <strong>1 donation</strong> can save up to 3 lives. It takes about 1 hour of your time.
+                </div>
+
+                <h3>Types of Donation</h3>
+                <ul>
+                    <li><strong>Whole blood:</strong> The most common type. Takes about 10 minutes for the actual draw. You can donate every 56 days.</li>
+                    <li><strong>Platelets:</strong> Especially important for transplant and cancer patients. Takes about 2 hours. You can donate every 7 days (up to 24 times per year).</li>
+                    <li><strong>Plasma:</strong> Used for clotting disorders and burn victims. You can donate every 28 days.</li>
+                    <li><strong>Power Red (double red cells):</strong> Donates twice the red blood cells in one session. Takes about 30 minutes longer.</li>
+                </ul>
+
+                <h3>How to Find a Blood Drive</h3>
+                <p>The American Red Cross operates blood drives nationwide. You can also donate at local blood banks and hospital blood centers. Schedule online or walk in.</p>
+
+                <a href="https://www.redcrossblood.org/give.html/find-drive" target="_blank" rel="noopener" class="cta-btn">Find a Blood Drive Near You</a>
+            </div>
+
+            <!-- Living Donation -->
+            <div class="advocacy-section" id="living-donor">
+                <h2>Become a Living Donor</h2>
+                <p>Living donation is one of the most direct ways to save a life. Living donors can donate a kidney (most common) or a portion of their liver, and the body adapts remarkably well. A living donor kidney lasts an average of 15-20 years — significantly longer than a deceased donor kidney.</p>
+
+                <h3>Who Can Be a Living Donor</h3>
+                <ul>
+                    <li>Generally healthy adults aged 18-60 (varies by center)</li>
+                    <li>Must have compatible blood type (or participate in a paired exchange)</li>
+                    <li>Must pass a thorough medical and psychological evaluation</li>
+                    <li>No history of diabetes, uncontrolled hypertension, or kidney disease</li>
+                    <li>BMI requirements vary by center (generally under 35)</li>
+                </ul>
+
+                <h3>The Process</h3>
+                <ul>
+                    <li><strong>Evaluation:</strong> Blood tests, imaging, psychological assessment (takes 1-3 months)</li>
+                    <li><strong>Surgery:</strong> Usually laparoscopic (minimally invasive), 2-4 hours</li>
+                    <li><strong>Recovery:</strong> 2-4 weeks off work for kidney; 4-6 weeks for liver</li>
+                    <li><strong>Long-term:</strong> Kidney donors live normal, healthy lives with one kidney. The remaining kidney compensates by growing slightly and increasing function.</li>
+                </ul>
+
+                <h3>Financial Protections</h3>
+                <p>The recipient's insurance covers all donor medical expenses related to the donation. The <a href="https://www.livingdonorassistance.org" target="_blank" rel="noopener">National Living Donor Assistance Center</a> reimburses travel, lodging, and lost wages. Federal law (NOTA) protects donors from insurance discrimination.</p>
+
+                <a href="https://unos.org/transplant/living-donation/" target="_blank" rel="noopener" class="cta-btn">Learn More About Living Donation</a>
+            </div>
+
+            <!-- Volunteering -->
+            <div class="advocacy-section" id="volunteer">
+                <h2>Volunteer with Transplant Organizations</h2>
+                <p>Transplant organizations depend on volunteers to raise awareness, support patients, and advocate for policy changes. Whether you have an hour a month or a day a week, your help makes a difference.</p>
+
+                <h3>Ways to Volunteer</h3>
+                <ul>
+                    <li><strong>Peer mentoring:</strong> Share your transplant experience with patients who are newly listed or recently transplanted. Organizations like <a href="https://trioweb.org" target="_blank" rel="noopener">TRIO</a> match mentors with mentees.</li>
+                    <li><strong>Community education:</strong> Give talks at schools, churches, and community centers about organ donation. The <a href="https://www.kidney.org" target="_blank" rel="noopener">National Kidney Foundation</a> provides speaker training and materials.</li>
+                    <li><strong>Advocacy:</strong> Contact your elected officials about transplant-related legislation. The <a href="https://www.liverfoundation.org" target="_blank" rel="noopener">American Liver Foundation</a> and other organizations coordinate advocacy days.</li>
+                    <li><strong>Events:</strong> Help organize fundraising walks, galas, and awareness events. Most organizations have local chapters that welcome event volunteers.</li>
+                    <li><strong>Administrative support:</strong> Help with office tasks, phone banks, mailings, and social media for your local organ procurement organization (OPO).</li>
+                </ul>
+
+                <h3>Organizations That Need Volunteers</h3>
+                <ul>
+                    <li><a href="https://www.kidney.org/get-involved" target="_blank" rel="noopener">National Kidney Foundation</a> — Kidney walks, patient education, advocacy</li>
+                    <li><a href="https://trioweb.org" target="_blank" rel="noopener">TRIO (Transplant Recipients International Organization)</a> — Peer mentoring, support groups</li>
+                    <li><a href="https://www.liverfoundation.org/get-involved/" target="_blank" rel="noopener">American Liver Foundation</a> — Liver Life Walks, education programs</li>
+                    <li><a href="https://www.heart.org/en/volunteer" target="_blank" rel="noopener">American Heart Association</a> — Heart walks, CPR training, advocacy</li>
+                    <li><a href="https://www.donatelife.net" target="_blank" rel="noopener">Donate Life America</a> — National awareness campaigns, DMV partnerships</li>
+                </ul>
+            </div>
+
+            <!-- Fundraising -->
+            <div class="advocacy-section" id="fundraise">
+                <h2>Fundraise for Transplant Patients</h2>
+                <p>Transplant costs can be overwhelming even with insurance. Out-of-pocket expenses for travel, lodging, medications, and lost wages can reach $20,000-$50,000. Community fundraising makes a real difference.</p>
+
+                <h3>How to Set Up a Transplant Fundraiser</h3>
+                <ul>
+                    <li><strong>Help Hope Live:</strong> A nonprofit fiscal sponsor for transplant fundraising. Donations are tax-deductible, and they provide a personal fundraising page, coaching, and support. <a href="https://helphopelive.org" target="_blank" rel="noopener">helphopelive.org</a></li>
+                    <li><strong>NFT (National Foundation for Transplants):</strong> Similar fiscal sponsorship for transplant patients. Handles donations, disbursements, and tax receipts. <a href="https://transplants.org" target="_blank" rel="noopener">transplants.org</a></li>
+                    <li><strong>Community events:</strong> Organize a benefit dinner, silent auction, car wash, or bake sale. Local businesses often donate goods or matching funds.</li>
+                    <li><strong>Employer matching:</strong> Many companies match employee charitable donations. Check if your employer has a matching program.</li>
+                    <li><strong>Social media campaigns:</strong> Share the patient's story (with their permission) and fundraising link. Personal stories drive the most engagement.</li>
+                </ul>
+
+                <h3>Tips for Effective Fundraising</h3>
+                <ul>
+                    <li>Use a verified nonprofit fiscal sponsor (not personal GoFundMe) for tax-deductible donations</li>
+                    <li>Be specific about what funds will cover (medications, travel, lodging)</li>
+                    <li>Provide regular updates to donors about the patient's progress</li>
+                    <li>Thank every donor personally</li>
+                </ul>
+            </div>
+
+        </div>
+    </main>
+
+    <footer id="disclaimer-full" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-disclaimer">
+                <h3>Disclaimer</h3>
+                <p><strong>This tool is for educational and exploratory purposes only.</strong> TransplantMatch is not affiliated with any of the organizations listed on this page. Links are provided for informational purposes.</p>
+                <p><strong>Always verify information</strong> directly with the organization before taking action.</p>
+            </div>
+            <div class="footer-meta">
+                <div class="footer-links">
+                    <a href="simulator.html">Simulator</a>
+                    <a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>
+                </div>
+                <p class="footer-copy">TransplantMatch is under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="session.js"></script>
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
