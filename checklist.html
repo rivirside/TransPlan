@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransplantMatch - Transplant Checklist</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        .checklist-header { text-align: center; padding: 2.5rem 1rem 0.5rem; }
+        .checklist-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .checklist-header p { color: var(--text-muted, #6b7280); margin-bottom: 1rem; }
+
+        .checklist-toolbar {
+            max-width: 800px; margin: 0 auto 1.5rem; padding: 0 1rem;
+            display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+        }
+        .progress-wrap { flex: 1; min-width: 200px; }
+        .progress-bar {
+            height: 8px; background: var(--border, #e5e7eb); border-radius: 4px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; background: var(--accent, #6366f1); border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .progress-label { font-size: 0.8rem; color: var(--text-muted, #6b7280); margin-top: 0.25rem; }
+        .toolbar-buttons { display: flex; gap: 0.5rem; }
+        .toolbar-buttons button {
+            padding: 0.45rem 0.85rem; border: 1px solid var(--border, #d1d5db); border-radius: 6px;
+            background: var(--surface, #fff); color: var(--text-1, #111); cursor: pointer; font-size: 0.82rem;
+        }
+        .toolbar-buttons button:hover { border-color: var(--accent, #6366f1); color: var(--accent, #6366f1); }
+
+        .checklist-content { max-width: 800px; margin: 0 auto 3rem; padding: 0 1rem; }
+
+        .phase {
+            background: var(--surface, #fff); border: 1px solid var(--border, #e5e7eb);
+            border-radius: 6px; margin-bottom: 1rem; overflow: hidden;
+        }
+        .phase-header {
+            padding: 0.85rem 1.25rem; display: flex; align-items: center; gap: 0.75rem;
+            border-bottom: 1px solid var(--border-light, #f3f4f6);
+        }
+        .phase-number {
+            width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 700; color: #fff; background: var(--accent, #6366f1); flex-shrink: 0;
+        }
+        .phase-title { font-weight: 600; font-size: 1rem; color: var(--text-1, #111); }
+        .phase-desc { font-size: 0.82rem; color: var(--text-muted, #6b7280); margin-left: auto; }
+
+        .checklist-items { padding: 0.5rem 0; }
+        .checklist-item {
+            display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 1.25rem; cursor: pointer;
+        }
+        .checklist-item:hover { background: var(--surface-raised, #f9fafb); }
+        .checklist-item input[type="checkbox"] {
+            margin-top: 0.15rem; width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--accent, #6366f1);
+            cursor: pointer;
+        }
+        .checklist-item label { cursor: pointer; font-size: 0.9rem; color: var(--text-1, #111); line-height: 1.5; }
+        .checklist-item.checked label { text-decoration: line-through; color: var(--text-muted, #9ca3af); }
+
+        @media print {
+            .site-nav, .toolbar-buttons, .site-footer { display: none; }
+            .checklist-item input[type="checkbox"] { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav" aria-label="Site navigation">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <span class="nav-brand-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <span class="nav-brand-text">TransplantMatch</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="simulator.html" class="nav-link">Simulator</a>
+                <div class="nav-dropdown">
+                    <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">&#x25BE;</span></button>
+                    <div class="nav-dropdown-menu" role="menu">
+                        <a href="centers.html" class="nav-dropdown-item" role="menuitem">Center Explorer</a>
+                        <a href="compare.html" class="nav-dropdown-item" role="menuitem">Compare Centers</a>
+                        <a href="education.html" class="nav-dropdown-item" role="menuitem">Education</a>
+                        <a href="support.html" class="nav-dropdown-item" role="menuitem">Patient Support</a>
+                        <a href="faq.html" class="nav-dropdown-item" role="menuitem">FAQ</a>
+                        <a href="checklist.html" class="nav-dropdown-item active" role="menuitem">Checklist</a>
+                    </div>
+                </div>
+                <a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="checklist-header">
+            <h1>Transplant Journey Checklist</h1>
+            <p>Track your progress through the transplant process. Your progress is saved automatically in your browser.</p>
+        </div>
+
+        <div class="checklist-toolbar">
+            <div class="progress-wrap">
+                <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%;"></div></div>
+                <div class="progress-label" id="progress-label">0 of 0 completed</div>
+            </div>
+            <div class="toolbar-buttons">
+                <button type="button" id="print-btn">Print</button>
+                <button type="button" id="reset-btn">Reset</button>
+            </div>
+        </div>
+
+        <div class="checklist-content" id="checklist-content"></div>
+    </main>
+
+    <footer id="disclaimer-full" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-disclaimer">
+                <h3>Disclaimer</h3>
+                <p><strong>This tool is for educational and exploratory purposes only.</strong> This checklist is a general guide and not a substitute for your transplant team's specific instructions.</p>
+                <p><strong>Always follow your transplant center's protocols</strong> — they may have additional or different requirements.</p>
+            </div>
+            <div class="footer-meta">
+                <div class="footer-links">
+                    <a href="simulator.html">Simulator</a>
+                    <a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>
+                </div>
+                <p class="footer-copy">TransplantMatch is under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="session.js"></script>
+    <script>
+    (function() {
+        'use strict';
+        var STORAGE_KEY = 'transplan-checklist';
+
+        var phases = [
+            {
+                title: 'Pre-Evaluation',
+                items: [
+                    'Get referral from your doctor to a transplant center',
+                    'Research transplant centers using TransplantMatch',
+                    'Schedule evaluation appointment(s)',
+                    'Gather medical records (labs, imaging, surgical history)',
+                    'Review insurance coverage and financial assistance options',
+                    'Arrange transportation and lodging if center is out of town',
+                ]
+            },
+            {
+                title: 'Evaluation & Listing',
+                items: [
+                    'Complete transplant center evaluation (blood work, imaging, consultations)',
+                    'Meet with transplant surgeon, nephrologist/hepatologist, and coordinator',
+                    'Complete psychosocial evaluation',
+                    'Discuss organ-specific scoring (cPRA, MELD, LAS) with your team',
+                    'Understand the waitlist process and expected timeline',
+                    'Get officially listed on the UNOS waitlist',
+                    'Consider multiple listing at a second center',
+                ]
+            },
+            {
+                title: 'Waiting Period',
+                items: [
+                    'Keep all follow-up appointments with your transplant team',
+                    'Stay reachable 24/7 (keep phone charged, inform center of travel)',
+                    'Maintain your health (diet, exercise, medications)',
+                    'Complete required periodic testing (blood work, updates)',
+                    'Notify center of any health changes immediately',
+                    'Keep a packed hospital bag ready',
+                    'Arrange caregiver and support system for post-transplant',
+                    'Explore peer support groups and counseling resources',
+                ]
+            },
+            {
+                title: 'Transplant Surgery',
+                items: [
+                    'Respond immediately when called for an organ offer',
+                    'Follow pre-surgery fasting and medication instructions',
+                    'Bring ID, insurance cards, and medication list to the hospital',
+                    'Designate a healthcare proxy / power of attorney',
+                    'Notify your caregiver and support network',
+                ]
+            },
+            {
+                title: 'Recovery & Long-Term',
+                items: [
+                    'Follow post-transplant medication schedule exactly (immunosuppressants)',
+                    'Attend all post-transplant clinic visits',
+                    'Learn signs of rejection and when to seek emergency care',
+                    'Follow dietary restrictions recommended by your team',
+                    'Gradually resume physical activity as approved by your doctor',
+                    'Schedule regular lab work and biopsies as directed',
+                    'Maintain sun protection (increased skin cancer risk with immunosuppression)',
+                    'Connect with post-transplant peer support community',
+                ]
+            }
+        ];
+
+        var savedState = {};
+        try { savedState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) {}
+
+        var content = document.getElementById('checklist-content');
+        var progressFill = document.getElementById('progress-fill');
+        var progressLabel = document.getElementById('progress-label');
+        var totalItems = 0;
+        var allCheckboxes = [];
+
+        phases.forEach(function(phase, pi) {
+            var section = document.createElement('div');
+            section.className = 'phase';
+
+            var header = document.createElement('div');
+            header.className = 'phase-header';
+            var num = document.createElement('span');
+            num.className = 'phase-number';
+            num.textContent = String(pi + 1);
+            header.appendChild(num);
+            var title = document.createElement('span');
+            title.className = 'phase-title';
+            title.textContent = phase.title;
+            header.appendChild(title);
+            section.appendChild(header);
+
+            var items = document.createElement('div');
+            items.className = 'checklist-items';
+
+            phase.items.forEach(function(text, ii) {
+                var key = 'p' + pi + '_i' + ii;
+                totalItems++;
+                var row = document.createElement('div');
+                row.className = 'checklist-item';
+                if (savedState[key]) row.classList.add('checked');
+
+                var cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.id = key;
+                cb.checked = !!savedState[key];
+                allCheckboxes.push(cb);
+
+                var lbl = document.createElement('label');
+                lbl.setAttribute('for', key);
+                lbl.textContent = text;
+
+                cb.addEventListener('change', function() {
+                    savedState[key] = cb.checked;
+                    row.classList.toggle('checked', cb.checked);
+                    save();
+                    updateProgress();
+                });
+
+                row.appendChild(cb);
+                row.appendChild(lbl);
+                items.appendChild(row);
+            });
+
+            section.appendChild(items);
+            content.appendChild(section);
+        });
+
+        function save() {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(savedState)); } catch (e) {}
+        }
+
+        function updateProgress() {
+            var checked = allCheckboxes.filter(function(cb) { return cb.checked; }).length;
+            var pct = totalItems > 0 ? Math.round((checked / totalItems) * 100) : 0;
+            progressFill.style.width = pct + '%';
+            progressLabel.textContent = checked + ' of ' + totalItems + ' completed (' + pct + '%)';
+        }
+
+        updateProgress();
+
+        document.getElementById('print-btn').addEventListener('click', function() { window.print(); });
+        document.getElementById('reset-btn').addEventListener('click', function() {
+            if (!confirm('Reset all checklist progress? This cannot be undone.')) return;
+            savedState = {};
+            save();
+            allCheckboxes.forEach(function(cb) {
+                cb.checked = false;
+                cb.closest('.checklist-item').classList.remove('checked');
+            });
+            updateProgress();
+        });
+    })();
+    </script>
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
