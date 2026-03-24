@@ -1,0 +1,35 @@
+# TransplantMatch - robots.txt
+# https://transplantmatch.org
+
+User-agent: *
+Allow: /
+
+# HTML pages
+Allow: /index.html
+Allow: /simulator.html
+Allow: /centers.html
+Allow: /center.html
+Allow: /compare.html
+Allow: /find-centers.html
+Allow: /wait-estimator.html
+Allow: /organ-guides.html
+Allow: /education.html
+Allow: /support.html
+Allow: /advocacy.html
+Allow: /faq.html
+Allow: /checklist.html
+
+# Block internal/dev files
+Disallow: /backend/
+Disallow: /scripts/
+Disallow: /tests/
+Disallow: /node_modules/
+Disallow: /.claude/
+Disallow: /.github/
+Disallow: /.venv/
+
+# Sitemaps
+Sitemap: https://transplantmatch.org/sitemap.xml
+
+# LLM context
+# See /llms.txt for structured AI context

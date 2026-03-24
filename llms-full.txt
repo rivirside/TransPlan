@@ -1,0 +1,144 @@
+# TransplantMatch — Full Context for LLMs
+
+> TransplantMatch is a free, open-source decision support tool that helps transplant patients and families evaluate and compare 248 U.S. transplant centers. It uses publicly available data from SRTR, OPTN, CDC, CMS, EPA, and BLS.
+
+## Project Overview
+
+TransplantMatch provides data-driven analysis across 8 scoring categories with 40+ factors to generate relative suitability scores. It includes a Monte Carlo simulation engine (1,000 iterations) that models transplant probability over time with competing risks of mortality and waitlist removal.
+
+**This tool is for educational purposes only. It is not a medical device and does not provide medical advice.**
+
+---
+
+## Pages and Tools
+
+### Find My Centers (/find-centers.html)
+Personalized center recommendation wizard. Users enter their zip code (or use browser geolocation), select an organ type, and optionally select a blood type. The tool scores all centers with that organ program using a composite of:
+- Distance from user (30% weight)
+- 1-year graft survival rate (30%)
+- Wait time factor vs. national average (20%)
+- Annual transplant volume (20%)
+Returns the top 20 ranked centers with distance, survival %, wait factor, and volume.
+
+### Wait Time Estimator (/wait-estimator.html)
+Quick statistical estimate of transplant wait time. Users select an organ type and blood type (all 8 ABO/Rh combinations). The tool computes:
+- Estimated median wait = national median x blood type multiplier
+- 25th-75th percentile range from log-normal distribution parameters
+- Breakdown showing national baseline, blood type effect, and personalized estimate
+Data from SRTR-derived wait time distributions.
+
+### Center Explorer (/centers.html)
+Searchable directory of all 248 SRTR transplant centers. Features:
+- Text search by center name, city, or state
+- Filter by organ type (kidney, liver, heart, lung, pancreas, intestine)
+- Sort by name, state, programs, or distance
+- Zip code input with Nominatim geocoding for distance-based sorting
+- "Use My Location" browser geolocation button
+- Distance badges ("X mi away") on each card
+
+### Compare Centers (/compare.html)
+Side-by-side comparison of up to 3 centers. URL-shareable via ?centers=CODE1,CODE2,CODE3. Each column shows:
+- Center name, state, code
+- Contact info (phone, website)
+- Outcomes by organ: 1-yr graft, 1-yr patient, 3-yr graft survival, volume
+- Waitlist: currently waiting, transplanted per organ
+- Wait time factors per organ
+- Link to full center detail page
+
+### Center Detail (/center.html?code={CODE})
+Detailed page for each of 248 centers showing:
+- Organ Programs table: wait factor, mortality factor, delisting factor, 1-yr graft, 1-yr patient, 3-yr graft, 3-yr patient, hazard ratio with 95% CI, annual volume
+- Waitlist Activity: currently waiting, added last year, transplanted (deceased/living), died while waiting, removed (too ill) — with organ selector
+- Contact & Location: address, phone, website (fetched live from SRTR API with static fallback), interactive Leaflet map
+- Nearby Centers: other programs within 250 miles with distance
+- All sections are collapsible with descriptive preview text
+
+### Simulator (/simulator.html)
+Full Monte Carlo simulation engine. Users input:
+- Organ type, blood type, age, sex
+- Optional clinical scores (cPRA for kidney, MELD for liver, LAS for lung)
+- Custom weight adjustments for 8 scoring categories
+The simulator runs 1,000 iterations estimating transplant probability at 6, 12, 24, and 36 months for each center, incorporating competing risks (mortality, delisting). Results include per-center probability curves, ranking tables, and interactive map overlays.
+
+### Organ Guides (/organ-guides.html)
+Dedicated educational guides for kidney, liver, heart, lung, and pancreas transplants. Each section covers:
+- Organ-specific allocation scoring (cPRA, MELD/PELD, LAS, status tiers)
+- Living donor options where applicable
+- Key considerations (bridge therapy, wait times, special criteria)
+- Link to filtered Center Explorer for that organ
+
+### Education (/education.html)
+Comprehensive transplant education with sections on:
+- The 5-step transplant process (evaluation, listing, waiting, surgery, recovery)
+- Allocation and waitlist mechanics (UNOS policies, priority factors)
+- Key terms glossary (12 definitions)
+- Official resource links (UNOS, OPTN, SRTR, organdonor.gov)
+- Reading your SRTR report (6 key metrics explained)
+- Post-transplant medications and recovery (immunosuppressants, adherence, rejection signs, lifestyle)
+
+### Patient Support (/support.html)
+Resource directory with 6 sections:
+- National Organizations (NKF, ALF, ALA, AHA, TRIO)
+- Financial Assistance (NLDAC, HealthWell, Patient Advocate Foundation, Help Hope Live)
+- Travel & Lodging (National Patient Travel, Joe's House, Ronald McDonald House)
+- Peer Support (Transplant Living, Reddit r/transplant)
+- Caregiver & Family Resources (pre-transplant, travel, work/FMLA, post-care, burnout)
+- Insurance & Coverage (Medicare, Medicaid, private, out-of-state, prescription drugs)
+
+### FAQ (/faq.html)
+10 collapsible Q&A sections covering: multiple listing, blood type effects, SRTR ratings, organ allocation, graft vs. patient survival, data freshness, waitlist transfers, health status changes, geographic distance, and clinical scores (cPRA/MELD/LAS).
+
+### Checklist (/checklist.html)
+Interactive 34-item transplant journey checklist across 5 phases:
+1. Pre-Evaluation (6 items)
+2. Evaluation & Listing (7 items)
+3. Waiting Period (8 items)
+4. Transplant Surgery (5 items)
+5. Recovery & Long-Term (8 items)
+Progress saved to localStorage. Includes progress bar, print button, and reset.
+
+### Advocacy & Give Back (/advocacy.html)
+6 educational articles with calls to action:
+- Become an organ donor (organdonor.gov registration)
+- Join bone marrow registry (Be The Match)
+- Donate blood (Red Cross)
+- Become a living donor (kidney/liver)
+- Volunteer with transplant organizations (TRIO, NKF, ALF, AHA)
+- Fundraise for transplant patients (Help Hope Live, NFT)
+
+---
+
+## Data Architecture
+
+### Center Data
+- 248 SRTR transplant centers with verified geocoordinates
+- Per-center, per-organ: wait time factors, mortality/delisting factors, graft/patient survival (1yr, 3yr), hazard ratios with 95% CI, annual volume, performance ratings
+- Contact info: address, phone, website (live SRTR API fetch with static fallback)
+- Waitlist overview: currently waiting, added, transplanted, died, removed per organ
+
+### Scoring Categories
+1. Medical Compatibility (organ, blood type, clinical scores)
+2. Wait Time (center-specific log-normal distributions)
+3. Donor Availability (traffic fatality rates, donor registration, cause-of-death by region)
+4. Hospital Quality (CMS star ratings, transplant volume)
+5. Post-Transplant Outcomes (graft/patient survival, performance ratings)
+6. Cost of Living (BLS regional price parities)
+7. Health Demographics (CDC county-level health data)
+8. Climate & Environment (EPA air quality, climate scores)
+
+### API Endpoints
+- GET /centers — List all 248 centers with coordinates and organ programs
+- GET /centers/{code} — Detailed data for a single center
+- POST /simulate — Monte Carlo simulation (1,000 iterations)
+- GET /health — API health check with data freshness metadata
+
+---
+
+## Technical Stack
+- Frontend: Vanilla JavaScript, Leaflet.js (maps), Chart.js (visualization)
+- Backend: Python 3.14, FastAPI, NumPy, SciPy
+- Data: JSON files refreshed weekly via automated GitHub Actions pipelines
+- Deployment: Vercel (frontend) + Vercel Functions (backend)
+- Source: https://github.com/rivirside/TransPlan
+- License: Open source
+- Contact: tomer@arizona.edu

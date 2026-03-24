@@ -1,0 +1,45 @@
+# TransplantMatch
+
+> TransplantMatch is a free, open-source transplant center analysis tool for patients and families. It compares 248 U.S. transplant centers using public SRTR, OPTN, CDC, and CMS data.
+
+## Tools
+
+- [Find My Centers](/find-centers.html): Personalized center recommendations based on location, organ type, and blood type
+- [Wait Time Estimator](/wait-estimator.html): Quick median wait time estimate by organ and blood type
+- [Center Explorer](/centers.html): Search and filter all 248 transplant centers by name, location, or organ
+- [Compare Centers](/compare.html): Side-by-side comparison of up to 3 centers
+- [Simulator](/simulator.html): Full Monte Carlo simulation with 1,000 iterations modeling transplant probability over time
+
+## Patient Resources
+
+- [Organ Guides](/organ-guides.html): Organ-specific transplant guides for kidney, liver, heart, lung, and pancreas
+- [Education](/education.html): The transplant process, allocation rules, glossary, SRTR data guide, medications
+- [Patient Support](/support.html): Financial assistance, travel/lodging, peer support, caregiver resources, insurance
+- [FAQ](/faq.html): 10 common questions about transplant waitlists, allocation, and center data
+- [Checklist](/checklist.html): Interactive 34-item transplant journey tracker with 5 phases
+- [Advocacy & Give Back](/advocacy.html): Become an organ donor, join bone marrow registry, donate blood, volunteer
+
+## Center Detail Pages
+
+Each of the 248 centers has a detail page at `/center.html?code={CODE}` showing:
+- Organ programs with graft/patient survival rates, hazard ratios, and volume
+- Waitlist activity (waiting, added, transplanted, died, removed)
+- Contact info (address, phone, website) with live SRTR API fetch
+- Interactive map
+- Nearby centers within 250 miles
+
+## Data Sources
+
+- SRTR (Scientific Registry of Transplant Recipients) — center outcomes, waitlist data, performance ratings
+- OPTN (Organ Procurement and Transplantation Network) — allocation policies, center listings
+- CDC — health demographics, cause of death by region
+- CMS — hospital quality ratings
+- EPA — air quality data
+- BLS — cost of living indices
+
+## Technical
+
+- Frontend: Vanilla JavaScript, Leaflet maps, Chart.js
+- Backend: Python FastAPI with NumPy/SciPy for Monte Carlo simulation
+- Data: 248 geocoded transplant centers, refreshed weekly via automated pipelines
+- Open source: https://github.com/rivirside/TransPlan
