@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransplantMatch - Frequently Asked Questions</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        .faq-header { text-align: center; padding: 2.5rem 1rem 1rem; }
+        .faq-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .faq-header p { color: var(--text-muted, #6b7280); margin-bottom: 2rem; }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            padding: 0 1rem;
+        }
+        .faq-item {
+            border: 1px solid var(--border, #e5e7eb);
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            background: var(--surface, #fff);
+            overflow: hidden;
+        }
+        .faq-item summary {
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-1, #111);
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-item summary::-webkit-details-marker { display: none; }
+        .faq-item summary::after {
+            content: '+';
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: var(--text-muted, #6b7280);
+            flex-shrink: 0;
+            margin-left: 1rem;
+            transition: transform 0.15s;
+        }
+        .faq-item[open] summary::after { content: '\2212'; }
+        .faq-item summary:hover { color: var(--accent, #6366f1); }
+        .faq-answer {
+            padding: 0 1.25rem 1.25rem;
+            color: var(--text-2, #374151);
+            font-size: 0.9rem;
+            line-height: 1.65;
+        }
+        .faq-answer p { margin: 0 0 0.75rem; }
+        .faq-answer p:last-child { margin-bottom: 0; }
+        .faq-answer a { color: var(--accent, #6366f1); }
+        .faq-answer ul { margin: 0.5rem 0; padding-left: 1.5rem; }
+        .faq-answer li { margin-bottom: 0.3rem; }
+
+        .faq-cta {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-muted, #6b7280);
+            font-size: 0.9rem;
+        }
+        .faq-cta a { color: var(--accent, #6366f1); }
+    </style>
+</head>
+<body>
+    <nav class="site-nav" aria-label="Site navigation">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <span class="nav-brand-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                <span class="nav-brand-text">TransplantMatch</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="simulator.html" class="nav-link">Simulator</a>
+                <div class="nav-dropdown">
+                    <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">&#x25BE;</span></button>
+                    <div class="nav-dropdown-menu" role="menu">
+                        <a href="centers.html" class="nav-dropdown-item" role="menuitem">Center Explorer</a>
+                        <a href="compare.html" class="nav-dropdown-item" role="menuitem">Compare Centers</a>
+                        <a href="education.html" class="nav-dropdown-item" role="menuitem">Education</a>
+                        <a href="support.html" class="nav-dropdown-item" role="menuitem">Patient Support</a>
+                        <a href="faq.html" class="nav-dropdown-item active" role="menuitem">FAQ</a>
+                    </div>
+                </div>
+                <a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="faq-header">
+            <h1>Frequently Asked Questions</h1>
+            <p>Common questions about the transplant process, waitlists, and how to use TransplantMatch.</p>
+        </div>
+
+        <div class="faq-list">
+
+            <details class="faq-item">
+                <summary>Can I list at multiple transplant centers?</summary>
+                <div class="faq-answer">
+                    <p>Yes. UNOS policy allows patients to be listed at more than one transplant center simultaneously, a practice called "multiple listing." Each center conducts its own evaluation, and you maintain separate positions on each waitlist.</p>
+                    <p>Multiple listing can improve your chances by accessing different donor pools, but it involves additional evaluations, travel, and potentially higher costs. Discuss this option with your transplant team. Use our <a href="compare.html">Compare Centers</a> tool to evaluate potential second listings.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>How does blood type affect my wait time?</summary>
+                <div class="faq-answer">
+                    <p>Blood type significantly affects organ allocation because donors and recipients must be blood-type compatible. The impact varies by organ:</p>
+                    <ul>
+                        <li><strong>Type O</strong> — can only receive from type O donors (longest wait for kidneys)</li>
+                        <li><strong>Type A</strong> — can receive from types A and O</li>
+                        <li><strong>Type B</strong> — can receive from types B and O (often longer waits due to fewer B donors)</li>
+                        <li><strong>Type AB</strong> — universal recipient, can receive from any blood type (shortest wait)</li>
+                    </ul>
+                    <p>TransplantMatch incorporates blood type into its Monte Carlo simulation to estimate personalized wait time probabilities.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>What does "as expected" mean on SRTR reports?</summary>
+                <div class="faq-answer">
+                    <p>"As expected" is a risk-adjusted performance rating from SRTR. It means the center's outcomes (like graft survival) are statistically consistent with what would be predicted given the complexity of patients they treat.</p>
+                    <p>SRTR adjusts for factors like patient age, diagnosis, and comorbidities, so a center treating sicker patients isn't penalized. The three ratings are:</p>
+                    <ul>
+                        <li><strong>Better than expected</strong> — outcomes significantly above the risk-adjusted prediction</li>
+                        <li><strong>As expected</strong> — outcomes within the normal statistical range</li>
+                        <li><strong>Worse than expected</strong> — outcomes significantly below the prediction</li>
+                    </ul>
+                    <p>Most centers are rated "as expected." A rating of "worse than expected" triggers additional CMS oversight.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>How are organs allocated in the United States?</summary>
+                <div class="faq-answer">
+                    <p>UNOS (United Network for Organ Sharing) manages the national organ allocation system. When a donor organ becomes available, UNOS generates a match list based on:</p>
+                    <ul>
+                        <li><strong>Medical urgency</strong> — sicker patients may receive priority</li>
+                        <li><strong>Blood type compatibility</strong> — must be ABO-compatible</li>
+                        <li><strong>Tissue typing / HLA matching</strong> — especially important for kidneys</li>
+                        <li><strong>Time on waitlist</strong> — longer-waiting patients get priority</li>
+                        <li><strong>Geographic proximity</strong> — organs are offered locally first, then regionally, then nationally</li>
+                        <li><strong>Organ-specific scores</strong> — MELD (liver), LAS (lung), heart allocation tiers</li>
+                    </ul>
+                    <p>Learn more on our <a href="education.html">Education</a> page or at <a href="https://unos.org" target="_blank" rel="noopener">unos.org</a>.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>What is the difference between graft survival and patient survival?</summary>
+                <div class="faq-answer">
+                    <p>These are two distinct measures of transplant success:</p>
+                    <ul>
+                        <li><strong>Graft survival</strong> — the transplanted organ is still functioning. If the graft fails, the patient may return to the waitlist or go on dialysis (for kidneys).</li>
+                        <li><strong>Patient survival</strong> — the patient is alive, regardless of whether the transplanted organ is still working.</li>
+                    </ul>
+                    <p>Patient survival is usually higher than graft survival because a patient can survive graft failure (e.g., return to dialysis). Both metrics are shown on our <a href="centers.html">Center Explorer</a> detail pages.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>How often is TransplantMatch data updated?</summary>
+                <div class="faq-answer">
+                    <p>TransplantMatch uses automated data pipelines that refresh from public sources:</p>
+                    <ul>
+                        <li><strong>Weekly</strong> — EPA air quality, CDC health demographics, CMS hospital quality, BLS cost of living</li>
+                        <li><strong>Bimonthly</strong> — SRTR transplant center data (released semi-annually by SRTR)</li>
+                        <li><strong>Live</strong> — Center contact info is fetched from SRTR in real-time when you view a center detail page</li>
+                    </ul>
+                    <p>Each data source shows its last-updated date on the freshness banner in the simulator.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>Can I transfer my waitlist position to another center?</summary>
+                <div class="faq-answer">
+                    <p>You cannot directly transfer your accumulated wait time from one center to another. However, UNOS policy does allow your wait time at one center to count toward priority at another center if you transfer your care.</p>
+                    <p>The specifics depend on the organ and the centers involved. Your transplant coordinator at both centers can help navigate the transfer process. This is another reason why <a href="compare.html">comparing centers</a> before listing is valuable.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>What happens if I become too sick for transplant?</summary>
+                <div class="faq-answer">
+                    <p>If your health deteriorates significantly, the transplant team may temporarily place you "on hold" (Status 7 for kidneys) or remove you from the waitlist. This can happen if:</p>
+                    <ul>
+                        <li>You develop an active infection</li>
+                        <li>A new cancer diagnosis requires treatment first</li>
+                        <li>Your overall condition makes surgery too risky</li>
+                    </ul>
+                    <p>Being removed from the waitlist doesn't mean you can never be re-listed. Once the issue is resolved, your team can re-activate your listing, and your prior wait time is preserved. The "Removed (too ill)" statistic shown on our center pages reflects these cases.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>How does geographic distance affect organ offers?</summary>
+                <div class="faq-answer">
+                    <p>Since 2021, UNOS uses concentric distance circles (measured in nautical miles from the donor hospital) for most organs. Organs are offered first to patients within 250 nautical miles, then 500, then nationally. This replaced the older regional/DSA-based system.</p>
+                    <p>This means your center's proximity to donor hospitals matters. Centers in areas with higher donor rates (often correlated with traffic fatality rates and donor registration rates) may have shorter wait times. TransplantMatch factors this into its scoring.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>What are cPRA, MELD, and LAS scores?</summary>
+                <div class="faq-answer">
+                    <p>These are organ-specific clinical scores used in allocation:</p>
+                    <ul>
+                        <li><strong>cPRA (Calculated Panel Reactive Antibodies)</strong> — Kidney. Measures how sensitized you are to donor antigens. Higher cPRA (0-100%) means fewer compatible donors, so highly sensitized patients get priority points.</li>
+                        <li><strong>MELD (Model for End-Stage Liver Disease)</strong> — Liver. Predicts 90-day mortality without transplant using lab values (bilirubin, INR, creatinine). Scores range from 6-40; higher = sicker = more priority.</li>
+                        <li><strong>LAS (Lung Allocation Score)</strong> — Lung. Balances urgency (risk of death without transplant) against expected post-transplant survival. Higher LAS = more priority.</li>
+                    </ul>
+                    <p>TransplantMatch lets you enter these scores in the simulator for more personalized wait time estimates. Learn more on our <a href="education.html">Education</a> page.</p>
+                </div>
+            </details>
+
+        </div>
+
+        <div class="faq-cta">
+            <p>Have more questions? Check our <a href="education.html">Education</a> page for detailed guides, or explore <a href="support.html">Patient Support</a> resources.</p>
+        </div>
+    </main>
+
+    <footer id="disclaimer-full" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-disclaimer">
+                <h3>Disclaimer</h3>
+                <p><strong>This tool is for educational and exploratory purposes only.</strong> TransplantMatch is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
+                <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant.</p>
+            </div>
+            <div class="footer-meta">
+                <div class="footer-links">
+                    <a href="simulator.html">Simulator</a>
+                    <a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>
+                </div>
+                <p class="footer-copy">TransplantMatch is under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="session.js"></script>
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
