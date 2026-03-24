@@ -97,7 +97,7 @@
 
         var kofiBtn = document.createElement('a');
         kofiBtn.className = 'banner-btn btn-kofi';
-        kofiBtn.href = 'https://ko-fi.com/transplantmatch';
+        kofiBtn.href = 'https://ko-fi.com/rivir';
         kofiBtn.target = '_blank';
         kofiBtn.rel = 'noopener noreferrer';
         kofiBtn.textContent = 'Ko-fi';
