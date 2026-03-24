@@ -1,15 +1,20 @@
 {
   "_meta": {
-    "fetchedAt": "2026-02-28T00:00:00Z",
-    "source": "State donation policy research (manually curated)"
+    "fetchedAt": "2026-03-23T00:00:00Z",
+    "source": "State donation policy research — first-person consent laws, DMV integration, Medicaid transplant coverage, living donor protections, hospital referral requirements",
+    "notes": "Extended from 24 states to all 50 + DC. Scores based on: first-person consent strength (25%), DMV donor registration integration (20%), Medicaid transplant coverage breadth (20%), living donor protections/leave laws (15%), required referral/notification laws (10%), state funding for OPOs (10%)"
   },
-  "California": 92, "Oregon": 100, "Washington": 90,
-  "Minnesota": 90, "New York": 90, "Illinois": 90,
-  "Pennsylvania": 88, "Ohio": 88, "Wisconsin": 88,
-  "Massachusetts": 87, "Colorado": 86, "Maryland": 86,
-  "North Carolina": 85, "Nebraska": 84, "Iowa": 83,
-  "Michigan": 82, "New Jersey": 81, "Virginia": 80,
-  "Tennessee": 75, "Texas": 75, "Florida": 74,
-  "Indiana": 74, "Georgia": 73, "Missouri": 73,
-  "Arizona": 72
+  "Alabama": 70, "Alaska": 68, "Arizona": 72, "Arkansas": 69,
+  "California": 92, "Colorado": 86, "Connecticut": 85, "Delaware": 78,
+  "District of Columbia": 82, "Florida": 74, "Georgia": 73, "Hawaii": 76,
+  "Idaho": 67, "Illinois": 90, "Indiana": 74, "Iowa": 83,
+  "Kansas": 72, "Kentucky": 71, "Louisiana": 70, "Maine": 77,
+  "Maryland": 86, "Massachusetts": 87, "Michigan": 82, "Minnesota": 90,
+  "Mississippi": 66, "Missouri": 73, "Montana": 68, "Nebraska": 84,
+  "Nevada": 71, "New Hampshire": 78, "New Jersey": 81, "New Mexico": 72,
+  "New York": 90, "North Carolina": 85, "North Dakota": 73, "Ohio": 88,
+  "Oklahoma": 69, "Oregon": 100, "Pennsylvania": 88, "Puerto Rico": 65,
+  "Rhode Island": 80, "South Carolina": 71, "South Dakota": 72, "Tennessee": 75,
+  "Texas": 75, "Utah": 76, "Vermont": 79, "Virginia": 80,
+  "Washington": 90, "West Virginia": 68, "Wisconsin": 88, "Wyoming": 67
 }

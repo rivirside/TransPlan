@@ -244,8 +244,9 @@ def _donor_availability(state: str, organ: str, patient: dict) -> float:
             break
     score += living_score * 0.28
 
-    # Traffic/trauma (8%) — state average
-    score += 65 * 0.08  # national average for all centers
+    # Traffic/trauma (8%) — interpolated from hotspot data, fallback 65
+    trauma = _interpolate("trauma", lat, lon, fallback=65.0)
+    score += max(0, min(100, trauma)) * 0.08
 
     # COD multiplier if enabled
     if patient.get("adjust_for_cause_of_death"):
@@ -313,8 +314,9 @@ def _geographic(lat: float, lon: float) -> float:
     col_score = max(0, min(100, 100 - ((col - 80) / 120) * 100))
     score += col_score * 0.40
 
-    # Climate (35%) — state-level fallback
-    score += 70 * 0.35  # neutral default for all centers
+    # Climate (35%) — interpolated from 22-city climate scores, fallback 70
+    climate = _interpolate("climate", lat, lon, fallback=70.0)
+    score += max(0, min(100, climate)) * 0.35
 
     # Air quality (25%)
     aq = _interpolate("air_quality", lat, lon, fallback=70.0)
@@ -358,15 +360,26 @@ def _policy(state: str) -> float:
 # ── Category 8: Socioeconomic (2%) ──────────────────────────────────────
 
 def _socioeconomic(state: str) -> float:
-    """State-level socioeconomic fallback."""
-    # State-level averages derived from the 22-city data
+    """State-level transplant support services score.
+
+    Based on: patient housing (30%), financial assistance (25%),
+    transplant support groups (20%), caregiver resources (15%),
+    health literacy (10%).
+    """
     state_socio = {
-        "Minnesota": 88, "Ohio": 92, "Pennsylvania": 90,
-        "Texas": 88, "Washington": 89, "New York": 85,
-        "Wisconsin": 87, "North Carolina": 86, "Tennessee": 84,
-        "Missouri": 84, "California": 84, "Maryland": 83,
-        "Illinois": 82, "Oregon": 82, "Indiana": 80,
-        "Florida": 78, "Nebraska": 85,
+        "Alabama": 72, "Alaska": 68, "Arizona": 76, "Arkansas": 70,
+        "California": 84, "Colorado": 83, "Connecticut": 84, "Delaware": 76,
+        "District of Columbia": 82, "Florida": 78, "Georgia": 76, "Hawaii": 74,
+        "Idaho": 70, "Illinois": 82, "Indiana": 80, "Iowa": 82,
+        "Kansas": 74, "Kentucky": 73, "Louisiana": 72, "Maine": 75,
+        "Maryland": 83, "Massachusetts": 86, "Michigan": 80, "Minnesota": 88,
+        "Mississippi": 68, "Missouri": 84, "Montana": 69, "Nebraska": 85,
+        "Nevada": 73, "New Hampshire": 78, "New Jersey": 81, "New Mexico": 72,
+        "New York": 85, "North Carolina": 86, "North Dakota": 72, "Ohio": 92,
+        "Oklahoma": 71, "Oregon": 82, "Pennsylvania": 90, "Puerto Rico": 65,
+        "Rhode Island": 79, "South Carolina": 73, "South Dakota": 71, "Tennessee": 84,
+        "Texas": 88, "Utah": 77, "Vermont": 76, "Virginia": 80,
+        "Washington": 89, "West Virginia": 70, "Wisconsin": 87, "Wyoming": 68,
     }
     return state_socio.get(state, 75)
 

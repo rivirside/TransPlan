@@ -128,6 +128,29 @@ def _extract_layer_points(layer_name: str) -> tuple[np.ndarray, np.ndarray] | No
                 points.append((lat, lon))
                 values.append(float(factor))
 
+    elif layer_name == "climate":
+        # Climate recovery scores from 22 focus cities
+        for city, val in data.climate_scores.items():
+            if city in _CITY_COORDS and isinstance(val, (int, float)):
+                points.append(_CITY_COORDS[city])
+                values.append(float(val))
+
+    elif layer_name == "trauma":
+        # Traffic/trauma scores from city data + accident hotspots
+        traffic = data.traffic_fatalities
+        trauma_scores = traffic.get("traumaScores", {})
+        for city, val in trauma_scores.items():
+            if city in _CITY_COORDS and isinstance(val, (int, float)):
+                points.append(_CITY_COORDS[city])
+                values.append(float(val))
+        # Also include accident hotspot intensities (0-1 scale → 0-100)
+        for hotspot in traffic.get("accidentHotspots", []):
+            lat, lon = hotspot.get("lat"), hotspot.get("lon")
+            intensity = hotspot.get("intensity")
+            if lat is not None and lon is not None and intensity is not None:
+                points.append((lat, lon))
+                values.append(float(intensity) * 100)
+
     elif layer_name.startswith("graft_survival_"):
         organ = layer_name[len("graft_survival_"):]
         center_data = data.center_outcomes.get("center_outcomes", {})
