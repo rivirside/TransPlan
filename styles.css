@@ -3988,16 +3988,20 @@ body {
   font-weight: 600;
 }
 .scroll-arrow {
+  animation: bounce 2s ease infinite;
+}
+.scroll-arrow::after {
+  content: '';
+  display: block;
   width: 18px;
   height: 18px;
   border-right: 2px solid var(--warm-accent);
   border-bottom: 2px solid var(--warm-accent);
   transform: rotate(45deg);
-  animation: bounce 2s ease infinite;
 }
 @keyframes bounce {
-  0%, 100% { transform: rotate(45deg) translateY(0); opacity: 1; }
-  50% { transform: rotate(45deg) translateY(8px); opacity: 0.4; }
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(8px); opacity: 0.4; }
 }
 
 /* --- Story section (main scrollytelling grid) --- */
