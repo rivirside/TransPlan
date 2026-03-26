@@ -6,8 +6,6 @@
     <title>transplant.today - Data-Driven Transplant Location Analysis</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
     <script src="dark-mode.js"></script>
 </head>
 <body class="landing-page">
@@ -23,7 +21,7 @@
             <div class="nav-links">
                 <a href="simulator.html" class="nav-link">Simulator</a>
                 <div class="nav-dropdown">
-                    <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">▾</span></button>
+                    <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>
                     <div class="nav-dropdown-menu" role="menu">
                         <a href="find-centers.html" class="nav-dropdown-item" role="menuitem">Find My Centers</a>
                         <a href="wait-estimator.html" class="nav-dropdown-item" role="menuitem">Wait Estimator</a>
@@ -45,138 +43,293 @@
 
     <main>
         <!-- Hero -->
-        <section class="hero">
-            <div class="hero-inner">
-                <h1>Find Your Best<br>Transplant Location</h1>
-                <p class="hero-sub">Compare 248 transplant centers across 8 scoring categories, run Monte Carlo simulations, and analyze demographic equity — all powered by public SRTR, OPTN, and CDC data.</p>
-                <div class="hero-actions">
-                    <a href="simulator.html" class="btn btn-primary btn-lg">Launch Simulator</a>
-                    <a href="#how-it-works" class="btn btn-ghost">How it works</a>
-                </div>
-            </div>
+        <section class="landing-hero">
+            <div class="kicker">An independent research and data project</div>
+            <h1>Where you list for a transplant<br>shapes your odds. <em>Dramatically.</em></h1>
+            <p class="hero-sub">Wait times for kidneys, livers, hearts, and lungs vary <strong>enormously</strong> depending on where you're listed. Most patients never see this data compared side by side. Most researchers can't easily model how policy changes would shift these outcomes. This project tackles both.</p>
+            <p class="hero-note">Built by a researcher who wanted this tool to exist. Public data from 8 sources, refreshed weekly, analyzed with open probabilistic models.</p>
         </section>
 
-        <!-- Features -->
-        <section id="features" class="section">
-            <div class="section-inner">
-                <h2 class="section-title">What TransplantMatch Does</h2>
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <div class="feature-card-title">
-                            <div class="feature-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></div>
-                            <h3>Multi-Factor Scoring</h3>
-                        </div>
-                        <p>8 weighted categories analyze 40+ data points to generate relative suitability scores for your specific organ transplant needs.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-card-title">
-                            <div class="feature-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-                            <h3>Wait Time Forecasting</h3>
-                        </div>
-                        <p>1,000-iteration Monte Carlo simulation models transplant probability over time with competing risks of mortality and waitlist removal.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-card-title">
-                            <div class="feature-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-                            <h3>Equity Analysis</h3>
-                        </div>
-                        <p>48-profile demographic matrix evaluates fairness across blood types, age brackets, and sex. Gini coefficient measures per-city equality.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-card-title">
-                            <div class="feature-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></div>
-                            <h3>Interactive Map</h3>
-                        </div>
-                        <p>Explore 248 transplant centers with 10 data overlays including health demographics, donor registration, and spatial heatmaps.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-card-title">
-                            <div class="feature-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h5l3-9 4 18 3-9h5"/></svg></div>
-                            <h3>What-If Scenarios</h3>
-                        </div>
-                        <p>Adjust donor rates and wait time multipliers to see how UNOS policy changes would affect transplant probabilities via real-time re-simulation.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-card-title">
-                            <div class="feature-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-                            <h3>Export &amp; Reports</h3>
-                        </div>
-                        <p>Download results as PDF, CSV, or JSON. Export charts as PNG images. Share results via URL parameters.</p>
+        <!-- Scroll hint -->
+        <div class="scroll-hint">
+            <span>Scroll down to explore the data</span>
+            <div class="scroll-arrow"></div>
+        </div>
+
+        <!-- Scrollytelling story section -->
+        <div class="story-section">
+            <div class="narrative-panel">
+
+                <!-- Step 1: The landscape -->
+                <div class="narr-step active" data-step="0">
+                    <div class="step-number">The Landscape</div>
+                    <h2>248 transplant programs. One country.</h2>
+                    <p>Each marker is a hospital that performs organ transplants: kidneys, livers, hearts, lungs, pancreas, and intestine. Together they serve over 100,000 patients on the national waitlist.</p>
+                    <p>They cluster around major metros. But patients come from everywhere, including rural areas hundreds of miles from the nearest center.</p>
+                    <div class="data-source">Center data from <strong>SRTR</strong> (Scientific Registry of Transplant Recipients)</div>
+                    <div class="step-nav">
+                        <button class="step-btn ghost" disabled>Back</button>
+                        <button class="step-btn primary" onclick="goStep(1)">Next</button>
+                        <span class="step-counter">1 / 8</span>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- Centers Map -->
-        <section class="section section-alt">
-            <div class="section-inner" style="max-width: 1100px;">
-                <h2 class="section-title">248 Transplant Centers Nationwide</h2>
-                <p style="text-align: center; color: var(--text-2); margin-bottom: var(--space-6);">Click any center to see details. Zoom and pan to explore.</p>
-                <div id="landing-map" style="height: 420px; border-radius: var(--radius-md); border: 1px solid var(--border); overflow: hidden;"></div>
-            </div>
-        </section>
-
-        <!-- How It Works -->
-        <section id="how-it-works" class="section">
-            <div class="section-inner">
-                <h2 class="section-title">How It Works</h2>
-                <div class="steps-flow">
-                    <div class="step-card">
-                        <span class="step-number">1</span>
-                        <h3>Enter Your Profile</h3>
-                        <p>Organ type, blood type, age, and optional clinical inputs like cPRA, MELD, or LAS scores.</p>
-                    </div>
-                    <div class="step-card">
-                        <span class="step-number">2</span>
-                        <h3>Algorithm Scores Centers</h3>
-                        <p>Multi-factor analysis across medical compatibility, wait times, donor availability, and 5 more categories.</p>
-                    </div>
-                    <div class="step-card">
-                        <span class="step-number">3</span>
-                        <h3>Run Simulation</h3>
-                        <p>1,000 Monte Carlo iterations estimate transplant probability at 6, 12, 24, and 36 months per center.</p>
-                    </div>
-                    <div class="step-card">
-                        <span class="step-number">4</span>
-                        <h3>Compare &amp; Analyze</h3>
-                        <p>Side-by-side comparison, detailed breakdowns, equity analysis, and exportable reports.</p>
+                <!-- Step 2: The problem -->
+                <div class="narr-step" data-step="1">
+                    <div class="step-number">The Problem</div>
+                    <h2>They are not created equal.</h2>
+                    <p>Wait times at these centers vary by orders of magnitude, even for the same organ and blood type. Two hospitals 40 miles apart can differ by years.</p>
+                    <div class="big-stat">8 mo to 11 yr</div>
+                    <div class="stat-label">Kidney median wait range across US centers</div>
+                    <p>Each center is colored from <span style="color:#2d9e5c;font-weight:600;">green</span> (shorter waits) to <span style="color:#e05252;font-weight:600;">red</span> (longer waits). The pattern is geographic, not random.</p>
+                    <div class="data-source">Wait data from <strong>OPTN</strong> (Organ Procurement and Transplantation Network)</div>
+                    <div class="step-nav">
+                        <button class="step-btn ghost" onclick="goStep(0)">Back</button>
+                        <button class="step-btn primary" onclick="goStep(2)">Next</button>
+                        <span class="step-counter">2 / 8</span>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- Data Trust -->
-        <section class="section">
-            <div class="section-inner" style="text-align: center;">
-                <h2 class="section-title">Powered by Trusted Public Data</h2>
-                <p class="trust-description">TransplantMatch uses publicly available datasets refreshed weekly via automated pipelines.</p>
-                <div class="trust-sources">
-                    <span class="trust-badge">SRTR</span>
-                    <span class="trust-badge">OPTN</span>
-                    <span class="trust-badge">CDC</span>
-                    <span class="trust-badge">CMS</span>
-                    <span class="trust-badge">EPA</span>
-                    <span class="trust-badge">BLS</span>
+                <!-- Step 3: How fatalities create donors -->
+                <div class="narr-step" data-step="2">
+                    <div class="step-number">Organ Supply</div>
+                    <h2>Traumatic deaths are a major source of donor organs.</h2>
+                    <p>A large share of transplantable organs come from sudden fatalities, particularly motor vehicle accidents. The shaded red regions show areas with higher traffic fatality rates.</p>
+                    <p>These areas often don't overlap with major transplant centers, creating a geographic mismatch between where organs become available and where patients are waiting.</p>
+                    <div class="data-source">Fatality data from <strong>NHTSA</strong> via CDC WISQARS</div>
+                    <div class="step-nav">
+                        <button class="step-btn ghost" onclick="goStep(1)">Back</button>
+                        <button class="step-btn primary" onclick="goStep(3)">Next</button>
+                        <span class="step-counter">3 / 8</span>
+                    </div>
+                </div>
+
+                <!-- Step 4: Different fatalities, different organs -->
+                <div class="narr-step" data-step="3">
+                    <div class="step-number">Not All Donors Are Equal</div>
+                    <h2>Different causes of death preserve different organs.</h2>
+                    <p>Brain death from trauma (car accidents, falls) tends to preserve kidneys, livers, and pancreases well because blood flow continues. Cardiac death, by contrast, limits viability for hearts and lungs due to warm ischemia time.</p>
+                    <p>This means a region's <em>type</em> of fatalities shapes which organs are available there, not just how many. Rural areas with high traffic fatalities may have strong kidney supply but limited heart availability.</p>
+                    <div class="highlight">We model this by weighting organ-specific donor rates per region, not just raw fatality counts.</div>
+                    <div class="data-source">Donor type data from <strong>OPTN</strong> &amp; <strong>SRTR</strong> program-specific reports</div>
+                    <div class="step-nav">
+                        <button class="step-btn ghost" onclick="goStep(2)">Back</button>
+                        <button class="step-btn primary" onclick="goStep(4)">Next</button>
+                        <span class="step-counter">4 / 8</span>
+                    </div>
+                </div>
+
+                <!-- Step 5: Donor registration -->
+                <div class="narr-step" data-step="4">
+                    <div class="step-number">Donor Willingness</div>
+                    <h2>Donor registration rates vary wildly by state.</h2>
+                    <p>How many people in a region have opted in as organ donors directly affects the supply pipeline. Blue shaded regions show higher registration density.</p>
+                    <div class="big-stat">35% to 68%</div>
+                    <div class="stat-label">State-level donor registration rate range</div>
+                    <p>When you layer supply patterns, registration rates, hospital volume, and wait times, you start to see why where you list matters as much as your clinical profile.</p>
+                    <div class="data-source">Registration data from <strong>HRSA</strong> / Donate Life America</div>
+                    <div class="step-nav">
+                        <button class="step-btn ghost" onclick="goStep(3)">Back</button>
+                        <button class="step-btn primary" onclick="goStep(5)">Next</button>
+                        <span class="step-counter">5 / 8</span>
+                    </div>
+                </div>
+
+                <!-- Step 6: The methods -->
+                <div class="narr-step" data-step="5">
+                    <div class="step-number">The Methods</div>
+                    <h2>Monte Carlo simulation with competing risks.</h2>
+                    <p>For each center, we run 1,000 Monte Carlo iterations that model the probability of transplant at 6, 12, 24, and 36 months. Each iteration accounts for competing risks: transplant, mortality on the waitlist, and removal for other reasons.</p>
+                    <p>A 48-profile demographic matrix evaluates equity across blood types, age brackets, and sex. The Gini coefficient measures how fairly each center distributes outcomes across patient profiles.</p>
+                    <div class="highlight">What-if scenarios let researchers adjust donor rates and wait-time multipliers to model how UNOS policy changes would shift transplant probabilities in real time.</div>
+                    <div class="step-nav">
+                        <button class="step-btn ghost" onclick="goStep(4)">Back</button>
+                        <button class="step-btn primary" onclick="goStep(6)">Next</button>
+                        <span class="step-counter">6 / 8</span>
+                    </div>
+                </div>
+
+                <!-- Step 7: The composite score -->
+                <div class="narr-step" data-step="6">
+                    <div class="step-number">The Composite</div>
+                    <h2>50+ variables. 8 weighted categories. One score.</h2>
+                    <p>transplant.today combines all of these layers into a composite suitability score: medical compatibility, wait times, donor availability, hospital quality (<strong>CMS</strong>), logistics, health demographics (<strong>CDC</strong>), air quality (<strong>EPA</strong>), and socioeconomic support (<strong>BLS</strong>).</p>
+                    <p>Larger, brighter markers indicate higher composite scores. The weights adapt to your organ type, blood type, and clinical profile.</p>
+                    <div class="highlight">This is the kind of multi-factor analysis that wealthy patients pay consultants to perform. We made it free and open source.</div>
+                    <div class="step-nav">
+                        <button class="step-btn ghost" onclick="goStep(5)">Back</button>
+                        <button class="step-btn primary" onclick="goStep(7)">Next</button>
+                        <span class="step-counter">7 / 8</span>
+                    </div>
+                </div>
+
+                <!-- Step 8: For patients and researchers -->
+                <div class="narr-step" data-step="7">
+                    <div class="step-number">For Patients and Researchers</div>
+                    <h2>A tool for decisions. A platform for discovery.</h2>
+                    <p><strong>For patients:</strong> the Simulator gives you personalized center rankings with wait-time forecasts. The Center Explorer lets you compare programs side by side. No login, no cost.</p>
+                    <p><strong>For researchers:</strong> the Data tab exposes every layer as a toggleable overlay on the interactive map. Run what-if policy scenarios. Export results as CSV, JSON, or PDF. Explore how allocation policies, donor registration drives, and infrastructure investments could reshape equitable access to transplantation.</p>
+                    <div class="highlight">Free. Open source. No login required. Data refreshed weekly from 8 public sources.</div>
+                    <div class="step-nav">
+                        <button class="step-btn ghost" onclick="goStep(6)">Back</button>
+                        <button class="step-btn primary" onclick="document.querySelector('.post-story-cta').scrollIntoView({behavior:'smooth'})">Launch Simulator</button>
+                        <span class="step-counter">8 / 8</span>
+                    </div>
+                </div>
+
+                <div class="progress-bar-wrap">
+                    <div class="progress-bar-fill" id="progress-fill"></div>
                 </div>
             </div>
-        </section>
 
-        <!-- CTA -->
-        <section class="section section-cta">
-            <div class="section-inner" style="text-align: center;">
+            <div class="story-map-wrapper">
+                <div id="story-map"></div>
+
+                <!-- Pre-built legends, one per step -->
+                <div class="map-legend visible" id="legend-0">
+                    <div class="legend-row"><div class="legend-swatch" style="background:#2a2520;"></div> Transplant center</div>
+                </div>
+                <div class="map-legend" id="legend-1">
+                    <div class="legend-row"><div class="legend-gradient" style="background:linear-gradient(to right,rgb(45,158,60),rgb(235,28,60));"></div> Median wait time</div>
+                    <div class="legend-sub">Green = shorter &nbsp; Red = longer</div>
+                </div>
+                <div class="map-legend" id="legend-2">
+                    <div class="legend-row"><div class="legend-swatch region" style="background:rgba(217,59,59,0.5);"></div> Higher fatality rate region</div>
+                    <div class="legend-row"><div class="legend-swatch" style="background:#444;"></div> Center location</div>
+                </div>
+                <div class="map-legend" id="legend-3">
+                    <div class="legend-row"><div class="legend-swatch" style="background:#d93b3b;width:10px;height:10px;"></div> Brain death donor source</div>
+                    <div class="legend-row"><div class="legend-swatch" style="background:#e0a040;width:7px;height:7px;"></div> Cardiac death donor source</div>
+                    <div class="legend-sub">Size = relative volume</div>
+                </div>
+                <div class="map-legend" id="legend-4">
+                    <div class="legend-row"><div class="legend-swatch region" style="background:rgba(59,130,246,0.5);"></div> Higher registration rate</div>
+                    <div class="legend-row"><div class="legend-swatch" style="background:#444;"></div> Center location</div>
+                </div>
+                <div class="map-legend" id="legend-5">
+                    <div class="legend-row"><div class="legend-swatch" style="background:#c97c4a;"></div> Simulation sample</div>
+                    <div class="legend-sub">Monte Carlo + equity model</div>
+                </div>
+                <div class="map-legend" id="legend-6">
+                    <div class="legend-row"><div class="legend-swatch" style="background:#c97c4a;width:12px;height:12px;"></div> Higher composite score</div>
+                    <div class="legend-row"><div class="legend-swatch" style="background:#c97c4a;width:6px;height:6px;"></div> Lower composite score</div>
+                </div>
+                <div class="map-legend" id="legend-7">
+                    <div class="legend-row"><div class="legend-swatch" style="background:#c97c4a;"></div> All 248 centers</div>
+                    <div class="legend-sub">Click any for full profile</div>
+                </div>
+
+                <div class="map-simplified-note">
+                    Visualizations here are simplified for storytelling. Visit the <a href="data.html">Data page</a> for full interactive layers with real values.
+                </div>
+            </div>
+        </div>
+
+        <!-- Post-story CTA -->
+        <div class="post-story-cta">
+            <div class="post-story-inner">
                 <h2>Ready to explore your options?</h2>
-                <p>Free, open-source, and no account required.</p>
-                <a href="simulator.html" class="btn btn-primary btn-lg">Launch Simulator</a>
+                <p>Run the simulator for your organ and blood type. Compare centers side by side.</p>
             </div>
-        </section>
+            <div class="post-story-actions">
+                <a href="simulator.html" class="btn-warm-primary">Launch Simulator</a>
+                <a href="data.html" class="btn-warm-ghost">Explore full data map</a>
+            </div>
+        </div>
 
+        <!-- Feature grid -->
+        <div class="landing-features">
+            <div class="landing-feature">
+                <div class="landing-feature-num">01</div>
+                <h3>Multi-Factor Scoring</h3>
+                <p>8 categories, 50+ variables per center, adjusted for your organ and blood type.</p>
+            </div>
+            <div class="landing-feature">
+                <div class="landing-feature-num">02</div>
+                <h3>Monte Carlo Simulation</h3>
+                <p>1,000 iterations with competing risks: transplant, mortality, removal. 6 to 36 month horizons.</p>
+            </div>
+            <div class="landing-feature">
+                <div class="landing-feature-num">03</div>
+                <h3>Equity Analysis</h3>
+                <p>48-profile demographic matrix with Gini coefficient. See which centers treat all patient profiles fairly.</p>
+            </div>
+        </div>
+
+        <!-- Resources section -->
+        <div class="resources-section">
+            <div class="resources-title">Tools and Guides</div>
+            <div class="resources-grid">
+                <a href="find-centers.html" class="resource-card">
+                    <h3>Find My Centers</h3>
+                    <p>Locate transplant programs near you based on organ type and location.</p>
+                </a>
+                <a href="wait-estimator.html" class="resource-card">
+                    <h3>Wait Estimator</h3>
+                    <p>Estimate wait times with Monte Carlo simulation for any center and profile.</p>
+                </a>
+                <a href="centers.html" class="resource-card">
+                    <h3>Center Explorer</h3>
+                    <p>Browse all 248 centers with detailed metrics, scores, and program data.</p>
+                </a>
+                <a href="compare.html" class="resource-card">
+                    <h3>Compare Centers</h3>
+                    <p>Side-by-side comparison of transplant programs across all scoring categories.</p>
+                </a>
+                <a href="organ-guides.html" class="resource-card">
+                    <h3>Organ Guides</h3>
+                    <p>Detailed guides for kidney, liver, heart, lung, and pancreas transplantation.</p>
+                </a>
+                <a href="checklist.html" class="resource-card">
+                    <h3>Transplant Checklist</h3>
+                    <p>Step-by-step checklist to help you prepare for the transplant process.</p>
+                </a>
+                <a href="organ-guides.html#insurance" class="resource-card">
+                    <h3>Insurance Navigator</h3>
+                    <p>Understand insurance coverage, costs, and financial assistance for transplants.</p>
+                </a>
+                <a href="organ-guides.html#caregiver" class="resource-card">
+                    <h3>Caregiver Guide</h3>
+                    <p>Resources and guidance for caregivers supporting transplant patients.</p>
+                </a>
+                <a href="education.html" class="resource-card">
+                    <h3>Education</h3>
+                    <p>Learn how organ allocation works, what scores mean, and how to read the data.</p>
+                </a>
+                <a href="support.html" class="resource-card">
+                    <h3>Patient Support</h3>
+                    <p>Connect with support groups, mental health resources, and patient communities.</p>
+                </a>
+                <a href="faq.html" class="resource-card">
+                    <h3>FAQ</h3>
+                    <p>Answers to common questions about transplant.today and how the tools work.</p>
+                </a>
+                <a href="advocacy.html" class="resource-card">
+                    <h3>Advocacy and Give Back</h3>
+                    <p>Learn how to advocate for organ donation and support the transplant community.</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Sources bar -->
+        <div class="sources-bar">
+            <span class="sources-label">Data from</span>
+            <span class="source-badge">SRTR</span>
+            <span class="source-badge">OPTN</span>
+            <span class="source-badge">CDC</span>
+            <span class="source-badge">CMS</span>
+            <span class="source-badge">EPA</span>
+            <span class="source-badge">BLS</span>
+            <span class="source-badge">NHTSA</span>
+            <span class="source-badge">HRSA</span>
+        </div>
     </main>
 
     <footer id="disclaimer-full" class="site-footer">
         <div class="footer-inner">
             <div class="footer-disclaimer">
                 <h3>Disclaimer</h3>
-                <p><strong>This tool is for educational and exploratory purposes only.</strong> TransplantMatch is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
+                <p><strong>This tool is for educational and exploratory purposes only.</strong> transplant.today is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
                 <p><strong>Scores are relative comparisons</strong> based on publicly available regional statistics. They are not clinical assessments.</p>
                 <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant.</p>
             </div>
@@ -192,54 +345,7 @@
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <script>
-    (function() {
-        'use strict';
-        if (typeof L === 'undefined' || !document.getElementById('landing-map')) return;
-
-        var map = L.map('landing-map', { scrollWheelZoom: false }).setView([39.8, -98.6], 4);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '\u00a9 OpenStreetMap contributors',
-            maxZoom: 18
-        }).addTo(map);
-        map.on('click', function() { map.scrollWheelZoom.enable(); });
-
-        (async function() {
-            var centers = [];
-            try {
-                var r = await fetch('/centers');
-                if (r.ok) { var d = await r.json(); centers = d.centers || []; }
-            } catch (e) {}
-            if (!centers.length) {
-                try {
-                    var r2 = await fetch('data/srtr-all-centers.json');
-                    if (r2.ok) { var d2 = await r2.json(); centers = Object.values(d2.centers || {}); }
-                } catch (e) {}
-            }
-            if (!centers.length) return;
-
-            var cluster = typeof L.markerClusterGroup === 'function'
-                ? L.markerClusterGroup({ maxClusterRadius: 50, showCoverageOnHover: false, disableClusteringAtZoom: 7 })
-                : L.layerGroup();
-
-            centers.forEach(function(c) {
-                if (!c.lat || !c.lon) return;
-                var m = L.circleMarker([c.lat, c.lon], {
-                    radius: 6, fillColor: '#5B6FE6', color: '#3844AB',
-                    weight: 2, opacity: 1, fillOpacity: 0.8
-                });
-                var loc = [c.state_abbr || c.state || ''];
-                var popup = '<strong>' + (c.name || 'Unknown') + '</strong><br>'
-                    + '<em>' + loc.join('') + '</em><br>'
-                    + '<a href="center.html?code=' + encodeURIComponent(c.code || '') + '" style="color:#5B6FE6">View Details \u2192</a>';
-                m.bindPopup(popup);
-                m.addTo(cluster);
-            });
-            cluster.addTo(map);
-        })();
-    })();
-    </script>
+    <script src="landing-story.js"></script>
     <script src="donation-banner.js"></script>
     <script src="session.js"></script>
     <!-- Vercel Analytics -->
