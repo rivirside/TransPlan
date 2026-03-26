@@ -4033,13 +4033,18 @@ body {
 .narr-step.active {
   display: flex;
 }
-.step-number {
+.landing-page .step-number {
   font-size: 10px;
   letter-spacing: 2px;
   color: var(--warm-accent);
   text-transform: uppercase;
   font-weight: 700;
   margin-bottom: 14px;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: none;
+  display: block;
 }
 .narr-step h2 {
   font-size: 22px;
