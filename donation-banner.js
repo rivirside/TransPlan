@@ -60,8 +60,8 @@
             '  flex-shrink: 0;',
             '}',
             '#donation-banner .banner-close:hover { color: var(--text-1, #111); }',
-            '@media (max-width: 600px) {',
-            '  #donation-banner { flex-direction: column; gap: 0.5rem; padding: 0.75rem 1rem; }',
+            '@media (max-width: 768px) {',
+            '  #donation-banner { display: none !important; }',
             '}',
         ].join('\n');
         document.head.appendChild(style);
