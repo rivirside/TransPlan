@@ -1,10 +1,10 @@
-# TransplantMatch — Full Context for LLMs
+# transplant.today - Full Context for LLMs
 
-> TransplantMatch is a free, open-source decision support tool that helps transplant patients and families evaluate and compare 248 U.S. transplant centers. It uses publicly available data from SRTR, OPTN, CDC, CMS, EPA, and BLS.
+> transplant.today is a free, open-source transplant research platform that helps patients, families, and policy researchers evaluate and compare 248 U.S. transplant centers. It uses publicly available data from 8 sources: SRTR, OPTN, CDC, CMS, EPA, BLS, NHTSA, and HRSA. The platform supports policy analysis, what-if scenarios, and equity modeling across the U.S. transplant system.
 
 ## Project Overview
 
-TransplantMatch provides data-driven analysis across 8 scoring categories with 40+ factors to generate relative suitability scores. It includes a Monte Carlo simulation engine (1,000 iterations) that models transplant probability over time with competing risks of mortality and waitlist removal.
+transplant.today provides data-driven analysis across 8 scoring categories with 40+ factors to generate relative suitability scores. It includes a Monte Carlo simulation engine (1,000 iterations) that models transplant probability over time with competing risks of mortality and waitlist removal. The landing page features a scrollytelling experience that introduces visitors to the transplant system through data-driven narrative, guiding them from national statistics to personalized center discovery.
 
 **This tool is for educational purposes only. It is not a medical device and does not provide medical advice.**
 
@@ -48,7 +48,7 @@ Side-by-side comparison of up to 3 centers. URL-shareable via ?centers=CODE1,COD
 ### Center Detail (/center.html?code={CODE})
 Detailed page for each of 248 centers showing:
 - Organ Programs table: wait factor, mortality factor, delisting factor, 1-yr graft, 1-yr patient, 3-yr graft, 3-yr patient, hazard ratio with 95% CI, annual volume
-- Waitlist Activity: currently waiting, added last year, transplanted (deceased/living), died while waiting, removed (too ill) — with organ selector
+- Waitlist Activity: currently waiting, added last year, transplanted (deceased/living), died while waiting, removed (too ill) - with organ selector
 - Contact & Location: address, phone, website (fetched live from SRTR API with static fallback), interactive Leaflet map
 - Nearby Centers: other programs within 250 miles with distance
 - All sections are collapsible with descriptive preview text
@@ -59,6 +59,14 @@ Full Monte Carlo simulation engine. Users input:
 - Optional clinical scores (cPRA for kidney, MELD for liver, LAS for lung)
 - Custom weight adjustments for 8 scoring categories
 The simulator runs 1,000 iterations estimating transplant probability at 6, 12, 24, and 36 months for each center, incorporating competing risks (mortality, delisting). Results include per-center probability curves, ranking tables, and interactive map overlays.
+
+### Data Explorer (/data.html)
+Interactive data exploration tool for researchers and policy analysts. Features:
+- National transplant trends and aggregate statistics
+- Regional disparity analysis across OPOs and DSAs
+- Center-level metric comparisons with filtering and sorting
+- Support for what-if scenarios and equity modeling
+- Exportable views for policy research and academic use
 
 ### Organ Guides (/organ-guides.html)
 Dedicated educational guides for kidney, liver, heart, lung, and pancreas transplants. Each section covers:
@@ -127,10 +135,23 @@ Progress saved to localStorage. Includes progress bar, print button, and reset.
 8. Climate & Environment (EPA air quality, climate scores)
 
 ### API Endpoints
-- GET /centers — List all 248 centers with coordinates and organ programs
-- GET /centers/{code} — Detailed data for a single center
-- POST /simulate — Monte Carlo simulation (1,000 iterations)
-- GET /health — API health check with data freshness metadata
+- GET /centers - List all 248 centers with coordinates and organ programs
+- GET /centers/{code} - Detailed data for a single center
+- POST /simulate - Monte Carlo simulation (1,000 iterations)
+- GET /health - API health check with data freshness metadata
+
+---
+
+## Data Sources
+
+- SRTR (Scientific Registry of Transplant Recipients) - center outcomes, waitlist data, performance ratings
+- OPTN (Organ Procurement and Transplantation Network) - allocation policies, center listings
+- CDC - health demographics, cause of death by region
+- CMS - hospital quality ratings
+- EPA - air quality data
+- BLS - cost of living indices
+- NHTSA - traffic fatality rates for donor availability modeling
+- HRSA - health resources and services data
 
 ---
 

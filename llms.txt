@@ -1,6 +1,6 @@
-# TransplantMatch
+# transplant.today
 
-> TransplantMatch is a free, open-source transplant center analysis tool for patients and families. It compares 248 U.S. transplant centers using public SRTR, OPTN, CDC, and CMS data.
+> transplant.today is a free, open-source transplant research platform for patients, families, and policy researchers. It compares 248 U.S. transplant centers using public data from 8 sources (SRTR, OPTN, CDC, CMS, EPA, BLS, NHTSA, HRSA), supporting policy analysis, what-if scenarios, and equity modeling. The landing page features a scrollytelling experience that introduces the transplant system through data-driven storytelling.
 
 ## Tools
 
@@ -9,6 +9,7 @@
 - [Center Explorer](/centers.html): Search and filter all 248 transplant centers by name, location, or organ
 - [Compare Centers](/compare.html): Side-by-side comparison of up to 3 centers
 - [Simulator](/simulator.html): Full Monte Carlo simulation with 1,000 iterations modeling transplant probability over time
+- [Data Explorer](/data.html): Interactive exploration of national transplant trends, regional disparities, and center-level metrics for policy analysis and equity research
 
 ## Patient Resources
 
@@ -30,12 +31,14 @@ Each of the 248 centers has a detail page at `/center.html?code={CODE}` showing:
 
 ## Data Sources
 
-- SRTR (Scientific Registry of Transplant Recipients) — center outcomes, waitlist data, performance ratings
-- OPTN (Organ Procurement and Transplantation Network) — allocation policies, center listings
-- CDC — health demographics, cause of death by region
-- CMS — hospital quality ratings
-- EPA — air quality data
-- BLS — cost of living indices
+- SRTR (Scientific Registry of Transplant Recipients) - center outcomes, waitlist data, performance ratings
+- OPTN (Organ Procurement and Transplantation Network) - allocation policies, center listings
+- CDC - health demographics, cause of death by region
+- CMS - hospital quality ratings
+- EPA - air quality data
+- BLS - cost of living indices
+- NHTSA - traffic fatality rates for donor availability modeling
+- HRSA - health resources and services data
 
 ## Technical
 
