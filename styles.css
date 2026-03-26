@@ -4381,6 +4381,122 @@ body {
 }
 
 
+/* ===== Landing Page Responsive ===== */
+
+/* Tablet: stack story section */
+@media (max-width: 1024px) {
+  .story-section {
+    grid-template-columns: 1fr;
+    height: auto;
+    max-height: none;
+    min-height: auto;
+  }
+
+  .narrative-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--warm-border);
+    position: relative;
+    min-height: 280px;
+  }
+
+  .narr-step {
+    position: relative;
+    inset: auto;
+    padding: 28px 32px;
+  }
+
+  .story-map-wrapper {
+    height: 400px;
+  }
+
+  .landing-hero {
+    padding: 48px 32px 28px;
+  }
+
+  .landing-hero h1 {
+    font-size: 36px;
+  }
+
+  .post-story-inner {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .landing-hero {
+    padding: 36px 20px 24px;
+  }
+
+  .landing-hero h1 {
+    font-size: 28px;
+    letter-spacing: -1px;
+  }
+
+  .hero-sub {
+    font-size: 15px;
+  }
+
+  .narr-step {
+    padding: 20px;
+  }
+
+  .narr-step h2 {
+    font-size: 20px;
+  }
+
+  .big-stat {
+    font-size: 28px;
+  }
+
+  .story-map-wrapper {
+    height: 300px;
+  }
+
+  .landing-features {
+    grid-template-columns: 1fr;
+  }
+
+  .resources-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .post-story-cta {
+    padding: 32px 20px;
+  }
+
+  .sources-bar {
+    padding: 24px 20px;
+    flex-wrap: wrap;
+  }
+
+  .scroll-hint {
+    padding: 12px 0 24px;
+  }
+
+  .step-nav {
+    flex-wrap: wrap;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .landing-hero h1 {
+    font-size: 24px;
+  }
+
+  .resources-grid {
+    gap: 8px;
+  }
+
+  .landing-features {
+    gap: 1px;
+  }
+}
+
+
 /* ===================================================================
    DARK MODE
    Applied via data-dark="true" on <html>.
