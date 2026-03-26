@@ -4289,15 +4289,33 @@ body {
 
 /* --- Features grid --- */
 .landing-features {
+  border-top: 1px solid var(--warm-border);
+}
+.landing-feature-header {
+  padding: 32px 48px 0;
+}
+.landing-feature-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--warm-text);
+  letter-spacing: -0.3px;
+}
+.landing-features-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   background: var(--warm-border);
-  border-top: 1px solid var(--warm-border);
+  margin-top: 20px;
 }
 .landing-feature {
   background: var(--warm-bg);
   padding: 28px 32px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s;
+}
+.landing-feature:hover {
+  background: var(--warm-surface);
 }
 .landing-feature-num {
   font-size: 10px;
@@ -4427,10 +4445,15 @@ body {
     font-size: 36px;
   }
 
-  .post-story-inner {
+  .post-story-cta {
     flex-direction: column;
     gap: 20px;
     text-align: center;
+    align-items: center;
+  }
+
+  .post-story-actions {
+    justify-content: center;
   }
 }
 
@@ -4465,7 +4488,7 @@ body {
     height: 300px;
   }
 
-  .landing-features {
+  .landing-features-grid {
     grid-template-columns: 1fr;
   }
 
@@ -4501,7 +4524,7 @@ body {
     gap: 8px;
   }
 
-  .landing-features {
+  .landing-features-grid {
     gap: 1px;
   }
 }
