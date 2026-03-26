@@ -4015,6 +4015,7 @@ body {
   border-right: 1px solid var(--warm-border);
   overflow: hidden;
   position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
 }
@@ -4226,6 +4227,10 @@ body {
 .landing-page .leaflet-control-attribution {
   font-size: 9px !important;
   opacity: 0.4;
+}
+.landing-page .leaflet-top.leaflet-left {
+  left: auto;
+  right: 10px;
 }
 .landing-page .leaflet-control-zoom {
   border: 1px solid var(--warm-border) !important;
