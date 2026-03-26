@@ -27,7 +27,7 @@
         var banner = document.createElement('div');
         banner.id = 'donation-banner';
         banner.setAttribute('role', 'complementary');
-        banner.setAttribute('aria-label', 'Support TransplantMatch');
+        banner.setAttribute('aria-label', 'Support transplant.today');
 
         // Styles
         var style = document.createElement('style');
@@ -70,9 +70,9 @@
         var text = document.createElement('div');
         text.className = 'banner-text';
         var strong = document.createElement('strong');
-        strong.textContent = 'TransplantMatch is free and open-source.';
+        strong.textContent = 'transplant.today is free and open-source.';
         text.appendChild(strong);
-        text.appendChild(document.createTextNode(' Help us keep it running \u2014 every dollar supports development, data updates, and hosting.'));
+        text.appendChild(document.createTextNode(' Help us keep it running. Every dollar supports development, data updates, and hosting.'));
         banner.appendChild(text);
 
         // Buttons
