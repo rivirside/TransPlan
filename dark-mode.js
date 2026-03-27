@@ -153,9 +153,17 @@
     });
   }
 
+  function tryInitNav() {
+    if (document.querySelector('.nav-links')) {
+      initNav();
+    } else {
+      document.addEventListener('nav-ready', initNav, { once: true });
+    }
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initNav);
+    document.addEventListener('DOMContentLoaded', tryInitNav);
   } else {
-    initNav();
+    tryInitNav();
   }
 })();
