@@ -22,10 +22,45 @@
                     <p class="hero-sub">Wait times for kidneys, livers, hearts, and lungs vary <strong>enormously</strong> depending on where you're listed. Most patients never see this data compared side by side. Most researchers can't easily model how policy changes would shift these outcomes. This project tackles both.</p>
                     <p class="hero-note">This is an open-source project built on public data. If you're a developer, researcher, or transplant advocate, we'd love your help. <a href="docs-site/build/api-reference/simulate" target="_blank" rel="noopener" style="color:var(--warm-accent);font-weight:600;text-decoration:none;">Check out the API</a> or <a href="mailto:contact@rivir.social" style="color:var(--warm-accent);font-weight:600;text-decoration:none;">get in touch</a>.</p>
                 </div>
-                <div class="hero-pull-box">
-                    <div class="hero-pull-eyebrow">A real patient story</div>
-                    <p class="hero-pull-story">A kidney patient listed in Phoenix waits a median of <em>4 months.</em> The same patient listed in Boston waits <em>3 years.</em></p>
-                    <p class="hero-pull-caption">Both patients are on the same national waitlist, governed by the same federal rules. The difference is which transplant program they chose.</p>
+                <div class="hero-pull-carousel">
+                    <div class="pull-stack">
+
+                    <div class="pull-card">
+                        <div class="hero-pull-eyebrow">A real patient story</div>
+                        <p class="hero-pull-story">A kidney patient listed in Phoenix waits a median of <em>4 months.</em> The same patient listed in Boston waits <em>3 years.</em></p>
+                        <p class="hero-pull-caption">Both patients are on the same national waitlist, governed by the same federal rules. The difference is which transplant program they chose.</p>
+                    </div>
+
+                    <div class="pull-card">
+                        <div class="hero-pull-eyebrow">The disparity, by organ</div>
+                        <p class="hero-pull-story">Heart candidates in some regions wait <em>6× longer</em> than those in neighboring areas — same organ, same blood type.</p>
+                        <p class="hero-pull-caption">Wait time variation is driven by geography and accumulated waitlist pressure, not medical urgency.</p>
+                    </div>
+
+                    <div class="pull-card">
+                        <div class="hero-pull-eyebrow">What patients can do</div>
+                        <p class="hero-pull-story">Listing at two or more transplant centers can cut expected wait time by <em>up to 65%.</em></p>
+                        <p class="hero-pull-caption">It's legal, underused, and rarely discussed. transplant.today shows you where it matters most.</p>
+                    </div>
+
+                    <div class="pull-card">
+                        <div class="hero-pull-eyebrow">The stakes</div>
+                        <p class="hero-pull-story">Over <em>20 people die</em> every day waiting for a transplant. Many had options they never knew about.</p>
+                        <p class="hero-pull-caption">Data transparency changes outcomes. This project is built on that belief.</p>
+                    </div>
+
+                    </div><!-- /.pull-stack -->
+                    <div class="carousel-controls">
+                        <button class="carousel-prev" aria-label="Previous card">&#8592;</button>
+                        <div class="carousel-dots">
+                            <span class="pull-dot active"></span>
+                            <span class="pull-dot"></span>
+                            <span class="pull-dot"></span>
+                            <span class="pull-dot"></span>
+                        </div>
+                        <button class="carousel-next" aria-label="Next card">&#8594;</button>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -329,6 +364,48 @@
     <div id="footer-placeholder"></div>
 
     <script src="components/site-chrome.js?v=5"></script>
+    <script>
+    // Editorial carousel
+    (function() {
+      var carousel = document.querySelector('.hero-pull-carousel');
+      if (!carousel) return;
+      var stack = carousel.querySelector('.pull-stack');
+      var cards = Array.from(carousel.querySelectorAll('.pull-card'));
+      var dots = Array.from(carousel.querySelectorAll('.pull-dot'));
+      var total = cards.length;
+      var current = 0;
+
+      function update() {
+        cards.forEach(function(card, i) {
+          var layer = (i - current + total) % total;
+          card.setAttribute('data-layer', Math.min(layer, 3));
+        });
+        dots.forEach(function(dot, i) {
+          dot.classList.toggle('active', i === current);
+        });
+        requestAnimationFrame(function() {
+          var h = cards[current].offsetHeight;
+          stack.style.height = (h + 36) + 'px';
+        });
+      }
+
+      function go(idx) { current = (idx + total) % total; update(); }
+
+      carousel.querySelector('.carousel-prev').addEventListener('click', function() { go(current - 1); });
+      carousel.querySelector('.carousel-next').addEventListener('click', function() { go(current + 1); });
+      dots.forEach(function(dot, i) { dot.addEventListener('click', function() { go(i); }); });
+
+      var tx = 0;
+      carousel.addEventListener('touchstart', function(e) { tx = e.touches[0].clientX; }, { passive: true });
+      carousel.addEventListener('touchend', function(e) {
+        var dx = tx - e.changedTouches[0].clientX;
+        if (Math.abs(dx) > 40) go(dx > 0 ? current + 1 : current - 1);
+      });
+
+      update();
+      window.addEventListener('resize', function() { update(); });
+    })();
+    </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="landing-story.js"></script>
     <script>
