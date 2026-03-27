@@ -3999,7 +3999,7 @@ body {
 .pull-card {
   position: absolute;
   top: 0; left: 0; right: 0;
-  padding: 28px 30px;
+  padding: 32px 34px;
   border-radius: 14px;
   border: 1px solid var(--warm-border);
   background: #fff;
@@ -4040,7 +4040,7 @@ body {
   margin-bottom: 14px;
 }
 .hero-pull-story {
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 300;
   line-height: 1.55;
   color: var(--warm-text);
@@ -4052,7 +4052,7 @@ body {
   font-style: italic;
 }
 .hero-pull-caption {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--warm-muted-light);
   line-height: 1.55;
 }
@@ -4220,12 +4220,12 @@ body {
     margin-bottom: 18px;
   }
   .hero-pull-story {
-    font-size: 28px;
+    font-size: 30px;
     line-height: 1.5;
     margin-bottom: 18px;
   }
   .hero-pull-caption {
-    font-size: 17px;
+    font-size: 18px;
   }
   .carousel-controls {
     margin-top: 16px;
@@ -4236,9 +4236,8 @@ body {
   }
   .post-story-inner {
     max-width: 960px;
-  }
-  .landing-features {
-    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -4506,6 +4505,17 @@ body {
   display: flex;
   gap: 12px;
 }
+.btn-warm-primary,
+.btn-warm-accent,
+.btn-warm-accent-ghost,
+.btn-warm-ghost {
+  display: inline-block;
+  text-decoration: none;
+  font-family: inherit;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
 .btn-warm-primary {
   padding: 14px 32px;
   font-size: 13px;
@@ -4516,6 +4526,29 @@ body {
   background: var(--warm-text);
   color: #fff;
 }
+.btn-warm-primary:hover { opacity: 0.85; }
+.btn-warm-accent {
+  padding: 14px 28px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  letter-spacing: 0.3px;
+  background: var(--warm-accent);
+  color: #fff;
+}
+.btn-warm-accent:hover { opacity: 0.85; }
+.btn-warm-accent-ghost {
+  padding: 14px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: var(--warm-accent);
+  border: 1.5px solid var(--warm-accent);
+  letter-spacing: 0.3px;
+}
+.btn-warm-accent-ghost:hover { background: color-mix(in srgb, var(--warm-accent) 8%, transparent); }
 .btn-warm-ghost {
   padding: 14px 24px;
   font-size: 13px;
@@ -4526,6 +4559,7 @@ body {
   border: 1.5px solid var(--warm-border);
   letter-spacing: 0.3px;
 }
+.btn-warm-ghost:hover { background: color-mix(in srgb, var(--warm-text) 5%, transparent); }
 
 /* --- Features grid --- */
 .landing-features {
