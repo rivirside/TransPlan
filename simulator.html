@@ -24,7 +24,7 @@
                         <legend>Required Information</legend>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="organ">Needed Organ *</label>
+                                <label for="organ">Needed Organ * <button type="button" class="info-btn" tabindex="-1" title="The organ type determines which transplant centers, wait times, and clinical scores are relevant. Each organ has different allocation policies and donor availability patterns." aria-label="Information: Needed Organ"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
                                 <select id="organ" required>
                                     <option value="">Select organ...</option>
                                     <option value="kidney">Kidney</option>
@@ -43,7 +43,7 @@
                                     <input type="range" id="cpra" min="0" max="100" value="0">
                                     <output id="cpra-output">0%</output>
                                 </div>
-                                <small class="field-help">Panel Reactive Antibody measures how sensitized your immune system is to donor tissue. Higher values mean longer expected waits. Leave at 0 if unknown.</small>
+                                <small class="field-help">Panel Reactive Antibody measures how sensitized the immune system is to donor tissue. Higher values mean longer expected waits. Leave at 0 if unknown.</small>
                             </div>
 
                             <div class="form-group conditional-field" id="meld-group" data-organ="liver" style="display:none;">
@@ -74,12 +74,12 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="age">Age *</label>
+                                <label for="age">Age * <button type="button" class="info-btn" tabindex="-1" title="Age affects medical compatibility scoring. Pediatric patients (under 18) receive priority in allocation. Outcomes data shows different patterns for patients over 65. Feeds into the Medical Compatibility category (25% weight)." aria-label="Information: Age"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
                                 <input type="number" id="age" min="1" max="120" placeholder="Sample age" required>
                             </div>
 
                             <div class="form-group">
-                                <label for="sex">Sex *</label>
+                                <label for="sex">Sex * <button type="button" class="info-btn" tabindex="-1" title="Sex affects organ size matching, especially for heart and lung transplants where donor-recipient body size compatibility matters. Minimal impact for kidney and liver. Feeds into Medical Compatibility (25% weight)." aria-label="Information: Sex"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
                                 <select id="sex" required>
                                     <option value="">Select...</option>
                                     <option value="male">Male</option>
@@ -104,17 +104,17 @@
                         <legend>Optional Details</legend>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="weight">Weight (lbs)</label>
+                                <label for="weight">Weight (lbs) <button type="button" class="info-btn" tabindex="-1" title="Used for organ size matching, especially critical for heart and lung transplants. Combined with height to estimate body surface area. Leave blank if unknown -- default matching will be used." aria-label="Information: Weight"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
                                 <input type="number" id="weight" min="20" max="800" placeholder="Optional">
                             </div>
 
                             <div class="form-group">
-                                <label for="height">Height (inches)</label>
+                                <label for="height">Height (inches) <button type="button" class="info-btn" tabindex="-1" title="Used for organ size matching, especially critical for heart and lung transplants. Combined with weight to estimate body surface area. Leave blank if unknown -- default matching will be used." aria-label="Information: Height"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
                                 <input type="number" id="height" min="20" max="100" placeholder="Optional">
                             </div>
 
                             <div class="form-group">
-                                <label for="insurance">Insurance Type</label>
+                                <label for="insurance">Insurance Type <button type="button" class="info-btn" tabindex="-1" title="Insurance type affects which transplant centers will accept a patient. Medicaid and uninsured patients face access barriers that vary significantly by center. Feeds into the Hospital Quality category (15% weight)." aria-label="Information: Insurance Type"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
                                 <select id="insurance">
                                     <option value="">Select...</option>
                                     <option value="medicare">Medicare</option>
@@ -130,33 +130,33 @@
                         <legend>Simulation Settings</legend>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="homeCenter">Reference Center <button type="button" class="info-btn" tabindex="-1" title="Select your current transplant center for comparison. Used to highlight your center on the map and show how other locations rank relative to it. Does not affect simulation results." aria-label="Information: Reference Center"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
+                                <label for="homeCenter">Reference Center <button type="button" class="info-btn" tabindex="-1" title="Select a reference transplant center for comparison. Used to highlight that center on the map and show how other locations rank relative to it. Does not affect simulation results." aria-label="Information: Reference Center"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
                                 <select id="homeCenter">
                                     <option value="">None selected</option>
                                 </select>
-                                <small class="field-help">Select your current transplant center to see how other cities compare.</small>
+                                <small class="field-help">Select a reference transplant center to see how other cities compare.</small>
                             </div>
                             <div class="form-group">
-                                <label for="patientLocation">Reference Location <button type="button" class="info-btn" tabindex="-1" title="Enter your home location to calculate distances to each transplant center. Used only for distance calculations and display. Does not affect simulation results." aria-label="Information: Reference Location"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
+                                <label for="patientLocation">Reference Location <button type="button" class="info-btn" tabindex="-1" title="Enter a home location to calculate distances to each transplant center. Used only for distance calculations and display. Does not affect simulation results." aria-label="Information: Reference Location"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
                                 <input type="text" id="patientLocation" placeholder="City, State or ZIP code" autocomplete="off">
-                                <small class="field-help" id="patientLocationHelp">Enter your location to see distances to each center.</small>
+                                <small class="field-help" id="patientLocationHelp">Enter a location to see distances to each center.</small>
                             </div>
                             <div class="form-group">
                                 <label class="overlay-toggle" for="adjustCauseOfDeath">
                                     <input type="checkbox" id="adjustCauseOfDeath">
-                                    <span>Adjust for regional cause-of-death patterns</span>
+                                    <span>Adjust for regional cause-of-death patterns <button type="button" class="info-btn" tabindex="-1" title="When enabled, applies organ-specific donor recovery rates based on how people die in each state (trauma, stroke, cardiovascular, drug intoxication, anoxia). Different causes of death yield different donor organs at different rates." aria-label="Information: Cause of death adjustment"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></span>
                                 </label>
                                 <small class="field-help">Applies organ-specific donor recovery rates based on state-level mortality data (trauma, stroke, cardiovascular, drug intoxication, anoxia).</small>
                             </div>
                             <div class="form-group">
                                 <label class="overlay-toggle" for="useCopula">
                                     <input type="checkbox" id="useCopula">
-                                    <span>Correlated competing risks (Clayton copula)</span>
+                                    <span>Correlated competing risks (Clayton copula) <button type="button" class="info-btn" tabindex="-1" title="When enabled, models the statistical dependence between mortality and delisting risks. In reality, declining health increases both risks simultaneously. Without this, the model treats them as independent events, which underestimates combined risk." aria-label="Information: Clayton copula"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></span>
                                 </label>
                                 <small class="field-help">Models positive dependence between mortality and delisting — declining health accelerates both events simultaneously, producing more realistic risk estimates.</small>
                             </div>
                             <div class="form-group">
-                                <label for="inferenceMode">Inference Method</label>
+                                <label for="inferenceMode">Inference Method <button type="button" class="info-btn" tabindex="-1" title="Controls how probability estimates are computed. Monte Carlo (default) runs 1,000+ random simulations for robust estimates. Bayesian Network uses exact inference for instant results. MCMC samples from posterior distributions for data-derived uncertainty bounds." aria-label="Information: Inference Method"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
                                 <select id="inferenceMode">
                                     <option value="monte_carlo">Monte Carlo (stochastic, default)</option>
                                     <option value="bayesian">Bayesian Network (exact, faster)</option>
@@ -226,9 +226,9 @@
                     <div class="results-mode-toggle" role="tablist" aria-label="Results view mode">
                         <button id="tab-scores" class="mode-tab active" role="tab" aria-selected="true" aria-controls="panel-scores">Location Scores</button>
                         <button id="tab-probabilities" class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-probabilities">Simulation Probabilities</button>
-                        <button id="tab-equity" class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-equity" disabled title="Backend not running">Equity Analysis</button>
+                        <button id="tab-equity" class="mode-tab" role="tab" aria-selected="false" aria-controls="panel-equity" disabled title="Requires backend server">Equity Analysis</button>
                     </div>
-                    <button id="printResults" class="btn-print" onclick="window.print()" title="Print results for your care team">
+                    <button id="printResults" class="btn-print" onclick="window.print()" title="Print results for a care team">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 1h8v3H4V1zm-1 3h10a2 2 0 012 2v4a2 2 0 01-2 2h-1v3H4v-3H3a2 2 0 01-2-2V6a2 2 0 012-2zm2 6v4h6v-4H5zm6-3a1 1 0 100-2 1 1 0 000 2z" fill="currentColor"/></svg>
                         Print
                     </button>
@@ -337,12 +337,33 @@
                             <button id="resultsNext" class="pagination-btn">Next &raquo;</button>
                         </div>
                     </div>
-                    <div id="resultsContainer" class="results-container" aria-live="polite" aria-label="City ranking results">
-                        <!-- Results will be inserted here -->
+                    <div id="resultsContainer" class="results-container" style="display:none" aria-live="polite" aria-label="City ranking results">
+                        <!-- Legacy card results (hidden, kept for backward compat) -->
+                    </div>
+
+                    <div id="resultsSummary" class="results-summary" style="display:none"></div>
+
+                    <div class="results-table-wrapper">
+                        <table id="resultsTable" class="results-table">
+                            <thead>
+                                <tr>
+                                    <th data-sort="rank">#</th>
+                                    <th data-sort="city">Program / City</th>
+                                    <th data-sort="score">Score</th>
+                                    <th data-sort="waitTime">Wait Time</th>
+                                    <th data-sort="donorRate">Donor Avail.</th>
+                                    <th data-sort="centersQuality">Center Quality</th>
+                                    <th data-sort="distance" id="distanceHeader" style="display:none">Distance</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody"></tbody>
+                        </table>
                     </div>
 
                     <div class="charts-section">
-                        <h3>City Comparison</h3>
+                        <h3>Score Breakdown by Category</h3>
+                        <p class="chart-description">How each scoring category contributes to the overall location suitability score across the top-ranked cities.</p>
                         <div class="chart-container">
                             <canvas id="comparisonChart" role="img" aria-label="Bar chart comparing scoring categories across top-ranked cities"></canvas>
                         </div>
@@ -351,6 +372,10 @@
 
                 <!-- Phase 2: Probability View -->
                 <div id="panel-probabilities" class="results-panel" role="tabpanel" aria-labelledby="tab-probabilities" style="display: none;">
+                    <div id="probabilityEmptyState" class="panel-empty-state" style="display: none;">
+                        <p><strong>Simulation Probabilities</strong> runs a Monte Carlo simulation to estimate transplant probability, mortality risk, and delisting likelihood over 24 months for each city.</p>
+                        <p>This feature requires the backend server. Start it locally with <code>cd backend && python -m uvicorn main:app --reload</code>, or it will be available when the backend is deployed.</p>
+                    </div>
                     <div id="probabilityContainer" class="results-container" aria-live="polite" aria-label="Simulation probability results">
                         <!-- Probability cards will be inserted here -->
                     </div>
@@ -371,7 +396,7 @@
 
                     <div class="charts-section" id="tornadoSection" style="display:none">
                         <h3>Input Sensitivity Analysis</h3>
-                        <p class="chart-description">How much does each clinical parameter affect your 24-month transplant probability? Each bar shows the outcome range from most favorable to least favorable value for that parameter, using the top-ranked city.</p>
+                        <p class="chart-description">How much does each clinical parameter affect the 24-month transplant probability? Each bar shows the outcome range from most favorable to least favorable value for that parameter, using the top-ranked city.</p>
                         <div class="chart-container chart-container--tornado">
                             <canvas id="tornadoChart" role="img" aria-label="Tornado chart showing how each input parameter affects 24-month transplant probability"></canvas>
                         </div>
@@ -380,7 +405,7 @@
                     <!-- Phase 3 M5: What-If Scenario Sliders -->
                     <div class="charts-section" id="whatIfSection" style="display:none">
                         <h3>What-If Scenario Analysis</h3>
-                        <p class="chart-description">Explore how UNOS policy changes or model assumption adjustments would affect your transplant probability. Choose a predefined policy scenario or adjust raw multipliers manually. Each analysis triggers a full Monte Carlo re-simulation.</p>
+                        <p class="chart-description">Explore how UNOS policy changes or model assumption adjustments would affect transplant probability. Choose a predefined policy scenario or adjust raw multipliers manually. Each analysis triggers a full Monte Carlo re-simulation.</p>
 
                         <!-- Phase 4 M4: Policy Scenario Selector -->
                         <div class="policy-scenario-section" id="policyScenarioSection">
@@ -484,6 +509,10 @@
 
                 <!-- Phase 3 M4: Equity Analysis View -->
                 <div id="panel-equity" class="results-panel" role="tabpanel" aria-labelledby="tab-equity" style="display: none;">
+                    <div id="equityEmptyState" class="panel-empty-state" style="display: none;">
+                        <p><strong>Equity Analysis</strong> sweeps across 48 demographic profiles (varying blood type, age, and sex) to measure how equitable transplant outcomes are across cities.</p>
+                        <p>This feature requires the backend server. Start it locally with <code>cd backend && python -m uvicorn main:app --reload</code>, or it will be available when the backend is deployed.</p>
+                    </div>
                     <div class="equity-disclaimer" role="alert">
                         <strong>Equity Analysis Limitations</strong>
                         <p>This analysis varies blood type, age, and sex while holding clinical parameters fixed. It does not model race, ethnicity, socioeconomic status, or insurance type. Results reflect model behavior, not observed real-world disparities.</p>
@@ -525,11 +554,13 @@
                 <div class="data-sources">
                     <h3>Data Sources</h3>
                     <ul>
-                        <li>UNOS (United Network for Organ Sharing) transplant registry data</li>
-                        <li>OPTN (Organ Procurement and Transplantation Network) regional statistics</li>
-                        <li>CDC mortality and donor availability rates</li>
-                        <li>Regional health demographics and comorbidity prevalence</li>
-                        <li>Hospital transplant center performance metrics</li>
+                        <li>SRTR Program-Specific Reports (January 2025 release) -- center-level volumes and outcomes</li>
+                        <li>UNOS/OPTN -- national transplant registry, wait time estimates by organ type</li>
+                        <li>CDC BRFSS (2023) -- chronic disease prevalence (diabetes, obesity, CKD, hypertension, smoking)</li>
+                        <li>EPA AQS (2024) -- ozone and PM2.5 air quality measurements</li>
+                        <li>NHTSA FARS (2023) -- traffic fatality rates by state</li>
+                        <li>BLS CPI (2024) -- metro area cost of living indices</li>
+                        <li>State DMV/Registry data -- organ donor registration rates</li>
                     </ul>
                 </div>
             </section>

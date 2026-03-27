@@ -567,7 +567,7 @@ function initializeMap() {
             const strong = document.createElement('strong');
             strong.textContent = 'Map unavailable';
             p.appendChild(strong);
-            p.appendChild(document.createTextNode(' \u2014 the mapping library could not be loaded. Your city rankings and scores are still displayed below.'));
+            p.appendChild(document.createTextNode(' \u2014 the mapping library could not be loaded. City rankings and scores are still displayed below.'));
             notice.appendChild(p);
             mapEl.replaceChildren(notice);
             mapEl.style.height = 'auto';
@@ -2022,7 +2022,7 @@ function updateMapWithResults(cities, homeCenterCity) {
                 iconSize: [size + 6, size + 6]
             });
 
-            const popupPrefix = isHome ? '<strong>Your Center</strong><br>' : '';
+            const popupPrefix = isHome ? '<strong>Reference Center</strong><br>' : '';
             L.marker(coord, { icon: icon, zIndexOffset: isHome ? 1000 : 0 })
                 .bindPopup(`
                     ${popupPrefix}
@@ -2409,10 +2409,20 @@ function displayResults(cities, formData) {
         resultsSection.insertBefore(warningEl, resultsSection.querySelector('.map-section'));
     }
     if (formData.urgency === '1') {
-        warningEl.innerHTML = '<strong>Important:</strong> Status 1 (critical) patients are typically too medically urgent for relocation planning. These results may not be actionable for your situation. Please discuss any decisions with your transplant team immediately.';
+        warningEl.innerHTML = '<strong>Important:</strong> Status 1 (critical) patients are typically too medically urgent for relocation planning. These results may not be actionable in this situation. Discuss any decisions with the transplant team immediately.';
         warningEl.style.display = 'block';
     } else {
         warningEl.style.display = 'none';
+    }
+
+    // Dynamic results intro (#193)
+    const introEl = document.querySelector('.results-intro');
+    if (introEl) {
+        const organNames = { kidney: 'kidney', liver: 'liver', heart: 'heart', lung: 'lung', pancreas: 'pancreas', intestine: 'intestine' };
+        const organLabel = organNames[formData.organ] || formData.organ;
+        const urgencyLabels = { '1': 'Status 1 (critical)', '2': 'Status 2 (high priority)', '3': 'Status 3 (active)', '4': 'Status 4 (inactive)' };
+        const urgencyLabel = urgencyLabels[formData.urgency] || '';
+        introEl.textContent = `Results for a ${organLabel} transplant candidate, blood type ${formData.bloodType}, age ${formData.age}, ${urgencyLabel}. Cities ranked by location suitability score based on regional data trends.`;
     }
 
     // Find home center for comparison (null if not selected)
@@ -2452,6 +2462,10 @@ function displayResults(cities, formData) {
 
     // Update pagination controls
     _updatePaginationControls(filtered.length, totalPages, cities);
+
+    // ── Table view (#204) ────────────────────────────────────────────
+    _renderResultsTable(filtered, formData, homeCenter);
+    _renderResultsSummary(cities, formData);
 
     resultsSection.style.display = 'block';
     // Hide empty state when results appear
@@ -2588,7 +2602,7 @@ function createCityCard(city, rank, formData, homeCenter) {
     // Build comparison badge HTML (all values derived from internal scoring, not user input)
     let comparisonHtml = '';
     if (isHome) {
-        comparisonHtml = '<div class="comparison-badge comparison-home">Your Center</div>';
+        comparisonHtml = '<div class="comparison-badge comparison-home">Reference Center</div>';
     } else if (homeCenter) {
         const delta = city.personalizedScore - homeCenter.personalizedScore;
         const sign = delta >= 0 ? '+' : '';
@@ -2654,7 +2668,9 @@ function createCityCard(city, rank, formData, homeCenter) {
         ${city.scoreBreakdown ? `
         <div class="radar-chart-container">
             <h4>Score Breakdown</h4>
-            <canvas id="${radarId}"></canvas>
+            ${window.TransPlanCDN && window.TransPlanCDN.chartjs
+                ? `<canvas id="${radarId}"></canvas>`
+                : `<div class="chart-fallback">${Object.entries(city.scoreBreakdown).map(([k, v]) => k.replace(/([A-Z])/g, ' $1').trim() + ': ' + (typeof v === 'number' ? v.toFixed(0) : v)).join(' / ')}</div>`}
         </div>
         ` : ''}
 
@@ -2671,8 +2687,8 @@ function createCityCard(city, rank, formData, homeCenter) {
         openCityDetail(city.city);
     });
 
-    // Render radar chart after card is in DOM
-    if (city.scoreBreakdown) {
+    // Render radar chart after card is in DOM (skip if Chart.js unavailable #199)
+    if (city.scoreBreakdown && window.TransPlanCDN && window.TransPlanCDN.chartjs) {
         setTimeout(() => {
             if (window.TransPlanCharts) {
                 window.TransPlanCharts.createRadarChart(radarId, city.scoreBreakdown, city.city);
@@ -2707,6 +2723,263 @@ function getDonorClass(rate) {
 function getMatchClass(rate) {
     const value = parseInt(rate);
     return value >= 80 ? 'good' : value >= 70 ? 'moderate' : 'poor';
+}
+
+// ── Results Table (#204) ────────────────────────────────────────────────────
+
+/** Current sort state for the results table */
+var _tableSortKey = 'rank';
+var _tableSortAsc = true;
+
+/**
+ * Render the summary card above the table.
+ */
+function _renderResultsSummary(cities, formData) {
+    var el = document.getElementById('resultsSummary');
+    if (!el || !cities || cities.length === 0) { if (el) el.style.display = 'none'; return; }
+
+    var top = cities[0];
+    var worst = cities[cities.length - 1];
+    var range = top.personalizedScore.toFixed(1) + ' \u2013 ' + worst.personalizedScore.toFixed(1);
+
+    // Pick a key differentiator from the top city
+    var diff = '';
+    if (top.donorRate === 'Very High') diff = 'Very high donor availability';
+    else if (parseFloat(top.waitTime) <= 1) diff = 'Very short wait time';
+    else if (top.centersQuality === 'Excellent') diff = 'Excellent center quality';
+    else diff = top.factors && top.factors[0] ? top.factors[0] : '';
+
+    // Note: all values are derived from internal scoring data, not user input
+    el.textContent = '';
+    var span1 = document.createElement('span');
+    span1.className = 'summary-top-city';
+    span1.textContent = '#1 ' + top.city + ', ' + top.state;
+    el.appendChild(span1);
+
+    var span2 = document.createElement('span');
+    span2.className = 'summary-score';
+    span2.textContent = top.personalizedScore.toFixed(1) + '/100';
+    el.appendChild(span2);
+
+    if (diff) {
+        var span3 = document.createElement('span');
+        span3.className = 'summary-detail';
+        span3.textContent = diff;
+        el.appendChild(span3);
+    }
+
+    var span4 = document.createElement('span');
+    span4.className = 'summary-detail';
+    span4.textContent = 'Score range: ' + range + ' (' + cities.length + ' programs)';
+    el.appendChild(span4);
+
+    el.style.display = '';
+}
+
+/**
+ * Render (or re-render) the results table body.
+ * @param {Array} cities - filtered city list
+ * @param {Object} formData
+ * @param {Object|null} homeCenter
+ */
+function _renderResultsTable(cities, formData, homeCenter) {
+    var tbody = document.getElementById('resultsTableBody');
+    if (!tbody) return;
+    tbody.textContent = '';
+
+    var hasDistance = !!formData.patientLat;
+    var distHeader = document.getElementById('distanceHeader');
+    if (distHeader) distHeader.style.display = hasDistance ? '' : 'none';
+
+    // Sort a working copy
+    var sorted = cities.slice();
+    _sortResultsArray(sorted, _tableSortKey, _tableSortAsc, formData);
+
+    // Update header sort indicators
+    _updateSortIndicators();
+
+    sorted.forEach(function(city) {
+        var originalRank = cities.indexOf(city) + 1;
+        var tr = document.createElement('tr');
+        var isHome = homeCenter && city.city === homeCenter.city;
+        if (isHome) tr.className = 'home-row';
+
+        var scoreClass = city.personalizedScore >= 90 ? 'good' :
+                         city.personalizedScore >= 80 ? 'moderate' : 'poor';
+
+        // Rank cell
+        var tdRank = document.createElement('td');
+        tdRank.className = 'rank-cell' + (originalRank <= 3 ? ' rank-' + originalRank : '');
+        tdRank.textContent = originalRank;
+        tr.appendChild(tdRank);
+
+        // City cell
+        var tdCity = document.createElement('td');
+        tdCity.className = 'city-cell';
+        tdCity.textContent = city.city;
+        var stateSpan = document.createElement('span');
+        stateSpan.className = 'city-state';
+        stateSpan.textContent = city.state;
+        tdCity.appendChild(stateSpan);
+        if (isHome) {
+            var refLabel = document.createElement('small');
+            refLabel.style.cssText = 'color:var(--color-primary);font-weight:400;margin-left:4px';
+            refLabel.textContent = '(ref)';
+            tdCity.appendChild(refLabel);
+        }
+        tr.appendChild(tdCity);
+
+        // Score cell
+        var tdScore = document.createElement('td');
+        tdScore.className = 'score-cell metric-cell ' + scoreClass;
+        tdScore.textContent = city.personalizedScore.toFixed(1);
+        tr.appendChild(tdScore);
+
+        // Wait Time cell
+        var tdWait = document.createElement('td');
+        tdWait.className = 'metric-cell ' + getWaitTimeClass(formData.organ, city.waitTime);
+        tdWait.textContent = city.waitTime;
+        tr.appendChild(tdWait);
+
+        // Donor Availability cell
+        var tdDonor = document.createElement('td');
+        tdDonor.className = 'metric-cell ' + getDonorClass(city.donorRate);
+        tdDonor.textContent = city.donorRate;
+        tr.appendChild(tdDonor);
+
+        // Center Quality cell
+        var tdQuality = document.createElement('td');
+        tdQuality.className = 'metric-cell';
+        tdQuality.textContent = city.centersQuality;
+        tr.appendChild(tdQuality);
+
+        // Distance cell (conditional)
+        if (hasDistance) {
+            var tdDist = document.createElement('td');
+            tdDist.className = 'metric-cell';
+            var coord = cityCoordinates[city.city];
+            if (coord) {
+                var dist = Math.round(_haversineMiles(formData.patientLat, formData.patientLon, coord[0], coord[1]));
+                var distClass = dist < 200 ? 'good' : dist < 500 ? 'moderate' : 'poor';
+                tdDist.className += ' ' + distClass;
+                tdDist.textContent = dist + ' mi';
+            } else {
+                tdDist.textContent = '\u2014';
+            }
+            tr.appendChild(tdDist);
+        }
+
+        // Details button cell
+        var tdBtn = document.createElement('td');
+        var btn = document.createElement('button');
+        btn.className = 'detail-btn';
+        btn.dataset.city = city.city;
+        btn.textContent = 'Details';
+        tdBtn.appendChild(btn);
+        tr.appendChild(tdBtn);
+
+        // Row click -> open detail modal
+        tr.addEventListener('click', function() {
+            openCityDetail(city.city);
+        });
+
+        tbody.appendChild(tr);
+    });
+}
+
+/**
+ * Sort the results array in-place by the given key.
+ */
+function _sortResultsArray(arr, key, asc, formData) {
+    arr.sort(function(a, b) {
+        var va, vb;
+        switch (key) {
+            case 'rank':
+            case 'score':
+                va = a.personalizedScore; vb = b.personalizedScore;
+                // Default sort for rank is descending (highest score = rank 1)
+                return key === 'rank'
+                    ? (asc ? vb - va : va - vb)
+                    : (asc ? va - vb : vb - va);
+            case 'city':
+                va = a.city.toLowerCase(); vb = b.city.toLowerCase();
+                return asc ? va.localeCompare(vb) : vb.localeCompare(va);
+            case 'waitTime':
+                va = parseFloat(a.waitTime) || 0; vb = parseFloat(b.waitTime) || 0;
+                return asc ? va - vb : vb - va;
+            case 'donorRate':
+                var donorOrder = { 'Very High': 4, 'High': 3, 'Moderate': 2, 'Low': 1 };
+                va = donorOrder[a.donorRate] || 0; vb = donorOrder[b.donorRate] || 0;
+                return asc ? va - vb : vb - va;
+            case 'centersQuality':
+                var qualOrder = { 'Excellent': 4, 'Very Good': 3, 'Good': 2, 'Fair': 1 };
+                va = qualOrder[a.centersQuality] || 0; vb = qualOrder[b.centersQuality] || 0;
+                return asc ? va - vb : vb - va;
+            case 'distance':
+                if (!formData || !formData.patientLat) return 0;
+                var ca = cityCoordinates[a.city], cb = cityCoordinates[b.city];
+                va = ca ? _haversineMiles(formData.patientLat, formData.patientLon, ca[0], ca[1]) : 99999;
+                vb = cb ? _haversineMiles(formData.patientLat, formData.patientLon, cb[0], cb[1]) : 99999;
+                return asc ? va - vb : vb - va;
+            default:
+                return 0;
+        }
+    });
+}
+
+/**
+ * Update sort arrow indicators on table headers.
+ */
+function _updateSortIndicators() {
+    var ths = document.querySelectorAll('.results-table thead th[data-sort]');
+    ths.forEach(function(th) {
+        var key = th.getAttribute('data-sort');
+        var arrow = th.querySelector('.sort-arrow');
+        if (!arrow) {
+            arrow = document.createElement('span');
+            arrow.className = 'sort-arrow';
+            th.appendChild(arrow);
+        }
+        if (key === _tableSortKey) {
+            th.classList.add('sort-active');
+            arrow.textContent = _tableSortAsc ? ' \u25B2' : ' \u25BC';
+        } else {
+            th.classList.remove('sort-active');
+            arrow.textContent = ' \u25B2';
+        }
+    });
+}
+
+/**
+ * Initialize click handlers on table headers for sorting.
+ * Called once on DOMContentLoaded.
+ */
+function _initTableSortHandlers() {
+    var table = document.getElementById('resultsTable');
+    if (!table) return;
+    table.querySelector('thead').addEventListener('click', function(e) {
+        var th = e.target.closest('th[data-sort]');
+        if (!th) return;
+        var key = th.getAttribute('data-sort');
+        if (_tableSortKey === key) {
+            _tableSortAsc = !_tableSortAsc;
+        } else {
+            _tableSortKey = key;
+            // Default ascending for most, descending for score/rank
+            _tableSortAsc = (key === 'score' || key === 'rank') ? true : true;
+        }
+        // Re-render table with current results
+        if (_currentResults && _currentFormData) {
+            var homeCenter = _currentFormData.homeCenter
+                ? _currentResults.find(function(c) { return c.city === _currentFormData.homeCenter; })
+                : null;
+            var filtered = _currentResults;
+            if (_paginationFilterState) {
+                filtered = _currentResults.filter(function(c) { return c.state === _paginationFilterState; });
+            }
+            _renderResultsTable(filtered, _currentFormData, homeCenter);
+        }
+    });
 }
 
 // ── Phase 2: Probability View ──────────────────────────────────────────────
@@ -3456,7 +3729,7 @@ function createProbabilityCard(city, rank, homeCenter) {
         const compDiv = _el('div', 'comparison-indicator');
         if (isHome) {
             compDiv.classList.add('comparison-home');
-            compDiv.textContent = 'Your Center';
+            compDiv.textContent = 'Reference Center';
         } else {
             const delta = city.p_transplant_24mo - homeCenter.p_transplant_24mo;
             const pctDelta = (delta * 100).toFixed(1);
@@ -4184,6 +4457,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Phase 6B: Pagination event handlers
     _initPaginationHandlers();
+
+    // #204: Results table sort handlers
+    _initTableSortHandlers();
 
     // Wire weight slider re-scoring (Phase 4 M1)
     // When weights change, re-calculate Phase 1 scores instantly (no backend call)

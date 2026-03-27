@@ -250,13 +250,13 @@
     /**
      * Render the data freshness banner in the results section.
      */
-    function renderFreshnessBanner(metadata, sourceStatuses) {
+    function renderFreshnessBanner(metadata, sourceStatuses, fileFetchedDates) {
         const banner = document.getElementById('data-freshness-banner');
         if (!banner) return;
 
         // Determine last update: prefer metadata.lastFullFetch, fall back to
         // the most recent fetchedAt from any individual source, then fall back
-        // to _meta.fetchedAt timestamps embedded in individual data files.
+        // to _meta.fetchedAt timestamps collected before stripMeta (#184).
         let lastFetch = metadata?.lastFullFetch;
         if (!lastFetch && metadata?.sources) {
             const dates = Object.values(metadata.sources)
@@ -266,19 +266,10 @@
                 .reverse();
             if (dates.length) lastFetch = dates[0];
         }
-        // Fall back to _meta.fetchedAt from loaded data files (#147)
-        if (!lastFetch && window.TransPlanData) {
-            const fileDates = [];
-            for (const [key, val] of Object.entries(window.TransPlanData)) {
-                if (key.startsWith('_')) continue;
-                if (val && val._meta && val._meta.fetchedAt) {
-                    fileDates.push(val._meta.fetchedAt);
-                }
-            }
-            if (fileDates.length) {
-                fileDates.sort().reverse();
-                lastFetch = fileDates[0];
-            }
+        // Fall back to pre-collected _meta.fetchedAt dates (#184 fix)
+        if (!lastFetch && fileFetchedDates && fileFetchedDates.length) {
+            fileFetchedDates.sort().reverse();
+            lastFetch = fileFetchedDates[0];
         }
 
         const lastUpdate = lastFetch
@@ -324,12 +315,17 @@
 
         const loaded = {};
         const sourceStatuses = {};
+        const fileFetchedDates = []; // #184: collect _meta.fetchedAt before stripMeta
 
         results.forEach((result, index) => {
             const [key] = entries[index];
             if (result.status === 'fulfilled' && result.value) {
                 const [, data] = result.value;
                 if (data) {
+                    // Capture _meta.fetchedAt before stripping (#184)
+                    if (data._meta && data._meta.fetchedAt) {
+                        fileFetchedDates.push(data._meta.fetchedAt);
+                    }
                     loaded[key] = stripMeta(data);
                     sourceStatuses[key] = 'loaded';
                 } else {
@@ -353,10 +349,11 @@
 
         window.TransPlanData = loaded;
         window.TransPlanData._sourceStatuses = sourceStatuses;
+        window.TransPlanData._fileFetchedDates = fileFetchedDates; // #184
         window.TransPlanData._loaded = true;
 
         // Render freshness banner
-        renderFreshnessBanner(loaded.metadata, sourceStatuses);
+        renderFreshnessBanner(loaded.metadata, sourceStatuses, fileFetchedDates);
 
         return loaded;
     }
