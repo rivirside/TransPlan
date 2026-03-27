@@ -16,7 +16,7 @@
       '<div class="nav-inner">' +
         '<a href="/" class="nav-brand">' +
           '<span class="nav-brand-icon" aria-hidden="true">' +
-            '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' +
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 14.2222V4C3.2 2.89543 4.09543 2 5.2 2H18.8C19.9046 2 20.8 2.89543 20.8 4V14.2222M3.2 14.2222H20.8M3.2 14.2222L1.71969 19.4556C1.35863 20.7321 2.31762 22 3.64418 22H20.3558C21.6824 22 22.6414 20.7321 22.2803 19.4556L20.8 14.2222"/><path d="M11 19L13 19"/><path d="M14 6L16 8L14 10"/><path d="M10 6L8 8L10 10"/></svg>' +
           '</span>' +
           '<span class="nav-brand-text">transplant.today</span>' +
         '</a>' +
@@ -24,18 +24,23 @@
         '<div class="nav-links">' +
           '<a href="simulator.html" class="nav-link">Simulator</a>' +
           '<div class="nav-dropdown">' +
-            '<button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>' +
+            '<button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Tools <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>' +
             '<div class="nav-dropdown-menu" role="menu">' +
               '<a href="find-centers.html" class="nav-dropdown-item" role="menuitem">Find My Centers</a>' +
               '<a href="wait-estimator.html" class="nav-dropdown-item" role="menuitem">Wait Estimator</a>' +
               '<a href="centers.html" class="nav-dropdown-item" role="menuitem">Center Explorer</a>' +
               '<a href="compare.html" class="nav-dropdown-item" role="menuitem">Compare Centers</a>' +
+            '</div>' +
+          '</div>' +
+          '<div class="nav-dropdown">' +
+            '<button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>' +
+            '<div class="nav-dropdown-menu" role="menu">' +
               '<a href="organ-guides.html" class="nav-dropdown-item" role="menuitem">Organ Guides</a>' +
               '<a href="education.html" class="nav-dropdown-item" role="menuitem">Education</a>' +
               '<a href="support.html" class="nav-dropdown-item" role="menuitem">Patient Support</a>' +
-              '<a href="advocacy.html" class="nav-dropdown-item" role="menuitem">Give Back</a>' +
               '<a href="faq.html" class="nav-dropdown-item" role="menuitem">FAQ</a>' +
               '<a href="checklist.html" class="nav-dropdown-item" role="menuitem">Checklist</a>' +
+              '<a href="advocacy.html" class="nav-dropdown-item" role="menuitem">Give Back</a>' +
             '</div>' +
           '</div>' +
           '<a href="data.html" class="nav-link nav-link-accent">Data</a>' +
