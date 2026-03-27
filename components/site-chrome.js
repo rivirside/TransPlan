@@ -95,6 +95,7 @@
                 '<a href="docs-site/build/api-reference/simulate" class="footer-cta-link" target="_blank" rel="noopener">Check out the API →</a>' +
                 '<a href="mailto:contact@rivir.social" class="footer-cta-link">Get in touch →</a>' +
               '</div>' +
+              '<p class="footer-affil">transplant.today is under active development. Not affiliated with UNOS, OPTN, any transplant center, or the University of Arizona. Contact: <a href="mailto:contact@rivir.social">contact@rivir.social</a></p>' +
             '</div>' +
             '<div class="footer-col footer-col-nav">' +
               '<div class="footer-col-head">Explore</div>' +
@@ -110,7 +111,6 @@
             '<div class="footer-col footer-col-legal">' +
               '<div class="footer-col-head">Disclaimer</div>' +
               disc +
-              '<p class="footer-affil">transplant.today is under active development. Not affiliated with UNOS, OPTN, any transplant center, or the University of Arizona. Contact: <a href="mailto:contact@rivir.social">contact@rivir.social</a></p>' +
             '</div>' +
           '</div>' +
         '</div>' +

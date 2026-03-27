@@ -130,14 +130,14 @@
                         <legend>Simulation Settings</legend>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="homeCenter">Home Center</label>
+                                <label for="homeCenter">Reference Center <button type="button" class="info-btn" tabindex="-1" title="Select your current transplant center for comparison. Used to highlight your center on the map and show how other locations rank relative to it. Does not affect simulation results." aria-label="Information: Reference Center"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
                                 <select id="homeCenter">
                                     <option value="">None selected</option>
                                 </select>
                                 <small class="field-help">Select your current transplant center to see how other cities compare.</small>
                             </div>
                             <div class="form-group">
-                                <label for="patientLocation">Your Location</label>
+                                <label for="patientLocation">Reference Location <button type="button" class="info-btn" tabindex="-1" title="Enter your home location to calculate distances to each transplant center. Used only for distance calculations and display. Does not affect simulation results." aria-label="Information: Reference Location"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button></label>
                                 <input type="text" id="patientLocation" placeholder="City, State or ZIP code" autocomplete="off">
                                 <small class="field-help" id="patientLocationHelp">Enter your location to see distances to each center.</small>
                             </div>
@@ -830,7 +830,8 @@
     <script src="equity-charts.js"></script>
     <script src="export-handler.js"></script>
     <script src="url-sharing.js"></script>
-    <script src="donation-banner.js"></script>
+    <!-- <script src="donation-banner.js"></script> -->
+    <script src="disclaimer-modal.js"></script>
     <script src="session.js"></script>
     <script>
     /* Resolve info button hrefs for local dev vs GitHub Pages */
