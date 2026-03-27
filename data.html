@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Explorer - transplant.today</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+    <script src="dark-mode.js"></script>
+</head>
+<body class="data-page">
+    <div id="nav-placeholder"></div>
+
+    <main>
+        <!-- Header -->
+        <div class="data-header">
+            <div class="data-kicker">Interactive Data Explorer</div>
+            <h1>Every layer. Every center. One map.</h1>
+            <p class="data-subtitle">Toggle transplant center metrics, state-level policy data, county health demographics, and environmental layers. Filter by organ. Export results.</p>
+        </div>
+
+        <!-- Map section -->
+        <div class="data-map-section">
+            <div class="data-map-frame">
+                <div id="data-map"></div>
+                <!-- Layer panel and legend panel are built by data-explorer.js -->
+            </div>
+        </div>
+
+        <!-- Data sources -->
+        <div class="data-sources-section">
+            <div class="data-sources-title">Data Sources</div>
+            <p class="data-sources-subtitle">All data is sourced from US federal agencies and updated regularly. Click any card to visit the official source.</p>
+            <div class="data-sources-grid">
+                <a href="https://www.srtr.org" target="_blank" rel="noopener" class="data-source-card">
+                    <span class="data-source-badge badge-srtr">SRTR</span>
+                    <h3>Scientific Registry of Transplant Recipients</h3>
+                    <p>Center-level transplant program data including wait times, volumes, and post-transplant outcomes for all 248 US programs.</p>
+                    <span class="data-source-freq">Updated semi-annually</span>
+                    <span class="data-source-link-indicator">&rarr;</span>
+                </a>
+                <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener" class="data-source-card">
+                    <span class="data-source-badge badge-optn">OPTN</span>
+                    <h3>Organ Procurement &amp; Transplantation Network</h3>
+                    <p>National transplant data including organ allocation policies, waiting list statistics, and donor information.</p>
+                    <span class="data-source-freq">Updated monthly</span>
+                    <span class="data-source-link-indicator">&rarr;</span>
+                </a>
+                <a href="https://www.cdc.gov/places" target="_blank" rel="noopener" class="data-source-card">
+                    <span class="data-source-badge badge-cdc">CDC</span>
+                    <h3>Centers for Disease Control &amp; Prevention</h3>
+                    <p>County-level health demographics: diabetes, obesity, hypertension, and smoking prevalence from the PLACES dataset.</p>
+                    <span class="data-source-freq">Updated annually</span>
+                    <span class="data-source-link-indicator">&rarr;</span>
+                </a>
+                <a href="https://www.medicare.gov/care-compare" target="_blank" rel="noopener" class="data-source-card">
+                    <span class="data-source-badge badge-cms">CMS</span>
+                    <h3>Centers for Medicare &amp; Medicaid Services</h3>
+                    <p>Hospital quality ratings, patient safety indicators, and transplant program reputation scores.</p>
+                    <span class="data-source-freq">Updated quarterly</span>
+                    <span class="data-source-link-indicator">&rarr;</span>
+                </a>
+                <a href="https://aqs.epa.gov" target="_blank" rel="noopener" class="data-source-card">
+                    <span class="data-source-badge badge-epa">EPA</span>
+                    <h3>Environmental Protection Agency</h3>
+                    <p>Air quality monitoring station data including AQI readings, PM2.5, ozone, and pollutant levels across the US.</p>
+                    <span class="data-source-freq">Updated daily</span>
+                    <span class="data-source-link-indicator">&rarr;</span>
+                </a>
+                <a href="https://www.nhtsa.gov" target="_blank" rel="noopener" class="data-source-card">
+                    <span class="data-source-badge badge-nhtsa">NHTSA</span>
+                    <h3>National Highway Traffic Safety Administration</h3>
+                    <p>State-level traffic fatality rates used to model traumatic organ donor supply patterns.</p>
+                    <span class="data-source-freq">Updated annually</span>
+                    <span class="data-source-link-indicator">&rarr;</span>
+                </a>
+                <a href="https://www.organdonor.gov" target="_blank" rel="noopener" class="data-source-card">
+                    <span class="data-source-badge badge-hrsa">HRSA</span>
+                    <h3>Health Resources &amp; Services Administration</h3>
+                    <p>State-level organ donor registration rates and Donate Life America participation data.</p>
+                    <span class="data-source-freq">Updated annually</span>
+                    <span class="data-source-link-indicator">&rarr;</span>
+                </a>
+                <a href="https://www.bls.gov" target="_blank" rel="noopener" class="data-source-card">
+                    <span class="data-source-badge badge-bls">BLS</span>
+                    <h3>Bureau of Labor Statistics</h3>
+                    <p>Regional cost of living indices and employment data used for socioeconomic support scoring.</p>
+                    <span class="data-source-freq">Updated quarterly</span>
+                    <span class="data-source-link-indicator">&rarr;</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="components/site-chrome.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
+    <script src="data-explorer.js"></script>
+    <script src="donation-banner.js"></script>
+    <script src="session.js"></script>
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
