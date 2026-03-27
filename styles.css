@@ -4505,8 +4505,9 @@ body {
   display: flex;
   gap: 12px;
 }
+/* 4-step warm gradient: darkest → dark warm → accent outline → ghost */
 .btn-warm-primary,
-.btn-warm-accent,
+.btn-warm-secondary,
 .btn-warm-accent-ghost,
 .btn-warm-ghost {
   display: inline-block;
@@ -4514,50 +4515,39 @@ body {
   font-family: inherit;
   border-radius: 8px;
   white-space: nowrap;
-  transition: opacity 0.15s ease, background 0.15s ease;
-}
-.btn-warm-primary {
-  padding: 14px 32px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  letter-spacing: 0.3px;
-  background: var(--warm-text);
-  color: #fff;
-}
-.btn-warm-primary:hover { opacity: 0.85; }
-.btn-warm-accent {
   padding: 14px 28px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  border: none;
   letter-spacing: 0.3px;
-  background: var(--warm-accent);
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+/* Step 1: solid near-black */
+.btn-warm-primary {
+  border: none;
+  background: var(--warm-text);
   color: #fff;
 }
-.btn-warm-accent:hover { opacity: 0.85; }
+.btn-warm-primary:hover { opacity: 0.85; }
+/* Step 2: solid dark mahogany — bridges black and orange */
+.btn-warm-secondary {
+  border: none;
+  background: color-mix(in srgb, var(--warm-text) 52%, var(--warm-accent));
+  color: #fff;
+}
+.btn-warm-secondary:hover { opacity: 0.85; }
+/* Step 3: outlined accent orange */
 .btn-warm-accent-ghost {
-  padding: 14px 24px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
   background: transparent;
   color: var(--warm-accent);
   border: 1.5px solid var(--warm-accent);
-  letter-spacing: 0.3px;
 }
 .btn-warm-accent-ghost:hover { background: color-mix(in srgb, var(--warm-accent) 8%, transparent); }
+/* Step 4: faint ghost */
 .btn-warm-ghost {
-  padding: 14px 24px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
   background: transparent;
-  color: var(--warm-text);
+  color: var(--warm-muted);
   border: 1.5px solid var(--warm-border);
-  letter-spacing: 0.3px;
 }
 .btn-warm-ghost:hover { background: color-mix(in srgb, var(--warm-text) 5%, transparent); }
 
