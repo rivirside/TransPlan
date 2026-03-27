@@ -10,38 +10,7 @@
     <script src="dark-mode.js"></script>
 </head>
 <body>
-    <nav class="site-nav" aria-label="Site navigation">
-        <div class="nav-inner">
-            <a href="/" class="nav-brand">
-                <span class="nav-brand-icon" aria-hidden="true">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                </span>
-                <span class="nav-brand-text">transplant.today</span>
-            </a>
-            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-            <div class="nav-links">
-                <a href="/" class="nav-link">Home</a>
-                <a href="simulator.html" class="nav-link nav-link--active">Simulator</a>
-                <div class="nav-dropdown">
-                    <button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">▾</span></button>
-                    <div class="nav-dropdown-menu" role="menu">
-                        <a href="find-centers.html" class="nav-dropdown-item" role="menuitem">Find My Centers</a>
-                        <a href="wait-estimator.html" class="nav-dropdown-item" role="menuitem">Wait Estimator</a>
-                        <a href="centers.html" class="nav-dropdown-item" role="menuitem">Center Explorer</a>
-                        <a href="compare.html" class="nav-dropdown-item" role="menuitem">Compare Centers</a>
-                        <a href="organ-guides.html" class="nav-dropdown-item" role="menuitem">Organ Guides</a>
-                        <a href="education.html" class="nav-dropdown-item" role="menuitem">Education</a>
-                        <a href="support.html" class="nav-dropdown-item" role="menuitem">Patient Support</a>
-                        <a href="advocacy.html" class="nav-dropdown-item" role="menuitem">Give Back</a>
-                        <a href="faq.html" class="nav-dropdown-item" role="menuitem">FAQ</a>
-                        <a href="checklist.html" class="nav-dropdown-item" role="menuitem">Checklist</a>
-                    </div>
-                </div>
-                <a href="data.html" class="nav-link nav-link-accent">Data</a>
-                <a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>
-            </div>
-        </div>
-    </nav>
+    <div id="nav-placeholder"></div>
     <div class="app-layout">
         <aside class="sidebar">
             <div class="sidebar-disclaimer">
@@ -802,27 +771,7 @@
         </main>
     </div>
 
-    <footer id="disclaimer-full" class="site-footer">
-        <div class="footer-inner">
-            <div class="footer-disclaimer">
-                <h3>Disclaimer</h3>
-                <p><strong>This tool is for educational and exploratory purposes only.</strong> transplant.today is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>
-                <p><strong>What this tool cannot account for:</strong> HLA typing and crossmatch compatibility, specific disease etiology and comorbidities, your current functional status, individual OPO performance, or your relationship with specific transplant programs. While optional inputs for cPRA, MELD, and LAS adjust scoring, they are rough approximations and do not replace clinical allocation models.</p>
-                <p><strong>Scores are relative comparisons</strong> based on publicly available regional statistics. They are not clinical assessments. A city scoring 85/100 does not mean you have an 85% chance of a successful transplant there.</p>
-                <p><strong>Some data is estimated or manually curated</strong> and may not reflect current conditions. Wait time estimates are derived from regional averages and may not match your individual circumstances.</p>
-                <p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant. Your medical team has access to your complete clinical picture, which this tool does not.</p>
-            </div>
-            <div class="footer-meta">
-                <div class="footer-links">
-                    <a href="/">Home</a>
-                    <a href="#methodology">Methodology</a>
-                    <a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>
-                </div>
-                <p class="footer-copy">transplant.today is a project under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>
-                <p class="footer-copy">Interested in learning more? Contact <a href="mailto:tomer@arizona.edu">tomer@arizona.edu</a></p>
-            </div>
-        </div>
-    </footer>
+    <div id="footer-placeholder" data-footer-variant="simulator"></div>
 
     <!-- City Detail Modal (M3) -->
     <div id="cityDetailModal" class="city-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modal-city-name">
@@ -851,6 +800,7 @@
         </div>
     </div>
 
+    <script src="components/site-chrome.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leaflet=true;"></script>
     <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"
