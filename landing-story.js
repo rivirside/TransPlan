@@ -222,5 +222,14 @@
 
     // Initialize progress bar
     document.getElementById('progress-fill').style.width = ((1 / totalSteps) * 100) + '%';
+
+    // Scroll-hint click handler
+    var scrollHint = document.querySelector('.scroll-hint');
+    if (scrollHint) {
+      scrollHint.style.cursor = 'pointer';
+      scrollHint.addEventListener('click', function() {
+        document.querySelector('.story-section').scrollIntoView({ behavior: 'smooth' });
+      });
+    }
   }
 })();

@@ -3919,6 +3919,12 @@ body {
 .landing-page {
   background: var(--warm-bg);
   color: var(--warm-text);
+  scroll-snap-type: y proximity;
+  overflow-y: auto;
+  height: 100vh;
+}
+.landing-page .story-section {
+  scroll-snap-align: start;
 }
 
 /* --- Hero --- */
