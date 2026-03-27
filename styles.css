@@ -2596,67 +2596,88 @@ body {
 .site-footer {
   background: var(--neutral-100);
   border-top: 2px solid var(--neutral-300);
-  padding: var(--space-5) var(--space-4);
   font-size: var(--fs-xs);
   line-height: 1.5;
   color: var(--text-2);
 }
 .footer-inner {
-  max-width: 960px;
+  max-width: 1100px;
   margin: 0 auto;
 }
-.footer-disclaimer {
-  margin-bottom: var(--space-4);
+.footer-cols {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 1.6fr;
+  gap: 52px;
+  padding: 44px 48px 40px;
+  align-items: start;
 }
-.footer-disclaimer h3 {
-  font-family: var(--font-heading);
-  color: var(--text-1);
-  margin-bottom: var(--space-2);
-  font-size: var(--fs-md);
+.footer-col {
+  text-align: left;
+}
+.footer-brand-name {
+  font-size: 15px;
   font-weight: 700;
+  color: var(--warm-text, var(--text-1));
+  letter-spacing: -0.3px;
+  margin-bottom: 12px;
 }
-.footer-disclaimer p {
-  margin-bottom: var(--space-2);
-  color: var(--text-2);
-}
-.footer-meta {
-  border-top: 1px solid var(--neutral-300);
-  padding-top: var(--space-3);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-}
-.footer-links {
-  display: flex;
-  gap: var(--space-2);
-}
-.footer-links a {
-  color: var(--color-primary);
-  text-decoration: underline;
-  font-weight: 500;
-}
-.footer-links a:hover {
-  color: var(--color-primary-dark);
-}
-.footer-copy {
-  color: var(--text-muted);
-  font-size: var(--fs-xs);
-  margin: 0;
-}
-.footer-pull {
+.footer-about {
   font-size: 13px;
-  font-weight: 300;
-  line-height: 1.55;
-  color: var(--warm-muted-light, #888);
-  border-left: 2px solid var(--warm-accent, #c97c4a);
-  padding: 6px 0 6px 12px;
-  margin: 8px 0;
+  color: var(--text-2);
+  line-height: 1.65;
+  margin-bottom: 16px;
 }
-.footer-pull em {
-  color: var(--warm-accent, #c97c4a);
-  font-style: italic;
+.footer-cta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.footer-cta-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--warm-accent, var(--color-primary));
+  text-decoration: none;
+}
+.footer-cta-link:hover { text-decoration: underline; }
+.footer-col-head {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+.footer-col-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.footer-col-nav a {
+  font-size: 13px;
+  color: var(--text-2);
+  text-decoration: none;
+  line-height: 1.4;
+}
+.footer-col-nav a:hover {
+  color: var(--warm-accent, var(--color-primary));
+  text-decoration: underline;
+}
+.footer-col-legal p {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-bottom: 8px;
+}
+.footer-col-legal p a {
+  color: var(--warm-accent, var(--color-primary));
+  text-decoration: none;
+}
+.footer-col-legal p a:hover { text-decoration: underline; }
+.footer-affil {
+  font-size: 11px !important;
+  border-top: 1px solid var(--neutral-300);
+  padding-top: 10px;
+  margin-top: 10px !important;
 }
 
 /* --- CDN fallback --- */
@@ -3613,12 +3634,10 @@ body {
     font-size: var(--fs-xs);
   }
 
-  .footer-disclaimer {
-    padding: var(--space-5);
-  }
-  .footer-meta {
-    flex-direction: column;
-    align-items: flex-start;
+  .footer-cols {
+    grid-template-columns: 1fr;
+    padding: 28px 20px 24px;
+    gap: 28px;
   }
 
   .submit-btn {
@@ -4512,14 +4531,22 @@ body {
 .landing-features {
   border-top: 1px solid var(--warm-border);
 }
-.landing-feature-header {
-  padding: 32px 48px 0;
+.methods-split {
+  display: grid;
+  grid-template-columns: 1fr 180px 1fr;
+  align-items: center;
+  gap: 40px;
+  padding: 40px 48px 44px;
 }
-.landing-feature-header h2 {
-  font-size: 18px;
+.methods-center-col {
+  text-align: center;
+}
+.methods-center-col h2 {
+  font-size: 19px;
   font-weight: 700;
   color: var(--warm-text);
-  letter-spacing: -0.3px;
+  letter-spacing: -0.4px;
+  line-height: 1.4;
 }
 .landing-features-grid {
   display: grid;
@@ -4558,10 +4585,10 @@ body {
 
 /* --- Methods accordion --- */
 .methods-accordion {
-  margin: 20px 48px 32px;
   border: 1px solid var(--warm-border);
   border-radius: 10px;
   overflow: hidden;
+  align-self: start;
 }
 .acc-item + .acc-item {
   border-top: 1px solid var(--warm-border);
@@ -4801,8 +4828,14 @@ body {
   .landing-features-grid {
     grid-template-columns: 1fr;
   }
-  .methods-accordion {
-    margin: 16px 20px 24px;
+  .methods-split {
+    grid-template-columns: 1fr;
+    padding: 24px 20px;
+    gap: 16px;
+  }
+  .methods-center-col {
+    order: -1;
+    text-align: left;
   }
   .resources-grid {
     grid-template-columns: 1fr;

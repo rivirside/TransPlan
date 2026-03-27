@@ -83,19 +83,35 @@
   };
 
   function buildFooter(variant) {
-    var disc = disclaimers[variant] || disclaimers['default'];
-    var links = footerLinks[variant] || footerLinks['default'];
+    var disc = (disclaimers[variant] || disclaimers['default']).replace('<h3>Disclaimer</h3>', '');
     return (
       '<footer id="disclaimer-full" class="site-footer">' +
         '<div class="footer-inner">' +
-          '<div class="footer-disclaimer">' + disc + '</div>' +
-          '<div class="footer-meta">' +
-            '<div class="footer-links">' + links + '</div>' +
-            '<blockquote class="footer-pull">' +
-              'A kidney patient listed in Phoenix waits a median of <em>4 months.</em> The same patient listed in Boston waits <em>3 years.</em>' +
-            '</blockquote>' +
-            '<p class="footer-copy">transplant.today is under active development. Not affiliated with UNOS, OPTN, any transplant center, or the University of Arizona.</p>' +
-            '<p class="footer-copy">Contact: <a href="mailto:contact@rivir.social">contact@rivir.social</a></p>' +
+          '<div class="footer-cols">' +
+            '<div class="footer-col">' +
+              '<div class="footer-brand-name">transplant.today</div>' +
+              '<p class="footer-about">This is an open-source project built on public data. If you\'re a developer, researcher, or transplant advocate, we\'d love your help.</p>' +
+              '<div class="footer-cta-row">' +
+                '<a href="docs-site/build/api-reference/simulate" class="footer-cta-link" target="_blank" rel="noopener">Check out the API →</a>' +
+                '<a href="mailto:contact@rivir.social" class="footer-cta-link">Get in touch →</a>' +
+              '</div>' +
+            '</div>' +
+            '<div class="footer-col footer-col-nav">' +
+              '<div class="footer-col-head">Explore</div>' +
+              '<a href="simulator.html">Simulator</a>' +
+              '<a href="centers.html">Center Explorer</a>' +
+              '<a href="find-centers.html">Find My Centers</a>' +
+              '<a href="wait-estimator.html">Wait Estimator</a>' +
+              '<a href="compare.html">Compare Centers</a>' +
+              '<a href="data.html">Data Explorer</a>' +
+              '<a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>' +
+              '<a href="https://github.com/rivirside/TransPlan" target="_blank" rel="noopener">GitHub ↗</a>' +
+            '</div>' +
+            '<div class="footer-col footer-col-legal">' +
+              '<div class="footer-col-head">Disclaimer</div>' +
+              disc +
+              '<p class="footer-affil">transplant.today is under active development. Not affiliated with UNOS, OPTN, any transplant center, or the University of Arizona. Contact: <a href="mailto:contact@rivir.social">contact@rivir.social</a></p>' +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</footer>'

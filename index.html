@@ -255,38 +255,77 @@
 
         <!-- Methodology links -->
         <div class="landing-features">
-            <div class="landing-feature-header">
-                <h2>Read more about our methods</h2>
-            </div>
-            <div class="methods-accordion">
-                <div class="acc-item">
-                    <button class="acc-trigger" aria-expanded="false">
-                        <span class="acc-title">Multi-Factor Scoring</span>
-                        <span class="acc-icon" aria-hidden="true"></span>
-                    </button>
-                    <div class="acc-body" hidden>
-                        <p>8 scoring categories and 50+ variables per center, adjusted for your organ type, blood type, and patient profile. Categories include wait time, transplant rate, survival outcomes, volume, and equity — each weighted by evidence of patient impact.</p>
-                        <a href="docs-site/build/architecture/scoring" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
+            <div class="methods-split">
+                <!-- Left column: 3 accordion items -->
+                <div class="methods-accordion">
+                    <div class="acc-item">
+                        <button class="acc-trigger" aria-expanded="false">
+                            <span class="acc-title">Multi-Factor Scoring</span>
+                            <span class="acc-icon" aria-hidden="true"></span>
+                        </button>
+                        <div class="acc-body" hidden>
+                            <p>8 scoring categories and 50+ variables per center, adjusted for your organ type, blood type, and patient profile. Categories include wait time, transplant rate, survival outcomes, volume, and equity — each weighted by evidence of patient impact.</p>
+                            <a href="docs-site/build/architecture/scoring" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
+                        </div>
+                    </div>
+                    <div class="acc-item">
+                        <button class="acc-trigger" aria-expanded="false">
+                            <span class="acc-title">Monte Carlo Simulation</span>
+                            <span class="acc-icon" aria-hidden="true"></span>
+                        </button>
+                        <div class="acc-body" hidden>
+                            <p>1,000 iterations per center using competing risks: transplant, mortality, and waitlist removal. Simulates 6 to 36-month patient horizons across organ types. Each run samples from real SRTR distributions, accounting for variation in donor supply, patient acuity, and center-level acceptance rates.</p>
+                            <a href="docs-site/build/architecture/overview" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
+                        </div>
+                    </div>
+                    <div class="acc-item">
+                        <button class="acc-trigger" aria-expanded="false">
+                            <span class="acc-title">Equity Analysis</span>
+                            <span class="acc-icon" aria-hidden="true"></span>
+                        </button>
+                        <div class="acc-body" hidden>
+                            <p>A 48-profile demographic matrix runs each center across blood types, age brackets, and sex to evaluate distributional fairness. We compute a <a href="docs-site/build/architecture/scoring" target="_blank" rel="noopener">Gini coefficient</a> per center to identify programs where certain patient profiles are systematically disadvantaged relative to others at the same institution.</p>
+                            <a href="docs-site/build/architecture/equity" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
+                        </div>
                     </div>
                 </div>
-                <div class="acc-item">
-                    <button class="acc-trigger" aria-expanded="false">
-                        <span class="acc-title">Monte Carlo Simulation</span>
-                        <span class="acc-icon" aria-hidden="true"></span>
-                    </button>
-                    <div class="acc-body" hidden>
-                        <p>1,000 iterations per center using competing risks: transplant, mortality, and waitlist removal. Simulates 6 to 36-month patient horizons across organ types. Each run samples from real SRTR distributions, accounting for variation in donor supply, patient acuity, and center-level acceptance rates.</p>
-                        <a href="docs-site/build/architecture/overview" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
-                    </div>
+
+                <!-- Center: heading -->
+                <div class="methods-center-col">
+                    <h2>Read more about our methods</h2>
                 </div>
-                <div class="acc-item">
-                    <button class="acc-trigger" aria-expanded="false">
-                        <span class="acc-title">Equity Analysis</span>
-                        <span class="acc-icon" aria-hidden="true"></span>
-                    </button>
-                    <div class="acc-body" hidden>
-                        <p>A 48-profile demographic matrix runs each center across blood types, age brackets, and sex to evaluate distributional fairness. We compute a <a href="docs-site/build/architecture/scoring" target="_blank" rel="noopener">Gini coefficient</a> per center to identify programs where certain patient profiles are systematically disadvantaged relative to others at the same institution.</p>
-                        <a href="docs-site/build/architecture/equity" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
+
+                <!-- Right column: 3 more accordion items -->
+                <div class="methods-accordion">
+                    <div class="acc-item">
+                        <button class="acc-trigger" aria-expanded="false">
+                            <span class="acc-title">Data Pipeline &amp; Sources</span>
+                            <span class="acc-icon" aria-hidden="true"></span>
+                        </button>
+                        <div class="acc-body" hidden>
+                            <p>We pull from 8 federal data sources on a weekly refresh cycle: <a href="https://www.srtr.org" target="_blank" rel="noopener">SRTR</a> program-specific reports, <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener">OPTN</a> historical allocation data, CDC PLACES chronic disease indices, CMS quality metrics, EPA air quality readings, BLS socioeconomic indicators, NHTSA fatality records, and HRSA organ donation registration data. Each source is normalized to a common schema and cross-validated before entering the model.</p>
+                            <a href="docs-site/build/architecture/data-pipeline" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
+                        </div>
+                    </div>
+                    <div class="acc-item">
+                        <button class="acc-trigger" aria-expanded="false">
+                            <span class="acc-title">Organ-Specific Modeling</span>
+                            <span class="acc-icon" aria-hidden="true"></span>
+                        </button>
+                        <div class="acc-body" hidden>
+                            <p>Every organ has distinct supply dynamics, ischemia windows, and allocation rules. Hearts survive 4 to 6 hours outside the body; kidneys, up to 36. We parameterize these differences — including DBD vs. DCD donor type rates, geographic procurement corridors, and center-level acceptance patterns — separately for kidney, liver, heart, lung, and pancreas transplantation.</p>
+                            <a href="docs-site/build/architecture/overview" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
+                        </div>
+                    </div>
+                    <div class="acc-item">
+                        <button class="acc-trigger" aria-expanded="false">
+                            <span class="acc-title">What-If Policy Engine</span>
+                            <span class="acc-icon" aria-hidden="true"></span>
+                        </button>
+                        <div class="acc-body" hidden>
+                            <p>The policy simulation layer lets researchers adjust key upstream variables: OPO conversion efficiency, donor registration rates, geographic allocation rule widths, and cold ischemia transport constraints. Scenarios run in real time using the same Monte Carlo engine, so changes cascade through center-level wait-time probabilities immediately.</p>
+                            <a href="data.html" class="acc-link">Explore what-if scenarios →</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -363,7 +402,7 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="components/site-chrome.js?v=5"></script>
+    <script src="components/site-chrome.js?v=6"></script>
     <script>
     // Editorial carousel
     (function() {
