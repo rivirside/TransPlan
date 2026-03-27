@@ -1,0 +1,80 @@
+---
+sidebar_position: 2
+---
+
+# MCMC Hierarchical Model
+
+TransPlan's third inference engine uses Markov Chain Monte Carlo to fit a hierarchical Bayesian survival model to SRTR data. This approach quantifies honest uncertainty in model parameters rather than treating point estimates as ground truth.
+
+## Motivation
+
+Monte Carlo simulation uses fixed SRTR data values (median waits, mortality rates, delisting rates) as known constants. But these estimates carry statistical uncertainty. A 22-city estimate of kidney mortality is derived from finite sample sizes, with confidence intervals that overlap. The MCMC model learns the joint posterior distribution of all parameters, propagating this uncertainty through to outcome probabilities.
+
+## Model Specification
+
+A three-level Bayesian hierarchical model:
+
+1. **National hyperpriors**: population-level priors on organ-specific baseline mortality, delisting, and graft survival
+2. **City random effects**: deviations from national rates per center, pooled via exchangeability
+3. **Patient-level covariates**: blood type, urgency, age as multipliers on the city effects
+
+The model includes 92 free parameters per organ (6 organs, so ~550 parameters total):
+- Baseline mortality and delisting rates
+- 22 city random effects per outcome
+- Blood type offsets (8 types)
+- Urgency offsets (4 levels)
+- Age scaling
+- Correlation between mortality and delisting (shared frailty via LKJ-Cholesky)
+
+## Fitting Process
+
+Fitting occurs offline using PyMC's NUTS (No-U-Turn Sampler), a variant of Hamiltonian Monte Carlo. For each organ:
+
+1. SRTR historical data (14 biannual releases from 2019 to 2025) is loaded
+2. The model is specified in PyMC with informed priors
+3. NUTS samples 4 chains of 2000 iterations each (discarding 1000 warmup)
+4. Convergence is assessed: R-hat < 1.01, ESS > 400 per parameter
+5. The posterior trace is saved as an ArviZ NetCDF file (~10-50 MB per organ)
+
+This process runs once per organ and takes approximately 20 to 40 minutes per organ on a modern CPU.
+
+## Query-Time Inference
+
+At query time:
+
+1. The cached posterior trace for the requested organ is loaded
+2. 50 draws are sampled uniformly from the posterior
+3. For each draw, a complete Monte Carlo simulation is run using posterior parameter values
+4. Results are aggregated into median probabilities and credible intervals
+
+Total query time: approximately 400ms to 800ms for 248 centers.
+
+## Uncertainty Quantification
+
+Unlike Monte Carlo (which has sampling error) or BBN (which is deterministic), MCMC produces Bayesian credible intervals that reflect parameter uncertainty.
+
+For a given center and patient:
+- **Posterior predictive 95% credible interval** = the middle 95% of per-draw p24 values
+- **This interval reflects**: uncertainty in city effects, blood type multipliers, mortality/delisting rates, and their interactions, all learned from data
+
+## Shared Frailty
+
+The MCMC model includes a bivariate normal with LKJ-Cholesky prior linking city-level mortality and delisting offsets. This replaces the fixed copula in Monte Carlo, allowing the model to learn the correlation between these competing risks from data.
+
+The learned correlation typically ranges from 0.2 to 0.5 across organs, indicating moderate positive dependence.
+
+## Validation
+
+MCMC and Monte Carlo rankings were cross-validated on representative patient profiles. Spearman rank correlation: 0.48 to 0.68 by organ. Posterior predictive checks compare MCMC posterior predictions against observed SRTR statistics and show good agreement on national medians, city factors, blood type multipliers, and monotonicity of urgency effects.
+
+## Access
+
+Use the `/simulate` endpoint with `?inference_mode=mcmc` to run MCMC inference. The frontend includes a dropdown to select the inference engine. Results are returned in the same schema as Monte Carlo, with credible intervals replacing bootstrap confidence intervals.
+
+## Limitations
+
+The hierarchical model assumes center effects are exchangeable (pooled via a normal prior). In reality, centers differ substantially in unobserved ways (case complexity, referral networks, center specialization). The model partially handles this via the LKJ frailty, but unmeasured confounding remains.
+
+MCMC is sensitive to prior specification. The current priors are informed by SRTR historical ranges but may be overconfident if the data generation process changes. Sensitivity analysis is recommended for policy-relevant conclusions.
+
+Fitting requires substantial computational resources (hours per organ). Refitting to incorporate new SRTR data is planned to occur quarterly.

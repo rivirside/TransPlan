@@ -1,0 +1,72 @@
+---
+sidebar_position: 1
+---
+
+# Bayesian Belief Network
+
+TransPlan offers Bayesian Belief Network inference as an alternative to Monte Carlo simulation. This approach uses exact probabilistic reasoning on a graphical model, providing faster query times and transparent causal assumptions.
+
+## The Problem with Independence
+
+The standard Monte Carlo engine treats all factors as multiplicatively independent. Blood type multiplier times city factor times urgency multiplier times cause-of-death multiplier. But this misses important interactions.
+
+The reality: the effect of blood type on wait time depends on regional donor supply. O-negative patients in a low-O-donor region face superlinearly disadvantaged outcomes. Age-organ mortality interactions vary dramatically across organs: heart mortality is far more age-sensitive than kidney. High-wait cities tend to have correlated high delisting rates, not independent ones.
+
+A Bayesian Belief Network captures these causal dependencies as a directed acyclic graph with conditional probability tables.
+
+## Architecture
+
+The TransPlan BBN is a 12-node DAG with 19 edges, built from existing SRTR data without introducing new parameters.
+
+### Nodes
+
+- **Evidence nodes** (observed): Organ, BloodType, Age, Urgency, Region
+- **Intermediate nodes** (latent): DonorSupply, WaitTimeCategory, GraftSurvival, MortalityRisk, DelistingRisk
+- **Outcome nodes** (queried): TransplantOutcome (4 competing states)
+
+### Conditional Probability Tables (CPTs)
+
+Each CPT is derived from:
+1. SRTR program-specific reports (organ-specific base rates)
+2. State-level donor registration data
+3. Regional cause-of-death distributions
+4. Hospital volume and center-specific survival outcomes
+
+All CPTs are deterministic functions of existing public data. No model tuning or fitting occurs.
+
+## Query-Time Inference
+
+When a patient profile is provided:
+
+1. Evidence is set on the five observable nodes (organ, blood type, age, urgency, region)
+2. VariableElimination (exact inference) computes marginal probabilities for all outcome nodes
+3. The network iterates over each of the 248 centers with region as the only changing evidence node
+4. Results are identical across multiple runs (deterministic)
+
+### Performance
+
+A complete query across all 248 centers takes approximately 200-400ms on a typical laptop, compared to 2+ seconds for Monte Carlo. Results are not cached; inference is real-time.
+
+## Comparing MC and BBN
+
+| Aspect | Monte Carlo | Bayesian Network |
+|--------|-------------|-----------------|
+| Query time | ~2000ms | ~300ms |
+| Uncertainty | Sampling error (95% CI) | Deterministic (no sampling variance) |
+| Interpretability | Black box simulation | Transparent DAG structure |
+| Interactions | Multiplicative independence | Explicit conditional dependencies |
+| Validation | Cross-validated rankings | Cross-validated with MC |
+
+## Cross-Validation Results
+
+BBN and Monte Carlo were evaluated on 100 representative patient profiles across all organs. Spearman rank correlation between city rankings: 0.52 to 0.71 depending on organ. Mean absolute difference in 24-month transplant probability: 3 to 7 percentage points. Directional consistency on blood type, organ, and urgency effects: 100% agreement.
+
+## Access
+
+Use the `/simulate` endpoint with `?inference_mode=bayesian` to run BBN inference. The frontend includes a dropdown to select the inference engine. Results are returned in the same schema as Monte Carlo.
+
+## Limitations
+
+The BBN assumes conditional independence between organ outcomes and causes-of-death given the intermediate nodes. In reality, some regional correlations exist. The model also fixes CPT values derived from historical national data and does not learn from regional variation. These are conservative assumptions that lean toward underestimating interactions.
+
+The competing risks probabilities from BBN do not have frequentist confidence intervals (the network is deterministic). Instead, the frontend displays an "uncertainty band" that reflects the resolution of the underlying CPT discretization.

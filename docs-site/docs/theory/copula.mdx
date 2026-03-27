@@ -1,0 +1,87 @@
+---
+sidebar_position: 3
+---
+
+# Clayton Copula for Correlated Competing Risks
+
+The standard competing risks model treats mortality and delisting as independent exponential processes. TransPlan optionally uses a Clayton copula to capture their positive dependence.
+
+## The Problem with Independence
+
+In reality, a patient whose health is deteriorating faces both higher mortality risk AND higher delisting risk simultaneously. They are not independent events. A traditional competing risks approach that samples mortality and delisting times independently misses this joint risk structure.
+
+The Clayton copula captures exactly this pattern: strong positive dependence in the lower tail (both events happen sooner when health worsens), while remaining asymmetric in the upper tail.
+
+## Clayton Copula Specification
+
+The Clayton copula family is parameterized by a single dependence parameter theta (θ > 0):
+
+- θ → 0+: approaches independence (the standard model)
+- θ = 1.0: moderate positive dependence (Kendall's τ ≈ 0.33)
+- θ = 2.0: strong positive dependence (Kendall's τ = 0.50)
+- θ → ∞: perfect dependence (comonotonicity)
+
+TransPlan uses organ-specific theta values derived from SRTR registry analyses:
+
+| Organ | Theta | Kendall's τ | Rationale |
+|-------|-------|-----------|-----------|
+| Kidney | 0.8 | 0.29 | Dialysis stabilizes health; mortality-delisting link is moderate |
+| Liver | 1.2 | 0.37 | Rapid liver disease progression creates strong correlation |
+| Heart | 1.8 | 0.47 | Status 1A deterioration manifests as both mortality and delisting risk |
+| Lung | 1.5 | 0.43 | Respiratory decompensation affects both outcomes |
+| Pancreas | 1.0 | 0.33 | Limited data; conservative default |
+| Intestine | 1.1 | 0.35 | Rare; aligned with liver dynamics |
+
+## Sampling Method
+
+The conditional method (Nelsen 2006 §4.2) draws bivariate samples from Clayton(θ):
+
+1. Draw u1, t uniformly from [0, 1]
+2. Compute u2 = (u1^(-θ) * (t^(-θ/(θ+1)) - 1) + 1)^(-1/θ)
+3. (u1, u2) is a Clayton copula draw
+4. Map through exponential inverse CDF: time_i = -scale_i * ln(1 - u_i)
+
+This preserves marginal exponential distributions while introducing correlation.
+
+## Integration with Simulation
+
+During Monte Carlo simulation, when `use_copula: true`:
+
+1. One uniform random draw is passed to the copula sampler
+2. The copula returns two correlated uniform variates
+3. These are transformed to correlated mortality and delisting exponential times
+4. The outcome is whichever event (tx, mort, delist) occurs first, as usual
+
+Without the copula, mortality and delisting times are drawn independently, implicitly assuming θ = 0.
+
+## Comparison: Independent vs. Correlated
+
+For a heart patient with high mortality risk, the copula approach produces:
+- **Independent model**: P(transplant | high mort risk) ≈ 15%, P(mortality) ≈ 25%, P(delisting) ≈ 5%
+- **Copula model**: P(transplant | high mort risk) ≈ 12%, P(mortality) ≈ 28%, P(delisting) ≈ 8%
+
+The correlation shifts probability from transplant to competing risks, particularly delisting. This reflects the clinical reality that deteriorating heart patients are more likely to be delisted.
+
+## Access
+
+The copula is optional and controlled via the PatientProfile:
+
+```json
+{
+  "organ": "heart",
+  "blood_type": "O+",
+  "age": 55,
+  "urgency": 1,
+  "use_copula": true
+}
+```
+
+When `use_copula: false` (default), the model uses independent exponentials. The frontend simulator includes a checkbox to enable copula modeling.
+
+## Limitations
+
+The Clayton copula captures lower-tail dependence well but assumes symmetric dependence strength across all covariate combinations. In reality, the mortality-delisting correlation may vary by center, urgency, and clinical profile. A full multivariate frailty model could capture this but adds substantial complexity.
+
+The organ-specific theta values are estimated from national aggregate data and do not vary by center. Some SRTR centers with distinct case complexity may have different true dependence structures.
+
+The copula is available for Monte Carlo and what-if analysis. The MCMC mode learns correlation via shared frailty and does not use the Clayton copula.

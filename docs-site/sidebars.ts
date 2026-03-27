@@ -18,6 +18,9 @@ const sidebars: SidebarsConfig = {
       items: [
         'theory/scoring-methodology',
         'theory/monte-carlo',
+        'theory/bayesian-network',
+        'theory/mcmc',
+        'theory/copula',
         'theory/competing-risks',
         'theory/wait-time-distributions',
       ],
