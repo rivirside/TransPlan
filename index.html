@@ -12,6 +12,7 @@
     <div id="nav-placeholder"></div>
 
     <main>
+        <div class="hero-panel">
         <!-- Hero -->
         <section class="landing-hero">
             <div class="hero-left">
@@ -31,6 +32,7 @@
         <div class="scroll-hint">
             <span>Scroll down to explore the data and learn more about the project</span>
             <div class="scroll-arrow"></div>
+        </div>
         </div>
 
         <!-- Scrollytelling story section -->
@@ -219,19 +221,37 @@
             <div class="landing-feature-header">
                 <h2>Read more about our methods</h2>
             </div>
-            <div class="landing-features-grid">
-                <a href="docs-site/build/" class="landing-feature">
-                    <h3>Multi-Factor Scoring</h3>
-                    <p>8 categories, 50+ variables per center, adjusted for your organ and blood type.</p>
-                </a>
-                <a href="docs-site/build/" class="landing-feature">
-                    <h3>Monte Carlo Simulation</h3>
-                    <p>1,000 iterations with competing risks: transplant, mortality, removal. 6 to 36 month horizons.</p>
-                </a>
-                <a href="docs-site/build/" class="landing-feature">
-                    <h3>Equity Analysis</h3>
-                    <p>48-profile demographic matrix with Gini coefficient. See which centers treat all patient profiles fairly.</p>
-                </a>
+            <div class="methods-accordion">
+                <div class="acc-item">
+                    <button class="acc-trigger" aria-expanded="false">
+                        <span class="acc-title">Multi-Factor Scoring</span>
+                        <span class="acc-icon" aria-hidden="true"></span>
+                    </button>
+                    <div class="acc-body" hidden>
+                        <p>8 scoring categories and 50+ variables per center, adjusted for your organ type, blood type, and patient profile. Categories include wait time, transplant rate, survival outcomes, volume, and equity — each weighted by evidence of patient impact.</p>
+                        <a href="docs-site/build/architecture/scoring" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
+                    </div>
+                </div>
+                <div class="acc-item">
+                    <button class="acc-trigger" aria-expanded="false">
+                        <span class="acc-title">Monte Carlo Simulation</span>
+                        <span class="acc-icon" aria-hidden="true"></span>
+                    </button>
+                    <div class="acc-body" hidden>
+                        <p>1,000 iterations per center using competing risks: transplant, mortality, and waitlist removal. Simulates 6 to 36-month patient horizons across organ types. Each run samples from real SRTR distributions, accounting for variation in donor supply, patient acuity, and center-level acceptance rates.</p>
+                        <a href="docs-site/build/architecture/overview" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
+                    </div>
+                </div>
+                <div class="acc-item">
+                    <button class="acc-trigger" aria-expanded="false">
+                        <span class="acc-title">Equity Analysis</span>
+                        <span class="acc-icon" aria-hidden="true"></span>
+                    </button>
+                    <div class="acc-body" hidden>
+                        <p>A 48-profile demographic matrix runs each center across blood types, age brackets, and sex to evaluate distributional fairness. We compute a <a href="docs-site/build/architecture/scoring" target="_blank" rel="noopener">Gini coefficient</a> per center to identify programs where certain patient profiles are systematically disadvantaged relative to others at the same institution.</p>
+                        <a href="docs-site/build/architecture/equity" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -309,6 +329,26 @@
     <script src="components/site-chrome.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="landing-story.js"></script>
+    <script>
+    // Methods accordion — auto-close on open
+    (function() {
+      document.querySelectorAll('.acc-trigger').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var item = btn.closest('.acc-item');
+          var body = item.querySelector('.acc-body');
+          var isOpen = btn.getAttribute('aria-expanded') === 'true';
+          document.querySelectorAll('.acc-item').forEach(function(i) {
+            i.querySelector('.acc-trigger').setAttribute('aria-expanded', 'false');
+            i.querySelector('.acc-body').hidden = true;
+          });
+          if (!isOpen) {
+            btn.setAttribute('aria-expanded', 'true');
+            body.hidden = false;
+          }
+        });
+      });
+    })();
+    </script>
     <script src="donation-banner.js"></script>
     <script src="session.js"></script>
     <!-- Vercel Analytics -->
