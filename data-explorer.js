@@ -1298,47 +1298,84 @@
 
     var centers = Object.values(centersData.centers || {});
     var filtered = centers.filter(function (c) {
+      if (!c.lat || !c.lon) return false;
       if (activeOrgan !== 'All') {
         return c.organs && c.organs.indexOf(activeOrgan.toLowerCase()) !== -1;
       }
       return true;
     });
 
+    // Determine which center-layer columns to include
+    var extraCols = [];
+    if (activeLayers['center-wait'] && waitData) extraCols.push('wait_factor');
+    if (activeLayers['center-volume'] && volumeData) extraCols.push('volume');
+    if (activeLayers['center-survival'] && outcomeData) extraCols.push('survival_1yr');
+    if (activeLayers['center-composite']) extraCols.push('composite_score');
+
+    function rowValues(c) {
+      var vals = {};
+      if (extraCols.indexOf('wait_factor') !== -1) {
+        var factors = waitData.center_wait_time_factors[c.code];
+        var organKey = activeOrgan === 'All' ? null : activeOrgan.toLowerCase();
+        if (factors && organKey) {
+          vals.wait_factor = factors[organKey] != null ? Number(factors[organKey].toFixed(2)) : null;
+        } else if (factors) {
+          var fv = Object.values(factors);
+          vals.wait_factor = fv.length ? Number((fv.reduce(function (a, b) { return a + b; }, 0) / fv.length).toFixed(2)) : null;
+        } else {
+          vals.wait_factor = null;
+        }
+      }
+      if (extraCols.indexOf('volume') !== -1) {
+        vals.volume = getCenterVolume(c, activeOrgan);
+        if (vals.volume != null) vals.volume = Math.round(vals.volume);
+      }
+      if (extraCols.indexOf('survival_1yr') !== -1) {
+        var surv = getCenterSurvival(c, activeOrgan);
+        vals.survival_1yr = surv != null ? Number(surv.toFixed(1)) : null;
+      }
+      if (extraCols.indexOf('composite_score') !== -1) {
+        vals.composite_score = Number((compositeScore(c.code) * 100).toFixed(0));
+      }
+      return vals;
+    }
+
     if (format === 'json') {
-      var jsonStr = JSON.stringify(filtered, null, 2);
-      downloadFile(jsonStr, 'transplant-centers.json', 'application/json');
+      var jsonArr = filtered.map(function (c) {
+        var obj = {
+          center_name: c.name,
+          city: c.city || '',
+          state: c.state_abbr || c.state || '',
+          srtr_code: c.code,
+          lat: c.lat,
+          lon: c.lon
+        };
+        var extras = rowValues(c);
+        extraCols.forEach(function (col) {
+          obj[col] = extras[col];
+        });
+        return obj;
+      });
+      downloadFile(JSON.stringify(jsonArr, null, 2), 'transplant-centers.json', 'application/json');
     } else {
       // CSV
-      var headers = ['code', 'name', 'state', 'lat', 'lon', 'organs'];
-      if (waitData) headers.push('wait_factor');
-      if (outcomeData) headers.push('survival_1yr');
+      var headers = ['center_name', 'city', 'state', 'srtr_code', 'lat', 'lon'];
+      extraCols.forEach(function (col) { headers.push(col); });
 
       var rows = [headers.join(',')];
       filtered.forEach(function (c) {
+        var extras = rowValues(c);
         var row = [
-          c.code,
           '"' + (c.name || '').replace(/"/g, '""') + '"',
+          '"' + (c.city || '').replace(/"/g, '""') + '"',
           c.state_abbr || c.state || '',
+          c.code,
           c.lat,
-          c.lon,
-          '"' + (c.organs || []).join(';') + '"'
+          c.lon
         ];
-        if (waitData) {
-          var factors = waitData.center_wait_time_factors[c.code];
-          var organKey = activeOrgan === 'All' ? null : activeOrgan.toLowerCase();
-          if (factors && organKey) {
-            row.push(factors[organKey] != null ? factors[organKey] : '');
-          } else if (factors) {
-            var vals = Object.values(factors);
-            row.push(vals.length ? (vals.reduce(function (a, b) { return a + b; }, 0) / vals.length).toFixed(2) : '');
-          } else {
-            row.push('');
-          }
-        }
-        if (outcomeData) {
-          var surv = getCenterSurvival(c, activeOrgan);
-          row.push(surv != null ? surv.toFixed(1) : '');
-        }
+        extraCols.forEach(function (col) {
+          row.push(extras[col] != null ? extras[col] : '');
+        });
         rows.push(row.join(','));
       });
       downloadFile(rows.join('\n'), 'transplant-centers.csv', 'text/csv');
