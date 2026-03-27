@@ -4090,9 +4090,9 @@ body {
     grid-template-columns: 500px 1fr;
   }
   .landing-hero {
-    max-width: 1280px;
+    max-width: none;
     gap: 20px;
-    padding: 48px 64px 36px;
+    padding: 48px 80px 36px;
   }
   .landing-hero h1 {
     font-size: 58px;
@@ -4100,16 +4100,18 @@ body {
   }
   .hero-sub {
     font-size: 17px;
-    max-width: 620px;
+    max-width: 560px;
   }
   .hero-row {
-    gap: 72px;
+    gap: 80px;
   }
   .hero-pull-box {
-    width: 360px;
+    width: clamp(400px, 28vw, 500px);
+    padding: 32px 36px;
   }
   .hero-pull-story {
-    font-size: 16px;
+    font-size: 18px;
+    line-height: 1.6;
   }
   .post-story-inner {
     max-width: 960px;
