@@ -14,10 +14,17 @@
     <main>
         <!-- Hero -->
         <section class="landing-hero">
-            <div class="kicker">An independent research and data project</div>
-            <h1>Where you list for a transplant<br>shapes your odds. <em>Dramatically.</em></h1>
-            <p class="hero-sub">Wait times for kidneys, livers, hearts, and lungs vary <strong>enormously</strong> depending on where you're listed. Most patients never see this data compared side by side. Most researchers can't easily model how policy changes would shift these outcomes. This project tackles both.</p>
-            <p class="hero-note">This is an open-source project built on public data. If you're a developer, researcher, or transplant advocate, we'd love your help. <a href="docs-site/build/api-reference/simulate" target="_blank" rel="noopener" style="color:var(--warm-accent);font-weight:600;text-decoration:none;">Check out the API</a> or <a href="mailto:contact@rivir.social" style="color:var(--warm-accent);font-weight:600;text-decoration:none;">get in touch</a>.</p>
+            <div class="hero-left">
+                <div class="kicker">An independent research and data project</div>
+                <h1>Where you list for a transplant<br>shapes your odds. <em>Dramatically.</em></h1>
+                <p class="hero-sub">Wait times for kidneys, livers, hearts, and lungs vary <strong>enormously</strong> depending on where you're listed. Most patients never see this data compared side by side. Most researchers can't easily model how policy changes would shift these outcomes. This project tackles both.</p>
+                <p class="hero-note">This is an open-source project built on public data. If you're a developer, researcher, or transplant advocate, we'd love your help. <a href="docs-site/build/api-reference/simulate" target="_blank" rel="noopener" style="color:var(--warm-accent);font-weight:600;text-decoration:none;">Check out the API</a> or <a href="mailto:contact@rivir.social" style="color:var(--warm-accent);font-weight:600;text-decoration:none;">get in touch</a>.</p>
+            </div>
+            <div class="hero-pull-box">
+                <div class="hero-pull-eyebrow">A real patient story</div>
+                <p class="hero-pull-story">A kidney patient listed in Phoenix waits a median of <em>4 months.</em> The same patient listed in Boston waits <em>3 years.</em></p>
+                <p class="hero-pull-caption">Both patients are on the same national waitlist, governed by the same federal rules. The difference is which transplant program they chose.</p>
+            </div>
         </section>
 
         <!-- Scroll hint -->
@@ -33,9 +40,10 @@
                 <!-- Step 1: The landscape -->
                 <div class="narr-step active" data-step="0">
                     <div class="step-number">The Landscape</div>
-                    <h2><a href="centers.html">248 transplant programs</a>. One country.</h2>
-                    <p>Each marker is a hospital that performs organ transplants: kidneys, livers, hearts, lungs, pancreas, and intestine. Together they serve over 100,000 patients on the national waitlist.</p>
-                    <p>They cluster around major metros. But patients come from everywhere, including rural areas hundreds of miles from the nearest center.</p>
+                    <h2><a href="centers.html">248 transplant programs</a>. One country. Over 100,000 people waiting.</h2>
+                    <p>Each dot on this map is a hospital authorized to perform organ transplants: kidneys, livers, hearts, lungs, pancreases, and intestines. They range from major academic medical centers performing hundreds of transplants a year to smaller community programs doing fewer than a dozen.</p>
+                    <p>They cluster around major metropolitan areas. But the patients who need them don't. Rural Americans, who face higher rates of diabetes, hypertension, and kidney disease, often live hundreds of miles from the nearest program. Listing at a distant center means travel costs, months of proximity, and being reachable within hours of a donor call.</p>
+                    <p>The centers on this map are the entire system. There is no private alternative, no bypass. Every transplant in the U.S. goes through one of these 248 programs.</p>
                     <div class="data-source">Center data from <a href="https://www.srtr.org" target="_blank" rel="noopener"><strong>SRTR</strong></a> (Scientific Registry of Transplant Recipients)</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" disabled>Back</button>
@@ -48,10 +56,9 @@
                 <div class="narr-step" data-step="1">
                     <div class="step-number">The Problem</div>
                     <h2>They are not created equal.</h2>
-                    <p>Wait times at these centers vary by orders of magnitude, even for the same organ and blood type. Two hospitals 40 miles apart can differ by years.</p>
-                    <div class="big-stat">8 mo to 11 yr</div>
-                    <div class="stat-label">Kidney median wait range across US centers</div>
-                    <p>Each center is colored from <span style="color:#2d9e5c;font-weight:600;">green</span> (shorter waits) to <span style="color:#e05252;font-weight:600;">red</span> (longer waits). The pattern is geographic, not random.</p>
+                    <p>Kidney wait times across U.S. transplant centers range from roughly <strong>8 months</strong> at the most favorable programs to <strong>over 11 years</strong> at the most competitive. The same organ, the same blood type, the same medical urgency — but the choice of center determines when, or whether, a transplant happens.</p>
+                    <p>Two hospitals 40 miles apart can differ by years of expected waiting. A patient listed in Phoenix may be transplanted within months. Their counterpart at a high-volume Boston center, who chose it for its reputation, may wait a decade. This is not a function of how sick they are. It is a function of which program they chose.</p>
+                    <p>Each center is colored from <span style="color:#2d9e5c;font-weight:600;">green</span> (shorter waits) to <span style="color:#e05252;font-weight:600;">red</span> (longer waits). The gradient is not random. It mirrors regional organ supply, accumulated waitlist pressure, and decades of uneven policy.</p>
                     <div class="data-source">Wait data from <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener"><strong>OPTN</strong></a> (Organ Procurement and Transplantation Network)</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(0)">Back</button>
@@ -63,10 +70,11 @@
                 <!-- Step 3: How fatalities create donors -->
                 <div class="narr-step" data-step="2">
                     <div class="step-number">Organ Supply</div>
-                    <h2>Traumatic deaths are a major source of donor organs.</h2>
-                    <p>A large share of transplantable organs come from sudden fatalities, particularly motor vehicle accidents. The shaded red regions show areas with higher traffic fatality rates.</p>
-                    <p>These areas often don't overlap with major transplant centers, creating a geographic mismatch between where organs become available and where patients are waiting.</p>
-                    <div class="data-source">Fatality data from <a href="https://www.nhtsa.gov" target="_blank" rel="noopener"><strong>NHTSA</strong></a> via CDC WISQARS</div>
+                    <h2>Where organs come from shapes everything downstream.</h2>
+                    <p>Most transplantable organs come from deceased donors who die suddenly: motor vehicle accidents, strokes, drug overdoses. For a donation to occur, death must be declared, the organ procured, and a compatible recipient reached in hours. Hearts survive roughly 4 to 6 hours outside the body. Kidneys, up to 36.</p>
+                    <p>The red-shaded regions show areas with higher traffic fatality rates, which correlate with higher potential deceased donor supply. But high-fatality areas rarely overlap with major transplant centers. This geographic mismatch between where organs become available and where patients wait is one of the central inefficiencies of the current allocation system.</p>
+                    <p>A center's proximity to active organ procurement corridors is a real logistical advantage. Distance from supply means more declined offers, longer cold ischemia times, and lower transplant rates for patients at that program.</p>
+                    <div class="data-source">Fatality data from <a href="https://www.nhtsa.gov" target="_blank" rel="noopener"><strong>NHTSA</strong></a> via <a href="https://wisqars.cdc.gov" target="_blank" rel="noopener"><strong>CDC WISQARS</strong></a></div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(1)">Back</button>
                         <button class="step-btn primary" onclick="goStep(3)">Next</button>
@@ -77,10 +85,10 @@
                 <!-- Step 4: Different fatalities, different organs -->
                 <div class="narr-step" data-step="3">
                     <div class="step-number">Not All Donors Are Equal</div>
-                    <h2>Different causes of death preserve different organs.</h2>
-                    <p>Brain death from trauma (car accidents, falls) tends to preserve kidneys, livers, and pancreases well because blood flow continues. Cardiac death, by contrast, limits viability for hearts and lungs due to warm ischemia time.</p>
-                    <p>This means a region's <em>type</em> of fatalities shapes which organs are available there, not just how many. Rural areas with high traffic fatalities may have strong kidney supply but limited heart availability.</p>
-                    <div class="highlight">We model this by <a href="docs-site/build/architecture/data-pipeline" target="_blank" rel="noopener">weighting organ-specific donor rates per region</a>, not just raw fatality counts.</div>
+                    <h2>The cause of death determines which organs are viable.</h2>
+                    <p>Donors declared brain dead (DBD) — typically from trauma — maintain circulation until the moment of procurement. This preserves kidneys, livers, and pancreases well, and yields the highest-quality hearts and lungs. Donors declared dead by cardiac criteria (DCD) experience a period of warm ischemia before procurement, which limits heart and lung viability but still produces viable kidneys and, increasingly, livers.</p>
+                    <p>A region with high traffic fatalities may generate strong DBD kidney and liver supply but offer fewer viable hearts or lungs. Rural areas with high DCD rates may supply kidneys to nearby centers but be unable to serve a patient awaiting a heart transplant 200 miles away.</p>
+                    <div class="highlight">We model this by <a href="docs-site/build/architecture/data-pipeline" target="_blank" rel="noopener">weighting organ-specific donor type rates per region</a>, not just raw fatality counts, so a center's score reflects the actual supply landscape for your organ type.</div>
                     <div class="data-source">Donor type data from <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener"><strong>OPTN</strong></a> &amp; <a href="https://www.srtr.org" target="_blank" rel="noopener"><strong>SRTR</strong></a> program-specific reports</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(2)">Back</button>
@@ -92,12 +100,11 @@
                 <!-- Step 5: Donor registration -->
                 <div class="narr-step" data-step="4">
                     <div class="step-number">Donor Willingness</div>
-                    <h2>Donor registration rates vary wildly by state.</h2>
-                    <p>How many people in a region have opted in as organ donors directly affects the supply pipeline. Blue shaded regions show higher registration density.</p>
-                    <div class="big-stat">35% to 68%</div>
-                    <div class="stat-label">State-level donor registration rate range</div>
-                    <p>When you layer supply patterns, registration rates, hospital volume, and wait times, you start to see why where you list matters as much as your clinical profile.</p>
-                    <div class="data-source">Registration data from <a href="https://www.organdonor.gov" target="_blank" rel="noopener"><strong>HRSA</strong></a> / Donate Life America</div>
+                    <h2>Not every eligible death produces a donor.</h2>
+                    <p>Registered donors must be identified among the eligible deceased, and family consent obtained. Registration rates across U.S. states range from roughly <strong>35% to 68%</strong> of licensed drivers. High-registration states benefit from a deeper potential donor pool and, typically, shorter wait times. Low-registration states rely more on family authorization at the bedside, a harder and less consistent process.</p>
+                    <p>Beyond registration, organ procurement organizations (OPOs) vary widely in how effectively they convert potential donors into actual ones. Some OPOs operate at the top of their potential; others leave significant supply unrealized. The blue-shaded regions reflect state-level registration density. This is the upstream input that shapes everything a transplant center can offer its patients.</p>
+                    <p>When you layer supply patterns, registration rates, hospital volume, and wait times together, the picture of why where you list matters begins to sharpen into something unavoidable.</p>
+                    <div class="data-source">Registration data from <a href="https://www.organdonor.gov" target="_blank" rel="noopener"><strong>HRSA</strong></a> / <a href="https://www.donatelife.net" target="_blank" rel="noopener"><strong>Donate Life America</strong></a></div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(3)">Back</button>
                         <button class="step-btn primary" onclick="goStep(5)">Next</button>
@@ -109,9 +116,9 @@
                 <div class="narr-step" data-step="5">
                     <div class="step-number">The Methods</div>
                     <h2><a href="docs-site/build/architecture/overview" target="_blank" rel="noopener">Monte Carlo simulation</a> with competing risks.</h2>
-                    <p>For each center, we run 1,000 Monte Carlo iterations that model the probability of transplant at 6, 12, 24, and 36 months. Each iteration accounts for competing risks: transplant, mortality on the waitlist, and removal for other reasons.</p>
-                    <p>A 48-profile demographic matrix evaluates equity across blood types, age brackets, and sex. The Gini coefficient measures how fairly each center distributes outcomes across patient profiles.</p>
-                    <div class="highlight"><a href="data.html">What-if scenarios</a> let researchers adjust donor rates and wait-time multipliers to model how UNOS policy changes would shift transplant probabilities in real time.</div>
+                    <p>For each of the 248 centers, we run 1,000 simulation iterations modeling the probability of receiving a transplant at 6, 12, 24, and 36 months. Each iteration draws on <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener"><strong>OPTN</strong></a> historical offer and acceptance rates and organ-specific donor flow by region. Critically, each iteration accounts for <em>competing risks</em>: the chance of transplant, the chance of dying while waiting, and the chance of removal for other medical reasons.</p>
+                    <p>A 48-profile demographic matrix runs each center across blood types, age brackets, and sex to evaluate equity. We then compute a <a href="docs-site/build/architecture/scoring" target="_blank" rel="noopener">Gini coefficient</a> per center, a standard measure of distributional inequity, to identify programs where certain patient profiles are systematically disadvantaged relative to others at the same institution.</p>
+                    <div class="highlight"><a href="data.html">What-if scenarios</a> let researchers adjust donor rates, OPO performance, and wait-time multipliers to model how UNOS policy changes would shift transplant probabilities in real time.</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(4)">Back</button>
                         <button class="step-btn primary" onclick="goStep(6)">Next</button>
@@ -123,9 +130,9 @@
                 <div class="narr-step" data-step="6">
                     <div class="step-number">The Composite</div>
                     <h2>50+ variables. 8 weighted categories. One score.</h2>
-                    <p>transplant.today combines all of these layers into a composite suitability score: medical compatibility, wait times, donor availability, hospital quality (<a href="https://www.medicare.gov/care-compare" target="_blank" rel="noopener"><strong>CMS</strong></a>), logistics, health demographics (<a href="https://www.cdc.gov/places" target="_blank" rel="noopener"><strong>CDC</strong></a>), air quality (<a href="https://aqs.epa.gov" target="_blank" rel="noopener"><strong>EPA</strong></a>), and socioeconomic support (<a href="https://www.bls.gov" target="_blank" rel="noopener"><strong>BLS</strong></a>).</p>
-                    <p>Larger, brighter markers indicate higher composite scores. The weights adapt to your organ type, blood type, and clinical profile.</p>
-                    <div class="highlight">This is the kind of multi-factor analysis that wealthy patients pay consultants to perform. We made it free and open source.</div>
+                    <p>transplant.today synthesizes all of these layers into a composite suitability score for each center and organ type. The score draws on medical compatibility, wait-time probability, donor supply quality, hospital outcomes (<a href="https://www.medicare.gov/care-compare" target="_blank" rel="noopener"><strong>CMS</strong></a>), logistical access, chronic disease burden (<a href="https://www.cdc.gov/places" target="_blank" rel="noopener"><strong>CDC PLACES</strong></a>), air quality (<a href="https://aqs.epa.gov" target="_blank" rel="noopener"><strong>EPA AQS</strong></a>), and socioeconomic support (<a href="https://www.bls.gov" target="_blank" rel="noopener"><strong>BLS</strong></a>).</p>
+                    <p>The weights are not fixed. They adapt based on your organ type, blood type, urgency tier, and clinical profile. A heart patient's score weights heavily toward donor quality and center volume. A kidney patient's may weight more toward wait-time probability and equity. Larger, brighter markers on this map indicate higher composite scores for a default kidney profile.</p>
+                    <div class="highlight">This is the kind of multi-factor analysis that well-resourced patients pay transplant consultants thousands of dollars to perform. We made it free and open source.</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(5)">Back</button>
                         <button class="step-btn primary" onclick="goStep(7)">Next</button>
@@ -137,9 +144,9 @@
                 <div class="narr-step" data-step="7">
                     <div class="step-number">For Patients and Researchers</div>
                     <h2>A tool for decisions. A platform for discovery.</h2>
-                    <p><strong>For patients:</strong> the <a href="simulator.html">Simulator</a> gives you personalized center rankings with wait-time forecasts. The <a href="centers.html">Center Explorer</a> lets you compare programs side by side. No login, no cost.</p>
-                    <p><strong>For researchers:</strong> the <a href="data.html">Data tab</a> exposes every layer as a toggleable overlay on the interactive map. Run what-if policy scenarios. Export results as CSV or JSON. Explore how allocation policies, donor registration drives, and infrastructure investments could reshape equitable access to transplantation.</p>
-                    <div class="highlight">Free. Open source. No login required. Data refreshed weekly from 8 public sources.</div>
+                    <p>For patients and families, the <a href="simulator.html">Simulator</a> takes your organ type, blood type, and clinical profile and returns personalized center rankings with wait-time probability forecasts: not just raw wait times, but the actual probability you will be transplanted within 6, 12, 24, and 36 months at each center given your specific situation. The <a href="centers.html">Center Explorer</a> lets you compare programs side by side across every scoring category.</p>
+                    <p>For researchers, clinicians, and policy advocates, the <a href="data.html">Data Explorer</a> exposes every layer of this model as a toggleable map overlay with real values. Run what-if policy scenarios: what happens to national wait times if OPO performance improves in the South? How does a donor registration drive in a low-registration state affect equity? Export any layer as <a href="docs-site/build/api-reference/simulate" target="_blank" rel="noopener">CSV or JSON</a> for independent analysis.</p>
+                    <div class="highlight">Free. Open source. No login required. Data refreshed weekly from 8 federal sources: <a href="https://www.srtr.org" target="_blank" rel="noopener">SRTR</a>, <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener">OPTN</a>, <a href="https://www.cdc.gov" target="_blank" rel="noopener">CDC</a>, <a href="https://www.medicare.gov/care-compare" target="_blank" rel="noopener">CMS</a>, <a href="https://aqs.epa.gov" target="_blank" rel="noopener">EPA</a>, <a href="https://www.bls.gov" target="_blank" rel="noopener">BLS</a>, <a href="https://www.nhtsa.gov" target="_blank" rel="noopener">NHTSA</a>, <a href="https://www.organdonor.gov" target="_blank" rel="noopener">HRSA</a>.</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(6)">Back</button>
                         <button class="step-btn primary" onclick="document.querySelector('.post-story-cta').scrollIntoView({behavior:'smooth'})">Launch Simulator</button>
