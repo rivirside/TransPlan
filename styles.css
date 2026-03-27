@@ -4010,7 +4010,7 @@ body {
   color: var(--warm-accent);
 }
 .hero-sub {
-  font-size: 17px;
+  font-size: 15px;
   color: var(--warm-muted);
   line-height: 1.7;
   max-width: 560px;
