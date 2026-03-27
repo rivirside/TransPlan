@@ -17,10 +17,11 @@ Add links to key phrases in the 8 scrollytelling steps. All links open in new ta
 | 1 - Landscape | "SRTR" (data source) | `https://www.srtr.org` |
 | 2 - Problem | "OPTN" (data source) | `https://optn.transplant.hrsa.gov` |
 | 3 - Organ Supply | "NHTSA" (data source) | `https://www.nhtsa.gov` |
-| 4 - Donor Types | "organ-specific donor rates per region" | `docs-site/build/` |
-| 4 - Donor Types | "OPTN" and "SRTR" (data source) | respective sites |
+| 4 - Donor Types | "organ-specific donor rates per region" | `docs-site/build/architecture/data-pipeline` |
+| 4 - Donor Types | "OPTN" (data source) | `https://optn.transplant.hrsa.gov` |
+| 4 - Donor Types | "SRTR" (data source) | `https://www.srtr.org` |
 | 5 - Registration | "HRSA" (data source) | `https://www.organdonor.gov` |
-| 6 - Methods | "Monte Carlo simulation" (heading) | `docs-site/build/` |
+| 6 - Methods | "Monte Carlo simulation" (heading) | `docs-site/build/architecture/overview` |
 | 6 - Methods | "What-if scenarios" (highlight) | `data.html` |
 | 7 - Composite | "CMS" | `https://www.medicare.gov/care-compare` |
 | 7 - Composite | "CDC" | `https://www.cdc.gov/places` |
@@ -62,8 +63,18 @@ Create `components/site-chrome.js` containing nav and footer HTML as template li
    - Default: standard 3-paragraph disclaimer (most pages)
    - `simulator`: extended 5-paragraph disclaimer with limitations detail
    - `advocacy`: custom non-affiliation disclaimer
-5. Dark mode toggle, hamburger menu, and dropdown behavior preserved in the same file
-6. Mobile nav toggle logic included
+5. Omitting `data-footer-variant` means default. `data.html` uses default.
+6. `simulator.html` footer-links are unique (Home, Methodology, Docs) vs the standard (Simulator, Docs). Encode this in the variant system.
+
+### Load order with dark-mode.js
+
+`dark-mode.js` loads in `<head>` (before paint) to prevent FOUC. It sets `data-dark` on `<html>` and builds the toggle button on DOMContentLoaded by finding `.nav-links`. Since `site-chrome.js` also runs on DOMContentLoaded and injects the nav, the load order matters:
+
+1. `dark-mode.js` in `<head>` - sets dark attribute immediately, registers DOMContentLoaded listener
+2. `site-chrome.js` before `</body>` - injects nav/footer HTML
+3. Since scripts before `</body>` execute before DOMContentLoaded fires (if DOM isn't ready yet), `site-chrome.js` injects first, then `dark-mode.js` DOMContentLoaded handler finds `.nav-links` and adds the toggle
+
+If timing is unreliable, `site-chrome.js` should dispatch a custom event `nav-ready` after injection, and `dark-mode.js` should listen for it as a fallback.
 
 ### Files affected
 
@@ -120,7 +131,7 @@ Draggable via grip handle in title bar. Accordion sections with checkboxes:
 - Wait times (color gradient green-to-red) - source: `wait-time-distributions-centers.json`
 - Transplant volumes (dot size) - source: `hospital-quality.json`
 - Survival outcomes (color gradient amber-to-green) - source: `post-transplant-outcomes-centers.json`
-- Composite score (size + opacity) - source: computed from pipeline
+- Composite score (size + opacity) - source: pre-computed per center during simulation run, stored in simulator's scoring output. For v1, use a deterministic hash-based placeholder (same approach as `landing-story.js` layer 6) until the pipeline exports a `data/composite-scores.json` file.
 
 **Constraint:** Radio behavior within center-dot group. Only one color encoding and one size encoding active at a time (max 2 dimensions: size + color).
 
@@ -139,12 +150,14 @@ Draggable via grip handle in title bar. Accordion sections with checkboxes:
 
 **Constraint:** Radio behavior. One county fill layer at a time.
 
-**Cross-level stacking:** One state fill + one county fill allowed simultaneously. County renders on top with lower default opacity. Opacity sliders in legend panel let users tune the blending.
+**Cross-level stacking:** One state fill + one county fill allowed simultaneously. Organ filter pills have no effect on state, county, or EPA layers (only center data).
+
+**Z-order (bottom to top):** state choropleth, county choropleth, EPA monitor dots, center dots/clusters. All four levels can be active simultaneously.
 
 **Point data (2,749 monitors)** - rendered as small circle markers:
 - EPA air quality (cyan, sized by AQI) - source: `air-quality-monitors.json`
 
-**Export buttons:** CSV and JSON for currently visible/filtered data.
+**Export buttons:** In the layer panel footer. Exports center-level data for currently active layers, filtered by selected organ. CSV includes columns for each active layer's values. JSON mirrors the structure. Choropleth and EPA data are not exported (they're reference layers).
 
 ### Floating legend panel (bottom-right)
 
@@ -186,9 +199,18 @@ Cards have hover effect (accent border + subtle shadow). Each shows: source name
 
 ### Required new data files
 
-State and county choropleth rendering requires GeoJSON boundary files:
-- `data/geo/us-states.geojson` - US state boundaries
-- `data/geo/us-counties.geojson` - US county boundaries (can use simplified/topojson for performance)
+State and county choropleth rendering requires boundary files:
+- `data/geo/us-states.topojson` - US state boundaries (source: US Census Bureau TIGER/Line, simplified)
+- `data/geo/us-counties.topojson` - US county boundaries (source: US Census Bureau TIGER/Line, simplified to <2MB)
+- Use TopoJSON format (not GeoJSON) for ~10x size reduction. Decompress client-side with `topojson-client`.
+
+### Data loading and performance
+
+- **Lazy loading:** Only fetch data files when their layer is first toggled on. Center data (`srtr-all-centers.json`) loads on page init. All other files load on demand.
+- **County geometry target:** Simplified TopoJSON under 2MB. Use mapshaper or topojson CLI to simplify.
+- **EPA monitors:** Load on demand. 2,749 points is fine for Leaflet with canvas renderer.
+- **Leaflet canvas renderer:** Use `preferCanvas: true` for all circle markers (better performance with many points vs SVG).
+- **Dependencies:** `leaflet`, `leaflet.markercluster`, `topojson-client` (all loaded from CDN like the existing Leaflet setup)
 
 ### New files
 
@@ -213,7 +235,35 @@ State and county choropleth rendering requires GeoJSON boundary files:
 
 2. **Footer** (in `components/site-chrome.js`): Add "GitHub" link to `footer-links` div alongside Simulator and Documentation links.
 
-3. **Verify once repo is public:** The links won't work until the repo is made public. Add the links now pointing to the expected URL; they'll activate when the repo goes public.
+3. **Repo URL:** `https://github.com/rivirside/TransPlan`. Links work now (repo is public).
+
+---
+
+## Task 5: Landing Page Polish
+
+### Scroll snap for story section
+
+When the user scrolls past the hero, gently snap the viewport to the story section so it settles into view. Not aggressive -- easy to scroll past if the user keeps scrolling.
+
+- Use CSS `scroll-snap-type: y proximity` on the page (not `mandatory`, which traps the user)
+- Add `scroll-snap-align: start` to the `.story-section` element
+- The chevron arrow at the bottom of the hero should smooth-scroll to the story section on click (already partially implemented -- verify it targets the right element)
+- Result: a casual scroll gets nudged into the story section, but a strong scroll passes right through
+
+### Full-width layout at 100% zoom
+
+The landing page narrative panel currently occupies the left ~420px with the map on the right, but at 100% zoom on wide monitors the right side can feel empty. Fix:
+
+- Increase the story section max-width or let it fill more of the viewport
+- The narrative panel can be wider (up to ~500px) on screens >1400px
+- The map should fill the remaining space (it already does via flex, but verify)
+- Post-story CTA and feature grid sections should also use wider max-width to match
+
+### Nav font size consistency
+
+The nav dropdown items (Resources menu) appear smaller than the top-level nav links. Unify:
+- Top-level nav links and dropdown items should use the same font size
+- Check `.nav-dropdown-item` vs `.nav-link` font-size in `styles.css`
 
 ---
 
@@ -230,7 +280,8 @@ State and county choropleth rendering requires GeoJSON boundary files:
 
 ## Implementation order
 
-1. **Task 2** (shared nav/footer) - do first, eliminates duplication before creating data.html
-2. **Task 1** (hyperlink story steps) - quick, independent
-3. **Task 3** (data explorer page) - largest task, depends on task 2 for nav/footer
-4. **Task 4** (GitHub link) - trivial, do alongside task 2 or 3
+1. **Task 5** (landing page polish) - scroll snap, full-width layout, nav font fix. Quick CSS changes, do first.
+2. **Task 2** (shared nav/footer) - eliminates duplication before creating data.html
+3. **Task 1** (hyperlink story steps) - quick, independent
+4. **Task 3** (data explorer page) - largest task, depends on task 2 for nav/footer
+5. **Task 4** (GitHub link) - trivial, do alongside task 2 or 3
