@@ -70,13 +70,11 @@
   var footerLinks = {
     default:
       '<a href="simulator.html">Simulator</a>' +
-      '<a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>' +
-      '<a href="https://github.com/rivirside/TransPlan" target="_blank" rel="noopener">GitHub</a>',
+      '<a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>',
 
     simulator:
       '<a href="/">Home</a>' +
-      '<a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>' +
-      '<a href="https://github.com/rivirside/TransPlan" target="_blank" rel="noopener">GitHub</a>'
+      '<a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>'
   };
 
   function buildFooter(variant) {
