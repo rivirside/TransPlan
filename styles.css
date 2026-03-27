@@ -4019,6 +4019,21 @@ body {
   max-height: 720px;
 }
 
+@media (min-width: 1400px) {
+  .story-section {
+    grid-template-columns: 500px 1fr;
+  }
+  .landing-hero {
+    max-width: 960px;
+  }
+  .post-story-inner {
+    max-width: 960px;
+  }
+  .landing-features {
+    max-width: 960px;
+  }
+}
+
 /* --- Narrative panel --- */
 .narrative-panel {
   border-right: 1px solid var(--warm-border);
