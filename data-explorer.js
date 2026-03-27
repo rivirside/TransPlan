@@ -502,9 +502,111 @@
     });
   }
 
+  /* ------- State Choropleth ---------------------------------------- */
+
+  var statesGeo = null; // cached GeoJSON FeatureCollection
+
+  function loadStatesGeo() {
+    if (statesGeo) return Promise.resolve(statesGeo);
+    return loadJSON('data/geo/us-states.topojson').then(function (topo) {
+      statesGeo = topojson.feature(topo, topo.objects.states);
+      return statesGeo;
+    });
+  }
+
+  // Color scales for state layers
+  var STATE_SCALES = {
+    'state-donor': {
+      steps: [
+        { max: 25, color: '#dbeafe' },
+        { max: 40, color: '#93c5fd' },
+        { max: 55, color: '#3b82f6' },
+        { max: 65, color: '#2563eb' },
+        { max: Infinity, color: '#1d4ed8' }
+      ]
+    },
+    'state-fatality': {
+      steps: [
+        { max: 5, color: '#fecaca' },
+        { max: 10, color: '#fca5a5' },
+        { max: 20, color: '#f87171' },
+        { max: 30, color: '#ef4444' },
+        { max: 40, color: '#dc2626' },
+        { max: Infinity, color: '#991b1b' }
+      ]
+    },
+    'state-policy': {
+      steps: [
+        { max: 72, color: '#d1fae5' },
+        { max: 78, color: '#6ee7b7' },
+        { max: 85, color: '#34d399' },
+        { max: 92, color: '#059669' },
+        { max: Infinity, color: '#065f46' }
+      ]
+    }
+  };
+
+  function stateColor(key, value) {
+    if (value == null) return '#e5e7eb';
+    var scale = STATE_SCALES[key];
+    if (!scale) return '#e5e7eb';
+    for (var i = 0; i < scale.steps.length; i++) {
+      if (value <= scale.steps[i].max) return scale.steps[i].color;
+    }
+    return scale.steps[scale.steps.length - 1].color;
+  }
+
+  var STATE_DATA_URLS = {
+    'state-donor':    'data/donor-registration.json',
+    'state-fatality': 'data/traffic-fatalities.json',
+    'state-policy':   'data/manual/policy-tiers.json'
+  };
+
   function loadStateLayer(key) {
-    console.log('Layer not yet implemented: ' + key);
-    // Stub — will be implemented in Tasks 12-14
+    Promise.all([loadStatesGeo(), loadJSON(STATE_DATA_URLS[key])]).then(function (results) {
+      var geo = results[0];
+      var raw = results[1];
+      var opacity = layerOpacities[key] || 0.5;
+
+      // Build lookup: state name -> value
+      var lookup = {};
+      if (key === 'state-donor') {
+        lookup = raw.stateRegistrationRates || {};
+      } else if (key === 'state-fatality') {
+        lookup = raw.stateFatalityRates || {};
+      } else if (key === 'state-policy') {
+        // policy-tiers.json has state names as top-level keys (except _meta)
+        Object.keys(raw).forEach(function (k) {
+          if (k !== '_meta') lookup[k] = raw[k];
+        });
+      }
+
+      var layer = L.geoJSON(geo, {
+        pane: 'statePane',
+        style: function (feature) {
+          var name = feature.properties.name;
+          var val = lookup[name];
+          return {
+            fillColor: stateColor(key, val),
+            fillOpacity: opacity * 0.7,
+            color: '#fff',
+            weight: 1,
+            opacity: opacity
+          };
+        },
+        onEachFeature: function (feature, layer) {
+          var name = feature.properties.name;
+          var val = lookup[name];
+          var label = val != null ? String(val) : 'N/A';
+          if (key === 'state-donor') label += '%';
+          if (key === 'state-fatality') label += ' per 100k';
+          if (key === 'state-policy') label += ' / 100';
+          layer.bindTooltip(name + ': ' + label, { sticky: true });
+        }
+      }).addTo(map);
+
+      layerObjects[key] = layer;
+    });
   }
 
   function loadCountyLayer(key) {
@@ -723,7 +825,7 @@
       'center-composite': '#c97c4a',
       'state-donor': '#3b82f6',
       'state-fatality': '#d93b3b',
-      'state-policy': '#8b5cf6',
+      'state-policy': '#059669',
       'county-diabetes': '#ef4444',
       'county-obesity': '#f59e0b',
       'county-hypertension': '#6366f1',
@@ -908,11 +1010,11 @@
 
       parent.appendChild(dotRow);
     } else if (key === 'state-donor') {
-      appendGradient(parent, 'linear-gradient(to right,rgba(59,130,246,0.1),rgba(59,130,246,0.6))', 'Low registration', 'High registration');
+      appendGradient(parent, 'linear-gradient(to right,#dbeafe,#1d4ed8)', 'Low registration', 'High registration');
     } else if (key === 'state-fatality') {
-      appendGradient(parent, 'linear-gradient(to right,rgba(217,59,59,0.1),rgba(217,59,59,0.6))', 'Low fatality rate', 'High fatality rate');
+      appendGradient(parent, 'linear-gradient(to right,#fecaca,#991b1b)', 'Low fatality rate', 'High fatality rate');
     } else if (key === 'state-policy') {
-      appendGradient(parent, 'linear-gradient(to right,#ede9fe,#8b5cf6)', 'Tier 1', 'Tier 5');
+      appendGradient(parent, 'linear-gradient(to right,#d1fae5,#065f46)', 'Score 65', 'Score 100');
     } else if (key.indexOf('county-') === 0) {
       var color = getSwatchColor(key);
       appendGradient(parent, 'linear-gradient(to right,' + hexToRgba(color, 0.1) + ',' + hexToRgba(color, 0.7) + ')', 'Low prevalence', 'High prevalence');
