@@ -4505,7 +4505,13 @@ body {
   display: flex;
   gap: 12px;
 }
-/* 4-step warm gradient: darkest → dark warm → accent outline → ghost */
+/*
+ * 4-button crossfade: background cools left→right (clay→black),
+ * text warms left→right (white→clay). The two properties move in
+ * opposite directions, meeting in the middle.
+ *
+ * [clay bg / white text] → [deep clay / white] → [mahogany / clay] → [black / clay]
+ */
 .btn-warm-primary,
 .btn-warm-secondary,
 .btn-warm-accent-ghost,
@@ -4513,6 +4519,7 @@ body {
   display: inline-block;
   text-decoration: none;
   font-family: inherit;
+  border: none;
   border-radius: 8px;
   white-space: nowrap;
   padding: 14px 28px;
@@ -4520,36 +4527,32 @@ body {
   font-weight: 600;
   cursor: pointer;
   letter-spacing: 0.3px;
-  transition: opacity 0.15s ease, background 0.15s ease;
+  transition: opacity 0.15s ease;
 }
-/* Step 1: solid near-black */
-.btn-warm-primary {
-  border: none;
-  background: var(--warm-text);
-  color: #fff;
-}
-.btn-warm-primary:hover { opacity: 0.85; }
-/* Step 2: solid dark mahogany — bridges black and orange */
-.btn-warm-secondary {
-  border: none;
-  background: color-mix(in srgb, var(--warm-text) 52%, var(--warm-accent));
-  color: #fff;
-}
-.btn-warm-secondary:hover { opacity: 0.85; }
-/* Step 3: outlined accent orange */
-.btn-warm-accent-ghost {
-  background: transparent;
-  color: var(--warm-accent);
-  border: 1.5px solid var(--warm-accent);
-}
-.btn-warm-accent-ghost:hover { background: color-mix(in srgb, var(--warm-accent) 8%, transparent); }
-/* Step 4: faint ghost */
+/* Left end — clay bg, cool white text */
 .btn-warm-ghost {
-  background: transparent;
-  color: var(--warm-muted);
-  border: 1.5px solid var(--warm-border);
+  background: var(--warm-accent);
+  color: #fff;
 }
-.btn-warm-ghost:hover { background: color-mix(in srgb, var(--warm-text) 5%, transparent); }
+/* Step 2 — deep clay bg, still white text */
+.btn-warm-accent-ghost {
+  background: color-mix(in srgb, var(--warm-accent) 72%, var(--warm-text));
+  color: #fff;
+}
+/* Step 3 — dark mahogany bg, text begins warming to clay */
+.btn-warm-secondary {
+  background: color-mix(in srgb, var(--warm-text) 62%, var(--warm-accent));
+  color: var(--warm-accent);
+}
+/* Right end — black bg, full warm clay text */
+.btn-warm-primary {
+  background: var(--warm-text);
+  color: var(--warm-accent);
+}
+.btn-warm-ghost:hover,
+.btn-warm-accent-ghost:hover,
+.btn-warm-secondary:hover,
+.btn-warm-primary:hover { opacity: 0.82; }
 
 /* --- Features grid --- */
 .landing-features {
