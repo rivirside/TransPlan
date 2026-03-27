@@ -1344,7 +1344,7 @@ body {
   position: relative;
   width: 100%;
   max-width: 720px;
-  max-height: 85vh;
+  max-height: calc(100vh - 2 * var(--space-4));
   overflow-y: auto;
   background: var(--surface);
   border-radius: var(--radius-lg);
@@ -3646,7 +3646,7 @@ body {
 
   .city-modal-content {
     margin: var(--space-2);
-    max-height: 95vh;
+    max-height: calc(100vh - 2 * var(--space-2));
   }
 
   .city-modal-body {
