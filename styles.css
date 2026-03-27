@@ -5476,26 +5476,32 @@ body {
     padding: 0 12px 24px;
   }
   .data-map-frame {
-    height: 500px;
+    height: 400px;
     border-radius: 10px;
   }
 
-  /* Stack panels on mobile */
+  /* Bottom-sheet layer panel on mobile */
   .data-layer-panel {
-    position: relative;
+    position: fixed;
     top: auto;
-    left: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
-    border-radius: 10px 10px 0 0;
-    max-height: 200px;
+    max-height: 50vh;
+    border-radius: 14px 14px 0 0;
+    z-index: 1000;
   }
   .data-legend-panel {
-    position: relative;
+    position: fixed;
     bottom: auto;
-    right: auto;
-    width: 100%;
-    border-radius: 0 0 10px 10px;
-    max-height: 160px;
+    right: 8px;
+    left: auto;
+    top: 8px;
+    width: calc(100% - 16px);
+    border-radius: 10px;
+    max-height: 40vh;
+    z-index: 999;
   }
 
   .data-sources-section {
@@ -5504,6 +5510,14 @@ body {
   .data-sources-grid {
     grid-template-columns: 1fr;
   }
+
+  .data-organ-pills {
+    flex-wrap: wrap;
+  }
+
+  .data-layer-footer {
+    padding: 8px 10px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -5511,7 +5525,7 @@ body {
     font-size: 22px;
   }
   .data-map-frame {
-    height: 420px;
+    height: 400px;
   }
 }
 
