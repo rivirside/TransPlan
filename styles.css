@@ -4057,6 +4057,14 @@ body {
 .narr-step.active {
   display: flex;
 }
+.narr-step a {
+  color: var(--warm-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.narr-step a:hover {
+  text-decoration: underline;
+}
 .landing-page .step-number {
   font-size: 10px;
   letter-spacing: 2px;

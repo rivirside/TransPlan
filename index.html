@@ -63,10 +63,10 @@
                 <!-- Step 1: The landscape -->
                 <div class="narr-step active" data-step="0">
                     <div class="step-number">The Landscape</div>
-                    <h2>248 transplant programs. One country.</h2>
+                    <h2><a href="centers.html">248 transplant programs</a>. One country.</h2>
                     <p>Each marker is a hospital that performs organ transplants: kidneys, livers, hearts, lungs, pancreas, and intestine. Together they serve over 100,000 patients on the national waitlist.</p>
                     <p>They cluster around major metros. But patients come from everywhere, including rural areas hundreds of miles from the nearest center.</p>
-                    <div class="data-source">Center data from <strong>SRTR</strong> (Scientific Registry of Transplant Recipients)</div>
+                    <div class="data-source">Center data from <a href="https://www.srtr.org" target="_blank" rel="noopener"><strong>SRTR</strong></a> (Scientific Registry of Transplant Recipients)</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" disabled>Back</button>
                         <button class="step-btn primary" onclick="goStep(1)">Next</button>
@@ -82,7 +82,7 @@
                     <div class="big-stat">8 mo to 11 yr</div>
                     <div class="stat-label">Kidney median wait range across US centers</div>
                     <p>Each center is colored from <span style="color:#2d9e5c;font-weight:600;">green</span> (shorter waits) to <span style="color:#e05252;font-weight:600;">red</span> (longer waits). The pattern is geographic, not random.</p>
-                    <div class="data-source">Wait data from <strong>OPTN</strong> (Organ Procurement and Transplantation Network)</div>
+                    <div class="data-source">Wait data from <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener"><strong>OPTN</strong></a> (Organ Procurement and Transplantation Network)</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(0)">Back</button>
                         <button class="step-btn primary" onclick="goStep(2)">Next</button>
@@ -96,7 +96,7 @@
                     <h2>Traumatic deaths are a major source of donor organs.</h2>
                     <p>A large share of transplantable organs come from sudden fatalities, particularly motor vehicle accidents. The shaded red regions show areas with higher traffic fatality rates.</p>
                     <p>These areas often don't overlap with major transplant centers, creating a geographic mismatch between where organs become available and where patients are waiting.</p>
-                    <div class="data-source">Fatality data from <strong>NHTSA</strong> via CDC WISQARS</div>
+                    <div class="data-source">Fatality data from <a href="https://www.nhtsa.gov" target="_blank" rel="noopener"><strong>NHTSA</strong></a> via CDC WISQARS</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(1)">Back</button>
                         <button class="step-btn primary" onclick="goStep(3)">Next</button>
@@ -110,8 +110,8 @@
                     <h2>Different causes of death preserve different organs.</h2>
                     <p>Brain death from trauma (car accidents, falls) tends to preserve kidneys, livers, and pancreases well because blood flow continues. Cardiac death, by contrast, limits viability for hearts and lungs due to warm ischemia time.</p>
                     <p>This means a region's <em>type</em> of fatalities shapes which organs are available there, not just how many. Rural areas with high traffic fatalities may have strong kidney supply but limited heart availability.</p>
-                    <div class="highlight">We model this by weighting organ-specific donor rates per region, not just raw fatality counts.</div>
-                    <div class="data-source">Donor type data from <strong>OPTN</strong> &amp; <strong>SRTR</strong> program-specific reports</div>
+                    <div class="highlight">We model this by <a href="docs-site/build/architecture/data-pipeline" target="_blank" rel="noopener">weighting organ-specific donor rates per region</a>, not just raw fatality counts.</div>
+                    <div class="data-source">Donor type data from <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener"><strong>OPTN</strong></a> &amp; <a href="https://www.srtr.org" target="_blank" rel="noopener"><strong>SRTR</strong></a> program-specific reports</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(2)">Back</button>
                         <button class="step-btn primary" onclick="goStep(4)">Next</button>
@@ -127,7 +127,7 @@
                     <div class="big-stat">35% to 68%</div>
                     <div class="stat-label">State-level donor registration rate range</div>
                     <p>When you layer supply patterns, registration rates, hospital volume, and wait times, you start to see why where you list matters as much as your clinical profile.</p>
-                    <div class="data-source">Registration data from <strong>HRSA</strong> / Donate Life America</div>
+                    <div class="data-source">Registration data from <a href="https://www.organdonor.gov" target="_blank" rel="noopener"><strong>HRSA</strong></a> / Donate Life America</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(3)">Back</button>
                         <button class="step-btn primary" onclick="goStep(5)">Next</button>
@@ -138,10 +138,10 @@
                 <!-- Step 6: The methods -->
                 <div class="narr-step" data-step="5">
                     <div class="step-number">The Methods</div>
-                    <h2>Monte Carlo simulation with competing risks.</h2>
+                    <h2><a href="docs-site/build/architecture/overview" target="_blank" rel="noopener">Monte Carlo simulation</a> with competing risks.</h2>
                     <p>For each center, we run 1,000 Monte Carlo iterations that model the probability of transplant at 6, 12, 24, and 36 months. Each iteration accounts for competing risks: transplant, mortality on the waitlist, and removal for other reasons.</p>
                     <p>A 48-profile demographic matrix evaluates equity across blood types, age brackets, and sex. The Gini coefficient measures how fairly each center distributes outcomes across patient profiles.</p>
-                    <div class="highlight">What-if scenarios let researchers adjust donor rates and wait-time multipliers to model how UNOS policy changes would shift transplant probabilities in real time.</div>
+                    <div class="highlight"><a href="data.html">What-if scenarios</a> let researchers adjust donor rates and wait-time multipliers to model how UNOS policy changes would shift transplant probabilities in real time.</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(4)">Back</button>
                         <button class="step-btn primary" onclick="goStep(6)">Next</button>
@@ -153,7 +153,7 @@
                 <div class="narr-step" data-step="6">
                     <div class="step-number">The Composite</div>
                     <h2>50+ variables. 8 weighted categories. One score.</h2>
-                    <p>transplant.today combines all of these layers into a composite suitability score: medical compatibility, wait times, donor availability, hospital quality (<strong>CMS</strong>), logistics, health demographics (<strong>CDC</strong>), air quality (<strong>EPA</strong>), and socioeconomic support (<strong>BLS</strong>).</p>
+                    <p>transplant.today combines all of these layers into a composite suitability score: medical compatibility, wait times, donor availability, hospital quality (<a href="https://www.medicare.gov/care-compare" target="_blank" rel="noopener"><strong>CMS</strong></a>), logistics, health demographics (<a href="https://www.cdc.gov/places" target="_blank" rel="noopener"><strong>CDC</strong></a>), air quality (<a href="https://aqs.epa.gov" target="_blank" rel="noopener"><strong>EPA</strong></a>), and socioeconomic support (<a href="https://www.bls.gov" target="_blank" rel="noopener"><strong>BLS</strong></a>).</p>
                     <p>Larger, brighter markers indicate higher composite scores. The weights adapt to your organ type, blood type, and clinical profile.</p>
                     <div class="highlight">This is the kind of multi-factor analysis that wealthy patients pay consultants to perform. We made it free and open source.</div>
                     <div class="step-nav">
@@ -167,8 +167,8 @@
                 <div class="narr-step" data-step="7">
                     <div class="step-number">For Patients and Researchers</div>
                     <h2>A tool for decisions. A platform for discovery.</h2>
-                    <p><strong>For patients:</strong> the Simulator gives you personalized center rankings with wait-time forecasts. The Center Explorer lets you compare programs side by side. No login, no cost.</p>
-                    <p><strong>For researchers:</strong> the Data tab exposes every layer as a toggleable overlay on the interactive map. Run what-if policy scenarios. Export results as CSV, JSON, or PDF. Explore how allocation policies, donor registration drives, and infrastructure investments could reshape equitable access to transplantation.</p>
+                    <p><strong>For patients:</strong> the <a href="simulator.html">Simulator</a> gives you personalized center rankings with wait-time forecasts. The <a href="centers.html">Center Explorer</a> lets you compare programs side by side. No login, no cost.</p>
+                    <p><strong>For researchers:</strong> the <a href="data.html">Data tab</a> exposes every layer as a toggleable overlay on the interactive map. Run what-if policy scenarios. Export results as CSV or JSON. Explore how allocation policies, donor registration drives, and infrastructure investments could reshape equitable access to transplantation.</p>
                     <div class="highlight">Free. Open source. No login required. Data refreshed weekly from 8 public sources.</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(6)">Back</button>
