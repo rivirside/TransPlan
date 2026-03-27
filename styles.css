@@ -2645,6 +2645,19 @@ body {
   font-size: var(--fs-xs);
   margin: 0;
 }
+.footer-pull {
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--warm-muted-light, #888);
+  border-left: 2px solid var(--warm-accent, #c97c4a);
+  padding: 6px 0 6px 12px;
+  margin: 8px 0;
+}
+.footer-pull em {
+  color: var(--warm-accent, #c97c4a);
+  font-style: italic;
+}
 
 /* --- CDN fallback --- */
 .cdn-fallback-notice {
@@ -3971,7 +3984,7 @@ body {
   margin-bottom: 12px;
 }
 .hero-pull-story {
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 300;
   line-height: 1.52;
   color: var(--warm-text);

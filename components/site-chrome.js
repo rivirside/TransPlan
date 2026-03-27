@@ -43,7 +43,7 @@
               '<a href="advocacy.html" class="nav-dropdown-item" role="menuitem">Give Back</a>' +
             '</div>' +
           '</div>' +
-          '<a href="data.html" class="nav-link nav-link-accent">Data</a>' +
+          '<a href="data.html" class="nav-link">Data</a>' +
           '<a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>' +
         '</div>' +
       '</div>' +
@@ -91,8 +91,11 @@
           '<div class="footer-disclaimer">' + disc + '</div>' +
           '<div class="footer-meta">' +
             '<div class="footer-links">' + links + '</div>' +
-            '<p class="footer-copy">transplant.today is under active development. Not affiliated with UNOS, OPTN, or any transplant center.</p>' +
-            '<p class="footer-copy">Contact: <a href="mailto:tomer@arizona.edu">tomer@arizona.edu</a></p>' +
+            '<blockquote class="footer-pull">' +
+              'A kidney patient listed in Phoenix waits a median of <em>4 months.</em> The same patient listed in Boston waits <em>3 years.</em>' +
+            '</blockquote>' +
+            '<p class="footer-copy">transplant.today is under active development. Not affiliated with UNOS, OPTN, any transplant center, or the University of Arizona.</p>' +
+            '<p class="footer-copy">Contact: <a href="mailto:contact@rivir.social">contact@rivir.social</a></p>' +
           '</div>' +
         '</div>' +
       '</footer>'
