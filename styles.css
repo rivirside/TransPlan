@@ -265,7 +265,6 @@ body {
   padding: var(--space-2, 8px) var(--space-4, 16px);
   color: var(--warm-muted, #888);
   text-decoration: none;
-  font-size: var(--fs-sm, 0.875rem);
   font-weight: 500;
   transition: background var(--transition-fast, 0.15s);
 }
