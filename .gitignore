@@ -39,3 +39,4 @@ data/snapshots/
 # AI dev tooling (Claude Code superpowers plugin, planning docs)
 .superpowers/
 docs/superpowers/
+.vercel
