@@ -3938,10 +3938,14 @@ body {
 .landing-hero {
   flex: 1;
   display: flex;
-  align-items: flex-start;
-  gap: 56px;
+  flex-direction: column;
   padding: 72px 48px 36px;
   max-width: 1200px;
+}
+.hero-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 56px;
 }
 .hero-left {
   flex: 1;
@@ -3957,7 +3961,6 @@ body {
   border-radius: 14px;
   border: 1px solid var(--warm-border);
   background: #fff;
-  margin-top: 38px;
 }
 .hero-pull-eyebrow {
   font-size: 10px;
@@ -4643,13 +4646,14 @@ body {
     height: 320px;
   }
   .landing-hero {
+    padding: 36px 20px 24px;
+  }
+  .hero-row {
     flex-direction: column;
     gap: 24px;
-    padding: 36px 20px 24px;
   }
   .hero-pull-box {
     width: 100%;
-    margin-top: 0;
   }
   .landing-hero h1 {
     font-size: 28px;
