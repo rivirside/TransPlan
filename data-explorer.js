@@ -144,7 +144,7 @@
     'county-obesity':     { group: 'county', label: 'Obesity',       type: 'fill', defaultOpacity: 0.4 },
     'county-hypertension':{ group: 'county', label: 'Hypertension',  type: 'fill', defaultOpacity: 0.4 },
     'county-smoking':     { group: 'county', label: 'Smoking',       type: 'fill', defaultOpacity: 0.4 },
-    'point-epa':      { group: 'point', label: 'Air quality',   type: 'dots', defaultOpacity: 0.9 }
+    'point-epa':      { group: 'point', label: 'Air quality',   type: 'dots', defaultOpacity: 0.7 }
   };
 
   // Initialize default opacities
@@ -714,9 +714,42 @@
     });
   }
 
+  /* ------- EPA Monitor Points -------------------------------------- */
+
+  function epaColor(aqi) {
+    if (aqi <= 50) return '#22d3ee';
+    if (aqi <= 100) return '#06b6d4';
+    return '#0e7490';
+  }
+
   function loadPointLayer(key) {
-    console.log('Layer not yet implemented: ' + key);
-    // Stub — will be implemented in Tasks 12-14
+    if (key !== 'point-epa') return;
+
+    loadJSON('data/air-quality-monitors.json').then(function (raw) {
+      var monitors = raw.monitors || [];
+      var opacity = layerOpacities[key] || 0.7;
+      var group = L.layerGroup([], { pane: 'epaPane' });
+
+      monitors.forEach(function (m) {
+        if (!m.lat || !m.lon) return;
+        var marker = L.circleMarker([m.lat, m.lon], {
+          radius: 3,
+          fillColor: epaColor(m.aqi),
+          color: epaColor(m.aqi),
+          weight: 0.5,
+          opacity: opacity,
+          fillOpacity: opacity * 0.85,
+          pane: 'epaPane'
+        });
+        var tip = (m.state || '') + ' — AQI ' + m.aqi +
+                  (m.pollutant ? ' (' + m.pollutant + ')' : '');
+        marker.bindTooltip(tip, { sticky: true });
+        group.addLayer(marker);
+      });
+
+      group.addTo(map);
+      layerObjects[key] = group;
+    });
   }
 
   /* ===================================================================
@@ -930,7 +963,7 @@
       'county-obesity': '#f59e0b',
       'county-hypertension': '#6366f1',
       'county-smoking': '#64748b',
-      'point-epa': '#22c55e'
+      'point-epa': '#22d3ee'
     };
     return colors[key] || '#999';
   }
@@ -1123,7 +1156,7 @@
         appendGradient(parent, 'linear-gradient(to right,' + first + ',' + last + ')', 'Low prevalence', 'High prevalence');
       }
     } else if (key === 'point-epa') {
-      appendGradient(parent, 'linear-gradient(to right,#22c55e,#ef4444)', 'Good AQI', 'Poor AQI');
+      appendGradient(parent, 'linear-gradient(to right,#22d3ee,#0e7490)', 'Good AQI (0-50)', 'Poor AQI (101+)');
     }
   }
 
