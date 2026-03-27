@@ -609,9 +609,109 @@
     });
   }
 
+  /* ------- County Choropleth --------------------------------------- */
+
+  var countiesGeo = null; // cached GeoJSON FeatureCollection
+
+  function loadCountiesGeo() {
+    if (countiesGeo) return Promise.resolve(countiesGeo);
+    return loadJSON('data/geo/us-counties.topojson').then(function (topo) {
+      countiesGeo = topojson.feature(topo, topo.objects.counties);
+      return countiesGeo;
+    });
+  }
+
+  var COUNTY_FIELD_MAP = {
+    'county-diabetes':      'diabetesRate',
+    'county-obesity':       'obesityRate',
+    'county-hypertension':  'hypertensionRate',
+    'county-smoking':       'smokingRate'
+  };
+
+  var COUNTY_SCALES = {
+    'county-diabetes': {
+      steps: [
+        { max: 8,  color: '#e0e7ff' },
+        { max: 11, color: '#a5b4fc' },
+        { max: 14, color: '#818cf8' },
+        { max: 17, color: '#6366f1' },
+        { max: Infinity, color: '#4338ca' }
+      ]
+    },
+    'county-obesity': {
+      steps: [
+        { max: 25, color: '#ede9fe' },
+        { max: 30, color: '#c4b5fd' },
+        { max: 35, color: '#a78bfa' },
+        { max: 40, color: '#8b5cf6' },
+        { max: Infinity, color: '#7c3aed' }
+      ]
+    },
+    'county-hypertension': {
+      steps: [
+        { max: 28, color: '#f3e8ff' },
+        { max: 33, color: '#d8b4fe' },
+        { max: 38, color: '#c084fc' },
+        { max: 43, color: '#a855f7' },
+        { max: Infinity, color: '#7e22ce' }
+      ]
+    },
+    'county-smoking': {
+      steps: [
+        { max: 12, color: '#e8e0f7' },
+        { max: 15, color: '#c4a8e0' },
+        { max: 18, color: '#a078c9' },
+        { max: 21, color: '#7c48b2' },
+        { max: Infinity, color: '#581e9b' }
+      ]
+    }
+  };
+
+  function countyColor(key, value) {
+    if (value == null) return '#e5e7eb';
+    var scale = COUNTY_SCALES[key];
+    if (!scale) return '#e5e7eb';
+    for (var i = 0; i < scale.steps.length; i++) {
+      if (value <= scale.steps[i].max) return scale.steps[i].color;
+    }
+    return scale.steps[scale.steps.length - 1].color;
+  }
+
   function loadCountyLayer(key) {
-    console.log('Layer not yet implemented: ' + key);
-    // Stub — will be implemented in Tasks 12-14
+    var field = COUNTY_FIELD_MAP[key];
+    Promise.all([loadCountiesGeo(), loadJSON('data/health-demographics-counties.json')]).then(function (results) {
+      var geo = results[0];
+      var raw = results[1];
+      var countyData = raw.counties || {};
+      var opacity = layerOpacities[key] || 0.4;
+
+      var layer = L.geoJSON(geo, {
+        pane: 'countyPane',
+        style: function (feature) {
+          var fips = feature.id;
+          var d = countyData[fips];
+          var val = d ? d[field] : null;
+          return {
+            fillColor: countyColor(key, val),
+            fillOpacity: opacity * 0.7,
+            color: '#fff',
+            weight: 0.3,
+            opacity: opacity * 0.5
+          };
+        },
+        onEachFeature: function (feature, layer) {
+          var fips = feature.id;
+          var d = countyData[fips];
+          var name = feature.properties.name || 'Unknown';
+          var state = d ? d.state : '';
+          var val = d ? d[field] : null;
+          var label = val != null ? val.toFixed(1) + '%' : 'N/A';
+          layer.bindTooltip(name + (state ? ', ' + state : '') + ': ' + label, { sticky: true });
+        }
+      }).addTo(map);
+
+      layerObjects[key] = layer;
+    });
   }
 
   function loadPointLayer(key) {
@@ -1016,8 +1116,12 @@
     } else if (key === 'state-policy') {
       appendGradient(parent, 'linear-gradient(to right,#d1fae5,#065f46)', 'Score 65', 'Score 100');
     } else if (key.indexOf('county-') === 0) {
-      var color = getSwatchColor(key);
-      appendGradient(parent, 'linear-gradient(to right,' + hexToRgba(color, 0.1) + ',' + hexToRgba(color, 0.7) + ')', 'Low prevalence', 'High prevalence');
+      var scale = COUNTY_SCALES[key];
+      if (scale) {
+        var first = scale.steps[0].color;
+        var last = scale.steps[scale.steps.length - 1].color;
+        appendGradient(parent, 'linear-gradient(to right,' + first + ',' + last + ')', 'Low prevalence', 'High prevalence');
+      }
     } else if (key === 'point-epa') {
       appendGradient(parent, 'linear-gradient(to right,#22c55e,#ef4444)', 'Good AQI', 'Poor AQI');
     }
