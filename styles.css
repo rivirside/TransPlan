@@ -3952,7 +3952,8 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 72px 48px 36px;
+  justify-content: center;
+  padding: 48px 48px 36px;
   max-width: 1200px;
 }
 .hero-row {
@@ -4089,8 +4090,26 @@ body {
     grid-template-columns: 500px 1fr;
   }
   .landing-hero {
-    max-width: 1200px;
+    max-width: 1280px;
+    gap: 20px;
+    padding: 48px 64px 36px;
+  }
+  .landing-hero h1 {
+    font-size: 58px;
+    margin-bottom: 28px;
+  }
+  .hero-sub {
+    font-size: 17px;
+    max-width: 620px;
+  }
+  .hero-row {
     gap: 72px;
+  }
+  .hero-pull-box {
+    width: 360px;
+  }
+  .hero-pull-story {
+    font-size: 16px;
   }
   .post-story-inner {
     max-width: 960px;
