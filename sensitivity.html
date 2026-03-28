@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>transplant.today - Sensitivity Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        /* ── Two-column layout ── */
+        .sens-layout {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            min-height: calc(100vh - 44px);
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .sens-sidebar {
+            position: sticky;
+            top: 44px;
+            max-height: calc(100vh - 44px);
+            overflow-y: auto;
+            padding: 1.5rem 1.25rem;
+            border-right: 1px solid var(--warm-border, #e8e4dc);
+            background: var(--surface, #fff);
+            align-self: start;
+        }
+
+        .sens-sidebar h2 {
+            font-size: 1.15rem;
+            margin-bottom: 1rem;
+            color: var(--warm-text, #1a1a1a);
+        }
+
+        .sens-main {
+            padding: 2rem 2.5rem;
+            background: var(--warm-bg, #faf9f7);
+            min-height: 100%;
+        }
+
+        /* ── Patient form styles ── */
+        .pf-form { display: flex; flex-direction: column; gap: 0; }
+        .pf-section h4 {
+            font-size: 0.9rem; font-weight: 600;
+            color: var(--warm-text, #1a1a1a);
+            margin: 0 0 0.75rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--warm-border, #e8e4dc);
+        }
+        .pf-grid {
+            display: grid; grid-template-columns: 1fr;
+            gap: 0.6rem;
+        }
+        .pf-field { display: flex; flex-direction: column; gap: 0.2rem; }
+        .pf-field label {
+            font-size: 0.78rem; font-weight: 600;
+            color: var(--warm-text, #1a1a1a);
+        }
+        .pf-field select,
+        .pf-field input[type="number"] {
+            padding: 0.4rem 0.55rem;
+            border: 1px solid var(--warm-border, #e8e4dc);
+            border-radius: 5px;
+            font-size: 0.82rem;
+            background: var(--surface, #fff);
+            color: var(--warm-text, #1a1a1a);
+        }
+        .pf-field select:focus,
+        .pf-field input:focus {
+            outline: 2px solid var(--warm-accent, #c97c4a);
+            border-color: transparent;
+        }
+        .pf-field input[type="range"] {
+            width: 100%;
+            accent-color: var(--warm-accent, #c97c4a);
+        }
+        .pf-range-val {
+            font-weight: 400;
+            font-size: 0.78rem;
+            color: var(--warm-accent, #c97c4a);
+        }
+        .pf-checkbox {
+            display: flex; align-items: center; gap: 0.4rem;
+            font-size: 0.78rem; color: var(--warm-text, #1a1a1a);
+            cursor: pointer;
+        }
+        .pf-checkbox input { accent-color: var(--warm-accent, #c97c4a); }
+        .pf-compact .pf-grid { gap: 0.5rem; }
+
+        /* ── Center picker ── */
+        .sens-field { margin-top: 1rem; }
+        .sens-field label {
+            display: block; font-size: 0.78rem; font-weight: 600;
+            color: var(--warm-text, #1a1a1a); margin-bottom: 0.3rem;
+        }
+        .sens-field select,
+        .sens-field input[type="text"] {
+            width: 100%; padding: 0.4rem 0.55rem;
+            border: 1px solid var(--warm-border, #e8e4dc);
+            border-radius: 5px; font-size: 0.82rem;
+            background: var(--surface, #fff); color: var(--warm-text, #1a1a1a);
+        }
+        .sens-field select:focus,
+        .sens-field input:focus {
+            outline: 2px solid var(--warm-accent, #c97c4a);
+            border-color: transparent;
+        }
+        .center-filter {
+            margin-bottom: 0.3rem;
+        }
+
+        /* ── Iterations slider ── */
+        .sens-slider-row {
+            margin-top: 1rem;
+            display: flex; flex-direction: column; gap: 0.2rem;
+        }
+        .sens-slider-label {
+            font-size: 0.78rem; font-weight: 600;
+            color: var(--warm-text, #1a1a1a);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .sens-slider-val {
+            font-weight: 400;
+            color: var(--warm-accent, #c97c4a);
+            font-size: 0.82rem;
+        }
+        .sens-slider-row input[type="range"] {
+            width: 100%;
+            accent-color: var(--warm-accent, #c97c4a);
+        }
+
+        /* ── Run button ── */
+        .sens-run-btn {
+            margin-top: 1.25rem; width: 100%;
+            padding: 0.65rem 1rem;
+            background: var(--warm-accent, #c97c4a);
+            color: #fff; border: none; border-radius: 6px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            transition: background 0.15s;
+        }
+        .sens-run-btn:hover { background: var(--warm-accent-dark, #a0603a); }
+        .sens-run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ── Tier badge ── */
+        .sens-tier {
+            margin-top: 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.75rem; color: var(--warm-muted, #888);
+        }
+
+        /* ── Error / status ── */
+        .sens-status {
+            margin-top: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--warm-muted, #888);
+        }
+        .sens-status.error { color: #c0392b; }
+
+        /* ── Results area ── */
+        .sens-results { display: none; }
+        .sens-results.visible { display: block; }
+
+        /* ── Baseline card ── */
+        .baseline-card {
+            background: var(--warm-surface, #fff);
+            border: 1px solid var(--warm-border, #e8e4dc);
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            max-width: 360px;
+        }
+        .baseline-label {
+            font-size: 0.82rem; text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--warm-muted, #888);
+            margin-bottom: 0.25rem;
+        }
+        .baseline-value {
+            font-size: 2.8rem; font-weight: 700;
+            color: var(--warm-accent, #c97c4a);
+            line-height: 1.1;
+        }
+        .baseline-sub {
+            font-size: 0.82rem;
+            color: var(--warm-muted, #888);
+            margin-top: 0.25rem;
+        }
+
+        /* ── Tornado chart container ── */
+        .tornado-wrap {
+            background: var(--warm-surface, #fff);
+            border: 1px solid var(--warm-border, #e8e4dc);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .tornado-wrap h3 {
+            font-size: 1rem; font-weight: 600;
+            color: var(--warm-text, #1a1a1a);
+            margin: 0 0 0.75rem;
+        }
+        .tornado-canvas-wrap {
+            position: relative;
+            width: 100%;
+            min-height: 300px;
+        }
+        .tornado-canvas-wrap canvas { width: 100% !important; }
+
+        /* ── Impact table ── */
+        .impact-table-wrap {
+            background: var(--warm-surface, #fff);
+            border: 1px solid var(--warm-border, #e8e4dc);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+        .impact-table-wrap h3 {
+            font-size: 1rem; font-weight: 600;
+            color: var(--warm-text, #1a1a1a);
+            margin: 0 0 0.75rem;
+        }
+        .impact-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+        .impact-table th {
+            text-align: left;
+            font-weight: 600;
+            color: var(--warm-muted, #888);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 0.5rem 0.75rem;
+            border-bottom: 2px solid var(--warm-border, #e8e4dc);
+            white-space: nowrap;
+        }
+        .impact-table td {
+            padding: 0.55rem 0.75rem;
+            border-bottom: 1px solid var(--warm-border, #e8e4dc);
+            color: var(--warm-text, #1a1a1a);
+        }
+        .impact-table tr:last-child td { border-bottom: none; }
+        .impact-table tr:hover td { background: var(--warm-bg, #faf9f7); }
+        .impact-param { font-weight: 600; }
+        .impact-delta {
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .impact-delta.positive { color: #27ae60; }
+        .impact-delta.negative { color: #c0392b; }
+
+        /* ── Elapsed time ── */
+        .sens-elapsed {
+            font-size: 0.75rem;
+            color: var(--warm-muted-light, #bbb);
+            margin-top: 0.5rem;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .sens-layout {
+                grid-template-columns: 1fr;
+            }
+            .sens-sidebar {
+                position: static;
+                max-height: none;
+                border-right: none;
+                border-bottom: 1px solid var(--warm-border, #e8e4dc);
+            }
+            .sens-main {
+                padding: 1.5rem 1rem;
+            }
+            .pf-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        /* ── Dark mode ── */
+        [data-dark="true"] .sens-sidebar {
+            background: var(--surface, #1e1e2e);
+            border-color: var(--border, #2A2E42);
+        }
+        [data-dark="true"] .sens-main {
+            background: var(--warm-bg, #181825);
+        }
+        [data-dark="true"] .pf-section h4 {
+            color: var(--text-1, #e2e5ed);
+            border-color: var(--border, #2A2E42);
+        }
+        [data-dark="true"] .pf-field label,
+        [data-dark="true"] .sens-field label,
+        [data-dark="true"] .sens-slider-label {
+            color: var(--text-1, #e2e5ed);
+        }
+        [data-dark="true"] .pf-field select,
+        [data-dark="true"] .pf-field input[type="number"],
+        [data-dark="true"] .sens-field select,
+        [data-dark="true"] .sens-field input[type="text"] {
+            background: var(--surface-raised, #262640);
+            border-color: var(--border, #2A2E42);
+            color: var(--text-1, #e2e5ed);
+        }
+        [data-dark="true"] .baseline-card,
+        [data-dark="true"] .tornado-wrap,
+        [data-dark="true"] .impact-table-wrap {
+            background: var(--surface, #1e1e2e);
+            border-color: var(--border, #2A2E42);
+        }
+        [data-dark="true"] .baseline-label,
+        [data-dark="true"] .baseline-sub,
+        [data-dark="true"] .sens-elapsed {
+            color: var(--text-muted, #7a7468);
+        }
+        [data-dark="true"] .baseline-value {
+            color: var(--warm-accent, #c97c4a);
+        }
+        [data-dark="true"] .tornado-wrap h3,
+        [data-dark="true"] .impact-table-wrap h3 {
+            color: var(--text-1, #e2e5ed);
+        }
+        [data-dark="true"] .impact-table th {
+            color: var(--text-muted, #7a7468);
+            border-color: var(--border, #2A2E42);
+        }
+        [data-dark="true"] .impact-table td {
+            color: var(--text-1, #e2e5ed);
+            border-color: var(--border, #2A2E42);
+        }
+        [data-dark="true"] .impact-table tr:hover td {
+            background: var(--surface-raised, #262640);
+        }
+        [data-dark="true"] .pf-checkbox {
+            color: var(--text-1, #e2e5ed);
+        }
+        [data-dark="true"] .sens-status {
+            color: var(--text-muted, #7a7468);
+        }
+        [data-dark="true"] .sens-tier {
+            color: var(--text-muted, #7a7468);
+        }
+    </style>
+</head>
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="sens-layout">
+        <!-- ── Sidebar ── -->
+        <aside class="sens-sidebar">
+            <div class="sidebar-disclaimer">
+                <strong>Educational tool only.</strong> Not a clinical assessment. <a href="faq.html#disclaimer">Full disclaimer</a>
+            </div>
+
+            <h2>Sensitivity Analysis</h2>
+
+            <!-- Patient form injected here -->
+            <div id="patient-form"></div>
+
+            <!-- Center picker -->
+            <div class="sens-field">
+                <label for="centerFilter">Transplant Center</label>
+                <input type="text" id="centerFilter" class="center-filter" placeholder="Type to filter centers...">
+                <select id="centerPicker">
+                    <option value="">Select organ first...</option>
+                </select>
+            </div>
+
+            <!-- Iterations slider -->
+            <div class="sens-slider-row">
+                <div class="sens-slider-label">
+                    <span>Iterations</span>
+                    <span class="sens-slider-val" id="sensItersVal">500</span>
+                </div>
+                <input type="range" id="sensIters" min="100" max="5000" value="500" step="100">
+            </div>
+
+            <!-- Run button -->
+            <button type="button" class="sens-run-btn" id="sensRunBtn" disabled>Run Sensitivity Analysis</button>
+
+            <!-- Tier badge -->
+            <div class="sens-tier">
+                <span class="tier-badge" id="sensTierBadge">Web</span>
+                <span id="sensTierCaps"></span>
+            </div>
+
+            <!-- Status -->
+            <div class="sens-status" id="sensStatus"></div>
+        </aside>
+
+        <!-- ── Results ── -->
+        <main class="sens-main">
+            <div class="sens-results" id="sensResults">
+                <!-- Baseline card -->
+                <div class="baseline-card" id="baselineCard">
+                    <div class="baseline-label">Baseline 24-Month Transplant Probability</div>
+                    <div class="baseline-value" id="baselineValue">--</div>
+                    <div class="baseline-sub" id="baselineSub"></div>
+                </div>
+
+                <!-- Tornado chart -->
+                <div class="tornado-wrap">
+                    <h3>Parameter Impact (Tornado Chart)</h3>
+                    <div class="tornado-canvas-wrap">
+                        <canvas id="tornadoChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Impact table -->
+                <div class="impact-table-wrap">
+                    <h3>Parameter Impact Details</h3>
+                    <table class="impact-table" id="impactTable">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Baseline Value</th>
+                                <th>Low Value</th>
+                                <th>P24 at Low</th>
+                                <th>High Value</th>
+                                <th>P24 at High</th>
+                                <th>Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody id="impactBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="sens-elapsed" id="sensElapsed"></div>
+            </div>
+
+            <!-- Empty state -->
+            <div id="sensEmpty" style="text-align: center; padding: 4rem 1rem; color: var(--warm-muted, #888);">
+                <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Configure patient profile and select a center</p>
+                <p style="font-size: 0.85rem;">Sensitivity analysis shows how each input parameter affects the 24-month transplant probability at a specific center.</p>
+                <p style="font-size: 0.85rem; margin-top: 1rem;">Also try: <a href="simulator.html" style="color: var(--warm-accent, #c97c4a);">Simulator</a> | <a href="find-centers.html" style="color: var(--warm-accent, #c97c4a);">Find Centers</a> | <a href="wait-estimator.html" style="color: var(--warm-accent, #c97c4a);">Wait Estimator</a></p>
+            </div>
+        </main>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="components/site-chrome.js?v=7"></script>
+    <script src="donation-banner.js"></script>
+    <script src="session.js"></script>
+    <script src="dark-mode.js"></script>
+    <script src="api-client.js"></script>
+    <script src="components/patient-form.js"></script>
+    <script src="probability-charts.js"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        // ── State ──
+        var allCenters = [];
+        var tierConfig = null;
+        var isRunning = false;
+
+        // ── DOM refs ──
+        var centerFilter = document.getElementById('centerFilter');
+        var centerPicker = document.getElementById('centerPicker');
+        var sensIters = document.getElementById('sensIters');
+        var sensItersVal = document.getElementById('sensItersVal');
+        var sensRunBtn = document.getElementById('sensRunBtn');
+        var sensStatus = document.getElementById('sensStatus');
+        var sensResults = document.getElementById('sensResults');
+        var sensEmpty = document.getElementById('sensEmpty');
+        var baselineValue = document.getElementById('baselineValue');
+        var baselineSub = document.getElementById('baselineSub');
+        var impactBody = document.getElementById('impactBody');
+        var sensElapsed = document.getElementById('sensElapsed');
+        var sensTierBadge = document.getElementById('sensTierBadge');
+        var sensTierCaps = document.getElementById('sensTierCaps');
+
+        // ── Inject patient form ──
+        TransPlanPatientForm.inject('patient-form', { compact: true });
+
+        // ── Iterations slider ──
+        sensIters.addEventListener('input', function () {
+            sensItersVal.textContent = this.value;
+        });
+
+        // ── Center picker: update on organ change ──
+        var organSelect = document.getElementById('pf-organ');
+        if (organSelect) {
+            organSelect.addEventListener('change', function () {
+                loadCentersForOrgan(this.value);
+                updateRunBtn();
+            });
+        }
+
+        function loadCentersForOrgan(organ) {
+            if (!organ) {
+                clearCenterPicker('Select organ first...');
+                allCenters = [];
+                centerFilter.value = '';
+                return;
+            }
+            var apiBase = window.TransPlanAPI ? TransPlanAPI.getBaseUrl() : '';
+            fetch(apiBase + '/centers?organ=' + encodeURIComponent(organ))
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    allCenters = data.centers || [];
+                    renderCenterOptions(allCenters);
+                    centerFilter.value = '';
+                })
+                .catch(function () {
+                    clearCenterPicker('Failed to load centers');
+                    allCenters = [];
+                });
+        }
+
+        function clearCenterPicker(text) {
+            while (centerPicker.firstChild) centerPicker.removeChild(centerPicker.firstChild);
+            var opt = document.createElement('option');
+            opt.value = '';
+            opt.textContent = text;
+            centerPicker.appendChild(opt);
+        }
+
+        function renderCenterOptions(centers) {
+            while (centerPicker.firstChild) centerPicker.removeChild(centerPicker.firstChild);
+            var placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = 'Select center...';
+            centerPicker.appendChild(placeholder);
+
+            centers.forEach(function (c) {
+                var opt = document.createElement('option');
+                opt.value = c.code;
+                opt.textContent = c.name + ' (' + (c.state_abbr || c.state || '') + ')';
+                centerPicker.appendChild(opt);
+            });
+        }
+
+        // ── Filter-as-you-type ──
+        centerFilter.addEventListener('input', function () {
+            var q = this.value.toLowerCase().trim();
+            if (!q) {
+                renderCenterOptions(allCenters);
+                return;
+            }
+            var filtered = allCenters.filter(function (c) {
+                var text = (c.name + ' ' + (c.state_abbr || '') + ' ' + (c.state || '') + ' ' + c.code).toLowerCase();
+                return text.indexOf(q) !== -1;
+            });
+            renderCenterOptions(filtered);
+        });
+
+        // ── Update run button state ──
+        centerPicker.addEventListener('change', updateRunBtn);
+
+        function updateRunBtn() {
+            var formData = TransPlanPatientForm.collectFormData();
+            var hasRequired = formData.organ && formData.bloodType && formData.age && formData.sex && formData.urgency;
+            var hasCenter = centerPicker.value !== '';
+            sensRunBtn.disabled = !(hasRequired && hasCenter) || isRunning;
+        }
+
+        // Watch all form fields for changes
+        document.getElementById('patient-form').addEventListener('change', updateRunBtn);
+        document.getElementById('patient-form').addEventListener('input', updateRunBtn);
+
+        // ── Run sensitivity analysis ──
+        sensRunBtn.addEventListener('click', runAnalysis);
+
+        async function runAnalysis() {
+            if (isRunning) return;
+
+            var formData = TransPlanPatientForm.collectFormData();
+            var centerCode = centerPicker.value;
+            var iterations = parseInt(sensIters.value, 10);
+
+            if (!formData.organ || !formData.bloodType || !formData.age || !formData.sex || !formData.urgency) {
+                setStatus('Please fill in all required patient fields.', true);
+                return;
+            }
+            if (!centerCode) {
+                setStatus('Please select a transplant center.', true);
+                return;
+            }
+
+            isRunning = true;
+            sensRunBtn.disabled = true;
+            sensRunBtn.textContent = 'Running...';
+            setStatus('Running sensitivity analysis (' + iterations + ' iterations)...');
+
+            try {
+                var apiBase = window.TransPlanAPI ? TransPlanAPI.getBaseUrl() : '';
+                var body = {
+                    patient: TransPlanAPI.normalizeFormData(formData),
+                    city: getCenterCity(centerCode),
+                    center_code: centerCode,
+                    iterations: iterations
+                };
+
+                var response = await fetch(apiBase + '/sensitivity', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (!response.ok) {
+                    var errText = '';
+                    try { var errData = await response.json(); errText = errData.detail || ''; } catch (e) {}
+                    throw new Error('API error ' + response.status + (errText ? ': ' + errText : ''));
+                }
+
+                var result = await response.json();
+                renderResults(result);
+                setStatus('');
+            } catch (err) {
+                setStatus('Analysis failed: ' + err.message, true);
+                console.warn('Sensitivity analysis error:', err);
+            } finally {
+                isRunning = false;
+                sensRunBtn.disabled = false;
+                sensRunBtn.textContent = 'Run Sensitivity Analysis';
+                updateRunBtn();
+            }
+        }
+
+        function getCenterCity(code) {
+            for (var i = 0; i < allCenters.length; i++) {
+                if (allCenters[i].code === code) {
+                    return allCenters[i].city || allCenters[i].name || code;
+                }
+            }
+            return code;
+        }
+
+        // ── Render results ──
+        function renderResults(result) {
+            sensEmpty.style.display = 'none';
+            sensResults.classList.add('visible');
+
+            // Baseline p24
+            var baseline = (result.impacts && result.impacts.length > 0)
+                ? result.impacts[0].p24_baseline : 0;
+            baselineValue.textContent = (baseline * 100).toFixed(1) + '%';
+            baselineSub.textContent = result.city + (result.center_code ? ' (' + result.center_code + ')' : '') +
+                ' \u00b7 ' + result.iterations + ' iterations';
+
+            // Tornado chart
+            TransPlanProbCharts.renderTornadoChart('tornadoChart', result);
+
+            // Impact table
+            renderImpactTable(result.impacts || []);
+
+            // Elapsed
+            if (result.elapsed_seconds !== undefined) {
+                sensElapsed.textContent = 'Completed in ' + result.elapsed_seconds.toFixed(2) + 's';
+            }
+
+            sensResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function renderImpactTable(impacts) {
+            while (impactBody.firstChild) impactBody.removeChild(impactBody.firstChild);
+
+            impacts.forEach(function (imp) {
+                var tr = document.createElement('tr');
+
+                // Parameter name
+                var tdParam = document.createElement('td');
+                tdParam.className = 'impact-param';
+                tdParam.textContent = imp.label;
+                tr.appendChild(tdParam);
+
+                // Baseline value
+                var tdBaseline = document.createElement('td');
+                tdBaseline.textContent = formatParamValue(imp.baseline_value);
+                tr.appendChild(tdBaseline);
+
+                // Low value
+                var tdLow = document.createElement('td');
+                tdLow.textContent = formatParamValue(imp.low_value);
+                tr.appendChild(tdLow);
+
+                // P24 at low
+                var tdP24Low = document.createElement('td');
+                tdP24Low.textContent = pct(imp.p24_at_low);
+                tr.appendChild(tdP24Low);
+
+                // High value
+                var tdHigh = document.createElement('td');
+                tdHigh.textContent = formatParamValue(imp.high_value);
+                tr.appendChild(tdHigh);
+
+                // P24 at high
+                var tdP24High = document.createElement('td');
+                tdP24High.textContent = pct(imp.p24_at_high);
+                tr.appendChild(tdP24High);
+
+                // Impact (absolute delta)
+                var delta = Math.abs(imp.p24_at_high - imp.p24_at_low);
+                var tdDelta = document.createElement('td');
+                tdDelta.className = 'impact-delta';
+                tdDelta.textContent = '\u00b1' + pct(delta / 2);
+
+                if (delta > 0.15) {
+                    tdDelta.classList.add('negative');
+                } else if (delta > 0.06) {
+                    tdDelta.classList.add('positive');
+                }
+                tr.appendChild(tdDelta);
+
+                impactBody.appendChild(tr);
+            });
+        }
+
+        function formatParamValue(val) {
+            if (val === null || val === undefined) return '--';
+            if (Number.isInteger(val)) return String(val);
+            return val.toFixed(2);
+        }
+
+        function pct(val) {
+            return (val * 100).toFixed(1) + '%';
+        }
+
+        function setStatus(msg, isError) {
+            sensStatus.textContent = msg;
+            sensStatus.className = 'sens-status' + (isError ? ' error' : '');
+        }
+
+        // ── Tier config ──
+        function loadTierConfig() {
+            var apiBase = window.TransPlanAPI ? TransPlanAPI.getBaseUrl() : '';
+            fetch(apiBase + '/tier')
+                .then(function (r) { return r.ok ? r.json() : null; })
+                .then(function (data) {
+                    tierConfig = data || defaultWebTier();
+                    applyTierCaps();
+                })
+                .catch(function () {
+                    tierConfig = defaultWebTier();
+                    applyTierCaps();
+                });
+        }
+
+        function defaultWebTier() {
+            return {
+                name: 'web',
+                caps: {
+                    max_sensitivity_iterations: 500
+                }
+            };
+        }
+
+        function applyTierCaps() {
+            if (!tierConfig) return;
+            var caps = tierConfig.caps || {};
+
+            // Badge
+            sensTierBadge.textContent = tierConfig.name === 'local' ? 'Local' : 'Web';
+            sensTierBadge.className = 'tier-badge tier-' + tierConfig.name;
+
+            // Cap iterations slider
+            var maxIter = caps.max_sensitivity_iterations || 500;
+            sensIters.max = maxIter;
+            if (parseInt(sensIters.value, 10) > maxIter) {
+                sensIters.value = maxIter;
+                sensItersVal.textContent = String(maxIter);
+            }
+
+            sensTierCaps.textContent = 'Max ' + maxIter + ' iterations';
+        }
+
+        // ── Init ──
+        loadTierConfig();
+        updateRunBtn();
+    })();
+    </script>
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

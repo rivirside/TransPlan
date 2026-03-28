@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>transplant.today - Equity Analysis</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="dark-mode.js"></script>
+    <style>
+        /* ── Layout ── */
+        .analysis-layout {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            min-height: calc(100vh - 44px);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .analysis-sidebar {
+            position: sticky;
+            top: 44px;
+            max-height: calc(100vh - 44px);
+            overflow-y: auto;
+            border-right: 1px solid var(--border, #e8e4dc);
+            padding: 1.25rem;
+            background: var(--surface, #fff);
+            align-self: start;
+        }
+        .analysis-main {
+            padding: 2rem 2.5rem;
+            min-width: 0;
+        }
+
+        /* ── Sidebar disclaimer ── */
+        .sidebar-disclaimer {
+            font-size: 0.78rem;
+            color: var(--text-3, #6b7280);
+            padding: 0.75rem;
+            background: var(--warning-50, #fffbeb);
+            border: 1px solid var(--warning-100, #fef3c7);
+            border-radius: 6px;
+            margin-bottom: 1.25rem;
+            line-height: 1.4;
+        }
+        .sidebar-disclaimer a { color: var(--accent, #c97c4a); }
+
+        /* ── Patient form styles ── */
+        .pf-form { display: flex; flex-direction: column; gap: 0.75rem; }
+        .pf-form.pf-compact .pf-grid { gap: 0.5rem; }
+        .pf-section h4 {
+            font-size: 0.9rem; font-weight: 600; color: var(--text-1, #1a1d2e);
+            margin: 0 0 0.75rem; padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border, #e8e4dc);
+        }
+        .pf-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 0.65rem;
+        }
+        .pf-field { display: flex; flex-direction: column; gap: 0.25rem; }
+        .pf-field label {
+            font-size: 0.78rem; font-weight: 600;
+            color: var(--text-2, #4a4f65);
+        }
+        .pf-field select, .pf-field input[type="number"] {
+            padding: 0.45rem 0.6rem;
+            border: 1px solid var(--border, #e8e4dc);
+            border-radius: 5px; font-size: 0.82rem;
+            background: var(--surface, #fff);
+            color: var(--text-1, #1a1d2e);
+        }
+        .pf-field select:focus, .pf-field input:focus {
+            outline: 2px solid var(--accent, #c97c4a);
+            border-color: transparent;
+        }
+        .pf-field input[type="range"] { width: 100%; accent-color: var(--accent, #c97c4a); }
+        .pf-range-val { font-weight: 400; color: var(--accent, #c97c4a); }
+        .pf-checkbox {
+            font-size: 0.78rem; color: var(--text-2, #4a4f65);
+            display: flex; align-items: center; gap: 0.4rem; cursor: pointer;
+        }
+        .pf-checkbox input { accent-color: var(--accent, #c97c4a); }
+
+        /* ── Equity-specific controls ── */
+        .eq-controls {
+            margin-top: 1rem; padding-top: 1rem;
+            border-top: 1px solid var(--border, #e8e4dc);
+        }
+        .eq-controls h4 {
+            font-size: 0.9rem; font-weight: 600; color: var(--text-1, #1a1d2e);
+            margin: 0 0 0.75rem;
+        }
+        .eq-slider-group {
+            margin-bottom: 0.75rem;
+        }
+        .eq-slider-group label {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.78rem; font-weight: 600; color: var(--text-2, #4a4f65);
+            margin-bottom: 0.3rem;
+        }
+        .eq-slider-group .eq-val {
+            font-weight: 700; color: var(--accent, #c97c4a);
+            min-width: 3ch; text-align: right;
+        }
+        .eq-slider-group input[type="range"] {
+            width: 100%; accent-color: var(--accent, #c97c4a);
+        }
+
+        /* ── Run button ── */
+        .eq-run-btn {
+            width: 100%; padding: 0.7rem;
+            background: var(--accent, #c97c4a); color: #fff; border: none;
+            border-radius: 6px; font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; transition: background 0.15s;
+            margin-top: 1rem;
+        }
+        .eq-run-btn:hover { background: #b56a3a; }
+        .eq-run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ── Tier badge ── */
+        .eq-tier-row {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-top: 0.75rem; font-size: 0.78rem; color: var(--text-3, #6b7280);
+        }
+
+        /* ── Loading spinner ── */
+        .eq-loading {
+            display: none; text-align: center; padding: 3rem 1rem;
+        }
+        .eq-loading.active { display: block; }
+        .eq-spinner {
+            width: 36px; height: 36px; border: 3px solid var(--border, #e8e4dc);
+            border-top-color: var(--accent, #c97c4a);
+            border-radius: 50%; margin: 0 auto 1rem;
+            animation: eq-spin 0.8s linear infinite;
+        }
+        @keyframes eq-spin { to { transform: rotate(360deg); } }
+        .eq-loading p { font-size: 0.85rem; color: var(--text-3, #6b7280); }
+
+        /* ── Error message ── */
+        .eq-error {
+            display: none; padding: 1rem; margin-bottom: 1.5rem;
+            background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;
+            color: #991b1b; font-size: 0.85rem;
+        }
+        .eq-error.active { display: block; }
+
+        /* ── Results header ── */
+        .eq-results { display: none; }
+        .eq-results.active { display: block; }
+        .eq-results-header {
+            margin-bottom: 2rem;
+        }
+        .eq-results-header h1 {
+            font-size: 1.5rem; color: var(--text-1, #1a1d2e);
+            margin: 0 0 0.25rem;
+        }
+        .eq-results-header p {
+            font-size: 0.85rem; color: var(--text-3, #6b7280); margin: 0;
+        }
+
+        /* ── Summary card ── */
+        .eq-summary {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1rem; margin-bottom: 2rem;
+        }
+        .eq-summary-card {
+            background: var(--surface, #fff);
+            border: 1px solid var(--border, #e8e4dc);
+            border-radius: 8px; padding: 1.25rem; text-align: center;
+        }
+        .eq-summary-card .eq-big-num {
+            font-size: 2.2rem; font-weight: 700; color: var(--accent, #c97c4a);
+            line-height: 1.1;
+        }
+        .eq-summary-card .eq-big-label {
+            font-size: 0.78rem; color: var(--text-3, #6b7280);
+            margin-top: 0.35rem;
+        }
+
+        /* ── Chart sections ── */
+        .eq-chart-section {
+            margin-bottom: 2rem;
+        }
+        .eq-chart-section h2 {
+            font-size: 1.05rem; font-weight: 600; color: var(--text-1, #1a1d2e);
+            margin: 0 0 0.75rem;
+        }
+        .eq-chart-wrap {
+            background: var(--surface, #fff);
+            border: 1px solid var(--border, #e8e4dc);
+            border-radius: 8px; padding: 1rem;
+        }
+        .eq-chart-wrap canvas { max-height: 320px; }
+        .eq-chart-wrap.eq-gini-chart canvas { max-height: 500px; }
+
+        /* ── Results table ── */
+        .eq-table-section { margin-bottom: 2rem; }
+        .eq-table-section h2 {
+            font-size: 1.05rem; font-weight: 600; color: var(--text-1, #1a1d2e);
+            margin: 0 0 0.75rem;
+        }
+        .eq-table-wrap {
+            background: var(--surface, #fff);
+            border: 1px solid var(--border, #e8e4dc);
+            border-radius: 8px; overflow-x: auto;
+        }
+        .eq-table {
+            width: 100%; border-collapse: collapse; font-size: 0.82rem;
+        }
+        .eq-table th {
+            text-align: left; padding: 0.6rem 0.75rem;
+            font-weight: 600; color: var(--text-2, #4a4f65);
+            border-bottom: 2px solid var(--border, #e8e4dc);
+            cursor: pointer; white-space: nowrap; user-select: none;
+        }
+        .eq-table th:hover { color: var(--accent, #c97c4a); }
+        .eq-table th .sort-arrow { font-size: 0.7rem; margin-left: 0.3rem; opacity: 0.4; }
+        .eq-table th.sorted .sort-arrow { opacity: 1; color: var(--accent, #c97c4a); }
+        .eq-table td {
+            padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border, #e8e4dc);
+            color: var(--text-1, #1a1d2e);
+        }
+        .eq-table tbody tr:hover { background: rgba(201, 124, 74, 0.04); }
+        .gini-dot {
+            display: inline-block; width: 8px; height: 8px;
+            border-radius: 50%; margin-right: 0.4rem; vertical-align: middle;
+        }
+        .gini-green { background: #1d9e5c; }
+        .gini-yellow { background: #d4860a; }
+        .gini-red { background: #d93b3b; }
+
+        /* ── Disclaimers ── */
+        .eq-disclaimers {
+            margin-top: 2rem; padding-top: 1rem;
+            border-top: 1px solid var(--border, #e8e4dc);
+        }
+        .eq-disclaimers p {
+            font-size: 0.75rem; color: var(--text-3, #6b7280);
+            line-height: 1.5; margin: 0 0 0.5rem;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 800px) {
+            .analysis-layout {
+                grid-template-columns: 1fr;
+            }
+            .analysis-sidebar {
+                position: static; max-height: none;
+                border-right: none; border-bottom: 1px solid var(--border, #e8e4dc);
+            }
+            .analysis-main { padding: 1.5rem 1rem; }
+            .eq-summary { grid-template-columns: 1fr; }
+            .pf-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── Dark mode ── */
+        [data-dark="true"] .analysis-sidebar { background: var(--surface, #1e2030); border-color: var(--border, #2e3148); }
+        [data-dark="true"] .sidebar-disclaimer { background: rgba(255,251,235,0.05); border-color: rgba(254,243,199,0.1); color: var(--text-3); }
+        [data-dark="true"] .eq-summary-card { background: var(--surface, #1e2030); border-color: var(--border, #2e3148); }
+        [data-dark="true"] .eq-chart-wrap { background: var(--surface, #1e2030); border-color: var(--border, #2e3148); }
+        [data-dark="true"] .eq-table-wrap { background: var(--surface, #1e2030); border-color: var(--border, #2e3148); }
+        [data-dark="true"] .eq-table th { color: var(--text-2, #a0a4b8); border-color: var(--border, #2e3148); }
+        [data-dark="true"] .eq-table td { color: var(--text-1, #e2e5ed); border-color: var(--border, #2e3148); }
+        [data-dark="true"] .eq-error { background: rgba(254,242,242,0.06); border-color: rgba(254,202,202,0.15); color: #fca5a5; }
+        [data-dark="true"] .pf-field select,
+        [data-dark="true"] .pf-field input[type="number"] {
+            background: var(--surface, #1e2030); color: var(--text-1, #e2e5ed);
+            border-color: var(--border, #2e3148);
+        }
+    </style>
+</head>
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="analysis-layout">
+        <!-- ── LEFT SIDEBAR ── -->
+        <aside class="analysis-sidebar">
+            <div class="sidebar-disclaimer">
+                <strong>Educational tool only.</strong> Not a clinical assessment. <a href="#disclaimer-full">Full disclaimer</a>
+            </div>
+
+            <div id="patient-form-container"></div>
+
+            <div class="eq-controls">
+                <h4>Equity Settings</h4>
+                <div class="eq-slider-group">
+                    <label>
+                        Iterations per profile
+                        <span class="eq-val" id="equityItersVal">200</span>
+                    </label>
+                    <input type="range" id="equityIters" min="50" max="5000" value="200" step="50">
+                </div>
+                <div class="eq-slider-group">
+                    <label>
+                        Max centers
+                        <span class="eq-val" id="equityMaxCentersVal">30</span>
+                    </label>
+                    <input type="range" id="equityMaxCenters" min="5" max="248" value="30" step="1">
+                </div>
+
+                <div class="eq-tier-row">
+                    <span class="tier-badge" id="eqTierBadge">Web</span>
+                    <span>Tier caps applied</span>
+                </div>
+            </div>
+
+            <button type="button" class="eq-run-btn" id="eqRunBtn" disabled>Run Equity Analysis</button>
+        </aside>
+
+        <!-- ── RIGHT RESULTS AREA ── -->
+        <div class="analysis-main">
+            <!-- Empty state -->
+            <div id="eqEmptyState" style="text-align:center; padding:4rem 1rem;">
+                <h2 style="font-size:1.25rem; color:var(--text-2, #4a4f65); margin-bottom:0.5rem;">Equity Analysis</h2>
+                <p style="color:var(--text-3, #6b7280); font-size:0.9rem; max-width:480px; margin:0 auto;">
+                    Fill in a patient profile and click <strong>Run Equity Analysis</strong> to see how transplant access varies across demographics and centers.
+                </p>
+            </div>
+
+            <!-- Loading -->
+            <div class="eq-loading" id="eqLoading">
+                <div class="eq-spinner"></div>
+                <p>Running equity analysis across demographic profiles...</p>
+                <p style="font-size:0.78rem;">This may take 15-30 seconds.</p>
+            </div>
+
+            <!-- Error -->
+            <div class="eq-error" id="eqError"></div>
+
+            <!-- Results -->
+            <div class="eq-results" id="eqResults">
+                <div class="eq-results-header">
+                    <h1>Equity Analysis Results</h1>
+                    <p id="eqResultsMeta"></p>
+                </div>
+
+                <!-- Summary cards -->
+                <div class="eq-summary">
+                    <div class="eq-summary-card">
+                        <div class="eq-big-num" id="eqOverallGini">--</div>
+                        <div class="eq-big-label">Overall Gini Coefficient</div>
+                    </div>
+                    <div class="eq-summary-card">
+                        <div class="eq-big-num" id="eqProfileCount">--</div>
+                        <div class="eq-big-label">Profiles Simulated</div>
+                    </div>
+                    <div class="eq-summary-card">
+                        <div class="eq-big-num" id="eqElapsed">--</div>
+                        <div class="eq-big-label">Elapsed Time (s)</div>
+                    </div>
+                </div>
+
+                <!-- Blood type disparity chart -->
+                <div class="eq-chart-section">
+                    <h2>Blood Type Disparity</h2>
+                    <div class="eq-chart-wrap">
+                        <canvas id="bloodTypeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Age bracket disparity chart -->
+                <div class="eq-chart-section">
+                    <h2>Age Bracket Disparity</h2>
+                    <div class="eq-chart-wrap">
+                        <canvas id="ageChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gini by center chart -->
+                <div class="eq-chart-section">
+                    <h2>Gini Coefficient by Center</h2>
+                    <div class="eq-chart-wrap eq-gini-chart">
+                        <canvas id="giniChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Sortable results table -->
+                <div class="eq-table-section">
+                    <h2>Center Details</h2>
+                    <div class="eq-table-wrap">
+                        <table class="eq-table" id="eqTable">
+                            <thead>
+                                <tr>
+                                    <th data-col="city">Center <span class="sort-arrow"></span></th>
+                                    <th data-col="state">State <span class="sort-arrow"></span></th>
+                                    <th data-col="gini">Gini <span class="sort-arrow"></span></th>
+                                    <th data-col="p24">P24 Range <span class="sort-arrow"></span></th>
+                                    <th data-col="wait">Wait Range <span class="sort-arrow"></span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="eqTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Disclaimers -->
+                <div class="eq-disclaimers" id="eqDisclaimers"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="components/site-chrome.js?v=7"></script>
+    <script src="donation-banner.js"></script>
+    <script src="session.js"></script>
+    <script src="dark-mode.js"></script>
+    <script src="api-client.js"></script>
+    <script src="components/patient-form.js"></script>
+    <script src="equity-charts.js"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        // ── Inject patient form ──
+        TransPlanPatientForm.inject('patient-form-container', { compact: true, showCopula: false, showCOD: false });
+
+        // ── DOM refs ──
+        var itersSlider = document.getElementById('equityIters');
+        var itersVal = document.getElementById('equityItersVal');
+        var maxCentersSlider = document.getElementById('equityMaxCenters');
+        var maxCentersVal = document.getElementById('equityMaxCentersVal');
+        var runBtn = document.getElementById('eqRunBtn');
+        var emptyState = document.getElementById('eqEmptyState');
+        var loadingEl = document.getElementById('eqLoading');
+        var errorEl = document.getElementById('eqError');
+        var resultsEl = document.getElementById('eqResults');
+
+        // ── Slider value displays ──
+        itersSlider.addEventListener('input', function () { itersVal.textContent = this.value; });
+        maxCentersSlider.addEventListener('input', function () { maxCentersVal.textContent = this.value; });
+
+        // ── Tier config ──
+        var _tierConfig = null;
+
+        function fetchTierConfig() {
+            var apiBase = window.TransPlanAPI ? window.TransPlanAPI.getBaseUrl() : '';
+            return fetch(apiBase + '/tier')
+                .then(function (r) { return r.ok ? r.json() : null; })
+                .then(function (data) {
+                    _tierConfig = data || _defaultWebTier();
+                    _applyTierCaps();
+                })
+                .catch(function () {
+                    _tierConfig = _defaultWebTier();
+                    _applyTierCaps();
+                });
+        }
+
+        function _defaultWebTier() {
+            return {
+                name: 'web',
+                caps: {
+                    max_equity_centers: 30,
+                    max_equity_iterations: 200
+                }
+            };
+        }
+
+        function _applyTierCaps() {
+            if (!_tierConfig) return;
+            var caps = _tierConfig.caps;
+            var badge = document.getElementById('eqTierBadge');
+            if (badge) {
+                badge.textContent = _tierConfig.name === 'local' ? 'Local' : 'Web';
+                badge.className = 'tier-badge tier-' + _tierConfig.name;
+            }
+            _capSlider('equityIters', 'equityItersVal', caps.max_equity_iterations);
+            _capSlider('equityMaxCenters', 'equityMaxCentersVal', caps.max_equity_centers);
+        }
+
+        function _capSlider(sliderId, valueId, maxVal) {
+            var slider = document.getElementById(sliderId);
+            if (!slider) return;
+            slider.max = maxVal;
+            if (parseInt(slider.value) > maxVal) slider.value = maxVal;
+            var valueEl = document.getElementById(valueId);
+            if (valueEl) valueEl.textContent = slider.value;
+        }
+
+        // ── Form validation — enable run button when required fields filled ──
+        function checkFormReady() {
+            var formData = TransPlanPatientForm.collectFormData();
+            var ready = formData.organ && formData.bloodType && formData.age && formData.sex && formData.urgency;
+            runBtn.disabled = !ready;
+        }
+
+        // Listen for changes in the patient form container
+        var formContainer = document.getElementById('patient-form-container');
+        formContainer.addEventListener('change', checkFormReady);
+        formContainer.addEventListener('input', checkFormReady);
+
+        // ── Sorting state ──
+        var _sortCol = 'gini';
+        var _sortAsc = true;
+        var _tableData = [];
+
+        // ── Run analysis ──
+        runBtn.addEventListener('click', function () {
+            runAnalysis();
+        });
+
+        async function runAnalysis() {
+            var formData = TransPlanPatientForm.collectFormData();
+            var iters = parseInt(itersSlider.value);
+            var maxCenters = parseInt(maxCentersSlider.value);
+
+            // Show loading, hide others
+            emptyState.style.display = 'none';
+            errorEl.className = 'eq-error';
+            resultsEl.className = 'eq-results';
+            loadingEl.className = 'eq-loading active';
+            runBtn.disabled = true;
+
+            try {
+                var result = await TransPlanAPI.equityAnalysis(formData, iters);
+
+                loadingEl.className = 'eq-loading';
+
+                if (!result) {
+                    errorEl.textContent = 'Analysis failed. The backend may be unavailable or timed out. Please try again with fewer iterations.';
+                    errorEl.className = 'eq-error active';
+                    runBtn.disabled = false;
+                    return;
+                }
+
+                renderResults(result);
+                resultsEl.className = 'eq-results active';
+            } catch (err) {
+                loadingEl.className = 'eq-loading';
+                errorEl.textContent = 'Unexpected error: ' + (err.message || 'Unknown');
+                errorEl.className = 'eq-error active';
+            }
+
+            runBtn.disabled = false;
+        }
+
+        // ── Render results ──
+        function renderResults(result) {
+            // Summary cards
+            document.getElementById('eqOverallGini').textContent = result.overall_gini !== undefined
+                ? result.overall_gini.toFixed(4)
+                : '--';
+            document.getElementById('eqProfileCount').textContent = result.profiles_simulated || '--';
+            document.getElementById('eqElapsed').textContent = result.elapsed_seconds !== undefined
+                ? result.elapsed_seconds.toFixed(1)
+                : '--';
+
+            // Meta line
+            var meta = document.getElementById('eqResultsMeta');
+            meta.textContent = (result.organ ? result.organ.charAt(0).toUpperCase() + result.organ.slice(1) : 'Unknown organ')
+                + ' | ' + (result.cities ? result.cities.length : 0) + ' centers analyzed';
+
+            // Charts — use first city's dimension data for blood type & age charts
+            var cities = result.cities || [];
+            if (cities.length > 0 && cities[0].dimension_disparities) {
+                var dims = cities[0].dimension_disparities;
+                TransPlanEquityCharts.renderBloodTypeDisparityChart('bloodTypeChart', dims.blood_type);
+                TransPlanEquityCharts.renderAgeDisparityChart('ageChart', dims.age_bracket);
+            }
+            TransPlanEquityCharts.renderGiniByCity('giniChart', cities);
+
+            // Table data
+            _tableData = cities.map(function (c) {
+                return {
+                    city: c.city || '',
+                    state: c.state || '',
+                    gini: c.gini_coefficient,
+                    p24_lo: c.p24_range ? c.p24_range[0] : 0,
+                    p24_hi: c.p24_range ? c.p24_range[1] : 0,
+                    wait_lo: c.median_wait_range ? c.median_wait_range[0] : 0,
+                    wait_hi: c.median_wait_range ? c.median_wait_range[1] : 0
+                };
+            });
+            _sortCol = 'gini';
+            _sortAsc = true;
+            renderTable();
+
+            // Disclaimers
+            var disclaimerDiv = document.getElementById('eqDisclaimers');
+            while (disclaimerDiv.firstChild) disclaimerDiv.removeChild(disclaimerDiv.firstChild);
+            if (result.disclaimers && result.disclaimers.length) {
+                result.disclaimers.forEach(function (d) {
+                    var p = document.createElement('p');
+                    p.textContent = d;
+                    disclaimerDiv.appendChild(p);
+                });
+            }
+        }
+
+        // ── Sortable table ──
+        function renderTable() {
+            var sorted = _tableData.slice().sort(function (a, b) {
+                var aVal = a[_sortCol];
+                var bVal = b[_sortCol];
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = (bVal || '').toLowerCase();
+                }
+                if (aVal < bVal) return _sortAsc ? -1 : 1;
+                if (aVal > bVal) return _sortAsc ? 1 : -1;
+                return 0;
+            });
+
+            var tbody = document.getElementById('eqTableBody');
+            while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
+
+            sorted.forEach(function (row) {
+                var tr = document.createElement('tr');
+
+                var tdCity = document.createElement('td');
+                tdCity.textContent = row.city;
+                tr.appendChild(tdCity);
+
+                var tdState = document.createElement('td');
+                tdState.textContent = row.state;
+                tr.appendChild(tdState);
+
+                var tdGini = document.createElement('td');
+                var dot = document.createElement('span');
+                dot.className = 'gini-dot ' + _giniDotClass(row.gini);
+                tdGini.appendChild(dot);
+                tdGini.appendChild(document.createTextNode(row.gini !== undefined ? row.gini.toFixed(4) : '--'));
+                tr.appendChild(tdGini);
+
+                var tdP24 = document.createElement('td');
+                tdP24.textContent = (row.p24_lo * 100).toFixed(1) + '% - ' + (row.p24_hi * 100).toFixed(1) + '%';
+                tr.appendChild(tdP24);
+
+                var tdWait = document.createElement('td');
+                tdWait.textContent = row.wait_lo.toFixed(1) + ' - ' + row.wait_hi.toFixed(1) + ' mo';
+                tr.appendChild(tdWait);
+
+                tbody.appendChild(tr);
+            });
+
+            // Update header sort arrows
+            var ths = document.querySelectorAll('#eqTable th');
+            ths.forEach(function (th) {
+                var col = th.getAttribute('data-col');
+                var arrow = th.querySelector('.sort-arrow');
+                if (col === _sortCol) {
+                    th.classList.add('sorted');
+                    arrow.textContent = _sortAsc ? '\u25B2' : '\u25BC';
+                } else {
+                    th.classList.remove('sorted');
+                    arrow.textContent = '\u25B2';
+                }
+            });
+        }
+
+        function _giniDotClass(g) {
+            if (g < 0.15) return 'gini-green';
+            if (g < 0.30) return 'gini-yellow';
+            return 'gini-red';
+        }
+
+        // Table header click for sorting
+        document.getElementById('eqTable').addEventListener('click', function (e) {
+            var th = e.target.closest('th[data-col]');
+            if (!th) return;
+            var col = th.getAttribute('data-col');
+            if (col === _sortCol) {
+                _sortAsc = !_sortAsc;
+            } else {
+                _sortCol = col;
+                _sortAsc = true;
+            }
+            renderTable();
+        });
+
+        // ── Init ──
+        fetchTierConfig();
+
+        // Dark mode hook for equity charts
+        if (window.TransPlanEquityCharts && window.TransPlanEquityCharts.onDarkModeChange) {
+            var observer = new MutationObserver(function () {
+                var isDark = document.documentElement.getAttribute('data-dark') === 'true';
+                TransPlanEquityCharts.onDarkModeChange(isDark);
+            });
+            observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-dark'] });
+        }
+    })();
+    </script>
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>transplant.today - What-If &amp; Policy Scenarios</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        /* ── Patient form component styles ── */
+        .pf-form { display: flex; flex-direction: column; gap: 0.75rem; }
+        .pf-compact .pf-field { margin-bottom: 0; }
+        .pf-section h4 {
+            font-size: var(--fs-md); font-weight: 600; color: var(--text-1);
+            margin-bottom: var(--space-3); padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .pf-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;
+        }
+        .pf-field { display: flex; flex-direction: column; gap: 0.25rem; }
+        .pf-field label {
+            font-size: var(--fs-xs); font-weight: 600; color: var(--text-2);
+        }
+        .pf-field select,
+        .pf-field input[type="number"] {
+            padding: 0.4rem 0.55rem; border: 1px solid var(--border);
+            border-radius: var(--radius-sm); font-size: var(--fs-sm);
+            background: var(--surface); color: var(--text-1);
+        }
+        .pf-field select:focus,
+        .pf-field input:focus {
+            outline: 2px solid var(--color-primary); border-color: transparent;
+        }
+        .pf-field input[type="range"] { width: 100%; margin-top: 0.2rem; }
+        .pf-range-val {
+            font-weight: 400; color: var(--color-primary); font-size: var(--fs-xs);
+        }
+        .pf-checkbox {
+            font-size: var(--fs-xs); color: var(--text-2); display: flex;
+            align-items: center; gap: 0.4rem; cursor: pointer;
+        }
+        .pf-checkbox input { margin: 0; }
+
+        /* ── Scenario page layout ── */
+        .scenario-sidebar {
+            display: flex; flex-direction: column; gap: var(--space-5);
+        }
+
+        .sidebar-section {
+            padding-bottom: var(--space-4);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .sidebar-section:last-child { border-bottom: none; padding-bottom: 0; }
+        .sidebar-section h3 {
+            font-size: var(--fs-sm); font-weight: 600; color: var(--text-1);
+            margin-bottom: var(--space-3);
+        }
+
+        /* Center picker */
+        .center-picker select {
+            width: 100%; padding: 0.45rem 0.55rem;
+            border: 1px solid var(--border); border-radius: var(--radius-sm);
+            font-size: var(--fs-sm); background: var(--surface); color: var(--text-1);
+        }
+        .center-picker select:focus {
+            outline: 2px solid var(--color-primary); border-color: transparent;
+        }
+        .center-picker .center-hint {
+            font-size: var(--fs-xs); color: var(--text-muted); margin-top: 0.3rem;
+        }
+
+        /* Tab selector */
+        .scenario-tabs {
+            display: flex; gap: 0; border: 1px solid var(--border);
+            border-radius: var(--radius-sm); overflow: hidden;
+        }
+        .scenario-tab {
+            flex: 1; padding: 0.45rem 0.4rem; border: none;
+            background: var(--surface); color: var(--text-3);
+            font-size: var(--fs-xs); font-weight: 500; cursor: pointer;
+            text-align: center; transition: all var(--transition-fast);
+            border-right: 1px solid var(--border);
+        }
+        .scenario-tab:last-child { border-right: none; }
+        .scenario-tab:hover { color: var(--text-1); background: var(--surface-raised); }
+        .scenario-tab.active {
+            background: var(--color-primary); color: #fff;
+        }
+
+        /* Tab panels */
+        .scenario-panel { display: none; }
+        .scenario-panel.active { display: block; }
+
+        /* Control fields */
+        .control-group { margin-bottom: var(--space-3); }
+        .control-group label {
+            display: flex; justify-content: space-between; align-items: baseline;
+            font-size: var(--fs-xs); font-weight: 600; color: var(--text-2);
+            margin-bottom: 0.2rem;
+        }
+        .control-group .slider-val {
+            font-weight: 400; color: var(--color-primary); font-size: var(--fs-xs);
+        }
+        .control-group input[type="range"] { width: 100%; }
+        .control-group select {
+            width: 100%; padding: 0.45rem 0.55rem;
+            border: 1px solid var(--border); border-radius: var(--radius-sm);
+            font-size: var(--fs-sm); background: var(--surface); color: var(--text-1);
+        }
+        .control-group select:focus {
+            outline: 2px solid var(--color-primary); border-color: transparent;
+        }
+        .scenario-desc {
+            font-size: var(--fs-xs); color: var(--text-3); margin-top: 0.3rem;
+            line-height: 1.45; font-style: italic;
+        }
+
+        /* Run buttons */
+        .run-btn {
+            width: 100%; padding: 0.6rem 1rem;
+            background: var(--color-primary); color: #fff; border: none;
+            border-radius: var(--radius-sm); font-size: var(--fs-sm);
+            font-weight: 600; cursor: pointer; transition: background var(--transition-fast);
+            margin-top: var(--space-3);
+        }
+        .run-btn:hover { background: var(--color-primary-dark); }
+        .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ── Results area ── */
+        .results-empty {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center;
+            padding: var(--space-10) var(--space-6); color: var(--text-3);
+        }
+        .results-empty svg { color: var(--neutral-300); margin-bottom: var(--space-5); }
+        .results-empty h2 {
+            font-size: var(--fs-xl); color: var(--text-2);
+            margin-bottom: var(--space-3); font-weight: 600;
+        }
+        .results-empty p { max-width: 420px; line-height: 1.6; }
+
+        .results-loading {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: var(--space-10) var(--space-6);
+            color: var(--text-3);
+        }
+        .results-loading .spinner {
+            width: 32px; height: 32px; border: 3px solid var(--border);
+            border-top-color: var(--color-primary); border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin-bottom: var(--space-4);
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .results-error {
+            padding: var(--space-4); background: var(--danger-50);
+            border: 1px solid var(--danger-100); border-radius: var(--radius-sm);
+            color: var(--danger-600); font-size: var(--fs-sm);
+        }
+
+        /* Comparison cards */
+        .comparison-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);
+            margin-bottom: var(--space-5);
+        }
+        .comparison-card {
+            padding: var(--space-4); border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+        .comparison-card h4 {
+            font-size: var(--fs-xs); font-weight: 600; color: var(--text-3);
+            text-transform: uppercase; letter-spacing: 0.05em;
+            margin-bottom: var(--space-3);
+        }
+        .stat-row {
+            display: flex; justify-content: space-between; align-items: baseline;
+            margin-bottom: var(--space-2);
+        }
+        .stat-row:last-child { margin-bottom: 0; }
+        .stat-label { font-size: var(--fs-sm); color: var(--text-2); }
+        .stat-value { font-size: var(--fs-md); font-weight: 700; color: var(--text-1); }
+        .stat-ci { font-size: var(--fs-xs); color: var(--text-muted); }
+
+        /* Delta card */
+        .delta-card {
+            padding: var(--space-4); border-radius: var(--radius-md);
+            border: 1px solid var(--border); text-align: center;
+            margin-bottom: var(--space-5);
+        }
+        .delta-card.positive { background: var(--success-50); border-color: var(--success-100); }
+        .delta-card.negative { background: var(--danger-50); border-color: var(--danger-100); }
+        .delta-card .delta-value {
+            font-size: var(--fs-2xl); font-weight: 700;
+        }
+        .delta-card.positive .delta-value { color: var(--success-600); }
+        .delta-card.negative .delta-value { color: var(--danger-600); }
+        .delta-card .delta-label {
+            font-size: var(--fs-sm); color: var(--text-2); margin-top: var(--space-1);
+        }
+        .delta-card .delta-pct {
+            font-size: var(--fs-sm); font-weight: 600; margin-top: var(--space-1);
+        }
+        .delta-card.positive .delta-pct { color: var(--success-500); }
+        .delta-card.negative .delta-pct { color: var(--danger-500); }
+
+        /* Bar chart */
+        .bar-chart {
+            display: flex; align-items: flex-end; gap: var(--space-6);
+            justify-content: center; padding: var(--space-5) 0;
+            margin-bottom: var(--space-5);
+        }
+        .bar-group { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+        .bar-wrapper {
+            width: 60px; height: 160px; display: flex; align-items: flex-end;
+            justify-content: center;
+        }
+        .bar {
+            width: 100%; border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            transition: height 0.5s ease;
+        }
+        .bar.baseline { background: var(--neutral-300); }
+        .bar.adjusted { background: var(--color-primary); }
+        .bar-label { font-size: var(--fs-xs); color: var(--text-2); font-weight: 600; }
+        .bar-value { font-size: var(--fs-xs); color: var(--text-3); }
+
+        /* Scenario info card */
+        .scenario-info-card {
+            padding: var(--space-4); background: var(--surface-raised);
+            border: 1px solid var(--border-light); border-radius: var(--radius-md);
+            margin-bottom: var(--space-5);
+        }
+        .scenario-info-card h3 {
+            font-size: var(--fs-md); font-weight: 600; color: var(--text-1);
+            margin-bottom: var(--space-2);
+        }
+        .scenario-info-card p {
+            font-size: var(--fs-sm); color: var(--text-2); line-height: 1.5;
+        }
+        .scenario-info-card .multipliers {
+            display: flex; gap: var(--space-4); margin-top: var(--space-3);
+            font-size: var(--fs-xs); color: var(--text-3);
+        }
+
+        /* Travel subsidy tier cards */
+        .tier-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-4); margin-bottom: var(--space-5);
+        }
+        .tier-card {
+            padding: var(--space-4); border-radius: var(--radius-md);
+            border: 1px solid var(--border); background: var(--surface);
+        }
+        .tier-card h4 {
+            font-size: var(--fs-md); font-weight: 700; color: var(--text-1);
+            margin-bottom: var(--space-3);
+        }
+        .tier-stat {
+            display: flex; justify-content: space-between;
+            font-size: var(--fs-sm); margin-bottom: var(--space-2);
+        }
+        .tier-stat .t-label { color: var(--text-2); }
+        .tier-stat .t-value { font-weight: 600; color: var(--text-1); }
+        .tier-stat .t-value.positive { color: var(--success-600); }
+        .tier-stat .t-value.negative { color: var(--danger-600); }
+
+        /* City breakdown table */
+        .city-table-wrap {
+            overflow-x: auto; margin-bottom: var(--space-5);
+        }
+        .city-table {
+            width: 100%; border-collapse: collapse; font-size: var(--fs-sm);
+        }
+        .city-table th {
+            text-align: left; padding: var(--space-2) var(--space-3);
+            font-size: var(--fs-xs); font-weight: 600; color: var(--text-3);
+            text-transform: uppercase; letter-spacing: 0.04em;
+            border-bottom: 2px solid var(--border);
+            cursor: pointer; user-select: none; white-space: nowrap;
+        }
+        .city-table th:hover { color: var(--text-1); }
+        .city-table th .sort-arrow { font-size: 0.7em; margin-left: 0.3em; }
+        .city-table td {
+            padding: var(--space-2) var(--space-3);
+            border-bottom: 1px solid var(--border-light); color: var(--text-1);
+        }
+        .city-table tr:hover td { background: var(--surface-raised); }
+
+        /* Results section title */
+        .results-title {
+            font-size: var(--fs-lg); font-weight: 600; color: var(--text-1);
+            margin-bottom: var(--space-2);
+        }
+        .results-subtitle {
+            font-size: var(--fs-sm); color: var(--text-3); margin-bottom: var(--space-5);
+        }
+        .results-meta {
+            font-size: var(--fs-xs); color: var(--text-muted); margin-top: var(--space-4);
+        }
+
+        /* Disclaimer */
+        .scenario-disclaimer {
+            margin-top: var(--space-5); padding: var(--space-3);
+            background: var(--warning-50); border: 1px solid var(--warning-100);
+            border-radius: var(--radius-sm); font-size: var(--fs-xs);
+            color: var(--text-3); line-height: 1.45;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .comparison-grid { grid-template-columns: 1fr; }
+            .pf-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="nav-placeholder"></div>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-disclaimer">
+                <strong>Educational tool only.</strong> Not a clinical assessment. Results are Monte Carlo estimates with inherent variability.
+            </div>
+
+            <div class="scenario-sidebar">
+                <!-- Patient form -->
+                <div class="sidebar-section">
+                    <div id="patient-form"></div>
+                </div>
+
+                <!-- Center picker -->
+                <div class="sidebar-section center-picker">
+                    <h3>Transplant Center</h3>
+                    <select id="centerSelect" disabled>
+                        <option value="">Select organ first...</option>
+                    </select>
+                    <div class="center-hint" id="centerHint">Select an organ above to load centers</div>
+                </div>
+
+                <!-- Analysis type tabs -->
+                <div class="sidebar-section">
+                    <h3>Analysis Type</h3>
+                    <div class="scenario-tabs">
+                        <button type="button" class="scenario-tab active" data-tab="whatif">Custom What-If</button>
+                        <button type="button" class="scenario-tab" data-tab="policy">Policy Scenario</button>
+                        <button type="button" class="scenario-tab" data-tab="subsidy">Travel Subsidy</button>
+                    </div>
+
+                    <!-- Custom What-If controls -->
+                    <div class="scenario-panel active" id="panel-whatif">
+                        <div class="control-group" style="margin-top: var(--space-3);">
+                            <label>Donor Rate Multiplier <span class="slider-val" id="donorMultVal">1.0x</span></label>
+                            <input type="range" id="donorMultSlider" min="0.5" max="2.0" step="0.1" value="1.0">
+                        </div>
+                        <div class="control-group">
+                            <label>Wait Time Multiplier <span class="slider-val" id="waitMultVal">1.0x</span></label>
+                            <input type="range" id="waitMultSlider" min="0.5" max="2.0" step="0.1" value="1.0">
+                        </div>
+                        <div class="control-group">
+                            <label>Iterations <span class="slider-val" id="whatifIterVal">500</span></label>
+                            <input type="range" id="whatifIterSlider" min="100" max="2000" step="100" value="500">
+                        </div>
+                        <button type="button" class="run-btn" id="runWhatIf" disabled>Run What-If</button>
+                    </div>
+
+                    <!-- Policy Scenario controls -->
+                    <div class="scenario-panel" id="panel-policy">
+                        <div class="control-group" style="margin-top: var(--space-3);">
+                            <label>Policy Scenario</label>
+                            <select id="policySelect" disabled>
+                                <option value="">Select organ first...</option>
+                            </select>
+                            <div class="scenario-desc" id="policyDesc"></div>
+                        </div>
+                        <div class="control-group">
+                            <label>Iterations <span class="slider-val" id="policyIterVal">500</span></label>
+                            <input type="range" id="policyIterSlider" min="100" max="2000" step="100" value="500">
+                        </div>
+                        <button type="button" class="run-btn" id="runPolicy" disabled>Run Policy Scenario</button>
+                    </div>
+
+                    <!-- Travel Subsidy controls -->
+                    <div class="scenario-panel" id="panel-subsidy">
+                        <div class="control-group" style="margin-top: var(--space-3);">
+                            <label>Iterations <span class="slider-val" id="subsidyIterVal">500</span></label>
+                            <input type="range" id="subsidyIterSlider" min="100" max="2000" step="100" value="500">
+                        </div>
+                        <button type="button" class="run-btn" id="runSubsidy" disabled>Run Analysis</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="main-content" id="resultsArea">
+            <!-- Empty state -->
+            <div class="results-empty" id="resultsEmpty">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20V10"/>
+                    <path d="M18 20V4"/>
+                    <path d="M6 20v-4"/>
+                </svg>
+                <h2>What-If &amp; Policy Scenarios</h2>
+                <p>Configure a patient profile and center, then choose an analysis type to explore how changes in donor availability, wait times, or policy affect transplant outcomes.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="components/site-chrome.js"></script>
+    <script src="donation-banner.js"></script>
+    <script src="session.js"></script>
+    <script src="dark-mode.js"></script>
+    <script src="api-client.js"></script>
+    <script src="components/patient-form.js"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        // ── State ──
+        var currentTab = 'whatif';
+        var centersCache = {};
+        var policyScenariosCache = {};
+        var tierCaps = { max_whatif_iterations: 500 };
+        var sortCol = null;
+        var sortAsc = true;
+
+        // ── DOM refs ──
+        var centerSelect = document.getElementById('centerSelect');
+        var centerHint = document.getElementById('centerHint');
+        var donorMultSlider = document.getElementById('donorMultSlider');
+        var donorMultVal = document.getElementById('donorMultVal');
+        var waitMultSlider = document.getElementById('waitMultSlider');
+        var waitMultVal = document.getElementById('waitMultVal');
+        var whatifIterSlider = document.getElementById('whatifIterSlider');
+        var whatifIterVal = document.getElementById('whatifIterVal');
+        var policySelect = document.getElementById('policySelect');
+        var policyDesc = document.getElementById('policyDesc');
+        var policyIterSlider = document.getElementById('policyIterSlider');
+        var policyIterVal = document.getElementById('policyIterVal');
+        var subsidyIterSlider = document.getElementById('subsidyIterSlider');
+        var subsidyIterVal = document.getElementById('subsidyIterVal');
+        var runWhatIfBtn = document.getElementById('runWhatIf');
+        var runPolicyBtn = document.getElementById('runPolicy');
+        var runSubsidyBtn = document.getElementById('runSubsidy');
+        var resultsArea = document.getElementById('resultsArea');
+
+        // ── Init: inject patient form ──
+        if (window.TransPlanPatientForm) {
+            TransPlanPatientForm.inject('patient-form', { compact: true });
+        }
+
+        // ── Fetch tier config ──
+        function fetchTierConfig() {
+            var apiBase = window.TransPlanAPI ? window.TransPlanAPI.getBaseUrl() : '';
+            fetch(apiBase + '/tier')
+                .then(function (r) { return r.ok ? r.json() : null; })
+                .then(function (data) {
+                    if (data && data.caps) {
+                        tierCaps = data.caps;
+                    }
+                    applyIterCaps();
+                })
+                .catch(function () { applyIterCaps(); });
+        }
+
+        function applyIterCaps() {
+            var maxIter = tierCaps.max_whatif_iterations || 500;
+            [whatifIterSlider, policyIterSlider, subsidyIterSlider].forEach(function (slider) {
+                if (!slider) return;
+                if (parseInt(slider.max, 10) > maxIter) slider.max = maxIter;
+                if (parseInt(slider.value, 10) > maxIter) {
+                    slider.value = maxIter;
+                    var valEl = document.getElementById(slider.id.replace('Slider', 'Val'));
+                    if (valEl) valEl.textContent = maxIter;
+                }
+            });
+        }
+
+        fetchTierConfig();
+
+        // ── Slider value displays ──
+        donorMultSlider.addEventListener('input', function () {
+            donorMultVal.textContent = parseFloat(this.value).toFixed(1) + 'x';
+        });
+        waitMultSlider.addEventListener('input', function () {
+            waitMultVal.textContent = parseFloat(this.value).toFixed(1) + 'x';
+        });
+        whatifIterSlider.addEventListener('input', function () {
+            whatifIterVal.textContent = this.value;
+        });
+        policyIterSlider.addEventListener('input', function () {
+            policyIterVal.textContent = this.value;
+        });
+        subsidyIterSlider.addEventListener('input', function () {
+            subsidyIterVal.textContent = this.value;
+        });
+
+        // ── Tab switching ──
+        document.querySelectorAll('.scenario-tab').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.scenario-tab').forEach(function (t) { t.classList.remove('active'); });
+                document.querySelectorAll('.scenario-panel').forEach(function (p) { p.classList.remove('active'); });
+                btn.classList.add('active');
+                var tab = btn.getAttribute('data-tab');
+                currentTab = tab;
+                var panel = document.getElementById('panel-' + tab);
+                if (panel) panel.classList.add('active');
+                updateRunButtons();
+            });
+        });
+
+        // ── Organ change: load centers + policy scenarios ──
+        function getOrgan() {
+            var el = document.getElementById('pf-organ');
+            return el ? el.value : '';
+        }
+
+        function watchOrganChange() {
+            var organEl = document.getElementById('pf-organ');
+            if (!organEl) return;
+            organEl.addEventListener('change', function () {
+                var organ = this.value;
+                if (organ) {
+                    loadCenters(organ);
+                    loadPolicyScenarios(organ);
+                } else {
+                    centerSelect.textContent = '';
+                    var defaultOpt = document.createElement('option');
+                    defaultOpt.value = '';
+                    defaultOpt.textContent = 'Select organ first...';
+                    centerSelect.appendChild(defaultOpt);
+                    centerSelect.disabled = true;
+                    centerHint.textContent = 'Select an organ above to load centers';
+                    policySelect.textContent = '';
+                    var defaultPOpt = document.createElement('option');
+                    defaultPOpt.value = '';
+                    defaultPOpt.textContent = 'Select organ first...';
+                    policySelect.appendChild(defaultPOpt);
+                    policySelect.disabled = true;
+                    policyDesc.textContent = '';
+                }
+                updateRunButtons();
+            });
+        }
+        watchOrganChange();
+
+        function loadCenters(organ) {
+            if (centersCache[organ]) {
+                populateCenters(centersCache[organ]);
+                return;
+            }
+            centerSelect.textContent = '';
+            var loadingOpt = document.createElement('option');
+            loadingOpt.value = '';
+            loadingOpt.textContent = 'Loading centers...';
+            centerSelect.appendChild(loadingOpt);
+            centerSelect.disabled = true;
+            centerHint.textContent = 'Loading...';
+
+            if (window.TransPlanAPI && window.TransPlanAPI.fetchCenters) {
+                TransPlanAPI.fetchCenters({ organ: organ }).then(function (data) {
+                    if (data && data.centers) {
+                        centersCache[organ] = data.centers;
+                        populateCenters(data.centers);
+                    } else {
+                        centerSelect.textContent = '';
+                        var errOpt = document.createElement('option');
+                        errOpt.value = '';
+                        errOpt.textContent = 'No centers found';
+                        centerSelect.appendChild(errOpt);
+                        centerHint.textContent = 'Could not load centers';
+                    }
+                }).catch(function () {
+                    centerSelect.textContent = '';
+                    var errOpt = document.createElement('option');
+                    errOpt.value = '';
+                    errOpt.textContent = 'Error loading centers';
+                    centerSelect.appendChild(errOpt);
+                    centerHint.textContent = 'Backend may be unavailable';
+                });
+            }
+        }
+
+        function populateCenters(centers) {
+            centerSelect.textContent = '';
+            var placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = 'Choose a center...';
+            centerSelect.appendChild(placeholder);
+            centers.forEach(function (c) {
+                var opt = document.createElement('option');
+                opt.value = c.city || c.name;
+                opt.textContent = c.city ? (c.city + ', ' + (c.state || '')) : c.name;
+                centerSelect.appendChild(opt);
+            });
+            centerSelect.disabled = false;
+            centerHint.textContent = centers.length + ' centers available';
+            centerSelect.addEventListener('change', updateRunButtons);
+            updateRunButtons();
+        }
+
+        function loadPolicyScenarios(organ) {
+            if (policyScenariosCache[organ]) {
+                populatePolicyScenarios(policyScenariosCache[organ]);
+                return;
+            }
+            policySelect.textContent = '';
+            var loadingOpt = document.createElement('option');
+            loadingOpt.value = '';
+            loadingOpt.textContent = 'Loading scenarios...';
+            policySelect.appendChild(loadingOpt);
+            policySelect.disabled = true;
+
+            if (window.TransPlanAPI && window.TransPlanAPI.policyScenarios) {
+                TransPlanAPI.policyScenarios(organ).then(function (scenarios) {
+                    if (scenarios && scenarios.length > 0) {
+                        policyScenariosCache[organ] = scenarios;
+                        populatePolicyScenarios(scenarios);
+                    } else {
+                        policySelect.textContent = '';
+                        var errOpt = document.createElement('option');
+                        errOpt.value = '';
+                        errOpt.textContent = 'No scenarios available';
+                        policySelect.appendChild(errOpt);
+                        policySelect.disabled = true;
+                    }
+                }).catch(function () {
+                    policySelect.textContent = '';
+                    var errOpt = document.createElement('option');
+                    errOpt.value = '';
+                    errOpt.textContent = 'Error loading scenarios';
+                    policySelect.appendChild(errOpt);
+                    policySelect.disabled = true;
+                });
+            }
+        }
+
+        function populatePolicyScenarios(scenarios) {
+            policySelect.textContent = '';
+            var placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = 'Choose a scenario...';
+            policySelect.appendChild(placeholder);
+            scenarios.forEach(function (s) {
+                var opt = document.createElement('option');
+                opt.value = s.id;
+                opt.textContent = s.name;
+                opt.setAttribute('data-desc', s.description || '');
+                policySelect.appendChild(opt);
+            });
+            policySelect.disabled = false;
+
+            policySelect.addEventListener('change', function () {
+                var selected = policySelect.options[policySelect.selectedIndex];
+                var desc = selected ? selected.getAttribute('data-desc') : '';
+                policyDesc.textContent = desc || '';
+                updateRunButtons();
+            });
+        }
+
+        // ── Validate & enable run buttons ──
+        function isFormValid() {
+            var organ = getOrgan();
+            var age = document.getElementById('pf-age');
+            var sex = document.getElementById('pf-sex');
+            var blood = document.getElementById('pf-bloodType');
+            var urgency = document.getElementById('pf-urgency');
+            return organ && age && age.value && sex && sex.value && blood && blood.value && urgency && urgency.value;
+        }
+
+        function updateRunButtons() {
+            var valid = isFormValid();
+            var hasCenter = centerSelect.value !== '';
+            var hasScenario = policySelect.value !== '';
+
+            runWhatIfBtn.disabled = !(valid && hasCenter);
+            runPolicyBtn.disabled = !(valid && hasCenter && hasScenario);
+            runSubsidyBtn.disabled = !valid;
+        }
+
+        // Watch form changes for button state
+        document.addEventListener('change', function (e) {
+            if (e.target.closest('#patient-form') || e.target.id === 'centerSelect' || e.target.id === 'policySelect') {
+                updateRunButtons();
+            }
+        });
+        document.addEventListener('input', function (e) {
+            if (e.target.closest('#patient-form')) {
+                updateRunButtons();
+            }
+        });
+
+        // ── Utility: safe text node builder ──
+        function escText(str) {
+            return String(str);
+        }
+
+        function setText(el, text) {
+            el.textContent = text;
+        }
+
+        function fmtPct(v) {
+            return (v * 100).toFixed(1) + '%';
+        }
+
+        function fmtDelta(v) {
+            var sign = v >= 0 ? '+' : '';
+            return sign + (v * 100).toFixed(1) + ' pp';
+        }
+
+        function fmtDeltaPct(baseline, adjusted) {
+            if (!baseline || baseline === 0) return '';
+            var pct = ((adjusted - baseline) / baseline) * 100;
+            var sign = pct >= 0 ? '+' : '';
+            return sign + pct.toFixed(1) + '%';
+        }
+
+        function fmtWait(months) {
+            return months.toFixed(1) + ' mo';
+        }
+
+        function fmtCI(ci) {
+            if (!ci || ci.length < 2) return '';
+            return '[' + fmtPct(ci[0]) + ', ' + fmtPct(ci[1]) + ']';
+        }
+
+        // ── DOM builder helpers ──
+        function el(tag, className, textContent) {
+            var node = document.createElement(tag);
+            if (className) node.className = className;
+            if (textContent !== undefined) node.textContent = textContent;
+            return node;
+        }
+
+        function showLoading(msg) {
+            resultsArea.textContent = '';
+            var wrap = el('div', 'results-loading');
+            var spinner = el('div', 'spinner');
+            wrap.appendChild(spinner);
+            var label = el('div', '', msg || 'Running analysis...');
+            wrap.appendChild(label);
+            resultsArea.appendChild(wrap);
+        }
+
+        function showError(msg) {
+            resultsArea.textContent = '';
+            var errDiv = el('div', 'results-error', msg);
+            resultsArea.appendChild(errDiv);
+        }
+
+        // ── Run What-If ──
+        runWhatIfBtn.addEventListener('click', function () {
+            if (!isFormValid() || !centerSelect.value) return;
+            var formData = TransPlanPatientForm.collectFormData('pf');
+            var city = centerSelect.value;
+            var donorMult = parseFloat(donorMultSlider.value);
+            var waitMult = parseFloat(waitMultSlider.value);
+            var iters = parseInt(whatifIterSlider.value, 10);
+
+            showLoading('Running what-if analysis...');
+            runWhatIfBtn.disabled = true;
+
+            TransPlanAPI.whatIf(formData, city, donorMult, waitMult, iters)
+                .then(function (result) {
+                    runWhatIfBtn.disabled = false;
+                    updateRunButtons();
+                    if (!result) {
+                        showError('What-if analysis failed. The backend may be unavailable.');
+                        return;
+                    }
+                    renderWhatIfResult(result);
+                })
+                .catch(function (err) {
+                    runWhatIfBtn.disabled = false;
+                    updateRunButtons();
+                    showError('What-if analysis failed: ' + (err.message || 'Unknown error'));
+                });
+        });
+
+        // ── Run Policy Scenario ──
+        runPolicyBtn.addEventListener('click', function () {
+            if (!isFormValid() || !centerSelect.value || !policySelect.value) return;
+            var formData = TransPlanPatientForm.collectFormData('pf');
+            var scenarioId = policySelect.value;
+            var city = centerSelect.value;
+            var iters = parseInt(policyIterSlider.value, 10);
+
+            showLoading('Running policy scenario analysis...');
+            runPolicyBtn.disabled = true;
+
+            TransPlanAPI.policyScenario(formData, scenarioId, city, iters)
+                .then(function (result) {
+                    runPolicyBtn.disabled = false;
+                    updateRunButtons();
+                    if (!result) {
+                        showError('Policy scenario analysis failed. The backend may be unavailable.');
+                        return;
+                    }
+                    renderPolicyResult(result);
+                })
+                .catch(function (err) {
+                    runPolicyBtn.disabled = false;
+                    updateRunButtons();
+                    showError('Policy scenario analysis failed: ' + (err.message || 'Unknown error'));
+                });
+        });
+
+        // ── Run Travel Subsidy ──
+        runSubsidyBtn.addEventListener('click', function () {
+            if (!isFormValid()) return;
+            var formData = TransPlanPatientForm.collectFormData('pf');
+            var iters = parseInt(subsidyIterSlider.value, 10);
+
+            showLoading('Running travel subsidy analysis across all cities (this may take a moment)...');
+            runSubsidyBtn.disabled = true;
+
+            TransPlanAPI.travelSubsidyAnalysis(formData, [], iters)
+                .then(function (result) {
+                    runSubsidyBtn.disabled = false;
+                    updateRunButtons();
+                    if (!result) {
+                        showError('Travel subsidy analysis failed. The backend may be unavailable.');
+                        return;
+                    }
+                    renderSubsidyResult(result);
+                })
+                .catch(function (err) {
+                    runSubsidyBtn.disabled = false;
+                    updateRunButtons();
+                    showError('Travel subsidy analysis failed: ' + (err.message || 'Unknown error'));
+                });
+        });
+
+        // ── Build comparison card DOM ──
+        function buildComparisonCard(title, p24, ci, medianWait) {
+            var card = el('div', 'comparison-card');
+            card.appendChild(el('h4', '', title));
+
+            var row1 = el('div', 'stat-row');
+            row1.appendChild(el('span', 'stat-label', 'P(24 mo)'));
+            row1.appendChild(el('span', 'stat-value', fmtPct(p24)));
+            card.appendChild(row1);
+
+            var row2 = el('div', 'stat-row');
+            row2.appendChild(el('span', 'stat-label', '95% CI'));
+            row2.appendChild(el('span', 'stat-ci', fmtCI(ci)));
+            card.appendChild(row2);
+
+            var row3 = el('div', 'stat-row');
+            row3.appendChild(el('span', 'stat-label', 'Median Wait'));
+            row3.appendChild(el('span', 'stat-value', fmtWait(medianWait)));
+            card.appendChild(row3);
+
+            return card;
+        }
+
+        // ── Build bar chart DOM ──
+        function buildBarChart(baseP24, adjP24, baseWait, adjWait) {
+            var maxP = Math.max(baseP24, adjP24, 0.01);
+            var maxW = Math.max(baseWait, adjWait, 1);
+            var chart = el('div', 'bar-chart');
+
+            function addBarGroup(value, maxVal, cssClass, valueText, labelText) {
+                var group = el('div', 'bar-group');
+                var wrapper = el('div', 'bar-wrapper');
+                var bar = el('div', 'bar ' + cssClass);
+                bar.style.height = Math.round((value / maxVal) * 140) + 'px';
+                wrapper.appendChild(bar);
+                group.appendChild(wrapper);
+                group.appendChild(el('div', 'bar-value', valueText));
+                group.appendChild(el('div', 'bar-label', labelText));
+                return group;
+            }
+
+            chart.appendChild(addBarGroup(baseP24, maxP, 'baseline', fmtPct(baseP24), 'Baseline P24'));
+            chart.appendChild(addBarGroup(adjP24, maxP, 'adjusted', fmtPct(adjP24), 'Adjusted P24'));
+            chart.appendChild(addBarGroup(baseWait, maxW, 'baseline', fmtWait(baseWait), 'Baseline Wait'));
+            chart.appendChild(addBarGroup(adjWait, maxW, 'adjusted', fmtWait(adjWait), 'Adjusted Wait'));
+
+            return chart;
+        }
+
+        // ── Build delta card DOM ──
+        function buildDeltaCard(deltaP24, baselineP24, adjustedP24) {
+            var isPositive = deltaP24 >= 0;
+            var card = el('div', 'delta-card ' + (isPositive ? 'positive' : 'negative'));
+
+            card.appendChild(el('div', 'delta-value', fmtDelta(deltaP24)));
+            card.appendChild(el('div', 'delta-label', 'Change in P(transplant within 24 months)'));
+            card.appendChild(el('div', 'delta-pct', fmtDeltaPct(baselineP24, adjustedP24) + ' relative change'));
+
+            return card;
+        }
+
+        // ── Render What-If result ──
+        function renderWhatIfResult(r) {
+            resultsArea.textContent = '';
+
+            resultsArea.appendChild(el('h2', 'results-title', 'What-If Analysis: ' + r.city + ', ' + r.state));
+            resultsArea.appendChild(el('div', 'results-subtitle', 'Donor rate ' + parseFloat(r.donor_rate_multiplier).toFixed(1) + 'x, Wait time ' + parseFloat(r.wait_time_multiplier).toFixed(1) + 'x'));
+
+            resultsArea.appendChild(buildDeltaCard(r.delta_p24, r.baseline_p24, r.adjusted_p24));
+
+            var grid = el('div', 'comparison-grid');
+            grid.appendChild(buildComparisonCard('Baseline', r.baseline_p24, r.baseline_ci_95, r.baseline_median_wait));
+            grid.appendChild(buildComparisonCard('Adjusted', r.adjusted_p24, r.adjusted_ci_95, r.adjusted_median_wait));
+            resultsArea.appendChild(grid);
+
+            resultsArea.appendChild(buildBarChart(r.baseline_p24, r.adjusted_p24, r.baseline_median_wait, r.adjusted_median_wait));
+
+            resultsArea.appendChild(el('div', 'results-meta', r.iterations + ' iterations, ' + r.elapsed_seconds.toFixed(2) + 's'));
+        }
+
+        // ── Render Policy Scenario result ──
+        function renderPolicyResult(r) {
+            resultsArea.textContent = '';
+
+            resultsArea.appendChild(el('h2', 'results-title', 'Policy Scenario: ' + r.city + ', ' + r.state));
+
+            if (r.scenario) {
+                var infoCard = el('div', 'scenario-info-card');
+                infoCard.appendChild(el('h3', '', r.scenario.name || ''));
+                infoCard.appendChild(el('p', '', r.scenario.description || ''));
+                var mults = el('div', 'multipliers');
+                mults.appendChild(el('span', '', 'Donor rate: ' + parseFloat(r.donor_rate_multiplier).toFixed(2) + 'x'));
+                mults.appendChild(el('span', '', 'Wait time: ' + parseFloat(r.wait_time_multiplier).toFixed(2) + 'x'));
+                infoCard.appendChild(mults);
+                resultsArea.appendChild(infoCard);
+            }
+
+            resultsArea.appendChild(buildDeltaCard(r.delta_p24, r.baseline_p24, r.adjusted_p24));
+
+            var grid = el('div', 'comparison-grid');
+            grid.appendChild(buildComparisonCard('Baseline', r.baseline_p24, r.baseline_ci_95, r.baseline_median_wait));
+            grid.appendChild(buildComparisonCard('With Policy', r.adjusted_p24, r.adjusted_ci_95, r.adjusted_median_wait));
+            resultsArea.appendChild(grid);
+
+            resultsArea.appendChild(buildBarChart(r.baseline_p24, r.adjusted_p24, r.baseline_median_wait, r.adjusted_median_wait));
+
+            resultsArea.appendChild(el('div', 'results-meta', r.iterations + ' iterations, ' + r.elapsed_seconds.toFixed(2) + 's'));
+        }
+
+        // ── Render Travel Subsidy result ──
+        function renderSubsidyResult(r) {
+            resultsArea.textContent = '';
+
+            var titleOrgan = r.organ.charAt(0).toUpperCase() + r.organ.slice(1);
+            resultsArea.appendChild(el('h2', 'results-title', 'Travel Subsidy Analysis: ' + titleOrgan));
+            resultsArea.appendChild(el('div', 'results-subtitle', r.total_cities + ' cities analyzed, ' + r.iterations_per_city + ' iterations per city'));
+
+            // Tier summary cards
+            var tierGrid = el('div', 'tier-grid');
+            r.tiers.forEach(function (tier) {
+                var card = el('div', 'tier-card');
+                card.appendChild(el('h4', '', tier.label));
+
+                function addTierStat(label, value, extraClass) {
+                    var row = el('div', 'tier-stat');
+                    row.appendChild(el('span', 't-label', label));
+                    var valSpan = el('span', 't-value' + (extraClass ? ' ' + extraClass : ''), value);
+                    row.appendChild(valSpan);
+                    card.appendChild(row);
+                }
+
+                addTierStat('Avg Baseline P24', fmtPct(tier.system_avg_baseline_p24));
+                addTierStat('Avg Adjusted P24', fmtPct(tier.system_avg_adjusted_p24));
+                addTierStat('System Delta', fmtDelta(tier.system_delta_p24), tier.system_delta_p24 >= 0 ? 'positive' : 'negative');
+                addTierStat('Avg Wait Change', fmtWait(tier.system_avg_adjusted_wait) + ' (from ' + fmtWait(tier.system_avg_baseline_wait) + ')', tier.system_avg_adjusted_wait <= tier.system_avg_baseline_wait ? 'positive' : 'negative');
+
+                tierGrid.appendChild(card);
+            });
+            resultsArea.appendChild(tierGrid);
+
+            // Per-city breakdown
+            if (r.tiers.length > 0) {
+                resultsArea.appendChild(el('h3', '', 'Per-City Breakdown'));
+                resultsArea.lastChild.style.cssText = 'font-size:var(--fs-md); font-weight:600; color:var(--text-1); margin-bottom:var(--space-3);';
+
+                var selectWrap = document.createElement('div');
+                selectWrap.style.marginBottom = 'var(--space-3)';
+                var tierSelect = document.createElement('select');
+                tierSelect.id = 'tierTableSelect';
+                tierSelect.style.cssText = 'padding:0.4rem 0.6rem; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:var(--fs-sm); background:var(--surface); color:var(--text-1);';
+                r.tiers.forEach(function (tier, i) {
+                    var opt = document.createElement('option');
+                    opt.value = i;
+                    opt.textContent = tier.label;
+                    tierSelect.appendChild(opt);
+                });
+                selectWrap.appendChild(tierSelect);
+                resultsArea.appendChild(selectWrap);
+
+                r.tiers.forEach(function (tier, idx) {
+                    var tableWrap = el('div', 'city-table-wrap tier-table');
+                    tableWrap.id = 'tierTable-' + idx;
+                    if (idx > 0) tableWrap.style.display = 'none';
+                    tableWrap.appendChild(buildCityTable(tier.cities));
+                    resultsArea.appendChild(tableWrap);
+                });
+
+                // Wire tier table toggle
+                tierSelect.addEventListener('change', function () {
+                    document.querySelectorAll('.tier-table').forEach(function (t) { t.style.display = 'none'; });
+                    var target = document.getElementById('tierTable-' + tierSelect.value);
+                    if (target) target.style.display = '';
+                });
+            }
+
+            // Disclaimers
+            if (r.disclaimers && r.disclaimers.length > 0) {
+                var discDiv = el('div', 'scenario-disclaimer');
+                discDiv.appendChild(el('strong', '', 'Disclaimers:'));
+                var ul = document.createElement('ul');
+                ul.style.cssText = 'margin:0.3rem 0 0 1rem; padding:0;';
+                r.disclaimers.forEach(function (d) {
+                    var li = document.createElement('li');
+                    li.style.marginBottom = '0.2rem';
+                    li.textContent = d;
+                    ul.appendChild(li);
+                });
+                discDiv.appendChild(ul);
+                resultsArea.appendChild(discDiv);
+            }
+
+            resultsArea.appendChild(el('div', 'results-meta', r.elapsed_seconds.toFixed(2) + 's total'));
+
+            // Wire table sorting
+            wireSorting();
+        }
+
+        function buildCityTable(cities) {
+            var table = document.createElement('table');
+            table.className = 'city-table';
+
+            var thead = document.createElement('thead');
+            var headerRow = document.createElement('tr');
+            var columns = [
+                { key: 'city', label: 'City' },
+                { key: 'state', label: 'State' },
+                { key: 'baseline_p24', label: 'Baseline P24' },
+                { key: 'adjusted_p24', label: 'Adjusted P24' },
+                { key: 'delta_p24', label: 'Delta' },
+                { key: 'baseline_median_wait', label: 'Base Wait' },
+                { key: 'adjusted_median_wait', label: 'Adj Wait' }
+            ];
+            columns.forEach(function (col) {
+                var th = document.createElement('th');
+                th.setAttribute('data-sort', col.key);
+                th.textContent = col.label + ' ';
+                var arrow = el('span', 'sort-arrow');
+                th.appendChild(arrow);
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            var tbody = document.createElement('tbody');
+            cities.forEach(function (c) {
+                var tr = document.createElement('tr');
+                var isPos = c.delta_p24 >= 0;
+
+                var td1 = el('td', '', c.city);
+                var td2 = el('td', '', c.state);
+                var td3 = el('td', '', fmtPct(c.baseline_p24));
+                var td4 = el('td', '', fmtPct(c.adjusted_p24));
+                var td5 = el('td', '', fmtDelta(c.delta_p24));
+                td5.style.color = isPos ? 'var(--success-600)' : 'var(--danger-600)';
+                td5.style.fontWeight = '600';
+                var td6 = el('td', '', fmtWait(c.baseline_median_wait));
+                var td7 = el('td', '', fmtWait(c.adjusted_median_wait));
+
+                tr.appendChild(td1);
+                tr.appendChild(td2);
+                tr.appendChild(td3);
+                tr.appendChild(td4);
+                tr.appendChild(td5);
+                tr.appendChild(td6);
+                tr.appendChild(td7);
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            return table;
+        }
+
+        function wireSorting() {
+            document.querySelectorAll('.city-table th[data-sort]').forEach(function (th) {
+                th.addEventListener('click', function () {
+                    var col = th.getAttribute('data-sort');
+                    var table = th.closest('table');
+                    if (!table) return;
+
+                    var tbody = table.querySelector('tbody');
+                    if (!tbody) return;
+
+                    var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+                    var colIndex = Array.prototype.indexOf.call(th.parentNode.children, th);
+
+                    if (sortCol === col) {
+                        sortAsc = !sortAsc;
+                    } else {
+                        sortCol = col;
+                        sortAsc = true;
+                    }
+
+                    table.querySelectorAll('.sort-arrow').forEach(function (a) { a.textContent = ''; });
+                    th.querySelector('.sort-arrow').textContent = sortAsc ? ' \u25B2' : ' \u25BC';
+
+                    rows.sort(function (a, b) {
+                        var aText = a.children[colIndex].textContent.trim();
+                        var bText = b.children[colIndex].textContent.trim();
+                        var aNum = parseFloat(aText);
+                        var bNum = parseFloat(bText);
+
+                        if (!isNaN(aNum) && !isNaN(bNum)) {
+                            return sortAsc ? aNum - bNum : bNum - aNum;
+                        }
+                        return sortAsc ? aText.localeCompare(bText) : bText.localeCompare(aText);
+                    });
+
+                    rows.forEach(function (row) { tbody.appendChild(row); });
+                });
+            });
+        }
+    })();
+    </script>
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
