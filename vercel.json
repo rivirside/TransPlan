@@ -4,7 +4,7 @@
   "buildCommand": "cd docs-site && npm install && npm run build",
   "functions": {
     "api/index.py": {
-      "excludeFiles": "{docs-site/**,notebooks/**,scripts/**,tests/**,.venv/**,.claude/**,.playwright-mcp/**,*.html,*.css,*.js,components/**,TransPlan.app/**}"
+      "includeFiles": "backend/**,data/**"
     }
   },
   "rewrites": [
