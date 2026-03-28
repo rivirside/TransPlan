@@ -37,7 +37,7 @@ class TestDataLoading:
 
     def test_city_factors_loaded(self):
         factors = get_city_factors()
-        assert len(factors) == 22, f"Expected 22 cities, got {len(factors)}"
+        assert len(factors) >= 22, f"Expected at least 22 cities, got {len(factors)}"
         assert "Pittsburgh" in factors
         assert "Los Angeles" in factors
 

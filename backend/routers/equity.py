@@ -25,7 +25,7 @@ class EquityAnalysisRequest(BaseModel):
 
 @router.post("/equity-analysis", response_model=EquityAnalysisResult)
 def run_equity_analysis(request: EquityAnalysisRequest) -> EquityAnalysisResult:
-    """Run equity analysis across demographic profiles for all 22 cities."""
+    """Run equity analysis across demographic profiles for transplant centers."""
     try:
         from tier_config import get_tier
         tier = get_tier()

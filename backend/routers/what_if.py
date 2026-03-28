@@ -182,7 +182,7 @@ class TravelSubsidyRequest(BaseModel):
     patient: PatientProfile
     cities: list[str] = Field(
         default_factory=list,
-        description="Cities to analyze. Empty = all 22 cities.",
+        description="Cities to analyze. Empty = all available centers.",
     )
     iterations: int = Field(default=500, ge=100, le=2000)
 

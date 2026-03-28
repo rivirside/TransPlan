@@ -64,7 +64,7 @@ def test_enumerations_correct_sizes():
     assert len(BLOOD_TYPES) == 8
     assert len(AGE_GROUPS) == 4
     assert len(URGENCY_LEVELS) == 4
-    assert len(REGIONS) == 22
+    assert len(REGIONS) >= 22  # Classic set has 22; may grow
 
 
 def test_discrete_states_nonempty():
@@ -83,23 +83,27 @@ def test_discrete_states_nonempty():
 
 
 def test_donor_supply_cpt_shape():
+    n = len(REGIONS)
     cpt = build_donor_supply_cpt()
-    assert cpt.shape == (3, 6, 8, 22)
+    assert cpt.shape == (3, 6, 8, n)
 
 
 def test_wait_category_cpt_shape():
+    n = len(REGIONS)
     cpt = build_wait_category_cpt()
-    assert cpt.shape == (4, 6, 8, 22, 3)
+    assert cpt.shape == (4, 6, 8, n, 3)
 
 
 def test_mortality_risk_cpt_shape():
+    n = len(REGIONS)
     cpt = build_mortality_risk_cpt()
-    assert cpt.shape == (3, 6, 4, 4, 22)
+    assert cpt.shape == (3, 6, 4, 4, n)
 
 
 def test_delisting_risk_cpt_shape():
+    n = len(REGIONS)
     cpt = build_delisting_risk_cpt()
-    assert cpt.shape == (3, 6, 22, 4)
+    assert cpt.shape == (3, 6, n, 4)
 
 
 def test_competing_outcome_cpt_shape():
