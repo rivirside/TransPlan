@@ -1,4 +1,4 @@
-"""Tests for MCMC inference service (Phase 5 M3)."""
+"""Tests for MCMC inference service (Phase 5 M3 + Phase 7 #207)."""
 
 import json
 
@@ -17,7 +17,11 @@ from services.mcmc_survival import BLOOD_TYPES, build_organ_model, load_organ_da
 def _fit_kidney_trace():
     """Fit a quick kidney trace and save to disk for inference tests."""
     import pymc as pm
+    from services.data_loader import load_all
     from services.mcmc_survival import save_trace
+
+    # Ensure data_loader singleton is populated (needed by center mapping)
+    load_all()
 
     data = load_organ_data("kidney")
     model = build_organ_model(data)
@@ -55,12 +59,15 @@ class TestAvailability:
 
 
 # ---------------------------------------------------------------------------
-# Simulation result structure tests
+# Simulation result structure tests — classic granularity
 # ---------------------------------------------------------------------------
 
 @pytest.fixture
 def kidney_patient():
-    return PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male", urgency=2)
+    return PatientProfile(
+        organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+        bbn_granularity="classic",
+    )
 
 
 class TestSimulationResultStructure:
@@ -74,7 +81,8 @@ class TestSimulationResultStructure:
         result = simulate_mcmc(kidney_patient, n_iterations=200)
         assert result.inference_mode == "mcmc"
 
-    def test_22_cities_present(self, kidney_patient):
+    def test_22_cities_in_classic_mode(self, kidney_patient):
+        """Classic granularity should produce exactly 22 city results."""
         from services.mcmc_inference import simulate_mcmc
         result = simulate_mcmc(kidney_patient, n_iterations=200)
         assert len(result.cities) == 22
@@ -136,6 +144,122 @@ class TestSimulationResultStructure:
 
 
 # ---------------------------------------------------------------------------
+# Granularity mode tests (#207)
+# ---------------------------------------------------------------------------
+
+class TestGranularityModes:
+    def test_state_granularity_returns_all_centers(self):
+        """State/full granularity should return more than 22 results (all centers)."""
+        from services.mcmc_inference import simulate_mcmc
+        patient = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            bbn_granularity="state",
+        )
+        result = simulate_mcmc(patient, n_iterations=200)
+        # Should have more than 22 results (all kidney centers)
+        assert len(result.cities) > 22, (
+            f"state granularity should return all centers, got {len(result.cities)}"
+        )
+
+    def test_full_granularity_returns_all_centers(self):
+        """Full granularity should behave same as state for center iteration."""
+        from services.mcmc_inference import simulate_mcmc
+        patient = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            bbn_granularity="full",
+        )
+        result = simulate_mcmc(patient, n_iterations=200)
+        assert len(result.cities) > 22
+
+    def test_state_granularity_has_center_codes(self):
+        """State/full results should include center codes."""
+        from services.mcmc_inference import simulate_mcmc
+        patient = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            bbn_granularity="state",
+        )
+        result = simulate_mcmc(patient, n_iterations=200)
+        # At least some centers should have codes
+        codes = [c.center_code for c in result.cities if c.center_code]
+        assert len(codes) > 0, "state granularity should have center codes"
+
+    def test_state_granularity_probabilities_valid(self):
+        """Probabilities should be valid in state granularity mode."""
+        from services.mcmc_inference import simulate_mcmc
+        patient = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            bbn_granularity="state",
+        )
+        result = simulate_mcmc(patient, n_iterations=200)
+        for city in result.cities:
+            assert 0 <= city.p_transplant_24mo <= 1
+            assert city.median_wait_months > 0
+
+    def test_classic_granularity_no_center_codes(self):
+        """Classic mode should not have center codes (iterates over cities)."""
+        from services.mcmc_inference import simulate_mcmc
+        patient = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            bbn_granularity="classic",
+        )
+        result = simulate_mcmc(patient, n_iterations=200)
+        assert len(result.cities) == 22
+        # Classic mode has empty center codes
+        for city in result.cities:
+            assert city.center_code == ""
+
+    def test_center_adjustments_create_variation(self):
+        """Centers mapped to the same trace city should have different p24 values
+        due to center-level adjustment factors."""
+        from services.mcmc_inference import simulate_mcmc
+        patient = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            bbn_granularity="state",
+        )
+        result = simulate_mcmc(patient, n_iterations=500)
+        # Get all p24 values — there should be variation
+        p24s = [c.p_transplant_24mo for c in result.cities]
+        assert max(p24s) - min(p24s) > 0.01, (
+            f"Expected center-level variation; range was {max(p24s) - min(p24s)}"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Auto-fallback trace selection tests (#207)
+# ---------------------------------------------------------------------------
+
+class TestTraceFallback:
+    def test_trace_path_classic(self):
+        from services.mcmc_inference import _trace_path
+        p = _trace_path("kidney", "classic")
+        assert p.name == "kidney.nc"
+
+    def test_trace_path_state(self):
+        from services.mcmc_inference import _trace_path
+        p = _trace_path("kidney", "state")
+        assert p.name == "kidney-state.nc"
+
+    def test_trace_path_full(self):
+        from services.mcmc_inference import _trace_path
+        p = _trace_path("kidney", "full")
+        assert p.name == "kidney-full.nc"
+
+    def test_select_trace_falls_back_to_classic(self):
+        """When only classic trace exists, state/full should fall back to it."""
+        from services.mcmc_inference import _select_trace
+        path, actual_g = _select_trace("kidney", "state")
+        # The classic trace was saved by the fixture
+        assert path is not None
+        assert actual_g == "classic"
+
+    def test_select_trace_returns_none_for_missing_organ(self):
+        from services.mcmc_inference import _select_trace
+        path, actual_g = _select_trace("intestine", "classic")
+        assert path is None
+        assert actual_g is None
+
+
+# ---------------------------------------------------------------------------
 # Clinical parameter tests
 # ---------------------------------------------------------------------------
 
@@ -143,8 +267,14 @@ class TestClinicalParameters:
     def test_blood_type_ab_better_than_o(self):
         """AB+ (universal recipient) should have higher p24 than O+."""
         from services.mcmc_inference import simulate_mcmc
-        patient_o = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male", urgency=2)
-        patient_ab = PatientProfile(organ="kidney", blood_type="AB+", age=45, sex="male", urgency=2)
+        patient_o = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
+            bbn_granularity="classic",
+        )
+        patient_ab = PatientProfile(
+            organ="kidney", blood_type="AB+", age=45, sex="male", urgency=2,
+            bbn_granularity="classic",
+        )
         result_o = simulate_mcmc(patient_o, n_iterations=500)
         result_ab = simulate_mcmc(patient_ab, n_iterations=500)
         best_o = result_o.cities[0].p_transplant_24mo
@@ -156,7 +286,7 @@ class TestClinicalParameters:
         from services.mcmc_inference import simulate_mcmc
         patient = PatientProfile(
             organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
-            use_copula=True,
+            use_copula=True, bbn_granularity="classic",
         )
         result = simulate_mcmc(patient, n_iterations=200)
         assert len(result.cities) == 22

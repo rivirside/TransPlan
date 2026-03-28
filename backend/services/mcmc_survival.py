@@ -42,12 +42,31 @@ BLOOD_TYPES = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"]
 URGENCY_LEVELS = [1, 2, 3, 4]
 
 
+def trace_path(organ: str, granularity: str = "classic") -> Path:
+    """Return the path for a trace file at the given granularity."""
+    if granularity == "classic":
+        return TRACE_DIR / f"{organ}.nc"
+    return TRACE_DIR / f"{organ}-{granularity}.nc"
+
+
 # ---------------------------------------------------------------------------
 # Data loading
 # ---------------------------------------------------------------------------
 
-def load_organ_data(organ: str) -> dict[str, Any]:
-    """Load and prepare all observed data for a single organ model."""
+def load_organ_data(organ: str, granularity: str = "classic") -> dict[str, Any]:
+    """Load and prepare all observed data for a single organ model.
+
+    Parameters
+    ----------
+    organ : str
+        One of ORGANS.
+    granularity : str
+        Region granularity for the model:
+        - "classic": 22 cities (original behavior)
+        - "state":   ~50 US states (centers grouped by state)
+        - "full":    ~248 individual SRTR center codes
+    """
+    # National-level organ data (needed for all granularities)
     with open(DATA_DIR / "wait-time-distributions.json") as f:
         wt_data = json.load(f)
     with open(DATA_DIR / "competing-risks.json") as f:
@@ -56,23 +75,7 @@ def load_organ_data(organ: str) -> dict[str, Any]:
     organ_wt = wt_data[organ]
     organ_cr = cr_data[organ]
 
-    # City-level wait time factors (shared across organs)
-    city_factors_raw = wt_data.get("city_wait_time_factors", {})
-    cities = sorted(k for k in city_factors_raw if not k.startswith("_"))
-    city_wait_factors = np.array([city_factors_raw[c] for c in cities], dtype=np.float64)
-
-    # City-level competing risk adjustments (shared across organs)
-    city_adj_raw = cr_data.get("city_adjustments", {})
-    city_mort_factors = np.array(
-        [city_adj_raw.get(c, {}).get("mortality_factor", 1.0) for c in cities],
-        dtype=np.float64,
-    )
-    city_delist_factors = np.array(
-        [city_adj_raw.get(c, {}).get("delisting_factor", 1.0) for c in cities],
-        dtype=np.float64,
-    )
-
-    # Blood type multipliers
+    # Blood type multipliers (organ-level, not region-level)
     bt_mults_raw = organ_wt.get("blood_type_multipliers", {})
     bt_mults = np.array([bt_mults_raw.get(bt, 1.0) for bt in BLOOD_TYPES], dtype=np.float64)
 
@@ -88,6 +91,50 @@ def load_organ_data(organ: str) -> dict[str, Any]:
         "50-64": age_raw.get("50-64", 1.0),
         "65+": age_raw.get("65+", 1.9),
     }
+
+    if granularity == "classic":
+        # Classic 22-city behavior
+        city_factors_raw = wt_data.get("city_wait_time_factors", {})
+        cities = sorted(k for k in city_factors_raw if not k.startswith("_"))
+        city_wait_factors = np.array([city_factors_raw[c] for c in cities], dtype=np.float64)
+
+        city_adj_raw = cr_data.get("city_adjustments", {})
+        city_mort_factors = np.array(
+            [city_adj_raw.get(c, {}).get("mortality_factor", 1.0) for c in cities],
+            dtype=np.float64,
+        )
+        city_delist_factors = np.array(
+            [city_adj_raw.get(c, {}).get("delisting_factor", 1.0) for c in cities],
+            dtype=np.float64,
+        )
+    else:
+        # state / full: Use center-level data with dynamic region grouping
+        from services.bbn_parameterizer import get_center_to_region_map, get_regions
+        from services.data_loader import get_data
+
+        regions = get_regions(granularity)
+        center_map = get_center_to_region_map(granularity)
+        center_data = get_data()
+
+        center_wt = center_data.center_wait_times.get("center_wait_time_factors", {})
+        center_cr = center_data.center_competing_risks.get("center_adjustments", {})
+
+        wait_factors = []
+        mort_factors = []
+        delist_factors = []
+        for region in regions:
+            codes = [c for c, r in center_map.items() if r == region]
+            wf = [center_wt.get(c, {}).get(organ, 1.0) for c in codes]
+            mf = [center_cr.get(c, {}).get(organ, {}).get("mortality_factor", 1.0) for c in codes]
+            df = [center_cr.get(c, {}).get(organ, {}).get("delisting_factor", 1.0) for c in codes]
+            wait_factors.append(sum(wf) / max(len(wf), 1))
+            mort_factors.append(sum(mf) / max(len(mf), 1))
+            delist_factors.append(sum(df) / max(len(df), 1))
+
+        cities = regions
+        city_wait_factors = np.array(wait_factors, dtype=np.float64)
+        city_mort_factors = np.array(mort_factors, dtype=np.float64)
+        city_delist_factors = np.array(delist_factors, dtype=np.float64)
 
     return {
         "organ": organ,
@@ -299,6 +346,7 @@ def fit_organ_model(
     n_tune: int = 1000,
     random_seed: int = 42,
     target_accept: float = 0.90,
+    granularity: str = "classic",
 ) -> az.InferenceData:
     """
     Build and fit the hierarchical model for one organ.
@@ -306,7 +354,7 @@ def fit_organ_model(
     Returns an ArviZ InferenceData object containing the posterior trace.
     Typical runtime: 1-10 minutes depending on hardware.
     """
-    data = load_organ_data(organ)
+    data = load_organ_data(organ, granularity=granularity)
     model = build_organ_model(data)
 
     logger.info(
@@ -338,18 +386,18 @@ def fit_organ_model(
     return trace
 
 
-def save_trace(organ: str, trace: az.InferenceData) -> Path:
+def save_trace(organ: str, trace: az.InferenceData, granularity: str = "classic") -> Path:
     """Save an ArviZ trace to NetCDF file."""
-    TRACE_DIR.mkdir(parents=True, exist_ok=True)
-    path = TRACE_DIR / f"{organ}.nc"
+    path = trace_path(organ, granularity)
+    path.parent.mkdir(parents=True, exist_ok=True)
     trace.to_netcdf(str(path))
     logger.info("Saved trace for %s to %s (%.1f MB)", organ, path, path.stat().st_size / 1e6)
     return path
 
 
-def load_trace(organ: str) -> az.InferenceData | None:
+def load_trace(organ: str, granularity: str = "classic") -> az.InferenceData | None:
     """Load a cached ArviZ trace.  Returns None if not found."""
-    path = TRACE_DIR / f"{organ}.nc"
+    path = trace_path(organ, granularity)
     if not path.exists():
         return None
     trace = az.from_netcdf(str(path))
@@ -357,9 +405,9 @@ def load_trace(organ: str) -> az.InferenceData | None:
     return trace
 
 
-def trace_exists(organ: str) -> bool:
+def trace_exists(organ: str, granularity: str = "classic") -> bool:
     """Check whether a cached trace file exists for the given organ."""
-    return (TRACE_DIR / f"{organ}.nc").exists()
+    return trace_path(organ, granularity).exists()
 
 
 # ---------------------------------------------------------------------------

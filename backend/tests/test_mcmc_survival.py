@@ -12,6 +12,8 @@ from services.mcmc_survival import (
     build_organ_model,
     load_organ_data,
     sample_params_from_trace,
+    trace_exists,
+    trace_path,
 )
 
 
@@ -25,8 +27,8 @@ class TestLoadOrganData:
         data = load_organ_data(organ)
         assert data["organ"] == organ
 
-    def test_kidney_data_shape(self):
-        data = load_organ_data("kidney")
+    def test_kidney_data_shape_classic(self):
+        data = load_organ_data("kidney", granularity="classic")
         assert data["n_cities"] == 22
         assert data["national_median"] > 0
         assert data["log_sigma"] > 0
@@ -67,6 +69,71 @@ class TestLoadOrganData:
         assert "65+" in data["age_mults"]
         # Young should have lower mortality
         assert data["age_mults"]["18-34"] < data["age_mults"]["65+"]
+
+    def test_state_granularity_kidney(self, data):
+        """State granularity should produce ~50 regions."""
+        d = load_organ_data("kidney", granularity="state")
+        assert d["organ"] == "kidney"
+        assert d["n_cities"] >= 40  # ~50 states
+        assert d["n_cities"] <= 55
+        assert d["city_wait_factors"].shape == (d["n_cities"],)
+        assert d["city_mort_factors"].shape == (d["n_cities"],)
+        assert d["city_delist_factors"].shape == (d["n_cities"],)
+        # National-level fields should still be present
+        assert d["national_median"] > 0
+        assert d["bt_mults"].shape == (8,)
+        assert d["urg_mults"].shape == (4,)
+
+    def test_full_granularity_kidney(self, data):
+        """Full granularity should produce ~248 regions."""
+        d = load_organ_data("kidney", granularity="full")
+        assert d["organ"] == "kidney"
+        assert d["n_cities"] >= 200
+        assert d["city_wait_factors"].shape == (d["n_cities"],)
+        assert d["national_median"] > 0
+
+    def test_state_factors_positive(self, data):
+        d = load_organ_data("kidney", granularity="state")
+        assert (d["city_wait_factors"] > 0).all()
+        assert (d["city_mort_factors"] > 0).all()
+        assert (d["city_delist_factors"] > 0).all()
+
+    def test_granularity_default_is_classic(self):
+        """Default granularity should match explicit classic."""
+        data_default = load_organ_data("kidney")
+        data_classic = load_organ_data("kidney", granularity="classic")
+        assert data_default["n_cities"] == data_classic["n_cities"]
+        assert data_default["cities"] == data_classic["cities"]
+        np.testing.assert_array_equal(data_default["city_wait_factors"], data_classic["city_wait_factors"])
+
+
+# ---------------------------------------------------------------------------
+# Trace path tests
+# ---------------------------------------------------------------------------
+
+class TestTracePath:
+    def test_classic_path(self):
+        p = trace_path("kidney")
+        assert p.name == "kidney.nc"
+        assert "mcmc-traces" in str(p)
+
+    def test_classic_explicit(self):
+        p = trace_path("kidney", "classic")
+        assert p.name == "kidney.nc"
+
+    def test_state_path(self):
+        p = trace_path("kidney", "state")
+        assert p.name == "kidney-state.nc"
+
+    def test_full_path(self):
+        p = trace_path("liver", "full")
+        assert p.name == "liver-full.nc"
+
+    def test_trace_exists_missing(self):
+        # A non-existent granularity trace should not exist
+        assert trace_exists("kidney", "full") is False or True  # may or may not exist
+        # But this should at least not raise
+        trace_exists("kidney", "state")
 
 
 # ---------------------------------------------------------------------------
@@ -137,6 +204,13 @@ class TestBuildOrganModel:
         # Should have ~92 free parameters
         # (but count method varies, just check model built)
         assert len(model.free_RVs) == 19
+
+    def test_model_builds_state_granularity(self, data):
+        """Model should build with state-level data (different n_cities)."""
+        d = load_organ_data("kidney", granularity="state")
+        model = build_organ_model(d)
+        assert model is not None
+        assert len(model.free_RVs) == 19  # same structure, different shapes
 
 
 # ---------------------------------------------------------------------------

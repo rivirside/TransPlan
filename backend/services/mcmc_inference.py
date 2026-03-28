@@ -1,5 +1,5 @@
 """
-MCMC inference service — Phase 5 M3.
+MCMC inference service — Phase 5 M3 + Phase 7 #207.
 
 At query time, loads a cached posterior trace (fitted offline) and runs
 forward Monte Carlo simulation using parameter draws from the posterior.
@@ -7,15 +7,22 @@ This produces results with data-derived credible intervals instead of
 the fixed point estimates used by the standard Monte Carlo engine.
 
 Query-time flow:
-  1. Load cached ArviZ trace for the requested organ
+  1. Load cached ArviZ trace for the requested organ (with auto-fallback)
   2. Draw N parameter sets from the posterior (one per iteration group)
-  3. For each city, simulate competing risks using posterior parameters
-  4. Assemble into SimulationResult (same schema as monte_carlo.simulate)
+  3. For each center, map to trace city via explicit center->region mapping
+  4. Apply center-level adjustment factors post-inference
+  5. Assemble into SimulationResult (same schema as monte_carlo.simulate)
+
+Granularity modes (#207):
+  - "classic": Iterate over 22 trace cities only (original behavior)
+  - "state" / "full": Iterate over all ~248 centers, applying center-level
+    adjustment factors relative to the parent trace city's parameters.
 """
 
 import json
 import logging
 import time
+from pathlib import Path
 
 import numpy as np
 import scipy.stats
@@ -42,14 +49,59 @@ logger = logging.getLogger(__name__)
 _trace_cache: dict = {}
 
 
-def _get_trace(organ: str):
-    """Load trace from cache or disk."""
-    if organ not in _trace_cache:
+# ---------------------------------------------------------------------------
+# Trace loading with auto-fallback (#207)
+# ---------------------------------------------------------------------------
+
+def _trace_path(organ: str, granularity: str = "classic") -> Path:
+    """Return the expected trace file path for a given organ and granularity."""
+    if granularity == "classic":
+        return Path(DATA_DIR) / "mcmc-traces" / f"{organ}.nc"
+    return Path(DATA_DIR) / "mcmc-traces" / f"{organ}-{granularity}.nc"
+
+
+def _select_trace(organ: str, granularity: str) -> tuple[Path | None, str | None]:
+    """Find best available trace, falling back to coarser granularity.
+
+    Tries the requested granularity first, then falls back through
+    state -> classic. Returns (path, actual_granularity) or (None, None).
+    """
+    for g in [granularity, "state", "classic"]:
+        p = _trace_path(organ, g)
+        if p.exists():
+            return p, g
+    return None, None
+
+
+def _get_trace(organ: str, granularity: str = "classic"):
+    """Load trace from cache or disk, with auto-fallback to coarser granularity."""
+    cache_key = f"{organ}:{granularity}"
+    if cache_key in _trace_cache:
+        return _trace_cache[cache_key]
+
+    # Try auto-fallback
+    path, actual_g = _select_trace(organ, granularity)
+    if path is None:
+        # Last resort: try the default classic path (backward compat)
+        classic_key = f"{organ}:classic"
+        if classic_key in _trace_cache:
+            return _trace_cache[classic_key]
         trace = load_trace(organ)
-        if trace is None:
-            return None
-        _trace_cache[organ] = trace
-    return _trace_cache[organ]
+        if trace is not None:
+            _trace_cache[classic_key] = trace
+        return trace
+
+    if actual_g != granularity:
+        logger.info(
+            "Trace fallback: %s requested %s, using %s trace at %s",
+            organ, granularity, actual_g, path,
+        )
+
+    # Load the trace
+    import arviz as az
+    trace = az.from_netcdf(str(path))
+    _trace_cache[cache_key] = trace
+    return trace
 
 
 def is_available(organ: str) -> bool:
@@ -93,6 +145,74 @@ def _get_clinical_multiplier(organ: str, params: dict, patient: PatientProfile) 
     return 1.0
 
 
+# ---------------------------------------------------------------------------
+# Center-level adjustment factors (#207)
+# ---------------------------------------------------------------------------
+
+def _load_center_adjustments(organ: str) -> dict:
+    """Load center-level wait time and competing risk adjustment data.
+
+    Returns a dict with:
+      - wait_factors: {center_code: organ_factor}
+      - mort_factors: {center_code: mortality_factor}
+      - delist_factors: {center_code: delisting_factor}
+      - city_wait_factors: {city: factor} (from city-level data, for ratio computation)
+      - city_mort_factors: {city: factor}
+      - city_delist_factors: {city: factor}
+    """
+    from services.data_loader import get_data
+    data = get_data()
+
+    # Center-level factors
+    cwt = data.center_wait_times.get("center_wait_time_factors", {})
+    center_wait = {code: info.get(organ, 1.0) for code, info in cwt.items()}
+
+    ccr = data.center_competing_risks.get("center_adjustments", {})
+    center_mort = {
+        code: info.get(organ, {}).get("mortality_factor", 1.0)
+        for code, info in ccr.items()
+    }
+    center_delist = {
+        code: info.get(organ, {}).get("delisting_factor", 1.0)
+        for code, info in ccr.items()
+    }
+
+    # City-level factors (for computing center/city ratio)
+    city_wait = data.wait_time_distributions.get("city_wait_time_factors", {})
+    city_wait = {k: v for k, v in city_wait.items() if not k.startswith("_")}
+
+    city_adj = data.competing_risks.get("city_adjustments", {})
+    city_mort = {}
+    city_delist = {}
+    for city_name, adj in city_adj.items():
+        if city_name.startswith("_"):
+            continue
+        mf = adj.get("mortality_factor", 1.0)
+        df = adj.get("delisting_factor", 1.0)
+        city_mort[city_name] = mf if not isinstance(mf, str) else 1.0
+        city_delist[city_name] = df if not isinstance(df, str) else 1.0
+
+    return {
+        "wait_factors": center_wait,
+        "mort_factors": center_mort,
+        "delist_factors": center_delist,
+        "city_wait_factors": city_wait,
+        "city_mort_factors": city_mort,
+        "city_delist_factors": city_delist,
+    }
+
+
+def _compute_center_adjustment(center_factor: float, city_factor: float) -> float:
+    """Compute center-level adjustment ratio relative to parent city.
+
+    If a center's factor is 0.5 and its parent city's factor is 1.0,
+    the center should have half the wait time (ratio = 0.5).
+    """
+    if city_factor <= 0:
+        return 1.0
+    return center_factor / city_factor
+
+
 def simulate_mcmc(
     patient: PatientProfile,
     n_iterations: int | None = None,
@@ -102,18 +222,25 @@ def simulate_mcmc(
 
     For each iteration batch (grouped by posterior draw):
       1. Sample a parameter set from the posterior
-      2. For each city, construct log-normal wait time distribution
+      2. For each city/center, construct log-normal wait time distribution
       3. Draw competing risk times (with optional copula)
       4. Determine outcomes
 
     The key difference from standard MC: parameters themselves vary across
     draws, producing wider credible intervals that honestly reflect
     parameter uncertainty.
+
+    Granularity modes (#207):
+      - "classic": Iterate over 22 trace cities (one result per city)
+      - "state"/"full": Iterate over all ~248 centers with center-level
+        adjustment factors applied post-inference
     """
     if n_iterations is None:
         n_iterations = SIMULATION_ITERATIONS
 
-    trace = _get_trace(patient.organ)
+    granularity = getattr(patient, "bbn_granularity", "classic")
+
+    trace = _get_trace(patient.organ, granularity)
     if trace is None:
         raise RuntimeError(
             f"No MCMC trace available for {patient.organ}. "
@@ -133,7 +260,7 @@ def simulate_mcmc(
     # Pre-sample all parameter sets
     param_draws = sample_params_from_trace(trace, n_draws=N_PARAM_DRAWS, rng=rng)
 
-    # Build city name → index mapping from trace metadata
+    # Build city name -> index mapping from trace metadata
     trace_cities = json.loads(str(trace.attrs.get("cities", "[]")))
     if not trace_cities:
         # Fall back to sorted city names from wait time data
@@ -142,6 +269,14 @@ def simulate_mcmc(
         cf = wt.get("city_wait_time_factors", {})
         trace_cities = sorted(k for k in cf if not k.startswith("_"))
     city_to_idx = {c: i for i, c in enumerate(trace_cities)}
+
+    # Build explicit center -> trace city mapping (#207)
+    try:
+        from services.bbn_parameterizer import get_center_to_region_map
+        center_city_map = get_center_to_region_map("classic")
+    except (RuntimeError, ImportError):
+        # Fallback: empty map (Nashville fallback will be used for all centers)
+        center_city_map = {}
 
     # Map blood type and urgency to indices
     bt_idx = BLOOD_TYPES.index(patient.blood_type) if patient.blood_type in BLOOD_TYPES else 2  # A+ fallback
@@ -159,23 +294,93 @@ def simulate_mcmc(
     if isinstance(age_mort_mult, str):
         age_mort_mult = 1.0
 
+    # Load center-level adjustment data (for state/full granularity) (#207)
+    center_adj = None
+    if granularity in ("state", "full"):
+        try:
+            center_adj = _load_center_adjustments(patient.organ)
+        except Exception as e:
+            logger.warning("Could not load center adjustments: %s — proceeding without", e)
+
+    # Determine iteration targets based on granularity (#207)
+    if granularity == "classic":
+        # Classic mode: iterate over trace cities only
+        iteration_targets = [
+            {
+                "code": "",
+                "city": city_name,
+                "state": "",
+                "lat": None,
+                "lon": None,
+                "name": city_name,
+                "cidx": idx,
+                "center_wait_adj": 1.0,
+                "center_mort_adj": 1.0,
+                "center_delist_adj": 1.0,
+            }
+            for city_name, idx in city_to_idx.items()
+        ]
+    else:
+        # State/full mode: iterate over all centers with center-level adjustments
+        iteration_targets = []
+        for center in _get_centers(patient.organ):
+            code = center.get("code", "")
+            city = center.get("name", center.get("city", ""))
+            state = center.get("state", center.get("state_abbr", ""))
+            lat = center.get("lat")
+            lon = center.get("lon")
+
+            # Use explicit center->city mapping (#207)
+            region = center_city_map.get(code, "Nashville")
+            cidx = city_to_idx.get(region)
+            if cidx is None:
+                cidx = city_to_idx.get("Nashville", 0)
+
+            # Compute center-level adjustment ratios (#207)
+            center_wait_adj = 1.0
+            center_mort_adj = 1.0
+            center_delist_adj = 1.0
+            if center_adj is not None and code:
+                # Wait time: center_factor / city_factor for the parent city
+                c_wait = center_adj["wait_factors"].get(code, 1.0)
+                city_wait = center_adj["city_wait_factors"].get(region, 1.0)
+                center_wait_adj = _compute_center_adjustment(c_wait, city_wait)
+
+                # Mortality: center_factor / city_factor
+                c_mort = center_adj["mort_factors"].get(code, 1.0)
+                city_mort = center_adj["city_mort_factors"].get(region, 1.0)
+                center_mort_adj = _compute_center_adjustment(c_mort, city_mort)
+
+                # Delisting: center_factor / city_factor
+                c_delist = center_adj["delist_factors"].get(code, 1.0)
+                city_delist = center_adj["city_delist_factors"].get(region, 1.0)
+                center_delist_adj = _compute_center_adjustment(c_delist, city_delist)
+
+            iteration_targets.append({
+                "code": code,
+                "city": city,
+                "state": state,
+                "lat": lat,
+                "lon": lon,
+                "name": center.get("name", city),
+                "cidx": cidx,
+                "center_wait_adj": center_wait_adj,
+                "center_mort_adj": center_mort_adj,
+                "center_delist_adj": center_delist_adj,
+            })
+
     city_results: list[CityProbability] = []
 
-    for center in _get_centers(patient.organ):
-        code = center.get("code", "")
-        city = center.get("name", center.get("city", ""))
-        state = center.get("state", center.get("state_abbr", ""))
-        lat = center.get("lat")
-        lon = center.get("lon")
-        # Map center to nearest trace city for parameter lookup
-        cidx = city_to_idx.get(city)
-        if cidx is None and code:
-            # Try mapping via state; pick first trace city in same state
-            st = center.get("state_abbr", "")
-            for tc_name, tc_idx in city_to_idx.items():
-                # Fallback: just use first available
-                if cidx is None:
-                    cidx = tc_idx
+    for target in iteration_targets:
+        code = target["code"]
+        city = target["city"]
+        state = target["state"]
+        lat = target["lat"]
+        lon = target["lon"]
+        cidx = target["cidx"]
+        center_wait_adj = target["center_wait_adj"]
+        center_mort_adj = target["center_mort_adj"]
+        center_delist_adj = target["center_delist_adj"]
 
         # Accumulate simulation results across parameter draws
         all_outcomes = np.empty(actual_iterations, dtype=int)
@@ -200,8 +405,11 @@ def simulate_mcmc(
             # Blood type multiplier from posterior
             bt_mult = params["bt_multipliers"][bt_idx]
 
-            # Compose adjusted median
-            adjusted_median = national_median * bt_mult * city_wait_factor * clinical_mult
+            # Compose adjusted median with center-level adjustment (#207)
+            adjusted_median = (
+                national_median * bt_mult * city_wait_factor
+                * clinical_mult * center_wait_adj
+            )
 
             # Draw transplant times from log-normal
             dist = scipy.stats.lognorm(s=log_sigma, scale=adjusted_median)
@@ -209,7 +417,8 @@ def simulate_mcmc(
 
             # --- Apply COD multiplier (same as standard MC) ---
             if patient.adjust_for_cause_of_death:
-                cod_mult = _get_cod_multiplier(state, patient.organ, n_samples=iters_per_draw, rng=rng)
+                cod_state = state if len(state) == 2 else ""
+                cod_mult = _get_cod_multiplier(cod_state, patient.organ, n_samples=iters_per_draw, rng=rng)
                 safe_mult = np.where(cod_mult > 0, cod_mult, 1.0)
                 effective_mult = np.power(safe_mult, SUPPLY_WAIT_ELASTICITY)
                 transplant_times = transplant_times / effective_mult
@@ -229,15 +438,20 @@ def simulate_mcmc(
             # Urgency multiplier from posterior
             urg_mult = params["urg_multipliers"][urg_idx]
 
-            # Compose annual rates
-            annual_mort = national_mort * city_mort_factor * urg_mult * age_mort_mult
-            annual_delist = national_delist * city_delist_factor
+            # Compose annual rates with center-level adjustments (#207)
+            annual_mort = (
+                national_mort * city_mort_factor * urg_mult
+                * age_mort_mult * center_mort_adj
+            )
+            annual_delist = (
+                national_delist * city_delist_factor * center_delist_adj
+            )
 
             mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
             delist_scale = 12.0 / annual_delist if annual_delist > 0 else 1e6
 
             # Draw competing risk times.
-            # The MCMC model learns mort↔delist correlation via shared
+            # The MCMC model learns mort<->delist correlation via shared
             # frailty (LKJ prior).  The posterior draws already carry
             # correlated city offsets, so the external Clayton copula is
             # redundant for MCMC mode.  We still honor use_copula as an
@@ -327,7 +541,7 @@ def simulate_mcmc(
             city=city,
             state=state,
             center_code=code,
-            center_name=center.get("name", city),
+            center_name=target.get("name", city),
             lat=lat,
             lon=lon,
             p_transplant_6mo=round(p_6, 4),
@@ -345,9 +559,12 @@ def simulate_mcmc(
     city_results.sort(key=lambda c: c.p_transplant_24mo, reverse=True)
 
     elapsed = time.perf_counter() - start
+    n_targets = len(city_results)
     logger.info(
-        "MCMC inference: %s %s, %d iterations (%d param draws × %d each), %.2fs",
-        patient.organ, patient.blood_type, actual_iterations, N_PARAM_DRAWS, iters_per_draw, elapsed,
+        "MCMC inference: %s %s, %d %s, %d iterations (%d param draws x %d each), %.2fs",
+        patient.organ, patient.blood_type, n_targets,
+        "cities" if granularity == "classic" else "centers",
+        actual_iterations, N_PARAM_DRAWS, iters_per_draw, elapsed,
     )
 
     return SimulationResult(

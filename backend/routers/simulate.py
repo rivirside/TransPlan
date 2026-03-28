@@ -54,6 +54,7 @@ def run_simulation(
                     status_code=503,
                     detail="MCMC inference unavailable (missing pymc/arviz dependencies)",
                 )
+            patient.bbn_granularity = bbn_granularity
             if not is_available(patient.organ):
                 raise HTTPException(
                     status_code=503,

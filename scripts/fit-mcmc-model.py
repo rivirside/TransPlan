@@ -37,6 +37,7 @@ from services.mcmc_survival import (
     fit_organ_model,
     load_organ_data,
     save_trace,
+    trace_path,
 )
 
 logging.basicConfig(
@@ -53,16 +54,17 @@ def fit_and_save(
     n_tune: int,
     target_accept: float,
     strict: bool = False,
+    granularity: str = "classic",
 ) -> None:
     """Fit model for one organ and save the trace."""
     logger.info("=" * 60)
-    logger.info("Fitting %s: %d samples × %d chains, %d tune", organ, n_samples, n_chains, n_tune)
+    logger.info("Fitting %s (%s): %d samples × %d chains, %d tune", organ, granularity, n_samples, n_chains, n_tune)
     logger.info("=" * 60)
 
     t0 = time.perf_counter()
 
     # Load data for diagnostics
-    data = load_organ_data(organ)
+    data = load_organ_data(organ, granularity=granularity)
     logger.info(
         "Data: %d cities, national_median=%.1f, mort_rate=%.4f, delist_rate=%.4f",
         data["n_cities"], data["national_median"],
@@ -76,10 +78,11 @@ def fit_and_save(
         n_chains=n_chains,
         n_tune=n_tune,
         target_accept=target_accept,
+        granularity=granularity,
     )
 
     # Save trace
-    path = save_trace(organ, trace)
+    path = save_trace(organ, trace, granularity=granularity)
     elapsed = time.perf_counter() - t0
 
     # Print diagnostics
@@ -129,6 +132,8 @@ def main():
     parser.add_argument("--target-accept", type=float, default=0.90, help="NUTS target acceptance (default: 0.90)")
     parser.add_argument("--quick", action="store_true", help="Quick mode: 100 samples, 1 chain, 50 tune")
     parser.add_argument("--strict", action="store_true", help="Block trace save if R-hat >= 1.01 or ESS < 400")
+    parser.add_argument("--granularity", choices=["classic", "state", "full"], default="classic",
+                        help="Region granularity (classic=22 cities, state=~50, full=~248)")
 
     args = parser.parse_args()
 
@@ -151,6 +156,7 @@ def main():
             n_tune=args.tune,
             target_accept=args.target_accept,
             strict=args.strict,
+            granularity=args.granularity,
         )
 
     total_elapsed = time.perf_counter() - total_start
