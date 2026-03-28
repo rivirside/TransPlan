@@ -2,17 +2,19 @@
 # Full dev/research deps (pymc, jupyter, lifelines, etc.) live in backend/requirements.txt.
 #
 # IMPORTANT: Only add packages that are actually imported by backend/ code.
-# Unused deps bloat the Lambda bundle (500MB limit). Verify with:
-#   grep -r "import <pkg>" backend/
+# Unused deps bloat the Lambda bundle (250MB limit). Verify with:
+#   grep -r "import <pkg>" backend/services/ backend/routers/
 
 fastapi>=0.110.0
-uvicorn[standard]>=0.29.0
 pydantic>=2.6.0
-httpx>=0.27.0
 
-# Core simulation (Monte Carlo engine)
+# Core simulation (Monte Carlo + spatial interpolation)
 numpy>=1.26.0
 scipy>=1.13.0
 
-# BBN inference: bbn_lite.py (replaces pgmpy to avoid 9.7GB torch dep)
-# pandas: NOT needed at runtime — only used in notebooks/scripts
+# NOT needed on Vercel (verified with grep):
+# uvicorn — Vercel provides its own ASGI runtime
+# httpx — not imported by any backend service
+# pandas — only used in notebooks/scripts
+# lifelines, openpyxl, xlrd — data pipeline only
+# pgmpy — replaced by backend/services/bbn_lite.py
