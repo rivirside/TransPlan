@@ -104,7 +104,10 @@ def get_center_to_region_map(granularity: str = "state") -> dict[str, str]:
     all_centers = data.all_centers.get("centers", {})
     if granularity == "state":
         return {code: c.get("state_abbr", "XX") for code, c in all_centers.items()}
-    # "classic" mode — delegate to bayesian_network's mapping
+    # "classic" mode — delegate to bayesian_network's mapping.
+    # NOTE: Deferred import to avoid circular dependency. bbn_parameterizer is
+    # imported by bayesian_network at module level; importing bayesian_network
+    # here at call time breaks the cycle. Do not move to top-level imports.
     from services.bayesian_network import _get_center_region_map
     return _get_center_region_map()
 

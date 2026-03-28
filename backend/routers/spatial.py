@@ -120,6 +120,11 @@ def query_spatial_grid(
     Generate a grid of interpolated values for heatmap rendering.
     Returns a lat/lon/value array covering CONUS.
     """
+    from tier_config import get_tier
+    tier = get_tier()
+    if resolution > tier.max_spatial_resolution:
+        resolution = tier.max_spatial_resolution
+
     import numpy as np
     try:
         surface = get_surface(layer, method)
