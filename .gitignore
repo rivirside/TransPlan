@@ -12,6 +12,7 @@ theme-*.png
 data/metadata.json
 
 # Python backend
+.venv/
 backend/.venv/
 backend/__pycache__/
 backend/**/__pycache__/

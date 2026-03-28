@@ -533,6 +533,15 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **How:** Extract `_get_center_region_map()` into a standalone utility module (e.g., `services/center_mapping.py`) that both `bbn_parameterizer` and `bayesian_network` import without circular dependency.
 - **File:** `backend/services/bbn_parameterizer.py:108`, `backend/services/bayesian_network.py`
 
+### L-071: Documentation still references "22 cities" in ~15 places
+- **Severity:** LOW
+- **Status:** OPEN
+- **Category:** Documentation
+- **What:** After expanding all 3 inference engines to support 248 centers via granularity modes, ~15 documentation references in `docs/status.md`, `docs-site/docs/` (architecture, frontend, data-pipeline, FAQ, roadmap, testing, data-curation), and backend comments/docstrings still say "22 cities" as if it were a hard limit. The functional code and tests have been updated, but prose documentation has not.
+- **Why:** Misleading for new contributors and reviewers who read the docs and think the system is limited to 22 cities. Should reflect the current state: 22 cities is the "classic" default, with state (~50) and full (248) modes available.
+- **How:** Batch find-and-replace across docs/ and docs-site/docs/: change "22 cities" to "22 focus cities (classic mode)" or "up to 248 SRTR centers" as appropriate. Update architecture diagrams, FAQ answers, and contributing guides. Backend comments in `bbn_parameterizer.py`, `bayesian_network.py`, `monte_carlo.py`, `brier_score.py` should note the classic set is a configurable default.
+- **Files:** `docs/status.md`, `docs-site/docs/architecture/*.md`, `docs-site/docs/about/faq.md`, `docs-site/docs/about/roadmap.md`, `docs-site/docs/contributing/*.md`, `backend/services/bbn_parameterizer.py`, `backend/services/bayesian_network.py`, `backend/services/monte_carlo.py`, `backend/services/brier_score.py`
+
 ---
 
 ## 9. Data Provenance
