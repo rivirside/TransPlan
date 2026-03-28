@@ -132,7 +132,7 @@
   /**
    * Call POST /sensitivity on the backend.
    * @param {Object} formData - Raw form data from the frontend
-   * @param {string} city - City to analyze (use top-ranked city from simulate result)
+   * @param {string} city - City name or center code to analyze
    * @param {number} [iterations] - Number of Monte Carlo iterations (default 300)
    * @returns {Promise<Object|null>} SensitivityResult or null on failure
    */
@@ -145,6 +145,7 @@
       var body = {
         patient: normalizeFormData(formData),
         city: city || 'Nashville',
+        center_code: city || '',
         iterations: iterations || 300
       };
       var response = await fetch(base + '/sensitivity', {
@@ -176,9 +177,10 @@
    * Runs demographic stratification across 48 profiles × 22 cities.
    * @param {Object} formData - Raw form data from the frontend
    * @param {number} [iterationsPerProfile] - Monte Carlo iterations per profile (default 300)
+   * @param {number} [maxCenters] - Max centers to include (default 30)
    * @returns {Promise<Object|null>} EquityAnalysisResult or null on failure
    */
-  async function equityAnalysis(formData, iterationsPerProfile) {
+  async function equityAnalysis(formData, iterationsPerProfile, maxCenters) {
     var base = getBaseUrl();
     var controller = new AbortController();
     // Equity analysis is expensive (48 profiles × 22 cities) — 30s timeout
@@ -187,7 +189,8 @@
     try {
       var body = {
         patient: normalizeFormData(formData),
-        iterations_per_profile: iterationsPerProfile || 300
+        iterations_per_profile: iterationsPerProfile || 300,
+        max_centers: maxCenters || 30
       };
       var response = await fetch(base + '/equity-analysis', {
         method: 'POST',

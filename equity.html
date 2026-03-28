@@ -513,7 +513,7 @@
             runBtn.disabled = true;
 
             try {
-                var result = await TransPlanAPI.equityAnalysis(formData, iters);
+                var result = await TransPlanAPI.equityAnalysis(formData, iters, maxCenters);
 
                 loadingEl.className = 'eq-loading';
 
