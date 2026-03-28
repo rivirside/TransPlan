@@ -484,6 +484,55 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **File:** `script.js` → `cityData`, `cityStateMap`; `data-loader.js` → `DEFAULTS`
 - **Mitigation:** Add inline comments documenting these as intentional fallback data for graceful degradation.
 
+### L-066: Continuous transplant probability surface (spatial probability heatmap)
+- **Severity:** LOW (enhancement)
+- **Status:** DEFERRED (Phase 8 / post-funding)
+- **Category:** Spatial / Simulation
+- **What:** Instead of ranking 248 discrete centers, generate a continuous heatmap showing P(transplant at 24mo) across the entire US for a given patient profile. Users could identify optimal zip codes to relocate to, not just optimal centers.
+- **Why:** Patients often ask "where should I move?" not "which center should I list at?" A continuous surface would answer the relocation question directly. The spatial interpolation engine (RBF/IDW) already produces continuous surfaces for individual data layers (wait times, mortality, etc.) -- extending to a composite probability surface is architecturally feasible.
+- **How:** New endpoint `GET /spatial-probability-grid` that: (1) at each grid point, interpolates center-level factors (wait time, mortality, delisting, graft survival), (2) runs a lightweight analytical approximation (BBN-style, not full MC) to compute P(transplant|location), (3) returns the same lat/lon/intensity format as `/spatial-grid` for Leaflet heatmap rendering. Patient-specific: organ, blood type, urgency affect the surface. Resolution-dependent: web tier ~30x30 (900 mini-simulations), local tier ~100x100 (10,000).
+- **Deferral rationale:** (1) Computationally expensive: 900-10,000 inference calls per request, even with BBN. (2) Clinical interpretation unclear: interpolated probabilities at non-center locations are extrapolations, not observed data. A patient can't actually get a transplant at a random geographic point -- they'd go to the nearest center. (3) Better framed as "nearest center analysis with travel contours" than "probability at any point." (4) Infrastructure is ~80% there (spatial engine, heatmap renderer, tier system), but validation and clinical framing need careful thought.
+- **Prerequisites:** BBN full-mode benchmarking on Vercel (L-069), tier system validation, spatial.html mature enough for complex overlays.
+- **File:** Would create `backend/services/spatial_probability.py`, new endpoint in `backend/routers/spatial.py`, new layer option in `spatial.html`.
+
+### L-067: Custom city set / user-defined focus centers
+- **Severity:** MEDIUM (enhancement)
+- **Status:** DEFERRED
+- **Category:** Configuration / UX
+- **What:** Allow users to define their own subset of centers to analyze (e.g., "the 10 centers nearest to me," "all centers in Texas," or a hand-picked list) rather than choosing between the fixed 22-city classic set, ~50 state groups, or all 248 centers.
+- **Why:** The 22-city "classic" set was chosen for SRTR data density but has no clinical justification for any individual patient. A patient in rural Montana cares about different centers than one in NYC. The full 248-center mode is computationally expensive and returns too many results. A user-defined subset would give the right granularity for each patient's situation.
+- **How:** (1) Add `center_codes: list[str]` optional parameter to PatientProfile schema. When provided, simulation only runs for those centers. (2) Frontend: "My Centers" picker on simulator page with multi-select or geographic filter (state, radius from zip, organ program). (3) URL-shareable via query param (`?centers=TNMT,PAPT,MNRM`). (4) Works with all 3 inference engines (MC already iterates a center list, BBN/MCMC would filter their output).
+- **Deferral rationale:** Lower priority than completing the tier system and analysis pages. The existing granularity modes (classic/state/full) cover most use cases. A custom picker adds UI complexity (multi-select with search across 248 centers).
+- **File:** `backend/models/schemas.py` (new field), all 3 simulation services (filter logic), `simulator.html` (multi-select picker).
+
+### L-068: 22-city selection rationale undocumented
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Category:** Documentation / Reproducibility
+- **What:** The original 22 cities (Pittsburgh, Baltimore, Philadelphia, New York, Minneapolis, Madison, Chicago, Cleveland, St. Louis, Indianapolis, Omaha, Rochester, Nashville, Durham, Miami, Dallas, Houston, Portland, Seattle, San Francisco, Los Angeles, Palo Alto) were chosen during Phase 1 without documented rationale. No ADR explains why these 22 and not others.
+- **Why:** For peer review and reproducibility, the city selection criteria must be documented. Were they chosen for SRTR data density? Geographic coverage? Program volume? Center of Excellence status? The answer affects how "classic" mode should be interpreted by users and reviewers.
+- **How:** (1) Research the original selection criteria (likely: top-volume programs with geographic spread covering all 11 UNOS regions). (2) Document in an ADR (ADR-029). (3) Add a note to the BBN "classic" mode description explaining what the 22 cities represent. (4) Consider whether the classic set should be updated (some cities like Palo Alto are unusual choices for a transplant focus city).
+- **File:** `docs/adr-log.md`, `backend/services/bbn_parameterizer.py` (comment on REGIONS list).
+
+### L-069: BBN full-mode (248 regions) performance untested on Vercel
+- **Severity:** MEDIUM
+- **Status:** OPEN
+- **Category:** Performance / Deployment
+- **What:** The BBN `bbn_granularity=full` mode creates a pgmpy model with 248 discrete Region states. CPTs are ~11x larger than classic mode. This has been tested locally but never benchmarked on Vercel's serverless function limits (memory, execution time, cold start).
+- **Why:** If full mode exceeds Vercel's 1GB memory limit or 300s timeout, it would fail silently or timeout. The tier system currently blocks "full" on the web tier, but this should be validated rather than assumed.
+- **How:** (1) Deploy current code to Vercel. (2) Test `POST /simulate?inference_mode=bayesian&bbn_granularity=full` with a standard patient profile. (3) Measure: response time, memory usage (via Vercel function logs), cold start penalty. (4) If it works within limits, consider allowing "full" on web tier. If not, document the limit.
+- **Deferral rationale:** Blocked on deployment. Current tier system safely gates this to local-only mode.
+- **File:** No code changes needed -- this is a deployment validation task.
+
+### L-070: Circular import fragility between bbn_parameterizer and bayesian_network
+- **Severity:** LOW
+- **Status:** OPEN (tech debt)
+- **Category:** Architecture
+- **What:** `bbn_parameterizer.get_center_to_region_map("classic")` imports `bayesian_network._get_center_region_map` via a deferred import (inside the function, not at module level) to avoid a circular dependency. `bayesian_network` imports from `bbn_parameterizer` at module level.
+- **Why:** If anyone moves the deferred import to module level, or adds a new module-level import in the opposite direction, Python will raise `ImportError` at startup. The deferred import has a comment explaining this, but it's still fragile.
+- **How:** Extract `_get_center_region_map()` into a standalone utility module (e.g., `services/center_mapping.py`) that both `bbn_parameterizer` and `bayesian_network` import without circular dependency.
+- **File:** `backend/services/bbn_parameterizer.py:108`, `backend/services/bayesian_network.py`
+
 ---
 
 ## 9. Data Provenance
