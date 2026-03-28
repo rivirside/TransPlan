@@ -1,0 +1,26 @@
+# Python virtual environments
+.venv/
+backend/.venv/
+
+# MCMC traces (large binaries, not needed for web deployment)
+data/mcmc-traces/
+
+# SRTR raw Excel files
+data/srtr-raw/
+
+# Model comparison snapshots
+data/snapshots/
+
+# Docs site build artifacts
+docs-site/build/
+docs-site/.docusaurus/
+docs-site/node_modules/
+
+# Development files
+.claude/
+.playwright-mcp/
+notebooks/
+*.pyc
+__pycache__/
+.pytest_cache/
+.DS_Store
