@@ -32,11 +32,22 @@ class PatientProfile(BaseModel):
         True,
         description="Use Clayton copula for correlated mortality/delisting draws (recommended; set False for independent exponentials)"
     )
+    # Phase 6 #206: BBN region granularity
+    bbn_granularity: str = Field(
+        "state",
+        description="BBN region node granularity: 'classic' (22 cities), 'state' (~50 states), 'full' (248 centers)"
+    )
     # Phase 4 M1: Configurable scoring weights (frontend concern, passed through for export fidelity)
     custom_weights: Optional[dict[str, float]] = Field(
         None,
         description="Custom scoring weights as { category: decimal_fraction }. 8 keys, all >= 0, sum ~1.0"
     )
+
+    @model_validator(mode="after")
+    def validate_bbn_granularity(self):
+        if self.bbn_granularity not in ("classic", "state", "full"):
+            self.bbn_granularity = "state"
+        return self
 
     @model_validator(mode="after")
     def validate_custom_weights(self):

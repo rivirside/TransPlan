@@ -34,6 +34,8 @@ from services.bbn_parameterizer import (
     build_graft_survival_cpt,
     build_mortality_risk_cpt,
     build_wait_category_cpt,
+    get_center_to_region_map,
+    get_regions,
     _normalize,
 )
 from services.data_loader import get_data, load_all
@@ -319,3 +321,85 @@ def test_age_to_group_boundaries():
     assert age_to_group(64) == "50-64"
     assert age_to_group(65) == "65+"
     assert age_to_group(99) == "65+"
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Dynamic granularity: get_regions / get_center_to_region_map
+# ──────────────────────────────────────────────────────────────────────
+
+
+def test_get_regions_classic_returns_22():
+    regions = get_regions("classic")
+    assert len(regions) == 22
+    assert "Pittsburgh" in regions
+
+
+def test_get_regions_state_returns_states():
+    regions = get_regions("state")
+    assert len(regions) >= 40
+    assert len(regions) <= 55
+
+
+def test_get_regions_full_returns_all_centers():
+    regions = get_regions("full")
+    assert len(regions) >= 200
+
+
+def test_get_center_to_region_map_state():
+    mapping = get_center_to_region_map("state")
+    regions = get_regions("state")
+    assert all(v in regions for v in mapping.values())
+
+
+def test_get_center_to_region_map_full():
+    mapping = get_center_to_region_map("full")
+    for code, region in mapping.items():
+        assert code == region
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Dynamic granularity: build_all_cpts with different modes
+# ──────────────────────────────────────────────────────────────────────
+
+
+def test_build_all_cpts_classic_region_shape():
+    cpts = build_all_cpts(granularity="classic")
+    # Region prior should have 22 values
+    region_cpt = cpts["Region"]
+    assert region_cpt.shape[0] == 22
+
+
+def test_build_all_cpts_state_region_shape():
+    cpts = build_all_cpts(granularity="state")
+    regions = get_regions("state")
+    region_cpt = cpts["Region"]
+    assert region_cpt.shape[0] == len(regions)
+
+
+def test_donor_supply_normalized_state():
+    cpts = build_all_cpts(granularity="state")
+    ds = cpts["DonorSupply"]
+    # Check normalization on first few slices
+    for i in range(min(3, ds.shape[1])):
+        for j in range(min(3, ds.shape[2])):
+            for k in range(min(3, ds.shape[3])):
+                total = ds[:, i, j, k].sum()
+                assert abs(total - 1.0) < 1e-5, f"Not normalized at [{i},{j},{k}]: {total}"
+
+
+def test_build_all_cpts_state_all_normalized():
+    """All CPTs in state mode must have columns summing to 1."""
+    cpts = build_all_cpts(granularity="state")
+    for name, cpt in cpts.items():
+        sums = cpt.sum(axis=0)
+        np.testing.assert_allclose(
+            sums, 1.0, atol=1e-5,
+            err_msg=f"{name} CPT (state mode) has columns not summing to 1.0"
+        )
+
+
+def test_build_all_cpts_state_nonnegative():
+    """All CPTs in state mode must be non-negative."""
+    cpts = build_all_cpts(granularity="state")
+    for name, cpt in cpts.items():
+        assert np.all(cpt >= 0), f"{name} CPT (state mode) has negative values"

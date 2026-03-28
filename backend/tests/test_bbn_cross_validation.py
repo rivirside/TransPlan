@@ -41,7 +41,8 @@ def _reset():
 
 
 def _make_patient(**kwargs) -> PatientProfile:
-    defaults = dict(organ="kidney", blood_type="O+", age=55, sex="male", urgency=2)
+    defaults = dict(organ="kidney", blood_type="O+", age=55, sex="male", urgency=2,
+                    bbn_granularity="classic")
     defaults.update(kwargs)
     return PatientProfile(**defaults)
 
@@ -51,11 +52,12 @@ def _rank_correlation(patient: PatientProfile, mc_iters: int = 500) -> float:
     mc_result = simulate_mc(patient, n_iterations=mc_iters)
     bbn_result = simulate_bbn(patient)
 
-    # Build city→p24 maps
+    # Build city→p24 maps (intersect — BBN classic has 22 cities, MC has 248)
     mc_map = {c.city: c.p_transplant_24mo for c in mc_result.cities}
     bbn_map = {c.city: c.p_transplant_24mo for c in bbn_result.cities}
 
-    cities = sorted(mc_map.keys())
+    cities = sorted(mc_map.keys() & bbn_map.keys())
+    assert len(cities) >= 10, f"Too few overlapping cities: {len(cities)}"
     mc_vals = [mc_map[c] for c in cities]
     bbn_vals = [bbn_map[c] for c in cities]
 

@@ -4,11 +4,16 @@ Bayesian Belief Network inference engine for transplant probability estimation.
 Alternative to Monte Carlo simulation (Phase 5 M1, ADR-024).
 Uses pgmpy's VariableElimination for exact inference on a 12-node DAG.
 
-The BBN is constructed once and cached. For each patient query, evidence is set
-on the 5 observable nodes and marginal probabilities are computed for all
-outcome nodes across all 22 cities (Region iterated as evidence).
+The BBN is constructed and cached per granularity level. For each patient query,
+evidence is set on the 5 observable nodes and marginal probabilities are computed
+for all outcome nodes across all regions (Region iterated as evidence).
 
-Typical query time: < 100ms for all 22 cities (vs ~2s for Monte Carlo).
+Granularity levels (#206):
+  - "classic": 22 representative cities (original model)
+  - "state":   ~50 US states
+  - "full":    all ~248 SRTR centers
+
+Typical query time: < 100ms for classic (vs ~2s for Monte Carlo).
 """
 import logging
 import time
@@ -34,6 +39,8 @@ from services.bbn_parameterizer import (
     WAIT_CATEGORY_STATES,
     age_to_group,
     build_all_cpts,
+    get_center_to_region_map,
+    get_regions,
 )
 from services.outcomes import build_outcomes_dict
 from services.trends import get_city_trends
@@ -129,6 +136,8 @@ DAG_EDGES = [
 # Node cardinalities and state names
 # ──────────────────────────────────────────────────────────────────────
 
+# Legacy module-level dicts (classic 22-city model) — kept for backward
+# compatibility with code that imports NODE_CARDS / NODE_STATE_NAMES directly.
 NODE_CARDS = {
     "Organ": len(ORGANS),
     "BloodType": len(BLOOD_TYPES),
@@ -159,15 +168,56 @@ NODE_STATE_NAMES = {
     "CompoundSuccess": COMPOUND_SUCCESS_STATES,
 }
 
+
+def _build_node_cardinalities(regions: list[str]) -> dict[str, int]:
+    """Build node cardinality dict for a dynamic region list."""
+    return {
+        "Organ": len(ORGANS),
+        "BloodType": len(BLOOD_TYPES),
+        "AgeGroup": len(AGE_GROUPS),
+        "Urgency": len(URGENCY_LEVELS),
+        "Region": len(regions),
+        "DonorSupply": len(DONOR_SUPPLY_STATES),
+        "WaitCategory": len(WAIT_CATEGORY_STATES),
+        "MortalityRisk": len(MORTALITY_RISK_STATES),
+        "DelistingRisk": len(DELISTING_RISK_STATES),
+        "CompetingOutcome": len(COMPETING_OUTCOME_STATES),
+        "GraftSurvival1yr": len(GRAFT_SURVIVAL_STATES),
+        "CompoundSuccess": len(COMPOUND_SUCCESS_STATES),
+    }
+
+
+def _build_state_names(regions: list[str]) -> dict[str, list[str]]:
+    """Build node state-name dict for a dynamic region list."""
+    return {
+        "Organ": ORGANS,
+        "BloodType": BLOOD_TYPES,
+        "AgeGroup": AGE_GROUPS,
+        "Urgency": [str(u) for u in URGENCY_LEVELS],
+        "Region": regions,
+        "DonorSupply": DONOR_SUPPLY_STATES,
+        "WaitCategory": WAIT_CATEGORY_STATES,
+        "MortalityRisk": MORTALITY_RISK_STATES,
+        "DelistingRisk": DELISTING_RISK_STATES,
+        "CompetingOutcome": COMPETING_OUTCOME_STATES,
+        "GraftSurvival1yr": GRAFT_SURVIVAL_STATES,
+        "CompoundSuccess": COMPOUND_SUCCESS_STATES,
+    }
+
 # ──────────────────────────────────────────────────────────────────────
-# Cached BBN model
+# Cached BBN models — keyed by granularity level
 # ──────────────────────────────────────────────────────────────────────
 
-_model: PgmpyBN | None = None
-_inference: VariableElimination | None = None
+_MODEL_CACHE: dict[str, tuple[PgmpyBN, VariableElimination, list[str]]] = {}
 
 
-def _build_cpd(name: str, cpt: np.ndarray, parents: list[str]) -> TabularCPD:
+def _build_cpd(
+    name: str,
+    cpt: np.ndarray,
+    parents: list[str],
+    node_cards: dict[str, int],
+    node_state_names: dict[str, list[str]],
+) -> TabularCPD:
     """
     Construct a pgmpy TabularCPD from our numpy CPT array.
 
@@ -175,8 +225,8 @@ def _build_cpd(name: str, cpt: np.ndarray, parents: list[str]) -> TabularCPD:
     pgmpy expects a (k, c1*c2*...) 2D array where columns enumerate
     all parent state combinations in row-major order.
     """
-    card = NODE_CARDS[name]
-    state_names = {name: NODE_STATE_NAMES[name]}
+    card = node_cards[name]
+    state_names = {name: node_state_names[name]}
 
     if not parents:
         # Root node — 1D prior
@@ -188,9 +238,9 @@ def _build_cpd(name: str, cpt: np.ndarray, parents: list[str]) -> TabularCPD:
             state_names=state_names,
         )
 
-    parent_cards = [NODE_CARDS[p] for p in parents]
+    parent_cards = [node_cards[p] for p in parents]
     for p in parents:
-        state_names[p] = NODE_STATE_NAMES[p]
+        state_names[p] = node_state_names[p]
 
     # Reshape CPT to 2D: (node_card, product_of_parent_cards)
     # Our CPT arrays have shape (node_card, parent1_card, parent2_card, ...)
@@ -213,20 +263,26 @@ def _get_parents(node: str) -> list[str]:
     return [src for src, dst in DAG_EDGES if dst == node]
 
 
-def build_model() -> tuple[PgmpyBN, VariableElimination]:
+def build_model(granularity: str = "state") -> tuple[PgmpyBN, VariableElimination]:
     """
     Construct the pgmpy BayesianNetwork and VariableElimination engine.
-    Cached after first call.
-    """
-    global _model, _inference
 
-    if _model is not None and _inference is not None:
-        return _model, _inference
+    Cached per granularity level ("classic", "state", "full").
+    Returns (model, inference_engine).
+    """
+    if granularity in _MODEL_CACHE:
+        model, inference, _ = _MODEL_CACHE[granularity]
+        return model, inference
 
     start = time.perf_counter()
 
-    # Build CPTs from data
-    cpts = build_all_cpts()
+    # Get regions for this granularity level
+    regions = get_regions(granularity)
+    node_cards = _build_node_cardinalities(regions)
+    node_state_names = _build_state_names(regions)
+
+    # Build CPTs from data for this granularity
+    cpts = build_all_cpts(granularity)
 
     # Construct pgmpy model
     model = PgmpyBN(DAG_EDGES)
@@ -235,31 +291,33 @@ def build_model() -> tuple[PgmpyBN, VariableElimination]:
     cpd_list = []
     for name, cpt_array in cpts.items():
         parents = _get_parents(name)
-        cpd = _build_cpd(name, cpt_array, parents)
+        cpd = _build_cpd(name, cpt_array, parents, node_cards, node_state_names)
         cpd_list.append(cpd)
 
     model.add_cpds(*cpd_list)
 
     # Validate
     if not model.check_model():
-        raise RuntimeError("BBN model validation failed — CPDs are inconsistent with DAG")
+        raise RuntimeError(
+            f"BBN model validation failed for granularity '{granularity}' "
+            f"— CPDs are inconsistent with DAG"
+        )
 
     inference = VariableElimination(model)
 
     elapsed = time.perf_counter() - start
-    logger.info("BBN model built in %.3fs: %d nodes, %d edges",
-                elapsed, len(model.nodes()), len(model.edges()))
+    logger.info(
+        "BBN model built in %.3fs (granularity=%s, %d regions): %d nodes, %d edges",
+        elapsed, granularity, len(regions), len(model.nodes()), len(model.edges()),
+    )
 
-    _model = model
-    _inference = inference
+    _MODEL_CACHE[granularity] = (model, inference, regions)
     return model, inference
 
 
 def reset_model() -> None:
-    """Reset cached model (for testing)."""
-    global _model, _inference
-    _model = None
-    _inference = None
+    """Reset all cached models (for testing)."""
+    _MODEL_CACHE.clear()
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -273,9 +331,17 @@ def _query_city(
     age_group: str,
     urgency: str,
     city: str,
+    regions: list[str] | None = None,
 ) -> dict:
     """
     Query the BBN for a single city (region).
+
+    Parameters
+    ----------
+    regions : list[str] | None
+        Valid region names for this model's granularity. If provided, the
+        *city* argument is validated against this list. Falls back to the
+        legacy REGIONS constant when None.
 
     Returns dict with:
       - competing_outcome: P(transplant|mortality|delisting|still_waiting)
@@ -283,6 +349,11 @@ def _query_city(
       - compound_success: P(success|partial|failure)
       - wait_category: P(short|moderate|long|very_long)
     """
+    valid_regions = regions if regions is not None else REGIONS
+    if city not in valid_regions:
+        # Fallback: first region in list (safe default)
+        city = valid_regions[0]
+
     evidence = {
         "Organ": organ,
         "BloodType": blood_type,
@@ -349,15 +420,26 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
     Run Bayesian Belief Network inference for all SRTR centers
     that perform the patient's organ.
 
-    The BBN has 22 discrete regions. Each of the ~248 centers is mapped
-    to the nearest BBN region (via center-mapping or state match).
+    The BBN Region node size adapts to ``patient.bbn_granularity``:
+      - "classic": 22 cities — only centers mapped to those 22 BBN cities
+      - "state":   ~50 states — all centers
+      - "full":    ~248 centers — all centers
+
     Centers sharing a region receive the same BBN probabilities but
     different post-transplant outcomes (center-level data).
     """
     start = time.perf_counter()
 
-    _, inference = build_model()
-    center_region_map = _get_center_region_map()
+    granularity = getattr(patient, "bbn_granularity", "state")
+
+    _, inference = build_model(granularity)
+
+    # Use dynamic region functions from bbn_parameterizer
+    regions = get_regions(granularity)
+    center_region_map = get_center_to_region_map(granularity)
+
+    # Keep legacy map for backward-compatible trend lookups
+    legacy_center_region_map = _get_center_region_map()
 
     organ = patient.organ
     blood_type = patient.blood_type
@@ -367,95 +449,174 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
     # Cache BBN results by region (many centers share a region)
     region_cache: dict[str, dict] = {}
 
-    from services.monte_carlo import _get_centers
-    centers = _get_centers(organ)
-
     city_results: list[CityProbability] = []
 
-    for center in centers:
-        code = center.get("code", "")
-        name = center.get("name", center.get("city", ""))
-        state_full = center.get("state", center.get("state_abbr", ""))
-        lat = center.get("lat")
-        lon = center.get("lon")
+    if granularity == "classic":
+        # Classic mode: one result per BBN region (22 cities).
+        # Use the region name as the display city and look up representative
+        # center info for lat/lon/state from the legacy _CITY_STATES mapping.
+        for region_name in regions:
+            query_result = _query_city(
+                inference, organ, blood_type, age_group, urgency, region_name,
+                regions=regions,
+            )
+            region_cache[region_name] = query_result
 
-        # Map center to BBN region
-        region = center_region_map.get(code, center.get("city", "Nashville"))
-        if region not in REGIONS:
-            region = "Nashville"  # safe default
+            state_abbr = _CITY_STATES.get(region_name, "")
 
-        # Run BBN inference (cached per region)
-        if region not in region_cache:
-            region_cache[region] = _query_city(inference, organ, blood_type, age_group, urgency, region)
-        query_result = region_cache[region]
+            co_probs = query_result["competing_outcome"]
+            p_transplant_24 = co_probs[0]
+            p_mortality_24 = co_probs[1]
+            p_delisting_24 = co_probs[2]
+            p_waiting_24 = co_probs[3]
 
-        co_probs = query_result["competing_outcome"]
-        p_transplant_24 = co_probs[0]
-        p_mortality_24 = co_probs[1]
-        p_delisting_24 = co_probs[2]
-        p_waiting_24 = co_probs[3]
+            wait_probs = query_result["wait_category"]
+            time_probs = _estimate_time_horizon_probs(wait_probs)
+            p_6 = time_probs["p6"] * p_transplant_24 / max(time_probs["p24"], 0.01)
+            p_12 = time_probs["p12"] * p_transplant_24 / max(time_probs["p24"], 0.01)
+            p_24 = p_transplant_24
+            p_36 = min(1.0, time_probs["p36"] * p_transplant_24 / max(time_probs["p24"], 0.01))
 
-        wait_probs = query_result["wait_category"]
-        time_probs = _estimate_time_horizon_probs(wait_probs)
-        p_6 = time_probs["p6"] * p_transplant_24 / max(time_probs["p24"], 0.01)
-        p_12 = time_probs["p12"] * p_transplant_24 / max(time_probs["p24"], 0.01)
-        p_24 = p_transplant_24
-        p_36 = min(1.0, time_probs["p36"] * p_transplant_24 / max(time_probs["p24"], 0.01))
+            p_6 = max(0.0, min(p_6, p_24))
+            p_12 = max(p_6, min(p_12, p_24))
+            p_36 = max(p_24, min(p_36, 1.0))
 
-        p_6 = max(0.0, min(p_6, p_24))
-        p_12 = max(p_6, min(p_12, p_24))
-        p_36 = max(p_24, min(p_36, 1.0))
+            median_wait = _estimate_median_wait(wait_probs)
 
-        median_wait = _estimate_median_wait(wait_probs)
+            ci_half = max(0.03, p_24 * 0.10)
+            ci_lo = max(0.0, p_24 - ci_half)
+            ci_hi = min(1.0, p_24 + ci_half)
 
-        ci_half = max(0.03, p_24 * 0.10)
-        ci_lo = max(0.0, p_24 - ci_half)
-        ci_hi = min(1.0, p_24 + ci_half)
+            competing_risks_24 = {
+                "p_transplant_24mo": round(p_24, 4),
+                "p_mortality_24mo": round(p_mortality_24, 4),
+                "p_delisting_24mo": round(p_delisting_24, 4),
+                "p_still_waiting_24mo": round(p_waiting_24, 4),
+            }
 
-        competing_risks_24 = {
-            "p_transplant_24mo": round(p_24, 4),
-            "p_mortality_24mo": round(p_mortality_24, 4),
-            "p_delisting_24mo": round(p_delisting_24, 4),
-            "p_still_waiting_24mo": round(p_waiting_24, 4),
-        }
+            outcomes_data = None
+            try:
+                outcomes_data = build_outcomes_dict(patient.organ, city=region_name, p_transplant_24mo=p_24)
+            except (KeyError, FileNotFoundError, ValueError):
+                pass
 
-        # Center-level outcomes
-        outcomes_data = None
-        try:
-            outcomes_data = build_outcomes_dict(patient.organ, city=name, p_transplant_24mo=p_24, center_code=code)
-        except (KeyError, FileNotFoundError, ValueError):
-            pass
+            trends_data = None
+            try:
+                trends_data = get_city_trends(patient.organ, region_name)
+            except (KeyError, FileNotFoundError, ValueError):
+                pass
 
-        trends_data = None
-        try:
-            trends_data = get_city_trends(patient.organ, region)
-        except (KeyError, FileNotFoundError, ValueError):
-            pass
+            city_results.append(CityProbability(
+                city=region_name,
+                state=state_abbr,
+                center_code="",
+                center_name=region_name,
+                lat=None,
+                lon=None,
+                p_transplant_6mo=round(p_6, 4),
+                p_transplant_12mo=round(p_12, 4),
+                p_transplant_24mo=round(p_24, 4),
+                p_transplant_36mo=round(p_36, 4),
+                confidence_interval_95=(round(ci_lo, 4), round(ci_hi, 4)),
+                median_wait_months=round(max(median_wait, 0.1), 2),
+                competing_risks=competing_risks_24,
+                outcomes=outcomes_data,
+                trends=trends_data,
+            ))
+    else:
+        # State / full mode: one result per SRTR center.
+        from services.monte_carlo import _get_centers
+        centers = _get_centers(organ)
 
-        city_results.append(CityProbability(
-            city=name,
-            state=state_full,
-            center_code=code,
-            center_name=name,
-            lat=lat,
-            lon=lon,
-            p_transplant_6mo=round(p_6, 4),
-            p_transplant_12mo=round(p_12, 4),
-            p_transplant_24mo=round(p_24, 4),
-            p_transplant_36mo=round(p_36, 4),
-            confidence_interval_95=(round(ci_lo, 4), round(ci_hi, 4)),
-            median_wait_months=round(max(median_wait, 0.1), 2),
-            competing_risks=competing_risks_24,
-            outcomes=outcomes_data,
-            trends=trends_data,
-        ))
+        for center in centers:
+            code = center.get("code", "")
+            name = center.get("name", center.get("city", ""))
+            state_full = center.get("state", center.get("state_abbr", ""))
+            lat = center.get("lat")
+            lon = center.get("lon")
+
+            # Map center to BBN region using the granularity-aware map
+            region = center_region_map.get(code, regions[0] if regions else "Nashville")
+            if region not in regions:
+                region = regions[0] if regions else "Nashville"
+
+            # Run BBN inference (cached per region)
+            if region not in region_cache:
+                region_cache[region] = _query_city(
+                    inference, organ, blood_type, age_group, urgency, region,
+                    regions=regions,
+                )
+            query_result = region_cache[region]
+
+            co_probs = query_result["competing_outcome"]
+            p_transplant_24 = co_probs[0]
+            p_mortality_24 = co_probs[1]
+            p_delisting_24 = co_probs[2]
+            p_waiting_24 = co_probs[3]
+
+            wait_probs = query_result["wait_category"]
+            time_probs = _estimate_time_horizon_probs(wait_probs)
+            p_6 = time_probs["p6"] * p_transplant_24 / max(time_probs["p24"], 0.01)
+            p_12 = time_probs["p12"] * p_transplant_24 / max(time_probs["p24"], 0.01)
+            p_24 = p_transplant_24
+            p_36 = min(1.0, time_probs["p36"] * p_transplant_24 / max(time_probs["p24"], 0.01))
+
+            p_6 = max(0.0, min(p_6, p_24))
+            p_12 = max(p_6, min(p_12, p_24))
+            p_36 = max(p_24, min(p_36, 1.0))
+
+            median_wait = _estimate_median_wait(wait_probs)
+
+            ci_half = max(0.03, p_24 * 0.10)
+            ci_lo = max(0.0, p_24 - ci_half)
+            ci_hi = min(1.0, p_24 + ci_half)
+
+            competing_risks_24 = {
+                "p_transplant_24mo": round(p_24, 4),
+                "p_mortality_24mo": round(p_mortality_24, 4),
+                "p_delisting_24mo": round(p_delisting_24, 4),
+                "p_still_waiting_24mo": round(p_waiting_24, 4),
+            }
+
+            # Center-level outcomes
+            outcomes_data = None
+            try:
+                outcomes_data = build_outcomes_dict(patient.organ, city=name, p_transplant_24mo=p_24, center_code=code)
+            except (KeyError, FileNotFoundError, ValueError):
+                pass
+
+            # Trends use the legacy 22-city region for lookup
+            legacy_region = legacy_center_region_map.get(code, center.get("city", "Nashville"))
+            trends_data = None
+            try:
+                trends_data = get_city_trends(patient.organ, legacy_region)
+            except (KeyError, FileNotFoundError, ValueError):
+                pass
+
+            city_results.append(CityProbability(
+                city=name,
+                state=state_full,
+                center_code=code,
+                center_name=name,
+                lat=lat,
+                lon=lon,
+                p_transplant_6mo=round(p_6, 4),
+                p_transplant_12mo=round(p_12, 4),
+                p_transplant_24mo=round(p_24, 4),
+                p_transplant_36mo=round(p_36, 4),
+                confidence_interval_95=(round(ci_lo, 4), round(ci_hi, 4)),
+                median_wait_months=round(max(median_wait, 0.1), 2),
+                competing_risks=competing_risks_24,
+                outcomes=outcomes_data,
+                trends=trends_data,
+            ))
 
     city_results.sort(key=lambda c: c.p_transplant_24mo, reverse=True)
 
     elapsed = time.perf_counter() - start
     logger.info(
-        "BBN inference complete: %s %s, %.3fs for %d centers (%d unique regions)",
-        patient.organ, patient.blood_type, elapsed, len(city_results), len(region_cache),
+        "BBN inference complete: %s %s (granularity=%s), %.3fs for %d centers (%d unique regions)",
+        patient.organ, patient.blood_type, granularity, elapsed, len(city_results), len(region_cache),
     )
 
     return SimulationResult(

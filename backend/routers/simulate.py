@@ -21,6 +21,7 @@ def run_simulation(
     ),
     copula_theta: float = Query(default=None, ge=0.1, le=5.0, description="Override Clayton copula theta (use_copula must be true)"),
     elasticity: float = Query(default=None, ge=0.1, le=1.0, description="Override supply-wait elasticity (default 0.65)"),
+    bbn_granularity: str = Query(default="state", description="BBN region granularity: 'classic' (22), 'state' (~50), 'full' (248)"),
 ) -> SimulationResult:
     try:
         if inference_mode == "bayesian":
@@ -31,6 +32,7 @@ def run_simulation(
                     status_code=503,
                     detail="Bayesian inference unavailable (missing pgmpy dependency)",
                 )
+            patient.bbn_granularity = bbn_granularity
             return simulate_bbn(patient)
         if inference_mode == "mcmc":
             try:
