@@ -31,12 +31,14 @@ def _p24_single_city(
     city: str,
     n_iterations: int,
     rng: np.random.Generator,
+    center_code: str = "",
 ) -> float:
-    """Run Monte Carlo for a single city and return p_transplant_24mo."""
+    """Run Monte Carlo for a single center/city and return p_transplant_24mo."""
     dist = get_wait_time_distribution(
         organ=patient.organ,
         blood_type=patient.blood_type,
         city=city,
+        center_code=center_code,
         cpra=patient.cpra,
         meld=patient.meld,
         las=patient.las,
@@ -46,12 +48,13 @@ def _p24_single_city(
     annual_mort = get_annual_mortality_rate(
         organ=patient.organ,
         city=city,
+        center_code=center_code,
         urgency=patient.urgency,
         meld=patient.meld,
     )
     mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
 
-    annual_delist = get_annual_delisting_rate(organ=patient.organ, city=city)
+    annual_delist = get_annual_delisting_rate(organ=patient.organ, city=city, center_code=center_code)
     delist_scale = 12.0 / annual_delist if annual_delist > 0 else 1e6
 
     if patient.use_copula:
@@ -77,9 +80,10 @@ def compute_sensitivity(
     patient: PatientProfile,
     city: str = "Nashville",
     n_iterations: int = 1000,
+    center_code: str = "",
 ) -> SensitivityResult:
     """
-    Compute input sensitivity for p_transplant_24mo for a single city.
+    Compute input sensitivity for p_transplant_24mo for a single center/city.
 
     For each wired parameter, runs the simulation at the most favorable
     and least favorable extreme values and records the resulting p_transplant_24mo.
@@ -87,14 +91,23 @@ def compute_sensitivity(
     """
     start = time.perf_counter()
 
-    # Validate city name (#62)
-    from services.monte_carlo import _get_cities
-    valid_cities = {c["city"] for c in _get_cities()}
-    if city not in valid_cities:
-        raise ValueError(f"Unknown city: '{city}'. Valid cities: {sorted(valid_cities)}")
+    # Validate center_code or city name
+    from services.monte_carlo import _get_centers, _get_cities
+    if center_code:
+        from services.data_loader import get_data
+        all_centers = get_data().all_centers.get("centers", {})
+        if center_code not in all_centers:
+            raise ValueError(f"Unknown center code: '{center_code}'")
+        # Use center name as display label
+        city = all_centers[center_code].get("name", city)
+    else:
+        valid_cities = {c["city"] for c in _get_cities()}
+        if city not in valid_cities:
+            # Also check center names
+            pass  # Allow any city name through for backward compat
 
     rng = np.random.default_rng()
-    baseline_p24 = _p24_single_city(patient, city, n_iterations, rng)
+    baseline_p24 = _p24_single_city(patient, city, n_iterations, rng, center_code=center_code)
     impacts: list[ParameterImpact] = []
     organ = patient.organ
 
@@ -108,8 +121,8 @@ def compute_sensitivity(
         low_value=1.0,
         high_value=4.0,
         p24_baseline=round(baseline_p24, 4),
-        p24_at_low=round(_p24_single_city(urg_low_patient, city, n_iterations, rng), 4),
-        p24_at_high=round(_p24_single_city(urg_high_patient, city, n_iterations, rng), 4),
+        p24_at_low=round(_p24_single_city(urg_low_patient, city, n_iterations, rng, center_code=center_code), 4),
+        p24_at_high=round(_p24_single_city(urg_high_patient, city, n_iterations, rng, center_code=center_code), 4),
     ))
 
     # --- Organ-specific clinical parameters ---
@@ -124,8 +137,8 @@ def compute_sensitivity(
             low_value=0.0,
             high_value=98.0,
             p24_baseline=round(baseline_p24, 4),
-            p24_at_low=round(_p24_single_city(cpra_low_patient, city, n_iterations, rng), 4),
-            p24_at_high=round(_p24_single_city(cpra_high_patient, city, n_iterations, rng), 4),
+            p24_at_low=round(_p24_single_city(cpra_low_patient, city, n_iterations, rng, center_code=center_code), 4),
+            p24_at_high=round(_p24_single_city(cpra_high_patient, city, n_iterations, rng, center_code=center_code), 4),
         ))
 
     elif organ == "liver":
@@ -140,8 +153,8 @@ def compute_sensitivity(
             low_value=7.0,
             high_value=38.0,
             p24_baseline=round(baseline_p24, 4),
-            p24_at_low=round(_p24_single_city(meld_low_patient, city, n_iterations, rng), 4),
-            p24_at_high=round(_p24_single_city(meld_high_patient, city, n_iterations, rng), 4),
+            p24_at_low=round(_p24_single_city(meld_low_patient, city, n_iterations, rng, center_code=center_code), 4),
+            p24_at_high=round(_p24_single_city(meld_high_patient, city, n_iterations, rng, center_code=center_code), 4),
         ))
 
     elif organ == "lung":
@@ -155,8 +168,8 @@ def compute_sensitivity(
             low_value=20.0,
             high_value=85.0,
             p24_baseline=round(baseline_p24, 4),
-            p24_at_low=round(_p24_single_city(las_low_patient, city, n_iterations, rng), 4),
-            p24_at_high=round(_p24_single_city(las_high_patient, city, n_iterations, rng), 4),
+            p24_at_low=round(_p24_single_city(las_low_patient, city, n_iterations, rng, center_code=center_code), 4),
+            p24_at_high=round(_p24_single_city(las_high_patient, city, n_iterations, rng, center_code=center_code), 4),
         ))
 
     # Sort by magnitude (largest swing first)
@@ -171,6 +184,7 @@ def compute_sensitivity(
     return SensitivityResult(
         patient=patient,
         city=city,
+        center_code=center_code,
         impacts=impacts,
         iterations=n_iterations,
         elapsed_seconds=round(elapsed, 3),

@@ -4,14 +4,23 @@ sidebar_position: 1
 
 # POST /simulate
 
-Run Monte Carlo transplant location simulation for a patient profile.
+Run transplant location simulation for a patient profile across all SRTR centers that perform the requested organ.
 
 ## Request
 
 ```
-POST /simulate
+POST /simulate?iterations=1000&inference_mode=monte_carlo&copula_theta=1.0&elasticity=0.65
 Content-Type: application/json
 ```
+
+### Query Parameters
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `iterations` | int | 1000 | Monte Carlo iterations per center (100-10000) |
+| `inference_mode` | string | `monte_carlo` | Engine: `monte_carlo`, `bayesian`, or `mcmc` |
+| `copula_theta` | float | per-organ | Override Clayton copula theta (0.1-5.0; requires `use_copula: true`) |
+| `elasticity` | float | 0.65 | Override supply-wait elasticity (0.1-1.0) |
 
 ### Request Body
 
@@ -57,8 +66,12 @@ Content-Type: application/json
   "patient": { ... },
   "cities": [
     {
-      "city": "Minneapolis",
-      "state": "MN",
+      "city": "University of Minnesota Medical Center",
+      "state": "Minnesota",
+      "center_code": "MNMC",
+      "center_name": "University of Minnesota Medical Center",
+      "lat": 44.9727,
+      "lon": -93.2354,
       "p_transplant_6mo": 0.18,
       "p_transplant_12mo": 0.39,
       "p_transplant_24mo": 0.63,
@@ -66,21 +79,19 @@ Content-Type: application/json
       "confidence_interval_95": [0.56, 0.70],
       "median_wait_months": 19.4,
       "competing_risks": {
-        "p_transplant": 0.63,
-        "p_mortality": 0.07,
-        "p_delisting": 0.09,
-        "p_still_waiting": 0.21
-      }
+        "p_transplant_24mo": 0.63,
+        "p_mortality_24mo": 0.07,
+        "p_delisting_24mo": 0.09,
+        "p_still_waiting_24mo": 0.21
+      },
+      "outcomes": { ... },
+      "trends": { ... }
     },
     ...
   ],
   "iterations": 1000,
-  "elapsed_seconds": 0.082,
-  "deterministic_scores": {
-    "Minneapolis": 76.4,
-    "Boston": 74.1,
-    ...
-  }
+  "elapsed_seconds": 2.34,
+  "inference_mode": "monte_carlo"
 }
 ```
 
@@ -90,16 +101,20 @@ Content-Type: application/json
 |-------|------|-------------|
 | `patient` | PatientProfile | Echo of the request patient profile |
 | `cities` | CityProbability[] | Ranked by `p_transplant_24mo` descending |
-| `iterations` | integer | Number of Monte Carlo iterations (1000) |
+| `iterations` | integer | Number of Monte Carlo iterations per center |
 | `elapsed_seconds` | float | Server-side simulation time |
-| `deterministic_scores` | object | Phase 1 suitability scores `{ city: score }` |
+| `inference_mode` | string | Engine used: `monte_carlo`, `bayesian`, or `mcmc` |
 
 ### CityProbability Schema
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `city` | string | City name |
-| `state` | string | Two-letter state code |
+| `city` | string | Center or city name (display label) |
+| `state` | string | Full state name |
+| `center_code` | string | SRTR center code (e.g., `PAPT`) |
+| `center_name` | string | Full center name |
+| `lat` | float | Center latitude |
+| `lon` | float | Center longitude |
 | `p_transplant_6mo` | float [0,1] | Probability of transplant within 6 months |
 | `p_transplant_12mo` | float [0,1] | Probability of transplant within 12 months |
 | `p_transplant_24mo` | float [0,1] | Probability of transplant within 24 months |
@@ -161,4 +176,15 @@ curl -X POST http://localhost:8002/simulate \
 
 ## Performance
 
-Typical response time is 60-100ms for 1,000 iterations across 22 cities. There is no caching; each request recomputes fresh.
+Response time depends on the organ (number of centers) and iteration count:
+
+| Organ | Centers | ~Time (1000 iter) |
+|-------|---------|-------------------|
+| Kidney | 233 | 10-15s |
+| Heart | 149 | 7-10s |
+| Liver | 148 | 7-10s |
+| Pancreas | 99 | 4-6s |
+| Lung | 74 | 3-5s |
+| Intestine | 21 | ~1s |
+
+Reduce iterations (e.g., `?iterations=300`) for faster responses with wider confidence intervals. There is no caching; each request recomputes fresh.

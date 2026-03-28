@@ -77,8 +77,17 @@ def _get_cities() -> list[dict[str, str]]:
         return _FALLBACK_CITIES
 
 
+def _get_centers(organ: str) -> list[dict]:
+    """Get all SRTR centers that perform *organ*, falling back to 22 cities."""
+    try:
+        centers = get_data().centers_for_organ(organ)
+        return centers if centers else _FALLBACK_CITIES
+    except RuntimeError:
+        return _FALLBACK_CITIES
+
+
 # Module-level CITIES kept for backward compat (tests, imports).
-# Production code uses _get_cities() which loads from data files.
+# Production code uses _get_centers(organ) which loads from data files.
 CITIES = _FALLBACK_CITIES
 
 
@@ -194,35 +203,52 @@ def _bootstrap_ci(outcomes: np.ndarray, event: int, threshold_months: np.ndarray
     return (lo, hi)
 
 
-def simulate(patient: PatientProfile, n_iterations: int | None = None) -> SimulationResult:
+def simulate(
+    patient: PatientProfile,
+    n_iterations: int | None = None,
+    copula_theta_override: float | None = None,
+    elasticity_override: float | None = None,
+) -> SimulationResult:
     """
-    Run Monte Carlo simulation with competing risks for all 22 cities.
+    Run Monte Carlo simulation with competing risks for all SRTR centers
+    that perform the requested organ.
 
-    For each city and iteration:
-      1. Draw transplant_time from log-normal (M2)
-      2. Draw mortality_time from exponential (annual rate → monthly scale)
-      3. Draw delisting_time from exponential (annual rate → monthly scale)
+    For each center and iteration:
+      1. Draw transplant_time from log-normal (center-level wait-time factor)
+      2. Draw mortality_time from exponential (center-level mortality factor)
+      3. Draw delisting_time from exponential (center-level delisting factor)
       4. Outcome = whichever event occurs first
 
-    Returns ranked cities with transplant probabilities, CIs, and
+    Returns ranked centers with transplant probabilities, CIs, and
     competing risks breakdown at 24 months.
     """
     if n_iterations is None:
         n_iterations = SIMULATION_ITERATIONS
 
+    eff_elasticity = elasticity_override if elasticity_override is not None else SUPPLY_WAIT_ELASTICITY
+
     start = time.perf_counter()
     rng = np.random.default_rng()
     city_results: list[CityProbability] = []
 
-    for city_info in _get_cities():
-        city = city_info["city"]
-        state = city_info["state"]
+    for center in _get_centers(patient.organ):
+        # Center records have {code, name, state, state_abbr, lat, lon, ...}
+        # Fallback records (22-city mode) have {city, state}
+        code = center.get("code", "")
+        name = center.get("name", center.get("city", ""))
+        state_abbr = center.get("state_abbr", center.get("state", ""))
+        state_full = center.get("state", _get_state_full_name(state_abbr) or state_abbr)
+        lat = center.get("lat")
+        lon = center.get("lon")
+        # Display label: use city name for fallback, center name for full mode
+        display_city = center.get("city", name)
 
         # --- Draw transplant times from log-normal ---
         dist = get_wait_time_distribution(
             organ=patient.organ,
             blood_type=patient.blood_type,
-            city=city,
+            center_code=code,
+            city=display_city,
             cpra=patient.cpra,
             meld=patient.meld,
             las=patient.las,
@@ -233,43 +259,43 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
         # Sublinear elasticity: wait_adj = multiplier ^ elasticity (L-056)
         if patient.adjust_for_cause_of_death:
             cod_mult = _get_cod_multiplier(
-                state, patient.organ,
+                state_abbr, patient.organ,
                 n_samples=n_iterations, rng=rng,
             )
-            # cod_mult is an array of per-iteration multipliers (stochastic)
             safe_mult = np.where(cod_mult > 0, cod_mult, 1.0)
-            effective_mult = np.power(safe_mult, SUPPLY_WAIT_ELASTICITY)
+            effective_mult = np.power(safe_mult, eff_elasticity)
             transplant_times = transplant_times / effective_mult
 
         # --- Draw mortality & delisting times ---
         annual_mort = get_annual_mortality_rate(
-            organ=patient.organ, city=city, urgency=patient.urgency, meld=patient.meld,
+            organ=patient.organ, center_code=code, city=display_city,
+            urgency=patient.urgency, meld=patient.meld,
         )
         mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
 
-        annual_delist = get_annual_delisting_rate(organ=patient.organ, city=city)
+        annual_delist = get_annual_delisting_rate(
+            organ=patient.organ, center_code=code, city=display_city,
+        )
         delist_scale = 12.0 / annual_delist if annual_delist > 0 else 1e6
 
         if patient.use_copula:
-            # Clayton copula: correlated lower-tail dependence (Phase 5 M2)
             mortality_times, delisting_times = draw_correlated_competing_risks(
                 mort_scale=mort_scale,
                 delist_scale=delist_scale,
                 n=n_iterations,
-                theta=ORGAN_COPULA_THETA.get(patient.organ, COPULA_THETA),
+                theta=copula_theta_override if copula_theta_override is not None else ORGAN_COPULA_THETA.get(patient.organ, COPULA_THETA),
                 rng=rng,
             )
         else:
-            # Independent exponentials (original model)
             mortality_times = rng.exponential(scale=mort_scale, size=n_iterations)
             delisting_times = rng.exponential(scale=delist_scale, size=n_iterations)
 
         # --- Determine outcome: which event occurs first ---
         all_times = np.stack([transplant_times, mortality_times, delisting_times], axis=1)
-        event_times = np.min(all_times, axis=1)      # time of first event
-        outcomes = np.argmin(all_times, axis=1)       # 0=transplant, 1=death, 2=delisted
+        event_times = np.min(all_times, axis=1)
+        outcomes = np.argmin(all_times, axis=1)
 
-        # --- Compute transplant probabilities (transplant occurs first AND within horizon) ---
+        # --- Compute transplant probabilities ---
         def p_transplant_within(horizon: float) -> float:
             return float(np.mean((outcomes == 0) & (event_times <= horizon)))
 
@@ -278,45 +304,44 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
         p_24 = p_transplant_within(24)
         p_36 = p_transplant_within(36)
 
-        # --- 95% CI for 24-month transplant probability ---
         ci_95 = _bootstrap_ci(outcomes, event=0, threshold_months=event_times, time_horizon=24)
 
-        # --- Median wait to transplant (among those who got transplanted) ---
         transplanted_mask = outcomes == 0
         if np.any(transplanted_mask):
             median_wait = float(np.median(transplant_times[transplanted_mask]))
         else:
-            median_wait = float(np.median(transplant_times))  # fallback
-
-        # --- Competing risks breakdown at 24 months ---
-        p_mort_24 = float(np.mean((outcomes == 1) & (event_times <= 24)))
-        p_delist_24 = float(np.mean((outcomes == 2) & (event_times <= 24)))
-        p_waiting_24 = float(np.mean(event_times > 24))
+            median_wait = float(np.median(transplant_times))
 
         competing_risks_24 = {
             "p_transplant_24mo": round(p_24, 4),
-            "p_mortality_24mo": round(p_mort_24, 4),
-            "p_delisting_24mo": round(p_delist_24, 4),
-            "p_still_waiting_24mo": round(p_waiting_24, 4),
+            "p_mortality_24mo": round(float(np.mean((outcomes == 1) & (event_times <= 24))), 4),
+            "p_delisting_24mo": round(float(np.mean((outcomes == 2) & (event_times <= 24))), 4),
+            "p_still_waiting_24mo": round(float(np.mean(event_times > 24)), 4),
         }
 
-        # Phase 4 M2: Attach post-transplant outcomes if available
+        # Post-transplant outcomes (center-level if available)
         outcomes_data = None
         try:
-            outcomes_data = build_outcomes_dict(patient.organ, city, p_24)
+            outcomes_data = build_outcomes_dict(
+                patient.organ, city=display_city, p_transplant_24mo=p_24, center_code=code,
+            )
         except (KeyError, FileNotFoundError, ValueError) as e:
-            logger.warning("Outcomes data unavailable for %s/%s: %s", patient.organ, city, e)
+            logger.warning("Outcomes data unavailable for %s/%s: %s", patient.organ, code or display_city, e)
 
-        # Phase 4 M3: Attach historical trends if available
+        # Historical trends (city-level — center-level trends not yet available)
         trends_data = None
         try:
-            trends_data = get_city_trends(patient.organ, city)
-        except (KeyError, FileNotFoundError, ValueError) as e:
-            logger.warning("Trends data unavailable for %s/%s: %s", patient.organ, city, e)
+            trends_data = get_city_trends(patient.organ, display_city)
+        except (KeyError, FileNotFoundError, ValueError):
+            pass
 
         city_results.append(CityProbability(
-            city=city,
-            state=state,
+            city=display_city,
+            state=state_full,
+            center_code=code,
+            center_name=name,
+            lat=lat,
+            lon=lon,
             p_transplant_6mo=round(p_6, 4),
             p_transplant_12mo=round(p_12, 4),
             p_transplant_24mo=round(p_24, 4),
@@ -328,13 +353,13 @@ def simulate(patient: PatientProfile, n_iterations: int | None = None) -> Simula
             trends=trends_data,
         ))
 
-    # Rank by 24-month transplant probability, descending
     city_results.sort(key=lambda c: c.p_transplant_24mo, reverse=True)
 
     elapsed = time.perf_counter() - start
+    n_centers = len(city_results)
     logger.info(
-        "Simulation complete: %s %s, %d iterations, %.2fs",
-        patient.organ, patient.blood_type, n_iterations, elapsed,
+        "Simulation complete: %s %s, %d centers, %d iterations, %.2fs",
+        patient.organ, patient.blood_type, n_centers, n_iterations, elapsed,
     )
 
     return SimulationResult(

@@ -25,16 +25,24 @@ def _get_outcomes_data() -> dict:
     return get_data().post_transplant_outcomes
 
 
-def get_city_outcomes(organ: str, city: str) -> dict | None:
+def get_city_outcomes(organ: str, city: str = "", center_code: str = "") -> dict | None:
     """
-    Get post-transplant outcomes for a specific city and organ.
-    Returns dict with graft/patient survival, hazard ratios, performance rating.
+    Get post-transplant outcomes for a specific center/city and organ.
+    Prefers center-code lookup; falls back to city-level data.
     Returns None if data is unavailable.
     """
     if organ not in VALID_ORGANS:
         return None
-    data = _get_outcomes_data()
-    city_outcomes = data.get("city_outcomes", {})
+    data = get_data()
+    # Prefer center-code lookup from center-level outcomes
+    if center_code:
+        center_outcomes = data.center_outcomes.get("center_outcomes", {})
+        center_data = center_outcomes.get(center_code, {})
+        result = center_data.get(organ)
+        if result:
+            return result
+    # Fall back to city-level outcomes
+    city_outcomes = _get_outcomes_data().get("city_outcomes", {})
     city_data = city_outcomes.get(city, {})
     return city_data.get(organ) or None
 
@@ -50,12 +58,12 @@ def get_national_baselines(organ: str) -> dict | None:
     return data.get(organ) or None
 
 
-def get_graft_survival_1yr(organ: str, city: str) -> float | None:
+def get_graft_survival_1yr(organ: str, city: str = "", center_code: str = "") -> float | None:
     """
     Get 1-year graft survival rate for a center (as a percentage, e.g. 95.0).
     Falls back to national average if center data unavailable.
     """
-    outcomes = get_city_outcomes(organ, city)
+    outcomes = get_city_outcomes(organ, city, center_code=center_code)
     if outcomes and outcomes.get("graft_survival_1yr") is not None:
         return outcomes["graft_survival_1yr"]
     # Fall back to national
@@ -65,12 +73,12 @@ def get_graft_survival_1yr(organ: str, city: str) -> float | None:
     return None
 
 
-def get_patient_survival_1yr(organ: str, city: str) -> float | None:
+def get_patient_survival_1yr(organ: str, city: str = "", center_code: str = "") -> float | None:
     """
     Get 1-year patient survival rate for a center (as a percentage).
     Falls back to national average if center data unavailable.
     """
-    outcomes = get_city_outcomes(organ, city)
+    outcomes = get_city_outcomes(organ, city, center_code=center_code)
     if outcomes and outcomes.get("patient_survival_1yr") is not None:
         return outcomes["patient_survival_1yr"]
     baselines = get_national_baselines(organ)
@@ -95,12 +103,12 @@ def compute_compound_success(p_transplant_24mo: float, graft_survival_1yr_pct: f
     return p_transplant_24mo * (graft_survival_1yr_pct / 100.0)
 
 
-def build_outcomes_dict(organ: str, city: str, p_transplant_24mo: float) -> dict | None:
+def build_outcomes_dict(organ: str, city: str = "", p_transplant_24mo: float = 0.0, center_code: str = "") -> dict | None:
     """
-    Build the complete outcomes dict for a city, ready to attach to CityProbability.
-    Returns None if no outcomes data available for this organ/city.
+    Build the complete outcomes dict for a center/city, ready to attach to CityProbability.
+    Returns None if no outcomes data available for this organ/center.
     """
-    outcomes = get_city_outcomes(organ, city)
+    outcomes = get_city_outcomes(organ, city, center_code=center_code)
     baselines = get_national_baselines(organ)
 
     # Need at least baselines to be useful
@@ -110,12 +118,12 @@ def build_outcomes_dict(organ: str, city: str, p_transplant_24mo: float) -> dict
     result = {}
 
     # Graft survival
-    gs_1yr = get_graft_survival_1yr(organ, city)
+    gs_1yr = get_graft_survival_1yr(organ, city, center_code=center_code)
     if gs_1yr is not None:
         result["graft_survival_1yr"] = round(gs_1yr / 100.0, 4)
 
     # Patient survival
-    ps_1yr = get_patient_survival_1yr(organ, city)
+    ps_1yr = get_patient_survival_1yr(organ, city, center_code=center_code)
     if ps_1yr is not None:
         result["patient_survival_1yr"] = round(ps_1yr / 100.0, 4)
 

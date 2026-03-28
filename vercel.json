@@ -1,5 +1,31 @@
 {
   "framework": null,
   "outputDirectory": ".",
-  "buildCommand": "cd docs-site && npm install && npm run build"
+  "buildCommand": "cd docs-site && npm install && npm run build",
+  "rewrites": [
+    { "source": "/simulate", "destination": "/api/index" },
+    { "source": "/equity-analysis", "destination": "/api/index" },
+    { "source": "/sensitivity", "destination": "/api/index" },
+    { "source": "/what-if", "destination": "/api/index" },
+    { "source": "/score", "destination": "/api/index" },
+    { "source": "/centers", "destination": "/api/index" },
+    { "source": "/centers/:path*", "destination": "/api/index" },
+    { "source": "/health", "destination": "/api/index" },
+    { "source": "/trends/:path*", "destination": "/api/index" },
+    { "source": "/spatial-layers", "destination": "/api/index" },
+    { "source": "/interpolated-value", "destination": "/api/index" },
+    { "source": "/interpolated-profile", "destination": "/api/index" },
+    { "source": "/allocation-circles", "destination": "/api/index" },
+    { "source": "/distance-score", "destination": "/api/index" },
+    { "source": "/spatial-grid", "destination": "/api/index" },
+    { "source": "/location-delta", "destination": "/api/index" },
+    { "source": "/policy-scenarios", "destination": "/api/index" },
+    { "source": "/policy-scenarios/:path*", "destination": "/api/index" },
+    { "source": "/policy-scenario", "destination": "/api/index" },
+    { "source": "/travel-subsidy-analysis", "destination": "/api/index" },
+    { "source": "/api/v1/:path*", "destination": "/api/index" },
+    { "source": "/docs", "destination": "/api/index" },
+    { "source": "/redoc", "destination": "/api/index" },
+    { "source": "/openapi.json", "destination": "/api/index" }
+  ]
 }

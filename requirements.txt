@@ -1,0 +1,22 @@
+# Production dependencies for Vercel deployment.
+# Full dev/research deps (pymc, jupyter, etc.) live in backend/requirements.txt.
+
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.6.0
+httpx>=0.27.0
+
+# Core simulation (Monte Carlo engine)
+numpy>=1.26.0
+scipy>=1.13.0
+
+# Bayesian belief network inference (pgmpy requires pandas + networkx)
+pgmpy>=0.1.25
+pandas>=2.2.0
+
+# Survival analysis (post-transplant outcomes)
+lifelines>=0.29.0
+
+# Data loading (Excel files)
+openpyxl>=3.1.0
+xlrd>=2.0.0

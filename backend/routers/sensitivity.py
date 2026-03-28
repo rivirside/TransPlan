@@ -15,7 +15,11 @@ class SensitivityRequest(BaseModel):
     patient: PatientProfile
     city: str = Field(
         default="Nashville",
-        description="City to run sensitivity analysis for (use top-ranked city from /simulate)",
+        description="City name (legacy) or display label for the center",
+    )
+    center_code: str = Field(
+        default="",
+        description="SRTR center code (preferred over city name)",
     )
     iterations: int = Field(default=1000, ge=100, le=5000)
 
@@ -23,7 +27,10 @@ class SensitivityRequest(BaseModel):
 @router.post("/sensitivity", response_model=SensitivityResult)
 def run_sensitivity(request: SensitivityRequest) -> SensitivityResult:
     try:
-        return compute_sensitivity(request.patient, request.city, request.iterations)
+        return compute_sensitivity(
+            request.patient, request.city, request.iterations,
+            center_code=request.center_code,
+        )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:

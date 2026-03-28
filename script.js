@@ -2100,16 +2100,19 @@ const stateAbbreviations = {
 
     function populate(entries) {
         entries
-            .sort((a, b) => a.city.localeCompare(b.city))
-            .forEach(({ city, state }) => {
+            .sort((a, b) => (a.name || a.city || '').localeCompare(b.name || b.city || ''))
+            .forEach((entry) => {
                 const option = document.createElement('option');
-                option.value = city;
-                option.textContent = city + ', ' + (stateAbbreviations[state] || state);
+                const name = entry.name || entry.city || '';
+                const state = entry.state_abbr || stateAbbreviations[entry.state] || entry.state || '';
+                const code = entry.code || '';
+                option.value = code || name;
+                option.textContent = name + (state ? ', ' + state : '') + (code ? ' (' + code + ')' : '');
                 select.appendChild(option);
             });
     }
 
-    // Try dynamic loading from backend API — fetch ALL centers (#148)
+    // Try dynamic loading from backend API — fetch ALL centers (#148, #203)
     if (window.TransPlanAPI && window.TransPlanAPI.fetchCenters) {
         try {
             const data = await window.TransPlanAPI.fetchCenters({});

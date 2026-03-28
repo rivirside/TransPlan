@@ -54,19 +54,27 @@ def _ensure_loaded() -> None:
 from services.stats_utils import get_range_multiplier as _get_range_multiplier
 
 
+def _center_adjustment(center_code: str, organ: str) -> dict[str, float]:
+    """Look up per-organ mortality/delisting factors for a center code."""
+    from services.data_loader import get_data
+    center_adj = get_data().center_competing_risks.get("center_adjustments", {})
+    return center_adj.get(center_code, {}).get(organ, {})
+
+
 def get_annual_mortality_rate(
     organ: str,
-    city: str,
-    urgency: int,
+    city: str = "",
+    urgency: int = 2,
     meld: int | None = None,
+    center_code: str = "",
 ) -> float:
     """
     Return adjusted annual mortality rate while on waitlist.
 
     Adjustments applied:
-      - Urgency-specific multiplier (higher urgency → higher mortality)
-      - MELD-specific multiplier (liver only; higher MELD → higher mortality)
-      - City factor (better hospitals → lower mortality)
+      - Urgency-specific multiplier (higher urgency -> higher mortality)
+      - MELD-specific multiplier (liver only; higher MELD -> higher mortality)
+      - Center or city factor (better hospitals -> lower mortality)
     """
     _ensure_loaded()
 
@@ -86,14 +94,18 @@ def get_annual_mortality_rate(
         meld_mults = organ_data.get("meld_mortality_multipliers", {})
         meld_mult = _get_range_multiplier(meld, meld_mults)
 
-    # City adjustment
-    city_adj = _CITY_ADJUSTMENTS.get(city, {})
-    city_mult = city_adj.get("mortality_factor", 1.0)
+    # Location adjustment — prefer center-code, fall back to city
+    if center_code:
+        adj = _center_adjustment(center_code, organ)
+        city_mult = adj.get("mortality_factor", 1.0)
+    else:
+        city_adj = _CITY_ADJUSTMENTS.get(city, {})
+        city_mult = city_adj.get("mortality_factor", 1.0)
 
     return base * urg_mult * meld_mult * city_mult
 
 
-def get_annual_delisting_rate(organ: str, city: str) -> float:
+def get_annual_delisting_rate(organ: str, city: str = "", center_code: str = "") -> float:
     """
     Return adjusted annual delisting rate (too sick, improved, non-compliant).
     """
@@ -105,8 +117,12 @@ def get_annual_delisting_rate(organ: str, city: str) -> float:
 
     base = organ_data["annual_delisting_rate"]
 
-    city_adj = _CITY_ADJUSTMENTS.get(city, {})
-    city_mult = city_adj.get("delisting_factor", 1.0)
+    if center_code:
+        adj = _center_adjustment(center_code, organ)
+        city_mult = adj.get("delisting_factor", 1.0)
+    else:
+        city_adj = _CITY_ADJUSTMENTS.get(city, {})
+        city_mult = city_adj.get("delisting_factor", 1.0)
 
     return base * city_mult
 

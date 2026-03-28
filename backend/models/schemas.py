@@ -64,8 +64,12 @@ class PatientProfile(BaseModel):
 
 
 class CityProbability(BaseModel):
-    city: str
+    city: str = Field(description="City or center name (display label)")
     state: str
+    center_code: str = Field("", description="SRTR center code (e.g. 'PAPT')")
+    center_name: str = Field("", description="Full center name")
+    lat: Optional[float] = Field(None, description="Center latitude")
+    lon: Optional[float] = Field(None, description="Center longitude")
     p_transplant_6mo: float = Field(..., ge=0, le=1)
     p_transplant_12mo: float = Field(..., ge=0, le=1)
     p_transplant_24mo: float = Field(..., ge=0, le=1)
@@ -140,7 +144,8 @@ class ParameterImpact(BaseModel):
 
 class SensitivityResult(BaseModel):
     patient: PatientProfile
-    city: str = Field(description="City used for sensitivity analysis")
+    city: str = Field(description="City or center used for sensitivity analysis")
+    center_code: str = Field("", description="SRTR center code (if center-level analysis)")
     impacts: list[ParameterImpact] = Field(description="Sorted by magnitude of impact (largest first)")
     iterations: int
     elapsed_seconds: float
@@ -153,9 +158,11 @@ class DemographicGroup(BaseModel):
 
 
 class CityEquity(BaseModel):
-    """Equity metrics for a single city across demographic profiles."""
+    """Equity metrics for a single center/city across demographic profiles."""
     city: str
     state: str
+    center_code: str = ""
+    center_name: str = ""
     gini_coefficient: float = Field(ge=0, le=1, description="0=equality, 1=total inequality")
     p24_range: tuple[float, float] = Field(description="(min, max) of p_transplant_24mo across profiles")
     median_wait_range: tuple[float, float] = Field(description="(min, max) median wait months across profiles")

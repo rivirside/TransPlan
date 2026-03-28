@@ -4,33 +4,35 @@ sidebar_position: 1
 
 # Architecture Overview
 
-TransPlan uses a two-layer architecture: a static frontend (Phase 1) augmented by a Python backend for probabilistic simulation (Phase 2).
+TransPlan uses a two-layer architecture: a static frontend (Phase 1) augmented by a Python backend for probabilistic simulation (Phase 2+). The backend is deployed as a Vercel Python function (Phase 3) and simulates across all 248 SRTR transplant centers (Phase 4).
 
 ## System Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     FastAPI Server (uvicorn)                  │
-│                     localhost:8002                            │
-│                                                               │
-│  ┌─────────────────────────┐  ┌────────────────────────────┐ │
-│  │   Static File Serving   │  │       REST API              │ │
-│  │   GET /  → index.html   │  │   POST /simulate           │ │
-│  │   GET /simulator.html   │  │   POST /sensitivity        │ │
-│  │   GET /algorithm.js     │  │   POST /equity-analysis    │ │
-│  │   GET /styles.css       │  │   GET  /health             │ │
-│  │   GET /data/*.json      │  │   POST /shutdown           │ │
-│  └─────────────────────────┘  └────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-         ↓ same-origin requests (no CORS needed)
+┌──────────────────────────────── Vercel ─────────────────────────────────┐
+│                                                                         │
+│  ┌──────────────────────────┐   ┌────────────────────────────────────┐ │
+│  │    CDN (Static Files)    │   │    Python Function (api/index.py)  │ │
+│  │    GET / → index.html    │   │    FastAPI app (backend/main.py)   │ │
+│  │    GET /simulator.html   │   │                                    │ │
+│  │    GET /algorithm.js     │   │    POST /simulate (248 centers)    │ │
+│  │    GET /styles.css       │   │    POST /sensitivity               │ │
+│  │    GET /data/*.json      │   │    POST /equity-analysis           │ │
+│  │                          │   │    POST /what-if                   │ │
+│  │  (rewrites route API     │   │    POST /score                     │ │
+│  │   paths to function)     │   │    GET  /centers                   │ │
+│  └──────────────────────────┘   │    GET  /health                    │ │
+│                                  └────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────┘
+         ↓ same-origin requests (Vercel rewrites)
 ┌──────────────────────────────────────────────────────────────┐
 │                   Browser (Frontend)                          │
 │                                                               │
 │  index.html     ← Landing page (features, CTA)              │
 │  simulator.html ← Simulation tool (form, results, map)      │
 │  algorithm.js   ← Phase 1: deterministic scoring engine      │
-│  api-client.js  ← Phase 2: calls /simulate + /sensitivity   │
-│                    + /equity-analysis                         │
+│  api-client.js  ← Phase 2+: calls /simulate + /sensitivity  │
+│                    + /equity-analysis + /score + /centers     │
 │  script.js      ← UI, form handling, results display         │
 │  charts.js      ← Chart.js radar/bar/donut                   │
 │  probability-charts.js ← CDF curves + competing risks +     │
@@ -63,9 +65,11 @@ TransPlan uses a two-layer architecture: a static frontend (Phase 1) augmented b
 
 ## Key Architectural Decisions
 
-### Single-Process Architecture (ADR-015)
+### Vercel Deployment (Phase 3)
 
-FastAPI serves both the API endpoints and the static frontend on a single port, eliminating CORS complexity and enabling same-origin `/simulate` requests. The frontend uses relative URLs (`/simulate`, `/health`) with no hardcoded backend URL.
+The Python backend is deployed as a Vercel serverless function (`api/index.py`). Static frontend files are served by Vercel's CDN. API paths (`/simulate`, `/health`, etc.) are routed to the Python function via `vercel.json` rewrites. The frontend uses relative URLs with no hardcoded backend URL, so the same code works locally and on Vercel.
+
+For local development, FastAPI serves both the API endpoints and the static frontend on a single port (same-origin, no CORS needed).
 
 ### No Build Step Frontend
 
@@ -73,7 +77,7 @@ The frontend is plain HTML/CSS/JS with no bundler. This avoids build toolchain c
 
 ### Graceful Degradation
 
-If the backend is not running, the frontend falls back silently to Phase 1, providing deterministic scores only. The Phase 2 tab remains hidden, and a yellow banner informs the user that probabilistic simulation is unavailable.
+If the backend is not running (e.g., GitHub Pages fallback), the frontend falls back silently to Phase 1, providing deterministic scores for 22 cities only. When the backend is available (Vercel deployment), the simulator covers all 248 SRTR centers filtered by the patient's organ.
 
 ### Data at Rest vs Runtime
 
@@ -87,7 +91,7 @@ Public API data is fetched by GitHub Actions on a weekly or bimonthly schedule a
 |------|---------|
 | `index.html` | Landing page: features, how-it-works, CTA to simulator |
 | `simulator.html` | Simulation tool: form, 3-tab results, modals, map, methodology |
-| `algorithm.js` | Phase 1 scoring engine: 8 categories x 22 cities |
+| `algorithm.js` | Phase 1 scoring engine: 8 categories (fallback for 22 cities when backend unavailable) |
 | `script.js` | UI orchestration: form, results display, map controls, city detail modal, comparison |
 | `api-client.js` | API client: POST /simulate, /sensitivity, /equity-analysis, graceful fallback |
 | `probability-charts.js` | CDF line charts, competing risks bars, tornado sensitivity chart (Chart.js) |
@@ -115,7 +119,7 @@ Public API data is fetched by GitHub Actions on a weekly or bimonthly schedule a
 | `backend/services/distributions.py` | Log-normal wait time model |
 | `backend/services/competing_risks.py` | Mortality/delisting exponential models |
 | `backend/services/sensitivity.py` | Sensitivity analysis: parameter impact on p_transplant_24mo |
-| `backend/services/equity.py` | Demographic equity analysis (48 profiles x 22 cities, Gini coefficient) |
+| `backend/services/equity.py` | Demographic equity analysis (48 profiles x all centers, Gini coefficient) |
 | `backend/services/brier_score.py` | Brier score calibration: Monte Carlo vs analytical validation |
 | `backend/services/data_loader.py` | Loads and caches data/*.json at startup |
 
@@ -128,7 +132,7 @@ User submits form
   → POST /simulate { patient: {...} }
   → backend validates with Pydantic
   → data_loader.py provides wait-time-distributions.json + competing-risks.json
-  → monte_carlo.py runs 1000 × 22 simulations
+  → monte_carlo.py runs 1000 iterations × N centers (filtered by organ)
   → returns SimulationResult JSON
   → api-client.js parses response
   → probability-charts.js renders CDF curves + competing risks bars
@@ -142,5 +146,5 @@ User submits form
 | Local (macOS) | Double-click `TransPlan.app` | No Terminal, background app |
 | Local (any) | `./start.command` | Bash script, opens browser |
 | Local (manual) | `uvicorn backend.main:app` | Full control |
-| Static (hosted) | Vercel | Landing page + docs site (no simulation) |
-| Production | TBD (Docker Compose) | Future: cloud deployment with backend |
+| Production | Vercel | Static files via CDN + Python function for API |
+| Docker | `docker compose up` | Local dev with all dependencies |

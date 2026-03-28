@@ -19,13 +19,27 @@ def run_simulation(
         default="monte_carlo",
         description="Inference engine: 'monte_carlo' (default), 'bayesian' (exact), or 'mcmc' (posterior sampling)",
     ),
+    copula_theta: float = Query(default=None, ge=0.1, le=5.0, description="Override Clayton copula theta (use_copula must be true)"),
+    elasticity: float = Query(default=None, ge=0.1, le=1.0, description="Override supply-wait elasticity (default 0.65)"),
 ) -> SimulationResult:
     try:
         if inference_mode == "bayesian":
-            from services.bayesian_network import simulate_bbn
+            try:
+                from services.bayesian_network import simulate_bbn
+            except ImportError:
+                raise HTTPException(
+                    status_code=503,
+                    detail="Bayesian inference unavailable (missing pgmpy dependency)",
+                )
             return simulate_bbn(patient)
         if inference_mode == "mcmc":
-            from services.mcmc_inference import is_available, simulate_mcmc
+            try:
+                from services.mcmc_inference import is_available, simulate_mcmc
+            except ImportError:
+                raise HTTPException(
+                    status_code=503,
+                    detail="MCMC inference unavailable (missing pymc/arviz dependencies)",
+                )
             if not is_available(patient.organ):
                 raise HTTPException(
                     status_code=503,
@@ -33,7 +47,7 @@ def run_simulation(
                            f"Run scripts/fit-mcmc-model.py --organ {patient.organ} to generate it.",
                 )
             return simulate_mcmc(patient, n_iterations=iterations)
-        return simulate(patient, n_iterations=iterations)
+        return simulate(patient, n_iterations=iterations, copula_theta_override=copula_theta, elasticity_override=elasticity)
     except HTTPException:
         raise
     except Exception as e:

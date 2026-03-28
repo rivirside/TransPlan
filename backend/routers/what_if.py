@@ -30,7 +30,11 @@ class WhatIfRequest(BaseModel):
     patient: PatientProfile
     city: str = Field(
         default="Nashville",
-        description="City to run what-if analysis for",
+        description="City name (legacy) or display label",
+    )
+    center_code: str = Field(
+        default="",
+        description="SRTR center code (preferred over city name)",
     )
     donor_rate_multiplier: float = Field(
         default=1.0,

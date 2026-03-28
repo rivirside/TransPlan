@@ -35,11 +35,11 @@ ORGAN_COPULA_THETA: dict[str, float] = {
 # Semantic version
 VERSION: str = "2.0.0-alpha"
 
-# CORS origins allowed (expand for production deploy)
+# CORS origins allowed
 ALLOWED_ORIGINS: list[str] = [
     "http://localhost",
     "http://localhost:3000",
     "http://127.0.0.1",
-    # GitHub Pages URL — update before deploy
-    # "https://rivirside.github.io",
+    "https://transplant.today",
+    "https://www.transplant.today",
 ]

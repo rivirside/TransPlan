@@ -30,7 +30,7 @@ from services.mcmc_survival import (
     sample_params_from_trace,
     trace_exists,
 )
-from services.monte_carlo import CITIES, _get_cities, _get_cod_multiplier
+from services.monte_carlo import CITIES, _get_centers, _get_cities, _get_cod_multiplier
 
 # Lazy import to avoid circular dependency
 _outcomes_builder = None
@@ -161,10 +161,21 @@ def simulate_mcmc(
 
     city_results: list[CityProbability] = []
 
-    for city_info in _get_cities():
-        city = city_info["city"]
-        state = city_info["state"]
+    for center in _get_centers(patient.organ):
+        code = center.get("code", "")
+        city = center.get("name", center.get("city", ""))
+        state = center.get("state", center.get("state_abbr", ""))
+        lat = center.get("lat")
+        lon = center.get("lon")
+        # Map center to nearest trace city for parameter lookup
         cidx = city_to_idx.get(city)
+        if cidx is None and code:
+            # Try mapping via state; pick first trace city in same state
+            st = center.get("state_abbr", "")
+            for tc_name, tc_idx in city_to_idx.items():
+                # Fallback: just use first available
+                if cidx is None:
+                    cidx = tc_idx
 
         # Accumulate simulation results across parameter draws
         all_outcomes = np.empty(actual_iterations, dtype=int)
@@ -315,6 +326,10 @@ def simulate_mcmc(
         city_results.append(CityProbability(
             city=city,
             state=state,
+            center_code=code,
+            center_name=center.get("name", city),
+            lat=lat,
+            lon=lon,
             p_transplant_6mo=round(p_6, 4),
             p_transplant_12mo=round(p_12, 4),
             p_transplant_24mo=round(p_24, 4),

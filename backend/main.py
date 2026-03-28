@@ -4,6 +4,7 @@ Serves both the API and the static frontend on a single port.
 This eliminates CORS issues and simplifies the launcher.
 """
 import logging
+import os
 import sys
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -64,7 +65,7 @@ app = FastAPI(
 # CORS kept as fallback for separate frontend/backend dev setups
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|^https://.*\.vercel\.app$|^https://(www\.)?transplant\.today$",
     allow_origins=ALLOWED_ORIGINS,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type", "X-Api-Key"],
@@ -96,7 +97,8 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 
 app.include_router(health.router, tags=["ops"])
-app.include_router(shutdown.router, tags=["ops"])
+if not os.environ.get("VERCEL"):
+    app.include_router(shutdown.router, tags=["ops"])
 app.include_router(simulate.router, tags=["simulation"])
 app.include_router(sensitivity.router, tags=["simulation"])
 app.include_router(equity.router, tags=["simulation"])
@@ -145,4 +147,6 @@ class SafeStaticFiles(StaticFiles):
 
 # Serve frontend files from repo root with sensitive-path blocking.
 # Mounted AFTER API routes so API endpoints take priority.
-app.mount("/", SafeStaticFiles(directory=str(REPO_ROOT), html=True), name="static")
+# On Vercel, static files are served by the CDN — skip the mount.
+if not os.environ.get("VERCEL"):
+    app.mount("/", SafeStaticFiles(directory=str(REPO_ROOT), html=True), name="static")

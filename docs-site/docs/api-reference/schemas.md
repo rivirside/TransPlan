@@ -23,8 +23,10 @@ class PatientProfile(BaseModel):
     cpra: Optional[int]    # 0–100 (kidney only)
     meld: Optional[int]    # 6–40  (liver only)
     las: Optional[float]   # 0–100 (lung only)
-    home_center: Optional[str]     # Patient's current listing center (city name)
+    home_center: Optional[str]     # Patient's current listing center (city or center code)
     adjust_for_cause_of_death: bool  # default False; apply COD donor multiplier
+    use_copula: bool               # default False; Clayton copula for correlated competing risks
+    custom_weights: Optional[dict] # Custom scoring weights { category: decimal_fraction }
 ```
 
 ### Field Details
@@ -59,12 +61,16 @@ Lung Allocation Score (lung only), ranging from 0 to 100. Higher scores indicate
 
 ## CityProbability
 
-Per-city simulation output.
+Per-center simulation output.
 
 ```python
 class CityProbability(BaseModel):
-    city: str
-    state: str
+    city: str               # Center or city name (display label)
+    state: str              # Full state name
+    center_code: str = ""   # SRTR center code (e.g. "PAPT")
+    center_name: str = ""   # Full center name
+    lat: Optional[float]    # Center latitude
+    lon: Optional[float]    # Center longitude
     p_transplant_6mo: float   # [0, 1]
     p_transplant_12mo: float  # [0, 1]
     p_transplant_24mo: float  # [0, 1]
@@ -72,12 +78,8 @@ class CityProbability(BaseModel):
     confidence_interval_95: tuple[float, float]  # for 24-month probability
     median_wait_months: float  # > 0
     competing_risks: Optional[dict]
-    # competing_risks = {
-    #   "p_transplant": float,
-    #   "p_mortality": float,
-    #   "p_delisting": float,
-    #   "p_still_waiting": float
-    # }  ← all sum to 1.0
+    outcomes: Optional[dict]   # Post-transplant graft/patient survival
+    trends: Optional[dict]     # Historical wait-time trends
 ```
 
 ---
@@ -92,11 +94,8 @@ class SimulationResult(BaseModel):
     cities: list[CityProbability]  # ranked by p_transplant_24mo descending
     iterations: int
     elapsed_seconds: float
-    deterministic_scores: dict  # { city_name: float }
+    inference_mode: str  # "monte_carlo", "bayesian", or "mcmc"
 ```
-
-#### `deterministic_scores`
-Phase 1 suitability scores (0-100) for all 22 cities, computed in parallel with the Monte Carlo simulation. Useful for side-by-side comparison.
 
 ---
 
@@ -139,7 +138,8 @@ class ParameterImpact(BaseModel):
 ```python
 class SensitivityResult(BaseModel):
     patient: PatientProfile
-    city: str                       # City used for analysis
+    city: str                       # City or center used for analysis
+    center_code: str = ""           # SRTR center code (if center-level)
     impacts: list[ParameterImpact]  # Sorted by magnitude (largest first)
     iterations: int
     elapsed_seconds: float
@@ -155,6 +155,8 @@ Per-city equity metrics (part of EquityAnalysisResult).
 class CityEquity(BaseModel):
     city: str
     state: str
+    center_code: str = ""                  # SRTR center code
+    center_name: str = ""                  # Full center name
     gini_coefficient: float                # 0 = equality, 1 = total inequality
     p24_range: tuple[float, float]         # (min, max) p_transplant_24mo across profiles
     median_wait_range: tuple[float, float] # (min, max) median wait across profiles
@@ -172,7 +174,7 @@ class CityEquity(BaseModel):
 class EquityAnalysisResult(BaseModel):
     organ: str
     cities: list[CityEquity]       # Sorted by gini ascending (most equitable first)
-    overall_gini: float            # Gini across all profiles × all cities
+    overall_gini: float            # Gini across all profiles x all centers
     profiles_simulated: int        # Total demographic profiles (48)
     iterations_per_profile: int
     elapsed_seconds: float

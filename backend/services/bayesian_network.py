@@ -52,6 +52,44 @@ _CITY_STATES = {
     "Palo Alto": "CA",
 }
 
+# Inverted: state abbreviation → first BBN region in that state
+_STATE_TO_REGION = {}
+for _city, _st in _CITY_STATES.items():
+    _STATE_TO_REGION.setdefault(_st, _city)
+
+# Center code → BBN region cache (built lazily)
+_CENTER_REGION_MAP: dict[str, str] | None = None
+
+
+def _get_center_region_map() -> dict[str, str]:
+    """Build center_code -> BBN region (one of 22 cities) mapping."""
+    global _CENTER_REGION_MAP
+    if _CENTER_REGION_MAP is not None:
+        return _CENTER_REGION_MAP
+
+    from services.data_loader import get_data
+    data = get_data()
+
+    # 1) Direct mapping from srtr-center-mapping.json
+    mapping = data.center_mapping.get("cities", {})
+    code_to_region: dict[str, str] = {}
+    for city_name, info in mapping.items():
+        primary = info.get("primary", "")
+        if primary:
+            code_to_region[primary] = city_name
+        for alt in info.get("alternates", []):
+            code_to_region[alt] = city_name
+
+    # 2) State-based fallback for unmapped centers
+    all_centers = data.all_centers.get("centers", {})
+    for code, info in all_centers.items():
+        if code not in code_to_region:
+            st = info.get("state_abbr", "")
+            code_to_region[code] = _STATE_TO_REGION.get(st, "Nashville")
+
+    _CENTER_REGION_MAP = code_to_region
+    return code_to_region
+
 # ──────────────────────────────────────────────────────────────────────
 # DAG edges (19 edges, 12 nodes)
 # ──────────────────────────────────────────────────────────────────────
@@ -308,57 +346,68 @@ def _estimate_time_horizon_probs(wait_probs: list[float]) -> dict[str, float]:
 
 def simulate_bbn(patient: PatientProfile) -> SimulationResult:
     """
-    Run Bayesian Belief Network inference for all 22 cities.
+    Run Bayesian Belief Network inference for all SRTR centers
+    that perform the patient's organ.
 
-    Returns a SimulationResult with the same structure as Monte Carlo,
-    enabling direct comparison and seamless frontend rendering.
+    The BBN has 22 discrete regions. Each of the ~248 centers is mapped
+    to the nearest BBN region (via center-mapping or state match).
+    Centers sharing a region receive the same BBN probabilities but
+    different post-transplant outcomes (center-level data).
     """
     start = time.perf_counter()
 
     _, inference = build_model()
+    center_region_map = _get_center_region_map()
 
-    # Map patient profile to evidence state names
     organ = patient.organ
     blood_type = patient.blood_type
     age_group = age_to_group(patient.age)
     urgency = str(patient.urgency)
 
+    # Cache BBN results by region (many centers share a region)
+    region_cache: dict[str, dict] = {}
+
+    from services.monte_carlo import _get_centers
+    centers = _get_centers(organ)
+
     city_results: list[CityProbability] = []
 
-    for city in REGIONS:
-        state = _CITY_STATES.get(city, "")
+    for center in centers:
+        code = center.get("code", "")
+        name = center.get("name", center.get("city", ""))
+        state_full = center.get("state", center.get("state_abbr", ""))
+        lat = center.get("lat")
+        lon = center.get("lon")
 
-        # Run BBN inference for this city
-        query_result = _query_city(inference, organ, blood_type, age_group, urgency, city)
+        # Map center to BBN region
+        region = center_region_map.get(code, center.get("city", "Nashville"))
+        if region not in REGIONS:
+            region = "Nashville"  # safe default
 
-        # Extract competing outcome probabilities
+        # Run BBN inference (cached per region)
+        if region not in region_cache:
+            region_cache[region] = _query_city(inference, organ, blood_type, age_group, urgency, region)
+        query_result = region_cache[region]
+
         co_probs = query_result["competing_outcome"]
-        p_transplant_24 = co_probs[0]  # P(transplant wins at 24mo)
+        p_transplant_24 = co_probs[0]
         p_mortality_24 = co_probs[1]
         p_delisting_24 = co_probs[2]
         p_waiting_24 = co_probs[3]
 
-        # Estimate time-horizon probabilities from wait category distribution
         wait_probs = query_result["wait_category"]
-        # Scale by P(transplant wins) to get conditional transplant probabilities
         time_probs = _estimate_time_horizon_probs(wait_probs)
         p_6 = time_probs["p6"] * p_transplant_24 / max(time_probs["p24"], 0.01)
         p_12 = time_probs["p12"] * p_transplant_24 / max(time_probs["p24"], 0.01)
         p_24 = p_transplant_24
         p_36 = min(1.0, time_probs["p36"] * p_transplant_24 / max(time_probs["p24"], 0.01))
 
-        # Clamp to [0, 1] and ensure monotonicity
         p_6 = max(0.0, min(p_6, p_24))
         p_12 = max(p_6, min(p_12, p_24))
         p_36 = max(p_24, min(p_36, 1.0))
 
-        # Estimate median wait
         median_wait = _estimate_median_wait(wait_probs)
 
-        # Uncertainty band: BBN inference is deterministic (exact Variable Elimination),
-        # so this is NOT a sampling confidence interval. The ±10% band represents
-        # epistemic uncertainty from CPT discretization (continuous → tercile categories)
-        # and conditional independence assumptions. See issue #54.
         ci_half = max(0.03, p_24 * 0.10)
         ci_lo = max(0.0, p_24 - ci_half)
         ci_hi = min(1.0, p_24 + ci_half)
@@ -370,23 +419,26 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
             "p_still_waiting_24mo": round(p_waiting_24, 4),
         }
 
-        # Post-transplant outcomes (reuse existing service)
+        # Center-level outcomes
         outcomes_data = None
         try:
-            outcomes_data = build_outcomes_dict(patient.organ, city, p_24)
-        except (KeyError, FileNotFoundError, ValueError) as e:
-            logger.warning("Outcomes data unavailable for %s/%s: %s", patient.organ, city, e)
+            outcomes_data = build_outcomes_dict(patient.organ, city=name, p_transplant_24mo=p_24, center_code=code)
+        except (KeyError, FileNotFoundError, ValueError):
+            pass
 
-        # Historical trends (reuse existing service)
         trends_data = None
         try:
-            trends_data = get_city_trends(patient.organ, city)
-        except (KeyError, FileNotFoundError, ValueError) as e:
-            logger.warning("Trends data unavailable for %s/%s: %s", patient.organ, city, e)
+            trends_data = get_city_trends(patient.organ, region)
+        except (KeyError, FileNotFoundError, ValueError):
+            pass
 
         city_results.append(CityProbability(
-            city=city,
-            state=state,
+            city=name,
+            state=state_full,
+            center_code=code,
+            center_name=name,
+            lat=lat,
+            lon=lon,
             p_transplant_6mo=round(p_6, 4),
             p_transplant_12mo=round(p_12, 4),
             p_transplant_24mo=round(p_24, 4),
@@ -398,19 +450,18 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
             trends=trends_data,
         ))
 
-    # Rank by 24-month transplant probability, descending
     city_results.sort(key=lambda c: c.p_transplant_24mo, reverse=True)
 
     elapsed = time.perf_counter() - start
     logger.info(
-        "BBN inference complete: %s %s, %.3fs for %d cities",
-        patient.organ, patient.blood_type, elapsed, len(city_results),
+        "BBN inference complete: %s %s, %.3fs for %d centers (%d unique regions)",
+        patient.organ, patient.blood_type, elapsed, len(city_results), len(region_cache),
     )
 
     return SimulationResult(
         patient=patient,
         cities=city_results,
-        iterations=0,  # BBN is exact inference, not iterative
+        iterations=0,
         elapsed_seconds=round(elapsed, 3),
         inference_mode="bayesian",
     )

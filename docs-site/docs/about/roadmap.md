@@ -14,15 +14,17 @@ Phase 1 delivered a static site scoring 22 cities across 8 weighted categories u
 
 Phase 2 introduced Monte Carlo simulation and competing risks modeling. All 7 milestones are complete with 193 pytest tests providing coverage. The milestones progressed from the FastAPI backend scaffold (M1) through log-normal wait time distributions (M2), the Monte Carlo simulation engine (M3), the competing risks model (M4), the SRTR data pipeline for Excel PSR parsing (M5), frontend integration (M6), and validation and documentation (M7). M7 deliverables included Brier score retrospective validation (BS < 0.001 for all organs), sensitivity analysis with tornado charts, and this documentation site.
 
-## Phase 3: UI Overhaul and Advanced Features (In Progress)
+## Phase 3: Vercel Backend Deployment (Complete)
 
-Four of five milestones are complete. M1 added the Home Center dropdown for relocation comparison, with score and probability badges and a green map marker. M2 introduced the organ-specific cause-of-death donor multiplier using PMC10329409 recovery rates and CDC WONDER data. M3 added city detail modals (click any card for an 8-category breakdown) and side-by-side comparison of up to 3 cities with print view. M4 added demographic equity analysis with a 48-profile matrix, Gini coefficient, and 3 charts.
+The Python backend (FastAPI) is now deployed as a Vercel serverless function, making probabilistic simulation available to all visitors at transplant.today without running a local server. The deployment uses Vercel rewrites to route API paths to the Python function while serving static files via CDN. MCMC mode is gracefully disabled on Vercel (missing pymc dependency); Monte Carlo and Bayesian inference are fully available.
 
-M5 (UX Polish and Export) remains pending. The remaining work includes dark mode, URL sharing, PDF/CSV/JSON export, and sensitivity sliders.
+## Phase 4: All-Program Expansion (Complete)
 
-## Phase 4: Advanced Modeling
+The simulation engine now covers all 248 SRTR transplant centers (previously limited to 22 cities). Center-level data for wait-time factors, competing risks, and post-transplant outcomes was already available; Phase 4 rewired the services to use center codes instead of city names. All simulation parameters (iterations, copula theta, supply-wait elasticity) are now adjustable via API query params. The BBN and MCMC engines map 248 centers to 22 regions as an interim measure; full center-level BBN (#206) and MCMC (#207) are planned.
 
-Phase 4 will add configurable weights (user-adjustable category weights saved in the URL), a causal policy simulator (toggle allocation policy changes and see projected effects), real-time SRTR integration via direct API access when SRTR makes data available programmatically, and an IRB study in partnership with transplant centers for prospective validation. COD model data quality improvements (L-049 through L-056) are tracked under the M2b milestone.
+## Phase 5: Advanced Modeling
+
+Phase 5 will add real-time SRTR integration, IRB study partnerships, rebuild BBN with 248-center Region node (#206), refit MCMC with 248-center hierarchy (#207), and pursue prospective validation with transplant centers.
 
 ## Phase 5: FDA Clearance Path
 

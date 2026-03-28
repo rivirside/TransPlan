@@ -4,11 +4,21 @@
 
 ## What TransPlan Is
 
-A patient-facing clinical decision support tool that helps transplant patients identify the best US cities for their specific organ transplant needs. Currently a static site scoring 22 cities across 8 weighted categories using 40+ data points. On a path to become a probabilistic forecasting engine with Monte Carlo simulation, competing risks modeling, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
+A patient-facing clinical decision support tool that helps transplant patients identify the best US transplant centers for their specific organ needs. Deployed at transplant.today with a Python backend on Vercel. Covers all 248 SRTR centers with Monte Carlo simulation, Bayesian inference, competing risks modeling, equity analysis, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Phase 7 In Progress (UI Overhaul + Center Expansion)
+## Current State: Comprehensive Audit (#208) — Next Priority
 
-Phase 1-6B complete. **Phase 7 active:** UI overhaul (sidebar layout, landing page redesign, theme removal) + center expansion (248-center backend scoring). Three-tab results UI: Location Scores, Simulation Probabilities, Equity Analysis. Sidebar layout: form on left (340px sticky), results/map on right. Single-process architecture: FastAPI serves both API and static frontend on one port (no CORS needed). One-click launcher via `TransPlan.app` or `start.command`. Graceful degradation when backend unavailable (falls back to 22-city local scoring).
+Phase 1-7, Phase 3 (Vercel deploy), Phase 4 (248-center expansion) complete. **Next session:** address #208 (comprehensive audit of 33 issues across 10 categories). Priority order:
+
+1. **CRITICAL:** Wait time sorting bug in script.js:2910 — `parseFloat("1.8 years")` vs `parseFloat("3 months")` ignores units
+2. **HIGH:** Equity analysis infeasible at 248 centers (11.9M simulations/request → hours). Needs reduced defaults, async, or sampling.
+3. **HIGH:** BBN model has unjustified arbitrary values — 22-city selection undocumented, CPT magic numbers uncited, donor supply discretization assumed. Would not survive peer review.
+4. **HIGH:** Competing risks default to independent draws (should correlate); copula is optional and off by default.
+5. **MEDIUM:** CORS too permissive (any *.vercel.app), innerHTML XSS vectors, rate limit spoofable, bootstrap n=200 insufficient, Gini lacks validation, center data fallbacks inconsistent.
+
+Open model expansion issues: #206 (BBN 248-center Region node), #207 (MCMC 248-center hierarchy).
+
+**Phase 3 done:** Python backend deployed to Vercel as serverless function (api/index.py). Static files served by CDN, API paths routed via vercel.json rewrites. CORS configured for transplant.today and *.vercel.app. MCMC gracefully disabled on Vercel (missing pymc). **Phase 4 done:** Simulation engine expanded from 22 cities to all 248 SRTR centers. Center-level data (wait-time factors, competing risks, outcomes) wired into MC, BBN, and MCMC engines. All simulation parameters (iterations, copula_theta, elasticity) exposed as adjustable API query params. BBN/MCMC map 248 centers to 22 regions as interim; full expansion tracked in #206/#207. Frontend home-center dropdown dynamically loads all centers from API.
 
 **Phase 7 (March 2026):** UI overhaul — removed all 6 themes (themes.css, theme-switcher.js deleted), replaced with single polished light-mode design. System fonts (no Google Fonts dependency), 15px base font, soft radii, restored shadows. Simulator restructured: sidebar layout with form on left, results/map on right, methodology collapsed below results. Landing page redesigned: hero + feature card grid + 4-step flow + data trust badges + CTA. Nav simplified to Home | Simulator | Docs + dark mode toggle. Mobile hamburger menu added. Center expansion: `POST /score` endpoint scores all 248 SRTR centers using center-level data + spatial RBF interpolation. Frontend calls backend scoring API with 22-city local fallback. 19 new pytest tests. 224 Jest + 613+ pytest.
 

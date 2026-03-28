@@ -73,6 +73,17 @@ class TransPlanData:
             return []
         return [{"city": city, "state": info["state"]} for city, info in mapping.items()]
 
+    def centers_for_organ(self, organ: str) -> list[dict]:
+        """Return centers that perform *organ*, sorted by code.
+
+        Each dict has: code, name, state, state_abbr, lat, lon.
+        """
+        all_c = self.all_centers.get("centers", {})
+        return sorted(
+            [info for info in all_c.values() if organ in info.get("organs", [])],
+            key=lambda c: c.get("code", ""),
+        )
+
     @property
     def state_full_names(self) -> dict[str, str]:
         """

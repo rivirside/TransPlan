@@ -90,12 +90,13 @@ def _age_sex_multiplier(organ: str, age: int | None, sex: str | None) -> float:
 def get_wait_time_distribution(
     organ: str,
     blood_type: str,
-    city: str,
+    city: str = "",
     cpra: int | None = None,
     meld: int | None = None,
     las: float | None = None,
     age: int | None = None,
     sex: str | None = None,
+    center_code: str = "",
 ) -> scipy.stats.rv_continuous:
     """
     Return a log-normal distribution for wait time in months.
@@ -142,8 +143,13 @@ def get_wait_time_distribution(
     # Blood type modifier
     bt_mult = organ_params.get("blood_type_multipliers", {}).get(blood_type, 1.0)
 
-    # City modifier
-    city_mult = _CITY_FACTORS.get(city, 1.0)
+    # Location modifier — prefer center-code lookup, fall back to city name
+    if center_code:
+        from services.data_loader import get_data
+        center_factors = get_data().center_wait_times.get("center_wait_time_factors", {})
+        city_mult = center_factors.get(center_code, {}).get(organ, 1.0)
+    else:
+        city_mult = _CITY_FACTORS.get(city, 1.0)
 
     # Organ-specific clinical modifiers
     clinical_mult = 1.0
