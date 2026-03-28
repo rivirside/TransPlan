@@ -43,6 +43,15 @@
               '<a href="advocacy.html" class="nav-dropdown-item" role="menuitem">Give Back</a>' +
             '</div>' +
           '</div>' +
+          '<div class="nav-dropdown">' +
+            '<button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Analysis <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>' +
+            '<div class="nav-dropdown-menu" role="menu">' +
+              '<a href="equity.html" class="nav-dropdown-item" role="menuitem">Equity Analysis</a>' +
+              '<a href="sensitivity.html" class="nav-dropdown-item" role="menuitem">Sensitivity</a>' +
+              '<a href="scenarios.html" class="nav-dropdown-item" role="menuitem">Scenarios</a>' +
+              '<a href="spatial.html" class="nav-dropdown-item" role="menuitem">Spatial</a>' +
+            '</div>' +
+          '</div>' +
           '<a href="data.html" class="nav-link">Data</a>' +
           '<a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>' +
         '</div>' +
