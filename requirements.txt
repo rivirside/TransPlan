@@ -14,7 +14,5 @@ httpx>=0.27.0
 numpy>=1.26.0
 scipy>=1.13.0
 
-# Bayesian belief network inference (bbn_lite replaces pgmpy to avoid
-# pgmpy's 9.7GB torch dependency — see backend/services/bbn_lite.py)
-# Data manipulation (pandas used by data_loader, spatial, equity)
-pandas>=2.2.0
+# BBN inference: bbn_lite.py (replaces pgmpy to avoid 9.7GB torch dep)
+# pandas: NOT needed at runtime — only used in notebooks/scripts
