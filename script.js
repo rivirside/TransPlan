@@ -538,6 +538,169 @@ if (typeof window !== 'undefined') {
     };
 }
 
+// ── Tier Config ──
+var _tierConfig = null;
+
+function fetchTierConfig() {
+    var apiBase = window.TransPlanAPI ? window.TransPlanAPI.getBaseUrl() : '';
+    return fetch(apiBase + '/tier')
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) {
+            _tierConfig = data || _defaultWebTier();
+            _applyTierCaps();
+        })
+        .catch(function() {
+            _tierConfig = _defaultWebTier();
+            _applyTierCaps();
+        });
+}
+
+function _defaultWebTier() {
+    return {
+        name: 'web',
+        caps: {
+            max_iterations: 1000,
+            allowed_inference_modes: ['monte_carlo', 'bayesian'],
+            allowed_bbn_granularity: ['classic', 'state'],
+            copula_theta_locked: true,
+            elasticity_locked: true,
+            max_equity_centers: 30,
+            max_equity_iterations: 200,
+            max_sensitivity_iterations: 500,
+            max_whatif_iterations: 500,
+            max_spatial_resolution: 30
+        }
+    };
+}
+
+function _applyTierCaps() {
+    if (!_tierConfig) return;
+    var caps = _tierConfig.caps;
+    var badge = document.getElementById('tierBadge');
+    if (badge) {
+        badge.textContent = _tierConfig.name === 'local' ? 'Local' : 'Web';
+        badge.className = 'tier-badge tier-' + _tierConfig.name;
+    }
+    // Iterations slider
+    _capSlider('iterationsSlider', 'iterationsValue', caps.max_iterations);
+    // BBN granularity dropdown
+    _capSelect('bbnGranularity', caps.allowed_bbn_granularity);
+    // Copula theta
+    _lockControl('copulaThetaRow', caps.copula_theta_locked);
+    // Elasticity
+    _lockControl('elasticityRow', caps.elasticity_locked);
+    // Equity
+    _capSlider('equityCentersSlider', 'equityCentersValue', caps.max_equity_centers);
+    _capSlider('equityIterSlider', 'equityIterValue', caps.max_equity_iterations);
+}
+
+function _capSlider(sliderId, valueId, maxVal) {
+    var slider = document.getElementById(sliderId);
+    if (!slider) return;
+    slider.max = maxVal;
+    if (parseInt(slider.value) > maxVal) slider.value = maxVal;
+    var valueEl = document.getElementById(valueId);
+    if (valueEl) valueEl.textContent = slider.value;
+}
+
+function _capSelect(selectId, allowedValues) {
+    var sel = document.getElementById(selectId);
+    if (!sel) return;
+    Array.from(sel.options).forEach(function(opt) {
+        if (allowedValues.indexOf(opt.value) === -1) {
+            opt.disabled = true;
+            if (opt.textContent.indexOf('(local only)') === -1) {
+                opt.textContent += ' (local only)';
+            }
+        } else {
+            opt.disabled = false;
+        }
+    });
+    // If current value is not allowed, switch to last allowed
+    if (allowedValues.indexOf(sel.value) === -1) {
+        sel.value = allowedValues[allowedValues.length - 1];
+    }
+}
+
+function _lockControl(rowId, locked) {
+    var row = document.getElementById(rowId);
+    if (!row) return;
+    if (locked) {
+        row.classList.add('tier-locked');
+    } else {
+        row.classList.remove('tier-locked');
+    }
+}
+
+// Wire slider value displays
+function _initAdvancedSliders() {
+    var sliders = [
+        ['iterationsSlider', 'iterationsValue', ''],
+        ['copulaThetaSlider', 'copulaThetaValue', ''],
+        ['elasticitySlider', 'elasticityValue', ''],
+        ['donorMultSlider', 'donorMultValue', 'x'],
+        ['waitMultSlider', 'waitMultValue', 'x'],
+        ['equityCentersSlider', 'equityCentersValue', ''],
+        ['equityIterSlider', 'equityIterValue', '']
+    ];
+    sliders.forEach(function(s) {
+        var slider = document.getElementById(s[0]);
+        var display = document.getElementById(s[1]);
+        if (slider && display) {
+            slider.addEventListener('input', function() {
+                display.textContent = this.value + s[2];
+            });
+        }
+    });
+    // Show/hide BBN granularity row based on inference mode
+    var inferenceSelect = document.getElementById('inferenceMode');
+    if (inferenceSelect) {
+        inferenceSelect.addEventListener('change', function() {
+            var bbnRow = document.getElementById('bbnGranularityRow');
+            if (bbnRow) {
+                bbnRow.style.display = this.value === 'bayesian' ? '' : 'none';
+            }
+        });
+    }
+}
+
+// Collect advanced simulation params from the panel
+function _getAdvancedParams() {
+    var params = {};
+    var iterSlider = document.getElementById('iterationsSlider');
+    if (iterSlider) params.iterations = parseInt(iterSlider.value);
+
+    var bbnRow = document.getElementById('bbnGranularityRow');
+    var bbnSelect = document.getElementById('bbnGranularity');
+    if (bbnSelect && bbnRow && bbnRow.style.display !== 'none') {
+        params.bbn_granularity = bbnSelect.value;
+    }
+
+    if (!_tierConfig || !_tierConfig.caps.copula_theta_locked) {
+        var thetaSlider = document.getElementById('copulaThetaSlider');
+        if (thetaSlider) params.copula_theta = parseFloat(thetaSlider.value);
+    }
+
+    if (!_tierConfig || !_tierConfig.caps.elasticity_locked) {
+        var elastSlider = document.getElementById('elasticitySlider');
+        if (elastSlider) params.elasticity = parseFloat(elastSlider.value);
+    }
+
+    var donorSlider = document.getElementById('donorMultSlider');
+    if (donorSlider) params.donor_rate_multiplier = parseFloat(donorSlider.value);
+
+    var waitSlider = document.getElementById('waitMultSlider');
+    if (waitSlider) params.wait_time_multiplier = parseFloat(waitSlider.value);
+
+    var eqCentersSlider = document.getElementById('equityCentersSlider');
+    if (eqCentersSlider) params.max_equity_centers = parseInt(eqCentersSlider.value);
+
+    var eqIterSlider = document.getElementById('equityIterSlider');
+    if (eqIterSlider) params.equity_iterations = parseInt(eqIterSlider.value);
+
+    return params;
+}
+
 // Map layers
 let map;
 let trafficHeatLayer;
@@ -2187,13 +2350,17 @@ document.getElementById('transplantForm').addEventListener('submit', async funct
     await calculateResults(formData);
 
     // Phase 2: Call backend for simulation (Monte Carlo or Bayesian)
+    var advancedParams = typeof _getAdvancedParams === 'function' ? _getAdvancedParams() : {};
     let simResult = null;
     let equityResult = null;
     if (window.TransPlanAPI) {
-        simResult = await window.TransPlanAPI.simulate(formData, formData.inferenceMode);
+        simResult = await window.TransPlanAPI.simulate(formData, formData.inferenceMode, advancedParams);
         // M4: Run equity analysis in parallel with the spinner still visible
         if (simResult) {
-            equityResult = await window.TransPlanAPI.equityAnalysis(formData);
+            equityResult = await window.TransPlanAPI.equityAnalysis(
+                formData,
+                advancedParams.equity_iterations || undefined
+            );
         }
     }
 
@@ -4482,6 +4649,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // #204: Results table sort handlers
     _initTableSortHandlers();
+
+    // Tier system: fetch caps and wire advanced sliders
+    fetchTierConfig();
+    _initAdvancedSliders();
 
     // Wire weight slider re-scoring (Phase 4 M1)
     // When weights change, re-calculate Phase 1 scores instantly (no backend call)

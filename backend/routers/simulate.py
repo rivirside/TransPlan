@@ -24,6 +24,18 @@ def run_simulation(
     bbn_granularity: str = Query(default="state", description="BBN region granularity: 'classic' (22), 'state' (~50), 'full' (248)"),
 ) -> SimulationResult:
     try:
+        from tier_config import get_tier
+        tier = get_tier()
+        if iterations is not None and iterations > tier.max_iterations:
+            iterations = tier.max_iterations
+        if inference_mode not in tier.allowed_inference_modes:
+            raise HTTPException(400, f"Inference mode '{inference_mode}' not available in {tier.name} tier")
+        if bbn_granularity not in tier.allowed_bbn_granularity:
+            bbn_granularity = tier.allowed_bbn_granularity[-1]
+        if tier.copula_theta_locked:
+            copula_theta = None
+        if tier.elasticity_locked:
+            elasticity = None
         if inference_mode == "bayesian":
             try:
                 from services.bayesian_network import simulate_bbn

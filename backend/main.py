@@ -26,7 +26,7 @@ from starlette.staticfiles import StaticFiles
 from starlette.types import Scope
 
 from config import ALLOWED_ORIGINS, DATA_DIR, VERSION
-from routers import centers, equity, health, score, sensitivity, shutdown, simulate, spatial, trends, what_if
+from routers import centers, equity, health, score, sensitivity, shutdown, simulate, spatial, tier, trends, what_if
 from routers.api_v1 import include_v1_routers
 from services.data_loader import load_all
 
@@ -97,6 +97,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 
 app.include_router(health.router, tags=["ops"])
+app.include_router(tier.router, tags=["ops"])
 if not os.environ.get("VERCEL"):
     app.include_router(shutdown.router, tags=["ops"])
 app.include_router(simulate.router, tags=["simulation"])

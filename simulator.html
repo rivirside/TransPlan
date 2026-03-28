@@ -167,6 +167,61 @@
                         </div>
                     </fieldset>
 
+                    <details class="advanced-settings" id="advancedSettings">
+                        <summary>Advanced Simulation Settings <span class="tier-badge" id="tierBadge">Web</span></summary>
+
+                        <div class="settings-group">
+                            <h4>Simulation Quality</h4>
+                            <label class="setting-row">
+                                <span class="setting-label">Iterations <span class="setting-value" id="iterationsValue">1000</span></span>
+                                <input type="range" id="iterationsSlider" min="100" max="10000" value="1000" step="100" class="setting-slider">
+                            </label>
+
+                            <label class="setting-row" id="bbnGranularityRow" style="display:none">
+                                <span class="setting-label">BBN Region Granularity</span>
+                                <select id="bbnGranularity" class="setting-select">
+                                    <option value="classic">Classic (22 cities)</option>
+                                    <option value="state" selected>State (~50 groups)</option>
+                                    <option value="full">Full (248 centers)</option>
+                                </select>
+                            </label>
+
+                            <label class="setting-row" id="copulaThetaRow">
+                                <span class="setting-label">Copula Strength (&theta;) <span class="setting-value" id="copulaThetaValue">1.0</span></span>
+                                <input type="range" id="copulaThetaSlider" min="0.1" max="5.0" value="1.0" step="0.1" class="setting-slider">
+                            </label>
+
+                            <label class="setting-row" id="elasticityRow">
+                                <span class="setting-label">Supply-Wait Elasticity <span class="setting-value" id="elasticityValue">0.65</span></span>
+                                <input type="range" id="elasticitySlider" min="0.1" max="1.0" value="0.65" step="0.05" class="setting-slider">
+                            </label>
+                        </div>
+
+                        <div class="settings-group">
+                            <h4>What-If Multipliers</h4>
+                            <label class="setting-row">
+                                <span class="setting-label">Donor Rate <span class="setting-value" id="donorMultValue">1.0x</span></span>
+                                <input type="range" id="donorMultSlider" min="0.5" max="2.0" value="1.0" step="0.1" class="setting-slider">
+                            </label>
+                            <label class="setting-row">
+                                <span class="setting-label">Wait Time <span class="setting-value" id="waitMultValue">1.0x</span></span>
+                                <input type="range" id="waitMultSlider" min="0.5" max="2.0" value="1.0" step="0.1" class="setting-slider">
+                            </label>
+                        </div>
+
+                        <div class="settings-group">
+                            <h4>Equity Analysis</h4>
+                            <label class="setting-row">
+                                <span class="setting-label">Max Centers <span class="setting-value" id="equityCentersValue">30</span></span>
+                                <input type="range" id="equityCentersSlider" min="5" max="248" value="30" step="5" class="setting-slider">
+                            </label>
+                            <label class="setting-row">
+                                <span class="setting-label">Iterations/Profile <span class="setting-value" id="equityIterValue">200</span></span>
+                                <input type="range" id="equityIterSlider" min="50" max="5000" value="200" step="50" class="setting-slider">
+                            </label>
+                        </div>
+                    </details>
+
                     <fieldset>
                         <legend>Scoring Weights</legend>
                         <div class="weights-controls">

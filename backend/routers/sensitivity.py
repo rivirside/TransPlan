@@ -27,8 +27,11 @@ class SensitivityRequest(BaseModel):
 @router.post("/sensitivity", response_model=SensitivityResult)
 def run_sensitivity(request: SensitivityRequest) -> SensitivityResult:
     try:
+        from tier_config import get_tier
+        tier = get_tier()
+        iterations = min(request.iterations, tier.max_sensitivity_iterations)
         return compute_sensitivity(
-            request.patient, request.city, request.iterations,
+            request.patient, request.city, iterations,
             center_code=request.center_code,
         )
     except ValueError as e:

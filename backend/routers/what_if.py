@@ -54,12 +54,15 @@ class WhatIfRequest(BaseModel):
 @router.post("/what-if", response_model=WhatIfResult)
 def run_what_if(request: WhatIfRequest) -> WhatIfResult:
     try:
+        from tier_config import get_tier
+        tier = get_tier()
+        iterations = min(request.iterations, tier.max_whatif_iterations)
         return compute_what_if(
             patient=request.patient,
             city=request.city,
             donor_rate_multiplier=request.donor_rate_multiplier,
             wait_time_multiplier=request.wait_time_multiplier,
-            n_iterations=request.iterations,
+            n_iterations=iterations,
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
@@ -141,13 +144,18 @@ def run_policy_scenario(request: PolicyScenarioRequest) -> PolicyScenarioResult:
     # Get effective multipliers for this city
     donor_mult, wait_mult = get_city_multipliers(scenario, request.city)
 
+    # Clamp iterations to tier cap
+    from tier_config import get_tier
+    tier = get_tier()
+    iterations = min(request.iterations, tier.max_whatif_iterations)
+
     # Run the what-if engine with scenario-derived multipliers
     result = compute_what_if(
         patient=request.patient,
         city=request.city,
         donor_rate_multiplier=donor_mult,
         wait_time_multiplier=wait_mult,
-        n_iterations=request.iterations,
+        n_iterations=iterations,
     )
 
     return PolicyScenarioResult(
@@ -227,6 +235,11 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
 
     from services.monte_carlo import _get_cities
 
+    # Clamp iterations to tier cap
+    from tier_config import get_tier
+    tier = get_tier()
+    clamped_iterations = min(request.iterations, tier.max_whatif_iterations)
+
     # Determine which cities to analyze
     all_cities = _get_cities()
     if request.cities:
@@ -257,7 +270,7 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
                     city=city,
                     donor_rate_multiplier=donor_mult,
                     wait_time_multiplier=wait_mult,
-                    n_iterations=request.iterations,
+                    n_iterations=clamped_iterations,
                 )
                 city_results.append(TravelSubsidyCityResult(
                     city=result.city,
@@ -304,7 +317,7 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
         organ=request.patient.organ,
         tiers=tiers,
         total_cities=len(city_list),
-        iterations_per_city=request.iterations,
+        iterations_per_city=clamped_iterations,
         elapsed_seconds=round(elapsed, 3),
         disclaimers=[
             "This is a demand-side accessibility model. It estimates how "

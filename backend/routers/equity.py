@@ -27,10 +27,14 @@ class EquityAnalysisRequest(BaseModel):
 def run_equity_analysis(request: EquityAnalysisRequest) -> EquityAnalysisResult:
     """Run equity analysis across demographic profiles for all 22 cities."""
     try:
+        from tier_config import get_tier
+        tier = get_tier()
+        iterations = min(request.iterations_per_profile, tier.max_equity_iterations)
+        centers = min(request.max_centers, tier.max_equity_centers)
         return compute_equity_analysis(
             request.patient,
-            n_iterations=request.iterations_per_profile,
-            max_centers=request.max_centers,
+            n_iterations=iterations,
+            max_centers=centers,
         )
     except Exception as e:
         logger.exception("Equity analysis failed for %s", request.patient.organ)

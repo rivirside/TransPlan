@@ -73,19 +73,36 @@
    * Call POST /simulate on the backend.
    * @param {Object} formData - Raw form data from the frontend
    * @param {string} [inferenceMode] - 'monte_carlo' (default) or 'bayesian'
+   * @param {Object} [advancedParams] - Optional advanced params from tier panel
    * @returns {Promise<Object|null>} SimulationResult or null on failure
    */
-  async function simulate(formData, inferenceMode) {
+  async function simulate(formData, inferenceMode, advancedParams) {
     var base = getBaseUrl();
     var controller = new AbortController();
     var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
 
     try {
       var body = normalizeFormData(formData);
-      var url = base + '/simulate';
+      var qp = [];
       if (inferenceMode && inferenceMode !== 'monte_carlo') {
-        url += '?inference_mode=' + encodeURIComponent(inferenceMode);
+        qp.push('inference_mode=' + encodeURIComponent(inferenceMode));
       }
+      // Append advanced params as query parameters
+      if (advancedParams) {
+        if (advancedParams.iterations && advancedParams.iterations !== 1000) {
+          qp.push('iterations=' + advancedParams.iterations);
+        }
+        if (advancedParams.bbn_granularity) {
+          qp.push('bbn_granularity=' + encodeURIComponent(advancedParams.bbn_granularity));
+        }
+        if (advancedParams.copula_theta !== undefined) {
+          qp.push('copula_theta=' + advancedParams.copula_theta);
+        }
+        if (advancedParams.elasticity !== undefined) {
+          qp.push('elasticity=' + advancedParams.elasticity);
+        }
+      }
+      var url = base + '/simulate' + (qp.length ? '?' + qp.join('&') : '');
       var response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -449,6 +466,7 @@
     travelSubsidyAnalysis: travelSubsidyAnalysis,
     isBackendAvailable: isBackendAvailable,
     normalizeFormData: normalizeFormData,
-    fetchCenters: fetchCenters
+    fetchCenters: fetchCenters,
+    getBaseUrl: getBaseUrl
   };
 })();

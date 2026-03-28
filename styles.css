@@ -6391,3 +6391,184 @@ body {
 [data-dark="true"] .disclaimer-content strong {
   color: #d99d77;
 }
+
+/* ===================================================================
+   Advanced Simulation Settings (Tier System)
+   =================================================================== */
+.advanced-settings {
+  margin-top: var(--space-3);
+  border: 1px solid var(--border, #e8e4dc);
+  border-radius: var(--radius-xs);
+  padding: 0;
+  background: var(--surface, #fff);
+}
+
+.advanced-settings summary {
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  color: var(--text-2, #5a5448);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  user-select: none;
+}
+
+.advanced-settings summary:hover {
+  color: var(--color-primary-700, #7d4b2d);
+}
+
+.advanced-settings[open] summary {
+  border-bottom: 1px solid var(--border, #e8e4dc);
+}
+
+.settings-group {
+  padding: var(--space-3) var(--space-4);
+}
+
+.settings-group + .settings-group {
+  border-top: 1px solid var(--border, #e8e4dc);
+}
+
+.settings-group h4 {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted, #a8a198);
+  margin: 0 0 var(--space-2) 0;
+  font-weight: 600;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  font-size: var(--fs-sm);
+  cursor: default;
+}
+
+.setting-label {
+  flex: 0 0 auto;
+  min-width: 140px;
+  color: var(--text-2);
+}
+
+.setting-value {
+  font-weight: 600;
+  color: var(--color-primary, #c97c4a);
+}
+
+.setting-slider {
+  flex: 1;
+  min-width: 80px;
+  accent-color: var(--color-primary, #c97c4a);
+}
+
+.setting-select {
+  flex: 1;
+  min-width: 80px;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border, #e8e4dc);
+  border-radius: var(--radius-xs);
+  font-size: var(--fs-sm);
+  font-family: var(--font);
+  background: var(--surface, #fff);
+  color: var(--text-2);
+}
+
+/* Tier badge */
+.tier-badge {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-xs);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+}
+
+.tier-badge.tier-web {
+  background: var(--neutral-200, #e8e4dc);
+  color: var(--text-2, #5a5448);
+}
+
+.tier-badge.tier-local {
+  background: #d4edda;
+  color: #155724;
+}
+
+/* Tier-locked controls */
+.tier-locked {
+  opacity: 0.45;
+  position: relative;
+}
+
+.tier-locked .setting-slider,
+.tier-locked .setting-select {
+  pointer-events: none;
+}
+
+.tier-locked::after {
+  content: 'Local only';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.65rem;
+  color: var(--text-muted, #a8a198);
+  font-style: italic;
+}
+
+/* Dark mode — Advanced Settings */
+[data-dark="true"] .advanced-settings {
+  background: var(--surface, #2a2520);
+  border-color: var(--border, #3a3430);
+}
+
+[data-dark="true"] .advanced-settings summary {
+  color: var(--text-2, #b0a99e);
+}
+
+[data-dark="true"] .advanced-settings[open] summary {
+  border-bottom-color: var(--border, #3a3430);
+}
+
+[data-dark="true"] .settings-group + .settings-group {
+  border-top-color: var(--border, #3a3430);
+}
+
+[data-dark="true"] .settings-group h4 {
+  color: var(--text-muted, #7a7468);
+}
+
+[data-dark="true"] .setting-label {
+  color: var(--text-2, #b0a99e);
+}
+
+[data-dark="true"] .setting-value {
+  color: var(--color-primary-300, #e4ad82);
+}
+
+[data-dark="true"] .setting-select {
+  background: var(--neutral-800, #2a2520);
+  border-color: var(--border, #3a3430);
+  color: var(--text-2, #b0a99e);
+}
+
+[data-dark="true"] .tier-badge.tier-web {
+  background: var(--neutral-700, #3d3832);
+  color: var(--text-3, #7a7468);
+}
+
+[data-dark="true"] .tier-badge.tier-local {
+  background: #1a3a1a;
+  color: #8fdf8f;
+}
+
+[data-dark="true"] .tier-locked::after {
+  color: var(--text-muted, #7a7468);
+}
