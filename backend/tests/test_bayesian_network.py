@@ -119,30 +119,29 @@ def test_build_state_names_dynamic():
 
 
 def test_build_model_classic_succeeds():
-    model, inference = build_model("classic")
+    model = build_model("classic")
     assert model is not None
-    assert inference is not None
 
 
-def test_model_classic_passes_pgmpy_check():
-    model, _ = build_model("classic")
+def test_model_classic_passes_check():
+    model = build_model("classic")
     assert model.check_model()
 
 
 def test_model_classic_has_correct_node_count():
-    model, _ = build_model("classic")
+    model = build_model("classic")
     assert len(model.nodes()) == 12
 
 
 def test_model_classic_has_correct_edge_count():
-    model, _ = build_model("classic")
-    assert len(model.edges()) == 21
+    model = build_model("classic")
+    assert len(model.edges) == 21
 
 
 def test_build_model_caches():
     """Second call returns same object (cache hit)."""
-    m1, _ = build_model("classic")
-    m2, _ = build_model("classic")
+    m1 = build_model("classic")
+    m2 = build_model("classic")
     assert m1 is m2
 
 
@@ -327,14 +326,14 @@ def test_simulate_bbn_full_granularity():
 
 
 def test_build_model_state_granularity():
-    model, inference = build_model("state")
+    model = build_model("state")
     assert model is not None
     assert model.check_model()
     assert len(model.nodes()) == 12
 
 
 def test_build_model_full_granularity():
-    model, inference = build_model("full")
+    model = build_model("full")
     assert model is not None
     assert model.check_model()
     assert len(model.nodes()) == 12
@@ -354,8 +353,8 @@ def test_get_regions_state_more_than_classic():
 
 def test_granularity_models_cached_independently():
     """Each granularity gets its own cached model."""
-    m_classic, _ = build_model("classic")
-    m_state, _ = build_model("state")
+    m_classic = build_model("classic")
+    m_state = build_model("state")
     assert m_classic is not m_state
 
 

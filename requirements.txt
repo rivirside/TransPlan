@@ -10,8 +10,8 @@ httpx>=0.27.0
 numpy>=1.26.0
 scipy>=1.13.0
 
-# Bayesian belief network inference (pgmpy requires pandas + networkx)
-pgmpy>=0.1.25
+# Bayesian belief network inference (bbn_lite replaces pgmpy to avoid
+# pgmpy's 9.7GB torch dependency — see backend/services/bbn_lite.py)
 pandas>=2.2.0
 
 # Survival analysis (post-transplant outcomes)

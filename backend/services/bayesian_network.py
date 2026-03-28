@@ -19,11 +19,9 @@ import logging
 import time
 
 import numpy as np
-from pgmpy.factors.discrete import TabularCPD
-from pgmpy.inference import VariableElimination
-from pgmpy.models import DiscreteBayesianNetwork as PgmpyBN
 
 from models.schemas import CityProbability, PatientProfile, SimulationResult
+from services.bbn_lite import BayesianNet, Factor, variable_elimination
 from services.bbn_parameterizer import (
     AGE_GROUPS,
     BLOOD_TYPES,
@@ -208,54 +206,29 @@ def _build_state_names(regions: list[str]) -> dict[str, list[str]]:
 # Cached BBN models — keyed by granularity level
 # ──────────────────────────────────────────────────────────────────────
 
-_MODEL_CACHE: dict[str, tuple[PgmpyBN, VariableElimination, list[str]]] = {}
+_MODEL_CACHE: dict[str, tuple[BayesianNet, list[str]]] = {}
 
 
-def _build_cpd(
+def _build_factor(
     name: str,
     cpt: np.ndarray,
     parents: list[str],
     node_cards: dict[str, int],
-    node_state_names: dict[str, list[str]],
-) -> TabularCPD:
+) -> Factor:
     """
-    Construct a pgmpy TabularCPD from our numpy CPT array.
+    Construct a bbn_lite Factor from our numpy CPT array.
 
-    For a node with k states and parents with cardinalities [c1, c2, ...],
-    pgmpy expects a (k, c1*c2*...) 2D array where columns enumerate
-    all parent state combinations in row-major order.
+    Our CPT arrays have shape (node_card, parent1_card, parent2_card, ...).
+    Factor expects variables=[node, parent1, parent2, ...] with matching
+    cardinalities.
     """
-    card = node_cards[name]
-    state_names = {name: node_state_names[name]}
-
     if not parents:
         # Root node — 1D prior
-        values = cpt.reshape(card, 1)
-        return TabularCPD(
-            variable=name,
-            variable_card=card,
-            values=values,
-            state_names=state_names,
-        )
+        return Factor([name], [node_cards[name]], cpt.flatten())
 
-    parent_cards = [node_cards[p] for p in parents]
-    for p in parents:
-        state_names[p] = node_state_names[p]
-
-    # Reshape CPT to 2D: (node_card, product_of_parent_cards)
-    # Our CPT arrays have shape (node_card, parent1_card, parent2_card, ...)
-    # pgmpy wants (node_card, parent1_card * parent2_card * ...) in C-order
-    total_parent_configs = int(np.prod(parent_cards))
-    values = cpt.reshape(card, total_parent_configs)
-
-    return TabularCPD(
-        variable=name,
-        variable_card=card,
-        values=values,
-        evidence=parents,
-        evidence_card=parent_cards,
-        state_names=state_names,
-    )
+    variables = [name] + parents
+    cardinalities = [node_cards[v] for v in variables]
+    return Factor(variables, cardinalities, cpt)
 
 
 def _get_parents(node: str) -> list[str]:
@@ -263,38 +236,34 @@ def _get_parents(node: str) -> list[str]:
     return [src for src, dst in DAG_EDGES if dst == node]
 
 
-def build_model(granularity: str = "state") -> tuple[PgmpyBN, VariableElimination]:
+def build_model(granularity: str = "state") -> BayesianNet:
     """
-    Construct the pgmpy BayesianNetwork and VariableElimination engine.
+    Construct the BayesianNet with CPDs.
 
     Cached per granularity level ("classic", "state", "full").
-    Returns (model, inference_engine).
+    Returns the BayesianNet model (inference is done via variable_elimination()).
     """
     if granularity in _MODEL_CACHE:
-        model, inference, _ = _MODEL_CACHE[granularity]
-        return model, inference
+        model, _ = _MODEL_CACHE[granularity]
+        return model
 
     start = time.perf_counter()
 
     # Get regions for this granularity level
     regions = get_regions(granularity)
     node_cards = _build_node_cardinalities(regions)
-    node_state_names = _build_state_names(regions)
 
     # Build CPTs from data for this granularity
     cpts = build_all_cpts(granularity)
 
-    # Construct pgmpy model
-    model = PgmpyBN(DAG_EDGES)
+    # Construct lightweight model
+    model = BayesianNet(DAG_EDGES)
 
     # Add CPDs
-    cpd_list = []
     for name, cpt_array in cpts.items():
         parents = _get_parents(name)
-        cpd = _build_cpd(name, cpt_array, parents, node_cards, node_state_names)
-        cpd_list.append(cpd)
-
-    model.add_cpds(*cpd_list)
+        factor = _build_factor(name, cpt_array, parents, node_cards)
+        model.add_cpd(name, factor)
 
     # Validate
     if not model.check_model():
@@ -303,16 +272,14 @@ def build_model(granularity: str = "state") -> tuple[PgmpyBN, VariableEliminatio
             f"— CPDs are inconsistent with DAG"
         )
 
-    inference = VariableElimination(model)
-
     elapsed = time.perf_counter() - start
     logger.info(
         "BBN model built in %.3fs (granularity=%s, %d regions): %d nodes, %d edges",
-        elapsed, granularity, len(regions), len(model.nodes()), len(model.edges()),
+        elapsed, granularity, len(regions), len(model.nodes()), len(model.edges),
     )
 
-    _MODEL_CACHE[granularity] = (model, inference, regions)
-    return model, inference
+    _MODEL_CACHE[granularity] = (model, regions)
+    return model
 
 
 def reset_model() -> None:
@@ -325,13 +292,14 @@ def reset_model() -> None:
 # ──────────────────────────────────────────────────────────────────────
 
 def _query_city(
-    inference: VariableElimination,
+    model: BayesianNet,
     organ: str,
     blood_type: str,
     age_group: str,
     urgency: str,
     city: str,
     regions: list[str] | None = None,
+    node_state_names: dict[str, list[str]] | None = None,
 ) -> dict:
     """
     Query the BBN for a single city (region).
@@ -342,6 +310,9 @@ def _query_city(
         Valid region names for this model's granularity. If provided, the
         *city* argument is validated against this list. Falls back to the
         legacy REGIONS constant when None.
+    node_state_names : dict[str, list[str]] | None
+        Mapping from node name to state name list, used to convert
+        string evidence values to integer indices.
 
     Returns dict with:
       - competing_outcome: P(transplant|mortality|delisting|still_waiting)
@@ -354,31 +325,32 @@ def _query_city(
         # Fallback: first region in list (safe default)
         city = valid_regions[0]
 
+    # Use module-level state names as fallback
+    state_names = node_state_names if node_state_names is not None else NODE_STATE_NAMES
+
+    # Convert string evidence to integer indices
     evidence = {
-        "Organ": organ,
-        "BloodType": blood_type,
-        "AgeGroup": age_group,
-        "Urgency": urgency,
-        "Region": city,
+        "Organ": state_names["Organ"].index(organ),
+        "BloodType": state_names["BloodType"].index(blood_type),
+        "AgeGroup": state_names["AgeGroup"].index(age_group),
+        "Urgency": state_names["Urgency"].index(urgency),
+        "Region": state_names["Region"].index(city),
     }
 
+    # Query each outcome node independently (matches pgmpy behavior)
     results = {}
 
-    # Query CompetingOutcome
-    co_result = inference.query(["CompetingOutcome"], evidence=evidence)
-    results["competing_outcome"] = co_result.values.tolist()
+    co = variable_elimination(model, ["CompetingOutcome"], evidence)
+    results["competing_outcome"] = co["CompetingOutcome"].tolist()
 
-    # Query GraftSurvival1yr
-    gs_result = inference.query(["GraftSurvival1yr"], evidence=evidence)
-    results["graft_survival"] = gs_result.values.tolist()
+    gs = variable_elimination(model, ["GraftSurvival1yr"], evidence)
+    results["graft_survival"] = gs["GraftSurvival1yr"].tolist()
 
-    # Query CompoundSuccess
-    cs_result = inference.query(["CompoundSuccess"], evidence=evidence)
-    results["compound_success"] = cs_result.values.tolist()
+    cs = variable_elimination(model, ["CompoundSuccess"], evidence)
+    results["compound_success"] = cs["CompoundSuccess"].tolist()
 
-    # Query WaitCategory (useful for median wait estimation)
-    wc_result = inference.query(["WaitCategory"], evidence=evidence)
-    results["wait_category"] = wc_result.values.tolist()
+    wc = variable_elimination(model, ["WaitCategory"], evidence)
+    results["wait_category"] = wc["WaitCategory"].tolist()
 
     return results
 
@@ -432,7 +404,7 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
 
     granularity = getattr(patient, "bbn_granularity", "state")
 
-    _, inference = build_model(granularity)
+    model = build_model(granularity)
 
     # Use dynamic region functions from bbn_parameterizer
     regions = get_regions(granularity)
@@ -440,6 +412,9 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
 
     # Keep legacy map for backward-compatible trend lookups
     legacy_center_region_map = _get_center_region_map()
+
+    # Build state name mapping for index lookups
+    state_names = _build_state_names(regions)
 
     organ = patient.organ
     blood_type = patient.blood_type
@@ -457,8 +432,8 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
         # center info for lat/lon/state from the legacy _CITY_STATES mapping.
         for region_name in regions:
             query_result = _query_city(
-                inference, organ, blood_type, age_group, urgency, region_name,
-                regions=regions,
+                model, organ, blood_type, age_group, urgency, region_name,
+                regions=regions, node_state_names=state_names,
             )
             region_cache[region_name] = query_result
 
@@ -543,8 +518,8 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
             # Run BBN inference (cached per region)
             if region not in region_cache:
                 region_cache[region] = _query_city(
-                    inference, organ, blood_type, age_group, urgency, region,
-                    regions=regions,
+                    model, organ, blood_type, age_group, urgency, region,
+                    regions=regions, node_state_names=state_names,
                 )
             query_result = region_cache[region]
 
