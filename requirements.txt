@@ -1,5 +1,9 @@
 # Production dependencies for Vercel deployment.
-# Full dev/research deps (pymc, jupyter, etc.) live in backend/requirements.txt.
+# Full dev/research deps (pymc, jupyter, lifelines, etc.) live in backend/requirements.txt.
+#
+# IMPORTANT: Only add packages that are actually imported by backend/ code.
+# Unused deps bloat the Lambda bundle (500MB limit). Verify with:
+#   grep -r "import <pkg>" backend/
 
 fastapi>=0.110.0
 uvicorn[standard]>=0.29.0
@@ -12,11 +16,5 @@ scipy>=1.13.0
 
 # Bayesian belief network inference (bbn_lite replaces pgmpy to avoid
 # pgmpy's 9.7GB torch dependency — see backend/services/bbn_lite.py)
+# Data manipulation (pandas used by data_loader, spatial, equity)
 pandas>=2.2.0
-
-# Survival analysis (post-transplant outcomes)
-lifelines>=0.29.0
-
-# Data loading (Excel files)
-openpyxl>=3.1.0
-xlrd>=2.0.0
