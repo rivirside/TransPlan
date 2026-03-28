@@ -178,7 +178,7 @@ def _get_cod_multiplier(state_abbrev: str, organ: str, *, n_samples: int = 0, rn
         return state_score / nat_avg
 
 
-def _bootstrap_ci(outcomes: np.ndarray, event: int, threshold_months: np.ndarray, time_horizon: float, confidence: float = 0.95, n_bootstrap: int = 200) -> tuple[float, float]:
+def _bootstrap_ci(outcomes: np.ndarray, event: int, threshold_months: np.ndarray, time_horizon: float, confidence: float = 0.95, n_bootstrap: int = 1000) -> tuple[float, float]:
     """
     Compute a bootstrap confidence interval for P(event occurs first AND within time_horizon).
 

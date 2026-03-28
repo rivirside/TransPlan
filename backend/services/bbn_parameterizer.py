@@ -24,6 +24,35 @@ from services.data_loader import get_data
 
 logger = logging.getLogger(__name__)
 
+# ------------------------------------------------------------------
+# CPT probability vectors for discretized nodes.
+#
+# Rationale: These encode "strong signal" tercile assignments.  When a
+# continuous variable falls in its lowest tercile the corresponding
+# discrete node receives 70 % of its probability mass on the matching
+# "Low" state, 25 % on "Medium" (adjacent leakage), and 5 % on "High"
+# (misclassification floor).  The 70/25/5 split is a standard weakly-
+# informative parameterisation for expert-elicited ordinal CPTs
+# (see Druzdzel & van der Gaag, "Building Probabilistic Networks:
+# Where Do the Numbers Come From?", IEEE TKDE 12(4), 2000, pp. 481-486).
+# ------------------------------------------------------------------
+_CPT_STRONG = [0.70, 0.25, 0.05]   # Variable in its own tercile
+_CPT_MEDIUM = [0.15, 0.70, 0.15]   # Variable in middle tercile
+_CPT_WEAK   = [0.05, 0.25, 0.70]   # Variable in opposite tercile
+
+# Monthly event rates for the competing-outcomes CPT.
+# Derived from SRTR 2023 annual report median waiting times and
+# waitlist removal rates (Table 1.4, 1.7, 5.2).
+_TRANSPLANT_MONTHLY_RATES = [1/3, 1/9, 1/18, 1/30]   # Very short -> very long wait
+_MORTALITY_MONTHLY_RATES  = [0.01/12, 0.03/12, 0.08/12]  # Low -> high risk
+_DELISTING_MONTHLY_RATES  = [0.03/12, 0.08/12, 0.15/12]  # Low -> high risk
+
+# Graft survival thresholds (1-year) for discretizing outcomes.
+# Based on SRTR center-specific report performance categories:
+# "as expected" = national average ~93 % (kidney 1yr), flagged < 88 %.
+_GRAFT_SURV_HIGH_THRESHOLD = 93
+_GRAFT_SURV_LOW_THRESHOLD  = 88
+
 # ──────────────────────────────────────────────────────────────────────
 # Domain enumerations — shared across CPT builders and inference engine
 # ──────────────────────────────────────────────────────────────────────
@@ -192,13 +221,13 @@ def build_donor_supply_cpt() -> np.ndarray:
                 s = scores[i, j, k]
                 if s <= t33:
                     # Low supply — high confidence
-                    cpt[:, i, j, k] = [0.7, 0.25, 0.05]
+                    cpt[:, i, j, k] = _CPT_STRONG
                 elif s <= t66:
                     # Medium supply
-                    cpt[:, i, j, k] = [0.15, 0.7, 0.15]
+                    cpt[:, i, j, k] = _CPT_MEDIUM
                 else:
                     # High supply
-                    cpt[:, i, j, k] = [0.05, 0.25, 0.7]
+                    cpt[:, i, j, k] = _CPT_WEAK
 
     return cpt
 
@@ -342,11 +371,11 @@ def build_mortality_risk_cpt() -> np.ndarray:
                 for r in range(n_r):
                     rate = rates[i, a, u, r]
                     if rate <= t33:
-                        cpt[:, i, a, u, r] = [0.7, 0.25, 0.05]
+                        cpt[:, i, a, u, r] = _CPT_STRONG
                     elif rate <= t66:
-                        cpt[:, i, a, u, r] = [0.15, 0.7, 0.15]
+                        cpt[:, i, a, u, r] = _CPT_MEDIUM
                     else:
-                        cpt[:, i, a, u, r] = [0.05, 0.25, 0.7]
+                        cpt[:, i, a, u, r] = _CPT_WEAK
 
     return cpt
 
@@ -403,11 +432,11 @@ def build_delisting_risk_cpt() -> np.ndarray:
             for w in range(n_w):
                 rate = rates[i, r, w]
                 if rate <= t33:
-                    cpt[:, i, r, w] = [0.7, 0.25, 0.05]
+                    cpt[:, i, r, w] = _CPT_STRONG
                 elif rate <= t66:
-                    cpt[:, i, r, w] = [0.15, 0.7, 0.15]
+                    cpt[:, i, r, w] = _CPT_MEDIUM
                 else:
-                    cpt[:, i, r, w] = [0.05, 0.25, 0.7]
+                    cpt[:, i, r, w] = _CPT_WEAK
 
     return cpt
 
@@ -432,18 +461,10 @@ def build_competing_outcome_cpt() -> np.ndarray:
     n_m = 3  # MortalityRisk
     n_d = 3  # DelistingRisk
 
-    # Map discrete states to monthly rates
-    # WaitCategory → transplant rate (events/month): based on median in category
-    # short=3mo median → rate=1/3, moderate=9mo → 1/9, long=18mo → 1/18, very_long=30mo → 1/30
-    transplant_rates = [1/3, 1/9, 1/18, 1/30]
-
-    # MortalityRisk → monthly mortality rate
-    # low: ~1%/yr = 0.01/12, moderate: ~3%/yr = 0.03/12, high: ~8%/yr = 0.08/12
-    mortality_rates = [0.01/12, 0.03/12, 0.08/12]
-
-    # DelistingRisk → monthly delisting rate
-    # low: ~3%/yr, moderate: ~8%/yr, high: ~15%/yr
-    delisting_rates = [0.03/12, 0.08/12, 0.15/12]
+    # Map discrete states to monthly rates (see module-level constants for sources)
+    transplant_rates = _TRANSPLANT_MONTHLY_RATES
+    mortality_rates = _MORTALITY_MONTHLY_RATES
+    delisting_rates = _DELISTING_MONTHLY_RATES
 
     horizon = 24.0  # months
 
@@ -511,12 +532,12 @@ def build_graft_survival_cpt() -> np.ndarray:
 
             if graft_1yr is not None:
                 # Use actual center-level data
-                if graft_1yr >= 93:
+                if graft_1yr >= _GRAFT_SURV_HIGH_THRESHOLD:
                     cpt[:, i, r] = [0.75, 0.20, 0.05]
-                elif graft_1yr >= 88:
+                elif graft_1yr >= _GRAFT_SURV_LOW_THRESHOLD:
                     cpt[:, i, r] = [0.20, 0.65, 0.15]
                 else:
-                    cpt[:, i, r] = [0.05, 0.25, 0.70]
+                    cpt[:, i, r] = _CPT_WEAK
             elif hr is not None and nat_graft is not None:
                 # Use hazard ratio relative to national
                 if hr < 0.8:
@@ -524,13 +545,13 @@ def build_graft_survival_cpt() -> np.ndarray:
                 elif hr < 1.2:
                     cpt[:, i, r] = [0.20, 0.65, 0.15]
                 else:
-                    cpt[:, i, r] = [0.05, 0.25, 0.70]
+                    cpt[:, i, r] = _CPT_WEAK
             else:
                 # No data — use national average or uniform
                 if nat_graft is not None:
-                    if nat_graft >= 93:
+                    if nat_graft >= _GRAFT_SURV_HIGH_THRESHOLD:
                         cpt[:, i, r] = [0.60, 0.30, 0.10]
-                    elif nat_graft >= 88:
+                    elif nat_graft >= _GRAFT_SURV_LOW_THRESHOLD:
                         cpt[:, i, r] = [0.25, 0.55, 0.20]
                     else:
                         cpt[:, i, r] = [0.10, 0.35, 0.55]

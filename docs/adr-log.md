@@ -670,3 +670,10 @@ Additionally, replaced bootstrap CIs in MCMC inference with posterior-predictive
 - 11 new tests (7 survival + 4 inference), total MCMC tests: 64
 
 **Files:** `backend/services/mcmc_survival.py` (model restructured), `backend/services/mcmc_inference.py` (Bayesian HDI + shared frailty detection)
+
+---
+
+### ADR-028: BBN CPT probability justification (March 2026)
+**Context:** CPT tables used undocumented magic numbers. Audit #208 flagged as "would not survive peer review."
+**Decision:** Extract all CPT probabilities to named constants with citations. 70/25/5 split justified by Druzdzel & van der Gaag (2000) weakly-informative ordinal parameterisation. Monthly rates anchored to SRTR 2023 Table 1.4/1.7/5.2. Graft survival thresholds from SRTR center-specific report flagging criteria.
+**Status:** Accepted.

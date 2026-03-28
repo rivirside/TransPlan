@@ -14,8 +14,12 @@ router = APIRouter()
 class EquityAnalysisRequest(BaseModel):
     patient: PatientProfile
     iterations_per_profile: int = Field(
-        default=1000, ge=100, le=5000,
+        default=200, ge=50, le=5000,
         description="Monte Carlo iterations per demographic profile (lower = faster, less precise)"
+    )
+    max_centers: int = Field(
+        default=30, ge=5, le=300,
+        description="Maximum number of transplant centers to include (caps simulation size)"
     )
 
 
@@ -23,7 +27,11 @@ class EquityAnalysisRequest(BaseModel):
 def run_equity_analysis(request: EquityAnalysisRequest) -> EquityAnalysisResult:
     """Run equity analysis across demographic profiles for all 22 cities."""
     try:
-        return compute_equity_analysis(request.patient, request.iterations_per_profile)
+        return compute_equity_analysis(
+            request.patient,
+            n_iterations=request.iterations_per_profile,
+            max_centers=request.max_centers,
+        )
     except Exception as e:
         logger.exception("Equity analysis failed for %s", request.patient.organ)
         raise HTTPException(status_code=500, detail="Equity analysis failed — see server logs") from e

@@ -3,6 +3,13 @@ import numpy as np
 import pytest
 from scipy import stats
 
+
+def test_copula_enabled_by_default():
+    """Copula should be on by default for realistic correlated competing risks."""
+    from models.schemas import PatientProfile
+    p = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male", urgency=2)
+    assert p.use_copula is True
+
 from services.copula import (
     draw_correlated_competing_risks,
     kendall_tau,

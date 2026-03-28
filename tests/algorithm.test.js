@@ -984,3 +984,151 @@ describe('Configurable Weights', () => {
         expect(customResult.breakdown.geographic).toBe(defaultResult.breakdown.geographic);
     });
 });
+
+// ==================== WAIT TIME SORTING TESTS ====================
+// Tests for _parseWaitTimeMonths and _sortResultsArray from script.js.
+// We set up minimal DOM stubs so that script.js can be required in Node.
+
+describe('Wait Time Sorting (script.js)', () => {
+    let _parseWaitTimeMonths;
+    let _sortResultsArray;
+
+    beforeAll(() => {
+        // Provide minimal DOM stubs so script.js top-level code doesn't crash
+        if (typeof global.window === 'undefined') {
+            global.window = { TransPlanAPI: null };
+        }
+        if (typeof global.document === 'undefined') {
+            const noop = () => {};
+            const stubElement = {
+                addEventListener: noop,
+                appendChild: noop,
+                querySelector: () => stubElement,
+                querySelectorAll: () => [],
+                classList: { add: noop, remove: noop, toggle: noop, contains: () => false },
+                style: {},
+                value: '',
+                textContent: '',
+                innerHTML: '',
+                options: [],
+                selectedIndex: 0,
+                disabled: false,
+                remove: noop
+            };
+            global.document = {
+                getElementById: () => stubElement,
+                createElement: (tag) => ({ ...stubElement, tagName: tag }),
+                addEventListener: noop,
+                querySelector: () => stubElement,
+                querySelectorAll: () => [],
+                body: stubElement
+            };
+        }
+        if (typeof global.L === 'undefined') {
+            global.L = {
+                map: () => ({ setView: () => ({}), on: () => ({}), addLayer: () => ({}), removeLayer: () => ({}), fitBounds: () => ({}) }),
+                tileLayer: () => ({ addTo: () => ({}) }),
+                layerGroup: () => ({ addTo: () => ({}), clearLayers: () => ({}), addLayer: () => ({}) }),
+                marker: () => ({ bindPopup: () => ({}), addTo: () => ({}) }),
+                icon: () => ({}),
+                divIcon: () => ({}),
+                latLngBounds: () => ({ extend: () => ({}), isValid: () => false }),
+                heatLayer: () => ({ addTo: () => ({}), setLatLngs: () => ({}) }),
+                circle: () => ({ addTo: () => ({}) }),
+                control: { layers: () => ({ addTo: () => ({}) }) }
+            };
+        }
+
+        const scriptExports = require('../script');
+        _parseWaitTimeMonths = scriptExports._parseWaitTimeMonths;
+        _sortResultsArray = scriptExports._sortResultsArray;
+    });
+
+    // ---- _parseWaitTimeMonths unit tests ----
+
+    describe('_parseWaitTimeMonths', () => {
+        test('parses months correctly', () => {
+            expect(_parseWaitTimeMonths('4.2 months')).toBeCloseTo(4.2);
+        });
+
+        test('parses years and converts to months', () => {
+            expect(_parseWaitTimeMonths('1.8 years')).toBeCloseTo(21.6);
+            expect(_parseWaitTimeMonths('1 year')).toBeCloseTo(12);
+        });
+
+        test('parses weeks and converts to months', () => {
+            const result = _parseWaitTimeMonths('8 weeks');
+            expect(result).toBeCloseTo(8 / 4.345, 2);
+        });
+
+        test('parses days and converts to months', () => {
+            const result = _parseWaitTimeMonths('60 days');
+            expect(result).toBeCloseTo(60 / 30.44, 2);
+        });
+
+        test('defaults to months for bare numbers', () => {
+            expect(_parseWaitTimeMonths('6')).toBeCloseTo(6);
+        });
+
+        test('returns Infinity for null/undefined/empty', () => {
+            expect(_parseWaitTimeMonths(null)).toBe(Infinity);
+            expect(_parseWaitTimeMonths(undefined)).toBe(Infinity);
+            expect(_parseWaitTimeMonths('')).toBe(Infinity);
+        });
+
+        test('returns Infinity for non-numeric strings', () => {
+            expect(_parseWaitTimeMonths('N/A')).toBe(Infinity);
+            expect(_parseWaitTimeMonths('unknown')).toBe(Infinity);
+        });
+    });
+
+    // ---- Sorting with mixed units ----
+
+    describe('_sortResultsArray with mixed wait time units', () => {
+        test('sorts mixed units correctly ascending', () => {
+            const arr = [
+                { city: 'A', waitTime: '1.8 years' },   // 21.6 months
+                { city: 'B', waitTime: '4.2 months' },   //  4.2 months
+                { city: 'C', waitTime: '10 weeks' },      //  ~2.3 months
+                { city: 'D', waitTime: '6 months' }       //  6 months
+            ];
+            _sortResultsArray(arr, 'waitTime', true, null);
+            expect(arr.map(r => r.city)).toEqual(['C', 'B', 'D', 'A']);
+        });
+
+        test('sorts mixed units correctly descending', () => {
+            const arr = [
+                { city: 'A', waitTime: '1.8 years' },
+                { city: 'B', waitTime: '4.2 months' },
+                { city: 'C', waitTime: '10 weeks' },
+                { city: 'D', waitTime: '6 months' }
+            ];
+            _sortResultsArray(arr, 'waitTime', false, null);
+            expect(arr.map(r => r.city)).toEqual(['A', 'D', 'B', 'C']);
+        });
+
+        test('4.2 months sorts before 1.8 years (the original bug)', () => {
+            const arr = [
+                { city: 'Years', waitTime: '1.8 years' },
+                { city: 'Months', waitTime: '4.2 months' }
+            ];
+            _sortResultsArray(arr, 'waitTime', true, null);
+            // 4.2 months < 21.6 months, so Months should come first
+            expect(arr[0].city).toBe('Months');
+            expect(arr[1].city).toBe('Years');
+        });
+
+        test('null/missing waitTime sorts to end', () => {
+            const arr = [
+                { city: 'A', waitTime: null },
+                { city: 'B', waitTime: '3 months' },
+                { city: 'C', waitTime: '' }
+            ];
+            _sortResultsArray(arr, 'waitTime', true, null);
+            expect(arr[0].city).toBe('B');
+            // A and C both have Infinity, so they sort to end
+            expect(['A', 'C']).toContain(arr[1].city);
+            expect(['A', 'C']).toContain(arr[2].city);
+        });
+    });
+});

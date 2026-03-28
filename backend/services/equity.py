@@ -102,17 +102,24 @@ def _simulate_profile_center(
 
 def compute_equity_analysis(
     patient: PatientProfile,
-    n_iterations: int = 1000,
+    n_iterations: int = 200,
+    seed: int | None = None,
+    max_centers: int = 30,
 ) -> EquityAnalysisResult:
     """
-    Run equity analysis across 48 demographic profiles × all SRTR centers
+    Run equity analysis across 48 demographic profiles × centers
     for the patient's organ.
 
     Varies blood_type (8), age (3 brackets), sex (2) while preserving
     the patient's organ, urgency, cpra/meld/las, and COD toggle.
+
+    Centers are capped at *max_centers* to keep runtime feasible on
+    serverless (Vercel).  The cap selects the top half by lowest
+    wait_time_factor and randomly samples the rest for
+    representativeness.
     """
     start = time.perf_counter()
-    rng = np.random.default_rng(42)  # Fixed seed for reproducibility
+    rng = np.random.default_rng(seed if seed is not None else 42)
 
     # --- Generate profile variants ---
     profiles = []
@@ -132,6 +139,20 @@ def compute_equity_analysis(
                 })
 
     centers = _get_centers(patient.organ)
+
+    # Cap centers for performance: top-N by wait-time factor + random sample
+    if len(centers) > max_centers:
+        rng_sample = np.random.default_rng(seed if seed is not None else 42)
+        # Sort by wait_time_factor (lower = better) and take top half of budget
+        top_n = max_centers // 2
+        sorted_centers = sorted(centers, key=lambda c: c.get("wait_time_factor", 1.0))
+        top_centers = sorted_centers[:top_n]
+        # Random sample from remaining for representativeness
+        remaining = [c for c in centers if c not in top_centers]
+        sample_n = min(max_centers - top_n, len(remaining))
+        sampled = list(rng_sample.choice(remaining, size=sample_n, replace=False))
+        centers = top_centers + sampled
+
     logger.info(
         "Equity analysis: %s, %d profiles x %d centers x %d iter",
         patient.organ, len(profiles), len(centers), n_iterations,

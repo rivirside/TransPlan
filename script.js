@@ -529,12 +529,14 @@ let _currentEquityResult = null;
 let _isSubmitting = false;
 
 // M5: Expose results for export module
-window.TransPlanResults = {
-    getResults: function() { return _currentResults; },
-    getSimResult: function() { return _currentSimResult; },
-    getFormData: function() { return _currentFormData; },
-    getEquityResult: function() { return _currentEquityResult; }
-};
+if (typeof window !== 'undefined') {
+    window.TransPlanResults = {
+        getResults: function() { return _currentResults; },
+        getSimResult: function() { return _currentSimResult; },
+        getFormData: function() { return _currentFormData; },
+        getEquityResult: function() { return _currentEquityResult; }
+    };
+}
 
 // Map layers
 let map;
@@ -2891,6 +2893,22 @@ function _renderResultsTable(cities, formData, homeCenter) {
 }
 
 /**
+ * Parse a wait time string like "1.8 years" or "4.2 months" into a
+ * numeric value in months for correct sorting.
+ */
+function _parseWaitTimeMonths(str) {
+    if (!str) return Infinity;
+    var num = parseFloat(str);
+    if (isNaN(num)) return Infinity;
+    var lower = str.toLowerCase();
+    if (lower.indexOf('year') !== -1) return num * 12;
+    if (lower.indexOf('week') !== -1) return num / 4.345;
+    if (lower.indexOf('day') !== -1) return num / 30.44;
+    // Default: assume months
+    return num;
+}
+
+/**
  * Sort the results array in-place by the given key.
  */
 function _sortResultsArray(arr, key, asc, formData) {
@@ -2908,7 +2926,8 @@ function _sortResultsArray(arr, key, asc, formData) {
                 va = a.city.toLowerCase(); vb = b.city.toLowerCase();
                 return asc ? va.localeCompare(vb) : vb.localeCompare(va);
             case 'waitTime':
-                va = parseFloat(a.waitTime) || 0; vb = parseFloat(b.waitTime) || 0;
+                va = _parseWaitTimeMonths(a.waitTime);
+                vb = _parseWaitTimeMonths(b.waitTime);
                 return asc ? va - vb : vb - va;
             case 'donorRate':
                 var donorOrder = { 'Very High': 4, 'High': 3, 'Moderate': 2, 'Low': 1 };
@@ -4688,4 +4707,12 @@ function _addCompareRow(tbody, label, values, bestDirection) {
         tr.appendChild(td);
     });
     tbody.appendChild(tr);
+}
+
+// Export for unit tests (Node.js / Jest)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        _parseWaitTimeMonths: _parseWaitTimeMonths,
+        _sortResultsArray: _sortResultsArray
+    };
 }

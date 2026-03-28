@@ -1,6 +1,7 @@
 """Tests for services/equity.py — demographic equity analysis."""
 import pytest
 import numpy as np
+from unittest.mock import patch
 
 from models.schemas import EquityAnalysisResult, CityEquity, PatientProfile
 from services.equity import compute_equity_analysis, _gini
@@ -162,3 +163,87 @@ def test_equity_runs_for_all_organs(organ):
     assert isinstance(result, EquityAnalysisResult)
     assert result.organ == organ
     assert len(result.cities) == 22
+
+
+# -- max_centers parameter --
+
+class TestMaxCenters:
+    """Tests for the max_centers performance cap."""
+
+    def test_default_max_centers_is_30(self):
+        """compute_equity_analysis has max_centers default of 30."""
+        import inspect
+        sig = inspect.signature(compute_equity_analysis)
+        assert sig.parameters["max_centers"].default == 30
+
+    @staticmethod
+    def _fake_simulate(patient, city, n_iterations, rng, center_code=""):
+        """Deterministic stub for _simulate_profile_center."""
+        return (0.5, 12.0)
+
+    def test_centers_capped_when_exceeding_max(self):
+        """When there are more centers than max_centers, results are capped."""
+        fake_centers = [
+            {"city": f"City{i}", "state": "XX", "code": f"C{i:03d}",
+             "name": f"Center {i}", "wait_time_factor": 0.5 + i * 0.02}
+            for i in range(50)
+        ]
+        patient = PatientProfile(
+            organ="kidney", blood_type="A+", age=45, sex="male", urgency=2, cpra=50,
+        )
+        with patch("services.equity._get_centers", return_value=fake_centers), \
+             patch("services.equity._simulate_profile_center", side_effect=self._fake_simulate):
+            result = compute_equity_analysis(patient, n_iterations=50, max_centers=10)
+        assert len(result.cities) == 10
+
+    def test_no_capping_when_under_max(self):
+        """When centers <= max_centers, all centers are used."""
+        patient = PatientProfile(
+            organ="kidney", blood_type="O+", age=45, sex="male", urgency=2, cpra=50,
+        )
+        # Fallback gives 22 centers; max_centers=30 should not cap
+        result = compute_equity_analysis(patient, n_iterations=50, max_centers=30)
+        assert len(result.cities) == 22
+
+    def test_capped_results_still_valid(self):
+        """Capped results still have correct structure and valid metrics."""
+        fake_centers = [
+            {"city": f"City{i}", "state": "TX", "code": f"C{i:03d}",
+             "name": f"Center {i}", "wait_time_factor": 1.0 + i * 0.01}
+            for i in range(40)
+        ]
+        patient = PatientProfile(
+            organ="kidney", blood_type="B+", age=50, sex="female", urgency=2, cpra=30,
+        )
+        with patch("services.equity._get_centers", return_value=fake_centers), \
+             patch("services.equity._simulate_profile_center", side_effect=self._fake_simulate):
+            result = compute_equity_analysis(patient, n_iterations=50, max_centers=15)
+
+        assert len(result.cities) == 15
+        assert result.profiles_simulated == 48
+        assert 0 <= result.overall_gini <= 1
+        for city in result.cities:
+            assert 0 <= city.gini_coefficient <= 1
+            lo, hi = city.p24_range
+            assert 0 <= lo <= hi <= 1
+
+    def test_sampling_includes_top_centers(self):
+        """The top half by wait_time_factor should always be included."""
+        fake_centers = [
+            {"city": f"City{i}", "state": "CA", "code": f"C{i:03d}",
+             "name": f"Center {i}", "wait_time_factor": float(i)}
+            for i in range(20)
+        ]
+        patient = PatientProfile(
+            organ="kidney", blood_type="A+", age=40, sex="male", urgency=2, cpra=50,
+        )
+        with patch("services.equity._get_centers", return_value=fake_centers), \
+             patch("services.equity._simulate_profile_center", side_effect=self._fake_simulate):
+            result = compute_equity_analysis(patient, n_iterations=50, max_centers=10, seed=42)
+
+        # Top 5 by lowest wait_time_factor are codes C000..C004
+        result_codes = {c.center_code for c in result.cities}
+        top_5_codes = {f"C{i:03d}" for i in range(5)}
+        assert top_5_codes.issubset(result_codes), (
+            f"Top centers {top_5_codes} not all in result {result_codes}"
+        )
