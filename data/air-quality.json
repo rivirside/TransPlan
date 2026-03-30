@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "fetchedAt": "2026-03-23T07:04:51.561Z",
+    "fetchedAt": "2026-03-30T07:21:59.036Z",
     "source": "EPA AQS API (ozone + PM2.5)"
   },
-  "Pittsburgh": 77,
-  "Philadelphia": 75,
+  "Pittsburgh": 78,
+  "Philadelphia": 76,
   "Baltimore": 79,
   "New York": 79,
   "Minneapolis": 74,
