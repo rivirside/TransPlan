@@ -1,0 +1,2656 @@
+{
+  "organ": "lung",
+  "cities": [
+    {
+      "city": "Northwestern Memorial Hospital",
+      "state": "Illinois",
+      "center_code": "ILNM",
+      "center_name": "Northwestern Memorial Hospital",
+      "gini_coefficient": 0.0016,
+      "p24_range": [
+        0.99,
+        1.0
+      ],
+      "median_wait_range": [
+        0.3,
+        0.5
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9967,
+            "median_wait": 0.4
+          },
+          {
+            "value": "A-",
+            "p24": 0.9967,
+            "median_wait": 0.4
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9958,
+            "median_wait": 0.4
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9967,
+            "median_wait": 0.4
+          },
+          {
+            "value": "B+",
+            "p24": 0.9983,
+            "median_wait": 0.4
+          },
+          {
+            "value": "B-",
+            "p24": 0.9967,
+            "median_wait": 0.5
+          },
+          {
+            "value": "O+",
+            "p24": 0.9967,
+            "median_wait": 0.5
+          },
+          {
+            "value": "O-",
+            "p24": 0.9983,
+            "median_wait": 0.5
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9963,
+            "median_wait": 0.4
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9972,
+            "median_wait": 0.4
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9975,
+            "median_wait": 0.5
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9967,
+            "median_wait": 0.4
+          },
+          {
+            "value": "male",
+            "p24": 0.9973,
+            "median_wait": 0.4
+          }
+        ]
+      }
+    },
+    {
+      "city": "University of Wisconsin Hospital and Clinics",
+      "state": "Wisconsin",
+      "center_code": "WIUW",
+      "center_name": "University of Wisconsin Hospital and Clinics",
+      "gini_coefficient": 0.0019,
+      "p24_range": [
+        0.985,
+        1.0
+      ],
+      "median_wait_range": [
+        0.6,
+        1.0
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9958,
+            "median_wait": 0.8
+          },
+          {
+            "value": "A-",
+            "p24": 0.9942,
+            "median_wait": 0.8
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9942,
+            "median_wait": 0.7
+          },
+          {
+            "value": "AB-",
+            "p24": 0.995,
+            "median_wait": 0.7
+          },
+          {
+            "value": "B+",
+            "p24": 0.9958,
+            "median_wait": 0.9
+          },
+          {
+            "value": "B-",
+            "p24": 0.9967,
+            "median_wait": 0.9
+          },
+          {
+            "value": "O+",
+            "p24": 0.9958,
+            "median_wait": 0.9
+          },
+          {
+            "value": "O-",
+            "p24": 0.9992,
+            "median_wait": 0.9
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9966,
+            "median_wait": 0.8
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9941,
+            "median_wait": 0.8
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9969,
+            "median_wait": 0.9
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9952,
+            "median_wait": 0.8
+          },
+          {
+            "value": "male",
+            "p24": 0.9965,
+            "median_wait": 0.8
+          }
+        ]
+      }
+    },
+    {
+      "city": "St. Joseph's Hospital and Medical Center",
+      "state": "Arizona",
+      "center_code": "AZSJ",
+      "center_name": "St. Joseph's Hospital and Medical Center",
+      "gini_coefficient": 0.0022,
+      "p24_range": [
+        0.985,
+        1.0
+      ],
+      "median_wait_range": [
+        0.4,
+        0.6
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9975,
+            "median_wait": 0.5
+          },
+          {
+            "value": "A-",
+            "p24": 0.9967,
+            "median_wait": 0.5
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9967,
+            "median_wait": 0.4
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9975,
+            "median_wait": 0.5
+          },
+          {
+            "value": "B+",
+            "p24": 0.9958,
+            "median_wait": 0.5
+          },
+          {
+            "value": "B-",
+            "p24": 0.9958,
+            "median_wait": 0.6
+          },
+          {
+            "value": "O+",
+            "p24": 0.9967,
+            "median_wait": 0.6
+          },
+          {
+            "value": "O-",
+            "p24": 0.9933,
+            "median_wait": 0.6
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9959,
+            "median_wait": 0.5
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9966,
+            "median_wait": 0.5
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9963,
+            "median_wait": 0.6
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9967,
+            "median_wait": 0.5
+          },
+          {
+            "value": "male",
+            "p24": 0.9958,
+            "median_wait": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "city": "Vanderbilt University Medical Center",
+      "state": "Tennessee",
+      "center_code": "TNVU",
+      "center_name": "Vanderbilt University Medical Center",
+      "gini_coefficient": 0.003,
+      "p24_range": [
+        0.97,
+        1.0
+      ],
+      "median_wait_range": [
+        0.4,
+        0.6
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9975,
+            "median_wait": 0.5
+          },
+          {
+            "value": "A-",
+            "p24": 0.9942,
+            "median_wait": 0.5
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9983,
+            "median_wait": 0.4
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9975,
+            "median_wait": 0.5
+          },
+          {
+            "value": "B+",
+            "p24": 0.9983,
+            "median_wait": 0.5
+          },
+          {
+            "value": "B-",
+            "p24": 0.9892,
+            "median_wait": 0.6
+          },
+          {
+            "value": "O+",
+            "p24": 0.9933,
+            "median_wait": 0.6
+          },
+          {
+            "value": "O-",
+            "p24": 0.9958,
+            "median_wait": 0.6
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9953,
+            "median_wait": 0.5
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9947,
+            "median_wait": 0.5
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9966,
+            "median_wait": 0.6
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9967,
+            "median_wait": 0.5
+          },
+          {
+            "value": "male",
+            "p24": 0.9944,
+            "median_wait": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "city": "New York University Medical Center",
+      "state": "New York",
+      "center_code": "NYUC",
+      "center_name": "New York University Medical Center",
+      "gini_coefficient": 0.0035,
+      "p24_range": [
+        0.97,
+        1.0
+      ],
+      "median_wait_range": [
+        0.7,
+        1.1
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9933,
+            "median_wait": 0.9
+          },
+          {
+            "value": "A-",
+            "p24": 0.9892,
+            "median_wait": 0.9
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9925,
+            "median_wait": 0.8
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9883,
+            "median_wait": 0.8
+          },
+          {
+            "value": "B+",
+            "p24": 0.9933,
+            "median_wait": 1.0
+          },
+          {
+            "value": "B-",
+            "p24": 0.9942,
+            "median_wait": 1.0
+          },
+          {
+            "value": "O+",
+            "p24": 0.9867,
+            "median_wait": 1.0
+          },
+          {
+            "value": "O-",
+            "p24": 0.9925,
+            "median_wait": 1.0
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9934,
+            "median_wait": 0.9
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9891,
+            "median_wait": 0.9
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9912,
+            "median_wait": 1.0
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9929,
+            "median_wait": 0.9
+          },
+          {
+            "value": "male",
+            "p24": 0.9896,
+            "median_wait": 0.9
+          }
+        ]
+      }
+    },
+    {
+      "city": "University of California at Los Angeles Medical Center",
+      "state": "California",
+      "center_code": "CAUC",
+      "center_name": "University of California at Los Angeles Medical Center",
+      "gini_coefficient": 0.0038,
+      "p24_range": [
+        0.97,
+        1.0
+      ],
+      "median_wait_range": [
+        1.0,
+        1.5
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9892,
+            "median_wait": 1.2
+          },
+          {
+            "value": "A-",
+            "p24": 0.9908,
+            "median_wait": 1.2
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9942,
+            "median_wait": 1.0
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9875,
+            "median_wait": 1.1
+          },
+          {
+            "value": "B+",
+            "p24": 0.9867,
+            "median_wait": 1.3
+          },
+          {
+            "value": "B-",
+            "p24": 0.9883,
+            "median_wait": 1.3
+          },
+          {
+            "value": "O+",
+            "p24": 0.9867,
+            "median_wait": 1.3
+          },
+          {
+            "value": "O-",
+            "p24": 0.9842,
+            "median_wait": 1.4
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9894,
+            "median_wait": 1.2
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9878,
+            "median_wait": 1.2
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9881,
+            "median_wait": 1.3
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.989,
+            "median_wait": 1.2
+          },
+          {
+            "value": "male",
+            "p24": 0.9879,
+            "median_wait": 1.2
+          }
+        ]
+      }
+    },
+    {
+      "city": "University of Colorado Hospital/Health Science Center",
+      "state": "Colorado",
+      "center_code": "COUC",
+      "center_name": "University of Colorado Hospital/Health Science Center",
+      "gini_coefficient": 0.0039,
+      "p24_range": [
+        0.975,
+        1.0
+      ],
+      "median_wait_range": [
+        0.9,
+        1.4
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9892,
+            "median_wait": 1.1
+          },
+          {
+            "value": "A-",
+            "p24": 0.9892,
+            "median_wait": 1.1
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9925,
+            "median_wait": 1.0
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9933,
+            "median_wait": 1.0
+          },
+          {
+            "value": "B+",
+            "p24": 0.9883,
+            "median_wait": 1.2
+          },
+          {
+            "value": "B-",
+            "p24": 0.9883,
+            "median_wait": 1.2
+          },
+          {
+            "value": "O+",
+            "p24": 0.9858,
+            "median_wait": 1.2
+          },
+          {
+            "value": "O-",
+            "p24": 0.9925,
+            "median_wait": 1.3
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9881,
+            "median_wait": 1.1
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9912,
+            "median_wait": 1.1
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9903,
+            "median_wait": 1.2
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9894,
+            "median_wait": 1.1
+          },
+          {
+            "value": "male",
+            "p24": 0.9904,
+            "median_wait": 1.1
+          }
+        ]
+      }
+    },
+    {
+      "city": "Jackson Memorial Hospital University of Miami School of Medicine",
+      "state": "Florida",
+      "center_code": "FLJM",
+      "center_name": "Jackson Memorial Hospital University of Miami School of Medicine",
+      "gini_coefficient": 0.0041,
+      "p24_range": [
+        0.965,
+        1.0
+      ],
+      "median_wait_range": [
+        0.7,
+        1.1
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9883,
+            "median_wait": 0.9
+          },
+          {
+            "value": "A-",
+            "p24": 0.9942,
+            "median_wait": 0.9
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9908,
+            "median_wait": 0.8
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9933,
+            "median_wait": 0.8
+          },
+          {
+            "value": "B+",
+            "p24": 0.985,
+            "median_wait": 1.0
+          },
+          {
+            "value": "B-",
+            "p24": 0.9892,
+            "median_wait": 1.0
+          },
+          {
+            "value": "O+",
+            "p24": 0.985,
+            "median_wait": 1.0
+          },
+          {
+            "value": "O-",
+            "p24": 0.985,
+            "median_wait": 1.0
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9884,
+            "median_wait": 0.9
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9894,
+            "median_wait": 0.9
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9888,
+            "median_wait": 1.0
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9896,
+            "median_wait": 0.9
+          },
+          {
+            "value": "male",
+            "p24": 0.9881,
+            "median_wait": 0.9
+          }
+        ]
+      }
+    },
+    {
+      "city": "University of California San Diego Medical Center",
+      "state": "California",
+      "center_code": "CASD",
+      "center_name": "University of California San Diego Medical Center",
+      "gini_coefficient": 0.0043,
+      "p24_range": [
+        0.97,
+        1.0
+      ],
+      "median_wait_range": [
+        0.7,
+        1.1
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9925,
+            "median_wait": 0.9
+          },
+          {
+            "value": "A-",
+            "p24": 0.9858,
+            "median_wait": 0.9
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9933,
+            "median_wait": 0.8
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9875,
+            "median_wait": 0.8
+          },
+          {
+            "value": "B+",
+            "p24": 0.9875,
+            "median_wait": 1.0
+          },
+          {
+            "value": "B-",
+            "p24": 0.9842,
+            "median_wait": 1.0
+          },
+          {
+            "value": "O+",
+            "p24": 0.9908,
+            "median_wait": 1.0
+          },
+          {
+            "value": "O-",
+            "p24": 0.9867,
+            "median_wait": 1.0
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9872,
+            "median_wait": 0.9
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9894,
+            "median_wait": 0.9
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9891,
+            "median_wait": 1.0
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9904,
+            "median_wait": 0.9
+          },
+          {
+            "value": "male",
+            "p24": 0.9867,
+            "median_wait": 0.9
+          }
+        ]
+      }
+    },
+    {
+      "city": "Cedars-Sinai Medical Center",
+      "state": "California",
+      "center_code": "CACS",
+      "center_name": "Cedars-Sinai Medical Center",
+      "gini_coefficient": 0.0046,
+      "p24_range": [
+        0.97,
+        1.0
+      ],
+      "median_wait_range": [
+        0.7,
+        1.1
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9875,
+            "median_wait": 0.9
+          },
+          {
+            "value": "A-",
+            "p24": 0.9917,
+            "median_wait": 0.9
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9892,
+            "median_wait": 0.8
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9883,
+            "median_wait": 0.8
+          },
+          {
+            "value": "B+",
+            "p24": 0.9808,
+            "median_wait": 1.0
+          },
+          {
+            "value": "B-",
+            "p24": 0.9867,
+            "median_wait": 1.0
+          },
+          {
+            "value": "O+",
+            "p24": 0.9858,
+            "median_wait": 1.0
+          },
+          {
+            "value": "O-",
+            "p24": 0.9892,
+            "median_wait": 1.0
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9878,
+            "median_wait": 0.9
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9869,
+            "median_wait": 0.9
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9875,
+            "median_wait": 1.0
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.986,
+            "median_wait": 0.9
+          },
+          {
+            "value": "male",
+            "p24": 0.9888,
+            "median_wait": 0.9
+          }
+        ]
+      }
+    },
+    {
+      "city": "Banner University Medical Center-Tucson",
+      "state": "Arizona",
+      "center_code": "AZUA",
+      "center_name": "Banner University Medical Center-Tucson",
+      "gini_coefficient": 0.0047,
+      "p24_range": [
+        0.975,
+        1.0
+      ],
+      "median_wait_range": [
+        1.2,
+        1.9
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9933,
+            "median_wait": 1.4
+          },
+          {
+            "value": "A-",
+            "p24": 0.9867,
+            "median_wait": 1.5
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9942,
+            "median_wait": 1.3
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9883,
+            "median_wait": 1.4
+          },
+          {
+            "value": "B+",
+            "p24": 0.9867,
+            "median_wait": 1.6
+          },
+          {
+            "value": "B-",
+            "p24": 0.98,
+            "median_wait": 1.6
+          },
+          {
+            "value": "O+",
+            "p24": 0.985,
+            "median_wait": 1.7
+          },
+          {
+            "value": "O-",
+            "p24": 0.9875,
+            "median_wait": 1.8
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9888,
+            "median_wait": 1.4
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9878,
+            "median_wait": 1.5
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9866,
+            "median_wait": 1.7
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9885,
+            "median_wait": 1.5
+          },
+          {
+            "value": "male",
+            "p24": 0.9869,
+            "median_wait": 1.5
+          }
+        ]
+      }
+    },
+    {
+      "city": "University of California San Francisco Medical Center",
+      "state": "California",
+      "center_code": "CASF",
+      "center_name": "University of California San Francisco Medical Center",
+      "gini_coefficient": 0.0055,
+      "p24_range": [
+        0.93,
+        1.0
+      ],
+      "median_wait_range": [
+        1.4,
+        2.1
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9858,
+            "median_wait": 1.6
+          },
+          {
+            "value": "A-",
+            "p24": 0.9817,
+            "median_wait": 1.7
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9833,
+            "median_wait": 1.5
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9858,
+            "median_wait": 1.6
+          },
+          {
+            "value": "B+",
+            "p24": 0.9725,
+            "median_wait": 1.8
+          },
+          {
+            "value": "B-",
+            "p24": 0.9792,
+            "median_wait": 1.9
+          },
+          {
+            "value": "O+",
+            "p24": 0.9775,
+            "median_wait": 1.9
+          },
+          {
+            "value": "O-",
+            "p24": 0.9792,
+            "median_wait": 2.0
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.985,
+            "median_wait": 1.6
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9803,
+            "median_wait": 1.7
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9766,
+            "median_wait": 1.9
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9806,
+            "median_wait": 1.7
+          },
+          {
+            "value": "male",
+            "p24": 0.9806,
+            "median_wait": 1.7
+          }
+        ]
+      }
+    },
+    {
+      "city": "Inova Fairfax Hospital",
+      "state": "Virginia",
+      "center_code": "VAFH",
+      "center_name": "Inova Fairfax Hospital",
+      "gini_coefficient": 0.0059,
+      "p24_range": [
+        0.945,
+        0.99
+      ],
+      "median_wait_range": [
+        1.1,
+        1.8
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9708,
+            "median_wait": 1.4
+          },
+          {
+            "value": "A-",
+            "p24": 0.9708,
+            "median_wait": 1.4
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9775,
+            "median_wait": 1.2
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9733,
+            "median_wait": 1.3
+          },
+          {
+            "value": "B+",
+            "p24": 0.965,
+            "median_wait": 1.5
+          },
+          {
+            "value": "B-",
+            "p24": 0.9633,
+            "median_wait": 1.5
+          },
+          {
+            "value": "O+",
+            "p24": 0.9642,
+            "median_wait": 1.6
+          },
+          {
+            "value": "O-",
+            "p24": 0.9717,
+            "median_wait": 1.6
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9706,
+            "median_wait": 1.3
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9716,
+            "median_wait": 1.4
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9666,
+            "median_wait": 1.6
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9673,
+            "median_wait": 1.4
+          },
+          {
+            "value": "male",
+            "p24": 0.9719,
+            "median_wait": 1.4
+          }
+        ]
+      }
+    },
+    {
+      "city": "UT Southwestern Medical Center/",
+      "state": "Texas",
+      "center_code": "TXSP",
+      "center_name": "UT Southwestern Medical Center/",
+      "gini_coefficient": 0.007,
+      "p24_range": [
+        0.935,
+        0.99
+      ],
+      "median_wait_range": [
+        1.5,
+        2.4
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9708,
+            "median_wait": 1.8
+          },
+          {
+            "value": "A-",
+            "p24": 0.9708,
+            "median_wait": 1.9
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9742,
+            "median_wait": 1.6
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9758,
+            "median_wait": 1.7
+          },
+          {
+            "value": "B+",
+            "p24": 0.9542,
+            "median_wait": 2.0
+          },
+          {
+            "value": "B-",
+            "p24": 0.9733,
+            "median_wait": 2.1
+          },
+          {
+            "value": "O+",
+            "p24": 0.965,
+            "median_wait": 2.1
+          },
+          {
+            "value": "O-",
+            "p24": 0.9592,
+            "median_wait": 2.2
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9684,
+            "median_wait": 1.8
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9634,
+            "median_wait": 1.9
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9719,
+            "median_wait": 2.1
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9679,
+            "median_wait": 2.0
+          },
+          {
+            "value": "male",
+            "p24": 0.9679,
+            "median_wait": 2.0
+          }
+        ]
+      }
+    },
+    {
+      "city": "Florida Hospital Medical Center",
+      "state": "Florida",
+      "center_code": "FLFH",
+      "center_name": "Florida Hospital Medical Center",
+      "gini_coefficient": 0.0071,
+      "p24_range": [
+        0.95,
+        1.0
+      ],
+      "median_wait_range": [
+        1.2,
+        1.9
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9758,
+            "median_wait": 1.4
+          },
+          {
+            "value": "A-",
+            "p24": 0.9717,
+            "median_wait": 1.5
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9825,
+            "median_wait": 1.3
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9833,
+            "median_wait": 1.4
+          },
+          {
+            "value": "B+",
+            "p24": 0.9708,
+            "median_wait": 1.6
+          },
+          {
+            "value": "B-",
+            "p24": 0.9758,
+            "median_wait": 1.6
+          },
+          {
+            "value": "O+",
+            "p24": 0.965,
+            "median_wait": 1.7
+          },
+          {
+            "value": "O-",
+            "p24": 0.97,
+            "median_wait": 1.8
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9741,
+            "median_wait": 1.4
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9756,
+            "median_wait": 1.5
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9734,
+            "median_wait": 1.7
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9721,
+            "median_wait": 1.5
+          },
+          {
+            "value": "male",
+            "p24": 0.9767,
+            "median_wait": 1.5
+          }
+        ]
+      }
+    },
+    {
+      "city": "Temple University Hospital",
+      "state": "Pennsylvania",
+      "center_code": "PATU",
+      "center_name": "Temple University Hospital",
+      "gini_coefficient": 0.0072,
+      "p24_range": [
+        0.94,
+        1.0
+      ],
+      "median_wait_range": [
+        1.5,
+        2.3
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9825,
+            "median_wait": 1.7
+          },
+          {
+            "value": "A-",
+            "p24": 0.98,
+            "median_wait": 1.8
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9708,
+            "median_wait": 1.6
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9842,
+            "median_wait": 1.7
+          },
+          {
+            "value": "B+",
+            "p24": 0.9758,
+            "median_wait": 1.9
+          },
+          {
+            "value": "B-",
+            "p24": 0.9717,
+            "median_wait": 2.0
+          },
+          {
+            "value": "O+",
+            "p24": 0.9792,
+            "median_wait": 2.0
+          },
+          {
+            "value": "O-",
+            "p24": 0.9592,
+            "median_wait": 2.1
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9734,
+            "median_wait": 1.7
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9772,
+            "median_wait": 1.8
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9756,
+            "median_wait": 2.0
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9744,
+            "median_wait": 1.9
+          },
+          {
+            "value": "male",
+            "p24": 0.9765,
+            "median_wait": 1.9
+          }
+        ]
+      }
+    },
+    {
+      "city": "Mayo Clinic Florida",
+      "state": "Florida",
+      "center_code": "FLSL",
+      "center_name": "Mayo Clinic Florida",
+      "gini_coefficient": 0.0074,
+      "p24_range": [
+        0.935,
+        1.0
+      ],
+      "median_wait_range": [
+        1.5,
+        2.4
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9575,
+            "median_wait": 1.8
+          },
+          {
+            "value": "A-",
+            "p24": 0.9708,
+            "median_wait": 1.9
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9733,
+            "median_wait": 1.6
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9767,
+            "median_wait": 1.7
+          },
+          {
+            "value": "B+",
+            "p24": 0.9667,
+            "median_wait": 2.0
+          },
+          {
+            "value": "B-",
+            "p24": 0.9717,
+            "median_wait": 2.1
+          },
+          {
+            "value": "O+",
+            "p24": 0.9667,
+            "median_wait": 2.1
+          },
+          {
+            "value": "O-",
+            "p24": 0.9658,
+            "median_wait": 2.2
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9684,
+            "median_wait": 1.8
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9697,
+            "median_wait": 1.9
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9678,
+            "median_wait": 2.1
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9685,
+            "median_wait": 2.0
+          },
+          {
+            "value": "male",
+            "p24": 0.9688,
+            "median_wait": 2.0
+          }
+        ]
+      }
+    },
+    {
+      "city": "Tampa General Hospital",
+      "state": "Florida",
+      "center_code": "FLTG",
+      "center_name": "Tampa General Hospital",
+      "gini_coefficient": 0.0076,
+      "p24_range": [
+        0.935,
+        0.995
+      ],
+      "median_wait_range": [
+        1.5,
+        2.3
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9633,
+            "median_wait": 1.7
+          },
+          {
+            "value": "A-",
+            "p24": 0.9658,
+            "median_wait": 1.8
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9792,
+            "median_wait": 1.6
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9675,
+            "median_wait": 1.7
+          },
+          {
+            "value": "B+",
+            "p24": 0.9617,
+            "median_wait": 1.9
+          },
+          {
+            "value": "B-",
+            "p24": 0.9558,
+            "median_wait": 2.0
+          },
+          {
+            "value": "O+",
+            "p24": 0.9625,
+            "median_wait": 2.0
+          },
+          {
+            "value": "O-",
+            "p24": 0.9608,
+            "median_wait": 2.1
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9647,
+            "median_wait": 1.7
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9622,
+            "median_wait": 1.8
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9669,
+            "median_wait": 2.0
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9627,
+            "median_wait": 1.9
+          },
+          {
+            "value": "male",
+            "p24": 0.9665,
+            "median_wait": 1.9
+          }
+        ]
+      }
+    },
+    {
+      "city": "Mount Sinai Medical Center",
+      "state": "New York",
+      "center_code": "NYMS",
+      "center_name": "Mount Sinai Medical Center",
+      "gini_coefficient": 0.0091,
+      "p24_range": [
+        0.92,
+        0.98
+      ],
+      "median_wait_range": [
+        2.3,
+        3.5
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9525,
+            "median_wait": 2.7
+          },
+          {
+            "value": "A-",
+            "p24": 0.9508,
+            "median_wait": 2.8
+          },
+          {
+            "value": "AB+",
+            "p24": 0.955,
+            "median_wait": 2.4
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9675,
+            "median_wait": 2.6
+          },
+          {
+            "value": "B+",
+            "p24": 0.9333,
+            "median_wait": 3.0
+          },
+          {
+            "value": "B-",
+            "p24": 0.9492,
+            "median_wait": 3.1
+          },
+          {
+            "value": "O+",
+            "p24": 0.9383,
+            "median_wait": 3.1
+          },
+          {
+            "value": "O-",
+            "p24": 0.94,
+            "median_wait": 3.3
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9503,
+            "median_wait": 2.7
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9475,
+            "median_wait": 2.8
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9472,
+            "median_wait": 3.1
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.95,
+            "median_wait": 2.9
+          },
+          {
+            "value": "male",
+            "p24": 0.9467,
+            "median_wait": 2.9
+          }
+        ]
+      }
+    },
+    {
+      "city": "Integris Baptist Medical Center",
+      "state": "Oklahoma",
+      "center_code": "OKBC",
+      "center_name": "Integris Baptist Medical Center",
+      "gini_coefficient": 0.0101,
+      "p24_range": [
+        0.9,
+        0.98
+      ],
+      "median_wait_range": [
+        2.3,
+        3.5
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9508,
+            "median_wait": 2.7
+          },
+          {
+            "value": "A-",
+            "p24": 0.9392,
+            "median_wait": 2.8
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9592,
+            "median_wait": 2.4
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9575,
+            "median_wait": 2.6
+          },
+          {
+            "value": "B+",
+            "p24": 0.9442,
+            "median_wait": 3.0
+          },
+          {
+            "value": "B-",
+            "p24": 0.9425,
+            "median_wait": 3.1
+          },
+          {
+            "value": "O+",
+            "p24": 0.9417,
+            "median_wait": 3.1
+          },
+          {
+            "value": "O-",
+            "p24": 0.9325,
+            "median_wait": 3.3
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9428,
+            "median_wait": 2.7
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9456,
+            "median_wait": 2.8
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9494,
+            "median_wait": 3.1
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.944,
+            "median_wait": 2.9
+          },
+          {
+            "value": "male",
+            "p24": 0.9479,
+            "median_wait": 2.9
+          }
+        ]
+      }
+    },
+    {
+      "city": "St. Louis Children's Hospital",
+      "state": "Missouri",
+      "center_code": "MOCH",
+      "center_name": "St. Louis Children's Hospital",
+      "gini_coefficient": 0.0111,
+      "p24_range": [
+        0.89,
+        0.97
+      ],
+      "median_wait_range": [
+        2.0,
+        3.2
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.93,
+            "median_wait": 2.4
+          },
+          {
+            "value": "A-",
+            "p24": 0.9225,
+            "median_wait": 2.5
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9383,
+            "median_wait": 2.2
+          },
+          {
+            "value": "AB-",
+            "p24": 0.935,
+            "median_wait": 2.3
+          },
+          {
+            "value": "B+",
+            "p24": 0.9192,
+            "median_wait": 2.7
+          },
+          {
+            "value": "B-",
+            "p24": 0.9292,
+            "median_wait": 2.8
+          },
+          {
+            "value": "O+",
+            "p24": 0.9258,
+            "median_wait": 2.8
+          },
+          {
+            "value": "O-",
+            "p24": 0.9125,
+            "median_wait": 2.9
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9331,
+            "median_wait": 2.4
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9209,
+            "median_wait": 2.5
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9256,
+            "median_wait": 2.8
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9285,
+            "median_wait": 2.6
+          },
+          {
+            "value": "male",
+            "p24": 0.9246,
+            "median_wait": 2.6
+          }
+        ]
+      }
+    },
+    {
+      "city": "Hospital of the University of Pennsylvania",
+      "state": "Pennsylvania",
+      "center_code": "PAUP",
+      "center_name": "Hospital of the University of Pennsylvania",
+      "gini_coefficient": 0.0111,
+      "p24_range": [
+        0.895,
+        0.985
+      ],
+      "median_wait_range": [
+        1.9,
+        2.9
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9533,
+            "median_wait": 2.2
+          },
+          {
+            "value": "A-",
+            "p24": 0.9425,
+            "median_wait": 2.3
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9575,
+            "median_wait": 2.0
+          },
+          {
+            "value": "AB-",
+            "p24": 0.955,
+            "median_wait": 2.1
+          },
+          {
+            "value": "B+",
+            "p24": 0.9392,
+            "median_wait": 2.5
+          },
+          {
+            "value": "B-",
+            "p24": 0.9433,
+            "median_wait": 2.5
+          },
+          {
+            "value": "O+",
+            "p24": 0.9475,
+            "median_wait": 2.6
+          },
+          {
+            "value": "O-",
+            "p24": 0.9375,
+            "median_wait": 2.7
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9422,
+            "median_wait": 2.2
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9516,
+            "median_wait": 2.3
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9472,
+            "median_wait": 2.6
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9477,
+            "median_wait": 2.4
+          },
+          {
+            "value": "male",
+            "p24": 0.9463,
+            "median_wait": 2.4
+          }
+        ]
+      }
+    },
+    {
+      "city": "Stanford Health Care",
+      "state": "California",
+      "center_code": "CASU",
+      "center_name": "Stanford Health Care",
+      "gini_coefficient": 0.0113,
+      "p24_range": [
+        0.87,
+        0.955
+      ],
+      "median_wait_range": [
+        2.2,
+        3.4
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9283,
+            "median_wait": 2.6
+          },
+          {
+            "value": "A-",
+            "p24": 0.9192,
+            "median_wait": 2.7
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9258,
+            "median_wait": 2.3
+          },
+          {
+            "value": "AB-",
+            "p24": 0.93,
+            "median_wait": 2.5
+          },
+          {
+            "value": "B+",
+            "p24": 0.9042,
+            "median_wait": 2.9
+          },
+          {
+            "value": "B-",
+            "p24": 0.9042,
+            "median_wait": 3.0
+          },
+          {
+            "value": "O+",
+            "p24": 0.9108,
+            "median_wait": 3.0
+          },
+          {
+            "value": "O-",
+            "p24": 0.9083,
+            "median_wait": 3.2
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9178,
+            "median_wait": 2.6
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9222,
+            "median_wait": 2.7
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9091,
+            "median_wait": 3.0
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9146,
+            "median_wait": 2.8
+          },
+          {
+            "value": "male",
+            "p24": 0.9181,
+            "median_wait": 2.8
+          }
+        ]
+      }
+    },
+    {
+      "city": "University Hospitals of Cleveland",
+      "state": "Ohio",
+      "center_code": "OHUH",
+      "center_name": "University Hospitals of Cleveland",
+      "gini_coefficient": 0.0116,
+      "p24_range": [
+        0.9,
+        0.98
+      ],
+      "median_wait_range": [
+        2.2,
+        3.4
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9417,
+            "median_wait": 2.6
+          },
+          {
+            "value": "A-",
+            "p24": 0.945,
+            "median_wait": 2.7
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9567,
+            "median_wait": 2.3
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9642,
+            "median_wait": 2.5
+          },
+          {
+            "value": "B+",
+            "p24": 0.9475,
+            "median_wait": 2.9
+          },
+          {
+            "value": "B-",
+            "p24": 0.9358,
+            "median_wait": 3.0
+          },
+          {
+            "value": "O+",
+            "p24": 0.9358,
+            "median_wait": 3.0
+          },
+          {
+            "value": "O-",
+            "p24": 0.9242,
+            "median_wait": 3.2
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9391,
+            "median_wait": 2.6
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9466,
+            "median_wait": 2.7
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9459,
+            "median_wait": 3.0
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9508,
+            "median_wait": 2.8
+          },
+          {
+            "value": "male",
+            "p24": 0.9369,
+            "median_wait": 2.8
+          }
+        ]
+      }
+    },
+    {
+      "city": "Boston Children's Hospital",
+      "state": "Massachusetts",
+      "center_code": "MACH",
+      "center_name": "Boston Children's Hospital",
+      "gini_coefficient": 0.0117,
+      "p24_range": [
+        0.855,
+        0.945
+      ],
+      "median_wait_range": [
+        3.4,
+        5.3
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9083,
+            "median_wait": 4.1
+          },
+          {
+            "value": "A-",
+            "p24": 0.9058,
+            "median_wait": 4.3
+          },
+          {
+            "value": "AB+",
+            "p24": 0.925,
+            "median_wait": 3.6
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9175,
+            "median_wait": 3.8
+          },
+          {
+            "value": "B+",
+            "p24": 0.8925,
+            "median_wait": 4.5
+          },
+          {
+            "value": "B-",
+            "p24": 0.9033,
+            "median_wait": 4.6
+          },
+          {
+            "value": "O+",
+            "p24": 0.9058,
+            "median_wait": 4.7
+          },
+          {
+            "value": "O-",
+            "p24": 0.9,
+            "median_wait": 4.9
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9088,
+            "median_wait": 4.0
+          },
+          {
+            "value": "35-54",
+            "p24": 0.91,
+            "median_wait": 4.2
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9031,
+            "median_wait": 4.7
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9031,
+            "median_wait": 4.3
+          },
+          {
+            "value": "male",
+            "p24": 0.9115,
+            "median_wait": 4.3
+          }
+        ]
+      }
+    },
+    {
+      "city": "Methodist Specialty and Transplant Hospital",
+      "state": "Texas",
+      "center_code": "TXHS",
+      "center_name": "Methodist Specialty and Transplant Hospital",
+      "gini_coefficient": 0.0119,
+      "p24_range": [
+        0.89,
+        0.97
+      ],
+      "median_wait_range": [
+        3.4,
+        5.3
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9325,
+            "median_wait": 4.1
+          },
+          {
+            "value": "A-",
+            "p24": 0.93,
+            "median_wait": 4.3
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9417,
+            "median_wait": 3.6
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9417,
+            "median_wait": 3.8
+          },
+          {
+            "value": "B+",
+            "p24": 0.9358,
+            "median_wait": 4.5
+          },
+          {
+            "value": "B-",
+            "p24": 0.9133,
+            "median_wait": 4.6
+          },
+          {
+            "value": "O+",
+            "p24": 0.92,
+            "median_wait": 4.7
+          },
+          {
+            "value": "O-",
+            "p24": 0.9067,
+            "median_wait": 4.9
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.93,
+            "median_wait": 4.0
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9294,
+            "median_wait": 4.2
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9238,
+            "median_wait": 4.7
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9256,
+            "median_wait": 4.3
+          },
+          {
+            "value": "male",
+            "p24": 0.9298,
+            "median_wait": 4.3
+          }
+        ]
+      }
+    },
+    {
+      "city": "University of Alabama Hospital",
+      "state": "Alabama",
+      "center_code": "ALUA",
+      "center_name": "University of Alabama Hospital",
+      "gini_coefficient": 0.0128,
+      "p24_range": [
+        0.875,
+        0.96
+      ],
+      "median_wait_range": [
+        2.8,
+        4.4
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9208,
+            "median_wait": 3.4
+          },
+          {
+            "value": "A-",
+            "p24": 0.9175,
+            "median_wait": 3.6
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9342,
+            "median_wait": 3.0
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9208,
+            "median_wait": 3.2
+          },
+          {
+            "value": "B+",
+            "p24": 0.9058,
+            "median_wait": 3.7
+          },
+          {
+            "value": "B-",
+            "p24": 0.9075,
+            "median_wait": 3.8
+          },
+          {
+            "value": "O+",
+            "p24": 0.9167,
+            "median_wait": 3.9
+          },
+          {
+            "value": "O-",
+            "p24": 0.895,
+            "median_wait": 4.1
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.9191,
+            "median_wait": 3.4
+          },
+          {
+            "value": "35-54",
+            "p24": 0.9175,
+            "median_wait": 3.5
+          },
+          {
+            "value": "55-70",
+            "p24": 0.9078,
+            "median_wait": 3.9
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.9119,
+            "median_wait": 3.6
+          },
+          {
+            "value": "male",
+            "p24": 0.9177,
+            "median_wait": 3.6
+          }
+        ]
+      }
+    },
+    {
+      "city": "Keck Hospital of USC",
+      "state": "California",
+      "center_code": "CAUH",
+      "center_name": "Keck Hospital of USC",
+      "gini_coefficient": 0.0159,
+      "p24_range": [
+        0.82,
+        0.93
+      ],
+      "median_wait_range": [
+        3.4,
+        5.3
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.885,
+            "median_wait": 4.1
+          },
+          {
+            "value": "A-",
+            "p24": 0.8733,
+            "median_wait": 4.3
+          },
+          {
+            "value": "AB+",
+            "p24": 0.9067,
+            "median_wait": 3.6
+          },
+          {
+            "value": "AB-",
+            "p24": 0.8933,
+            "median_wait": 3.8
+          },
+          {
+            "value": "B+",
+            "p24": 0.8633,
+            "median_wait": 4.5
+          },
+          {
+            "value": "B-",
+            "p24": 0.8783,
+            "median_wait": 4.6
+          },
+          {
+            "value": "O+",
+            "p24": 0.8658,
+            "median_wait": 4.7
+          },
+          {
+            "value": "O-",
+            "p24": 0.8592,
+            "median_wait": 4.9
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.8772,
+            "median_wait": 4.0
+          },
+          {
+            "value": "35-54",
+            "p24": 0.8797,
+            "median_wait": 4.2
+          },
+          {
+            "value": "55-70",
+            "p24": 0.8775,
+            "median_wait": 4.7
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.8767,
+            "median_wait": 4.3
+          },
+          {
+            "value": "male",
+            "p24": 0.8796,
+            "median_wait": 4.3
+          }
+        ]
+      }
+    },
+    {
+      "city": "University of Chicago Medical Center",
+      "state": "Illinois",
+      "center_code": "ILUC",
+      "center_name": "University of Chicago Medical Center",
+      "gini_coefficient": 0.0173,
+      "p24_range": [
+        0.81,
+        0.935
+      ],
+      "median_wait_range": [
+        3.4,
+        5.3
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.9092,
+            "median_wait": 4.1
+          },
+          {
+            "value": "A-",
+            "p24": 0.895,
+            "median_wait": 4.3
+          },
+          {
+            "value": "AB+",
+            "p24": 0.8992,
+            "median_wait": 3.6
+          },
+          {
+            "value": "AB-",
+            "p24": 0.9033,
+            "median_wait": 3.8
+          },
+          {
+            "value": "B+",
+            "p24": 0.8808,
+            "median_wait": 4.5
+          },
+          {
+            "value": "B-",
+            "p24": 0.8942,
+            "median_wait": 4.6
+          },
+          {
+            "value": "O+",
+            "p24": 0.8842,
+            "median_wait": 4.7
+          },
+          {
+            "value": "O-",
+            "p24": 0.8383,
+            "median_wait": 4.9
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.8884,
+            "median_wait": 4.0
+          },
+          {
+            "value": "35-54",
+            "p24": 0.8934,
+            "median_wait": 4.2
+          },
+          {
+            "value": "55-70",
+            "p24": 0.8822,
+            "median_wait": 4.7
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.8806,
+            "median_wait": 4.3
+          },
+          {
+            "value": "male",
+            "p24": 0.8954,
+            "median_wait": 4.3
+          }
+        ]
+      }
+    },
+    {
+      "city": "Lucile Salter Packard Children's Hospital at Stanford",
+      "state": "California",
+      "center_code": "CAPC",
+      "center_name": "Lucile Salter Packard Children's Hospital at Stanford",
+      "gini_coefficient": 0.0183,
+      "p24_range": [
+        0.795,
+        0.935
+      ],
+      "median_wait_range": [
+        3.4,
+        5.3
+      ],
+      "dimension_disparities": {
+        "blood_type": [
+          {
+            "value": "A+",
+            "p24": 0.8825,
+            "median_wait": 4.1
+          },
+          {
+            "value": "A-",
+            "p24": 0.8583,
+            "median_wait": 4.3
+          },
+          {
+            "value": "AB+",
+            "p24": 0.8892,
+            "median_wait": 3.6
+          },
+          {
+            "value": "AB-",
+            "p24": 0.8767,
+            "median_wait": 3.8
+          },
+          {
+            "value": "B+",
+            "p24": 0.86,
+            "median_wait": 4.5
+          },
+          {
+            "value": "B-",
+            "p24": 0.8433,
+            "median_wait": 4.6
+          },
+          {
+            "value": "O+",
+            "p24": 0.8442,
+            "median_wait": 4.7
+          },
+          {
+            "value": "O-",
+            "p24": 0.84,
+            "median_wait": 4.9
+          }
+        ],
+        "age_bracket": [
+          {
+            "value": "18-34",
+            "p24": 0.8525,
+            "median_wait": 4.0
+          },
+          {
+            "value": "35-54",
+            "p24": 0.8619,
+            "median_wait": 4.2
+          },
+          {
+            "value": "55-70",
+            "p24": 0.8709,
+            "median_wait": 4.7
+          }
+        ],
+        "sex": [
+          {
+            "value": "female",
+            "p24": 0.8673,
+            "median_wait": 4.3
+          },
+          {
+            "value": "male",
+            "p24": 0.8562,
+            "median_wait": 4.3
+          }
+        ]
+      }
+    }
+  ],
+  "overall_gini": 0.0229,
+  "profiles_simulated": 48,
+  "iterations_per_profile": 200,
+  "elapsed_seconds": 1.233,
+  "seed_used": 42,
+  "disclaimers": [
+    "This equity simulation varies blood type, age, and sex while holding clinical parameters fixed. It does not model race, ethnicity, socioeconomic status, or insurance type.",
+    "Competing risks (waitlist mortality and delisting) are not stratified by demographics in the current model. Older patients face higher actual mortality that is not captured in these disparity estimates.",
+    "Insurance type is not currently modeled. Medicaid vs. private insurance access differences are a known driver of transplant disparities not reflected here.",
+    "These results show how the simulation model responds to demographic inputs, not observed real-world disparities. Actual disparities may be larger due to factors outside this model (referral bias, evaluation criteria, social determinants of health)."
+  ]
+}
