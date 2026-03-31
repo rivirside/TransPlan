@@ -121,12 +121,16 @@
     _capSelect('inferenceMode', allowedModes);
   }
 
-  /** Update the tier badge element. */
+  /** Update the tier badge element (handles both old and new IDs). */
   function _showBadge(tierName) {
-    var badge = document.getElementById('tierBadge');
-    if (!badge) return;
-    badge.textContent = tierName === 'local' ? 'Local' : 'Web';
-    badge.className = 'tier-badge tier-' + tierName;
+    var label = tierName === 'local' ? 'Local' : 'Web';
+    var cls = 'tier-badge tier-' + tierName;
+    ['tierBadge', 'sim-tier-badge'].forEach(function (id) {
+      var badge = document.getElementById(id);
+      if (!badge) return;
+      badge.textContent = label;
+      badge.className = cls;
+    });
   }
 
   // ── Apply all tier caps to the DOM ────────────────────────────────
@@ -137,19 +141,23 @@
 
     _showBadge(_config.name);
 
-    // Main simulator sliders
+    // Main simulator sliders (new sim-* IDs; also try legacy IDs)
+    _capSlider('sim-iterations', 'sim-iterations-value', caps.max_iterations);
     _capSlider('iterationsSlider', 'iterationsValue', caps.max_iterations);
 
     // Inference mode (hide MCMC on web)
     _filterInferenceOptions(caps.allowed_inference_modes);
 
-    // BBN granularity
+    // BBN granularity (new and legacy IDs)
+    _capSelect('sim-bbn-granularity', caps.allowed_bbn_granularity);
     _capSelect('bbnGranularity', caps.allowed_bbn_granularity);
 
-    // Copula theta -- hide entirely on web
+    // Copula theta -- hide entirely on web (new and legacy IDs)
+    _hideControl('sim-copula-theta-row', caps.copula_theta_locked);
     _hideControl('copulaThetaRow', caps.copula_theta_locked);
 
-    // Elasticity -- hide entirely on web
+    // Elasticity -- hide entirely on web (new and legacy IDs)
+    _hideControl('sim-elasticity-row', caps.elasticity_locked);
     _hideControl('elasticityRow', caps.elasticity_locked);
 
     // Equity page sliders

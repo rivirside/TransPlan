@@ -73,7 +73,7 @@
       params.iterations = parseInt(iterSlider.value, 10);
     }
 
-    var inferenceSelect = document.getElementById('sim-inference-mode');
+    var inferenceSelect = document.getElementById('inferenceMode');
     if (inferenceSelect) {
       params.inference_mode = inferenceSelect.value;
     }
