@@ -205,7 +205,7 @@ def _cod_multiplier(state: str, organ: str) -> float | None:
     return state_score / nat_avg if nat_avg > 0 else None
 
 
-def _donor_availability(state: str, organ: str, patient: dict) -> float:
+def _donor_availability(state: str, organ: str, patient: dict, lat: float = 0.0, lon: float = 0.0) -> float:
     """State-level donor availability scoring."""
     data = get_data()
     score = 0.0
@@ -416,7 +416,7 @@ def score_center(center: dict, patient: dict, weights: dict) -> CenterScoreResul
     breakdown = {
         "medicalCompatibility": _medical_compatibility(patient),
         "waitTime": _wait_time_score(code, organ, patient),
-        "donorAvailability": _donor_availability(state, organ, patient),
+        "donorAvailability": _donor_availability(state, organ, patient, lat, lon),
         "hospitalQuality": _hospital_quality(code, organ, patient),
         "geographic": _geographic(lat, lon),
         "healthDemographics": _health_demographics(lat, lon),

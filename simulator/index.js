@@ -341,52 +341,62 @@
 
   // ── Init ────────────────────────────────────────────────────────────────────
 
-  document.addEventListener('DOMContentLoaded', function () {
-    // Tier panel (fetches /tier, applies caps)
-    if (window.SimTierPanel) {
-      window.SimTierPanel.init();
-    }
+  function init() {
+    try {
+      // Tier panel (fetches /tier, applies caps)
+      if (window.SimTierPanel) {
+        window.SimTierPanel.init();
+      }
 
-    // Map (requires Leaflet loaded before this script)
-    if (window.SimMap) {
-      window.SimMap.init('sim-map');
-    }
+      // Map (requires Leaflet loaded before this script)
+      if (window.SimMap) {
+        window.SimMap.init('sim-map');
+      }
 
-    // Wire organ change handler
-    var organEl = document.getElementById('organ');
-    if (organEl) {
-      organEl.addEventListener('change', handleOrganChange);
-      if (organEl.value) handleOrganChange();
-    }
+      // Wire organ change handler
+      var organEl = document.getElementById('organ');
+      if (organEl) {
+        organEl.addEventListener('change', handleOrganChange);
+        if (organEl.value) handleOrganChange();
+      }
 
-    // Wire sliders
-    wireSliders();
+      // Wire sliders
+      wireSliders();
 
-    // Wire buttons
-    var scoreBtn = document.getElementById('sim-score-btn');
-    if (scoreBtn) scoreBtn.addEventListener('click', handleScore);
+      // Wire buttons
+      var scoreBtn = document.getElementById('sim-score-btn');
+      if (scoreBtn) scoreBtn.addEventListener('click', handleScore);
 
-    var simBtn = document.getElementById('sim-run-btn');
-    if (simBtn) simBtn.addEventListener('click', handleSimulate);
+      var simBtn = document.getElementById('sim-run-btn');
+      if (simBtn) simBtn.addEventListener('click', handleSimulate);
 
-    // Re-score when weights change
-    if (window.TransPlanWeights) {
-      window.TransPlanWeights.onReScore(function () {
-        if (window.SimResults && window.SimResults.getFormData()) {
+      // Re-score when weights change
+      if (window.TransPlanWeights) {
+        window.TransPlanWeights.onReScore(function () {
+          if (window.SimResults && window.SimResults.getFormData()) {
+            handleScore();
+          }
+        });
+      }
+
+      // URL param pre-fill
+      var hadParams = populateFromURL();
+      if (hadParams) {
+        var fd = collectFormData();
+        if (fd.organ && fd.bloodType && fd.age && fd.sex && fd.urgency) {
           handleScore();
         }
-      });
-    }
-
-    // URL param pre-fill
-    var hadParams = populateFromURL();
-    if (hadParams) {
-      var fd = collectFormData();
-      if (fd.organ && fd.bloodType && fd.age && fd.sex && fd.urgency) {
-        handleScore();
       }
+    } catch (e) {
+      console.error('[SimulatorInit] init() failed:', e.message, e.stack);
     }
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 
   // Listen for sim-center-hover events from the table to highlight map markers
   document.addEventListener('sim-center-hover', function (e) {
