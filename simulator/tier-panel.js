@@ -47,28 +47,23 @@
   }
 
   /**
-   * Filter a <select> so only allowed values remain selectable.
-   * Disallowed options are disabled and marked "(local only)".
+   * Filter a <select> so only allowed values remain.
+   * Disallowed options are REMOVED entirely (Phase 6: hide, don't disable).
    * If the currently selected value is disallowed, switch to the
    * last allowed value.
    */
   function _capSelect(selectId, allowedValues) {
     var sel = document.getElementById(selectId);
     if (!sel) return;
-    var opts = sel.options;
-    for (var i = 0; i < opts.length; i++) {
-      var opt = opts[i];
-      if (allowedValues.indexOf(opt.value) === -1) {
-        opt.disabled = true;
-        if (opt.textContent.indexOf('(local only)') === -1) {
-          opt.textContent += ' (local only)';
-        }
-      } else {
-        opt.disabled = false;
+    // Remove disallowed options (iterate backwards for safe removal)
+    for (var i = sel.options.length - 1; i >= 0; i--) {
+      var opt = sel.options[i];
+      if (opt.value && allowedValues.indexOf(opt.value) === -1) {
+        sel.removeChild(opt);
       }
     }
     if (allowedValues.indexOf(sel.value) === -1) {
-      sel.value = allowedValues[allowedValues.length - 1];
+      sel.value = allowedValues[allowedValues.length - 1] || '';
     }
   }
 
@@ -174,6 +169,25 @@
     _capSlider('whatifIterSlider', 'whatifIterVal', caps.max_whatif_iterations);
     _capSlider('policyIterSlider', 'policyIterVal', caps.max_whatif_iterations);
     _capSlider('subsidyIterSlider', 'subsidyIterVal', caps.max_whatif_iterations);
+
+    // Validation page — cap iteration inputs
+    var valIterIds = ['ce-iter', 'ms-iter', 'cs-iter', 'cal-iter', 'tv-iter'];
+    var valMaxIter = caps.max_validation_iterations || caps.max_sensitivity_iterations || 500;
+    valIterIds.forEach(function (id) {
+      var input = document.getElementById(id);
+      if (input) {
+        input.max = valMaxIter;
+        if (parseInt(input.value, 10) > valMaxIter) input.value = valMaxIter;
+      }
+    });
+    // Cap sweep steps
+    var msSteps = document.getElementById('ms-steps');
+    if (msSteps && caps.max_validation_sweep_steps) {
+      msSteps.max = caps.max_validation_sweep_steps;
+      if (parseInt(msSteps.value, 10) > caps.max_validation_sweep_steps) {
+        msSteps.value = caps.max_validation_sweep_steps;
+      }
+    }
 
     // Spatial page
     var resSlider = document.getElementById('resolutionSlider');

@@ -401,6 +401,7 @@
                 <p>Configure a patient profile and center, then choose an analysis type to explore how changes in donor availability, wait times, or policy affect transplant outcomes.</p>
             </div>
         </div>
+        <div id="scen-continue-buttons" style="margin-top:1rem"></div>
     </div>
 
     <div id="footer-placeholder"></div>
@@ -410,6 +411,7 @@
     <script src="session.js"></script>
     <script src="dark-mode.js"></script>
     <script src="api-client.js"></script>
+    <script src="simulator/tier-panel.js"></script>
     <script src="components/patient-form.js"></script>
     <script>
     (function () {
@@ -446,7 +448,9 @@
         // ── Init: inject patient form ──
         if (window.TransPlanPatientForm) {
             TransPlanPatientForm.inject('patient-form', { compact: true });
+            TransPlanPatientForm.populateFromURL();
         }
+        if (window.SimTierPanel) SimTierPanel.init();
 
         // ── Fetch tier config ──
         function fetchTierConfig() {
@@ -908,6 +912,13 @@
             resultsArea.appendChild(buildBarChart(r.baseline_p24, r.adjusted_p24, r.baseline_median_wait, r.adjusted_median_wait));
 
             resultsArea.appendChild(el('div', 'results-meta', r.iterations + ' iterations, ' + r.elapsed_seconds.toFixed(2) + 's'));
+
+            // Continue buttons
+            var contEl = document.getElementById('scen-continue-buttons');
+            if (contEl && window.TransPlanContinue) {
+                var fd = TransPlanPatientForm.collectFormData('pf');
+                TransPlanContinue.renderContinueButtons(contEl, 'scenarios', fd);
+            }
         }
 
         // ── Render Policy Scenario result ──
@@ -937,6 +948,13 @@
             resultsArea.appendChild(buildBarChart(r.baseline_p24, r.adjusted_p24, r.baseline_median_wait, r.adjusted_median_wait));
 
             resultsArea.appendChild(el('div', 'results-meta', r.iterations + ' iterations, ' + r.elapsed_seconds.toFixed(2) + 's'));
+
+            // Continue buttons
+            var contEl = document.getElementById('scen-continue-buttons');
+            if (contEl && window.TransPlanContinue) {
+                var fd = TransPlanPatientForm.collectFormData('pf');
+                TransPlanContinue.renderContinueButtons(contEl, 'scenarios', fd);
+            }
         }
 
         // ── Render Travel Subsidy result ──
@@ -1025,6 +1043,13 @@
 
             // Wire table sorting
             wireSorting();
+
+            // Continue buttons
+            var contEl = document.getElementById('scen-continue-buttons');
+            if (contEl && window.TransPlanContinue) {
+                var fd = TransPlanPatientForm.collectFormData('pf');
+                TransPlanContinue.renderContinueButtons(contEl, 'scenarios', fd);
+            }
         }
 
         function buildCityTable(cities) {
@@ -1128,5 +1153,6 @@
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
+    <script src="shared/continue-buttons.js"></script>
 </body>
 </html>

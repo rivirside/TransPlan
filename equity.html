@@ -395,6 +395,8 @@
 
                 <!-- Disclaimers -->
                 <div class="eq-disclaimers" id="eqDisclaimers"></div>
+
+                <div id="eq-continue-buttons" style="margin-top:1rem"></div>
             </div>
         </div>
     </div>
@@ -406,6 +408,7 @@
     <script src="session.js"></script>
     <script src="dark-mode.js"></script>
     <script src="api-client.js"></script>
+    <script src="simulator/tier-panel.js"></script>
     <script src="components/patient-form.js"></script>
     <script src="equity-charts.js"></script>
     <script>
@@ -414,6 +417,8 @@
 
         // ── Inject patient form ──
         TransPlanPatientForm.inject('patient-form-container', { compact: true, showCopula: false, showCOD: false });
+        TransPlanPatientForm.populateFromURL();
+        if (window.SimTierPanel) SimTierPanel.init();
 
         // ── DOM refs ──
         var itersSlider = document.getElementById('equityIters');
@@ -526,6 +531,13 @@
 
                 renderResults(result);
                 resultsEl.className = 'eq-results active';
+
+                // Continue buttons
+                var contEl = document.getElementById('eq-continue-buttons');
+                if (contEl && window.TransPlanContinue) {
+                    var formData = TransPlanPatientForm.collectFormData();
+                    TransPlanContinue.renderContinueButtons(contEl, 'equity', formData);
+                }
             } catch (err) {
                 loadingEl.className = 'eq-loading';
                 errorEl.textContent = 'Unexpected error: ' + (err.message || 'Unknown');
@@ -687,5 +699,6 @@
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
+    <script src="shared/continue-buttons.js"></script>
 </body>
 </html>

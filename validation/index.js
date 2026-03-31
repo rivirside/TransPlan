@@ -25,6 +25,38 @@
     if (tab && document.getElementById('panel-' + tab)) {
       switchTab(tab);
     }
+
+    // Pre-fill all organ/blood-type/age/sex selects from URL params
+    populateFromURL(params);
+  }
+
+  /**
+   * Pre-fill validation form fields from URL query params.
+   * Validation page has multiple independent forms (ce-, ms-, cs-, cal-, tv-, ref-).
+   * All share the same canonical param names: organ, bt, age, sex, urg.
+   */
+  function populateFromURL(params) {
+    if (!params.toString()) return;
+
+    var prefixes = ['ce', 'ms', 'cs', 'cal', 'tv', 'cv', 'ref'];
+    var organ = params.get('organ');
+    var bt = params.get('bt');
+    var age = params.get('age');
+    var sex = params.get('sex');
+    var urg = params.get('urg');
+
+    prefixes.forEach(function (pfx) {
+      if (organ) setVal(pfx + '-organ', organ);
+      if (bt) setVal(pfx + '-bt', bt);
+      if (age) setVal(pfx + '-age', age);
+      if (sex) setVal(pfx + '-sex', sex);
+      if (urg) setVal(pfx + '-urgency', urg);
+    });
+  }
+
+  function setVal(id, val) {
+    var el = document.getElementById(id);
+    if (el && val) el.value = val;
   }
 
   function switchTab(tabId) {

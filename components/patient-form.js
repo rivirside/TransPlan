@@ -218,9 +218,63 @@
     return v ? parseFloat(v) : null;
   }
 
+  /**
+   * Populate form fields from URL query parameters.
+   * Canonical URL params: organ, bt, age, sex, urg, cpra, meld, las, ins, cop, cod
+   * @param {string} [prefix='pf'] - ID prefix used during inject()
+   * @returns {boolean} true if any params were applied
+   */
+  function populateFromURL(prefix) {
+    var params = new URLSearchParams(window.location.search);
+    if (!params.toString()) return false;
+
+    var p = (prefix || 'pf') + '-';
+    var applied = false;
+
+    function setVal(id, val) {
+      if (val == null) return;
+      var el = document.getElementById(id);
+      if (el) { el.value = val; applied = true; }
+    }
+
+    function setChecked(id, val) {
+      var el = document.getElementById(id);
+      if (el) { el.checked = !!val; applied = true; }
+    }
+
+    setVal(p + 'organ', params.get('organ'));
+    setVal(p + 'bloodType', params.get('bt'));
+    setVal(p + 'age', params.get('age'));
+    setVal(p + 'sex', params.get('sex'));
+    setVal(p + 'urgency', params.get('urg'));
+    setVal(p + 'insurance', params.get('ins'));
+
+    var cpra = params.get('cpra');
+    if (cpra != null) {
+      setVal(p + 'cpra', cpra);
+      var cpraVal = document.getElementById(p + 'cpraVal');
+      if (cpraVal) cpraVal.textContent = cpra + '%';
+    }
+
+    setVal(p + 'meld', params.get('meld'));
+    setVal(p + 'las', params.get('las'));
+
+    if (params.get('cop') === '1') setChecked(p + 'useCopula', true);
+    if (params.get('cod') === '1') setChecked(p + 'adjustCOD', true);
+
+    // Trigger organ change to show conditional fields
+    var organEl = document.getElementById(p + 'organ');
+    if (organEl && organEl.value) {
+      organEl.dispatchEvent(new Event('change'));
+    }
+
+    return applied;
+  }
+
   // Expose globally
   window.TransPlanPatientForm = {
     inject: inject,
-    collectFormData: collectFormData
+    collectFormData: collectFormData,
+    populateFromURL: populateFromURL
   };
 })();
