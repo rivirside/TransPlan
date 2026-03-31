@@ -22,38 +22,32 @@
         '</a>' +
         '<button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>' +
         '<div class="nav-links">' +
-          '<a href="simulator.html" class="nav-link">Simulator</a>' +
           '<div class="nav-dropdown">' +
-            '<button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Tools <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>' +
+            '<button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">For Patients <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>' +
             '<div class="nav-dropdown-menu" role="menu">' +
-              '<a href="find-centers.html" class="nav-dropdown-item" role="menuitem">Find My Centers</a>' +
-              '<a href="wait-estimator.html" class="nav-dropdown-item" role="menuitem">Wait Estimator</a>' +
-              '<a href="centers.html" class="nav-dropdown-item" role="menuitem">Center Explorer</a>' +
+              '<a href="centers.html" class="nav-dropdown-item" role="menuitem">Centers</a>' +
               '<a href="compare.html" class="nav-dropdown-item" role="menuitem">Compare Centers</a>' +
-            '</div>' +
-          '</div>' +
-          '<div class="nav-dropdown">' +
-            '<button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Resources <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>' +
-            '<div class="nav-dropdown-menu" role="menu">' +
               '<a href="organ-guides.html" class="nav-dropdown-item" role="menuitem">Organ Guides</a>' +
               '<a href="education.html" class="nav-dropdown-item" role="menuitem">Education</a>' +
-              '<a href="support.html" class="nav-dropdown-item" role="menuitem">Patient Support</a>' +
               '<a href="faq.html" class="nav-dropdown-item" role="menuitem">FAQ</a>' +
               '<a href="checklist.html" class="nav-dropdown-item" role="menuitem">Checklist</a>' +
+              '<a href="support.html" class="nav-dropdown-item" role="menuitem">Support</a>' +
               '<a href="advocacy.html" class="nav-dropdown-item" role="menuitem">Give Back</a>' +
             '</div>' +
           '</div>' +
           '<div class="nav-dropdown">' +
-            '<button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">Analysis <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>' +
+            '<button class="nav-link nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">For Professionals <span class="dropdown-arrow" aria-hidden="true">&#9662;</span></button>' +
             '<div class="nav-dropdown-menu" role="menu">' +
-              '<a href="equity.html" class="nav-dropdown-item" role="menuitem">Equity Analysis</a>' +
+              '<a href="simulator.html" class="nav-dropdown-item" role="menuitem">Simulator</a>' +
+              '<a href="scenarios.html" class="nav-dropdown-item" role="menuitem">Scenario Lab</a>' +
+              '<a href="equity.html" class="nav-dropdown-item" role="menuitem">Equity Audit</a>' +
               '<a href="sensitivity.html" class="nav-dropdown-item" role="menuitem">Sensitivity</a>' +
-              '<a href="scenarios.html" class="nav-dropdown-item" role="menuitem">Scenarios</a>' +
+              '<a href="data.html" class="nav-dropdown-item" role="menuitem">Explorer</a>' +
               '<a href="spatial.html" class="nav-dropdown-item" role="menuitem">Spatial</a>' +
+              '<a href="docs-site/build/" class="nav-dropdown-item" role="menuitem" target="_blank" rel="noopener">Documentation</a>' +
+              '<a href="docs-site/build/api-reference/simulate" class="nav-dropdown-item" role="menuitem" target="_blank" rel="noopener">API Reference</a>' +
             '</div>' +
           '</div>' +
-          '<a href="data.html" class="nav-link">Data</a>' +
-          '<a href="docs-site/build/" class="nav-link" target="_blank" rel="noopener">Docs</a>' +
         '</div>' +
       '</div>' +
     '</nav>';
@@ -64,7 +58,7 @@
       '<h3>Disclaimer</h3>' +
       '<p><strong>This tool is for educational and exploratory purposes only.</strong> transplant.today is not a medical device, does not provide medical advice, and cannot predict individual transplant outcomes.</p>' +
       '<p><strong>Scores are relative comparisons</strong> based on publicly available regional statistics. They are not clinical assessments.</p>' +
-      '<p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant.</p>',
+      '<p><strong>Not clinically validated.</strong> This tool has not undergone clinical validation and should not be used for individual medical decisions. Consult a transplant team for clinical guidance.</p>',
 
     simulator:
       '<h3>Disclaimer</h3>' +
@@ -72,7 +66,7 @@
       '<p><strong>What this tool cannot account for:</strong> HLA typing and crossmatch compatibility, specific disease etiology and comorbidities, your current functional status, individual OPO performance, or your relationship with specific transplant programs. While optional inputs for cPRA, MELD, and LAS adjust scoring, they are rough approximations and do not replace clinical allocation models.</p>' +
       '<p><strong>Scores are relative comparisons</strong> based on publicly available regional statistics. They are not clinical assessments. A city scoring 85/100 does not mean you have an 85% chance of a successful transplant there.</p>' +
       '<p><strong>Some data is estimated or manually curated</strong> and may not reflect current conditions. Wait time estimates are derived from regional averages and may not match your individual circumstances.</p>' +
-      '<p><strong>Always consult your transplant team</strong> and healthcare providers before making any decisions about where to list for a transplant. Your medical team has access to your complete clinical picture, which this tool does not.</p>',
+      '<p><strong>Not clinically validated.</strong> This tool has not undergone clinical validation and should not be used for individual medical decisions. Consult a transplant team for clinical guidance.</p>',
 
     advocacy:
       '<h3>Disclaimer</h3>' +
@@ -107,15 +101,18 @@
               '<p class="footer-affil">transplant.today is under active development. Not affiliated with UNOS, OPTN, any transplant center, or the University of Arizona. Contact: <a href="mailto:contact@rivir.social">contact@rivir.social</a></p>' +
             '</div>' +
             '<div class="footer-col footer-col-nav">' +
-              '<div class="footer-col-head">Explore</div>' +
+              '<div class="footer-col-head">For Patients</div>' +
+              '<a href="centers.html">Centers</a>' +
+              '<a href="compare.html">Compare</a>' +
+              '<a href="organ-guides.html">Organ Guides</a>' +
+              '<a href="faq.html">FAQ</a>' +
+              '<div class="footer-col-head" style="margin-top:0.75rem">For Professionals</div>' +
               '<a href="simulator.html">Simulator</a>' +
-              '<a href="centers.html">Center Explorer</a>' +
-              '<a href="find-centers.html">Find My Centers</a>' +
-              '<a href="wait-estimator.html">Wait Estimator</a>' +
-              '<a href="compare.html">Compare Centers</a>' +
-              '<a href="data.html">Data Explorer</a>' +
+              '<a href="scenarios.html">Scenario Lab</a>' +
+              '<a href="equity.html">Equity Audit</a>' +
+              '<a href="data.html">Explorer</a>' +
               '<a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>' +
-              '<a href="https://github.com/rivirside/TransPlan" target="_blank" rel="noopener">GitHub ↗</a>' +
+              '<a href="https://github.com/rivirside/TransPlan" target="_blank" rel="noopener">GitHub</a>' +
             '</div>' +
             '<div class="footer-col footer-col-legal">' +
               '<div class="footer-col-head">Disclaimer</div>' +
