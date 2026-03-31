@@ -6,17 +6,34 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US transplant centers for their specific organ needs. Deployed at transplant.today with a Python backend on Vercel. Covers all 248 SRTR centers with Monte Carlo simulation, Bayesian inference, competing risks modeling, equity analysis, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Comprehensive Audit (#208) — Next Priority
+## Current State: Rebuild Phase 3 (Page Merges) — Next Priority
 
-Phase 1-7, Phase 3 (Vercel deploy), Phase 4 (248-center expansion) complete. **Next session:** address #208 (comprehensive audit of 33 issues across 10 categories). Priority order:
+**Full rebuild in progress** — Phases 0-2 complete, Phases 3-7 remaining. Plan: `.claude/plans/vectorized-honking-curry.md`
 
-1. **CRITICAL:** Wait time sorting bug in script.js:2910 — `parseFloat("1.8 years")` vs `parseFloat("3 months")` ignores units
-2. **HIGH:** Equity analysis infeasible at 248 centers (11.9M simulations/request → hours). Needs reduced defaults, async, or sampling.
-3. **HIGH:** BBN model has unjustified arbitrary values — 22-city selection undocumented, CPT magic numbers uncited, donor supply discretization assumed. Would not survive peer review.
-4. **HIGH:** Competing risks default to independent draws (should correlate); copula is optional and off by default.
-5. **MEDIUM:** CORS too permissive (any *.vercel.app), innerHTML XSS vectors, rate limit spoofable, bootstrap n=200 insufficient, Gini lacks validation, center data fallbacks inconsistent.
+### Rebuild Progress
 
-Open model expansion issues: #206 (BBN 248-center Region node), #207 (MCMC 248-center hierarchy).
+| Phase | Status | Commits | What Changed |
+|-------|--------|---------|--------------|
+| Phase 0: Seed & Reproducibility | ✅ Done | `a75dd72` | `seed` param on all simulation endpoints, `seed_used` in responses, `RunArtifact` export schema, frontend seed display + export |
+| Phase 1: Nav Restructure | ✅ Done | `6749b10` | "For Patients" / "For Professionals" mega-dropdowns in `site-chrome.js`, old URLs redirect |
+| Phase 2: Simulator Rebuild | ✅ Done | `6f99f07` `792e1da` `840e415` | Modular architecture: `simulator/{index,map,tier-panel,form-helpers,results,results-table}.js` + `shared/{api-client,export-handler,data-loader,continue-buttons,geo-utils,weight-config}.js`. `simulator.html` rewritten (two-panel sidebar+results). Verified: 233 centers scored, simulation runs, map renders, URL pre-fill works, continue buttons link to 4 tools |
+| **Phase 3: Page Merges** | 🔲 **NEXT** | — | Merge find-centers + centers + wait-estimator → `centers.html` (tabs). Merge data.html + spatial.html → `explorer.html` (tabs) |
+| Phase 4: Model Validation | 🔲 Pending | — | New `validation.html` with 7 sections, new backend router + services |
+| Phase 5: Inter-tool Linking | 🔲 Pending | — | `shared/continue-buttons.js` already built in Phase 2; wire to all pages |
+| Phase 6: Tier System | 🔲 Pending | — | Hide unavailable features (not greyed out) |
+| Phase 7: Cleanup & Polish | 🔲 Pending | — | Delete `script.js` (4889 lines), old HTML pages, final QA |
+
+### Bugs Fixed During Rebuild
+- `scoring.py` NameError: `_donor_availability()` missing `lat`/`lon` params (caused 500 on POST /score)
+- `index.js` DOMContentLoaded race: scripts at bottom of `<body>` run after event fires; fixed with `readyState` check
+- `tier-panel.js` ID mismatches between old/new element IDs (now handles both)
+- `form-helpers.js` inference mode select ID (`sim-inference-mode` → `inferenceMode`)
+
+### Deferred Issues
+- **#208 comprehensive audit** (33 issues) — deferred until rebuild complete
+- **#206** BBN 248-center Region node, **#207** MCMC 248-center hierarchy
+- **HIGH:** Equity analysis infeasible at scale (11.9M sims), BBN magic numbers uncited, CORS too permissive
+- **CRITICAL:** Wait time sorting bug (script.js:2910) — will be fixed when script.js is deleted in Phase 7
 
 **Phase 3 done:** Python backend deployed to Vercel as serverless function (api/index.py). Static files served by CDN, API paths routed via vercel.json rewrites. CORS configured for transplant.today and *.vercel.app. MCMC gracefully disabled on Vercel (missing pymc). **Phase 4 done:** Simulation engine expanded from 22 cities to all 248 SRTR centers. Center-level data (wait-time factors, competing risks, outcomes) wired into MC, BBN, and MCMC engines. All simulation parameters (iterations, copula_theta, elasticity) exposed as adjustable API query params. BBN/MCMC map 248 centers to 22 regions as interim; full expansion tracked in #206/#207. Frontend home-center dropdown dynamically loads all centers from API.
 
@@ -236,32 +253,38 @@ TransPlan/
   start.command           <- Double-click to launch (macOS); auto-finds free ports
   stop.command            <- Double-click to stop a running session
   session.js              <- Local session UI (End Session button, same-origin health check)
-  api-client.js           <- Backend API client (POST /simulate + /score + /sensitivity + /equity-analysis + /what-if + GET /centers, graceful fallback)
-  probability-charts.js   <- CDF curves, competing risks bar, tornado sensitivity chart (Chart.js)
-  equity-charts.js        <- Blood type disparity, age bracket disparity, Gini by city charts (Chart.js)
-  dark-mode.js            <- Dark mode toggle (auto-detect, localStorage persist, sun/moon button)
-  url-sharing.js          <- URL query param encode/decode for shareable form state
-  export-handler.js       <- PDF report, CSV, JSON, chart PNG export
+  simulator/              <- NEW (Phase 2 rebuild) — modular simulator
+    index.js              <- Entry point: form → score/simulate → table/map wiring, URL pre-fill
+    map.js                <- Leaflet map with center markers, highlighting, popups
+    tier-panel.js         <- Fetches /tier, applies caps, shows badge (WEB/LOCAL)
+    form-helpers.js       <- Home center dropdown, slider wiring, advanced params collection
+    results.js            <- Orchestrator: runScoring(), runSimulation(), geocodeHome(), state management
+    results-table.js      <- Renders sortable table with rank, score bars, simulation probability columns
+  shared/                 <- NEW (Phase 2 rebuild) — cross-page utilities
+    api-client.js         <- Backend API client (POST /simulate + /score + /sensitivity + /equity-analysis + /what-if + GET /centers)
+    export-handler.js     <- PDF report, CSV, JSON, RunArtifact export with seed
+    data-loader.js        <- Runtime JSON loader with fallbacks
+    continue-buttons.js   <- Inter-tool "Continue to..." buttons encoding patient profile as URL params
+    geo-utils.js          <- Haversine distance, geocoding helpers
+  components/
+    site-chrome.js        <- Shared nav/footer (For Patients / For Professionals dropdowns)
+    weight-config.js      <- Scoring weight sliders, presets, normalization, re-score trigger
   index.html              <- Landing page (hero, feature cards, 248-center map, steps flow, data trust badges, CTA)
-  simulator.html          <- Simulation tool (sidebar form, 3-tab results, modals, map, collapsed methodology)
-  find-centers.html       <- Find My Centers wizard (zip + organ + blood type → ranked results)
-  wait-estimator.html     <- Wait Time Estimator (organ + blood type → median IQR range)
+  simulator.html          <- Simulation tool — REBUILT: two-panel sidebar form + results/map/table
+  find-centers.html       <- Find My Centers wizard (→ merge into centers.html in Phase 3)
+  wait-estimator.html     <- Wait Time Estimator (→ merge into centers.html in Phase 3)
   compare.html            <- Side-by-side center comparison (up to 3, URL-shareable)
   organ-guides.html       <- Organ-specific transplant guides (kidney, liver, heart, lung, pancreas)
   faq.html                <- Frequently asked questions (10 collapsible Q&A)
   checklist.html          <- Transplant journey checklist (34 items, 5 phases, localStorage)
   advocacy.html           <- Advocacy & Give Back (6 articles: donor, marrow, blood, living, volunteer, fundraise)
-  donation-banner.js      <- Dismissible donation banner (GitHub Sponsors, Buy Me a Coffee, Ko-fi)
   algorithm.js            <- Frontend scoring engine (8 categories, 22 cities — fallback when backend unavailable)
-  script.js               <- UI, map, form, results display — calls POST /score for 248 centers with local fallback
-  data-loader.js          <- Runtime JSON loader with fallbacks
-  charts.js               <- Chart.js radar/bar/donut charts
-  styles.css              <- All CSS: design tokens (system fonts, 15px base, soft radii, shadows), sidebar layout, landing page, dark mode, responsive
+  script.js               <- LEGACY monolith (4889 lines) — TO BE DELETED in Phase 7
+  styles.css              <- All CSS + Phase 2 additions (sim-action-row, btn-secondary, sim-error, continue-buttons, dark mode overrides)
   (themes.css deleted)    <- 6 themes removed in Phase 7 UI overhaul
   (theme-switcher.js deleted) <- Theme picker removed in Phase 7
   package.json            <- Node deps (xml2js, jest)
   README.md               <- User-facing docs
-  weight-config.js          <- Scoring weight sliders, presets, normalization, re-score trigger (Phase 4 M1)
   tests/                  <- Unit tests (Jest)
     algorithm.test.js     <- 89 tests: all 8 scoring categories + comprehensive + COD multiplier + configurable weights
     utils.test.js         <- 23 tests: deepMerge, writeDataFile, mergeDataFile, CITIES
