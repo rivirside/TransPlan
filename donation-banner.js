@@ -7,6 +7,9 @@
     var STORAGE_KEY = 'transplan-donation-dismissed';
     var DISMISS_DAYS = 30; // Re-show after 30 days
 
+    // Banner disabled — return immediately
+    return;
+
     // Check if dismissed
     try {
         var dismissed = localStorage.getItem(STORAGE_KEY);
