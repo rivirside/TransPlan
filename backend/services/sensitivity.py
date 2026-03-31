@@ -43,7 +43,7 @@ def _p24_single_city(
         meld=patient.meld,
         las=patient.las,
     )
-    transplant_times = dist.rvs(size=n_iterations)
+    transplant_times = dist.rvs(size=n_iterations, random_state=rng)
 
     annual_mort = get_annual_mortality_rate(
         organ=patient.organ,
@@ -81,6 +81,7 @@ def compute_sensitivity(
     city: str = "Nashville",
     n_iterations: int = 1000,
     center_code: str = "",
+    seed: int | None = None,
 ) -> SensitivityResult:
     """
     Compute input sensitivity for p_transplant_24mo for a single center/city.
@@ -106,7 +107,9 @@ def compute_sensitivity(
             # Also check center names
             pass  # Allow any city name through for backward compat
 
-    rng = np.random.default_rng()
+    if seed is None:
+        seed = int(np.random.default_rng().integers(0, 2**31))
+    rng = np.random.default_rng(seed)
     baseline_p24 = _p24_single_city(patient, city, n_iterations, rng, center_code=center_code)
     impacts: list[ParameterImpact] = []
     organ = patient.organ
@@ -188,4 +191,5 @@ def compute_sensitivity(
         impacts=impacts,
         iterations=n_iterations,
         elapsed_seconds=round(elapsed, 3),
+        seed_used=seed,
     )

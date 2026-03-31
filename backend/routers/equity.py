@@ -1,5 +1,6 @@
 """POST /equity-analysis — Demographic equity analysis endpoint."""
 import logging
+from typing import Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -21,6 +22,7 @@ class EquityAnalysisRequest(BaseModel):
         default=30, ge=5, le=300,
         description="Maximum number of transplant centers to include (caps simulation size)"
     )
+    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
 
 
 @router.post("/equity-analysis", response_model=EquityAnalysisResult)
@@ -34,6 +36,7 @@ def run_equity_analysis(request: EquityAnalysisRequest) -> EquityAnalysisResult:
         return compute_equity_analysis(
             request.patient,
             n_iterations=iterations,
+            seed=request.seed,
             max_centers=centers,
         )
     except Exception as e:

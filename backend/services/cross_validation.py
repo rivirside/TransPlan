@@ -61,18 +61,18 @@ class CrossValidationResult:
     notes: list[str] = field(default_factory=list)
 
 
-def _run_mc(patient: PatientProfile, n_iterations: int) -> SimulationResult | None:
+def _run_mc(patient: PatientProfile, n_iterations: int, seed: int | None = None) -> SimulationResult | None:
     """Run Monte Carlo engine."""
     try:
         from services.monte_carlo import simulate
-        return simulate(patient, n_iterations=n_iterations)
+        return simulate(patient, n_iterations=n_iterations, seed=seed)
     except Exception as e:
         logger.warning("MC engine failed: %s", e)
         return None
 
 
 def _run_bbn(patient: PatientProfile) -> SimulationResult | None:
-    """Run Bayesian Belief Network engine."""
+    """Run Bayesian Belief Network engine (deterministic, no seed needed)."""
     try:
         from services.bayesian_network import simulate_bbn
         return simulate_bbn(patient)
@@ -82,7 +82,7 @@ def _run_bbn(patient: PatientProfile) -> SimulationResult | None:
 
 
 def _run_mcmc(patient: PatientProfile, n_iterations: int) -> SimulationResult | None:
-    """Run MCMC engine (requires fitted trace)."""
+    """Run MCMC engine (requires fitted trace; uses pre-fitted posterior, no seed needed)."""
     try:
         from services.mcmc_inference import is_available, simulate_mcmc
         if not is_available(patient.organ):
@@ -136,18 +136,29 @@ def _compare_pair(
 def cross_validate(
     patient: PatientProfile,
     n_iterations: int = 1000,
+    seed: int | None = None,
 ) -> CrossValidationResult:
     """
     Run all available engines and produce a comparison report.
 
     Returns a CrossValidationResult with pairwise metrics and a per-city
     probability table showing all engines side-by-side.
+
+    If *seed* is provided it is used for the MC engine; BBN is deterministic
+    and MCMC draws from a pre-fitted posterior, so neither needs a seed.
+    When *seed* is None a random seed is generated for reproducibility
+    logging.
     """
     start = time.perf_counter()
     notes: list[str] = []
 
-    # Run each engine
-    mc_result = _run_mc(patient, n_iterations)
+    # Generate a seed if not provided so the run is reproducible
+    if seed is None:
+        seed = int(np.random.default_rng().integers(0, 2**31))
+
+    # Run each engine (MC gets the seed; BBN is deterministic; MCMC uses
+    # pre-fitted posterior draws so seed is not applicable)
+    mc_result = _run_mc(patient, n_iterations, seed=seed)
     bbn_result = _run_bbn(patient)
     mcmc_result = _run_mcmc(patient, n_iterations)
 

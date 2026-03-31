@@ -101,6 +101,9 @@
         if (advancedParams.elasticity !== undefined) {
           qp.push('elasticity=' + advancedParams.elasticity);
         }
+        if (advancedParams.seed !== undefined && advancedParams.seed !== null) {
+          qp.push('seed=' + advancedParams.seed);
+        }
       }
       var url = base + '/simulate' + (qp.length ? '?' + qp.join('&') : '');
       var response = await fetch(url, {
@@ -136,7 +139,7 @@
    * @param {number} [iterations] - Number of Monte Carlo iterations (default 300)
    * @returns {Promise<Object|null>} SensitivityResult or null on failure
    */
-  async function sensitivity(formData, city, iterations) {
+  async function sensitivity(formData, city, iterations, seed) {
     var base = getBaseUrl();
     var controller = new AbortController();
     var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
@@ -148,6 +151,7 @@
         center_code: city || '',
         iterations: iterations || 300
       };
+      if (seed !== undefined && seed !== null) body.seed = seed;
       var response = await fetch(base + '/sensitivity', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -180,7 +184,7 @@
    * @param {number} [maxCenters] - Max centers to include (default 30)
    * @returns {Promise<Object|null>} EquityAnalysisResult or null on failure
    */
-  async function equityAnalysis(formData, iterationsPerProfile, maxCenters) {
+  async function equityAnalysis(formData, iterationsPerProfile, maxCenters, seed) {
     var base = getBaseUrl();
     var controller = new AbortController();
     // Equity analysis is expensive (48 profiles × 22 cities) — 30s timeout
@@ -192,6 +196,7 @@
         iterations_per_profile: iterationsPerProfile || 300,
         max_centers: maxCenters || 30
       };
+      if (seed !== undefined && seed !== null) body.seed = seed;
       var response = await fetch(base + '/equity-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -226,7 +231,7 @@
    * @param {number} [iterations] - Monte Carlo iterations (default 500)
    * @returns {Promise<Object|null>} WhatIfResult or null on failure
    */
-  async function whatIf(formData, city, donorRateMultiplier, waitTimeMultiplier, iterations) {
+  async function whatIf(formData, city, donorRateMultiplier, waitTimeMultiplier, iterations, seed) {
     var base = getBaseUrl();
     var controller = new AbortController();
     var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
@@ -239,6 +244,7 @@
         wait_time_multiplier: waitTimeMultiplier ?? 1.0,
         iterations: iterations ?? 500
       };
+      if (seed !== undefined && seed !== null) body.seed = seed;
       var response = await fetch(base + '/what-if', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -296,7 +302,7 @@
    * @param {number} [iterations] - Monte Carlo iterations (default 500)
    * @returns {Promise<Object|null>} PolicyScenarioResult or null
    */
-  async function policyScenario(formData, scenarioId, city, iterations) {
+  async function policyScenario(formData, scenarioId, city, iterations, seed) {
     var base = getBaseUrl();
     var controller = new AbortController();
     var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
@@ -308,6 +314,7 @@
         city: city || 'Nashville',
         iterations: iterations || 500
       };
+      if (seed !== undefined && seed !== null) body.seed = seed;
       var response = await fetch(base + '/policy-scenario', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -421,7 +428,7 @@
    * @param {number} [iterations] - Monte Carlo iterations per city (default 500)
    * @returns {Promise<Object|null>} TravelSubsidyAnalysisResult or null
    */
-  async function travelSubsidyAnalysis(formData, cities, iterations) {
+  async function travelSubsidyAnalysis(formData, cities, iterations, seed) {
     var base = getBaseUrl();
     var controller = new AbortController();
     // Longer timeout — this runs 4 tiers × N cities
@@ -433,6 +440,7 @@
         cities: cities || [],
         iterations: iterations || 500
       };
+      if (seed !== undefined && seed !== null) body.seed = seed;
       var response = await fetch(base + '/travel-subsidy-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

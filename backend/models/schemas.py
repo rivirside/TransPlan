@@ -108,6 +108,7 @@ class SimulationResult(BaseModel):
     cities: list[CityProbability]  # Ranked by p_transplant_24mo descending
     iterations: int
     elapsed_seconds: float
+    seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
     deterministic_scores: dict = Field(
         default_factory=dict,
         description="Phase 1 suitability scores for comparison (city → score)"
@@ -160,6 +161,7 @@ class SensitivityResult(BaseModel):
     impacts: list[ParameterImpact] = Field(description="Sorted by magnitude of impact (largest first)")
     iterations: int
     elapsed_seconds: float
+    seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
 
 
 class DemographicGroup(BaseModel):
@@ -190,6 +192,7 @@ class EquityAnalysisResult(BaseModel):
     profiles_simulated: int = Field(description="Total demographic profiles in matrix")
     iterations_per_profile: int
     elapsed_seconds: float
+    seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
     disclaimers: list[str] = Field(description="Mandatory limitation disclaimers")
 
 

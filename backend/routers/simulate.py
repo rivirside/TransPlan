@@ -22,6 +22,7 @@ def run_simulation(
     copula_theta: float = Query(default=None, ge=0.1, le=5.0, description="Override Clayton copula theta (use_copula must be true)"),
     elasticity: float = Query(default=None, ge=0.1, le=1.0, description="Override supply-wait elasticity (default 0.65)"),
     bbn_granularity: str = Query(default="state", description="BBN region granularity: 'classic' (22), 'state' (~50), 'full' (248)"),
+    seed: int = Query(default=None, ge=0, le=2147483647, description="RNG seed for reproducibility"),
 ) -> SimulationResult:
     try:
         from tier_config import get_tier
@@ -62,7 +63,7 @@ def run_simulation(
                            f"Run scripts/fit-mcmc-model.py --organ {patient.organ} to generate it.",
                 )
             return simulate_mcmc(patient, n_iterations=iterations)
-        return simulate(patient, n_iterations=iterations, copula_theta_override=copula_theta, elasticity_override=elasticity)
+        return simulate(patient, n_iterations=iterations, copula_theta_override=copula_theta, elasticity_override=elasticity, seed=seed)
     except HTTPException:
         raise
     except Exception as e:

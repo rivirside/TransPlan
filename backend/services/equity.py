@@ -119,7 +119,9 @@ def compute_equity_analysis(
     representativeness.
     """
     start = time.perf_counter()
-    rng = np.random.default_rng(seed if seed is not None else 42)
+    if seed is None:
+        seed = int(np.random.default_rng().integers(0, 2**31))
+    rng = np.random.default_rng(seed)
 
     # --- Generate profile variants ---
     profiles = []
@@ -142,7 +144,7 @@ def compute_equity_analysis(
 
     # Cap centers for performance: top-N by wait-time factor + random sample
     if len(centers) > max_centers:
-        rng_sample = np.random.default_rng(seed if seed is not None else 42)
+        rng_sample = np.random.default_rng(seed)
         # Sort by wait_time_factor (lower = better) and take top half of budget
         top_n = max_centers // 2
         sorted_centers = sorted(centers, key=lambda c: c.get("wait_time_factor", 1.0))
@@ -239,4 +241,5 @@ def compute_equity_analysis(
         iterations_per_profile=n_iterations,
         elapsed_seconds=round(elapsed, 3),
         disclaimers=EQUITY_DISCLAIMERS,
+        seed_used=seed,
     )

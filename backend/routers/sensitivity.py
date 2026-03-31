@@ -1,5 +1,6 @@
 """POST /sensitivity — Input parameter sensitivity analysis endpoint."""
 import logging
+from typing import Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -22,6 +23,7 @@ class SensitivityRequest(BaseModel):
         description="SRTR center code (preferred over city name)",
     )
     iterations: int = Field(default=1000, ge=100, le=5000)
+    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
 
 
 @router.post("/sensitivity", response_model=SensitivityResult)
@@ -33,6 +35,7 @@ def run_sensitivity(request: SensitivityRequest) -> SensitivityResult:
         return compute_sensitivity(
             request.patient, request.city, iterations,
             center_code=request.center_code,
+            seed=request.seed,
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e

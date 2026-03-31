@@ -573,6 +573,30 @@
   }
 
   // Expose for external use (PDF module uses these)
+  /**
+   * Export a complete run artifact for reproducibility.
+   * Includes tool name, seed, patient profile, parameters, and full results.
+   * @param {string} toolName - e.g., "simulator", "sensitivity", "equity", "scenarios"
+   * @param {Object} params - Tool-specific parameters (iterations, copula_theta, etc.)
+   * @param {Object} results - Full result payload from the API
+   * @param {number} seedUsed - The RNG seed used (from results.seed_used)
+   */
+  function exportRunArtifact(toolName, params, results, seedUsed) {
+    var artifact = {
+      version: '2.0.0',
+      tool: toolName,
+      timestamp: new Date().toISOString(),
+      seed_used: seedUsed || (results && results.seed_used) || 0,
+      patient: (results && results.patient) || params.patient || {},
+      parameters: params,
+      results: results,
+      tier: (window._tierConfig && window._tierConfig.name) || 'web'
+    };
+    var json = JSON.stringify(artifact, null, 2);
+    var ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    downloadText(json, 'transplan-' + toolName + '-' + ts + '.json', 'application/json');
+  }
+
   window.TransPlanExport = {
     exportCSV: exportCSV,
     exportJSON: exportJSON,
@@ -580,7 +604,8 @@
     exportAllCharts: exportAllCharts,
     exportChartPNG: exportChartPNG,
     buildScoresCSV: buildScoresCSV,
-    buildProbabilitiesCSV: buildProbabilitiesCSV
+    buildProbabilitiesCSV: buildProbabilitiesCSV,
+    exportRunArtifact: exportRunArtifact
   };
 
   if (document.readyState === 'loading') {

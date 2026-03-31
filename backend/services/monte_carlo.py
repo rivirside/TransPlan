@@ -178,7 +178,7 @@ def _get_cod_multiplier(state_abbrev: str, organ: str, *, n_samples: int = 0, rn
         return state_score / nat_avg
 
 
-def _bootstrap_ci(outcomes: np.ndarray, event: int, threshold_months: np.ndarray, time_horizon: float, confidence: float = 0.95, n_bootstrap: int = 1000) -> tuple[float, float]:
+def _bootstrap_ci(outcomes: np.ndarray, event: int, threshold_months: np.ndarray, time_horizon: float, confidence: float = 0.95, n_bootstrap: int = 1000, rng: np.random.Generator | None = None) -> tuple[float, float]:
     """
     Compute a bootstrap confidence interval for P(event occurs first AND within time_horizon).
 
@@ -188,8 +188,10 @@ def _bootstrap_ci(outcomes: np.ndarray, event: int, threshold_months: np.ndarray
     event : which event to compute CI for (0, 1, or 2)
     threshold_months : array of event times (min of the three draws)
     time_horizon : months cutoff
+    rng : numpy random generator (if None, creates unseeded one)
     """
-    rng = np.random.default_rng()
+    if rng is None:
+        rng = np.random.default_rng()
     n = len(outcomes)
     proportions = np.empty(n_bootstrap)
     mask = (outcomes == event) & (threshold_months <= time_horizon)
@@ -208,6 +210,7 @@ def simulate(
     n_iterations: int | None = None,
     copula_theta_override: float | None = None,
     elasticity_override: float | None = None,
+    seed: int | None = None,
 ) -> SimulationResult:
     """
     Run Monte Carlo simulation with competing risks for all SRTR centers
@@ -221,6 +224,11 @@ def simulate(
 
     Returns ranked centers with transplant probabilities, CIs, and
     competing risks breakdown at 24 months.
+
+    Parameters
+    ----------
+    seed : optional RNG seed for reproducibility. If None, a random seed is
+        generated and returned in the result so the run can be replicated.
     """
     if n_iterations is None:
         n_iterations = SIMULATION_ITERATIONS
@@ -228,7 +236,9 @@ def simulate(
     eff_elasticity = elasticity_override if elasticity_override is not None else SUPPLY_WAIT_ELASTICITY
 
     start = time.perf_counter()
-    rng = np.random.default_rng()
+    if seed is None:
+        seed = int(np.random.default_rng().integers(0, 2**31))
+    rng = np.random.default_rng(seed)
     city_results: list[CityProbability] = []
 
     for center in _get_centers(patient.organ):
@@ -253,7 +263,7 @@ def simulate(
             meld=patient.meld,
             las=patient.las,
         )
-        transplant_times = dist.rvs(size=n_iterations)
+        transplant_times = dist.rvs(size=n_iterations, random_state=rng)
 
         # --- Apply organ-specific cause-of-death multiplier (M2) ---
         # Sublinear elasticity: wait_adj = multiplier ^ elasticity (L-056)
@@ -304,7 +314,7 @@ def simulate(
         p_24 = p_transplant_within(24)
         p_36 = p_transplant_within(36)
 
-        ci_95 = _bootstrap_ci(outcomes, event=0, threshold_months=event_times, time_horizon=24)
+        ci_95 = _bootstrap_ci(outcomes, event=0, threshold_months=event_times, time_horizon=24, rng=rng)
 
         transplanted_mask = outcomes == 0
         if np.any(transplanted_mask):
@@ -367,4 +377,5 @@ def simulate(
         cities=city_results,
         iterations=n_iterations,
         elapsed_seconds=round(elapsed, 3),
+        seed_used=seed,
     )

@@ -38,6 +38,7 @@ class WhatIfResult(BaseModel):
     adjusted_median_wait: float
     iterations: int
     elapsed_seconds: float
+    seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
 
 
 def _run_single(
@@ -127,7 +128,7 @@ def _run_single(
 
     # Bootstrap CI for p24
     mask = (outcomes == 0) & (event_times <= 24)
-    boot_rng = np.random.default_rng()
+    boot_rng = rng  # Use the same seeded RNG for reproducibility
     n = len(outcomes)
     proportions = np.empty(200)
     for i in range(200):
@@ -156,12 +157,18 @@ def compute_what_if(
     donor_rate_multiplier: float = 1.0,
     wait_time_multiplier: float = 1.0,
     n_iterations: int = 500,
+    seed: int | None = None,
 ) -> WhatIfResult:
     """
     Run what-if analysis: baseline vs adjusted Monte Carlo for a single city.
 
     Uses paired random seeds so the only difference between baseline and adjusted
     results is the multiplier — this minimizes Monte Carlo noise in the delta.
+
+    Parameters
+    ----------
+    seed : optional RNG seed for reproducibility. If None, a random seed is
+        generated and returned in the result.
     """
     start = time.perf_counter()
 
@@ -177,8 +184,10 @@ def compute_what_if(
         raise ValueError(f"Unknown city: '{city}'. Valid cities: {valid}")
 
     # Use paired seeds for baseline vs adjusted comparison
-    seed = np.random.SeedSequence()
-    seed_baseline, seed_adjusted = seed.spawn(2)
+    if seed is None:
+        seed = int(np.random.default_rng().integers(0, 2**31))
+    seed_seq = np.random.SeedSequence(seed)
+    seed_baseline, seed_adjusted = seed_seq.spawn(2)
 
     # Baseline run (multipliers = 1.0)
     baseline = _run_single(
@@ -224,4 +233,5 @@ def compute_what_if(
         adjusted_median_wait=adjusted["median_wait"],
         iterations=n_iterations,
         elapsed_seconds=round(elapsed, 3),
+        seed_used=seed,
     )

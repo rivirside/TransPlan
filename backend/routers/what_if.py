@@ -49,6 +49,7 @@ class WhatIfRequest(BaseModel):
         description="Multiplier for base wait time distribution. >1 = longer waits, <1 = shorter waits",
     )
     iterations: int = Field(default=500, ge=100, le=2000)
+    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
 
 
 @router.post("/what-if", response_model=WhatIfResult)
@@ -63,6 +64,7 @@ def run_what_if(request: WhatIfRequest) -> WhatIfResult:
             donor_rate_multiplier=request.donor_rate_multiplier,
             wait_time_multiplier=request.wait_time_multiplier,
             n_iterations=iterations,
+            seed=request.seed,
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
@@ -81,6 +83,7 @@ class PolicyScenarioRequest(BaseModel):
         description="City to run scenario analysis for",
     )
     iterations: int = Field(default=500, ge=100, le=2000)
+    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
 
 
 class PolicyScenarioResult(BaseModel):
@@ -99,6 +102,7 @@ class PolicyScenarioResult(BaseModel):
     adjusted_median_wait: float
     iterations: int
     elapsed_seconds: float
+    seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
 
 
 @router.get("/policy-scenarios", response_model=list[PolicyScenario])
@@ -156,6 +160,7 @@ def run_policy_scenario(request: PolicyScenarioRequest) -> PolicyScenarioResult:
         donor_rate_multiplier=donor_mult,
         wait_time_multiplier=wait_mult,
         n_iterations=iterations,
+        seed=request.seed,
     )
 
     return PolicyScenarioResult(
@@ -185,6 +190,7 @@ class TravelSubsidyRequest(BaseModel):
         description="Cities to analyze. Empty = all available centers.",
     )
     iterations: int = Field(default=500, ge=100, le=2000)
+    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
 
 
 class TravelSubsidyCityResult(BaseModel):
@@ -218,6 +224,7 @@ class TravelSubsidyAnalysisResult(BaseModel):
     total_cities: int
     iterations_per_city: int
     elapsed_seconds: float
+    seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
     disclaimers: list[str]
 
 
@@ -271,6 +278,7 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
                     donor_rate_multiplier=donor_mult,
                     wait_time_multiplier=wait_mult,
                     n_iterations=clamped_iterations,
+                    seed=request.seed,
                 )
                 city_results.append(TravelSubsidyCityResult(
                     city=result.city,
