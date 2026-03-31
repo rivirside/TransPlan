@@ -19,6 +19,10 @@ class TierConfig:
     max_sensitivity_iterations: int
     max_whatif_iterations: int
     max_spatial_resolution: int
+    # Validation tool caps
+    max_validation_iterations: int
+    max_validation_sweep_steps: int
+    max_validation_train_years: int
 
 
 WEB_TIER = TierConfig(
@@ -33,6 +37,9 @@ WEB_TIER = TierConfig(
     max_sensitivity_iterations=500,
     max_whatif_iterations=500,
     max_spatial_resolution=30,
+    max_validation_iterations=300,
+    max_validation_sweep_steps=6,
+    max_validation_train_years=3,
 )
 
 LOCAL_TIER = TierConfig(
@@ -47,6 +54,9 @@ LOCAL_TIER = TierConfig(
     max_sensitivity_iterations=5000,
     max_whatif_iterations=2000,
     max_spatial_resolution=100,
+    max_validation_iterations=1000,
+    max_validation_sweep_steps=10,
+    max_validation_train_years=6,
 )
 
 

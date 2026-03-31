@@ -26,7 +26,7 @@ from starlette.staticfiles import StaticFiles
 from starlette.types import Scope
 
 from config import ALLOWED_ORIGINS, DATA_DIR, VERSION
-from routers import centers, equity, health, score, sensitivity, shutdown, simulate, spatial, tier, trends, what_if
+from routers import centers, equity, health, score, sensitivity, shutdown, simulate, spatial, tier, trends, validation, what_if
 from routers.api_v1 import include_v1_routers
 from services.data_loader import load_all
 
@@ -108,6 +108,7 @@ app.include_router(trends.router, tags=["trends"])
 app.include_router(centers.router, tags=["centers"])
 app.include_router(spatial.router, tags=["spatial"])
 app.include_router(score.router, tags=["scoring"])
+app.include_router(validation.router, tags=["validation"])
 
 # Public REST API v1 — all endpoints under /api/v1/ with rate limiting (#24)
 include_v1_routers(app)

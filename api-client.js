@@ -465,6 +465,112 @@
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Validation API methods (Phase 4)
+  // ---------------------------------------------------------------------------
+
+  function _postJSON(path, payload, timeoutMs) {
+    var to = timeoutMs || API_TIMEOUT_MS;
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, to);
+    return fetch(getBaseUrl() + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: ctrl.signal,
+    }).then(function (r) {
+      clearTimeout(timer);
+      return r.ok ? r.json() : r.json().then(function (e) { throw new Error(e.detail || r.status); });
+    }).catch(function (err) {
+      clearTimeout(timer);
+      throw err;
+    });
+  }
+
+  function _getJSON(path) {
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, API_TIMEOUT_MS);
+    return fetch(getBaseUrl() + path, { signal: ctrl.signal })
+      .then(function (r) {
+        clearTimeout(timer);
+        return r.ok ? r.json() : r.json().then(function (e) { throw new Error(e.detail || r.status); });
+      }).catch(function (err) { clearTimeout(timer); throw err; });
+  }
+
+  /**
+   * Compare MC / BBN / MCMC rankings for a patient profile.
+   * @param {Object} patient  PatientProfile dict
+   * @param {number} iterations
+   * @param {number|null} seed
+   */
+  function crossEngine(patient, iterations, seed) {
+    return _postJSON('/validation/cross-engine', { patient: patient, iterations: iterations || 300, seed: seed || null }, 60000);
+  }
+
+  /**
+   * Sweep a model parameter and measure ranking stability.
+   * @param {Object} patient PatientProfile dict
+   * @param {string} param   e.g. 'copula_theta', 'elasticity', 'cpra'
+   * @param {number} nSteps
+   * @param {number} baseIterations
+   * @param {number|null} seed
+   */
+  function modelSensitivity(patient, param, nSteps, baseIterations, seed) {
+    return _postJSON('/validation/model-sensitivity', {
+      patient: patient,
+      param: param,
+      n_steps: nSteps || 6,
+      base_iterations: baseIterations || 200,
+      seed: seed || null,
+    }, 120000);
+  }
+
+  /**
+   * Brier score calibration check.
+   * @param {Object} patient PatientProfile dict
+   * @param {number} iterations
+   * @param {number|null} seed
+   */
+  function calibration(patient, iterations, seed) {
+    return _postJSON('/validation/calibration', { patient: patient, iterations: iterations || 300, seed: seed || null }, 60000);
+  }
+
+  /**
+   * Walk-forward temporal validation.
+   * @param {Object} patient
+   * @param {number} trainStart
+   * @param {number} trainEnd
+   * @param {number} testEnd
+   * @param {number} iterations
+   * @param {number|null} seed
+   */
+  function temporalValidation(patient, trainStart, trainEnd, testEnd, iterations, seed) {
+    return _postJSON('/validation/temporal', {
+      patient: patient,
+      train_start: trainStart || 2019,
+      train_end: trainEnd || 2022,
+      test_end: testEnd || 2024,
+      iterations: iterations || 200,
+      seed: seed || null,
+    }, 120000);
+  }
+
+  /**
+   * MCMC convergence diagnostics for an organ.
+   * @param {string} organ
+   */
+  function convergence(organ) {
+    return _getJSON('/validation/convergence/' + organ);
+  }
+
+  /**
+   * Canonical deterministic reference run (seed=12345).
+   * @param {string} organ
+   */
+  function referenceRun(organ) {
+    return _getJSON('/validation/reference-run/' + organ);
+  }
+
   // Expose globally
   window.TransPlanAPI = {
     simulate: simulate,
@@ -478,6 +584,13 @@
     isBackendAvailable: isBackendAvailable,
     normalizeFormData: normalizeFormData,
     fetchCenters: fetchCenters,
-    getBaseUrl: getBaseUrl
+    getBaseUrl: getBaseUrl,
+    // Phase 4: Validation
+    crossEngine: crossEngine,
+    modelSensitivity: modelSensitivity,
+    calibration: calibration,
+    temporalValidation: temporalValidation,
+    convergence: convergence,
+    referenceRun: referenceRun,
   };
 })();

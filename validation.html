@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Validation — transplant.today</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        /* Validation tool — tab layout */
+        .validation-layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem 3rem;
+        }
+        .validation-header {
+            margin-bottom: 1.5rem;
+        }
+        .validation-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 0.25rem;
+        }
+        .validation-header p {
+            margin: 0;
+            color: var(--text-muted, #6b7280);
+            font-size: 0.9rem;
+        }
+        .val-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            border-bottom: 2px solid var(--border, #e5e7eb);
+            margin-bottom: 1.5rem;
+        }
+        .val-tab {
+            padding: 0.5rem 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: var(--text-muted, #6b7280);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: color 0.15s, border-color 0.15s;
+        }
+        .val-tab.active {
+            color: var(--accent, #2563eb);
+            border-bottom-color: var(--accent, #2563eb);
+        }
+        .val-tab:hover:not(.active) {
+            color: var(--text, #111827);
+        }
+        .val-panel { display: none; }
+        .val-panel.active { display: block; }
+
+        /* Shared panel UI */
+        .val-card {
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border, #e5e7eb);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .val-card h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0 0 0.75rem;
+        }
+        .val-card h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem;
+        }
+        .val-form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+        .val-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            min-width: 120px;
+        }
+        .val-form-group label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted, #6b7280);
+        }
+        .val-form-group select,
+        .val-form-group input[type="number"],
+        .val-form-group input[type="text"] {
+            padding: 0.4rem 0.5rem;
+            border: 1px solid var(--border, #d1d5db);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            background: var(--input-bg, #fff);
+            color: var(--text, #111827);
+        }
+        .val-run-btn {
+            padding: 0.45rem 1.1rem;
+            background: var(--accent, #2563eb);
+            color: #fff;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .val-run-btn:hover { background: #1d4ed8; }
+        .val-run-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+
+        /* Results */
+        .val-result-area {
+            margin-top: 1rem;
+        }
+        .val-stat-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .val-stat {
+            background: var(--well-bg, #f9fafb);
+            border: 1px solid var(--border, #e5e7eb);
+            border-radius: 0.375rem;
+            padding: 0.75rem 1rem;
+            min-width: 120px;
+        }
+        .val-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted, #6b7280);
+            margin-bottom: 0.25rem;
+        }
+        .val-stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .val-stat-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted, #6b7280);
+        }
+        .val-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .val-table th, .val-table td {
+            text-align: left;
+            padding: 0.45rem 0.75rem;
+            border-bottom: 1px solid var(--border, #e5e7eb);
+        }
+        .val-table th {
+            font-weight: 600;
+            background: var(--well-bg, #f9fafb);
+            font-size: 0.8rem;
+            color: var(--text-muted, #6b7280);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .val-table tr:last-child td { border-bottom: none; }
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-yellow { background: #fef9c3; color: #854d0e; }
+        .badge-red { background: #fee2e2; color: #991b1b; }
+        .badge-gray { background: var(--well-bg, #f3f4f6); color: var(--text-muted, #6b7280); }
+
+        /* Chart area */
+        .val-chart {
+            margin-top: 1rem;
+            height: 200px;
+            position: relative;
+            background: var(--well-bg, #f9fafb);
+            border: 1px solid var(--border, #e5e7eb);
+            border-radius: 0.375rem;
+            overflow: hidden;
+        }
+        .val-chart-inner {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Loading + error */
+        .val-loading {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 0;
+            color: var(--text-muted, #6b7280);
+            font-size: 0.875rem;
+        }
+        .val-loading.visible { display: flex; }
+        .val-spinner {
+            width: 18px; height: 18px;
+            border: 2px solid var(--border, #e5e7eb);
+            border-top-color: var(--accent, #2563eb);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .val-error {
+            display: none;
+            padding: 0.6rem 0.9rem;
+            background: #fee2e2;
+            color: #991b1b;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+        .val-error.visible { display: block; }
+
+        /* Engine comparison grid */
+        .engine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+        .engine-card {
+            background: var(--well-bg, #f9fafb);
+            border: 1px solid var(--border, #e5e7eb);
+            border-radius: 0.5rem;
+            padding: 0.9rem;
+        }
+        .engine-card-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted, #6b7280);
+            margin-bottom: 0.5rem;
+        }
+        .engine-not-available {
+            font-size: 0.8rem;
+            color: var(--text-muted, #9ca3af);
+            font-style: italic;
+        }
+        .top5-list {
+            list-style: none;
+            padding: 0; margin: 0;
+            font-size: 0.82rem;
+        }
+        .top5-list li {
+            padding: 0.15rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .rank-num {
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: var(--accent, #2563eb);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Sparkline chart using SVG */
+        .sparkline-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        /* Convergence diagnostics */
+        .convergence-not-available {
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--text-muted, #6b7280);
+            font-size: 0.9rem;
+        }
+        .convergence-not-available code {
+            background: var(--well-bg, #f3f4f6);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 640px) {
+            .val-form-row { flex-direction: column; }
+            .val-tabs { overflow-x: auto; flex-wrap: nowrap; }
+            .val-tab { white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="validation-layout">
+        <div class="validation-header">
+            <h1>Model Validation</h1>
+            <p>Cross-engine comparison, parameter stability, calibration, and temporal validation diagnostics.</p>
+        </div>
+
+        <!-- Tab bar -->
+        <div class="val-tabs" role="tablist" id="val-tabbar">
+            <button class="val-tab active" role="tab" data-tab="cross-engine">Cross-Engine</button>
+            <button class="val-tab" role="tab" data-tab="model-sensitivity">Model Sensitivity</button>
+            <button class="val-tab" role="tab" data-tab="clinical-sensitivity">Clinical Sensitivity</button>
+            <button class="val-tab" role="tab" data-tab="calibration">Calibration</button>
+            <button class="val-tab" role="tab" data-tab="temporal">Temporal</button>
+            <button class="val-tab" role="tab" data-tab="convergence">Convergence</button>
+            <button class="val-tab" role="tab" data-tab="reference">Reference Run</button>
+        </div>
+
+        <!-- ─── Cross-Engine Panel ─── -->
+        <div class="val-panel active" id="panel-cross-engine">
+            <div class="val-card">
+                <h2>Cross-Engine Comparison</h2>
+                <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Run Monte Carlo, Bayesian Network, and (when available) MCMC on the same patient profile. Ranks are compared with Spearman ρ and top-5 Jaccard overlap.</p>
+                <div class="val-form-row" id="ce-form-row">
+                    <div class="val-form-group">
+                        <label>Organ</label>
+                        <select id="ce-organ">
+                            <option value="kidney">Kidney</option>
+                            <option value="liver">Liver</option>
+                            <option value="heart">Heart</option>
+                            <option value="lung">Lung</option>
+                            <option value="pancreas">Pancreas</option>
+                            <option value="intestine">Intestine</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Blood Type</label>
+                        <select id="ce-bt">
+                            <option value="O+">O+</option><option value="O-">O-</option>
+                            <option value="A+">A+</option><option value="A-">A-</option>
+                            <option value="B+">B+</option><option value="B-">B-</option>
+                            <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Age</label>
+                        <input type="number" id="ce-age" value="45" min="1" max="99" style="width:70px">
+                    </div>
+                    <div class="val-form-group">
+                        <label>Sex</label>
+                        <select id="ce-sex">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Urgency</label>
+                        <select id="ce-urgency">
+                            <option value="1">1</option><option value="2" selected>2</option>
+                            <option value="3">3</option><option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Iterations</label>
+                        <input type="number" id="ce-iter" value="300" min="100" max="2000" style="width:80px">
+                    </div>
+                    <button class="val-run-btn" id="ce-run-btn">Run Comparison</button>
+                </div>
+                <div class="val-loading" id="ce-loading"><div class="val-spinner"></div> Running all engines…</div>
+                <div class="val-error" id="ce-error"></div>
+                <div class="val-result-area" id="ce-results" style="display:none">
+                    <div class="val-stat-row" id="ce-stats"></div>
+                    <div class="engine-grid" id="ce-engine-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── Model Sensitivity Panel ─── -->
+        <div class="val-panel" id="panel-model-sensitivity">
+            <div class="val-card">
+                <h2>Model Sensitivity (Parameter Sweep)</h2>
+                <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Sweep a model parameter across its full range and measure how stable city rankings are (Spearman ρ between adjacent steps).</p>
+                <div class="val-form-row">
+                    <div class="val-form-group">
+                        <label>Organ</label>
+                        <select id="ms-organ">
+                            <option value="kidney">Kidney</option>
+                            <option value="liver">Liver</option>
+                            <option value="heart">Heart</option>
+                            <option value="lung">Lung</option>
+                            <option value="pancreas">Pancreas</option>
+                            <option value="intestine">Intestine</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Blood Type</label>
+                        <select id="ms-bt">
+                            <option value="O+">O+</option><option value="O-">O-</option>
+                            <option value="A+">A+</option><option value="A-">A-</option>
+                            <option value="B+">B+</option><option value="B-">B-</option>
+                            <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Parameter</label>
+                        <select id="ms-param">
+                            <option value="copula_theta">Copula θ</option>
+                            <option value="elasticity">Elasticity</option>
+                            <option value="iterations">Iterations</option>
+                            <option value="urgency">Urgency</option>
+                            <option value="cpra">cPRA (kidney)</option>
+                            <option value="meld">MELD (liver)</option>
+                            <option value="las">LAS (lung)</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Steps</label>
+                        <input type="number" id="ms-steps" value="6" min="3" max="10" style="width:60px">
+                    </div>
+                    <div class="val-form-group">
+                        <label>Base Iter.</label>
+                        <input type="number" id="ms-iter" value="200" min="100" max="1000" style="width:80px">
+                    </div>
+                    <button class="val-run-btn" id="ms-run-btn">Run Sweep</button>
+                </div>
+                <div class="val-loading" id="ms-loading"><div class="val-spinner"></div> Sweeping parameter…</div>
+                <div class="val-error" id="ms-error"></div>
+                <div class="val-result-area" id="ms-results" style="display:none">
+                    <div class="val-stat-row" id="ms-stats"></div>
+                    <div id="ms-chart-area"></div>
+                    <table class="val-table" id="ms-table" style="margin-top:1rem">
+                        <thead><tr><th>Value</th><th>Spearman ρ</th><th>Top-5 Overlap with Baseline</th><th>Top-5 Centers</th></tr></thead>
+                        <tbody id="ms-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── Clinical Sensitivity Panel ─── -->
+        <div class="val-panel" id="panel-clinical-sensitivity">
+            <div class="val-card">
+                <h2>Clinical Parameter Sensitivity</h2>
+                <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Tornado chart: how much does each clinical parameter (cPRA, MELD, LAS, urgency) shift the 24-month transplant probability at a given center?</p>
+                <div class="val-form-row">
+                    <div class="val-form-group">
+                        <label>Organ</label>
+                        <select id="cs-organ">
+                            <option value="kidney">Kidney</option>
+                            <option value="liver">Liver</option>
+                            <option value="heart">Heart</option>
+                            <option value="lung">Lung</option>
+                            <option value="pancreas">Pancreas</option>
+                            <option value="intestine">Intestine</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Blood Type</label>
+                        <select id="cs-bt">
+                            <option value="O+">O+</option><option value="O-">O-</option>
+                            <option value="A+">A+</option><option value="A-">A-</option>
+                            <option value="B+">B+</option><option value="B-">B-</option>
+                            <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Age</label>
+                        <input type="number" id="cs-age" value="45" min="1" max="99" style="width:70px">
+                    </div>
+                    <div class="val-form-group">
+                        <label>City / Center</label>
+                        <input type="text" id="cs-city" value="Nashville" style="width:130px">
+                    </div>
+                    <div class="val-form-group">
+                        <label>Iterations</label>
+                        <input type="number" id="cs-iter" value="300" min="100" max="1000" style="width:80px">
+                    </div>
+                    <button class="val-run-btn" id="cs-run-btn">Run Sensitivity</button>
+                </div>
+                <div class="val-loading" id="cs-loading"><div class="val-spinner"></div> Computing sensitivity…</div>
+                <div class="val-error" id="cs-error"></div>
+                <div class="val-result-area" id="cs-results" style="display:none">
+                    <div id="cs-chart-area"></div>
+                    <table class="val-table" id="cs-table" style="margin-top:1rem">
+                        <thead><tr><th>Parameter</th><th>Baseline</th><th>Low → High</th><th>P24 Range</th><th>Impact</th></tr></thead>
+                        <tbody id="cs-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── Calibration Panel ─── -->
+        <div class="val-panel" id="panel-calibration">
+            <div class="val-card">
+                <h2>Brier Score Calibration</h2>
+                <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Measures how well predicted probabilities match binarized outcomes across two independent runs. Lower Brier score = better calibration.</p>
+                <div class="val-form-row">
+                    <div class="val-form-group">
+                        <label>Organ</label>
+                        <select id="cal-organ">
+                            <option value="kidney">Kidney</option>
+                            <option value="liver">Liver</option>
+                            <option value="heart">Heart</option>
+                            <option value="lung">Lung</option>
+                            <option value="pancreas">Pancreas</option>
+                            <option value="intestine">Intestine</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Blood Type</label>
+                        <select id="cal-bt">
+                            <option value="O+">O+</option><option value="O-">O-</option>
+                            <option value="A+">A+</option><option value="A-">A-</option>
+                            <option value="B+">B+</option><option value="B-">B-</option>
+                            <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Age</label>
+                        <input type="number" id="cal-age" value="45" min="1" max="99" style="width:70px">
+                    </div>
+                    <div class="val-form-group">
+                        <label>Iterations</label>
+                        <input type="number" id="cal-iter" value="300" min="100" max="1000" style="width:80px">
+                    </div>
+                    <button class="val-run-btn" id="cal-run-btn">Run Calibration</button>
+                </div>
+                <div class="val-loading" id="cal-loading"><div class="val-spinner"></div> Running calibration check…</div>
+                <div class="val-error" id="cal-error"></div>
+                <div class="val-result-area" id="cal-results" style="display:none">
+                    <div class="val-stat-row" id="cal-stats"></div>
+                    <div id="cal-note" style="margin-top:0.5rem;font-size:0.875rem;color:var(--text-muted,#6b7280)"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── Temporal Validation Panel ─── -->
+        <div class="val-panel" id="panel-temporal">
+            <div class="val-card">
+                <h2>Temporal Walk-Forward Validation</h2>
+                <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Train on years up to Y, test on year Y+1. Measures Spearman ρ between predicted and simulated next-year rankings.</p>
+                <div class="val-form-row">
+                    <div class="val-form-group">
+                        <label>Organ</label>
+                        <select id="tv-organ">
+                            <option value="kidney">Kidney</option>
+                            <option value="liver">Liver</option>
+                            <option value="heart">Heart</option>
+                            <option value="lung">Lung</option>
+                            <option value="pancreas">Pancreas</option>
+                            <option value="intestine">Intestine</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Blood Type</label>
+                        <select id="tv-bt">
+                            <option value="O+">O+</option><option value="O-">O-</option>
+                            <option value="A+">A+</option><option value="A-">A-</option>
+                            <option value="B+">B+</option><option value="B-">B-</option>
+                            <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Train Start</label>
+                        <input type="number" id="tv-train-start" value="2019" min="2015" max="2023" style="width:80px">
+                    </div>
+                    <div class="val-form-group">
+                        <label>Train End</label>
+                        <input type="number" id="tv-train-end" value="2022" min="2016" max="2024" style="width:80px">
+                    </div>
+                    <div class="val-form-group">
+                        <label>Test End</label>
+                        <input type="number" id="tv-test-end" value="2024" min="2017" max="2025" style="width:80px">
+                    </div>
+                    <div class="val-form-group">
+                        <label>Iterations</label>
+                        <input type="number" id="tv-iter" value="200" min="100" max="1000" style="width:80px">
+                    </div>
+                    <button class="val-run-btn" id="tv-run-btn">Run Validation</button>
+                </div>
+                <div class="val-loading" id="tv-loading"><div class="val-spinner"></div> Running temporal folds…</div>
+                <div class="val-error" id="tv-error"></div>
+                <div class="val-result-area" id="tv-results" style="display:none">
+                    <div class="val-stat-row" id="tv-stats"></div>
+                    <table class="val-table" style="margin-top:0.75rem">
+                        <thead><tr><th>Train End</th><th>Test Year</th><th>Spearman ρ</th><th>Top-5 Overlap</th><th>N Centers</th></tr></thead>
+                        <tbody id="tv-tbody"></tbody>
+                    </table>
+                    <div id="tv-notes" style="margin-top:0.5rem;font-size:0.8rem;color:var(--text-muted,#6b7280)"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── Convergence Panel ─── -->
+        <div class="val-panel" id="panel-convergence">
+            <div class="val-card">
+                <h2>MCMC Convergence Diagnostics</h2>
+                <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">R-hat (Gelman-Rubin) and ESS diagnostics for MCMC traces. Requires local install with <code>scripts/fit-mcmc-model.py</code>.</p>
+                <div class="val-form-row">
+                    <div class="val-form-group">
+                        <label>Organ</label>
+                        <select id="cv-organ">
+                            <option value="kidney">Kidney</option>
+                            <option value="liver">Liver</option>
+                            <option value="heart">Heart</option>
+                            <option value="lung">Lung</option>
+                            <option value="pancreas">Pancreas</option>
+                            <option value="intestine">Intestine</option>
+                        </select>
+                    </div>
+                    <button class="val-run-btn" id="cv-run-btn">Load Diagnostics</button>
+                </div>
+                <div class="val-loading" id="cv-loading"><div class="val-spinner"></div> Loading MCMC trace…</div>
+                <div class="val-error" id="cv-error"></div>
+                <div class="val-result-area" id="cv-results" style="display:none">
+                    <div class="val-stat-row" id="cv-stats"></div>
+                    <div id="cv-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── Reference Run Panel ─── -->
+        <div class="val-panel" id="panel-reference">
+            <div class="val-card">
+                <h2>Reference Run (seed = 12345)</h2>
+                <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Canonical deterministic run for regression testing. Results should be identical across deployments for the same model version.</p>
+                <div class="val-form-row">
+                    <div class="val-form-group">
+                        <label>Organ</label>
+                        <select id="ref-organ">
+                            <option value="kidney">Kidney</option>
+                            <option value="liver">Liver</option>
+                            <option value="heart">Heart</option>
+                            <option value="lung">Lung</option>
+                            <option value="pancreas">Pancreas</option>
+                            <option value="intestine">Intestine</option>
+                        </select>
+                    </div>
+                    <button class="val-run-btn" id="ref-run-btn">Load Reference Run</button>
+                </div>
+                <div class="val-loading" id="ref-loading"><div class="val-spinner"></div> Running with seed = 12345…</div>
+                <div class="val-error" id="ref-error"></div>
+                <div class="val-result-area" id="ref-results" style="display:none">
+                    <div class="val-stat-row" id="ref-stats"></div>
+                    <table class="val-table">
+                        <thead><tr><th>Rank</th><th>Center</th><th>State</th><th>P(Tx 24mo)</th><th>Median Wait</th></tr></thead>
+                        <tbody id="ref-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /.validation-layout -->
+
+    <div id="footer-placeholder" data-footer-variant="simulator"></div>
+
+    <script src="components/site-chrome.js"></script>
+    <script src="shared/api-client.js"></script>
+    <script src="validation/index.js"></script>
+    <script src="validation/cross-engine.js"></script>
+    <script src="validation/model-sensitivity.js"></script>
+    <script src="validation/clinical-sensitivity.js"></script>
+    <script src="validation/calibration.js"></script>
+    <script src="validation/temporal.js"></script>
+    <script src="validation/convergence.js"></script>
+    <script src="validation/reference.js"></script>
+</body>
+</html>

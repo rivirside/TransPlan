@@ -159,3 +159,51 @@ def get_data() -> TransPlanData:
     if _DATA is None:
         raise RuntimeError("Data not loaded — call load_all() at startup")
     return _DATA
+
+
+def get_historical_data(organ: str, city: str = "", year_range: tuple[int, int] | None = None) -> dict:
+    """
+    Return historical SRTR trend data for a given organ and city, optionally filtered by year range.
+
+    Returns a dict with keys: years, wait_time_medians, volumes, graft_survival_rates.
+    Returns empty dict if historical data not available.
+    """
+    data = get_data()
+    trends = data.historical_trends
+
+    # Try organ+city lookup
+    city_trends = trends.get("city_trends", {})
+    organ_key_patterns = [
+        city_trends.get(city, {}).get(organ, {}),       # city → organ
+        trends.get(organ, {}).get(city, {}),             # organ → city
+        trends.get(organ, {}),                           # organ-level only
+    ]
+
+    raw: dict = {}
+    for candidate in organ_key_patterns:
+        if candidate:
+            raw = candidate
+            break
+
+    if not raw:
+        return {}
+
+    # Apply year_range filter if requested
+    if year_range is None:
+        return raw
+
+    start_year, end_year = year_range
+    years = raw.get("years", [])
+    if not years:
+        return raw
+
+    filtered: dict = {}
+    for key, values in raw.items():
+        if key == "years":
+            filtered["years"] = [y for y in years if start_year <= y <= end_year]
+        elif isinstance(values, list) and len(values) == len(years):
+            filtered[key] = [v for y, v in zip(years, values) if start_year <= y <= end_year]
+        else:
+            filtered[key] = values
+
+    return filtered

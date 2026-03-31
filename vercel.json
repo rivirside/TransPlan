@@ -23,6 +23,7 @@
     { "source": "/policy-scenarios/:path*", "destination": "/api/index" },
     { "source": "/policy-scenario", "destination": "/api/index" },
     { "source": "/travel-subsidy-analysis", "destination": "/api/index" },
+    { "source": "/validation/:path*", "destination": "/api/index" },
     { "source": "/api/v1/:path*", "destination": "/api/index" },
     { "source": "/docs", "destination": "/api/index" },
     { "source": "/redoc", "destination": "/api/index" },
