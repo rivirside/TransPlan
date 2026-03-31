@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>transplant.today - Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leafletCss=true;" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        /* ── Explorer header + tabs ── */
+        .explorer-header { text-align: center; padding: 2rem 1rem 0.5rem; }
+        .explorer-header h1 { font-size: 2rem; margin-bottom: 0.3rem; }
+        .explorer-header p { color: var(--text-muted, #6b7280); max-width: 600px; margin: 0 auto; }
+
+        .explorer-tabs {
+            display: flex; justify-content: center; gap: 0.25rem;
+            max-width: 500px; margin: 1rem auto 1rem;
+            background: var(--surface-raised, #f1f3f7); border-radius: 8px; padding: 0.25rem;
+        }
+        .explorer-tab {
+            flex: 1; padding: 0.55rem 1rem; border: none; border-radius: 6px;
+            background: transparent; color: var(--text-2, #4a4f65); cursor: pointer;
+            font-size: 0.88rem; font-weight: 500; transition: all 0.15s;
+        }
+        .explorer-tab:hover { color: var(--text-1, #111); }
+        .explorer-tab.active {
+            background: var(--surface, #fff); color: var(--text-1, #111);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        /* ══════════════════════════════════════════
+           DATA LAYERS TAB
+           ══════════════════════════════════════════ */
+        .data-map-section { margin: 0 auto; max-width: 1200px; padding: 0 1rem 2rem; }
+        .data-map-frame { position: relative; border-radius: 8px; overflow: hidden; border: 1px solid var(--border, #e5e7eb); }
+        #data-map { height: 550px; width: 100%; background: #f0f0f0; }
+
+        /* Data sources section */
+        .data-sources-section {
+            max-width: 1200px; margin: 0 auto 3rem; padding: 0 1rem;
+        }
+        .data-sources-title {
+            font-size: 1.2rem; font-weight: 700; color: var(--text-1, #111);
+            margin-bottom: 0.3rem;
+        }
+        .data-sources-subtitle {
+            font-size: 0.88rem; color: var(--text-muted, #6b7280);
+            margin-bottom: 1.25rem;
+        }
+        .data-sources-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+        .data-source-card {
+            display: block; position: relative;
+            background: var(--surface, #fff); border: 1px solid var(--border, #e5e7eb);
+            border-radius: 6px; padding: 1rem 1.25rem;
+            text-decoration: none; color: inherit; transition: border-color 0.15s;
+        }
+        .data-source-card:hover { border-color: var(--accent, #6366f1); }
+        .data-source-card h3 { font-size: 0.92rem; font-weight: 600; margin: 0.5rem 0 0.4rem; color: var(--text-1); }
+        .data-source-card p { font-size: 0.8rem; color: var(--text-muted, #6b7280); line-height: 1.5; margin: 0; }
+        .data-source-badge {
+            display: inline-block; padding: 0.15rem 0.5rem; border-radius: 3px;
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+        }
+        .badge-srtr { background: #eef2ff; color: #3730a3; }
+        .badge-optn { background: #fce7f3; color: #9d174d; }
+        .badge-cdc { background: #dcfce7; color: #166534; }
+        .badge-cms { background: #dbeafe; color: #1e40af; }
+        .badge-epa { background: #f0fdf4; color: #166534; }
+        .badge-nhtsa { background: #fff7ed; color: #9a3412; }
+        .badge-hrsa { background: #fdf4ff; color: #7e22ce; }
+        .badge-bls { background: #fefce8; color: #854d0e; }
+        .data-source-freq { display: block; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; }
+        .data-source-link-indicator {
+            position: absolute; top: 1rem; right: 1rem;
+            font-size: 1rem; color: var(--text-muted); opacity: 0.5;
+        }
+
+        /* ══════════════════════════════════════════
+           SPATIAL ANALYSIS TAB
+           ══════════════════════════════════════════ */
+        .spatial-wrap {
+            position: relative; width: 100%;
+            height: calc(100vh - 160px); overflow: hidden;
+        }
+        #spatial-map { width: 100%; height: 100%; z-index: 1; }
+
+        .spatial-sidebar {
+            position: absolute; top: 0; left: 0;
+            width: 320px; height: 100%;
+            background: var(--surface, #fff);
+            border-right: 1px solid var(--border, #e5e7eb);
+            z-index: 1000; overflow-y: auto;
+            transition: transform 0.25s ease;
+            box-shadow: var(--shadow-lg);
+        }
+        .spatial-sidebar.collapsed { transform: translateX(-320px); }
+
+        .sidebar-toggle {
+            position: absolute; top: 12px; left: 320px; z-index: 1001;
+            width: 32px; height: 32px;
+            background: var(--surface, #fff);
+            border: 1px solid var(--border, #e5e7eb); border-left: none;
+            border-radius: 0 6px 6px 0; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; color: var(--text-2, #4a4f65);
+            box-shadow: var(--shadow-sm); transition: left 0.25s ease, background 0.15s;
+        }
+        .sidebar-toggle:hover { background: var(--surface-raised, #f1f3f7); }
+        .spatial-sidebar.collapsed + .sidebar-toggle {
+            left: 0; border-left: 1px solid var(--border, #e5e7eb);
+        }
+
+        .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border, #e5e7eb); }
+        .sidebar-header h2 { font-size: 1rem; font-weight: 700; color: var(--text-1, #111); margin: 0 0 4px; }
+        .sidebar-header p { font-size: 0.78rem; color: var(--text-muted, #6b7280); margin: 0; }
+
+        .sidebar-section { padding: 12px 16px; border-bottom: 1px solid var(--border-light, #f0f0f0); }
+        .sidebar-section label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-1, #111); margin-bottom: 6px; }
+        .sidebar-section select, .sidebar-section input[type="range"] { width: 100%; }
+        .sidebar-section select {
+            padding: 6px 8px; border: 1px solid var(--border, #d1d5db); border-radius: 6px;
+            font-size: 0.85rem; background: var(--surface, #fff); color: var(--text-1, #111);
+        }
+        .sidebar-section select:focus { outline: 2px solid var(--color-primary, #c97c4a); border-color: transparent; }
+
+        .method-toggles { display: flex; gap: 0; border: 1px solid var(--border, #d1d5db); border-radius: 6px; overflow: hidden; }
+        .method-btn {
+            flex: 1; padding: 6px 0; text-align: center; font-size: 0.82rem; font-weight: 600;
+            border: none; cursor: pointer; background: var(--surface, #fff); color: var(--text-2, #4a4f65); transition: all 0.15s;
+        }
+        .method-btn + .method-btn { border-left: 1px solid var(--border, #d1d5db); }
+        .method-btn.active { background: var(--color-primary, #c97c4a); color: #fff; }
+        .method-btn:hover:not(.active) { background: var(--surface-raised, #f1f3f7); }
+
+        .range-row { display: flex; align-items: center; gap: 8px; }
+        .range-row input[type="range"] { flex: 1; accent-color: var(--color-primary, #c97c4a); }
+        .range-val { font-size: 0.82rem; font-weight: 600; color: var(--text-1, #111); min-width: 28px; text-align: right; }
+
+        .load-btn {
+            width: 100%; padding: 8px 0; background: var(--color-primary, #c97c4a); color: #fff;
+            border: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600;
+            cursor: pointer; transition: background 0.15s;
+        }
+        .load-btn:hover { background: var(--color-primary-dark, #a0603a); }
+        .load-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .tier-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+        .tier-badge {
+            display: inline-block; padding: 2px 8px; border-radius: 12px;
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+        }
+        .tier-web { background: var(--color-primary-100, #f9e8d9); color: var(--color-primary-700, #7d4b2d); }
+        .tier-local { background: var(--success-100, #D1FAE5); color: var(--success-700, #115C38); }
+        .tier-caps { font-size: 0.72rem; color: var(--text-muted, #6b7280); }
+
+        .alloc-checkbox { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--text-1, #111); cursor: pointer; }
+        .alloc-checkbox input[type="checkbox"] { accent-color: var(--color-primary, #c97c4a); }
+
+        .score-card { display: none; background: var(--surface-raised, #f1f3f7); border-radius: 8px; padding: 10px 12px; margin-top: 8px; }
+        .score-card.visible { display: block; }
+        .score-card h4 { font-size: 0.78rem; font-weight: 700; color: var(--text-1, #111); margin-bottom: 6px; }
+        .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .score-item { text-align: center; }
+        .score-item .score-val { font-size: 1rem; font-weight: 700; color: var(--color-primary, #c97c4a); }
+        .score-item .score-label { font-size: 0.7rem; color: var(--text-muted, #6b7280); }
+
+        .inspect-panel {
+            display: none; position: absolute; bottom: 16px; right: 16px; z-index: 1000;
+            background: var(--surface, #fff); border: 1px solid var(--border, #e5e7eb);
+            border-radius: 8px; padding: 12px 16px; min-width: 240px; box-shadow: var(--shadow-lg);
+        }
+        .inspect-panel.visible { display: block; }
+        .inspect-panel h4 { font-size: 0.82rem; font-weight: 700; color: var(--text-1, #111); margin-bottom: 4px; }
+        .inspect-coords { font-size: 0.75rem; color: var(--text-muted, #6b7280); margin-bottom: 6px; }
+        .inspect-value { font-size: 1.1rem; font-weight: 700; color: var(--color-primary, #c97c4a); margin-bottom: 4px; }
+        .inspect-stats { font-size: 0.75rem; color: var(--text-2, #4a4f65); line-height: 1.5; }
+        .inspect-close {
+            position: absolute; top: 6px; right: 8px; background: none; border: none;
+            font-size: 1rem; color: var(--text-muted, #6b7280); cursor: pointer; line-height: 1;
+        }
+
+        .map-loading {
+            display: none; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); z-index: 1002;
+            background: var(--surface, #fff); border: 1px solid var(--border, #e5e7eb);
+            border-radius: 8px; padding: 16px 24px; box-shadow: var(--shadow-lg);
+            font-size: 0.9rem; color: var(--text-1, #111); text-align: center;
+        }
+        .map-loading.visible { display: block; }
+        .map-loading .spinner {
+            display: inline-block; width: 20px; height: 20px;
+            border: 2px solid var(--border, #e5e7eb); border-top-color: var(--color-primary, #c97c4a);
+            border-radius: 50%; animation: spin 0.6s linear infinite;
+            margin-right: 8px; vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .sidebar-status { font-size: 0.75rem; color: var(--text-muted, #6b7280); padding: 0 16px 8px; min-height: 20px; }
+        .sidebar-status.error { color: var(--danger, #D93B3B); }
+
+        @media (max-width: 600px) {
+            .spatial-sidebar { width: 280px; }
+            .spatial-sidebar.collapsed + .sidebar-toggle { left: 0; }
+            .sidebar-toggle { left: 280px; }
+        }
+    </style>
+</head>
+<body class="data-page">
+    <div id="nav-placeholder"></div>
+
+    <main>
+        <div class="explorer-header">
+            <h1>Explorer</h1>
+            <p>Interactive data layers, spatial interpolation, and allocation geography for all 248 U.S. transplant centers.</p>
+        </div>
+
+        <!-- ── Tab Switcher ── -->
+        <div class="explorer-tabs">
+            <button class="explorer-tab active" data-tab="data-layers" type="button">Data Layers</button>
+            <button class="explorer-tab" data-tab="spatial" type="button">Spatial Analysis</button>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             DATA LAYERS TAB
+             ══════════════════════════════════════════════════════════ -->
+        <div class="explorer-panel" id="data-layers-panel">
+            <div class="data-map-section">
+                <div class="data-map-frame">
+                    <div id="data-map"></div>
+                </div>
+            </div>
+
+            <div class="data-sources-section">
+                <div class="data-sources-title">Data Sources</div>
+                <p class="data-sources-subtitle">All data is sourced from US federal agencies and updated regularly. Click any card to visit the official source.</p>
+                <div class="data-sources-grid">
+                    <a href="https://www.srtr.org" target="_blank" rel="noopener" class="data-source-card">
+                        <span class="data-source-badge badge-srtr">SRTR</span>
+                        <h3>Scientific Registry of Transplant Recipients</h3>
+                        <p>Center-level transplant program data including wait times, volumes, and post-transplant outcomes for all 248 US programs.</p>
+                        <span class="data-source-freq">Updated semi-annually</span>
+                    </a>
+                    <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener" class="data-source-card">
+                        <span class="data-source-badge badge-optn">OPTN</span>
+                        <h3>Organ Procurement &amp; Transplantation Network</h3>
+                        <p>National transplant data including organ allocation policies, waiting list statistics, and donor information.</p>
+                        <span class="data-source-freq">Updated monthly</span>
+                    </a>
+                    <a href="https://www.cdc.gov/places" target="_blank" rel="noopener" class="data-source-card">
+                        <span class="data-source-badge badge-cdc">CDC</span>
+                        <h3>Centers for Disease Control &amp; Prevention</h3>
+                        <p>County-level health demographics: diabetes, obesity, hypertension, and smoking prevalence from the PLACES dataset.</p>
+                        <span class="data-source-freq">Updated annually</span>
+                    </a>
+                    <a href="https://www.medicare.gov/care-compare" target="_blank" rel="noopener" class="data-source-card">
+                        <span class="data-source-badge badge-cms">CMS</span>
+                        <h3>Centers for Medicare &amp; Medicaid Services</h3>
+                        <p>Hospital quality ratings, patient safety indicators, and transplant program reputation scores.</p>
+                        <span class="data-source-freq">Updated quarterly</span>
+                    </a>
+                    <a href="https://aqs.epa.gov" target="_blank" rel="noopener" class="data-source-card">
+                        <span class="data-source-badge badge-epa">EPA</span>
+                        <h3>Environmental Protection Agency</h3>
+                        <p>Air quality monitoring station data including AQI readings, PM2.5, ozone, and pollutant levels across the US.</p>
+                        <span class="data-source-freq">Updated daily</span>
+                    </a>
+                    <a href="https://www.nhtsa.gov" target="_blank" rel="noopener" class="data-source-card">
+                        <span class="data-source-badge badge-nhtsa">NHTSA</span>
+                        <h3>National Highway Traffic Safety Administration</h3>
+                        <p>State-level traffic fatality rates used to model traumatic organ donor supply patterns.</p>
+                        <span class="data-source-freq">Updated annually</span>
+                    </a>
+                    <a href="https://www.organdonor.gov" target="_blank" rel="noopener" class="data-source-card">
+                        <span class="data-source-badge badge-hrsa">HRSA</span>
+                        <h3>Health Resources &amp; Services Administration</h3>
+                        <p>State-level organ donor registration rates and Donate Life America participation data.</p>
+                        <span class="data-source-freq">Updated annually</span>
+                    </a>
+                    <a href="https://www.bls.gov" target="_blank" rel="noopener" class="data-source-card">
+                        <span class="data-source-badge badge-bls">BLS</span>
+                        <h3>Bureau of Labor Statistics</h3>
+                        <p>Regional cost of living indices and employment data used for socioeconomic support scoring.</p>
+                        <span class="data-source-freq">Updated quarterly</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             SPATIAL ANALYSIS TAB
+             ══════════════════════════════════════════════════════════ -->
+        <div class="explorer-panel" id="spatial-panel" style="display: none;">
+            <div class="spatial-wrap">
+                <div class="spatial-sidebar" id="sidebar">
+                    <div class="sidebar-header">
+                        <h2>Spatial Analysis</h2>
+                        <p>Explore interpolated transplant data layers across the US</p>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <label for="layerSelect">Data Layer</label>
+                        <select id="layerSelect">
+                            <option value="">Loading layers...</option>
+                        </select>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <label for="organFilter">Organ Filter</label>
+                        <select id="organFilter">
+                            <option value="kidney">Kidney</option>
+                            <option value="liver">Liver</option>
+                            <option value="heart">Heart</option>
+                            <option value="lung">Lung</option>
+                            <option value="pancreas">Pancreas</option>
+                            <option value="intestine">Intestine</option>
+                        </select>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <label>Interpolation Method</label>
+                        <div class="method-toggles">
+                            <button type="button" class="method-btn active" data-method="rbf">RBF</button>
+                            <button type="button" class="method-btn" data-method="idw">IDW</button>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <label for="resolutionSlider">Resolution <span class="range-val" id="resolutionValue">30</span></label>
+                        <div class="range-row">
+                            <input type="range" id="resolutionSlider" min="10" max="100" value="30" step="5">
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <button type="button" class="load-btn" id="loadBtn" disabled>Load Heatmap</button>
+                        <div class="tier-row">
+                            <span class="tier-badge tier-web" id="tierBadge">Web</span>
+                            <span class="tier-caps" id="tierCaps"></span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <label class="alloc-checkbox">
+                            <input type="checkbox" id="allocCheck">
+                            Show allocation circles
+                        </label>
+                        <p style="font-size:0.72rem; color:var(--text-muted); margin-top:4px;">Click a center marker to draw 250nm / 500nm UNOS circles</p>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <div class="score-card" id="scoreCard">
+                            <h4>Distance Score</h4>
+                            <div class="score-grid">
+                                <div class="score-item">
+                                    <div class="score-val" id="scoreComposite">--</div>
+                                    <div class="score-label">Composite</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-val" id="scoreProximity">--</div>
+                                    <div class="score-label">Proximity</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-val" id="scoreCompetition">--</div>
+                                    <div class="score-label">Competition</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-val" id="scoreDonorPool">--</div>
+                                    <div class="score-label">Donor Pool</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-status" id="sidebarStatus"></div>
+                </div>
+
+                <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">&#9664;</button>
+                <div id="spatial-map"></div>
+
+                <div class="inspect-panel" id="inspectPanel">
+                    <button type="button" class="inspect-close" id="inspectClose" aria-label="Close">&times;</button>
+                    <h4 id="inspectLayer">--</h4>
+                    <div class="inspect-coords" id="inspectCoords">--</div>
+                    <div class="inspect-value" id="inspectValue">--</div>
+                    <div class="inspect-stats" id="inspectStats">--</div>
+                </div>
+
+                <div class="map-loading" id="mapLoading">
+                    <span class="spinner"></span>Loading heatmap...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- Libraries -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leaflet=true;"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"
+            onerror="window._cdnFailed=window._cdnFailed||{};window._cdnFailed.leafletHeat=true;"></script>
+
+    <!-- Site chrome -->
+    <script src="components/site-chrome.js?v=8"></script>
+    <script src="donation-banner.js"></script>
+    <script src="session.js"></script>
+    <script src="api-client.js"></script>
+
+    <!-- Explorer modules -->
+    <script src="explorer/data-layers.js"></script>
+    <script src="explorer/spatial-analysis.js"></script>
+    <script src="explorer/index.js"></script>
+
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

@@ -3,149 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>transplant.today - Center Explorer</title>
+    <title>transplant.today - Centers</title>
     <link rel="stylesheet" href="styles.css">
     <script src="dark-mode.js"></script>
     <style>
-        .explorer-header {
-            text-align: center;
-            padding: 2.5rem 1rem 1rem;
+        /* ── Page header ── */
+        .centers-header { text-align: center; padding: 2.5rem 1rem 0.5rem; }
+        .centers-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .centers-header p { color: var(--text-muted, #6b7280); max-width: 600px; margin: 0 auto; }
+
+        /* ── Mode tabs ── */
+        .mode-tabs {
+            display: flex; justify-content: center; gap: 0.25rem;
+            max-width: 600px; margin: 1.5rem auto 1.5rem;
+            background: var(--surface-raised, #f1f3f7); border-radius: 8px; padding: 0.25rem;
         }
-        .explorer-header h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+        .mode-tab {
+            flex: 1; padding: 0.55rem 1rem; border: none; border-radius: 6px;
+            background: transparent; color: var(--text-2, #4a4f65); cursor: pointer;
+            font-size: 0.88rem; font-weight: 500; transition: all 0.15s;
         }
-        .explorer-header p {
-            color: var(--text-muted, #6b7280);
-            margin-bottom: 1.5rem;
+        .mode-tab:hover { color: var(--text-1, #111); }
+        .mode-tab.active {
+            background: var(--surface, #fff); color: var(--text-1, #111);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
-        .explorer-controls {
-            max-width: 900px;
-            margin: 0 auto 1.5rem;
-            padding: 0 1rem;
+        /* ── Shared form styles ── */
+        .form-group label {
+            display: block; font-size: 0.85rem; font-weight: 600;
+            color: var(--text-1, #111); margin-bottom: 0.4rem;
+        }
+        .form-group .hint { font-size: 0.78rem; color: var(--text-muted, #6b7280); font-weight: 400; margin-left: 0.3rem; }
+
+        /* ── Pill buttons (organ, blood) ── */
+        .organ-pills, .blood-pills, .pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .organ-pill, .pill {
+            padding: 0.45rem 0.9rem; border: 1px solid var(--border, #d1d5db); border-radius: 20px;
+            background: var(--surface, #fff); color: var(--text-2, #4a4f65); cursor: pointer;
+            font-size: 0.85rem; transition: all 0.15s;
+        }
+        .organ-pill:hover, .pill:hover { border-color: var(--accent, #6366f1); color: var(--accent, #6366f1); }
+        .organ-pill.active, .pill.active { background: var(--accent, #6366f1); color: #fff; border-color: var(--accent, #6366f1); }
+
+        .blood-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+        .blood-pill {
+            padding: 0.35rem 0.7rem; border: 1px solid var(--border, #d1d5db); border-radius: 6px;
+            background: var(--surface, #fff); color: var(--text-2, #4a4f65); cursor: pointer;
+            font-size: 0.82rem; transition: all 0.15s;
+        }
+        .blood-pill:hover { border-color: var(--accent, #6366f1); }
+        .blood-pill.active { background: var(--accent, #6366f1); color: #fff; border-color: var(--accent, #6366f1); }
+
+        /* ── Location input row ── */
+        .location-row { display: flex; gap: 0.5rem; align-items: center; }
+        .location-row input {
+            flex: 1; max-width: 200px; padding: 0.55rem 0.75rem;
+            border: 1px solid var(--border, #d1d5db); border-radius: 6px;
+            font-size: 0.9rem; background: var(--surface, #fff); color: var(--text-1, #111);
+        }
+        .location-row input:focus { outline: 2px solid var(--accent, #6366f1); border-color: transparent; }
+        .location-row button {
+            padding: 0.55rem 0.85rem; border: 1px solid var(--border, #d1d5db); border-radius: 6px;
+            background: var(--surface, #fff); color: var(--text-1, #111); cursor: pointer; font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .location-row button:hover { border-color: var(--accent, #6366f1); color: var(--accent, #6366f1); }
+        .location-status { font-size: 0.8rem; color: var(--text-muted, #6b7280); }
+
+        /* ── Action buttons ── */
+        .action-btn {
+            padding: 0.7rem 2rem; background: var(--accent, #6366f1); color: #fff; border: none;
+            border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer;
+            align-self: center; transition: background 0.15s;
+        }
+        .action-btn:hover { background: #4f46e5; }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ══════════════════════════════════════════
+           FIND MODE
+           ══════════════════════════════════════════ */
+        .find-form {
+            max-width: 700px; margin: 0 auto 2rem; padding: 0 1rem;
+            display: flex; flex-direction: column; gap: 1.25rem;
+        }
+        .results-container { max-width: 900px; margin: 0 auto 3rem; padding: 0 1rem; }
+        .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .results-header h2 { font-size: 1.15rem; color: var(--text-1); }
+        .results-count { font-size: 0.85rem; color: var(--text-muted, #6b7280); }
+
+        .result-card {
+            background: var(--surface, #fff); border: 1px solid var(--border, #e5e7eb);
+            border-radius: 6px; padding: 1rem 1.25rem; margin-bottom: 0.75rem;
+            display: grid; grid-template-columns: auto 1fr auto; gap: 1rem; align-items: center;
+        }
+        .result-rank {
+            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+        }
+        .result-rank.top3 { background: var(--accent, #6366f1); color: #fff; }
+        .result-rank.other { background: var(--surface-raised, #f1f3f7); color: var(--text-2); }
+        .result-info h3 { font-size: 0.95rem; font-weight: 600; color: var(--text-1); margin: 0 0 0.2rem; }
+        .result-meta { font-size: 0.82rem; color: var(--text-muted, #6b7280); }
+        .result-meta span { margin-right: 1rem; }
+        .result-scores { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+        .result-score { text-align: center; font-size: 0.72rem; color: var(--text-muted, #6b7280); line-height: 1.3; }
+        .result-score .val { font-size: 0.9rem; font-weight: 700; color: var(--text-1); display: block; }
+        .result-link { text-align: right; }
+        .result-link a { color: var(--accent, #6366f1); text-decoration: none; font-size: 0.85rem; white-space: nowrap; }
+        .result-link a:hover { text-decoration: underline; }
+        @media (max-width: 600px) {
+            .result-card { grid-template-columns: auto 1fr; }
+            .result-link { grid-column: 1 / -1; text-align: left; }
         }
 
-        .search-bar {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
+        /* ══════════════════════════════════════════
+           BROWSE MODE
+           ══════════════════════════════════════════ */
+        .browse-controls { max-width: 900px; margin: 0 auto 1.5rem; padding: 0 1rem; }
+        .search-bar { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
         .search-bar input {
-            flex: 1;
-            padding: 0.65rem 1rem;
-            border: 1px solid var(--border, #d1d5db);
-            border-radius: 3px;
-            font-size: 1rem;
-            background: var(--surface, #fff);
-            color: var(--text, #111827);
+            flex: 1; padding: 0.65rem 1rem;
+            border: 1px solid var(--border, #d1d5db); border-radius: 3px;
+            font-size: 1rem; background: var(--surface, #fff); color: var(--text, #111827);
         }
-        .search-bar input:focus {
-            outline: none;
-            border-color: var(--accent, #6366f1);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
-
+        .search-bar input:focus { outline: none; border-color: var(--accent, #6366f1); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
         .sort-select {
-            padding: 0.65rem 0.75rem;
-            border: 1px solid var(--border, #d1d5db);
-            border-radius: 3px;
-            font-size: 0.9rem;
-            background: var(--surface, #fff);
-            color: var(--text, #111827);
-            cursor: pointer;
+            padding: 0.65rem 0.75rem; border: 1px solid var(--border, #d1d5db); border-radius: 3px;
+            font-size: 0.9rem; background: var(--surface, #fff); color: var(--text, #111827); cursor: pointer;
         }
-
-        .filter-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
+        .filter-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
         .filter-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            padding: 0.35rem 0.7rem;
-            border-radius: 3px;
-            border: 1px solid var(--border, #d1d5db);
-            background: var(--surface, #fff);
-            color: var(--text, #374151);
-            font-size: 0.82rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: border-color 0.15s ease;
-            user-select: none;
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            padding: 0.35rem 0.7rem; border-radius: 3px;
+            border: 1px solid var(--border, #d1d5db); background: var(--surface, #fff);
+            color: var(--text, #374151); font-size: 0.82rem; font-weight: 500;
+            cursor: pointer; transition: border-color 0.15s; user-select: none;
         }
-        .filter-chip:hover {
-            border-color: var(--text-muted, #9ca3af);
-        }
-        .filter-chip.active {
-            background: var(--color-primary-50, #eef2ff);
-            border-color: var(--color-primary, #4f46e5);
-            color: var(--color-primary-800, #3730a3);
-        }
-
-        .results-info {
-            font-size: 0.9rem;
-            color: var(--text-muted, #6b7280);
-            margin-bottom: 1rem;
-        }
+        .filter-chip:hover { border-color: var(--text-muted, #9ca3af); }
+        .filter-chip.active { background: var(--color-primary-50, #eef2ff); border-color: var(--color-primary, #4f46e5); color: var(--color-primary-800, #3730a3); }
+        .results-info { font-size: 0.9rem; color: var(--text-muted, #6b7280); margin-bottom: 1rem; }
 
         .centers-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
-            max-width: 1100px;
-            margin: 0 auto 3rem;
-            padding: 0 1rem;
+            display: grid; grid-template-columns: 1fr; gap: 1rem;
+            max-width: 1100px; margin: 0 auto 3rem; padding: 0 1rem;
         }
-        @media (min-width: 640px) {
-            .centers-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (min-width: 960px) {
-            .centers-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
+        @media (min-width: 640px) { .centers-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 960px) { .centers-grid { grid-template-columns: repeat(3, 1fr); } }
 
         .center-card {
-            background: var(--surface, #fff);
-            border: 1px solid var(--border, #e5e7eb);
-            border-radius: 3px;
-            padding: 1rem;
+            background: var(--surface, #fff); border: 1px solid var(--border, #e5e7eb);
+            border-radius: 3px; padding: 1rem;
         }
-        .center-card:hover {
-            border-color: var(--color-primary-200, #c7d2fe);
-        }
-        .center-card-name {
-            font-size: 1.05rem;
-            font-weight: 600;
-            margin-bottom: 0.35rem;
-            color: var(--text, #111827);
-            line-height: 1.3;
-        }
-        .center-card-location {
-            font-size: 0.88rem;
-            color: var(--text-muted, #6b7280);
-            margin-bottom: 0.75rem;
-        }
-        .center-card-organs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.35rem;
-            margin-bottom: 1rem;
-        }
+        .center-card:hover { border-color: var(--color-primary-200, #c7d2fe); }
+        .center-card-name { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text, #111827); line-height: 1.3; }
+        .center-card-location { font-size: 0.88rem; color: var(--text-muted, #6b7280); margin-bottom: 0.75rem; }
+        .center-card-distance { font-size: 0.82rem; color: var(--accent, #6366f1); font-weight: 600; margin-bottom: 0.25rem; }
+        .center-card-organs { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1rem; }
         .organ-badge {
-            display: inline-block;
-            padding: 0.15rem 0.45rem;
-            border-radius: 2px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
+            display: inline-block; padding: 0.15rem 0.45rem; border-radius: 2px;
+            font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;
         }
         .organ-badge--kidney    { background: #fde8e8; color: #991b1b; }
         .organ-badge--liver     { background: #f3e8ff; color: #6b21a8; }
@@ -153,86 +170,174 @@
         .organ-badge--lung      { background: #dbeafe; color: #1e40af; }
         .organ-badge--pancreas  { background: #fff7ed; color: #9a3412; }
         .organ-badge--intestine { background: #dcfce7; color: #166534; }
-
         .center-card-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.88rem;
-            font-weight: 500;
-            color: var(--accent, #6366f1);
-            text-decoration: none;
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            font-size: 0.88rem; font-weight: 500; color: var(--accent, #6366f1); text-decoration: none;
         }
-        .center-card-link:hover {
-            text-decoration: underline;
-        }
+        .center-card-link:hover { text-decoration: underline; }
+        .no-results { text-align: center; padding: 3rem 1rem; color: var(--text-muted, #6b7280); }
+        .no-results-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
 
-        .no-results {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--text-muted, #6b7280);
+        /* ══════════════════════════════════════════
+           ESTIMATE MODE
+           ══════════════════════════════════════════ */
+        .est-form {
+            max-width: 600px; margin: 0 auto 2rem; padding: 0 1rem;
+            display: flex; flex-direction: column; gap: 1.25rem;
         }
-        .no-results-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
+        .est-result-card {
+            background: var(--surface, #fff); border: 1px solid var(--border, #e5e7eb);
+            border-radius: 8px; padding: 2rem; text-align: center;
+            max-width: 600px; margin: 0 auto;
         }
-
-        .loading-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--text-muted, #6b7280);
+        .est-result-organ { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .est-result-range { font-size: 2.5rem; font-weight: 700; color: var(--accent, #6366f1); margin: 0.5rem 0; }
+        .est-result-label { font-size: 0.9rem; color: var(--text-2); margin-bottom: 1.5rem; }
+        .est-breakdown {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+            border-top: 1px solid var(--border-light, #f3f4f6); padding-top: 1.25rem;
+            margin-top: 1rem; text-align: left;
         }
+        .bd-item { font-size: 0.82rem; }
+        .bd-item .bd-label { color: var(--text-muted); }
+        .bd-item .bd-val { font-weight: 600; color: var(--text-1); }
+        .est-result-note {
+            margin-top: 1.25rem; padding: 0.75rem; background: var(--surface-raised, #f9fafb);
+            border-radius: 6px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;
+        }
+        .est-result-actions { display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.25rem; }
+        .est-result-actions a {
+            padding: 0.45rem 1rem; border: 1px solid var(--border); border-radius: 6px;
+            color: var(--accent, #6366f1); text-decoration: none; font-size: 0.85rem;
+        }
+        .est-result-actions a:hover { border-color: var(--accent); }
     </style>
 </head>
 <body>
     <div id="nav-placeholder"></div>
 
     <main>
-        <div class="explorer-header">
-            <h1>Center Explorer</h1>
-            <p>Search and filter 248 U.S. transplant centers by name, location, or organ program.</p>
+        <div class="centers-header">
+            <h1>Transplant Centers</h1>
+            <p>Find, browse, and explore 248 U.S. transplant centers.</p>
         </div>
 
-        <div class="explorer-controls">
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search by center name, city, or state..." aria-label="Search transplant centers">
-                <select id="sort-select" class="sort-select" aria-label="Sort centers">
-                    <option value="name">Sort: Name</option>
-                    <option value="state">Sort: State</option>
-                    <option value="programs">Sort: Programs</option>
-                    <option value="distance">Sort: Distance</option>
-                </select>
-            </div>
-            <div class="search-bar" style="margin-top: 0; gap: 0.5rem;">
-                <input type="text" id="zip-input" placeholder="Zip code (e.g. 85721)" aria-label="Find nearest centers by zip code" maxlength="5" pattern="[0-9]{5}" inputmode="numeric" style="max-width: 170px; flex: 0 0 auto;">
-                <button type="button" id="locate-btn" class="filter-chip" style="white-space: nowrap; cursor: pointer; flex: 0 0 auto;">&#x1F4CD; My Location</button>
-                <span id="location-status" style="font-size: 0.82rem; color: var(--text-muted); align-self: center;"></span>
-            </div>
-            <div class="filter-chips" id="filter-chips" role="group" aria-label="Filter by organ type">
-                <button class="filter-chip" data-organ="kidney" type="button">
-                    <span aria-hidden="true">&#9679;</span> Kidney
-                </button>
-                <button class="filter-chip" data-organ="liver" type="button">
-                    <span aria-hidden="true">&#9679;</span> Liver
-                </button>
-                <button class="filter-chip" data-organ="heart" type="button">
-                    <span aria-hidden="true">&#9679;</span> Heart
-                </button>
-                <button class="filter-chip" data-organ="lung" type="button">
-                    <span aria-hidden="true">&#9679;</span> Lung
-                </button>
-                <button class="filter-chip" data-organ="pancreas" type="button">
-                    <span aria-hidden="true">&#9679;</span> Pancreas
-                </button>
-                <button class="filter-chip" data-organ="intestine" type="button">
-                    <span aria-hidden="true">&#9679;</span> Intestine
-                </button>
-            </div>
-            <div class="results-info" id="results-info" aria-live="polite">Loading centers...</div>
+        <!-- ── Mode Tabs ── -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" data-mode="find" type="button">Find By Location</button>
+            <button class="mode-tab" data-mode="browse" type="button">Browse All</button>
+            <button class="mode-tab" data-mode="estimate" type="button">Wait Estimate</button>
         </div>
 
-        <div id="centers-grid" class="centers-grid">
-            <div class="loading-state">Loading transplant centers...</div>
+        <!-- ══════════════════════════════════════════════════════════
+             FIND MODE
+             ══════════════════════════════════════════════════════════ -->
+        <div class="mode-panel" id="find-panel">
+            <div class="find-form">
+                <div class="form-group">
+                    <label>Your Location</label>
+                    <div class="location-row">
+                        <input type="text" id="find-zip" placeholder="Zip code" maxlength="5" pattern="[0-9]{5}" inputmode="numeric">
+                        <button type="button" id="find-locate-btn">&#x1F4CD; Use My Location</button>
+                        <span class="location-status" id="find-location-status"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Organ Type</label>
+                    <div class="organ-pills" id="find-organ-pills">
+                        <button type="button" class="organ-pill" data-organ="kidney">Kidney</button>
+                        <button type="button" class="organ-pill" data-organ="liver">Liver</button>
+                        <button type="button" class="organ-pill" data-organ="heart">Heart</button>
+                        <button type="button" class="organ-pill" data-organ="lung">Lung</button>
+                        <button type="button" class="organ-pill" data-organ="pancreas">Pancreas</button>
+                        <button type="button" class="organ-pill" data-organ="intestine">Intestine</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Blood Type <span class="hint">(optional — affects wait time estimate)</span></label>
+                    <div class="blood-pills" id="find-blood-pills">
+                        <button type="button" class="blood-pill" data-blood="O">O</button>
+                        <button type="button" class="blood-pill" data-blood="A">A</button>
+                        <button type="button" class="blood-pill" data-blood="B">B</button>
+                        <button type="button" class="blood-pill" data-blood="AB">AB</button>
+                    </div>
+                </div>
+
+                <button type="button" class="action-btn" id="find-btn" disabled>Find Centers</button>
+            </div>
+
+            <div class="results-container" id="find-results" style="display: none;"></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             BROWSE MODE
+             ══════════════════════════════════════════════════════════ -->
+        <div class="mode-panel" id="browse-panel" style="display: none;">
+            <div class="browse-controls">
+                <div class="search-bar">
+                    <input type="text" id="browse-search" placeholder="Search by center name, city, or state..." aria-label="Search transplant centers">
+                    <select id="browse-sort" class="sort-select" aria-label="Sort centers">
+                        <option value="name">Sort: Name</option>
+                        <option value="state">Sort: State</option>
+                        <option value="programs">Sort: Programs</option>
+                        <option value="distance">Sort: Distance</option>
+                    </select>
+                </div>
+                <div class="search-bar" style="margin-top: 0; gap: 0.5rem;">
+                    <input type="text" id="browse-zip" placeholder="Zip code (e.g. 85721)" aria-label="Find nearest centers by zip code" maxlength="5" pattern="[0-9]{5}" inputmode="numeric" style="max-width: 170px; flex: 0 0 auto;">
+                    <button type="button" id="browse-locate-btn" class="filter-chip" style="white-space: nowrap; cursor: pointer; flex: 0 0 auto;">&#x1F4CD; My Location</button>
+                    <span id="browse-location-status" style="font-size: 0.82rem; color: var(--text-muted); align-self: center;"></span>
+                </div>
+                <div class="filter-chips" id="browse-filter-chips" role="group" aria-label="Filter by organ type">
+                    <button class="filter-chip" data-organ="kidney" type="button"><span aria-hidden="true">&#9679;</span> Kidney</button>
+                    <button class="filter-chip" data-organ="liver" type="button"><span aria-hidden="true">&#9679;</span> Liver</button>
+                    <button class="filter-chip" data-organ="heart" type="button"><span aria-hidden="true">&#9679;</span> Heart</button>
+                    <button class="filter-chip" data-organ="lung" type="button"><span aria-hidden="true">&#9679;</span> Lung</button>
+                    <button class="filter-chip" data-organ="pancreas" type="button"><span aria-hidden="true">&#9679;</span> Pancreas</button>
+                    <button class="filter-chip" data-organ="intestine" type="button"><span aria-hidden="true">&#9679;</span> Intestine</button>
+                </div>
+                <div class="results-info" id="browse-info" aria-live="polite">Loading centers...</div>
+            </div>
+            <div id="browse-grid" class="centers-grid"></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             ESTIMATE MODE
+             ══════════════════════════════════════════════════════════ -->
+        <div class="mode-panel" id="estimate-panel" style="display: none;">
+            <div class="est-form">
+                <div class="form-group">
+                    <label>Organ Type</label>
+                    <div class="pills" id="est-organ-pills">
+                        <button type="button" class="pill" data-organ="kidney">Kidney</button>
+                        <button type="button" class="pill" data-organ="liver">Liver</button>
+                        <button type="button" class="pill" data-organ="heart">Heart</button>
+                        <button type="button" class="pill" data-organ="lung">Lung</button>
+                        <button type="button" class="pill" data-organ="pancreas">Pancreas</button>
+                        <button type="button" class="pill" data-organ="intestine">Intestine</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Blood Type</label>
+                    <div class="pills" id="est-blood-pills">
+                        <button type="button" class="pill" data-blood="O+">O+</button>
+                        <button type="button" class="pill" data-blood="O-">O-</button>
+                        <button type="button" class="pill" data-blood="A+">A+</button>
+                        <button type="button" class="pill" data-blood="A-">A-</button>
+                        <button type="button" class="pill" data-blood="B+">B+</button>
+                        <button type="button" class="pill" data-blood="B-">B-</button>
+                        <button type="button" class="pill" data-blood="AB+">AB+</button>
+                        <button type="button" class="pill" data-blood="AB-">AB-</button>
+                    </div>
+                </div>
+
+                <button type="button" class="action-btn" id="est-btn" disabled>Estimate Wait Time</button>
+            </div>
+
+            <div id="est-result" style="display: none; padding: 0 1rem;"></div>
         </div>
     </main>
 
@@ -241,270 +346,8 @@
     <script src="components/site-chrome.js?v=8"></script>
     <script src="donation-banner.js"></script>
     <script src="session.js"></script>
-    <script>
-    (function() {
-        'use strict';
-
-        var allCenters = [];
-        var activeOrgans = new Set();
-        var currentSort = 'name';
-        var userLat = null;
-        var userLon = null;
-
-        function haversine(lat1, lon1, lat2, lon2) {
-            var R = 3959, toRad = Math.PI / 180;
-            lat1 *= toRad; lon1 *= toRad; lat2 *= toRad; lon2 *= toRad;
-            var dlat = lat2 - lat1, dlon = lon2 - lon1;
-            var a = Math.sin(dlat/2)*Math.sin(dlat/2) + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dlon/2)*Math.sin(dlon/2);
-            return R * 2 * Math.asin(Math.sqrt(a));
-        }
-
-        async function geocodeZip(zip) {
-            var url = 'https://nominatim.openstreetmap.org/search?postalcode=' + encodeURIComponent(zip) + '&country=US&format=json&limit=1';
-            var r = await fetch(url, { headers: { 'User-Agent': 'TransPlan/1.0' } });
-            if (!r.ok) return null;
-            var results = await r.json();
-            if (!results.length) return null;
-            return { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) };
-        }
-
-        var searchInput = document.getElementById('search-input');
-        var sortSelect = document.getElementById('sort-select');
-        var filterChipsContainer = document.getElementById('filter-chips');
-        var resultsInfo = document.getElementById('results-info');
-        var centersGrid = document.getElementById('centers-grid');
-
-        // --- Data loading ---
-        async function loadCenters() {
-            // Try API first
-            try {
-                var resp = await fetch('/centers');
-                if (resp.ok) {
-                    var data = await resp.json();
-                    return data.centers || [];
-                }
-            } catch (e) {}
-            // Fallback: load JSON directly
-            try {
-                var resp = await fetch('data/srtr-all-centers.json');
-                if (resp.ok) {
-                    var data = await resp.json();
-                    return Object.values(data.centers || {});
-                }
-            } catch (e) {}
-            return [];
-        }
-
-        // --- Filtering & sorting ---
-        function getFilteredCenters() {
-            var query = searchInput.value.trim().toLowerCase();
-            var filtered = allCenters.filter(function(c) {
-                // Text search
-                if (query) {
-                    var name = (c.name || '').toLowerCase();
-                    var city = (c.city || '').toLowerCase();
-                    var state = (c.state || '').toLowerCase();
-                    var stateAbbr = (c.state_abbr || '').toLowerCase();
-                    if (name.indexOf(query) === -1 &&
-                        city.indexOf(query) === -1 &&
-                        state.indexOf(query) === -1 &&
-                        stateAbbr.indexOf(query) === -1) {
-                        return false;
-                    }
-                }
-                // Organ filter (OR logic)
-                if (activeOrgans.size > 0) {
-                    var organs = c.organs || [];
-                    var hasAny = false;
-                    activeOrgans.forEach(function(o) {
-                        if (organs.indexOf(o) !== -1) hasAny = true;
-                    });
-                    if (!hasAny) return false;
-                }
-                return true;
-            });
-
-            // Compute distances
-            if (userLat !== null && userLon !== null) {
-                filtered.forEach(function(c) {
-                    c._distance = (c.lat && c.lon) ? haversine(userLat, userLon, c.lat, c.lon) : Infinity;
-                });
-            } else {
-                filtered.forEach(function(c) { c._distance = undefined; });
-            }
-
-            // Sort
-            filtered.sort(function(a, b) {
-                if (currentSort === 'distance' && userLat !== null) {
-                    return (a._distance || Infinity) - (b._distance || Infinity);
-                } else if (currentSort === 'name') {
-                    return (a.name || '').localeCompare(b.name || '');
-                } else if (currentSort === 'state') {
-                    var s = (a.state || '').localeCompare(b.state || '');
-                    if (s !== 0) return s;
-                    return (a.name || '').localeCompare(b.name || '');
-                } else if (currentSort === 'programs') {
-                    return (b.organs || []).length - (a.organs || []).length;
-                }
-                return 0;
-            });
-
-            return filtered;
-        }
-
-        // --- Rendering ---
-        function renderCenters() {
-            var filtered = getFilteredCenters();
-
-            // Update count
-            resultsInfo.textContent = 'Showing ' + filtered.length + ' of ' + allCenters.length + ' centers';
-
-            // Clear grid
-            while (centersGrid.firstChild) {
-                centersGrid.removeChild(centersGrid.firstChild);
-            }
-
-            if (filtered.length === 0) {
-                var noResults = document.createElement('div');
-                noResults.className = 'no-results';
-                var icon = document.createElement('div');
-                icon.className = 'no-results-icon';
-                icon.textContent = '\uD83D\uDD0D';
-                noResults.appendChild(icon);
-                var msg = document.createElement('p');
-                msg.textContent = 'No centers match your search. Try adjusting your filters.';
-                noResults.appendChild(msg);
-                centersGrid.appendChild(noResults);
-                return;
-            }
-
-            filtered.forEach(function(center) {
-                var card = document.createElement('div');
-                card.className = 'center-card';
-
-                var nameEl = document.createElement('div');
-                nameEl.className = 'center-card-name';
-                nameEl.textContent = center.name || 'Unknown Center';
-                card.appendChild(nameEl);
-
-                var locEl = document.createElement('div');
-                locEl.className = 'center-card-location';
-                var parts = [];
-                if (center.city) parts.push(center.city);
-                if (center.state) parts.push(center.state);
-                else if (center.state_abbr) parts.push(center.state_abbr);
-                locEl.textContent = parts.join(', ') || 'Location unavailable';
-                card.appendChild(locEl);
-
-                if (center._distance !== undefined && center._distance !== Infinity) {
-                    var distEl = document.createElement('div');
-                    distEl.style.cssText = 'font-size:0.82rem;color:var(--accent,#6366f1);font-weight:600;margin-bottom:0.25rem;';
-                    distEl.textContent = Math.round(center._distance) + ' mi away';
-                    card.appendChild(distEl);
-                }
-
-                var organsEl = document.createElement('div');
-                organsEl.className = 'center-card-organs';
-                (center.organs || []).forEach(function(organ) {
-                    var badge = document.createElement('span');
-                    badge.className = 'organ-badge organ-badge--' + organ;
-                    badge.textContent = organ;
-                    organsEl.appendChild(badge);
-                });
-                card.appendChild(organsEl);
-
-                var link = document.createElement('a');
-                link.className = 'center-card-link';
-                link.href = 'center.html?code=' + encodeURIComponent(center.code || '');
-                link.textContent = 'View Details';
-                var arrow = document.createElement('span');
-                arrow.setAttribute('aria-hidden', 'true');
-                arrow.textContent = '\u2192';
-                link.appendChild(arrow);
-                card.appendChild(link);
-
-                centersGrid.appendChild(card);
-            });
-        }
-
-        // --- Event listeners ---
-        searchInput.addEventListener('keyup', function() {
-            renderCenters();
-        });
-
-        sortSelect.addEventListener('change', function() {
-            currentSort = sortSelect.value;
-            renderCenters();
-        });
-
-        filterChipsContainer.addEventListener('click', function(e) {
-            var chip = e.target.closest('.filter-chip');
-            if (!chip) return;
-            var organ = chip.getAttribute('data-organ');
-            if (!organ) return;
-            if (activeOrgans.has(organ)) {
-                activeOrgans.delete(organ);
-                chip.classList.remove('active');
-            } else {
-                activeOrgans.add(organ);
-                chip.classList.add('active');
-            }
-            renderCenters();
-        });
-
-        // --- Zip code / geolocation ---
-        var zipInput = document.getElementById('zip-input');
-        var locateBtn = document.getElementById('locate-btn');
-        var locationStatus = document.getElementById('location-status');
-
-        zipInput.addEventListener('input', function() {
-            var zip = zipInput.value.trim();
-            if (zip.length === 5 && /^\d{5}$/.test(zip)) {
-                locationStatus.textContent = 'Looking up...';
-                geocodeZip(zip).then(function(coords) {
-                    if (coords) {
-                        userLat = coords.lat; userLon = coords.lon;
-                        currentSort = 'distance'; sortSelect.value = 'distance';
-                        locationStatus.textContent = 'Sorted by distance';
-                        renderCenters();
-                    } else {
-                        locationStatus.textContent = 'Zip not found';
-                    }
-                }).catch(function() { locationStatus.textContent = 'Lookup failed'; });
-            } else if (zip.length === 0) {
-                userLat = null; userLon = null;
-                locationStatus.textContent = '';
-                if (currentSort === 'distance') { currentSort = 'name'; sortSelect.value = 'name'; }
-                renderCenters();
-            }
-        });
-
-        locateBtn.addEventListener('click', function() {
-            if (!navigator.geolocation) { locationStatus.textContent = 'Not supported'; return; }
-            locationStatus.textContent = 'Getting location...';
-            navigator.geolocation.getCurrentPosition(function(pos) {
-                userLat = pos.coords.latitude; userLon = pos.coords.longitude;
-                currentSort = 'distance'; sortSelect.value = 'distance';
-                locationStatus.textContent = 'Sorted by distance';
-                zipInput.value = '';
-                renderCenters();
-            }, function() {
-                locationStatus.textContent = 'Location denied';
-            }, { timeout: 10000 });
-        });
-
-        // --- Init ---
-        loadCenters().then(function(centers) {
-            allCenters = centers;
-            renderCenters();
-        }).catch(function() {
-            resultsInfo.textContent = 'Failed to load center data.';
-            while (centersGrid.firstChild) {
-                centersGrid.removeChild(centersGrid.firstChild);
-            }
-        });
-    })();
-    </script>
+    <script src="shared/geo-utils.js"></script>
+    <script src="centers-page.js"></script>
     <!-- Vercel Analytics -->
     <script>
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
