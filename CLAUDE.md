@@ -1,33 +1,43 @@
 # TransPlan — Claude Session Guide
 
-> Read `docs/status.md` for full project history. Read `.claude/plans/vectorized-honking-curry.md` for implementation details.
-
 ## What This Is
 
 Transplant center analysis tool at transplant.today. Python/FastAPI backend + vanilla JS frontend on Vercel. 248 SRTR centers, Monte Carlo/BBN/MCMC inference, equity analysis, policy scenarios, spatial interpolation.
 
-## Current State: Rebuild Phase 3
+## ⚠️ TWO PHASE SYSTEMS — DO NOT CONFUSE
 
-Full 8-phase rebuild in progress. **Phases 0-2 complete. Phase 3 (page merges) is next.**
+The project has TWO separate numbering systems in `docs/status.md`:
 
-### What's Done
+1. **Original development phases (1-7)** — ALL COMPLETE. These built the core product over many months (Monte Carlo engine, BBN, MCMC, copula, center expansion, spatial interpolation, patient resources, UI overhaul). These are documented in `docs/status.md` under sections like "Phase 5 M1-M5", "Phase 6A/6B", "Phase 7 Patient Resources".
 
-| Phase | What | Key Files |
-|-------|------|-----------|
-| 0 | Seed support on all simulation endpoints | `backend/routers/*.py`, `shared/export-handler.js` |
-| 1 | Nav → "For Patients" / "For Professionals" | `components/site-chrome.js` |
-| 2 | Simulator rebuilt as modular architecture | `simulator/*.js` (6 files), `shared/*.js` (5 files), `simulator.html` |
+2. **Rebuild phases (0-7)** — IN PROGRESS. A structural overhaul started March 30, 2026 to fix architecture problems left over from rapid development. Plan file: `docs/rebuild-plan.md` (also exists at `~/docs/rebuild-plan.md`).
 
-### What's Next
+**The rebuild phases are what matter for current work.** Ignore the original phase numbers.
 
-**Phase 3:** Merge redundant pages
-- `find-centers.html` + `centers.html` + `wait-estimator.html` → single `centers.html` with tabs
-- `data.html` + `spatial.html` → single `explorer.html` with tabs
+## Current State: Rebuild Phase 3 Is Next
 
-**Phase 4:** New Model Validation tool (`validation.html`, backend router + services)
-**Phase 5:** Inter-tool linking (continue buttons already built in Phase 2)
-**Phase 6:** Tier system (hide, not disable)
-**Phase 7:** Delete `script.js`, old pages, final QA
+| Rebuild Phase | Status | What |
+|---------------|--------|------|
+| 0: Seed & Reproducibility | ✅ Done | `seed` param on all simulation endpoints, `seed_used` in responses |
+| 1: Nav Restructure | ✅ Done | "For Patients" / "For Professionals" mega-dropdowns |
+| 2: Simulator Rebuild | ✅ Done | 6 modules in `simulator/`, 5 in `shared/`, `simulator.html` rewritten |
+| **3: Page Merges** | 🔲 **NEXT** | Merge 3 centers pages → 1, merge 2 explorer pages → 1 |
+| 4: Model Validation | 🔲 Pending | New `validation.html` with 7 sections, backend router + services |
+| 5: Inter-tool Linking | 🔲 Pending | URL params + continue buttons (buttons already built in Phase 2) |
+| 6: Tier System | 🔲 Pending | Hide unavailable features instead of greyed-out |
+| 7: Cleanup & Polish | 🔲 Pending | Delete `script.js` (4889 lines), delete old HTML pages, final QA |
+
+### Phase 3 Details (Next Session)
+
+Read `docs/rebuild-plan.md` for full implementation specs. Summary:
+
+**3.1 Centers page merge:**
+- Combine `find-centers.html` + `centers.html` + `wait-estimator.html` → single `centers.html` with tabs (Find / Browse / Estimate)
+- New `centers-page.js` (~500 lines)
+
+**3.2 Explorer page merge:**
+- Combine `data.html` + `spatial.html` → single `explorer.html` with tabs (Data Layers / Spatial Analysis)
+- New `explorer/index.js`, `explorer/data-layers.js`, `explorer/spatial-analysis.js`
 
 ## Architecture
 
@@ -52,7 +62,7 @@ shared/                Cross-page utilities
 components/
   site-chrome.js       Nav + footer (injected into all pages)
   weight-config.js     Scoring weight sliders
-script.js              LEGACY monolith (4889 lines) — DO NOT MODIFY, will be deleted in Phase 7
+script.js              LEGACY monolith (4889 lines) — DO NOT MODIFY, will be deleted in Rebuild Phase 7
 ```
 
 ## Dev Server

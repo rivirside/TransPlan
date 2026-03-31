@@ -8,7 +8,7 @@ A patient-facing clinical decision support tool that helps transplant patients i
 
 ## Current State: Rebuild Phase 3 (Page Merges) — Next Priority
 
-**Full rebuild in progress** — Phases 0-2 complete, Phases 3-7 remaining. Plan: `.claude/plans/vectorized-honking-curry.md`
+**Full rebuild in progress** — Phases 0-2 complete, Phases 3-7 remaining. Plan: `docs/rebuild-plan.md`
 
 ### Rebuild Progress
 
@@ -33,9 +33,15 @@ A patient-facing clinical decision support tool that helps transplant patients i
 - **#208 comprehensive audit** (33 issues) — deferred until rebuild complete
 - **#206** BBN 248-center Region node, **#207** MCMC 248-center hierarchy
 - **HIGH:** Equity analysis infeasible at scale (11.9M sims), BBN magic numbers uncited, CORS too permissive
-- **CRITICAL:** Wait time sorting bug (script.js:2910) — will be fixed when script.js is deleted in Phase 7
+- **CRITICAL:** Wait time sorting bug (script.js:2910) — will be fixed when script.js is deleted in Rebuild Phase 7
 
-**Phase 3 done:** Python backend deployed to Vercel as serverless function (api/index.py). Static files served by CDN, API paths routed via vercel.json rewrites. CORS configured for transplant.today and *.vercel.app. MCMC gracefully disabled on Vercel (missing pymc). **Phase 4 done:** Simulation engine expanded from 22 cities to all 248 SRTR centers. Center-level data (wait-time factors, competing risks, outcomes) wired into MC, BBN, and MCMC engines. All simulation parameters (iterations, copula_theta, elasticity) exposed as adjustable API query params. BBN/MCMC map 248 centers to 22 regions as interim; full expansion tracked in #206/#207. Frontend home-center dropdown dynamically loads all centers from API.
+---
+
+## Original Development Phase History
+
+> **NOTE:** The phases below are the ORIGINAL development phases (1-7), ALL COMPLETE. Do NOT confuse with the Rebuild Phases (0-7) tracked above. The rebuild is a structural overhaul on top of the completed product.
+
+**Phase 3 done (original):** Python backend deployed to Vercel as serverless function (api/index.py). Static files served by CDN, API paths routed via vercel.json rewrites. CORS configured for transplant.today and *.vercel.app. MCMC gracefully disabled on Vercel (missing pymc). **Phase 4 done:** Simulation engine expanded from 22 cities to all 248 SRTR centers. Center-level data (wait-time factors, competing risks, outcomes) wired into MC, BBN, and MCMC engines. All simulation parameters (iterations, copula_theta, elasticity) exposed as adjustable API query params. BBN/MCMC map 248 centers to 22 regions as interim; full expansion tracked in #206/#207. Frontend home-center dropdown dynamically loads all centers from API.
 
 **Phase 7 (March 2026):** UI overhaul — removed all 6 themes (themes.css, theme-switcher.js deleted), replaced with single polished light-mode design. System fonts (no Google Fonts dependency), 15px base font, soft radii, restored shadows. Simulator restructured: sidebar layout with form on left, results/map on right, methodology collapsed below results. Landing page redesigned: hero + feature card grid + 4-step flow + data trust badges + CTA. Nav simplified to Home | Simulator | Docs + dark mode toggle. Mobile hamburger menu added. Center expansion: `POST /score` endpoint scores all 248 SRTR centers using center-level data + spatial RBF interpolation. Frontend calls backend scoring API with 22-city local fallback. 19 new pytest tests. 224 Jest + 613+ pytest.
 
