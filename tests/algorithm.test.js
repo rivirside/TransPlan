@@ -986,10 +986,11 @@ describe('Configurable Weights', () => {
 });
 
 // ==================== WAIT TIME SORTING TESTS ====================
-// Tests for _parseWaitTimeMonths and _sortResultsArray from script.js.
-// We set up minimal DOM stubs so that script.js can be required in Node.
+// REMOVED: Tests for _parseWaitTimeMonths and _sortResultsArray from script.js.
+// script.js (4889-line legacy monolith) was deleted in Rebuild Phase 7.
+// Wait time sorting now handled by simulator/results-table.js.
 
-describe('Wait Time Sorting (script.js)', () => {
+describe.skip('Wait Time Sorting (script.js) — REMOVED: script.js deleted in Phase 7', () => {
     let _parseWaitTimeMonths;
     let _sortResultsArray;
 
