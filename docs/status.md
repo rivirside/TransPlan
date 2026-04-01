@@ -66,40 +66,40 @@ A patient-facing clinical decision support tool that helps transplant patients i
 | 7.1 | Bootstrap sample size (n=200) likely insufficient | Fixed: raised to n=1000 in rebuild |
 | 7.2 | Exponential hazard assumes constant rate | Partially addressed: score drift F3 models time-varying priority |
 
-**Still Open — HIGH (8):**
-| # | Issue | Notes |
-|---|-------|-------|
-| 1.1 | Arbitrary tercile thresholds in BBN parameterization | Global terciles, not per-organ |
-| 1.2 | Hardcoded wait category boundaries (6/12/24 months) | No documentation for breakpoints |
-| 1.3 | Magic numbers in BBN competing outcome rates | No source citations |
-| 1.4 | Arbitrary fallback values throughout services | Unexplained defaults (0.08 mort, 0.05 delist) |
-| 1.5 | Hardcoded donor supply discretization | CPT probabilities appear arbitrary |
-| 3.2 | CPT values lack empirical grounding | Ad-hoc formulas, no sensitivity analysis |
-| 4.2 | CORS regex allows ANY Vercel subdomain | Should restrict to known deployments |
-| 9.1 | Equity analysis infeasible at scale | 248 centers x 48 profiles x 1000 iter = 11.9M sims |
+**Still Open — HIGH (8):** #209-#216
+| # | GH | Issue |
+|---|-----|-------|
+| 1.1 | #209 | BBN: arbitrary tercile thresholds are global, not per-organ |
+| 1.2 | #210 | BBN: hardcoded wait category boundaries (6/12/24mo) undocumented |
+| 1.3 | #211 | BBN: magic numbers in competing outcome rates lack citations |
+| 1.4 | #212 | Arbitrary fallback values throughout services |
+| 1.5 | #213 | BBN: hardcoded donor supply discretization probabilities |
+| 3.2 | #214 | BBN: CPT values lack empirical grounding |
+| 4.2 | #215 | CORS regex allows ANY Vercel subdomain |
+| 9.1 | #216 | Equity analysis infeasible at scale (11.9M sims) |
 
-**Still Open — MEDIUM (19):**
-| # | Issue | Category |
-|---|-------|----------|
-| 4.1 | innerHTML used extensively (~27 locations) | Security |
-| 4.3 | Rate limiting trusts X-Forwarded-For | Security |
-| 5.1 | Center/city data fallback inconsistent | Consistency |
-| 5.2 | Error handling inconsistent across services | Consistency |
-| 6.1 | No pagination/virtualization for 200+ rows | Frontend perf |
-| 6.2 | Chart rendering with 200+ data points untested | Frontend perf |
-| 6.3 | Map markers without clustering for 200+ centers | Frontend perf |
-| 6.4 | Mobile responsiveness with large result sets | Frontend perf |
-| 7.3 | Gini implementation doesn't validate non-negative | Statistics |
-| 7.4 | BBN uncertainty band is heuristic ±10% | Statistics |
-| 8.1 | Missing center data silently falls back | Error handling |
-| 8.2 | Missing organ data returns factor 1.0 silently | Error handling |
-| 8.3 | Fallback to 1e6 scale for zero rates | Error handling |
-| 8.4 | Missing lat/lon passed as None | Error handling |
-| 9.2 | No memoization of distribution objects | Performance |
-| 10.1 | Inference mode availability not documented | Docs |
-| 10.2 | BBN CPT construction lacks citations | Docs |
-| 10.3 | 22-city selection criteria never documented | Docs |
-| 10.4 | Equity disclaimers hardcoded in Python | Docs |
+**Still Open — MEDIUM (19):** #217-#235
+| # | GH | Issue | Category |
+|---|-----|-------|----------|
+| 4.1 | #217 | innerHTML used in ~27 locations | Security |
+| 4.3 | #218 | Rate limiting trusts X-Forwarded-For | Security |
+| 5.1 | #219 | Center/city data fallback inconsistent | Consistency |
+| 5.2 | #220 | Error handling inconsistent across services | Consistency |
+| 6.1 | #221 | No pagination/virtualization for 200+ rows | Frontend perf |
+| 6.2 | #222 | Chart rendering with 200+ data points untested | Frontend perf |
+| 6.3 | #223 | Map markers without clustering on simulator | Frontend perf |
+| 6.4 | #224 | Mobile responsiveness with large result sets | Frontend perf |
+| 7.3 | #225 | Gini doesn't validate non-negative input | Statistics |
+| 7.4 | #226 | BBN uncertainty band is heuristic +/-10% | Statistics |
+| 8.1 | #227 | Missing center data silently falls back | Error handling |
+| 8.2 | #228 | Missing organ data returns factor 1.0 silently | Error handling |
+| 8.3 | #229 | Zero rates fall back to 1e6 scale | Error handling |
+| 8.4 | #230 | Missing lat/lon passed as None | Error handling |
+| 9.2 | #231 | No memoization of distribution objects | Performance |
+| 10.1 | #232 | Inference mode availability not documented | Docs |
+| 10.2 | #233 | BBN CPT construction lacks citations | Docs |
+| 10.3 | #234 | 22-city selection criteria never documented | Docs |
+| 10.4 | #235 | Equity disclaimers hardcoded in Python | Docs |
 
 ---
 
