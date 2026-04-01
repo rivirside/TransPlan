@@ -41,6 +41,8 @@ COMET is a modular agent-based model simulating individual donor-candidate inter
 - No multi-criteria center scoring
 - No multi-engine cross-validation
 
+**Note (March 2026):** TransPlan now models organ acceptance rates parametrically using a thinned Poisson process with per-center volume-derived acceptance factors, narrowing the gap with COMET's acceptance modeling. However, COMET's agent-based approach remains more realistic as it captures individual donor-candidate interaction dynamics and learns acceptance behavior from historical offer-level data, whereas TransPlan's parametric approximation operates at the center level.
+
 ## Benchmarking Potential
 **High (Priority 1).** Both tools are open-source. Extract COMET-Lung's validation patient profiles and predicted center-level outcomes. Run TransPlan for lung with equivalent profiles. Compute Spearman rank correlation between center rankings.
 

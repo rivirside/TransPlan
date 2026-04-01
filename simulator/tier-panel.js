@@ -189,6 +189,9 @@
       }
     }
 
+    // Trend projection slider
+    _capSlider('sim-trend-years', 'sim-trend-years-value', caps.max_trend_years);
+
     // Spatial page
     var resSlider = document.getElementById('resolutionSlider');
     if (resSlider) {

@@ -4,16 +4,16 @@ A systematic mapping of existing tools, platforms, and software for transplant a
 
 ## Comparison Matrix
 
-| Tool | Type | Organs | Centers | Competing Risks | Equity Audit | Policy Sim | Spatial Data | Patient-Facing | Open Source | Active |
-|------|------|--------|---------|-----------------|--------------|------------|--------------|----------------|-------------|--------|
-| **SRTR PSR** | Registry reports | All 6 | 248 | Yes (Fine-Gray) | No | No | No | Yes (srtr.org) | No (data available) | Yes |
-| **KPSAM** | Discrete-event sim | Kidney, Pancreas | ~248 | Yes (implicit) | No | Yes (primary purpose) | No | No | No (request access) | Maintained |
-| **LSAM** | Discrete-event sim | Liver | ~140 | Yes (implicit) | No | Yes (primary purpose) | No | No | No (request access) | Maintained |
-| **TSAM** | Discrete-event sim | Heart, Lung | ~120 | Yes (implicit) | No | Yes (primary purpose) | No | No | No (request access) | Maintained |
-| **COMET** | Agent-based sim | Lung (extensible) | 70+ | Yes (modular) | No | Yes | No | No | Yes (GitHub) | 2024 |
-| **LivSim** | Discrete-event sim | Liver | ~140 | Yes (implicit) | No | Yes | No | No | Yes (GitHub) | 2018 |
-| **TransplantCenterSearch** | Decision aid | Kidney, Liver | ~248 | No | No | No | No | Yes (web) | No | 2024 |
-| **TransPlan** | Multi-engine sim | All 6 | 248 | Yes (parametric + copula) | Yes (Gini) | Yes (5 scenarios) | Yes (24 layers) | Yes (web) | Yes (GitHub) | 2026 |
+| Tool | Type | Organs | Centers | Competing Risks | Acceptance Model | Score Progression | Equity Audit | Policy Sim | Spatial Data | Patient-Facing | Open Source | Active |
+|------|------|--------|---------|-----------------|------------------|-------------------|--------------|------------|--------------|----------------|-------------|--------|
+| **SRTR PSR** | Registry reports | All 6 | 248 | Yes (Fine-Gray) | No | No | No | No | No | Yes (srtr.org) | No (data available) | Yes |
+| **KPSAM** | Discrete-event sim | Kidney, Pancreas | ~248 | Yes (implicit) | No | No | No | Yes (primary purpose) | No | No | No (request access) | Maintained |
+| **LSAM** | Discrete-event sim | Liver | ~140 | Yes (implicit) | No | No | No | Yes (primary purpose) | No | No | No (request access) | Maintained |
+| **TSAM** | Discrete-event sim | Heart, Lung | ~120 | Yes (implicit) | No | No | No | Yes (primary purpose) | No | No | No (request access) | Maintained |
+| **COMET** | Agent-based sim | Lung (extensible) | 70+ | Yes (modular) | Yes (agent-based) | No | No | Yes | No | No | Yes (GitHub) | 2024 |
+| **LivSim** | Discrete-event sim | Liver | ~140 | Yes (implicit) | No | Yes (DES) | No | Yes | No | No | Yes (GitHub) | 2018 |
+| **TransplantCenterSearch** | Decision aid | Kidney, Liver | ~248 | No | No | No | No | No | No | Yes (web) | No | 2024 |
+| **TransPlan** | Multi-engine sim | All 6 | 248 | Yes (parametric + copula) | Yes (parametric) | Yes (piecewise) | Yes (Gini) | Yes (5 scenarios) | Yes (24 layers) | Yes (web) | Yes (GitHub) | 2026 |
 
 ## What Each Tool Does Well
 
@@ -68,8 +68,8 @@ TransPlan does NOT claim to replace SRTR, KPSAM/LSAM/TSAM, or COMET. Instead, it
 - No patient-level data (uses aggregate SRTR data, not individual records)
 - No clinical validation (no RCT, no prospective outcome comparison)
 - No discrete-event or agent-based simulation (uses parametric Monte Carlo)
-- No organ acceptance modeling (doesn't model offer acceptance behavior)
-- No MELD/LAS progression over time (static snapshot, not dynamic)
+- Organ acceptance modeling is parametric (thinned Poisson with volume-derived factors), not agent-based like COMET
+- MELD/LAS progression is piecewise-linear (interval-specific clinical multipliers), not discrete-event like LivSim
 
 ## Benchmarking Opportunities
 

@@ -309,14 +309,17 @@ def simulate(
                 transplant_times = transplant_times / a_rate
 
         # --- F3: Dynamic score drift (MELD/LAS progression) ---
+        # Per-sample piecewise drift: each sample's wait time maps to a
+        # time-varying ratio via np.interp over a monthly lookup table.
         if model_score_drift:
-            from services.distributions import get_drift_adjusted_multiplier
-            drift_ratio = get_drift_adjusted_multiplier(
+            from services.distributions import get_piecewise_drift_lookup
+            lookup_t, lookup_r = get_piecewise_drift_lookup(
                 patient.organ, meld=patient.meld, las=patient.las,
-                expected_wait_months=float(dist.median()),
             )
-            if drift_ratio != 1.0:
-                transplant_times = transplant_times * drift_ratio
+            if lookup_r is not None:
+                transplant_times = transplant_times * np.interp(
+                    transplant_times, lookup_t, lookup_r,
+                )
 
         # --- Apply organ-specific cause-of-death multiplier (M2) ---
         # Sublinear elasticity: wait_adj = multiplier ^ elasticity (L-056)

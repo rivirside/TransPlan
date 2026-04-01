@@ -93,6 +93,21 @@
       params.bbn_granularity = bbnSelect.value;
     }
 
+    var acceptCb = document.getElementById('sim-acceptance');
+    if (acceptCb && acceptCb.checked) {
+      params.model_acceptance = true;
+    }
+
+    var driftCb = document.getElementById('sim-score-drift');
+    if (driftCb && driftCb.checked) {
+      params.model_score_drift = true;
+    }
+
+    var trendSlider = document.getElementById('sim-trend-years');
+    if (trendSlider && parseFloat(trendSlider.value) > 0) {
+      params.trend_years = parseFloat(trendSlider.value);
+    }
+
     return params;
   }
 

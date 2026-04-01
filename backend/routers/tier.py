@@ -22,5 +22,6 @@ def get_tier_config():
             "max_sensitivity_iterations": tier.max_sensitivity_iterations,
             "max_whatif_iterations": tier.max_whatif_iterations,
             "max_spatial_resolution": tier.max_spatial_resolution,
+            "max_trend_years": tier.max_trend_years,
         },
     }

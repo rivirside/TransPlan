@@ -318,6 +318,7 @@
             <button class="val-tab" role="tab" data-tab="temporal">Temporal</button>
             <button class="val-tab" role="tab" data-tab="convergence">Convergence</button>
             <button class="val-tab" role="tab" data-tab="reference">Reference Run</button>
+            <button class="val-tab" role="tab" data-tab="enhancement">Enhancement</button>
         </div>
 
         <!-- ─── Cross-Engine Panel ─── -->
@@ -653,6 +654,64 @@
             </div>
         </div>
 
+        <div class="val-panel" id="panel-enhancement">
+            <div class="val-card">
+                <h2>Enhancement Comparison</h2>
+                <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Compare how acceptance modeling, score drift, and trend projection affect center rankings and transplant probabilities. Runs 4 simulations with the same seed.</p>
+                <div class="val-form-row">
+                    <div class="val-form-group">
+                        <label>Organ</label>
+                        <select id="ec-organ">
+                            <option value="kidney">Kidney</option>
+                            <option value="liver" selected>Liver</option>
+                            <option value="heart">Heart</option>
+                            <option value="lung">Lung</option>
+                            <option value="pancreas">Pancreas</option>
+                            <option value="intestine">Intestine</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>Blood Type</label>
+                        <select id="ec-bt">
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="A+" selected>A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                    <div class="val-form-group">
+                        <label>MELD (liver)</label>
+                        <input type="number" id="ec-meld" value="14" min="6" max="40" style="width:60px">
+                    </div>
+                    <div class="val-form-group">
+                        <label>Iterations</label>
+                        <input type="number" id="ec-iter" value="500" min="100" max="2000" style="width:70px">
+                    </div>
+                    <button class="val-run-btn" id="ec-run-btn">Run Comparison</button>
+                </div>
+                <div class="val-loading" id="ec-loading"><div class="val-spinner"></div> Running 4 simulations…</div>
+                <div class="val-error" id="ec-error"></div>
+                <div class="val-result-area" id="ec-results" style="display:none">
+                    <div class="val-stat-row" id="ec-stats"></div>
+                    <div style="overflow-x:auto">
+                        <table class="val-table">
+                            <thead><tr>
+                                <th>Center</th><th>State</th>
+                                <th>Base Rank</th><th>+Accept</th><th>+Drift</th><th>+Trends</th>
+                                <th>Base p24</th><th>+Accept</th><th>+Drift</th><th>+Trends</th>
+                                <th>Max &Delta;</th>
+                            </tr></thead>
+                            <tbody id="ec-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div><!-- /.validation-layout -->
 
     <div id="footer-placeholder" data-footer-variant="simulator"></div>
@@ -669,6 +728,7 @@
     <script src="validation/temporal.js"></script>
     <script src="validation/convergence.js"></script>
     <script src="validation/reference.js"></script>
+    <script src="validation/enhancement-comparison.js"></script>
     <script src="shared/continue-buttons.js"></script>
 </body>
 </html>

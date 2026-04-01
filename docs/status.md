@@ -6,9 +6,9 @@
 
 A patient-facing clinical decision support tool that helps transplant patients identify the best US transplant centers for their specific organ needs. Deployed at transplant.today with a Python backend on Vercel. Covers all 248 SRTR centers with Monte Carlo simulation, Bayesian inference, competing risks modeling, equity analysis, and policy impact analysis. See `docs/ideas.md` for the full SRS and `docs/roadmap.md` for phased development plan.
 
-## Current State: Rebuild Phase 3 (Page Merges) — Next Priority
+## Current State: Rebuild Complete ✅
 
-**Full rebuild in progress** — Phases 0-2 complete, Phases 3-7 remaining. Plan: `docs/rebuild-plan.md`
+**All 8 rebuild phases done.** Structural overhaul started March 30, 2026, completed March 31, 2026. Plan: `docs/rebuild-plan.md`
 
 ### Rebuild Progress
 
@@ -17,23 +17,89 @@ A patient-facing clinical decision support tool that helps transplant patients i
 | Phase 0: Seed & Reproducibility | ✅ Done | `a75dd72` | `seed` param on all simulation endpoints, `seed_used` in responses, `RunArtifact` export schema, frontend seed display + export |
 | Phase 1: Nav Restructure | ✅ Done | `6749b10` | "For Patients" / "For Professionals" mega-dropdowns in `site-chrome.js`, old URLs redirect |
 | Phase 2: Simulator Rebuild | ✅ Done | `6f99f07` `792e1da` `840e415` | Modular architecture: `simulator/{index,map,tier-panel,form-helpers,results,results-table}.js` + `shared/{api-client,export-handler,data-loader,continue-buttons,geo-utils,weight-config}.js`. `simulator.html` rewritten (two-panel sidebar+results). Verified: 233 centers scored, simulation runs, map renders, URL pre-fill works, continue buttons link to 4 tools |
-| **Phase 3: Page Merges** | 🔲 **NEXT** | — | Merge find-centers + centers + wait-estimator → `centers.html` (tabs). Merge data.html + spatial.html → `explorer.html` (tabs) |
-| Phase 4: Model Validation | 🔲 Pending | — | New `validation.html` with 7 sections, new backend router + services |
-| Phase 5: Inter-tool Linking | 🔲 Pending | — | `shared/continue-buttons.js` already built in Phase 2; wire to all pages |
-| Phase 6: Tier System | 🔲 Pending | — | Hide unavailable features (not greyed out) |
-| Phase 7: Cleanup & Polish | 🔲 Pending | — | Delete `script.js` (4889 lines), old HTML pages, final QA |
+| Phase 3: Page Merges | ✅ Done | `b4ca1db` | `centers.html` with Find/Browse/Estimate tabs (713-line `centers-page.js`). `explorer.html` with Data Layers/Spatial Analysis tabs (`explorer/{index,data-layers,spatial-analysis}.js`) |
+| Phase 4: Model Validation | ✅ Done | `7954423` | New `validation.html` with 7 analysis sections, backend router + services |
+| Phase 5: Inter-tool Linking | ✅ Done | `05d8b44` | Continue buttons wired to all pages, URL param passing across tools |
+| Phase 6: Tier System | ✅ Done | `05d8b44` | Hide unavailable features (not greyed out) |
+| Phase 7: Cleanup & Polish | ✅ Done | `bcdd5b1` | Deleted `script.js` (4889 lines) and `data-explorer.js` (1420 lines) |
+
+### Additional Pages Built
+- `sensitivity.html` — Sensitivity analysis tool (795 lines)
+- `scenarios.html` — Policy scenario comparison (1158 lines)
+- `equity.html` — Demographic equity auditing (704 lines)
+
+### Publication Infrastructure (March 31, 2026)
+- 9 paper subprojects in `papers/` with detailed READMEs
+- First drafts: Paper 01 (tools comparison) and Paper 03 (equity analysis)
+- Landscape documentation: `docs/landscape/` with 7 tool profiles and benchmarking plan
 
 ### Bugs Fixed During Rebuild
 - `scoring.py` NameError: `_donor_availability()` missing `lat`/`lon` params (caused 500 on POST /score)
 - `index.js` DOMContentLoaded race: scripts at bottom of `<body>` run after event fires; fixed with `readyState` check
 - `tier-panel.js` ID mismatches between old/new element IDs (now handles both)
 - `form-helpers.js` inference mode select ID (`sim-inference-mode` → `inferenceMode`)
+- BBN cross-validation tests updated for 248-center MC results
+- Donate banner disabled, disclaimer modal horizontal overflow fixed
+- Wait time sorting bug eliminated (script.js deleted)
 
-### Deferred Issues
-- **#208 comprehensive audit** (33 issues) — deferred until rebuild complete
+### Post-Rebuild Enhancements (March 31, 2026)
+- **Acceptance modeling** (`model_acceptance`): thinned Poisson process using per-center volume-derived acceptance rates
+- **Score drift** (`model_score_drift`): piecewise MELD/LAS progression during wait, adjusting transplant priority + mortality
+- **Trend projection** (`trend_years`): projects 22-city historical trend slopes forward to adjust wait, mortality, delisting rates
+- All opt-in, seed-safe, tier-gated. Frontend controls in simulator Advanced Settings.
+
+### Open Issues (Post-Rebuild)
 - **#206** BBN 248-center Region node, **#207** MCMC 248-center hierarchy
-- **HIGH:** Equity analysis infeasible at scale (11.9M sims), BBN magic numbers uncited, CORS too permissive
-- **CRITICAL:** Wait time sorting bug (script.js:2910) — will be fixed when script.js is deleted in Rebuild Phase 7
+- Old HTML pages still on disk (`find-centers.html`, `wait-estimator.html`, `data.html`, `spatial.html`) — can be deleted when nav links are confirmed updated
+
+### Issue #208 Audit Triage
+
+33 sub-issues across 10 categories. Triaged March 31, 2026 against rebuild + enhancements.
+
+**Addressed (6):**
+| # | Issue | Resolution |
+|---|-------|-----------|
+| 2.1 | Wait time sorting reads number only, ignores units | Fixed: `script.js` deleted in Phase 7 |
+| 3.1 | 22-city selection has no documented justification | Addressed: 248-center expansion in Phase 6A |
+| 3.3 | Competing risks default to independent draws | Addressed: `use_copula=True` is now default |
+| 5.3 | 22-city list duplicated in 3+ places | Reduced: center-mapping JSON is single source |
+| 7.1 | Bootstrap sample size (n=200) likely insufficient | Fixed: raised to n=1000 in rebuild |
+| 7.2 | Exponential hazard assumes constant rate | Partially addressed: score drift F3 models time-varying priority |
+
+**Still Open — HIGH (8):**
+| # | Issue | Notes |
+|---|-------|-------|
+| 1.1 | Arbitrary tercile thresholds in BBN parameterization | Global terciles, not per-organ |
+| 1.2 | Hardcoded wait category boundaries (6/12/24 months) | No documentation for breakpoints |
+| 1.3 | Magic numbers in BBN competing outcome rates | No source citations |
+| 1.4 | Arbitrary fallback values throughout services | Unexplained defaults (0.08 mort, 0.05 delist) |
+| 1.5 | Hardcoded donor supply discretization | CPT probabilities appear arbitrary |
+| 3.2 | CPT values lack empirical grounding | Ad-hoc formulas, no sensitivity analysis |
+| 4.2 | CORS regex allows ANY Vercel subdomain | Should restrict to known deployments |
+| 9.1 | Equity analysis infeasible at scale | 248 centers x 48 profiles x 1000 iter = 11.9M sims |
+
+**Still Open — MEDIUM (19):**
+| # | Issue | Category |
+|---|-------|----------|
+| 4.1 | innerHTML used extensively (~27 locations) | Security |
+| 4.3 | Rate limiting trusts X-Forwarded-For | Security |
+| 5.1 | Center/city data fallback inconsistent | Consistency |
+| 5.2 | Error handling inconsistent across services | Consistency |
+| 6.1 | No pagination/virtualization for 200+ rows | Frontend perf |
+| 6.2 | Chart rendering with 200+ data points untested | Frontend perf |
+| 6.3 | Map markers without clustering for 200+ centers | Frontend perf |
+| 6.4 | Mobile responsiveness with large result sets | Frontend perf |
+| 7.3 | Gini implementation doesn't validate non-negative | Statistics |
+| 7.4 | BBN uncertainty band is heuristic ±10% | Statistics |
+| 8.1 | Missing center data silently falls back | Error handling |
+| 8.2 | Missing organ data returns factor 1.0 silently | Error handling |
+| 8.3 | Fallback to 1e6 scale for zero rates | Error handling |
+| 8.4 | Missing lat/lon passed as None | Error handling |
+| 9.2 | No memoization of distribution objects | Performance |
+| 10.1 | Inference mode availability not documented | Docs |
+| 10.2 | BBN CPT construction lacks citations | Docs |
+| 10.3 | 22-city selection criteria never documented | Docs |
+| 10.4 | Equity disclaimers hardcoded in Python | Docs |
 
 ---
 

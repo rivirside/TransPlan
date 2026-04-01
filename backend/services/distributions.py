@@ -224,6 +224,80 @@ def get_drift_adjusted_multiplier(
     return 1.0
 
 
+def get_piecewise_drift_lookup(
+    organ: str,
+    meld: int | None = None,
+    las: float | None = None,
+) -> tuple[np.ndarray | None, np.ndarray | None]:
+    """Return a piecewise drift ratio lookup table for per-sample adjustment.
+
+    Builds monthly-resolution arrays from 0 to 60 months.  For each month *t*,
+    the score at time *t* is computed using the organ's drift rate, then the
+    clinical multiplier at that score is looked up.  A cumulative time-weighted
+    average multiplier from 0 to *t* is computed and the ratio is::
+
+        ratio(t) = cumulative_avg_multiplier(0..t) / static_multiplier(t=0)
+
+    Returns ``(times, ratios)`` as numpy arrays suitable for ``np.interp``,
+    or ``(None, None)`` when no drift applies (non-liver/lung organs, missing
+    score, zero drift rate, etc.).
+    """
+    from config import SCORE_DRIFT_CAPS, SCORE_DRIFT_RATES
+
+    _ensure_loaded()
+    organ_params = _DISTRIBUTIONS.get(organ)
+    if organ_params is None:
+        return None, None
+
+    clinical_multipliers = organ_params.get("clinical_multipliers", {})
+
+    # Determine which score key and initial value to use
+    if organ == "liver" and meld is not None and "meld" in clinical_multipliers:
+        score_key = "meld"
+        initial_score = float(meld)
+        drift_rate = SCORE_DRIFT_RATES.get("liver", {}).get("meld", 0)
+        if drift_rate <= 0:
+            return None, None
+        cap = SCORE_DRIFT_CAPS.get("meld", 40)
+        # MELD drifts upward, cap is a ceiling
+        clamp = lambda s: min(s, cap)  # noqa: E731
+    elif organ == "lung" and las is not None and "las" in clinical_multipliers:
+        score_key = "las"
+        initial_score = float(las)
+        drift_rate = SCORE_DRIFT_RATES.get("lung", {}).get("las", 0)
+        if drift_rate == 0:
+            return None, None
+        cap = SCORE_DRIFT_CAPS.get("las", 0)
+        # LAS drifts downward (negative rate), cap is a floor
+        clamp = lambda s: max(s, cap)  # noqa: E731
+    else:
+        return None, None
+
+    ranges = clinical_multipliers[score_key]
+    static_mult = _get_range_multiplier(initial_score, ranges)
+    if static_mult <= 0:
+        return None, None
+
+    # Build monthly resolution from 0 to 60 months
+    max_months = 60
+    times = np.arange(0, max_months + 1, dtype=float)  # 0, 1, 2, ..., 60
+    ratios = np.ones_like(times)
+
+    # Precompute the multiplier at each month
+    monthly_mults = np.empty(len(times))
+    for i, t in enumerate(times):
+        score_at_t = clamp(initial_score + drift_rate * t / 12.0)
+        monthly_mults[i] = _get_range_multiplier(score_at_t, ranges)
+
+    # ratios[0] = 1.0 (no drift at t=0)
+    # For t > 0, cumulative average multiplier from 0..t via trapezoidal rule
+    for i in range(1, len(times)):
+        cumulative_avg = np.trapezoid(monthly_mults[:i + 1], times[:i + 1]) / times[i]
+        ratios[i] = cumulative_avg / static_mult
+
+    return times, ratios
+
+
 def get_lognorm_params(dist) -> tuple[float, float, float]:
     """
     Safely extract (s, loc, scale) from a frozen lognorm distribution.

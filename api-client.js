@@ -104,6 +104,15 @@
         if (advancedParams.seed !== undefined && advancedParams.seed !== null) {
           qp.push('seed=' + advancedParams.seed);
         }
+        if (advancedParams.model_acceptance) {
+          qp.push('model_acceptance=true');
+        }
+        if (advancedParams.model_score_drift) {
+          qp.push('model_score_drift=true');
+        }
+        if (advancedParams.trend_years !== undefined && advancedParams.trend_years > 0) {
+          qp.push('trend_years=' + advancedParams.trend_years);
+        }
       }
       var url = base + '/simulate' + (qp.length ? '?' + qp.join('&') : '');
       var response = await fetch(url, {

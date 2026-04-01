@@ -41,6 +41,8 @@ LivSim is an open-source Python (3.4.2) discrete-event simulation of liver alloc
 - No patient-facing tools
 - No competing risks decomposition (transplant/mortality/delisting as separate outputs)
 
+**Note (March 2026):** TransPlan now models MELD/LAS score progression via piecewise-linear drift with interval-specific clinical multipliers, narrowing the gap with LivSim's dynamic MELD modeling. However, LivSim's discrete-event approach is more mechanistically detailed, tracking individual candidate MELD trajectories and modeling score-dependent allocation sequencing, whereas TransPlan's piecewise approximation applies population-level drift rates to the competing risks framework.
+
 ## Benchmarking Potential
 **Medium.** Run both tools for liver with equivalent patient profiles and policy scenarios. Compare center rankings and predicted wait times. Note: LivSim may require Python 3.4 compatibility work.
 

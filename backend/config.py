@@ -44,6 +44,10 @@ SCORE_DRIFT_CAPS: dict[str, float] = {
     "las": 0,     # LAS floor
 }
 
+# Piecewise drift interval boundaries (months) for per-sample score drift (F3).
+# The lookup table is built at monthly resolution from 0 to 60 months.
+PIECEWISE_DRIFT_INTERVALS: list[int] = [0, 6, 12, 18, 24, 36]
+
 # Semantic version
 VERSION: str = "2.0.0-alpha"
 

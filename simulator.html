@@ -215,6 +215,22 @@
                                 </span>
                                 <input type="range" id="sim-elasticity" min="0.1" max="1.0" value="0.65" step="0.05" class="setting-slider">
                             </label>
+
+                            <h4 class="setting-section-title">Enhancement Models</h4>
+                            <label class="setting-row">
+                                <span class="setting-label">Model Acceptance Rates</span>
+                                <input type="checkbox" id="sim-acceptance">
+                            </label>
+                            <label class="setting-row">
+                                <span class="setting-label">Model Score Drift (MELD/LAS)</span>
+                                <input type="checkbox" id="sim-score-drift">
+                            </label>
+                            <label class="setting-row" id="sim-trend-years-row">
+                                <span class="setting-label">
+                                    Trend Projection <span class="setting-value" id="sim-trend-years-value">0</span> yr
+                                </span>
+                                <input type="range" id="sim-trend-years" min="0" max="5" value="0" step="0.5" class="setting-slider">
+                            </label>
                         </div>
                     </details>
 

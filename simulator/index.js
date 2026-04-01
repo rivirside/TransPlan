@@ -336,6 +336,7 @@
     window.SimFormHelpers.wireSliderLabel('sim-iterations', 'sim-iterations-value');
     window.SimFormHelpers.wireSliderLabel('sim-copula-theta', 'sim-copula-theta-value');
     window.SimFormHelpers.wireSliderLabel('sim-elasticity', 'sim-elasticity-value');
+    window.SimFormHelpers.wireSliderLabel('sim-trend-years', 'sim-trend-years-value', ' yr');
     window.SimFormHelpers.wireSliderLabel('cpra', 'cpra-output', '%');
   }
 

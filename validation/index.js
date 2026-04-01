@@ -38,7 +38,7 @@
   function populateFromURL(params) {
     if (!params.toString()) return;
 
-    var prefixes = ['ce', 'ms', 'cs', 'cal', 'tv', 'cv', 'ref'];
+    var prefixes = ['ce', 'ms', 'cs', 'cal', 'tv', 'cv', 'ref', 'ec'];
     var organ = params.get('organ');
     var bt = params.get('bt');
     var age = params.get('age');
