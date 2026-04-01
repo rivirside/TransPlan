@@ -32,6 +32,18 @@ ORGAN_COPULA_THETA: dict[str, float] = {
     "intestine": 1.5,  # τ ≈ 0.43 — highest acuity, small volume
 }
 
+# Score drift rates (annual) for dynamic MELD/LAS progression (Feature 3).
+# Liver MELD: ~2.5 points/year (Volk et al. Hepatology 2006; Bambha et al. Gastro 2008).
+# Lung LAS: ~-1.0 points/year (Davis Square & LAS Working Group estimates).
+SCORE_DRIFT_RATES: dict[str, dict[str, float]] = {
+    "liver": {"meld": 2.5},
+    "lung": {"las": -1.0},
+}
+SCORE_DRIFT_CAPS: dict[str, float] = {
+    "meld": 40,   # MELD caps at 40
+    "las": 0,     # LAS floor
+}
+
 # Semantic version
 VERSION: str = "2.0.0-alpha"
 

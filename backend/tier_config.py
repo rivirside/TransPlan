@@ -23,6 +23,8 @@ class TierConfig:
     max_validation_iterations: int
     max_validation_sweep_steps: int
     max_validation_train_years: int
+    # Trend projection cap
+    max_trend_years: float
 
 
 WEB_TIER = TierConfig(
@@ -40,6 +42,7 @@ WEB_TIER = TierConfig(
     max_validation_iterations=300,
     max_validation_sweep_steps=6,
     max_validation_train_years=3,
+    max_trend_years=2.0,
 )
 
 LOCAL_TIER = TierConfig(
@@ -57,6 +60,7 @@ LOCAL_TIER = TierConfig(
     max_validation_iterations=1000,
     max_validation_sweep_steps=10,
     max_validation_train_years=6,
+    max_trend_years=5.0,
 )
 
 

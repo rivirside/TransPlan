@@ -23,6 +23,9 @@ def run_simulation(
     elasticity: float = Query(default=None, ge=0.1, le=1.0, description="Override supply-wait elasticity (default 0.65)"),
     bbn_granularity: str = Query(default="state", description="BBN region granularity: 'classic' (22), 'state' (~50), 'full' (248)"),
     seed: int = Query(default=None, ge=0, le=2147483647, description="RNG seed for reproducibility"),
+    model_acceptance: bool = Query(default=False, description="Model center-level organ acceptance rates"),
+    model_score_drift: bool = Query(default=False, description="Model MELD/LAS score progression during wait"),
+    trend_years: float = Query(default=0.0, ge=0.0, le=5.0, description="Project trends forward N years (0=disabled)"),
 ) -> SimulationResult:
     try:
         from tier_config import get_tier
@@ -37,6 +40,8 @@ def run_simulation(
             copula_theta = None
         if tier.elasticity_locked:
             elasticity = None
+        if trend_years > tier.max_trend_years:
+            trend_years = tier.max_trend_years
         if inference_mode == "bayesian":
             try:
                 from services.bayesian_network import simulate_bbn
@@ -63,7 +68,12 @@ def run_simulation(
                            f"Run scripts/fit-mcmc-model.py --organ {patient.organ} to generate it.",
                 )
             return simulate_mcmc(patient, n_iterations=iterations)
-        return simulate(patient, n_iterations=iterations, copula_theta_override=copula_theta, elasticity_override=elasticity, seed=seed)
+        return simulate(
+            patient, n_iterations=iterations,
+            copula_theta_override=copula_theta, elasticity_override=elasticity,
+            seed=seed, model_acceptance=model_acceptance,
+            model_score_drift=model_score_drift, trend_years=trend_years,
+        )
     except HTTPException:
         raise
     except Exception as e:

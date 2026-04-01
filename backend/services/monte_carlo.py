@@ -205,12 +205,28 @@ def _bootstrap_ci(outcomes: np.ndarray, event: int, threshold_months: np.ndarray
     return (lo, hi)
 
 
+def _get_acceptance_rate(organ: str, center_code: str) -> float:
+    """Return center-level effective acceptance rate (0 < rate <= 1.0).
+
+    Computed as national_rate * center_factor. Centers with higher volume
+    relative to median are assumed to accept more offers.
+    """
+    data = get_data()
+    ar = data.acceptance_rates
+    national = ar.get("national_acceptance_rates", {}).get(organ, 0.25)
+    factor = ar.get("center_acceptance_factors", {}).get(center_code, {}).get(organ, 1.0)
+    return min(national * factor, 1.0)
+
+
 def simulate(
     patient: PatientProfile,
     n_iterations: int | None = None,
     copula_theta_override: float | None = None,
     elasticity_override: float | None = None,
     seed: int | None = None,
+    model_acceptance: bool = False,
+    model_score_drift: bool = False,
+    trend_years: float = 0.0,
 ) -> SimulationResult:
     """
     Run Monte Carlo simulation with competing risks for all SRTR centers
@@ -241,6 +257,26 @@ def simulate(
     rng = np.random.default_rng(seed)
     city_results: list[CityProbability] = []
 
+    # --- F2: Pre-compute trend projections for 22 cities ---
+    trend_projections: dict[str, dict[str, float]] = {}
+    center_to_trend_city: dict[str, str] = {}
+    if trend_years > 0:
+        from services.trends import get_trend_projection
+        data = get_data()
+        mapping = data.center_mapping.get("cities", {})
+        # Build reverse map: center_code → city_name
+        for city_name, info in mapping.items():
+            primary = info.get("primary", "")
+            if primary:
+                center_to_trend_city[primary] = city_name
+            for alt in info.get("alternates", []):
+                center_to_trend_city[alt] = city_name
+        # Pre-compute projections for each city
+        for city_name in mapping:
+            trend_projections[city_name] = get_trend_projection(
+                patient.organ, city_name, years_forward=trend_years,
+            )
+
     for center in _get_centers(patient.organ):
         # Center records have {code, name, state, state_abbr, lat, lon, ...}
         # Fallback records (22-city mode) have {city, state}
@@ -265,6 +301,23 @@ def simulate(
         )
         transplant_times = dist.rvs(size=n_iterations, random_state=rng)
 
+        # --- F1: Acceptance rate thinning ---
+        # If center accepts fraction a of offers, effective wait = T/a
+        if model_acceptance:
+            a_rate = _get_acceptance_rate(patient.organ, code)
+            if a_rate > 0 and a_rate < 1.0:
+                transplant_times = transplant_times / a_rate
+
+        # --- F3: Dynamic score drift (MELD/LAS progression) ---
+        if model_score_drift:
+            from services.distributions import get_drift_adjusted_multiplier
+            drift_ratio = get_drift_adjusted_multiplier(
+                patient.organ, meld=patient.meld, las=patient.las,
+                expected_wait_months=float(dist.median()),
+            )
+            if drift_ratio != 1.0:
+                transplant_times = transplant_times * drift_ratio
+
         # --- Apply organ-specific cause-of-death multiplier (M2) ---
         # Sublinear elasticity: wait_adj = multiplier ^ elasticity (L-056)
         if patient.adjust_for_cause_of_death:
@@ -281,11 +334,38 @@ def simulate(
             organ=patient.organ, center_code=code, city=display_city,
             urgency=patient.urgency, meld=patient.meld,
         )
-        mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
 
         annual_delist = get_annual_delisting_rate(
             organ=patient.organ, center_code=code, city=display_city,
         )
+
+        # --- F3: Adjust mortality for score drift (higher MELD → higher mortality) ---
+        if model_score_drift and patient.organ == "liver" and patient.meld is not None:
+            from config import SCORE_DRIFT_RATES, SCORE_DRIFT_CAPS
+            drift_rate = SCORE_DRIFT_RATES.get("liver", {}).get("meld", 0)
+            if drift_rate > 0:
+                eff_meld = min(
+                    patient.meld + drift_rate * float(dist.median()) / 12.0,
+                    SCORE_DRIFT_CAPS.get("meld", 40),
+                )
+                avg_meld = (patient.meld + eff_meld) / 2.0
+                mort_at_drift = get_annual_mortality_rate(
+                    organ="liver", center_code=code, city=display_city,
+                    urgency=patient.urgency, meld=int(avg_meld),
+                )
+                if mort_at_drift > 0:
+                    annual_mort = mort_at_drift
+
+        # --- F2: Apply trend projections to rates ---
+        if trend_years > 0:
+            tc = center_to_trend_city.get(code)
+            if tc and tc in trend_projections:
+                tp = trend_projections[tc]
+                transplant_times = transplant_times * tp["wait_time_factor"]
+                annual_mort = annual_mort * tp["mortality_factor"]
+                annual_delist = annual_delist * tp["delisting_factor"]
+
+        mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
         delist_scale = 12.0 / annual_delist if annual_delist > 0 else 1e6
 
         if patient.use_copula:

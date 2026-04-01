@@ -95,9 +95,9 @@ class TestComputeMetricTrend:
 
     def test_null_values_filtered_before_regression(self):
         years = [2019, 2020, 2021, 2022, 2023, 2024, 2025]
-        values = [48.0, None, 44.0, None, 40.0, None, 36.0]
+        values = [48.0, None, 44.0, 42.0, 40.0, None, 36.0]
         result = _compute_metric_trend(years, values, "median_wait_months")
-        # 4 valid points — enough for regression
+        # 5 valid points — meets MIN_POINTS threshold for regression
         assert result["direction"] in ("improving", "stable", "declining")
         assert result["slope"] is not None
 
@@ -129,22 +129,28 @@ class TestComputeMetricTrend:
 
 class TestClassifyTrend:
     def test_non_significant_is_stable(self):
-        assert _classify_trend(-5.0, 0.50, "median_wait_months", 0.5) == "stable"
+        # p_value=0.50 > threshold → stable regardless of slope/R²
+        assert _classify_trend(-5.0, 0.50, 0.9, "median_wait_months", 0.5) == "stable"
 
     def test_small_slope_is_stable(self):
-        assert _classify_trend(-0.01, 0.05, "median_wait_months", 0.5) == "stable"
+        # slope=-0.01 < min_change=0.5 → stable
+        assert _classify_trend(-0.01, 0.01, 0.9, "median_wait_months", 0.5) == "stable"
 
     def test_negative_wait_time_slope_is_improving(self):
-        assert _classify_trend(-2.0, 0.01, "median_wait_months", 0.5) == "improving"
+        assert _classify_trend(-2.0, 0.01, 0.9, "median_wait_months", 0.5) == "improving"
 
     def test_positive_wait_time_slope_is_declining(self):
-        assert _classify_trend(2.0, 0.01, "median_wait_months", 0.5) == "declining"
+        assert _classify_trend(2.0, 0.01, 0.9, "median_wait_months", 0.5) == "declining"
 
     def test_positive_volume_slope_is_improving(self):
-        assert _classify_trend(10.0, 0.01, "volume", 3.0) == "improving"
+        assert _classify_trend(10.0, 0.01, 0.9, "volume", 3.0) == "improving"
 
     def test_negative_volume_slope_is_declining(self):
-        assert _classify_trend(-10.0, 0.01, "volume", 3.0) == "declining"
+        assert _classify_trend(-10.0, 0.01, 0.9, "volume", 3.0) == "declining"
+
+    def test_low_r_squared_is_stable(self):
+        # R² < MIN_R_SQUARED → stable even with significant p-value
+        assert _classify_trend(-5.0, 0.01, 0.1, "median_wait_months", 0.5) == "stable"
 
 
 # ---------------------------------------------------------------------------

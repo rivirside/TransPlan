@@ -175,6 +175,55 @@ def get_wait_time_distribution(
     return scipy.stats.lognorm(s=sigma, scale=adjusted_median)
 
 
+def get_drift_adjusted_multiplier(
+    organ: str,
+    meld: int | None = None,
+    las: float | None = None,
+    expected_wait_months: float = 0.0,
+) -> float:
+    """Return ratio of drifted vs static clinical multiplier for MELD/LAS progression.
+
+    If MELD drifts from 20→25 over the wait, the average is ~22.5. We look up the
+    clinical multiplier for the average score and divide by the static multiplier.
+    A ratio < 1.0 means the patient gets higher priority (shorter effective wait).
+
+    Returns 1.0 for non-liver/lung organs or when no drift applies.
+    """
+    from config import SCORE_DRIFT_CAPS, SCORE_DRIFT_RATES
+
+    _ensure_loaded()
+    organ_params = _DISTRIBUTIONS.get(organ)
+    if organ_params is None:
+        return 1.0
+
+    clinical_multipliers = organ_params.get("clinical_multipliers", {})
+
+    if organ == "liver" and meld is not None and "meld" in clinical_multipliers:
+        drift_rate = SCORE_DRIFT_RATES.get("liver", {}).get("meld", 0)
+        if drift_rate <= 0 or expected_wait_months <= 0:
+            return 1.0
+        cap = SCORE_DRIFT_CAPS.get("meld", 40)
+        eff_meld = min(meld + drift_rate * expected_wait_months / 12.0, cap)
+        avg_meld = (meld + eff_meld) / 2.0
+        static_mult = _get_range_multiplier(meld, clinical_multipliers["meld"])
+        drift_mult = _get_range_multiplier(avg_meld, clinical_multipliers["meld"])
+        return drift_mult / static_mult if static_mult > 0 else 1.0
+
+    if organ == "lung" and las is not None and "las" in clinical_multipliers:
+        drift_rate = SCORE_DRIFT_RATES.get("lung", {}).get("las", 0)
+        if drift_rate == 0 or expected_wait_months <= 0:
+            return 1.0
+        cap = SCORE_DRIFT_CAPS.get("las", 0)
+        # LAS drift is negative (function declines), but LAS values floor at 0
+        eff_las = max(las + drift_rate * expected_wait_months / 12.0, cap)
+        avg_las = (las + eff_las) / 2.0
+        static_mult = _get_range_multiplier(las, clinical_multipliers["las"])
+        drift_mult = _get_range_multiplier(avg_las, clinical_multipliers["las"])
+        return drift_mult / static_mult if static_mult > 0 else 1.0
+
+    return 1.0
+
+
 def get_lognorm_params(dist) -> tuple[float, float, float]:
     """
     Safely extract (s, loc, scale) from a frozen lognorm distribution.

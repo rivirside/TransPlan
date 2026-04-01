@@ -49,6 +49,8 @@ class TransPlanData:
     center_outcomes: dict = field(default_factory=dict)
     # Phase 7: Center contact info (address, phone, website) from SRTR report API
     center_contacts: dict = field(default_factory=dict)
+    # Acceptance rate factors per center per organ (derived from n_1yr volumes)
+    acceptance_rates: dict = field(default_factory=dict)
     # freshness metadata keyed by logical name
     freshness: dict = field(default_factory=dict)
 
@@ -146,6 +148,7 @@ def load_all() -> TransPlanData:
     data.center_competing_risks = _load_json(DATA_DIR / "competing-risks-centers.json", "center_competing_risks", data)
     data.center_outcomes = _load_json(DATA_DIR / "post-transplant-outcomes-centers.json", "center_outcomes", data)
     data.center_contacts = _load_json(DATA_DIR / "center-contacts.json", "center_contacts", data)
+    data.acceptance_rates = _load_json(DATA_DIR / "acceptance-rates-centers.json", "acceptance_rates", data)
 
     loaded = sum(1 for v in data.freshness.values() if v not in ("missing", "parse_error"))
     logger.info("TransPlan data loaded: %d/%d files OK", loaded, len(data.freshness))

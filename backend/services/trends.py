@@ -245,6 +245,70 @@ def get_city_trends(organ: str, city: str) -> dict | None:
     return trends
 
 
+def get_trend_projection(
+    organ: str,
+    city: str,
+    years_forward: float = 1.0,
+) -> dict[str, float]:
+    """Project historical trends forward to compute simulation adjustment factors.
+
+    Returns multipliers for wait_time, mortality, and delisting rates.
+    All default to 1.0 (no adjustment) if trends are insufficient or not significant.
+    Factors are clamped to [0.5, 2.0] to prevent extreme projections.
+
+    A wait_time_factor < 1.0 means waits are projected to decrease.
+    A mortality_factor > 1.0 means mortality is projected to increase.
+    """
+    result = {"wait_time_factor": 1.0, "mortality_factor": 1.0, "delisting_factor": 1.0}
+
+    if years_forward <= 0 or organ not in VALID_ORGANS:
+        return result
+
+    data = _get_historical_data()
+    if not data:
+        return result
+
+    city_data = data.get("cities", {}).get(city, {}).get(organ)
+    if not city_data:
+        return result
+
+    years = city_data.get("years", [])
+    if not years:
+        return result
+
+    # Map metric names to result keys and their data arrays
+    metrics = [
+        ("median_wait_months", "wait_time_factor", city_data.get("median_wait_months", [])),
+        ("mortality_rate", "mortality_factor", city_data.get("mortality_rate", [])),
+        ("delisting_rate", "delisting_factor", city_data.get("delisting_rate", [])),
+    ]
+
+    for metric_name, factor_key, values in metrics:
+        trend = _compute_metric_trend(years, values, metric_name)
+        if trend["direction"] == "insufficient_data" or trend["slope"] is None:
+            continue
+        # Only project if trend is statistically significant
+        if trend.get("p_value", 1.0) > P_VALUE_THRESHOLD:
+            continue
+        if trend.get("r_squared", 0.0) < MIN_R_SQUARED:
+            continue
+
+        # Get the last known value for relative projection
+        valid_values = [v for v in values if v is not None]
+        if not valid_values or valid_values[-1] <= 0:
+            continue
+
+        last_value = valid_values[-1]
+        projected_change = trend["slope"] * years_forward
+        factor = 1.0 + (projected_change / last_value)
+
+        # Clamp to [0.5, 2.0]
+        factor = max(0.5, min(2.0, factor))
+        result[factor_key] = round(factor, 4)
+
+    return result
+
+
 def get_all_trends(organ: str) -> dict[str, dict]:
     """
     Get trend analysis for all cities for a given organ.
