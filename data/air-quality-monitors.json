@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "fetchedAt": "2026-04-06T07:27:36.979Z",
-    "source": "EPA AQS API (2753 monitors, ozone + PM2.5, all states)"
+    "fetchedAt": "2026-04-13T08:01:31.865Z",
+    "source": "EPA AQS API (2754 monitors, ozone + PM2.5, all states)"
   },
   "monitors": [
     {
@@ -281,7 +281,7 @@
       "aqi": 47,
       "pollutant": "ozone",
       "state": "Arizona",
-      "value": 0.0512
+      "value": 0.0511
     },
     {
       "lat": 33.40314,
@@ -290,7 +290,7 @@
       "aqi": 45,
       "pollutant": "ozone",
       "state": "Arizona",
-      "value": 0.0483
+      "value": 0.0482
     },
     {
       "lat": 33.41123,
@@ -308,7 +308,7 @@
       "aqi": 47,
       "pollutant": "ozone",
       "state": "Arizona",
-      "value": 0.0504
+      "value": 0.0503
     },
     {
       "lat": 33.45244,
@@ -326,7 +326,7 @@
       "aqi": 47,
       "pollutant": "ozone",
       "state": "Arizona",
-      "value": 0.0509
+      "value": 0.0508
     },
     {
       "lat": 33.61092,
@@ -335,7 +335,7 @@
       "aqi": 48,
       "pollutant": "ozone",
       "state": "Arizona",
-      "value": 0.052
+      "value": 0.0519
     },
     {
       "lat": 33.48378,
@@ -344,7 +344,7 @@
       "aqi": 45,
       "pollutant": "ozone",
       "state": "Arizona",
-      "value": 0.0486
+      "value": 0.0485
     },
     {
       "lat": 32.29515,
@@ -434,7 +434,7 @@
       "aqi": 44,
       "pollutant": "ozone",
       "state": "Arizona",
-      "value": 0.0474
+      "value": 0.0473
     },
     {
       "lat": 33.45797,
@@ -461,7 +461,7 @@
       "aqi": 45,
       "pollutant": "ozone",
       "state": "Arizona",
-      "value": 0.049
+      "value": 0.0489
     },
     {
       "lat": 33.82169,
@@ -479,7 +479,7 @@
       "aqi": 49,
       "pollutant": "ozone",
       "state": "Arizona",
-      "value": 0.0527
+      "value": 0.0526
     },
     {
       "lat": 33.290229,
@@ -682,11 +682,11 @@
     {
       "lat": 39.76168,
       "lon": -121.84047,
-      "score": 82,
-      "aqi": 36,
+      "score": 84,
+      "aqi": 32,
       "pollutant": "ozone",
       "state": "California",
-      "value": 0.0389
+      "value": 0.0345
     },
     {
       "lat": 38.20185,
@@ -1276,11 +1276,11 @@
     {
       "lat": 37.488317,
       "lon": -120.836008,
-      "score": 78,
-      "aqi": 45,
+      "score": 80,
+      "aqi": 41,
       "pollutant": "ozone",
       "state": "California",
-      "value": 0.0481
+      "value": 0.0448
     },
     {
       "lat": 39.233477,
@@ -1474,11 +1474,11 @@
     {
       "lat": 37.961578,
       "lon": -121.281414,
-      "score": 84,
-      "aqi": 33,
+      "score": 83,
+      "aqi": 34,
       "pollutant": "ozone",
       "state": "California",
-      "value": 0.0357
+      "value": 0.0363
     },
     {
       "lat": 35.051454,
@@ -1573,11 +1573,11 @@
     {
       "lat": 36.031831,
       "lon": -119.055018,
-      "score": 76,
-      "aqi": 48,
+      "score": 77,
+      "aqi": 46,
       "pollutant": "ozone",
       "state": "California",
-      "value": 0.0522
+      "value": 0.0499
     },
     {
       "lat": 35.49453,
@@ -1874,16 +1874,16 @@
       "aqi": 32,
       "pollutant": "ozone",
       "state": "California",
-      "value": 0.0347
+      "value": 0.0348
     },
     {
       "lat": 39.125276,
       "lon": -123.202448,
-      "score": 84,
-      "aqi": 32,
+      "score": 85,
+      "aqi": 30,
       "pollutant": "ozone",
       "state": "California",
-      "value": 0.0341
+      "value": 0.0322
     },
     {
       "lat": 36.841592,
@@ -2021,15 +2021,6 @@
       "value": 0.0478
     },
     {
-      "lat": 40.592543,
-      "lon": -105.141122,
-      "score": 77,
-      "aqi": 46,
-      "pollutant": "ozone",
-      "state": "Colorado",
-      "value": 0.0493
-    },
-    {
       "lat": 39.638522,
       "lon": -104.569335,
       "score": 77,
@@ -2095,11 +2086,11 @@
     {
       "lat": 37.205862,
       "lon": -107.254118,
-      "score": 82,
-      "aqi": 37,
+      "score": 77,
+      "aqi": 46,
       "pollutant": "ozone",
       "state": "Colorado",
-      "value": 0.0405
+      "value": 0.0497
     },
     {
       "lat": 37.350054,
@@ -2262,6 +2253,15 @@
       "pollutant": "ozone",
       "state": "Colorado",
       "value": 0.0536
+    },
+    {
+      "lat": 40.592543,
+      "lon": -105.141122,
+      "score": 77,
+      "aqi": 46,
+      "pollutant": "ozone",
+      "state": "Colorado",
+      "value": 0.0493
     },
     {
       "lat": 39.09,
@@ -2486,52 +2486,52 @@
       "aqi": 39,
       "pollutant": "ozone",
       "state": "Delaware",
-      "value": 0.0426
+      "value": 0.0425
     },
     {
       "lat": 39.739441,
       "lon": -75.557534,
-      "score": 83,
-      "aqi": 34,
+      "score": 82,
+      "aqi": 36,
       "pollutant": "ozone",
       "state": "Delaware",
-      "value": 0.0368
+      "value": 0.0388
     },
     {
       "lat": 38.65392,
       "lon": -75.610605,
-      "score": 79,
-      "aqi": 42,
+      "score": 80,
+      "aqi": 41,
       "pollutant": "ozone",
       "state": "Delaware",
-      "value": 0.0451
+      "value": 0.0441
     },
     {
       "lat": 39.800423,
       "lon": -75.57634,
       "score": 80,
-      "aqi": 40,
+      "aqi": 41,
       "pollutant": "ozone",
       "state": "Delaware",
-      "value": 0.0437
+      "value": 0.0438
     },
     {
       "lat": 38.779077,
       "lon": -75.163269,
-      "score": 80,
-      "aqi": 40,
+      "score": 81,
+      "aqi": 39,
       "pollutant": "ozone",
       "state": "Delaware",
-      "value": 0.0432
+      "value": 0.0426
     },
     {
       "lat": 38.986681,
       "lon": -75.556818,
-      "score": 79,
-      "aqi": 42,
+      "score": 80,
+      "aqi": 41,
       "pollutant": "ozone",
       "state": "Delaware",
-      "value": 0.0457
+      "value": 0.0447
     },
     {
       "lat": 39.551279,
@@ -2540,7 +2540,7 @@
       "aqi": 40,
       "pollutant": "ozone",
       "state": "Delaware",
-      "value": 0.0437
+      "value": 0.0435
     },
     {
       "lat": 38.895572,
@@ -2624,8 +2624,8 @@
       "value": 0.0409
     },
     {
-      "lat": 26.687606,
-      "lon": -80.219619,
+      "lat": 26.68737,
+      "lon": -80.220311,
       "score": 83,
       "aqi": 34,
       "pollutant": "ozone",
@@ -2633,8 +2633,8 @@
       "value": 0.0363
     },
     {
-      "lat": 26.593808,
-      "lon": -80.058492,
+      "lat": 26.592741,
+      "lon": -80.058484,
       "score": 84,
       "aqi": 32,
       "pollutant": "ozone",
@@ -10814,15 +10814,6 @@
       "value": 0.0387
     },
     {
-      "lat": 42.51831,
-      "lon": -89.06347,
-      "score": 79,
-      "aqi": 42,
-      "pollutant": "ozone",
-      "state": "Wisconsin",
-      "value": 0.0455
-    },
-    {
       "lat": 42.66218,
       "lon": -88.48703,
       "score": 79,
@@ -10956,6 +10947,15 @@
       "pollutant": "ozone",
       "state": "Wisconsin",
       "value": 0.0414
+    },
+    {
+      "lat": 42.51831,
+      "lon": -89.06347,
+      "score": 79,
+      "aqi": 42,
+      "pollutant": "ozone",
+      "state": "Wisconsin",
+      "value": 0.0455
     },
     {
       "lat": 44.803888,
@@ -11522,7 +11522,7 @@
       "aqi": 39,
       "pollutant": "pm25",
       "state": "Arizona",
-      "value": 6.9388
+      "value": 7.0365
     },
     {
       "lat": 33.41046,
@@ -11635,11 +11635,11 @@
     {
       "lat": 33.56031,
       "lon": -112.06619,
-      "score": 81,
-      "aqi": 39,
+      "score": 80,
+      "aqi": 40,
       "pollutant": "pm25",
       "state": "Arizona",
-      "value": 6.9725
+      "value": 7.2251
     },
     {
       "lat": 33.48378,
@@ -11675,7 +11675,7 @@
       "aqi": 54,
       "pollutant": "pm25",
       "state": "Arizona",
-      "value": 10.7847
+      "value": 10.7219
     },
     {
       "lat": 33.421194,
@@ -11766,6 +11766,15 @@
       "pollutant": "pm25",
       "state": "Arizona",
       "value": 7.8353
+    },
+    {
+      "lat": 33.426663,
+      "lon": -112.118716,
+      "score": 71,
+      "aqi": 59,
+      "pollutant": "pm25",
+      "state": "Arizona",
+      "value": 13.4414
     },
     {
       "lat": 34.756189,
@@ -12094,11 +12103,11 @@
     {
       "lat": 37.793392,
       "lon": -121.247874,
-      "score": 82,
-      "aqi": 37,
+      "score": 80,
+      "aqi": 41,
       "pollutant": "pm25",
       "state": "California",
-      "value": 6.6196
+      "value": 7.3577
     },
     {
       "lat": 36.48187,
@@ -12161,25 +12170,25 @@
       "aqi": 53,
       "pollutant": "pm25",
       "state": "California",
-      "value": 10.3282
+      "value": 10.1962
     },
     {
       "lat": 32.842318,
       "lon": -116.768293,
-      "score": 86,
-      "aqi": 28,
+      "score": 83,
+      "aqi": 35,
       "pollutant": "pm25",
       "state": "California",
-      "value": 4.9729
+      "value": 6.2521
     },
     {
       "lat": 33.217046,
       "lon": -117.396249,
-      "score": 78,
-      "aqi": 44,
+      "score": 77,
+      "aqi": 46,
       "pollutant": "pm25",
       "state": "California",
-      "value": 7.9903
+      "value": 8.3521
     },
     {
       "lat": 32.578165,
@@ -12188,34 +12197,34 @@
       "aqi": 61,
       "pollutant": "pm25",
       "state": "California",
-      "value": 14.5187
+      "value": 14.2347
     },
     {
       "lat": 32.845709,
       "lon": -117.123964,
-      "score": 77,
-      "aqi": 46,
+      "score": 76,
+      "aqi": 48,
       "pollutant": "pm25",
       "state": "California",
-      "value": 8.198
+      "value": 8.6341
     },
     {
       "lat": 32.845709,
       "lon": -117.123964,
-      "score": 81,
-      "aqi": 39,
+      "score": 79,
+      "aqi": 43,
       "pollutant": "pm25",
       "state": "California",
-      "value": 7.0653
+      "value": 7.7887
     },
     {
       "lat": 32.985428,
       "lon": -117.082198,
-      "score": 81,
-      "aqi": 39,
+      "score": 77,
+      "aqi": 46,
       "pollutant": "pm25",
       "state": "California",
-      "value": 7.0152
+      "value": 8.2445
     },
     {
       "lat": 32.789565,
@@ -12224,16 +12233,16 @@
       "aqi": 51,
       "pollutant": "pm25",
       "state": "California",
-      "value": 9.3325
+      "value": 9.3455
     },
     {
       "lat": 32.552824,
       "lon": -117.047345,
-      "score": 68,
-      "aqi": 64,
+      "score": 70,
+      "aqi": 60,
       "pollutant": "pm25",
       "state": "California",
-      "value": 16.3167
+      "value": 13.9044
     },
     {
       "lat": 32.710177,
@@ -12242,7 +12251,7 @@
       "aqi": 54,
       "pollutant": "pm25",
       "state": "California",
-      "value": 10.6576
+      "value": 10.5514
     },
     {
       "lat": 36.30815,
@@ -12616,11 +12625,11 @@
     {
       "lat": 37.488317,
       "lon": -120.836008,
-      "score": 80,
-      "aqi": 41,
+      "score": 78,
+      "aqi": 44,
       "pollutant": "pm25",
       "state": "California",
-      "value": 7.3994
+      "value": 7.9323
     },
     {
       "lat": 35.385574,
@@ -12886,11 +12895,11 @@
     {
       "lat": 37.961578,
       "lon": -121.281414,
-      "score": 75,
-      "aqi": 50,
+      "score": 76,
+      "aqi": 49,
       "pollutant": "pm25",
       "state": "California",
-      "value": 8.9984
+      "value": 8.8288
     },
     {
       "lat": 33.362593,
@@ -13201,20 +13210,20 @@
     {
       "lat": 39.15047,
       "lon": -123.20655,
-      "score": 83,
-      "aqi": 35,
+      "score": 82,
+      "aqi": 37,
       "pollutant": "pm25",
       "state": "California",
-      "value": 6.2552
+      "value": 6.7311
     },
     {
       "lat": 39.39861,
       "lon": -123.35872,
-      "score": 83,
-      "aqi": 35,
+      "score": 82,
+      "aqi": 37,
       "pollutant": "pm25",
       "state": "California",
-      "value": 6.2538
+      "value": 6.5796
     },
     {
       "lat": 38.848014,
@@ -13679,10 +13688,10 @@
       "lat": 39.739441,
       "lon": -75.557534,
       "score": 80,
-      "aqi": 40,
+      "aqi": 41,
       "pollutant": "pm25",
       "state": "Delaware",
-      "value": 7.267
+      "value": 7.3211
     },
     {
       "lat": 39.551279,
@@ -13691,61 +13700,61 @@
       "aqi": 35,
       "pollutant": "pm25",
       "state": "Delaware",
-      "value": 6.2792
+      "value": 6.374
     },
     {
       "lat": 38.986681,
       "lon": -75.556818,
-      "score": 83,
-      "aqi": 35,
+      "score": 82,
+      "aqi": 36,
       "pollutant": "pm25",
       "state": "Delaware",
-      "value": 6.2443
+      "value": 6.4551
     },
     {
       "lat": 39.577647,
       "lon": -75.603659,
       "score": 83,
-      "aqi": 34,
+      "aqi": 35,
       "pollutant": "pm25",
       "state": "Delaware",
-      "value": 6.1347
+      "value": 6.3252
     },
     {
       "lat": 39.15564,
       "lon": -75.51821,
-      "score": 82,
-      "aqi": 37,
+      "score": 81,
+      "aqi": 39,
       "pollutant": "pm25",
       "state": "Delaware",
-      "value": 6.6846
+      "value": 6.9567
     },
     {
       "lat": 38.65392,
       "lon": -75.610605,
-      "score": 84,
-      "aqi": 33,
+      "score": 83,
+      "aqi": 34,
       "pollutant": "pm25",
       "state": "Delaware",
-      "value": 6.0091
+      "value": 6.0582
     },
     {
       "lat": 39.761273,
       "lon": -75.492047,
       "score": 77,
-      "aqi": 47,
+      "aqi": 46,
       "pollutant": "pm25",
       "state": "Delaware",
-      "value": 8.4532
+      "value": 8.2303
     },
     {
       "lat": 39.691872,
       "lon": -75.761766,
-      "score": 79,
-      "aqi": 43,
+      "score": 78,
+      "aqi": 44,
       "pollutant": "pm25",
       "state": "Delaware",
-      "value": 7.7501
+      "value": 7.8332
     },
     {
       "lat": 38.921847,
@@ -13820,8 +13829,8 @@
       "value": 6.5942
     },
     {
-      "lat": 26.456944,
-      "lon": -80.092778,
+      "lat": 26.457068,
+      "lon": -80.092872,
       "score": 83,
       "aqi": 35,
       "pollutant": "pm25",
@@ -13829,8 +13838,8 @@
       "value": 6.3412
     },
     {
-      "lat": 26.687606,
-      "lon": -80.219619,
+      "lat": 26.68737,
+      "lon": -80.220311,
       "score": 83,
       "aqi": 35,
       "pollutant": "pm25",
@@ -13838,8 +13847,8 @@
       "value": 6.3637
     },
     {
-      "lat": 26.724786,
-      "lon": -80.666447,
+      "lat": 26.724168,
+      "lon": -80.663341,
       "score": 82,
       "aqi": 37,
       "pollutant": "pm25",
@@ -16679,7 +16688,7 @@
       "aqi": 45,
       "pollutant": "pm25",
       "state": "Louisiana",
-      "value": 8.1781
+      "value": 8.1848
     },
     {
       "lat": 44.089406,
@@ -17048,7 +17057,7 @@
       "aqi": 31,
       "pollutant": "pm25",
       "state": "Massachusetts",
-      "value": 5.6497
+      "value": 5.6637
     },
     {
       "lat": 42.605816,
@@ -17315,10 +17324,10 @@
       "lat": 42.306666,
       "lon": -83.148889,
       "score": 75,
-      "aqi": 51,
+      "aqi": 50,
       "pollutant": "pm25",
       "state": "Michigan",
-      "value": 9.1686
+      "value": 8.9426
     },
     {
       "lat": 42.984173,
@@ -17399,7 +17408,7 @@
       "aqi": 48,
       "pollutant": "pm25",
       "state": "Michigan",
-      "value": 8.6562
+      "value": 8.6559
     },
     {
       "lat": 42.312158,
@@ -18830,7 +18839,7 @@
       "aqi": 38,
       "pollutant": "pm25",
       "state": "New Jersey",
-      "value": 6.7952
+      "value": 6.7621
     },
     {
       "lat": 39.989036,
@@ -19064,7 +19073,7 @@
       "aqi": 44,
       "pollutant": "pm25",
       "state": "New Mexico",
-      "value": 7.9341
+      "value": 7.8646
     },
     {
       "lat": 36.383359,
@@ -19295,10 +19304,10 @@
       "lat": 42.99328,
       "lon": -78.77153,
       "score": 80,
-      "aqi": 41,
+      "aqi": 40,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 7.306
+      "value": 7.2235
     },
     {
       "lat": 40.7997,
@@ -19325,16 +19334,16 @@
       "aqi": 38,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 6.8845
+      "value": 6.7583
     },
     {
       "lat": 42.64225,
       "lon": -73.75464,
-      "score": 82,
-      "aqi": 37,
+      "score": 81,
+      "aqi": 38,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 6.7
+      "value": 6.7522
     },
     {
       "lat": 40.7997,
@@ -19352,16 +19361,16 @@
       "aqi": 38,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 6.7904
+      "value": 6.773
     },
     {
       "lat": 40.816,
       "lon": -73.902,
       "score": 80,
-      "aqi": 41,
+      "aqi": 40,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 7.3425
+      "value": 7.2689
     },
     {
       "lat": 40.63307,
@@ -19379,7 +19388,7 @@
       "aqi": 30,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 5.4365
+      "value": 5.4368
     },
     {
       "lat": 40.71961,
@@ -19412,19 +19421,19 @@
       "lat": 43.14618,
       "lon": -77.54817,
       "score": 84,
-      "aqi": 32,
+      "aqi": 33,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 5.7927
+      "value": 6.0018
     },
     {
       "lat": 43.05235,
       "lon": -76.05921,
       "score": 83,
-      "aqi": 34,
+      "aqi": 35,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 6.1807
+      "value": 6.2293
     },
     {
       "lat": 40.73614,
@@ -19442,7 +19451,7 @@
       "aqi": 33,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 6.0142
+      "value": 6.0074
     },
     {
       "lat": 42.876907,
@@ -19451,16 +19460,16 @@
       "aqi": 39,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 7.0035
+      "value": 7.0138
     },
     {
       "lat": 42.68075,
       "lon": -73.75733,
       "score": 82,
-      "aqi": 36,
+      "aqi": 37,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 6.5479
+      "value": 6.6184
     },
     {
       "lat": 44.39308,
@@ -19469,7 +19478,7 @@
       "aqi": 24,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 4.4
+      "value": 4.3135
     },
     {
       "lat": 40.739264,
@@ -19487,7 +19496,7 @@
       "aqi": 36,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 6.5383
+      "value": 6.4918
     },
     {
       "lat": 41.49916,
@@ -19505,7 +19514,7 @@
       "aqi": 36,
       "pollutant": "pm25",
       "state": "New York",
-      "value": 6.4227
+      "value": 6.4752
     },
     {
       "lat": 40.71436,
@@ -21194,10 +21203,10 @@
       "lat": 39.991389,
       "lon": -75.080833,
       "score": 74,
-      "aqi": 53,
+      "aqi": 52,
       "pollutant": "pm25",
       "state": "Pennsylvania",
-      "value": 9.948
+      "value": 9.7042
     },
     {
       "lat": 40.338516,
@@ -22289,15 +22298,6 @@
       "value": 8.0582
     },
     {
-      "lat": 35.151194,
-      "lon": -90.041559,
-      "score": 75,
-      "aqi": 51,
-      "pollutant": "pm25",
-      "state": "Tennessee",
-      "value": 9.3
-    },
-    {
       "lat": 35.151699,
       "lon": -89.850249,
       "score": 79,
@@ -22314,15 +22314,6 @@
       "pollutant": "pm25",
       "state": "Tennessee",
       "value": 7.7034
-    },
-    {
-      "lat": 35.151194,
-      "lon": -90.041559,
-      "score": 80,
-      "aqi": 40,
-      "pollutant": "pm25",
-      "state": "Tennessee",
-      "value": 7.2583
     },
     {
       "lat": 36.1424,
@@ -22358,7 +22349,7 @@
       "aqi": 47,
       "pollutant": "pm25",
       "state": "Tennessee",
-      "value": 8.4676
+      "value": 8.4773
     },
     {
       "lat": 36.176382,
@@ -22566,6 +22557,24 @@
       "pollutant": "pm25",
       "state": "Tennessee",
       "value": 8.8837
+    },
+    {
+      "lat": 35.151194,
+      "lon": -90.041559,
+      "score": 80,
+      "aqi": 40,
+      "pollutant": "pm25",
+      "state": "Tennessee",
+      "value": 7.2583
+    },
+    {
+      "lat": 35.151194,
+      "lon": -90.041559,
+      "score": 75,
+      "aqi": 51,
+      "pollutant": "pm25",
+      "state": "Tennessee",
+      "value": 9.3
     },
     {
       "lat": 30.354934,
@@ -23933,7 +23942,7 @@
       "aqi": 29,
       "pollutant": "pm25",
       "state": "Washington",
-      "value": 5.2668
+      "value": 5.2662
     },
     {
       "lat": 47.663962,
@@ -24149,7 +24158,7 @@
       "aqi": 23,
       "pollutant": "pm25",
       "state": "Washington",
-      "value": 4.1678
+      "value": 4.1421
     },
     {
       "lat": 47.390821,
@@ -24581,7 +24590,7 @@
       "aqi": 18,
       "pollutant": "pm25",
       "state": "Wyoming",
-      "value": 3.2005
+      "value": 3.1906
     },
     {
       "lat": 43.081667,
@@ -24698,7 +24707,7 @@
       "aqi": 17,
       "pollutant": "pm25",
       "state": "Wyoming",
-      "value": 3.0427
+      "value": 3.0415
     },
     {
       "lat": 44.524568,
