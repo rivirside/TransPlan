@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetchedAt": "2026-04-13T08:01:42.772Z",
+    "fetchedAt": "2026-05-04T08:29:35.412Z",
     "source": "Organ recovery rates: PMC10329409 Table 2 (2023). State proportions: CDC 2017 mortality data (data.cdc.gov bi63-dtpu + xkb8-kh2a) with donor-eligibility calibration.",
     "notes": "Intestine rates from OPTN 2023 OTPD ratio (intestine/pancreas=0.104) with COD-specific clinical adjustments (see GitHub #16). Anoxia-NOS recovery rates estimated from PMC10329409 OR 0.848 vs trauma (see GitHub #14); state shares from CDC drowning rate patterns. Proportions represent share of potential brain-dead donors by cause among donor-eligible deaths. Calibration weights (trauma=0.31, cardiovascular=0.062, drug_intox=0.721, stroke=0.175) fitted via Nelder-Mead optimization.",
     "calibration": "Weights represent fraction of general-population deaths in each category that result in donor-eligible brain death."
