@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetchedAt": "2026-05-18T09:53:54.054Z",
+    "fetchedAt": "2026-05-25T09:58:34.017Z",
     "source": "CDC PLACES API (3144 counties: 2957 primary + 188 GIS fallback, 4 indicators, age-adjusted prevalence)"
   },
   "counties": {
