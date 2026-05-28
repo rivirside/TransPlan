@@ -70,6 +70,9 @@
     if (_hasHome) {
       _options.homeLocation = results.homeLocation;
     }
+    if (results.formData) {
+      _options.formData = results.formData;
+    }
     _expandedCode = null;
 
     // Clear container safely
@@ -481,6 +484,28 @@
       scoreBadge.textContent = row.score.toFixed(1) + ' / 100';
       header.appendChild(scoreBadge);
     }
+
+    // "Show calculations" button — opens provenance modal
+    if (window.ExplainModal && _options.formData) {
+      var explainBtn = _createElement('button', 'rt-detail-explain-btn');
+      explainBtn.textContent = 'Show calculations';
+      explainBtn.setAttribute('type', 'button');
+      explainBtn.setAttribute(
+        'title',
+        'See exactly how this score was computed: inputs, weights, and data sources'
+      );
+      explainBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        window.ExplainModal.showForCenter(
+          row.code,
+          row.name,
+          row.state + (row.stateAbbr ? ' (' + row.stateAbbr + ')' : ''),
+          _options.formData
+        );
+      });
+      header.appendChild(explainBtn);
+    }
+
     panel.appendChild(header);
 
     // Content grid: left = breakdown, right = simulation data

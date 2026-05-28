@@ -162,7 +162,8 @@
     window.SimResultsTable.render(container, {
       scores:     scoreResult.centers   || [],
       simulation: simResult.cities      || [],
-      homeLocation: home || null
+      homeLocation: home || null,
+      formData:   window.SimResults.getFormData() || null
     });
   }
 

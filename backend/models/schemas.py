@@ -1,5 +1,5 @@
 """Pydantic schemas for TransPlan Phase 2 API."""
-from typing import Literal, Optional
+from typing import Any, Literal, Optional
 from pydantic import BaseModel, Field, model_validator
 
 
@@ -139,6 +139,70 @@ class ScoringResult(BaseModel):
     """Response for POST /score endpoint."""
     patient: PatientProfile
     centers: list[CenterScore]
+    total_centers: int
+    elapsed_seconds: float
+
+
+# ── Provenance schemas (for ?explain=true) ──────────────────────────────
+
+class LookupTableEntry(BaseModel):
+    """One row of a lookup table used to score a component."""
+    label: str = Field(description="What this row matches (e.g. '35-49', 'O+', 'Ohio')")
+    value: Any = Field(description="Score, multiplier, or descriptive value (number or string)")
+    highlighted: bool = Field(default=False, description="True if this row matched the patient's input")
+    note: Optional[str] = Field(default=None, description="Optional context (e.g. 'pediatric premium')")
+
+
+class ComponentDetails(BaseModel):
+    """Detailed rule trail for a single component — answers 'why is the value what it is?'"""
+    summary: Optional[str] = Field(default=None, description="One-line explanation of the rule")
+    lookup_table: Optional[list[LookupTableEntry]] = Field(
+        default=None,
+        description="If the value came from a lookup table, the full table",
+    )
+    formula: Optional[str] = Field(default=None, description="Mathematical formula if applicable")
+    notes: Optional[str] = Field(default=None, description="Additional context or caveats")
+
+
+class ScoreComponent(BaseModel):
+    """A single sub-component within a scoring category."""
+    name: str = Field(description="Human-readable component name")
+    value: float = Field(description="Raw or normalized value (0-100 scale typical)")
+    weight_within_category: float = Field(description="Component's weight within its category (0-1)")
+    contribution: float = Field(description="value × weight_within_category")
+    source: str = Field(description="Where this value came from (data file, rule, fallback, etc.)")
+    raw_input: Optional[Any] = Field(default=None, description="Underlying raw input that drove this value")
+    details: Optional[ComponentDetails] = Field(
+        default=None,
+        description="Expanded explanation of the rule/lookup that produced this value",
+    )
+
+
+class CategoryProvenance(BaseModel):
+    """Provenance for a single scoring category."""
+    category: str = Field(description="Category key: medicalCompatibility, waitTime, etc.")
+    score: float = Field(description="Final category score (0-100)")
+    weight: float = Field(description="Category's weight in overall score (0-1)")
+    contribution: float = Field(description="score × weight (this category's contribution to total)")
+    components: list[ScoreComponent] = Field(description="Breakdown of sub-components")
+    notes: Optional[str] = Field(default=None, description="Additional context (e.g., fallbacks used)")
+
+
+class CenterScoreProvenance(BaseModel):
+    """Full provenance trail for a single center's score."""
+    code: str
+    name: str
+    total: float
+    weights_used: dict[str, float] = Field(description="Final weights after normalization")
+    categories: list[CategoryProvenance]
+    data_sources: list[str] = Field(description="List of data files consulted")
+
+
+class ScoringResultWithProvenance(BaseModel):
+    """Response for POST /score?explain=true endpoint."""
+    patient: PatientProfile
+    centers: list[CenterScore]
+    provenance: list[CenterScoreProvenance]
     total_centers: int
     elapsed_seconds: float
 

@@ -431,6 +431,41 @@
   }
 
   /**
+   * Call POST /score/explain — same as scoreAll but with full calculation provenance.
+   * Returns centers, provenance trails (top-N), or null on failure.
+   * @param {Object} formData - Raw form data from the frontend
+   * @param {number} [limit=20] - Limit provenance to top N centers (1-248)
+   */
+  async function scoreExplain(formData, limit) {
+    var base = getBaseUrl();
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS * 2);
+
+    try {
+      var body = normalizeFormData(formData);
+      var lim = (typeof limit === 'number' && limit > 0) ? Math.min(248, limit) : 20;
+      var response = await fetch(base + '/score/explain?limit=' + lim, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (!response.ok) {
+        console.warn('TransPlan score/explain API error:', response.status);
+        return null;
+      }
+      return await response.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        console.warn('TransPlan score/explain API timeout');
+      }
+      return null;
+    }
+  }
+
+  /**
    * Run travel subsidy multi-price-point comparison via POST /travel-subsidy-analysis.
    * @param {Object} formData - Raw form data from the frontend
    * @param {Array<string>} [cities] - Optional city list (empty = all 22)
@@ -584,6 +619,7 @@
   window.TransPlanAPI = {
     simulate: simulate,
     scoreAll: scoreAll,
+    scoreExplain: scoreExplain,
     sensitivity: sensitivity,
     equityAnalysis: equityAnalysis,
     whatIf: whatIf,
