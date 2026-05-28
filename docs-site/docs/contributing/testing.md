@@ -8,7 +8,7 @@ TransPlan has two test suites: Jest for JavaScript and pytest for Python.
 
 ## JavaScript Tests (Jest)
 
-The JavaScript suite contains **98 tests** covering the Phase 1 scoring algorithm, COD multiplier, and data utilities.
+The JavaScript suite contains **123 tests** (112 passing, 11 skipped) covering the scoring algorithm, COD multiplier, and data utilities.
 
 ```bash
 npm test
@@ -39,7 +39,7 @@ npx jest --watch
 
 ## Python Tests (pytest)
 
-The Python suite contains **193 tests** covering the Phase 2 backend, sensitivity analysis, and equity analysis.
+The Python suite contains **800+ tests** covering all three inference engines, sensitivity analysis, equity analysis, spatial interpolation, policy scenarios, and data validation.
 
 ```bash
 cd backend
@@ -50,15 +50,27 @@ python -m pytest
 
 ```
 backend/tests/
-  test_schemas.py           <- Pydantic schema validation (22 tests)
-  test_distributions.py     <- Log-normal wait time model (22 tests)
-  test_monte_carlo.py       <- Monte Carlo engine (25 tests)
-  test_competing_risks.py   <- Mortality/delisting models (17 tests)
-  test_data_loader.py       <- Data loading and fallbacks (34 tests)
-  test_sensitivity.py       <- Sensitivity analysis (tornado chart data)
-  test_equity.py            <- Equity analysis (48-profile demographic matrix)
-  test_brier_score.py       <- Brier score calibration validation
-  test_cod_multiplier.py    <- COD donor recovery multiplier
+  test_schemas.py               <- Pydantic schema validation
+  test_distributions.py         <- Log-normal wait time model
+  test_monte_carlo.py           <- Monte Carlo engine
+  test_competing_risks.py       <- Mortality/delisting models
+  test_copula.py                <- Clayton copula dependence
+  test_data_loader.py           <- Data loading and fallbacks
+  test_scoring.py               <- 8-category scoring algorithm
+  test_bayesian_network.py      <- BBN inference engine
+  test_bbn_cross_validation.py  <- BBN vs MC validation
+  test_mcmc_inference.py        <- MCMC hierarchical model
+  test_sensitivity.py           <- Sensitivity analysis
+  test_equity.py                <- Equity analysis (48-profile matrix)
+  test_policy_scenarios.py      <- UNOS policy simulations
+  test_spatial_interpolation.py <- RBF/IDW interpolation
+  test_allocation_geography.py  <- UNOS allocation circles
+  test_cross_validation.py      <- Cross-engine comparison
+  test_brier_score.py           <- Brier score calibration
+  test_acceptance.py            <- Organ acceptance modeling
+  test_score_drift.py           <- MELD/LAS score progression
+  test_trend_projection.py      <- Historical trend projection
+  + 14 more test files
 ```
 
 ### What's Tested
@@ -110,7 +122,7 @@ GitHub Actions runs both test suites on every push to `main`:
 - run: cd backend && python -m pytest
 ```
 
-All 291 tests (98 JS + 193 Python) must pass before merging.
+All tests (123 JS + 800+ Python) must pass before merging.
 
 ## What's Not Tested
 

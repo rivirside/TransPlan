@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Local Setup
 
-Run the full TransPlan stack locally with Phase 2 Monte Carlo simulation enabled.
+Run the full TransPlan stack locally with Monte Carlo simulation, Bayesian inference, and all interactive tools.
 
 ## Prerequisites
 
@@ -99,10 +99,10 @@ See [Data Pipeline](/architecture/data-pipeline) for details on each data source
 ## Running Tests
 
 ```bash
-# JavaScript unit tests (98 tests)
+# JavaScript unit tests (123 tests)
 npm test
 
-# Python backend tests (193 tests)
+# Python backend tests (800+ tests)
 cd backend
 python -m pytest
 ```
@@ -113,6 +113,6 @@ If a **port is already in use**, the launcher scans for a free port automaticall
 
 If you see a **`ModuleNotFoundError: backend`**, you are likely running uvicorn from inside the `backend/` directory. Run it from the repo root instead, using `backend.main:app` as the module path.
 
-If the **Phase 2 tab is not showing**, the backend is not running. Check that uvicorn started successfully and that `/health` returns `"status": "ok"`.
+If **simulation results are not showing**, the backend is not running. Check that uvicorn started successfully and that `/health` returns `"status": "ok"`.
 
 If **`pip install` fails with a PEP 668 error**, use the venv at `backend/.venv/` directly: `backend/.venv/bin/pip install -r backend/requirements.txt`.

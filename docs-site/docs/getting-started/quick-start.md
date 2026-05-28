@@ -36,8 +36,8 @@ Scores range from 0 to 100 and reflect relative suitability, not absolute transp
 
 ## Map View
 
-The interactive map shows all 22 cities with colored markers indicating relative suitability. Toggle overlay layers using the checkboxes in the map controls panel. If a Home Center is selected, a green "H" marker highlights it on the map.
+The interactive map shows all 248 SRTR transplant centers with colored markers indicating relative suitability. Toggle overlay layers using the checkboxes in the map controls panel. If a Home Center is selected, a green "H" marker highlights it on the map.
 
 ## Next Steps
 
-For a deeper setup, follow the [Local Setup](/getting-started/local-setup) guide to run the full stack locally with Phase 2 enabled. To understand how scores are calculated, read the [Scoring Methodology](/theory/scoring-methodology). For details on the probability estimates, see [Monte Carlo Simulation](/theory/monte-carlo).
+For a deeper setup, follow the [Local Setup](/getting-started/local-setup) guide to run the full stack locally. To understand how scores are calculated, read the [Scoring Methodology](/theory/scoring-methodology). For details on the probability estimates, see [Monte Carlo Simulation](/theory/monte-carlo).

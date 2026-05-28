@@ -7,6 +7,8 @@ Clinical decision support for transplant patients. TransPlan helps identify the 
 ## Quick Start
 
 ```bash
+# Prerequisites: Python 3.12+, Node.js 18+
+
 # Clone and install
 git clone https://github.com/rivirside/TransPlan.git
 cd TransPlan
@@ -14,7 +16,7 @@ npm ci                           # Frontend dependencies (Jest tests, fetch scri
 pip install -r backend/requirements.txt  # Backend dependencies
 
 # Run
-cd backend && uvicorn main:app --port 8002
+uvicorn backend.main:app --port 8002
 # Open http://localhost:8002
 ```
 
@@ -30,17 +32,16 @@ Or double-click `TransPlan.app` (macOS).
 ## Architecture
 
 ```
-Frontend (static HTML/JS)          Backend (FastAPI)
-  algorithm.js  ──── Phase 1 ────  POST /simulate ──── Monte Carlo (1000 iter)
-  script.js     ──── scoring  ────  POST /simulate?inference_mode=bayesian
-  api-client.js ──── graceful ────  POST /simulate?inference_mode=mcmc
-                     fallback
-                                   POST /sensitivity, /equity-analysis, /what-if
-                                   GET  /centers, /trends, /spatial-layers
-                                   GET  /api/v1/... (public API with rate limiting)
+Frontend (static HTML/JS)              Backend (FastAPI)
+  simulator/   ─── simulation ───────  POST /simulate ──── Monte Carlo (1000 iter)
+  shared/      ─── API client ───────  POST /simulate?inference_mode=bayesian
+  components/  ─── site chrome ──────  POST /simulate?inference_mode=mcmc
+  explorer/    ─── data layers ──────  POST /sensitivity, /equity-analysis, /what-if
+  algorithm.js ─── scoring fallback    GET  /centers, /trends, /spatial-layers
+                                       GET  /api/v1/... (public API with rate limiting)
 ```
 
-Single-process: FastAPI serves both API and static frontend on one port. Frontend degrades gracefully when backend is unavailable, using hardcoded data for Phase 1 scoring.
+Single-process: FastAPI serves both API and static frontend on one port. Frontend degrades gracefully when backend is unavailable, using local scoring as fallback.
 
 ### Public REST API
 
@@ -113,9 +114,12 @@ Free signups: [EPA AQS](https://aqs.epa.gov/aqsweb/documents/data_api.html), [BL
 TransPlan/
   index.html              # Landing page
   simulator.html          # Simulation tool (form, results, map)
-  algorithm.js            # Phase 1 scoring engine (8 categories)
-  script.js               # UI, Leaflet map, results display
-  api-client.js           # Backend API client with graceful fallback
+  algorithm.js            # Client-side scoring engine (8 categories)
+  simulator/              # Modular simulator JS (index, map, results, form, tier-panel)
+  shared/                 # Cross-page utilities (api-client, export, data-loader, geo)
+  components/             # Site chrome (nav + footer)
+  explorer/               # Explorer page modules (data layers, spatial analysis)
+  centers-page.js         # Centers tabbed page (Find/Browse/Estimate)
   data/                   # JSON data files (auto-updated + manual)
   scripts/                # Node.js fetch scripts + Python analysis scripts
   backend/
@@ -124,21 +128,22 @@ TransPlan/
     routers/              # API endpoint handlers
     services/             # Business logic (simulation, interpolation, etc.)
     middleware/            # Rate limiting
-    tests/                # pytest suite (600+ tests)
-  tests/                  # Jest suite (112 tests)
+    tests/                # pytest suite (800+ tests)
+  tests/                  # Jest suite (123 tests)
   docs/                   # Project docs (status, design, limitations, roadmap)
   docs-site/              # Docusaurus documentation site (22 pages)
   notebooks/              # Validation Jupyter notebooks (6 notebooks, 39 figures)
+  paper.md                # JOSS submission paper
 ```
 
 ## Testing
 
 ```bash
 # Backend (from backend/)
-python -m pytest tests/ -v           # 600+ tests
+python -m pytest tests/ -v           # 800+ tests
 
 # Frontend (from repo root)
-npx jest                             # 112 tests
+npx jest                             # 123 tests
 
 # Data validation
 node scripts/validate-data.js
@@ -153,7 +158,7 @@ node scripts/validate-data.js
 - **Policy scenario engine** (4 UNOS scenarios with literature-backed parameters)
 - **Equity analysis** (48-profile demographic matrix, Gini coefficient)
 - **Historical trends** (14 biannual SRTR releases, 2019-2025)
-- **6 UI themes** including Windows XP Luna (the default)
+- **Dark and light mode** with automatic OS preference detection
 - **Cross-engine validation** service for model comparison
 - **Model iteration comparison** scripts for tracking changes across versions
 

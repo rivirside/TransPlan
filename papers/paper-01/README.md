@@ -16,10 +16,10 @@ A software/tools paper describing the TransPlan platform: an open-source, web-ba
 | **JAMIA** (J Am Med Inform Assoc) | 7.9 | ⭐⭐⭐ | 10 pages | ~20% | Primary target. "Systems" paper category. Strong open-source culture. |
 | **SoftwareX** | 3.4 | ⭐⭐⭐ | 6 pages | ~45% | Short format, focused on software itself. Requires public repo. |
 | **JBI** (J Biomed Inform) | 4.5 | ⭐⭐ | 12 pages | ~22% | Broader informatics scope. Good fallback. |
-| **JMIR** (J Med Internet Res) | 7.1 | ⭐⭐ | 8 pages | ~30% | Web-based health tool angle. OA fees ~$2500. |
+| **JMIR** (J Med Internet Res) | 7.1 | ⭐⭐ | 8 pages | ~30% | Web-based health tool angle. OA fees ~$2500 covered by UA open access agreement. |
 | **BMC Med Inform Decis Mak** | 3.3 | ⭐⭐ | No limit | ~35% | Open access, faster review. Good if JAMIA rejects. |
 
-**Recommended:** Submit to JAMIA first. If rejected, pivot to SoftwareX (shorter, faster).
+**Recommended:** Submit to JAMIA first. If rejected, pivot to SoftwareX (shorter, faster). OA fees at JMIR and other venues covered by University of Arizona open access agreements.
 
 ## Likelihood of Acceptance
 **High (75%+)** — JAMIA regularly publishes open-source clinical tools. Key requirements: public availability, clear clinical utility, technical rigor. TransPlan meets all three.
