@@ -8,6 +8,7 @@
     { "source": "/sensitivity", "destination": "/api/index" },
     { "source": "/what-if", "destination": "/api/index" },
     { "source": "/score", "destination": "/api/index" },
+    { "source": "/score/:path*", "destination": "/api/index" },
     { "source": "/centers", "destination": "/api/index" },
     { "source": "/centers/:path*", "destination": "/api/index" },
     { "source": "/health", "destination": "/api/index" },
