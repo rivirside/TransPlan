@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetchedAt": "2026-06-01T11:22:54.414Z",
+    "fetchedAt": "2026-06-08T10:27:50.388Z",
     "source": "EPA AQS API (ozone + PM2.5)"
   },
   "Pittsburgh": 78,
@@ -12,7 +12,7 @@
   "Madison": 79,
   "Chicago": 76,
   "Cleveland": 75,
-  "St. Louis": 80,
+  "St. Louis": 82,
   "Indianapolis": 74,
   "Omaha": 81,
   "Nashville": 78,
