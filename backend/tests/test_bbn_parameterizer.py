@@ -119,6 +119,36 @@ def test_graft_survival_cpt_shape():
     assert cpt.shape == (3, 6, 22)
 
 
+def test_graft_survival_hr_ci_significance():
+    """#214: graft class comes from the HR 95% CI vs national (HR=1), not the
+    old arbitrary 0.8/1.2 cutoffs — CI entirely below 1 → good, above 1 → poor."""
+    import numpy as np
+    from services.bbn_parameterizer import (
+        build_graft_survival_cpt, get_regions, get_center_to_region_map,
+        _center_graft_hr_ci, ORGANS,
+    )
+    g = "full"
+    regions = get_regions(g)
+    cmap = get_center_to_region_map(g)
+    cpt = build_graft_survival_cpt(regions=regions, n_regions=len(regions),
+                                   center_map=cmap, granularity=g)
+    assert np.allclose(cpt.sum(axis=0), 1.0)
+    ki = ORGANS.index("kidney")
+    checked_good = checked_poor = False
+    for idx, rg in enumerate(regions):
+        ci = _center_graft_hr_ci("kidney", rg, g)
+        if not ci:
+            continue
+        cls = int(np.argmax(cpt[:, ki, idx]))  # 0=good,1=moderate,2=poor
+        if ci[1] < 1.0:
+            assert cls == 0, f"{rg}: HR-CI {ci} below 1 should be good, got {cls}"
+            checked_good = True
+        elif ci[0] > 1.0:
+            assert cls == 2, f"{rg}: HR-CI {ci} above 1 should be poor, got {cls}"
+            checked_poor = True
+    assert checked_good, "expected at least one significantly-better center to verify"
+
+
 def test_compound_success_cpt_shape():
     cpt = build_compound_success_cpt()
     assert cpt.shape == (3, 4, 3)

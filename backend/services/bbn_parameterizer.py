@@ -46,9 +46,11 @@ _CPT_WEAK   = [0.05, 0.25, 0.70]   # Variable in opposite tercile
 
 # Graft survival thresholds (1-year) for discretizing outcomes.
 # Based on SRTR center-specific report performance categories:
-# "as expected" = national average ~93 % (kidney 1yr), flagged < 88 %.
-_GRAFT_SURV_HIGH_THRESHOLD = 93
-_GRAFT_SURV_LOW_THRESHOLD  = 88
+# Graft survival is now classified relative to each ORGAN'S national 1-yr rate
+# (#214), not a single global threshold. _GRAFT_POOR_MARGIN is how far below the
+# organ-national rate (percentage points) a center must fall to be flagged
+# "poor" when only the survival percentage (not the HR CI) is available.
+_GRAFT_POOR_MARGIN = 3.0
 
 # ──────────────────────────────────────────────────────────────────────
 # Domain enumerations — shared across CPT builders and inference engine
@@ -740,6 +742,9 @@ def build_graft_survival_cpt(regions=None, n_regions=None, center_map=None,
     n_o = len(ORGANS)
     n_r = n_regions
 
+    # Graft-survival classes: [good, moderate, poor].
+    _GOOD, _MODERATE, _POOR = [0.75, 0.20, 0.05], [0.20, 0.65, 0.15], list(_CPT_WEAK)
+
     cpt = np.zeros((3, n_o, n_r))
 
     for i, organ in enumerate(ORGANS):
@@ -747,54 +752,61 @@ def build_graft_survival_cpt(regions=None, n_regions=None, center_map=None,
         nat_graft = national.get("national_graft_survival_1yr")
 
         for r, region in enumerate(regions):
-            # Try center-level aggregation for state/full modes
-            rf = _region_factor(region, organ, granularity, center_map,
-                                "graft_survival_1yr")
-            if rf is not None:
-                # state or full mode — use aggregated center-level data
-                graft_1yr = rf
-                if graft_1yr >= _GRAFT_SURV_HIGH_THRESHOLD:
-                    cpt[:, i, r] = [0.75, 0.20, 0.05]
-                elif graft_1yr >= _GRAFT_SURV_LOW_THRESHOLD:
-                    cpt[:, i, r] = [0.20, 0.65, 0.15]
-                else:
-                    cpt[:, i, r] = _CPT_WEAK
+            # (1) Significance-based classification from the center's graft-failure
+            # hazard-ratio 95% CI (#214) — only meaningful at full granularity,
+            # where the region is a single center. Replaces the arbitrary HR
+            # 0.8/1.2 cutoffs with a proper significance test vs. national (HR=1).
+            ci = _center_graft_hr_ci(organ, region, granularity)
+            if ci is not None:
+                lo, hi = ci
+                if hi < 1.0:        # failure hazard significantly below national
+                    cpt[:, i, r] = _GOOD
+                elif lo > 1.0:      # significantly above national
+                    cpt[:, i, r] = _POOR
+                else:               # CI straddles 1 → as expected
+                    cpt[:, i, r] = _MODERATE
                 continue
 
-            # Classic mode — use city-level lookup
-            city_data = city_outcomes.get(region, {}).get(organ, {})
-            graft_1yr = city_data.get("graft_survival_1yr")
-            hr = city_data.get("graft_hr_1yr")
+            # (2) Classify the center's 1-yr graft survival relative to its
+            # ORGAN'S national rate (#214) — not a single global 88/93 threshold,
+            # which mislabels organs with different baselines (kidney ~95 vs
+            # lung ~90). state/full use aggregated center data; classic the
+            # legacy city lookup.
+            graft_1yr = _region_factor(region, organ, granularity, center_map,
+                                       "graft_survival_1yr")
+            if graft_1yr is None:
+                graft_1yr = city_outcomes.get(region, {}).get(organ, {}).get("graft_survival_1yr")
 
-            if graft_1yr is not None:
-                # Use actual center-level data
-                if graft_1yr >= _GRAFT_SURV_HIGH_THRESHOLD:
-                    cpt[:, i, r] = [0.75, 0.20, 0.05]
-                elif graft_1yr >= _GRAFT_SURV_LOW_THRESHOLD:
-                    cpt[:, i, r] = [0.20, 0.65, 0.15]
+            if graft_1yr is not None and nat_graft is not None:
+                if graft_1yr >= nat_graft:
+                    cpt[:, i, r] = _GOOD
+                elif graft_1yr < nat_graft - _GRAFT_POOR_MARGIN:
+                    cpt[:, i, r] = _POOR
                 else:
-                    cpt[:, i, r] = _CPT_WEAK
-            elif hr is not None and nat_graft is not None:
-                # Use hazard ratio relative to national
-                if hr < 0.8:
-                    cpt[:, i, r] = [0.75, 0.20, 0.05]
-                elif hr < 1.2:
-                    cpt[:, i, r] = [0.20, 0.65, 0.15]
-                else:
-                    cpt[:, i, r] = _CPT_WEAK
+                    cpt[:, i, r] = _MODERATE
+            elif graft_1yr is not None:
+                cpt[:, i, r] = _MODERATE  # have a value but no national ref
             else:
-                # No data — use national average or uniform
-                if nat_graft is not None:
-                    if nat_graft >= _GRAFT_SURV_HIGH_THRESHOLD:
-                        cpt[:, i, r] = [0.60, 0.30, 0.10]
-                    elif nat_graft >= _GRAFT_SURV_LOW_THRESHOLD:
-                        cpt[:, i, r] = [0.25, 0.55, 0.20]
-                    else:
-                        cpt[:, i, r] = [0.10, 0.35, 0.55]
-                else:
-                    cpt[:, i, r] = [0.33, 0.34, 0.33]
+                cpt[:, i, r] = _MODERATE  # no data → organ-national prior (moderate)
 
     return cpt
+
+
+def _center_graft_hr_ci(organ: str, region: str, granularity: str):
+    """Per-center graft-failure HR 95% CI [lo, hi] from SRTR C-series, or None.
+
+    Only returned at "full" granularity, where a BBN region is a single center
+    code; at coarser granularities a region spans multiple centers and no single
+    CI applies.
+    """
+    if granularity != "full":
+        return None
+    from services.data_loader import get_data
+    rec = get_data().center_outcomes.get("center_outcomes", {}).get(region, {}).get(organ, {})
+    ci = rec.get("graft_hr_1yr_ci")
+    if ci and len(ci) == 2 and rec.get("graft_hr_1yr") is not None:
+        return float(ci[0]), float(ci[1])
+    return None
 
 
 # ──────────────────────────────────────────────────────────────────────
