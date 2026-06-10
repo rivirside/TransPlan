@@ -18,9 +18,10 @@ class EquityAnalysisRequest(BaseModel):
         default=200, ge=50, le=5000,
         description="Monte Carlo iterations per demographic profile (lower = faster, less precise)"
     )
-    max_centers: int = Field(
-        default=30, ge=5, le=300,
-        description="Maximum number of transplant centers to include (caps simulation size)"
+    max_centers: Optional[int] = Field(
+        default=None, ge=5, le=300,
+        description="Optional cap on centers analyzed. Default None = all centers "
+                    "(feasible since p24 is closed-form, #216)."
     )
     seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
 
@@ -32,7 +33,12 @@ def run_equity_analysis(request: EquityAnalysisRequest) -> EquityAnalysisResult:
         from tier_config import get_tier
         tier = get_tier()
         iterations = min(request.iterations_per_profile, tier.max_equity_iterations)
-        centers = min(request.max_centers, tier.max_equity_centers)
+        # Default: analyze all centers (None), bounded by the tier ceiling. An
+        # explicit request cap is honored, also bounded by the tier.
+        if request.max_centers is None:
+            centers = tier.max_equity_centers
+        else:
+            centers = min(request.max_centers, tier.max_equity_centers)
         return compute_equity_analysis(
             request.patient,
             n_iterations=iterations,

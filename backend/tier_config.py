@@ -34,7 +34,9 @@ WEB_TIER = TierConfig(
     allowed_bbn_granularity=("classic", "state"),
     copula_theta_locked=True,
     elasticity_locked=True,
-    max_equity_centers=30,
+    # Equity p24 is now closed-form (#216), so the full center set runs in <1s
+    # even on serverless — no need to cap the web tier at 30 anymore.
+    max_equity_centers=248,
     max_equity_iterations=200,
     max_sensitivity_iterations=500,
     max_whatif_iterations=500,
