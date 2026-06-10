@@ -23,13 +23,20 @@ import urllib.error
 import zipfile
 import io
 
-# SRTR PSR download URL pattern
-# The '2511' prefix = January 2025 release. Updates biannually.
+# SRTR PSR download URL pattern.
+# NOTE (2026-06): SRTR migrated from www.srtr.org to srtr.hrsa.gov. The old
+# www.srtr.org/assets/media/PSRdownloads/... paths now 301-redirect and then
+# 404. The working path is srtr.hrsa.gov/Archives/PSRdownloads/csrs_tables/.
+# Verified: the CURRENT release (2511) downloads; older release codes (2505,
+# 2411, …) and the bulk csrs_tables_all/*.zip archives 404 — the migrated site
+# only hosts the current release. Historical re-fetch is therefore no longer
+# possible; data/srtr-historical.json is the committed source of record.
 # FIXME: Auto-detect the latest release prefix from the PSR page.
 RELEASE_PREFIX = "2511"
-BASE_URL = "https://www.srtr.org/assets/media/PSRdownloads/csrs_tables"
-# Archived releases are zipped
-ARCHIVE_BASE_URL = "https://www.srtr.org/assets/media/PSRdownloads/csrs_tables_all"
+BASE_URL = "https://srtr.hrsa.gov/Archives/PSRdownloads/csrs_tables"
+# Bulk archive zips are no longer hosted post-migration (verified 404). Kept for
+# reference / in case SRTR restores them; download_historical() warns on failure.
+ARCHIVE_BASE_URL = "https://srtr.hrsa.gov/Archives/PSRdownloads/csrs_tables_all"
 
 # Organ codes matching our 6 supported organ types
 ORGAN_CODES = {

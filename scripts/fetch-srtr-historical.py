@@ -6,6 +6,14 @@ Scrapes the SRTR PSR page to discover available archived releases,
 downloads any that aren't already extracted locally, and unzips them
 into data/srtr-raw/historical/{YYMM}/.
 
+⚠️  KNOWN BROKEN (2026-06): SRTR migrated from www.srtr.org to srtr.hrsa.gov
+and the migrated site no longer hosts the bulk csrs_tables_all/*.zip archives
+or older release codes (verified 404). This script can no longer fetch
+historical data. The already-parsed data/srtr-historical.json is the committed
+source of record for trend analysis. For new historical data, see the SRTR
+archives page (srtr.hrsa.gov) or file a data request. URLs below are updated to
+the new domain in case SRTR restores the archive endpoints.
+
 Usage:
     python3 scripts/fetch-srtr-historical.py          # download new releases only
     python3 scripts/fetch-srtr-historical.py --all     # re-download everything
@@ -18,8 +26,8 @@ import sys
 import zipfile
 import urllib.request
 
-SRTR_URL = "https://www.srtr.org/reports/program-specific-reports/"
-BASE_DOWNLOAD_URL = "https://www.srtr.org/assets/media/PSRdownloads/csrs_tables_all/"
+SRTR_URL = "https://srtr.hrsa.gov/transplant-professionals/program-specific-report/program-specific-reports-psr/"
+BASE_DOWNLOAD_URL = "https://srtr.hrsa.gov/Archives/PSRdownloads/csrs_tables_all/"
 HISTORICAL_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "srtr-raw", "historical")
 
 # Only download releases from 2019 onward (code >= 1811)
