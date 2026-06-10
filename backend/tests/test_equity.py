@@ -76,9 +76,14 @@ class TestEquityResultStructure:
     def test_returns_equity_result(self, kidney_equity):
         assert isinstance(kidney_equity, EquityAnalysisResult)
 
-    def test_centers_capped_at_default_max(self, kidney_equity):
-        # 248 kidney centers are capped to the default max_centers=30
-        assert len(kidney_equity.cities) == 30
+    def test_full_center_coverage_by_default(self, kidney_equity):
+        # #216: analytic p24 makes the FULL center set feasible — no silent
+        # 30-cap. Kidney has 230+ centers; assert we analyze them all.
+        assert len(kidney_equity.cities) > 200
+
+    def test_analytic_method_flagged(self, kidney_equity):
+        # iterations_per_profile == 0 signals the closed-form (no-MC) method.
+        assert kidney_equity.iterations_per_profile == 0
 
     def test_48_profiles_simulated(self, kidney_equity):
         # 8 blood types × 3 age brackets × 2 sexes = 48
@@ -177,73 +182,44 @@ class TestClinicalSanity:
 def test_equity_runs_for_all_organs(organ, data):
     """Equity analysis should complete without error for all 6 organ types."""
     patient = PatientProfile(organ=organ, blood_type="A+", age=40, sex="female", urgency=2)
-    result = compute_equity_analysis(patient, n_iterations=100)
+    result = compute_equity_analysis(patient)
     assert isinstance(result, EquityAnalysisResult)
     assert result.organ == organ
-    # Center counts vary by organ; all are capped at the default max_centers=30
-    assert 0 < len(result.cities) <= 30
+    # #216: no default cap — every center for the organ is analyzed (analytic).
+    assert 0 < len(result.cities) <= 260
 
 
-# -- max_centers parameter --
+# -- max_centers parameter (#216: opt-in cap; default None = all centers) --
 
 class TestMaxCenters:
-    """Tests for the max_centers performance cap."""
+    """The cap is now opt-in. Default None analyzes ALL centers (feasible because
+    p24 is closed-form, #216); an int caps deliberately."""
 
-    def test_default_max_centers_is_30(self):
-        """compute_equity_analysis has max_centers default of 30."""
+    def test_default_max_centers_is_none(self):
         import inspect
         sig = inspect.signature(compute_equity_analysis)
-        assert sig.parameters["max_centers"].default == 30
+        assert sig.parameters["max_centers"].default is None
 
-    @staticmethod
-    def _fake_simulate(patient, city, n_iterations, rng, center_code=""):
-        """Deterministic stub for _simulate_profile_center."""
-        return (0.5, 12.0)
-
-    def test_centers_capped_when_exceeding_max(self):
-        """When there are more centers than max_centers, results are capped."""
-        fake_centers = [
-            {"city": f"City{i}", "state": "XX", "code": f"C{i:03d}",
-             "name": f"Center {i}", "wait_time_factor": 0.5 + i * 0.02}
-            for i in range(50)
-        ]
+    def test_explicit_cap_truncates(self, data):
         patient = PatientProfile(
             organ="kidney", blood_type="A+", age=45, sex="male", urgency=2, cpra=50,
         )
-        with patch("services.equity._get_centers", return_value=fake_centers), \
-             patch("services.equity._simulate_profile_center", side_effect=self._fake_simulate):
-            result = compute_equity_analysis(patient, n_iterations=50, max_centers=10)
+        result = compute_equity_analysis(patient, max_centers=10)
         assert len(result.cities) == 10
 
-    def test_no_capping_when_under_max(self):
-        """When centers <= max_centers, all centers are used."""
-        fake_centers = [
-            {"city": f"City{i}", "state": "XX", "code": f"C{i:03d}",
-             "name": f"Center {i}", "wait_time_factor": 0.5 + i * 0.02}
-            for i in range(20)
-        ]
+    def test_no_cap_analyzes_all(self, data):
         patient = PatientProfile(
             organ="kidney", blood_type="O+", age=45, sex="male", urgency=2, cpra=50,
         )
-        with patch("services.equity._get_centers", return_value=fake_centers), \
-             patch("services.equity._simulate_profile_center", side_effect=self._fake_simulate):
-            result = compute_equity_analysis(patient, n_iterations=50, max_centers=30)
-        assert len(result.cities) == 20
+        capped = compute_equity_analysis(patient, max_centers=10)
+        full = compute_equity_analysis(patient)
+        assert len(full.cities) > len(capped.cities) > 0
 
-    def test_capped_results_still_valid(self):
-        """Capped results still have correct structure and valid metrics."""
-        fake_centers = [
-            {"city": f"City{i}", "state": "TX", "code": f"C{i:03d}",
-             "name": f"Center {i}", "wait_time_factor": 1.0 + i * 0.01}
-            for i in range(40)
-        ]
+    def test_capped_results_still_valid(self, data):
         patient = PatientProfile(
             organ="kidney", blood_type="B+", age=50, sex="female", urgency=2, cpra=30,
         )
-        with patch("services.equity._get_centers", return_value=fake_centers), \
-             patch("services.equity._simulate_profile_center", side_effect=self._fake_simulate):
-            result = compute_equity_analysis(patient, n_iterations=50, max_centers=15)
-
+        result = compute_equity_analysis(patient, max_centers=15)
         assert len(result.cities) == 15
         assert result.profiles_simulated == 48
         assert 0 <= result.overall_gini <= 1
@@ -252,8 +228,9 @@ class TestMaxCenters:
             lo, hi = city.p24_range
             assert 0 <= lo <= hi <= 1
 
-    def test_sampling_includes_top_centers(self):
-        """The top half by wait_time_factor should always be included."""
+    def test_cap_selects_lowest_wait_factor_centers(self):
+        """When capping, the cap deterministically keeps the lowest-wait-factor
+        centers (no random sampling, #216)."""
         fake_centers = [
             {"city": f"City{i}", "state": "CA", "code": f"C{i:03d}",
              "name": f"Center {i}", "wait_time_factor": float(i)}
@@ -262,13 +239,9 @@ class TestMaxCenters:
         patient = PatientProfile(
             organ="kidney", blood_type="A+", age=40, sex="male", urgency=2, cpra=50,
         )
-        with patch("services.equity._get_centers", return_value=fake_centers), \
-             patch("services.equity._simulate_profile_center", side_effect=self._fake_simulate):
-            result = compute_equity_analysis(patient, n_iterations=50, max_centers=10, seed=42)
+        with patch("services.equity._get_centers", return_value=fake_centers):
+            result = compute_equity_analysis(patient, max_centers=10)
 
-        # Top 5 by lowest wait_time_factor are codes C000..C004
+        # Exactly the 10 lowest wait_time_factor codes (C000..C009).
         result_codes = {c.center_code for c in result.cities}
-        top_5_codes = {f"C{i:03d}" for i in range(5)}
-        assert top_5_codes.issubset(result_codes), (
-            f"Top centers {top_5_codes} not all in result {result_codes}"
-        )
+        assert result_codes == {f"C{i:03d}" for i in range(10)}

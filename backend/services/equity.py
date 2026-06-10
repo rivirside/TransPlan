@@ -20,6 +20,8 @@ import numpy as np
 from models.schemas import CityEquity, EquityAnalysisResult, PatientProfile
 from services.monte_carlo import CITIES, _get_centers, _get_cities
 from services.sensitivity import _p24_single_city
+from services.competing_risks import get_annual_mortality_rate, get_annual_delisting_rate
+from services.stats_utils import rate_to_exponential_scale
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +60,13 @@ EQUITY_DISCLAIMERS = [
         "inputs, not observed real-world disparities. Actual disparities may be "
         "larger due to factors outside this model (referral bias, evaluation "
         "criteria, social determinants of health)."
+    ),
+    (
+        "Transplant probabilities are computed in closed form (the competing-"
+        "risks integral over the wait-time distribution), so all centers are "
+        "analyzed with no sampling. Mortality–delisting correlation (the optional "
+        "copula) is omitted; it shifts centers near-uniformly and does not "
+        "materially affect the Gini disparity metric."
     ),
 ]
 
@@ -100,11 +109,31 @@ def _simulate_profile_center(
     return p24, median_wait
 
 
+# Fixed integration grid over [0, 24] months for the closed-form p24 (#216).
+# 241 points (~0.1-month spacing) integrated by the trapezoid rule — the
+# log-normal × exponential integrand is smooth, so this matches adaptive quad
+# to ~1e-4 while being a single vectorized pdf evaluation.
+_P24_GRID = np.linspace(0.0, 24.0, 241)
+
+
+def _grid_p24(dist, inv_total: float) -> float:
+    """∫₀²⁴ f_T(t)·exp(-(λ_M+λ_D)·t) dt by vectorized trapezoid integration.
+
+    f_T = wait-time pdf; exp(-inv_total·t) = joint survival of the two
+    (independent, exponential) competing risks. Probability that transplant
+    occurs first AND within 24 months.
+    """
+    integrand = dist.pdf(_P24_GRID) * np.exp(-inv_total * _P24_GRID)
+    # np.trapezoid (numpy>=2) with np.trapz fallback (numpy<2).
+    _trapz = getattr(np, "trapezoid", None) or np.trapz
+    return float(np.clip(_trapz(integrand, _P24_GRID), 0.0, 1.0))
+
+
 def compute_equity_analysis(
     patient: PatientProfile,
     n_iterations: int = 200,
     seed: int | None = None,
-    max_centers: int = 30,
+    max_centers: int | None = None,
 ) -> EquityAnalysisResult:
     """
     Run equity analysis across 48 demographic profiles × centers
@@ -113,15 +142,17 @@ def compute_equity_analysis(
     Varies blood_type (8), age (3 brackets), sex (2) while preserving
     the patient's organ, urgency, cpra/meld/las, and COD toggle.
 
-    Centers are capped at *max_centers* to keep runtime feasible on
-    serverless (Vercel).  The cap selects the top half by lowest
-    wait_time_factor and randomly samples the rest for
-    representativeness.
+    p_transplant_24mo is computed in CLOSED FORM (#216) — the competing-risks
+    integral, not Monte Carlo — so the FULL center set (up to 248) is feasible
+    with no sampling and no noise. The old MC approach forced a 30-center cap
+    (248×48×1000 ≈ 11.9M draws), which silently analyzed a sample while
+    presenting as comprehensive. `n_iterations` is now ignored (kept for API
+    compatibility); `max_centers=None` means all centers (set an int only to
+    cap deliberately).
     """
     start = time.perf_counter()
     if seed is None:
         seed = int(np.random.default_rng().integers(0, 2**31))
-    rng = np.random.default_rng(seed)
 
     # --- Generate profile variants ---
     profiles = []
@@ -142,39 +173,64 @@ def compute_equity_analysis(
 
     centers = _get_centers(patient.organ)
 
-    # Cap centers for performance: top-N by wait-time factor + random sample
-    if len(centers) > max_centers:
-        rng_sample = np.random.default_rng(seed)
-        # Sort by wait_time_factor (lower = better) and take top half of budget
-        top_n = max_centers // 2
+    # Optional deliberate cap (default: analyze ALL centers — analytic p24 makes
+    # this feasible, so no silent sampling).
+    if max_centers is not None and len(centers) > max_centers:
         sorted_centers = sorted(centers, key=lambda c: c.get("wait_time_factor", 1.0))
-        top_centers = sorted_centers[:top_n]
-        # Random sample from remaining for representativeness
-        remaining = [c for c in centers if c not in top_centers]
-        sample_n = min(max_centers - top_n, len(remaining))
-        sampled = list(rng_sample.choice(remaining, size=sample_n, replace=False))
-        centers = top_centers + sampled
+        centers = sorted_centers[:max_centers]
 
     logger.info(
-        "Equity analysis: %s, %d profiles x %d centers x %d iter",
-        patient.organ, len(profiles), len(centers), n_iterations,
+        "Equity analysis (analytic): %s, %d profiles x %d centers",
+        patient.organ, len(profiles), len(centers),
     )
 
-    # --- Simulate all profiles × all centers ---
+    # --- Evaluate all profiles × all centers (closed form) ---
     center_results: dict[str, list] = defaultdict(list)
     all_p24_values = []
+
+    from services.distributions import get_wait_time_distribution, _age_sex_multiplier
 
     for center in centers:
         code = center.get("code", "")
         display = center.get("name", center.get("city", ""))
-        for profile in profiles:
-            p24, median_wait = _simulate_profile_center(
-                profile["patient"], display, n_iterations, rng, center_code=code,
+
+        # Mortality/delisting depend on (organ, center, urgency, meld) — all FIXED
+        # across the 48 profiles — so the combined competing hazard is computed
+        # ONCE per center.
+        rep = profiles[0]["patient"]
+        annual_mort = get_annual_mortality_rate(
+            organ=rep.organ, city=display, center_code=code,
+            urgency=rep.urgency, meld=rep.meld,
+        )
+        annual_delist = get_annual_delisting_rate(
+            organ=rep.organ, city=display, center_code=code,
+        )
+        mort_scale = rate_to_exponential_scale(annual_mort, "mortality", code or display)
+        delist_scale = rate_to_exponential_scale(annual_delist, "delisting", code or display)
+        inv_total = 1.0 / mort_scale + 1.0 / delist_scale
+
+        # p24 and base median depend only on blood type (age/sex enter median via a
+        # scalar multiplier; the current model does not vary p24 by age/sex). So
+        # compute 8 distributions per center, not 48 — then map the 48 profiles.
+        bt_p24: dict[str, float] = {}
+        bt_median: dict[str, float] = {}
+        for bt in BLOOD_TYPES:
+            dist = get_wait_time_distribution(
+                organ=rep.organ, blood_type=bt, city=display, center_code=code,
+                cpra=rep.cpra, meld=rep.meld, las=rep.las,
             )
+            bt_p24[bt] = _grid_p24(dist, inv_total)
+            bt_median[bt] = float(dist.median())
+
+        for profile in profiles:
+            bt = profile["blood_type"]
+            p24 = bt_p24[bt]
+            median_wait = bt_median[bt] * _age_sex_multiplier(
+                rep.organ, profile["patient"].age, profile["sex"])
             center_results[code or display].append({
                 "p24": p24,
                 "median_wait": median_wait,
-                "blood_type": profile["blood_type"],
+                "blood_type": bt,
                 "age_bracket": profile["age_bracket"],
                 "sex": profile["sex"],
             })
@@ -238,7 +294,7 @@ def compute_equity_analysis(
         cities=city_equities,
         overall_gini=round(overall_gini, 4),
         profiles_simulated=len(profiles),
-        iterations_per_profile=n_iterations,
+        iterations_per_profile=0,  # 0 = analytic (closed-form, no Monte Carlo sampling)
         elapsed_seconds=round(elapsed, 3),
         disclaimers=EQUITY_DISCLAIMERS,
         seed_used=seed,
