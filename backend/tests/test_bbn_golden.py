@@ -7,10 +7,9 @@ explicit, reviewed golden update rather than slipping through silently.
 BBN inference is exact (no RNG), so outputs are fully deterministic and we can
 compare rounded values exactly — no tolerance needed.
 
-Covers the "classic" and "state" granularities across three organs. The 248-
-region "full" granularity is deliberately excluded here: its cold build is ~63s
-(see scripts/bbn-build-profile.py) and it is slated to move to a precomputed
-artifact (plan §4 / Step 3); its golden is added with that work.
+Covers all three granularities (classic, state, full) across three organs.
+"full" (248 regions) builds in ~0.4s after the WaitCategory vectorization, so
+it is no longer too slow to snapshot.
 
 To regenerate after an INTENTIONAL change: delete the golden file and re-run;
 review the diff before committing.
@@ -30,7 +29,7 @@ REFERENCE_PATIENTS = {
     "liver_A+":  dict(organ="liver",  blood_type="A+", age=55, sex="female", urgency=3, meld=22),
     "lung_O+":   dict(organ="lung",   blood_type="O+", age=60, sex="male", urgency=2, las=50.0),
 }
-GRANULARITIES = ("classic", "state")
+GRANULARITIES = ("classic", "state", "full")
 
 
 def _snapshot() -> dict:

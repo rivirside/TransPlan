@@ -357,47 +357,50 @@ def build_wait_category_cpt(regions=None, n_regions=None, center_map=None,
 
     # DonorSupply effect on median: low → 1.2x longer, medium → 1.0, high → 0.8x
     ds_multipliers = [1.2, 1.0, 0.8]
+    ds_arr = np.array(ds_multipliers)  # (n_ds,)
 
     cpt = np.zeros((4, n_o, n_b, n_r, n_ds))
 
+    # Vectorized over (BloodType, Region, DonorSupply) per organ. The previous
+    # implementation constructed a fresh scipy lognorm object and called .cdf()
+    # for every (organ, bt, region, ds) cell — ~107k frozen-dist constructions
+    # at full granularity (~12s). lognorm.cdf accepts an array `scale`, so we
+    # compute all medians at once and evaluate three CDF cut-points per organ.
+    # Math is identical to the scalar version, so outputs are bit-for-bit equal
+    # (gated by test_bbn_golden).
     for i, organ in enumerate(ORGANS):
         organ_data = wt.get(organ, {})
         national_median = organ_data.get("national_median_months", 12.0)
         sigma = organ_data.get("log_sigma", 1.0)
         bt_mults = organ_data.get("blood_type_multipliers", {})
 
-        for j, bt in enumerate(BLOOD_TYPES):
-            bt_mult = bt_mults.get(bt, 1.0)
+        bt_arr = np.array([bt_mults.get(bt, 1.0) for bt in BLOOD_TYPES])  # (n_b,)
+        region_arr = np.empty(n_r)
+        for k, region in enumerate(regions):
+            rf = _region_factor(region, organ, granularity, center_map, "wait_time_factor")
+            region_arr[k] = city_factors.get(region, 1.0) if rf is None else rf
 
-            for k, region in enumerate(regions):
-                # Get region wait-time multiplier
-                rf = _region_factor(region, organ, granularity, center_map,
-                                    "wait_time_factor")
-                if rf is None:
-                    # Classic mode — use city-level lookup
-                    region_mult = city_factors.get(region, 1.0)
-                else:
-                    region_mult = rf
+        # Adjusted median per (BloodType, Region, DonorSupply) via broadcasting.
+        adjusted_median = (
+            national_median
+            * bt_arr[:, None, None]
+            * region_arr[None, :, None]
+            * ds_arr[None, None, :]
+        )  # (n_b, n_r, n_ds)
 
-                for ds_idx in range(n_ds):
-                    ds_mult = ds_multipliers[ds_idx]
-                    adjusted_median = national_median * bt_mult * region_mult * ds_mult
+        c6 = lognorm.cdf(6, s=sigma, scale=adjusted_median)
+        c12 = lognorm.cdf(12, s=sigma, scale=adjusted_median)
+        c24 = lognorm.cdf(24, s=sigma, scale=adjusted_median)
 
-                    # Log-normal CDF: P(T <= t) where scale=median
-                    dist = lognorm(s=sigma, scale=adjusted_median)
-                    p6 = float(dist.cdf(6))
-                    p12 = float(dist.cdf(12))
-                    p24 = float(dist.cdf(24))
-
-                    probs = np.array([
-                        p6,                # short: <= 6 months
-                        p12 - p6,           # moderate: 6-12 months
-                        p24 - p12,          # long: 12-24 months
-                        1.0 - p24,          # very_long: > 24 months
-                    ])
-                    # Ensure non-negative and normalized
-                    probs = np.maximum(probs, 0.001)
-                    cpt[:, i, j, k, ds_idx] = _normalize(probs)
+        probs = np.stack([
+            c6,            # short: <= 6 months
+            c12 - c6,      # moderate: 6-12 months
+            c24 - c12,     # long: 12-24 months
+            1.0 - c24,     # very_long: > 24 months
+        ], axis=0)  # (4, n_b, n_r, n_ds)
+        probs = np.maximum(probs, 0.001)
+        probs = probs / probs.sum(axis=0, keepdims=True)  # == _normalize over states
+        cpt[:, i, :, :, :] = probs
 
     return cpt
 

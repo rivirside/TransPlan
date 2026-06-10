@@ -134,7 +134,9 @@ The latency argument is real and verified: Region collapses to one state before 
    >
    > ⚠️ **Correction:** an earlier run reported 62.9 s and "6× over budget — precompute." That was a **measurement artifact**: the build was timed while `tracemalloc` was active, which instruments every allocation and slowed the allocation-heavy pure-Python CPT loops ~5×. The profiler now times with tracemalloc off and captures peak memory in a separate run.
    >
-   > **Revised decision space.** Memory is a non-issue. Real cold build is **11.5 s** — only marginally over the 10 s soft budget, and the model is cached per process (`_MODEL_CACHE`), so only the first request on a cold container pays it. Options: **(B-opt)** vectorize the per-region CPT loops (2.1 MB of arrays should build in ~1–2 s, removing the problem at the root with no artifact/staleness machinery); **(A)** precompute-and-ship; **(C)** accept 11.5 s given per-process caching. Leaning B-opt, especially since the rebuild rewrites several CPT builders anyway.
+   > **Revised decision space.** Memory is a non-issue. Real cold build is **11.5 s** — only marginally over the 10 s soft budget, and the model is cached per process (`_MODEL_CACHE`), so only the first request on a cold container pays it. Options: **(B-opt)** vectorize the per-region CPT loops; **(A)** precompute-and-ship; **(C)** accept 11.5 s given per-process caching.
+   >
+   > **RESOLVED → B-opt (vectorize).** Localized the cost: ~all of it was `build_wait_category_cpt`, which constructed a fresh scipy `lognorm` object per (organ × bt × region × ds) cell (~107k frozen dists at full). Replaced with a vectorized `lognorm.cdf(array scale)` per organ — **full build 11.5 s → 0.39 s (30×)**, output bit-identical (golden diff = pure insertions, no value changes). **No precompute artifact / staleness machinery needed.** `test_bbn_golden` now covers all three granularities.
 2. **Build-perf gate.** Add `test_bbn_build_perf` that fails if cold `full` build exceeds the chosen budget. T-perf (query latency) does not cover this.
 
 **Query-path fixes:**
