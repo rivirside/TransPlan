@@ -20,8 +20,13 @@ def liver_patient() -> PatientProfile:
 
 
 @pytest.fixture
-def kidney_equity(kidney_patient) -> EquityAnalysisResult:
-    """Pre-computed equity result to avoid repeated slow computation."""
+def kidney_equity(kidney_patient, data) -> EquityAnalysisResult:
+    """Pre-computed equity result to avoid repeated slow computation.
+
+    Depends on the session `data` fixture so center data is always loaded —
+    otherwise the result silently falls back to 22 cities and the center
+    count depends on which test modules ran first.
+    """
     return compute_equity_analysis(kidney_patient, n_iterations=200)
 
 
@@ -52,6 +57,18 @@ class TestGiniComputation:
         """Single value → Gini = 0."""
         assert _gini(np.array([0.5])) == 0.0
 
+    def test_negative_values_rejected(self):
+        """Gini is undefined for negative inputs — must raise (#225)."""
+        with pytest.raises(ValueError, match="non-negative"):
+            _gini(np.array([0.5, -0.1, 0.3]))
+
+    def test_nan_rejected(self):
+        """NaN/inf inputs indicate an upstream bug — must raise (#225)."""
+        with pytest.raises(ValueError, match="finite"):
+            _gini(np.array([0.5, np.nan]))
+        with pytest.raises(ValueError, match="finite"):
+            _gini(np.array([0.5, np.inf]))
+
 
 # -- Result structure --
 
@@ -59,8 +76,9 @@ class TestEquityResultStructure:
     def test_returns_equity_result(self, kidney_equity):
         assert isinstance(kidney_equity, EquityAnalysisResult)
 
-    def test_has_22_cities(self, kidney_equity):
-        assert len(kidney_equity.cities) == 22
+    def test_centers_capped_at_default_max(self, kidney_equity):
+        # 248 kidney centers are capped to the default max_centers=30
+        assert len(kidney_equity.cities) == 30
 
     def test_48_profiles_simulated(self, kidney_equity):
         # 8 blood types × 3 age brackets × 2 sexes = 48
@@ -156,13 +174,14 @@ class TestClinicalSanity:
 # -- All organs --
 
 @pytest.mark.parametrize("organ", ["kidney", "liver", "heart", "lung", "pancreas", "intestine"])
-def test_equity_runs_for_all_organs(organ):
+def test_equity_runs_for_all_organs(organ, data):
     """Equity analysis should complete without error for all 6 organ types."""
     patient = PatientProfile(organ=organ, blood_type="A+", age=40, sex="female", urgency=2)
     result = compute_equity_analysis(patient, n_iterations=100)
     assert isinstance(result, EquityAnalysisResult)
     assert result.organ == organ
-    assert len(result.cities) == 22
+    # Center counts vary by organ; all are capped at the default max_centers=30
+    assert 0 < len(result.cities) <= 30
 
 
 # -- max_centers parameter --
@@ -198,12 +217,18 @@ class TestMaxCenters:
 
     def test_no_capping_when_under_max(self):
         """When centers <= max_centers, all centers are used."""
+        fake_centers = [
+            {"city": f"City{i}", "state": "XX", "code": f"C{i:03d}",
+             "name": f"Center {i}", "wait_time_factor": 0.5 + i * 0.02}
+            for i in range(20)
+        ]
         patient = PatientProfile(
             organ="kidney", blood_type="O+", age=45, sex="male", urgency=2, cpra=50,
         )
-        # Fallback gives 22 centers; max_centers=30 should not cap
-        result = compute_equity_analysis(patient, n_iterations=50, max_centers=30)
-        assert len(result.cities) == 22
+        with patch("services.equity._get_centers", return_value=fake_centers), \
+             patch("services.equity._simulate_profile_center", side_effect=self._fake_simulate):
+            result = compute_equity_analysis(patient, n_iterations=50, max_centers=30)
+        assert len(result.cities) == 20
 
     def test_capped_results_still_valid(self):
         """Capped results still have correct structure and valid metrics."""
