@@ -33,11 +33,10 @@ All 8 rebuild phases (0-7) are done. The structural overhaul that started March 
 
 **Still open:**
 1. **#207** MCMC 248-center refit (BBN done; MCMC not)
-2. **#208 audit** — remaining sub-issues (mostly frontend XSS #217, equity scale #216, BBN CPT empirical grounding #213/#214 deepening)
-3. **#237** temporal validation (data now in hand — fit earlier PSR, validate later), **#236** continuous BBN latents, **#238** revisit BBN hybrid
+2. **#208 audit** — remaining sub-issues (BBN CPT empirical grounding #213/#214 deepening). Closed this session: #216 (equity now closed-form, full 248 centers), #217 (innerHTML XSS).
+3. **#237** temporal validation — done as out-of-sample persistence + model concordance (`docs/temporal-validation-report.md`); full fit-on-N/predict-N+k forecast is the remaining follow-up. **#236** continuous BBN latents, **#238** revisit BBN hybrid.
 4. **Papers** — owner-driven; do NOT work on `papers/` (rigor/usability/validation work is pre-approved instead)
 5. **Old page cleanup** — `find-centers.html`, `wait-estimator.html`, `data.html`, `spatial.html` still on disk
-6. **HIGH:** Equity analysis infeasible at scale (11.9M sims, #216)
 
 ## Architecture
 
