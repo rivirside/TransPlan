@@ -227,6 +227,19 @@ def test_simulate_bbn_ci_contains_point_estimate():
         )
 
 
+def test_ci_width_scales_with_cohort_size():
+    """#226: the CI band must reflect cohort n, not a flat heuristic — tighter
+    for high-volume centers, wider for sparse ones."""
+    from services.bayesian_network import _data_uncertainty_ci
+    # Monotone non-increasing in n for reasonably-sized cohorts.
+    widths = [_data_uncertainty_ci(0.6, n) for n in (25, 100, 500, 2000)]
+    assert widths == sorted(widths, reverse=True), f"CI should tighten with n: {widths}"
+    assert widths[-1] < widths[0], "high-n band must be strictly tighter than low-n"
+    # Bounded, and a large cohort is far tighter than the old flat 0.10*p24=0.06.
+    assert _data_uncertainty_ci(0.6, 2000) < 0.03
+    assert 0.0 < _data_uncertainty_ci(0.6, 0) <= 0.30
+
+
 def test_simulate_bbn_competing_risks_sum():
     result = simulate_bbn(_make_patient())
     for c in result.cities:

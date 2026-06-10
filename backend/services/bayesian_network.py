@@ -424,6 +424,43 @@ def _combine_outcomes(query_result: dict) -> dict:
             "p_mortality_24": p_m, "p_delisting_24": p_d, "p_waiting_24": p_w}
 
 
+def _region_observed_n(organ: str, region: str, center_map: dict) -> int:
+    """Total observed cohort size (SRTR Table B7 n) across a region's centers."""
+    if not center_map:
+        return 0
+    from services.data_loader import get_data
+    data = get_data()
+    total = 0
+    for c, r in center_map.items():
+        if r != region:
+            continue
+        rec = data.observed_outcome(organ, c)
+        if rec and rec.get("n"):
+            total += int(rec["n"])
+    return total
+
+
+def _data_uncertainty_ci(p24: float, n: int) -> float:
+    """Half-width of the data-sampling interval on p24 (#226).
+
+    Replaces the old heuristic `max(0.03, 0.10*p24)`, which ignored cohort size
+    (and imposed a 3-point floor at low probabilities). Uses the binomial
+    standard error of the observed transplant proportion at the center's cohort
+    n, so the band TIGHTENS for high-volume centers and WIDENS for sparse ones.
+
+    Scope (honest labeling, plan D5): this is the *data-sampling* uncertainty in
+    the observed rates — the source #226 flagged. It is NOT the full credible
+    interval on p24, which would also propagate the WaitCategory-timing
+    uncertainty; that requires the CPT-parameter Monte Carlo deferred to a
+    follow-up. n=0 (no observed data for the region) → a wide, honest band.
+    """
+    import math
+    if n >= 1:
+        se = math.sqrt(max(p24 * (1.0 - p24), 1e-6) / n)
+        return min(0.30, max(0.01, 1.96 * se))
+    return 0.20
+
+
 # ──────────────────────────────────────────────────────────────────────
 # Main entry point: simulate_bbn (parallel to monte_carlo.simulate)
 # ──────────────────────────────────────────────────────────────────────
@@ -487,7 +524,8 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
 
             median_wait = _estimate_median_wait(query_result["wait_category"])
 
-            ci_half = max(0.03, p_24 * 0.10)
+            n_obs = _region_observed_n(organ, region_name, center_region_map)
+            ci_half = _data_uncertainty_ci(p_24, n_obs)
             ci_lo = max(0.0, p_24 - ci_half)
             ci_hi = min(1.0, p_24 + ci_half)
 
@@ -559,7 +597,8 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
 
             median_wait = _estimate_median_wait(query_result["wait_category"])
 
-            ci_half = max(0.03, p_24 * 0.10)
+            n_obs = _region_observed_n(organ, region, center_region_map)
+            ci_half = _data_uncertainty_ci(p_24, n_obs)
             ci_lo = max(0.0, p_24 - ci_half)
             ci_hi = min(1.0, p_24 + ci_half)
 
