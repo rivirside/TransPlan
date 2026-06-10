@@ -47,6 +47,14 @@ class CheckResult:
     discrepancy: float  # |observed - posterior_mean| / observed
     passed: bool
 
+    def __post_init__(self):
+        # Comparisons like `rho > 0.7` yield numpy.bool_, which is not a Python
+        # bool and breaks JSON serialization and isinstance checks. Coerce here
+        # so every construction site is safe (the alternative is wrapping every
+        # `inside_ci=`/`passed=` expression in bool()).
+        self.inside_ci = bool(self.inside_ci)
+        self.passed = bool(self.passed)
+
 
 @dataclass
 class PosteriorCheckReport:
