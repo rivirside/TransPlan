@@ -25,17 +25,17 @@ import io
 
 # SRTR PSR download URL pattern.
 # NOTE (2026-06): SRTR migrated from www.srtr.org to srtr.hrsa.gov. The old
-# www.srtr.org/assets/media/PSRdownloads/... paths now 301-redirect and then
-# 404. The working path is srtr.hrsa.gov/Archives/PSRdownloads/csrs_tables/.
-# Verified: the CURRENT release (2511) downloads; older release codes (2505,
-# 2411, …) and the bulk csrs_tables_all/*.zip archives 404 — the migrated site
-# only hosts the current release. Historical re-fetch is therefore no longer
-# possible; data/srtr-historical.json is the committed source of record.
+# www.srtr.org/assets/media/PSRdownloads/... paths now 301-redirect then 404.
+# Working paths on the new host:
+#   - current per-organ xls:  Archives/PSRdownloads/csrs_tables/csrs_final_tables_2511_<ORG>.xls
+#   - historical bulk zips:   Archives/PSRdownloads/csrs_tables_all/csrs_final_tables_<CODE>all.zip
+# Both verified working for all releases. The per-organ direct path works ONLY
+# for the current release; historical data comes via the all-organ zips
+# (download_historical() below). Release codes end in 05/11 (+ some 06); there
+# is no January (01) release.
 # FIXME: Auto-detect the latest release prefix from the PSR page.
 RELEASE_PREFIX = "2511"
 BASE_URL = "https://srtr.hrsa.gov/Archives/PSRdownloads/csrs_tables"
-# Bulk archive zips are no longer hosted post-migration (verified 404). Kept for
-# reference / in case SRTR restores them; download_historical() warns on failure.
 ARCHIVE_BASE_URL = "https://srtr.hrsa.gov/Archives/PSRdownloads/csrs_tables_all"
 
 # Organ codes matching our 6 supported organ types
@@ -51,15 +51,18 @@ ORGAN_CODES = {
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "srtr-raw")
 HISTORICAL_DIR = os.path.join(OUTPUT_DIR, "historical")
 
-# Historical releases: one per year (January release preferred, covers prior year).
-# YYMM format. Maps release code → nominal year for trend labeling.
+# Historical releases. YYMM format; releases are May (05) / Nov (11), plus the
+# early 06 release — there is NO January release. Codes verified against the
+# srtr.hrsa.gov archive. Maps release code → nominal year for trend labeling.
 HISTORICAL_RELEASES = {
-    "1901": 2019,
-    "2001": 2020,
-    "2101": 2021,
-    "2201": 2022,
-    "2301": 2023,
-    "2401": 2024,
+    "1811": 2018,
+    "1905": 2019, "1911": 2019,
+    "2006": 2020, "2011": 2020,
+    "2105": 2021, "2111": 2021,
+    "2205": 2022, "2211": 2022,
+    "2305": 2023, "2311": 2023,
+    "2405": 2024, "2411": 2024,
+    "2505": 2025,
 }
 # Current release is handled separately (already in srtr-raw/)
 CURRENT_RELEASE_YEAR = 2025
@@ -178,7 +181,7 @@ def download_historical(releases: dict[str, int] | None = None) -> tuple[int, li
                 success += 1
                 continue
 
-        filename = f"csrs_final_tables_{release_code}.zip"
+        filename = f"csrs_final_tables_{release_code}all.zip"
         url = f"{ARCHIVE_BASE_URL}/{filename}"
         print(f"Downloading {release_code} (year {year})...")
 

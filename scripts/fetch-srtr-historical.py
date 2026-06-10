@@ -6,13 +6,14 @@ Scrapes the SRTR PSR page to discover available archived releases,
 downloads any that aren't already extracted locally, and unzips them
 into data/srtr-raw/historical/{YYMM}/.
 
-⚠️  KNOWN BROKEN (2026-06): SRTR migrated from www.srtr.org to srtr.hrsa.gov
-and the migrated site no longer hosts the bulk csrs_tables_all/*.zip archives
-or older release codes (verified 404). This script can no longer fetch
-historical data. The already-parsed data/srtr-historical.json is the committed
-source of record for trend analysis. For new historical data, see the SRTR
-archives page (srtr.hrsa.gov) or file a data request. URLs below are updated to
-the new domain in case SRTR restores the archive endpoints.
+NOTE (2026-06): SRTR migrated from www.srtr.org to srtr.hrsa.gov. The bulk
+historical archives are alive and well at the new host — every release's
+all-organ zip is served at:
+  https://srtr.hrsa.gov/Archives/PSRdownloads/csrs_tables_all/csrs_final_tables_<CODE>all.zip
+(verified: all 14 historical codes + the current 2511 download, unzip, and
+parse). Release codes are MMM = 05 (May) / 11 (Nov), plus some 06 — there is
+NO January (01) release, so probing e.g. '2401' will 404. The per-organ direct
+path works only for the CURRENT release; historical data comes via the zips.
 
 Usage:
     python3 scripts/fetch-srtr-historical.py          # download new releases only
