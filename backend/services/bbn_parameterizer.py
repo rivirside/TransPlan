@@ -474,14 +474,15 @@ def build_mortality_risk_cpt(regions=None, n_regions=None, center_map=None,
 
                     rates[i, a, u, r] = base_rate * urg_mult * age_mult * region_mort
 
-    # Determine tercile thresholds
-    flat = rates.flatten()
-    t33 = np.percentile(flat, 33.3)
-    t66 = np.percentile(flat, 66.7)
-
+    # Tercile thresholds computed PER ORGAN (#209): mortality-rate distributions
+    # differ sharply by organ (e.g. kidney vs heart), so a single global cut-point
+    # mislabels risk. Each organ's cells are bucketed against its own terciles.
     cpt = np.zeros((3, n_o, n_a, n_u, n_r))
 
     for i in range(n_o):
+        organ_rates = rates[i]  # (n_a, n_u, n_r)
+        t33 = np.percentile(organ_rates, 33.3)
+        t66 = np.percentile(organ_rates, 66.7)
         for a in range(n_a):
             for u in range(n_u):
                 for r in range(n_r):
@@ -549,14 +550,13 @@ def build_delisting_risk_cpt(regions=None, n_regions=None, center_map=None,
             for w in range(n_w):
                 rates[i, r, w] = base_rate * region_delist * wait_delist_mults[w]
 
-    # Tercile thresholds
-    flat = rates.flatten()
-    t33 = np.percentile(flat, 33.3)
-    t66 = np.percentile(flat, 66.7)
-
+    # Tercile thresholds computed PER ORGAN (#209) — see build_mortality_risk_cpt.
     cpt = np.zeros((3, n_o, n_r, n_w))
 
     for i in range(n_o):
+        organ_rates = rates[i]  # (n_r, n_w)
+        t33 = np.percentile(organ_rates, 33.3)
+        t66 = np.percentile(organ_rates, 66.7)
         for r in range(n_r):
             for w in range(n_w):
                 rate = rates[i, r, w]
