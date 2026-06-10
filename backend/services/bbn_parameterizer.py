@@ -618,23 +618,27 @@ def _observed_vector_12mo(organ: str, region: str, center_map: dict) -> tuple[np
     data = get_data()
 
     codes = [c for c, r in center_map.items() if r == region] if center_map else []
-    tx = death = removed = n_total = 0.0
+    tx = death = removed = wsum = n_total = 0.0
     for code in codes:
-        rec = data.observed_outcome(organ, code)
+        rec = data.observed_outcome(organ, code)  # single lookup per center
         if not rec or rec.get("transplant_rate") is None:
             continue
-        w = float(rec.get("n") or 0) or 1.0  # weight by cohort; missing n → 1
+        w = float(rec.get("n") or 0) or 1.0  # rate weight: cohort n, or 1 if n missing
         tx += w * rec["transplant_rate"]
         death += w * (rec.get("waitlist_death_rate") or 0.0)
         removed += w * (rec.get("delisting_rate") or 0.0)
-        n_total += w if rec.get("n") else 0.0
+        wsum += w                           # normalizer for the weighted rates
+        n_total += float(rec["n"]) if rec.get("n") else 0.0  # confidence: KNOWN cohort only
 
-    if tx + death + removed == 0:  # no usable center data → national prior
+    # No usable rate data → national prior (also guards the wsum division: any
+    # positive rate implies a contributing center, so wsum > 0 here).
+    if tx + death + removed == 0:
         return _national_vector_12mo(organ), 0.0
 
-    wsum = sum((float(data.observed_outcome(organ, c).get("n") or 0) or 1.0)
-               for c in codes if data.observed_outcome(organ, c)
-               and data.observed_outcome(organ, c).get("transplant_rate") is not None)
+    # Rates use every center with a rate (weight 1 if n unknown); n_total counts
+    # only KNOWN cohort sizes, so a region built from unknown-n centers shrinks
+    # toward national (low confidence) even though its rates are populated. With
+    # the current SRTR release every center has n, so wsum == n_total in practice.
     tx, death, removed = tx / wsum / 100.0, death / wsum / 100.0, removed / wsum / 100.0
     waiting = max(0.0, 1.0 - tx - death - removed)
     vec = np.array([tx, death, removed, waiting])
@@ -646,6 +650,15 @@ def _national_vector_12mo(organ: str) -> np.ndarray:
     """National 12-month outcome proportion vector (shrinkage prior)."""
     from services.data_loader import get_data
     natl = get_data().observed_national(organ)
+    if not natl:
+        # No observed national baseline — srtr-observed-rates.json missing or
+        # not loaded. The synthetic 50/5/5 fallback keeps the model running but
+        # ungrounds CompetingOutcome; warn so a data-load failure isn't silent.
+        logger.warning(
+            "No observed national outcome baseline for organ '%s' — CompetingOutcome "
+            "falling back to synthetic 50/5/5 priors. Is srtr-observed-rates.json loaded?",
+            organ,
+        )
     tx = (natl.get("transplant_rate") or 50.0) / 100.0
     death = (natl.get("waitlist_death_rate") or 5.0) / 100.0
     removed = (natl.get("delisting_rate") or 5.0) / 100.0
@@ -935,9 +948,9 @@ def build_all_cpts(granularity: str = "classic") -> dict[str, np.ndarray]:
       Region:           (n_regions,)
       DonorSupply:      (3, 6, 8, n_regions)
       WaitCategory:     (4, 6, 8, n_regions, 3)
-      MortalityRisk:    (3, 6, 4, 4, n_regions)
-      DelistingRisk:    (3, 6, n_regions, 4)
-      CompetingOutcome: (4, 4, 3, 3)
+      MortalityRisk:    (3, 6, 4, 4, n_regions)   # queryable summary; no longer a CompetingOutcome parent (#211)
+      DelistingRisk:    (3, 6, n_regions, 4)       # queryable summary; no longer a CompetingOutcome parent (#211)
+      CompetingOutcome: (4, 6, n_regions)          # #211: grounded in observed (Organ, Region) rates
       GraftSurvival1yr: (3, 6, n_regions)
       CompoundSuccess:  (3, 4, 3)
     """
