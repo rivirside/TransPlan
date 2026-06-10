@@ -282,25 +282,44 @@
         const freshnessColors = { fresh: '#27ae60', stale: '#f39c12', expired: '#e74c3c' };
         const freshnessLabels = { fresh: 'Up to date', stale: 'Some data may be outdated', expired: 'Data may be outdated' };
 
-        let sourceDots = '';
+        // Build the banner with safe DOM construction — no innerHTML (#217).
+        // textContent / .title / .style auto-escape, so data-file metadata
+        // (source strings, dates) cannot break out into markup.
+        const bannerEl = document.createElement('div');
+        bannerEl.className = 'freshness-banner';
+        bannerEl.style.borderLeft = '4px solid ' + freshnessColors[overallFreshness];
+
+        const header = document.createElement('div');
+        header.className = 'freshness-header';
+        const strong = document.createElement('strong');
+        strong.textContent = 'Data last updated:';
+        header.appendChild(strong);
+        header.appendChild(document.createTextNode(' ' + lastUpdate + ' '));
+        const statusSpan = document.createElement('span');
+        statusSpan.className = 'freshness-status';
+        statusSpan.style.color = freshnessColors[overallFreshness];
+        statusSpan.textContent = freshnessLabels[overallFreshness];
+        header.appendChild(statusSpan);
+        bannerEl.appendChild(header);
+
+        const sources = document.createElement('div');
+        sources.className = 'freshness-sources';
         if (metadata?.sources) {
             for (const [key, info] of Object.entries(metadata.sources)) {
                 const status = getFreshness(info.fetchedAt);
-                const color = freshnessColors[status];
                 const label = key.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                sourceDots += `<span class="freshness-dot" style="color:${color}" title="${label}: ${info.source}">&#9679; ${label}</span> `;
+                const dot = document.createElement('span');
+                dot.className = 'freshness-dot';
+                dot.style.color = freshnessColors[status];
+                dot.title = label + ': ' + (info.source || '');
+                dot.textContent = '● ' + label;
+                sources.appendChild(dot);
+                sources.appendChild(document.createTextNode(' '));
             }
         }
+        bannerEl.appendChild(sources);
 
-        banner.innerHTML = `
-            <div class="freshness-banner" style="border-left: 4px solid ${freshnessColors[overallFreshness]}">
-                <div class="freshness-header">
-                    <strong>Data last updated:</strong> ${lastUpdate}
-                    <span class="freshness-status" style="color:${freshnessColors[overallFreshness]}">${freshnessLabels[overallFreshness]}</span>
-                </div>
-                <div class="freshness-sources">${sourceDots}</div>
-            </div>
-        `;
+        banner.replaceChildren(bannerEl);
     }
 
     /**
