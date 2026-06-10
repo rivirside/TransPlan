@@ -516,13 +516,11 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-069: BBN full-mode (248 regions) performance untested on Vercel
 - **Severity:** MEDIUM
-- **Status:** OPEN
+- **Status:** FIXED (June 2026 — BBN rebuild Step 0.5 + perf)
 - **Category:** Performance / Deployment
-- **What:** The BBN `bbn_granularity=full` mode creates a pgmpy model with 248 discrete Region states. CPTs are ~11x larger than classic mode. This has been tested locally but never benchmarked on Vercel's serverless function limits (memory, execution time, cold start).
-- **Why:** If full mode exceeds Vercel's 1GB memory limit or 300s timeout, it would fail silently or timeout. The tier system currently blocks "full" on the web tier, but this should be validated rather than assumed.
-- **How:** (1) Deploy current code to Vercel. (2) Test `POST /simulate?inference_mode=bayesian&bbn_granularity=full` with a standard patient profile. (3) Measure: response time, memory usage (via Vercel function logs), cold start penalty. (4) If it works within limits, consider allowing "full" on web tier. If not, document the limit.
-- **Deferral rationale:** Blocked on deployment. Current tier system safely gates this to local-only mode.
-- **File:** No code changes needed -- this is a deployment validation task.
+- **What:** The BBN `bbn_granularity=full` mode builds a 248-state Region model. Originally feared too slow for serverless.
+- **Fix:** Profiled with `scripts/bbn-build-profile.py` (note: an initial 62.9s reading was a `tracemalloc` artifact — never time a build under tracemalloc). Real cold full build was **11.5s**, all in `build_wait_category_cpt`, which constructed ~107k scipy `lognorm` objects in a quadruple loop. Vectorized to a single `lognorm.cdf(array scale)` per organ → **0.39s build, 7MB peak, 246ms query** (bit-identical output, golden-gated). Memory was never a concern. The model also caches per process. The remaining open question is the deferred precompute-vs-rebuild choice, now moot since rebuild is sub-second.
+- **File:** `backend/services/bbn_parameterizer.py:build_wait_category_cpt`, `scripts/bbn-build-profile.py`
 
 ### L-070: Circular import fragility between bbn_parameterizer and bayesian_network
 - **Severity:** LOW
@@ -532,6 +530,16 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **Why:** If anyone moves the deferred import to module level, or adds a new module-level import in the opposite direction, Python will raise `ImportError` at startup. The deferred import has a comment explaining this, but it's still fragile.
 - **How:** Extract `_get_center_region_map()` into a standalone utility module (e.g., `services/center_mapping.py`) that both `bbn_parameterizer` and `bayesian_network` import without circular dependency.
 - **File:** `backend/services/bbn_parameterizer.py:108`, `backend/services/bayesian_network.py`
+
+### L-072: BBN p24 is a hybrid — competing-risk split is center-average, not patient-specific
+- **Severity:** MEDIUM
+- **Status:** OPEN (deliberate v1 trade-off — tracked by #238)
+- **Category:** Statistical Model
+- **What:** After the #211 rebuild, the BBN's headline `p_transplant_24mo` is computed by a **hybrid** (`bayesian_network._combine_outcomes`): the **WaitCategory** node drives transplant *timing* (sensitive to blood type / region / donor supply, so p24 varies by patient — AB+ beats O+ by ~0.21), while the empirically-grounded **CompetingOutcome** (the center's OBSERVED SRTR Table B7 outcomes) supplies the competing-loss drain `q = (death+delist)/(tx+death+delist)` and the death/delisting/waiting split of the non-transplant mass.
+- **Why it's a limitation:** the competing-risk split is the center's **population average — not patient-specific.** A high-MELD liver candidate (or older / higher-urgency patient) faces higher true waitlist-death risk than the center's average case mix, but the BBN applies the center-average split; patient factors reach p24 only through WaitCategory *timing*, not through the competing risks. A secondary assumption: `p24 = timing × (1 − q)` treats the competing-loss share as independent of where in the wait-time distribution the patient sits.
+- **Why chosen anyway:** deliberate choice (this session) of the plan's **option A + hybrid** over full patient-specific modulation (**option B / D2a**), to (a) avoid double-counting the wait signal — the observed transplant rate already embeds wait length — and (b) keep the competing-risk structure observed-grounded and low-risk. The grounding is validated (CompetingOutcome transplant prob tracks observed rates at Spearman 0.80–0.99).
+- **How to revisit (#238):** modulate the observed competing-risk vector by patient factors on the cause-specific **hazard scale**, reference-anchored (a reference patient reduces exactly to the center's observed vector), with WaitCategory modulating only death/delisting (plan Q4). Needs careful design + validation.
+- **File:** `backend/services/bayesian_network.py` → `_combine_outcomes`; `docs/bbn-rebuild-plan.md` §2 D2/D2a; related #226 (full credible interval, also deferred).
 
 ### L-071: Documentation still references "22 cities" in ~15 places
 - **Severity:** LOW

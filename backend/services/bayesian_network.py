@@ -400,6 +400,12 @@ def _combine_outcomes(query_result: dict) -> dict:
     mass into death / delisting / still-waiting. Returns transplant probabilities
     at 6/12/24/36 months plus the 24-month competing-risk breakdown (which sums
     to 1 with p_24).
+
+    LIMITATION (docs/limitations.md L-072, revisit #238): the competing-risk
+    split is the center's population AVERAGE, not patient-specific — a high-MELD
+    or high-urgency patient gets the center-average death/delisting split.
+    Patient factors reach p24 only through WaitCategory timing. Deliberate v1
+    trade-off (option A + hybrid) over patient-specific modulation (option B).
     """
     obs_tx, obs_death, obs_delist, obs_wait = query_result["competing_outcome"]
     time_probs = _estimate_time_horizon_probs(query_result["wait_category"])
