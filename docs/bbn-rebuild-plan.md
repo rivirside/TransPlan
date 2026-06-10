@@ -234,6 +234,23 @@ Add `srtr-observed-rates.json` to `data_loader.py` (~line 150) with an accessor 
 
 ---
 
+## 9. Maintainer decisions (recommended)
+
+Recommendations on the §8 open questions, to make this plan execution-ready. Stance: close the 7 issues with defensible data-grounded fixes; defer the two big modeling upgrades (Q5, Q8) to separate research tickets so the rebuild stays shippable.
+
+| # | Question | Recommendation | Why |
+|---|---|---|---|
+| Q1 | Wait boundaries 6/12/24 (#210) | **Document, don't change.** | SRTR reports at `_C6`/`_C12` intervals (verified in Table B7 columns), so 6 & 12 *are* SRTR tiers; 24 is the model's headline outcome horizon. State each; don't retrofit a citation. |
+| Q2 | Donor-supply split (#213) | **Data-derive from `(distance-to-threshold, n)`; don't remove discretization.** | Removing discretization is Q5 — don't pull it forward. Closes #213 at "documented + data-derived." |
+| Q3 | MortalityRisk interaction terms (#214) | **Don't add them.** Calibration-gated multiplicative form suffices. | Pancreas/intestine at n≈3–6 can't estimate interactions reliably; adding them manufactures false structure. Document the limit. |
+| Q4 | Wait-signal double-counting (D2a) | **Confirm: WaitCategory modulates death/delisting only, not transplant.** | The transplant CIF already embeds wait length; modulating it again double-counts. Plan is correct. |
+| Q5 | Discretization depth | **Defer to its own ticket (#236).** Use per-organ data-driven breakpoints now. | Continuous conditional-Gaussian/logit-linear latents are the right long-term answer but a research effort, not a bundled step. |
+| Q6 | `delisting_rate` composition | **Correction: the issue is `REMREC` ("improved"), not `REFTX`.** Keep all three in the competing-risks math; **relabel** the node to "removed without transplant (other causes)". | Verified labels: `REFTX`="Refused transplant" (a real exit, keep), `REMREC`="Condition improved" (the arguably-good outcome). All three are valid competing events, so the transplant probability stays correct — the only defect is presentational. |
+| Q7 | Data-source pivot | **Pivot to `srtr-observed-rates.json`, but reconcile first** and wire its fetcher into the refresh pipeline. | Raw uncapped rates + `n` are strictly better for Dirichlet shrinkage. Add a one-time agreement check vs `competing-risks-centers.json`; keep the capped file as documented fallback. |
+| Q8 | MC migration / cross-validation | **Do NOT migrate MC.** Keep cross-validation as a two-method agreement check; add **temporal hold-out** (fit 2024 PSR, validate 2025) as the real external check (#237). | Migrating both engines onto one file makes cross-validation circular. Temporal hold-out reuses the calibration harness already built and tests a target the model never ingested. |
+
+---
+
 **Build first:** Step 0 (wire `srtr-observed-rates.json` into `data_loader.py`) followed immediately by Step 0.5 (measure build cost). The data wiring is the keystone for #211, #226, and shrinkage; the measurement decides whether the 248-state build ships in-function or as a precomputed artifact.
 
 Relevant files: `/Volumes/Lab/GitHub/TransPlan/backend/services/bbn_parameterizer.py`, `/Volumes/Lab/GitHub/TransPlan/backend/services/bayesian_network.py`, `/Volumes/Lab/GitHub/TransPlan/backend/services/bbn_lite.py`, `/Volumes/Lab/GitHub/TransPlan/backend/services/data_loader.py`, `/Volumes/Lab/GitHub/TransPlan/data/srtr-observed-rates.json`, and tests `/Volumes/Lab/GitHub/TransPlan/backend/tests/test_bbn_parameterizer.py`, `test_bayesian_network.py`, `test_bbn_cross_validation.py`.
