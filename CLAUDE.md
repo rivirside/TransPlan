@@ -81,8 +81,8 @@ explorer/              Explorer tabbed page (Data Layers/Spatial Analysis)
 
 ```bash
 # Backend (serves API + static files)
-cd /Users/rivir/Documents/GitHub/TransPlan
-source .venv/bin/activate
+cd /Volumes/Lab/GitHub/TransPlan
+source .venv/bin/activate          # Python 3.12.11 via pyenv, pinned by .python-version
 uvicorn backend.main:app --port 8002 --reload
 
 # Or use .claude/launch.json preset:
@@ -101,8 +101,14 @@ uvicorn backend.main:app --port 8002 --reload
 ## Tests
 
 ```bash
-pytest                    # 594+ tests
-npm test                  # 112 Jest tests
+# Python tests — must run from backend/ so services imports resolve
+cd backend && python -m pytest -q         # all tests (requires .venv active)
+cd backend && ../.venv/bin/python -m pytest -q  # without activating venv
+# 838 pass on pymc 6.0.1, including the MCMC suites. (The MCMC tests need the
+# netCDF4/h5netcdf backends in requirements.txt to serialize traces — without
+# them they error out, which looks like a pymc-version problem but isn't.)
+
+npm test                                  # 112 Jest tests (from repo root)
 ```
 
 ## Landscape & Benchmarking
