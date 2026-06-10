@@ -88,7 +88,7 @@ explorer/              Explorer tabbed page (Data Layers/Spatial Analysis)
 ```bash
 # Backend (serves API + static files)
 cd /Volumes/Lab/GitHub/TransPlan
-source .venv/bin/activate          # Python 3.12.11 via pyenv, pinned by .python-version
+source .venv/bin/activate          # local .venv is Python 3.12.11; .python-version is "3.12" (major.minor only — a patch pin like 3.12.11 breaks Vercel's uv runtime, which can't fetch exact patches)
 uvicorn backend.main:app --port 8002 --reload
 
 # Or use .claude/launch.json preset:
