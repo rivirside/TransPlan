@@ -1,0 +1,618 @@
+{
+  "persistence": {
+    "kidney": {
+      "~1yr": {
+        "mean_rho": 0.8264,
+        "min_rho": 0.7631,
+        "max_rho": 0.8632,
+        "n_release_pairs": 13,
+        "median_centers": 217
+      },
+      "~2yr": {
+        "mean_rho": 0.7606,
+        "min_rho": 0.6648,
+        "max_rho": 0.8056,
+        "n_release_pairs": 11,
+        "median_centers": 213
+      }
+    },
+    "liver": {
+      "~1yr": {
+        "mean_rho": 0.8012,
+        "min_rho": 0.7332,
+        "max_rho": 0.8625,
+        "n_release_pairs": 13,
+        "median_centers": 129
+      },
+      "~2yr": {
+        "mean_rho": 0.7135,
+        "min_rho": 0.6559,
+        "max_rho": 0.7983,
+        "n_release_pairs": 11,
+        "median_centers": 128
+      }
+    },
+    "heart": {
+      "~1yr": {
+        "mean_rho": 0.6091,
+        "min_rho": 0.4818,
+        "max_rho": 0.6657,
+        "n_release_pairs": 13,
+        "median_centers": 116
+      },
+      "~2yr": {
+        "mean_rho": 0.5498,
+        "min_rho": 0.446,
+        "max_rho": 0.6965,
+        "n_release_pairs": 11,
+        "median_centers": 114
+      }
+    },
+    "lung": {
+      "~1yr": {
+        "mean_rho": 0.6454,
+        "min_rho": 0.5238,
+        "max_rho": 0.7819,
+        "n_release_pairs": 13,
+        "median_centers": 60
+      },
+      "~2yr": {
+        "mean_rho": 0.4861,
+        "min_rho": 0.3004,
+        "max_rho": 0.6591,
+        "n_release_pairs": 11,
+        "median_centers": 59
+      }
+    },
+    "pancreas": {
+      "~1yr": {
+        "mean_rho": 0.7071,
+        "min_rho": 0.6,
+        "max_rho": 0.845,
+        "n_release_pairs": 5,
+        "median_centers": 9
+      },
+      "~2yr": {
+        "mean_rho": 0.7085,
+        "min_rho": 0.4184,
+        "max_rho": 0.8571,
+        "n_release_pairs": 3,
+        "median_centers": 9
+      }
+    },
+    "intestine": {}
+  },
+  "model_concordance": {
+    "kidney": {
+      "vs_release": [
+        {
+          "release": "1811",
+          "year": 2018,
+          "rho": 0.5616,
+          "p_value": 1.0991330898226016e-18,
+          "n_centers": 208
+        },
+        {
+          "release": "1905",
+          "year": 2019,
+          "rho": 0.6208,
+          "p_value": 9.206086449398018e-24,
+          "n_centers": 210
+        },
+        {
+          "release": "1911",
+          "year": 2019,
+          "rho": 0.7005,
+          "p_value": 6.744986483636884e-33,
+          "n_centers": 214
+        },
+        {
+          "release": "2006",
+          "year": 2020,
+          "rho": 0.7126,
+          "p_value": 3.5848146963970074e-34,
+          "n_centers": 212
+        },
+        {
+          "release": "2011",
+          "year": 2020,
+          "rho": 0.7212,
+          "p_value": 1.7548241923071505e-35,
+          "n_centers": 213
+        },
+        {
+          "release": "2105",
+          "year": 2021,
+          "rho": 0.7423,
+          "p_value": 1.4869897052936158e-38,
+          "n_centers": 213
+        },
+        {
+          "release": "2111",
+          "year": 2021,
+          "rho": 0.7777,
+          "p_value": 2.0010814249293177e-44,
+          "n_centers": 213
+        },
+        {
+          "release": "2205",
+          "year": 2022,
+          "rho": 0.7839,
+          "p_value": 5.58994867147044e-46,
+          "n_centers": 215
+        },
+        {
+          "release": "2211",
+          "year": 2022,
+          "rho": 0.8243,
+          "p_value": 1.5981192250060806e-54,
+          "n_centers": 215
+        },
+        {
+          "release": "2305",
+          "year": 2023,
+          "rho": 0.8715,
+          "p_value": 1.8070622859591164e-68,
+          "n_centers": 217
+        },
+        {
+          "release": "2311",
+          "year": 2023,
+          "rho": 0.8847,
+          "p_value": 7.039298560303724e-74,
+          "n_centers": 219
+        },
+        {
+          "release": "2405",
+          "year": 2024,
+          "rho": 0.8787,
+          "p_value": 5.702558485651933e-71,
+          "n_centers": 217
+        },
+        {
+          "release": "2411",
+          "year": 2024,
+          "rho": 0.8588,
+          "p_value": 8.651077480836421e-64,
+          "n_centers": 215
+        },
+        {
+          "release": "2505",
+          "year": 2025,
+          "rho": 0.8981,
+          "p_value": 5.455052013162365e-79,
+          "n_centers": 218
+        },
+        {
+          "release": "2511",
+          "year": 2025,
+          "rho": 0.8928,
+          "p_value": 9.100018310884551e-77,
+          "n_centers": 218
+        }
+      ],
+      "mean_rho_excl_2511": 0.7741
+    },
+    "liver": {
+      "vs_release": [
+        {
+          "release": "1811",
+          "year": 2018,
+          "rho": 0.5046,
+          "p_value": 1.257116580734955e-09,
+          "n_centers": 128
+        },
+        {
+          "release": "1905",
+          "year": 2019,
+          "rho": 0.567,
+          "p_value": 2.4656356824783726e-12,
+          "n_centers": 129
+        },
+        {
+          "release": "1911",
+          "year": 2019,
+          "rho": 0.6306,
+          "p_value": 1.5044884109477361e-15,
+          "n_centers": 128
+        },
+        {
+          "release": "2006",
+          "year": 2020,
+          "rho": 0.6332,
+          "p_value": 8.146258130963382e-16,
+          "n_centers": 129
+        },
+        {
+          "release": "2011",
+          "year": 2020,
+          "rho": 0.6267,
+          "p_value": 2.5113841623865325e-15,
+          "n_centers": 128
+        },
+        {
+          "release": "2105",
+          "year": 2021,
+          "rho": 0.6486,
+          "p_value": 1.6592785828246993e-16,
+          "n_centers": 127
+        },
+        {
+          "release": "2111",
+          "year": 2021,
+          "rho": 0.6669,
+          "p_value": 4.66916105648769e-18,
+          "n_centers": 130
+        },
+        {
+          "release": "2205",
+          "year": 2022,
+          "rho": 0.7086,
+          "p_value": 1.1840088741433649e-20,
+          "n_centers": 127
+        },
+        {
+          "release": "2211",
+          "year": 2022,
+          "rho": 0.7108,
+          "p_value": 7.88444845030056e-21,
+          "n_centers": 127
+        },
+        {
+          "release": "2305",
+          "year": 2023,
+          "rho": 0.7621,
+          "p_value": 9.754409739674444e-26,
+          "n_centers": 129
+        },
+        {
+          "release": "2311",
+          "year": 2023,
+          "rho": 0.8568,
+          "p_value": 6.392514492064674e-39,
+          "n_centers": 131
+        },
+        {
+          "release": "2405",
+          "year": 2024,
+          "rho": 0.8677,
+          "p_value": 2.7788373344583313e-41,
+          "n_centers": 132
+        },
+        {
+          "release": "2411",
+          "year": 2024,
+          "rho": 0.8515,
+          "p_value": 1.5370036516594903e-38,
+          "n_centers": 133
+        },
+        {
+          "release": "2505",
+          "year": 2025,
+          "rho": 0.8156,
+          "p_value": 3.6008964356249666e-33,
+          "n_centers": 134
+        },
+        {
+          "release": "2511",
+          "year": 2025,
+          "rho": 0.775,
+          "p_value": 2.759843762660101e-28,
+          "n_centers": 135
+        }
+      ],
+      "mean_rho_excl_2511": 0.7036
+    },
+    "heart": {
+      "vs_release": [
+        {
+          "release": "1811",
+          "year": 2018,
+          "rho": 0.1045,
+          "p_value": 0.26417060426207,
+          "n_centers": 116
+        },
+        {
+          "release": "1905",
+          "year": 2019,
+          "rho": 0.216,
+          "p_value": 0.01830402053744963,
+          "n_centers": 119
+        },
+        {
+          "release": "1911",
+          "year": 2019,
+          "rho": 0.1686,
+          "p_value": 0.0633389361411871,
+          "n_centers": 122
+        },
+        {
+          "release": "2006",
+          "year": 2020,
+          "rho": 0.223,
+          "p_value": 0.011748329896938628,
+          "n_centers": 127
+        },
+        {
+          "release": "2011",
+          "year": 2020,
+          "rho": 0.2762,
+          "p_value": 0.0021678536405387795,
+          "n_centers": 121
+        },
+        {
+          "release": "2105",
+          "year": 2021,
+          "rho": 0.3937,
+          "p_value": 8.661474661389877e-06,
+          "n_centers": 120
+        },
+        {
+          "release": "2111",
+          "year": 2021,
+          "rho": 0.4808,
+          "p_value": 2.0770483167618276e-08,
+          "n_centers": 122
+        },
+        {
+          "release": "2205",
+          "year": 2022,
+          "rho": 0.5157,
+          "p_value": 1.9545820299732744e-09,
+          "n_centers": 119
+        },
+        {
+          "release": "2211",
+          "year": 2022,
+          "rho": 0.6423,
+          "p_value": 2.0138086192989615e-15,
+          "n_centers": 121
+        },
+        {
+          "release": "2305",
+          "year": 2023,
+          "rho": 0.7254,
+          "p_value": 1.550526531122007e-20,
+          "n_centers": 118
+        },
+        {
+          "release": "2311",
+          "year": 2023,
+          "rho": 0.6944,
+          "p_value": 3.767324428257328e-19,
+          "n_centers": 124
+        },
+        {
+          "release": "2405",
+          "year": 2024,
+          "rho": 0.6253,
+          "p_value": 8.318674416187642e-15,
+          "n_centers": 124
+        },
+        {
+          "release": "2411",
+          "year": 2024,
+          "rho": 0.6193,
+          "p_value": 1.3675664764637392e-14,
+          "n_centers": 125
+        },
+        {
+          "release": "2505",
+          "year": 2025,
+          "rho": 0.7664,
+          "p_value": 1.4655869118243874e-26,
+          "n_centers": 131
+        },
+        {
+          "release": "2511",
+          "year": 2025,
+          "rho": 0.7896,
+          "p_value": 6.372041113293099e-29,
+          "n_centers": 130
+        }
+      ],
+      "mean_rho_excl_2511": 0.4608
+    },
+    "lung": {
+      "vs_release": [
+        {
+          "release": "1811",
+          "year": 2018,
+          "rho": 0.2915,
+          "p_value": 0.02641998939755439,
+          "n_centers": 58
+        },
+        {
+          "release": "1905",
+          "year": 2019,
+          "rho": 0.3485,
+          "p_value": 0.005512166486354462,
+          "n_centers": 62
+        },
+        {
+          "release": "1911",
+          "year": 2019,
+          "rho": 0.3403,
+          "p_value": 0.006808895819717531,
+          "n_centers": 62
+        },
+        {
+          "release": "2006",
+          "year": 2020,
+          "rho": 0.4206,
+          "p_value": 0.0006656792207624809,
+          "n_centers": 62
+        },
+        {
+          "release": "2011",
+          "year": 2020,
+          "rho": 0.4866,
+          "p_value": 6.993605956612681e-05,
+          "n_centers": 61
+        },
+        {
+          "release": "2105",
+          "year": 2021,
+          "rho": 0.5295,
+          "p_value": 6.8170744011259895e-06,
+          "n_centers": 64
+        },
+        {
+          "release": "2111",
+          "year": 2021,
+          "rho": 0.5851,
+          "p_value": 7.349425073682429e-07,
+          "n_centers": 61
+        },
+        {
+          "release": "2205",
+          "year": 2022,
+          "rho": 0.5821,
+          "p_value": 1.0687948126885138e-06,
+          "n_centers": 60
+        },
+        {
+          "release": "2211",
+          "year": 2022,
+          "rho": 0.5779,
+          "p_value": 1.647646168097301e-06,
+          "n_centers": 59
+        },
+        {
+          "release": "2305",
+          "year": 2023,
+          "rho": 0.582,
+          "p_value": 6.978691362520928e-07,
+          "n_centers": 62
+        },
+        {
+          "release": "2311",
+          "year": 2023,
+          "rho": 0.599,
+          "p_value": 3.396876174923826e-07,
+          "n_centers": 61
+        },
+        {
+          "release": "2405",
+          "year": 2024,
+          "rho": 0.7084,
+          "p_value": 1.6975464704098877e-10,
+          "n_centers": 61
+        },
+        {
+          "release": "2411",
+          "year": 2024,
+          "rho": 0.7821,
+          "p_value": 6.128150260293709e-14,
+          "n_centers": 62
+        },
+        {
+          "release": "2505",
+          "year": 2025,
+          "rho": 0.7213,
+          "p_value": 2.5919169038192778e-11,
+          "n_centers": 63
+        },
+        {
+          "release": "2511",
+          "year": 2025,
+          "rho": 0.7801,
+          "p_value": 1.2620801516374948e-13,
+          "n_centers": 61
+        }
+      ],
+      "mean_rho_excl_2511": 0.5396
+    },
+    "pancreas": {
+      "vs_release": [
+        {
+          "release": "1811",
+          "year": 2018,
+          "rho": 0.5636,
+          "p_value": 0.0897240283170912,
+          "n_centers": 10
+        },
+        {
+          "release": "1905",
+          "year": 2019,
+          "rho": 0.6991,
+          "p_value": 0.024470990757150358,
+          "n_centers": 10
+        },
+        {
+          "release": "1911",
+          "year": 2019,
+          "rho": 0.5394,
+          "p_value": 0.1075931877824148,
+          "n_centers": 10
+        },
+        {
+          "release": "2006",
+          "year": 2020,
+          "rho": 0.6154,
+          "p_value": 0.02516711655189932,
+          "n_centers": 13
+        },
+        {
+          "release": "2011",
+          "year": 2020,
+          "rho": 0.4167,
+          "p_value": 0.26458604674749636,
+          "n_centers": 9
+        },
+        {
+          "release": "2105",
+          "year": 2021,
+          "rho": 0.3273,
+          "p_value": 0.3258949410128414,
+          "n_centers": 11
+        },
+        {
+          "release": "2111",
+          "year": 2021,
+          "rho": 0.6108,
+          "p_value": 0.10772123669287105,
+          "n_centers": 8
+        },
+        {
+          "release": "2205",
+          "year": 2022,
+          "rho": 0.7866,
+          "p_value": 0.011909211951136508,
+          "n_centers": 9
+        },
+        {
+          "release": "2211",
+          "year": 2022,
+          "rho": 0.5952,
+          "p_value": 0.11952980613879274,
+          "n_centers": 8
+        },
+        {
+          "release": "2311",
+          "year": 2023,
+          "rho": 0.8333,
+          "p_value": 0.005265691029161747,
+          "n_centers": 9
+        }
+      ],
+      "mean_rho_excl_2511": 0.5987
+    },
+    "intestine": {
+      "vs_release": [
+        {
+          "release": "1811",
+          "year": 2018,
+          "rho": 0.2857,
+          "p_value": 0.49272624501695705,
+          "n_centers": 8
+        }
+      ],
+      "mean_rho_excl_2511": 0.2857
+    }
+  },
+  "params": {
+    "min_cohort_n": 10,
+    "min_common_centers": 8
+  }
+}
