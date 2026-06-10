@@ -130,7 +130,11 @@ The latency argument is real and verified: Region collapses to one state before 
 
 1. **Measure, don't assert.** Write a throwaway script that calls `build_all_cpts("full")` and records (a) wall time, (b) `tracemalloc` peak RSS, (c) summed CPT array bytes. Put the measured numbers in the plan. If cold build > ~10 s or peak > ~50% of the function memory limit, switch to the **precompute-and-ship-as-artifact** path: build all 248 CPTs offline, serialize to a data file, load at cold start instead of rebuilding in-function.
 
-   > **MEASURED (2026-06, `scripts/bbn-build-profile.py`):** cold `full` (248-region) build = **62.9 s**, peak mem 5.2 MB, CPT bytes 2.1 MB (→ ~2.4 MB after the D2 Region→CompetingOutcome edge), warm query 251 ms. Memory is a non-issue; **build time is 6× over budget**. **DECISION: precompute-and-ship-as-artifact.** The 63 s is pure-Python per-region CPT construction — build all CPTs offline, serialize (e.g. `.npz`), load at cold start. (For reference: classic build 5.5 s, state 11.9 s.)
+   > **MEASURED (2026-06, `scripts/bbn-build-profile.py`):** cold `full` (248-region) build = **11.5 s**, peak mem 7.2 MB, CPT bytes 2.1 MB (→ ~2.4 MB after the D2 Region→CompetingOutcome edge), warm query 246 ms. (classic 1.0 s, state 2.3 s.)
+   >
+   > ⚠️ **Correction:** an earlier run reported 62.9 s and "6× over budget — precompute." That was a **measurement artifact**: the build was timed while `tracemalloc` was active, which instruments every allocation and slowed the allocation-heavy pure-Python CPT loops ~5×. The profiler now times with tracemalloc off and captures peak memory in a separate run.
+   >
+   > **Revised decision space.** Memory is a non-issue. Real cold build is **11.5 s** — only marginally over the 10 s soft budget, and the model is cached per process (`_MODEL_CACHE`), so only the first request on a cold container pays it. Options: **(B-opt)** vectorize the per-region CPT loops (2.1 MB of arrays should build in ~1–2 s, removing the problem at the root with no artifact/staleness machinery); **(A)** precompute-and-ship; **(C)** accept 11.5 s given per-process caching. Leaning B-opt, especially since the rebuild rewrites several CPT builders anyway.
 2. **Build-perf gate.** Add `test_bbn_build_perf` that fails if cold `full` build exceeds the chosen budget. T-perf (query latency) does not cover this.
 
 **Query-path fixes:**

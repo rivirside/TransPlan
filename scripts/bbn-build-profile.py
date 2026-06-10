@@ -44,12 +44,18 @@ def profile_granularity(g: str) -> dict:
     cpt_bytes = sum(arr.nbytes for arr in cpts.values())
     largest = max(cpts.items(), key=lambda kv: kv[1].nbytes)
 
-    # Cold build (clear cache first), timed + peak memory
+    # Cold build TIME — measured with tracemalloc OFF. (tracemalloc instruments
+    # every allocation and slows allocation-heavy pure-Python builds ~5x, which
+    # silently inflated an earlier measurement; never time under tracemalloc.)
     bn._MODEL_CACHE.clear()
-    tracemalloc.start()
     t0 = time.perf_counter()
     bn.build_model(g)
     build_s = time.perf_counter() - t0
+
+    # Peak MEMORY — separate build under tracemalloc; ignore its (inflated) time.
+    bn._MODEL_CACHE.clear()
+    tracemalloc.start()
+    bn.build_model(g)
     _, peak = tracemalloc.get_traced_memory()
     tracemalloc.stop()
 
