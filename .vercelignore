@@ -8,6 +8,15 @@ data/mcmc-traces/
 # SRTR raw Excel files
 data/srtr-raw/
 
+# SRTR raw archive (153 MB of preserved release zips — kept in git for
+# durability, but offline-only: the runtime API loads the parsed JSONs, not
+# these. Bundling them blew past Lambda's 500 MB ephemeral limit.)
+data/srtr-archive/
+
+# Historical observed-rates (offline temporal-validation input only; the
+# runtime loads srtr-observed-rates.json, the current release, not this file)
+data/srtr-observed-rates-historical.json
+
 # Model comparison snapshots
 data/snapshots/
 
