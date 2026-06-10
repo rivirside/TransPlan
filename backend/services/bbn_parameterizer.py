@@ -40,12 +40,9 @@ _CPT_STRONG = [0.70, 0.25, 0.05]   # Variable in its own tercile
 _CPT_MEDIUM = [0.15, 0.70, 0.15]   # Variable in middle tercile
 _CPT_WEAK   = [0.05, 0.25, 0.70]   # Variable in opposite tercile
 
-# Monthly event rates for the competing-outcomes CPT.
-# Derived from SRTR 2023 annual report median waiting times and
-# waitlist removal rates (Table 1.4, 1.7, 5.2).
-_TRANSPLANT_MONTHLY_RATES = [1/3, 1/9, 1/18, 1/30]   # Very short -> very long wait
-_MORTALITY_MONTHLY_RATES  = [0.01/12, 0.03/12, 0.08/12]  # Low -> high risk
-_DELISTING_MONTHLY_RATES  = [0.03/12, 0.08/12, 0.15/12]  # Low -> high risk
+# (Removed #211: the hardcoded _TRANSPLANT/_MORTALITY/_DELISTING_MONTHLY_RATES
+# that drove the old competing-exponential CompetingOutcome CPT. It is now
+# grounded in observed per-center SRTR rates — see build_competing_outcome_cpt.)
 
 # Graft survival thresholds (1-year) for discretizing outcomes.
 # Based on SRTR center-specific report performance categories:
@@ -577,52 +574,141 @@ def build_delisting_risk_cpt(regions=None, n_regions=None, center_map=None,
 # risk levels, compute probability of each outcome at 24 months.
 # ──────────────────────────────────────────────────────────────────────
 
-def build_competing_outcome_cpt() -> np.ndarray:
+def _observed_vector_12mo(organ: str, region: str, center_map: dict) -> tuple[np.ndarray, float]:
+    """Region-level observed 12-month outcome proportions + total cohort n.
+
+    Aggregates the SRTR Table B7 observed rates of every center mapped to
+    *region* (volume-weighted by cohort n), returning a 4-way proportion vector
+    [transplant, death, removed-other, still-waiting] that sums to 1, plus the
+    summed n. Centers with no observed record contribute nothing; if the region
+    has no data at all, returns (national_vector, 0.0).
+
+    Q6 note: "removed-other" = SRTR REMDET (worsened) + REMREC (improved) +
+    REFTX (refused). All three are genuine non-transplant exits, so they belong
+    in the competing-risks denominator; the UI labels this state "removed
+    without transplant (other causes)" rather than implying it is all negative.
     """
-    Build CPT for CompetingOutcome node.
+    from services.data_loader import get_data
+    data = get_data()
 
-    Shape: (4, 4, 3, 3)
-    Axes:  [CompetingOutcome states, WaitCategory, MortalityRisk, DelistingRisk]
+    codes = [c for c, r in center_map.items() if r == region] if center_map else []
+    tx = death = removed = n_total = 0.0
+    for code in codes:
+        rec = data.observed_outcome(organ, code)
+        if not rec or rec.get("transplant_rate") is None:
+            continue
+        w = float(rec.get("n") or 0) or 1.0  # weight by cohort; missing n → 1
+        tx += w * rec["transplant_rate"]
+        death += w * (rec.get("waitlist_death_rate") or 0.0)
+        removed += w * (rec.get("delisting_rate") or 0.0)
+        n_total += w if rec.get("n") else 0.0
 
-    Uses analytical competing exponentials at 24-month horizon.
+    if tx + death + removed == 0:  # no usable center data → national prior
+        return _national_vector_12mo(organ), 0.0
+
+    wsum = sum((float(data.observed_outcome(organ, c).get("n") or 0) or 1.0)
+               for c in codes if data.observed_outcome(organ, c)
+               and data.observed_outcome(organ, c).get("transplant_rate") is not None)
+    tx, death, removed = tx / wsum / 100.0, death / wsum / 100.0, removed / wsum / 100.0
+    waiting = max(0.0, 1.0 - tx - death - removed)
+    vec = np.array([tx, death, removed, waiting])
+    s = vec.sum()
+    return (vec / s if s > 0 else _national_vector_12mo(organ)), n_total
+
+
+def _national_vector_12mo(organ: str) -> np.ndarray:
+    """National 12-month outcome proportion vector (shrinkage prior)."""
+    from services.data_loader import get_data
+    natl = get_data().observed_national(organ)
+    tx = (natl.get("transplant_rate") or 50.0) / 100.0
+    death = (natl.get("waitlist_death_rate") or 5.0) / 100.0
+    removed = (natl.get("delisting_rate") or 5.0) / 100.0
+    waiting = max(0.0, 1.0 - tx - death - removed)
+    vec = np.array([tx, death, removed, waiting])
+    return vec / vec.sum()
+
+
+def _estimate_concentration(organ: str, regions: list, center_map: dict,
+                            p_nat: np.ndarray) -> float:
+    """Empirical-Bayes (Beta moment) estimate of the Dirichlet prior strength k
+    for an organ, from the dispersion of center transplant rates around the
+    national mean (#211, replaces the previous fixed magic constant).
+
+    Larger k ⇒ centers shrink harder toward national (used when between-center
+    dispersion is small relative to sampling noise). Clipped to [2, 400].
     """
-    n_w = 4  # WaitCategory
-    n_m = 3  # MortalityRisk
-    n_d = 3  # DelistingRisk
+    p_mean = float(p_nat[0])  # national transplant proportion
+    if not (0.0 < p_mean < 1.0):
+        return 25.0
+    props, ns = [], []
+    for region in regions:
+        vec, n = _observed_vector_12mo(organ, region, center_map)
+        if n >= 1:
+            props.append(vec[0])
+            ns.append(n)
+    if len(props) < 5:
+        return 25.0  # too few sampled regions to estimate dispersion
+    props = np.array(props)
+    ns = np.array(ns, dtype=float)
+    w = ns / ns.sum()
+    between_var = float(np.sum(w * (props - p_mean) ** 2))     # observed dispersion
+    sampling_var = float(np.sum(w * p_mean * (1 - p_mean) / ns))  # expected binomial noise
+    tau2 = between_var - sampling_var                          # true between-center variance
+    if tau2 <= 1e-6:
+        return 400.0  # dispersion is all noise → shrink hard
+    k = p_mean * (1 - p_mean) / tau2 - 1.0
+    return float(np.clip(k, 2.0, 400.0))
 
-    # Map discrete states to monthly rates (see module-level constants for sources)
-    transplant_rates = _TRANSPLANT_MONTHLY_RATES
-    mortality_rates = _MORTALITY_MONTHLY_RATES
-    delisting_rates = _DELISTING_MONTHLY_RATES
 
-    horizon = 24.0  # months
+def _extend_12_to_24(p12: np.ndarray) -> np.ndarray:
+    """Extend a 12-month competing-risks CIF vector to 24 months under a
+    constant-cause-specific-hazard assumption (#211 shape assumption).
 
-    cpt = np.zeros((4, n_w, n_m, n_d))
+    With constant hazards, S(24)=S(12)^2 and each cause-specific CIF scales by
+    (1 - S(24))/(1 - S(12)) = 1 + S(12). So:
+        p24_event   = p12_event * (1 + wait12)
+        p24_waiting = wait12 ** 2
+    This preserves the simplex exactly: (1-w)(1+w) + w^2 = 1. Documented as an
+    assumption (constant second-year hazards), not an observation.
+    """
+    tx, death, removed, wait = p12
+    factor = 1.0 + wait
+    return np.array([tx * factor, death * factor, removed * factor, wait * wait])
 
-    for w in range(n_w):
-        for m in range(n_m):
-            for d in range(n_d):
-                lam_t = transplant_rates[w]
-                lam_m = mortality_rates[m]
-                lam_d = delisting_rates[d]
-                lam_total = lam_t + lam_m + lam_d
 
-                if lam_total <= 0:
-                    cpt[:, w, m, d] = [0.25, 0.25, 0.25, 0.25]
-                    continue
+def build_competing_outcome_cpt(regions=None, n_regions=None, center_map=None,
+                                granularity="classic") -> np.ndarray:
+    """
+    Build CPT for CompetingOutcome node — empirically grounded (#206/#211, opt A).
 
-                # P(event i wins AND happens before horizon) =
-                # (lam_i / lam_total) * (1 - exp(-lam_total * horizon))
-                p_any_event = 1.0 - np.exp(-lam_total * horizon)
+    Shape: (4, n_organs, n_regions)
+    Axes:  [CompetingOutcome states (transplant, death, removed-other, waiting),
+            Organ, Region]
 
-                p_transplant = (lam_t / lam_total) * p_any_event
-                p_mortality = (lam_m / lam_total) * p_any_event
-                p_delisting = (lam_d / lam_total) * p_any_event
-                p_waiting = 1.0 - p_any_event
+    Each (organ, region) cell is the center's OBSERVED 12-month competing-risk
+    outcome vector (SRTR Table B7), Dirichlet-shrunk toward the organ-national
+    vector for small cohorts, then extended to the model's 24-month horizon.
+    No latent-state (WaitCategory/Mortality/Delisting) modulation — the cell is
+    the center's own observed population outcomes (option A).
+    """
+    if regions is None:
+        regions = REGIONS
+    if n_regions is None:
+        n_regions = len(regions)
 
-                probs = np.array([p_transplant, p_mortality, p_delisting, p_waiting])
-                probs = np.maximum(probs, 0.001)
-                cpt[:, w, m, d] = _normalize(probs)
+    n_o = len(ORGANS)
+    cpt = np.zeros((4, n_o, n_regions))
+
+    for i, organ in enumerate(ORGANS):
+        p_nat = _national_vector_12mo(organ)
+        k = _estimate_concentration(organ, regions, center_map, p_nat)
+        for r, region in enumerate(regions):
+            p_obs, n = _observed_vector_12mo(organ, region, center_map)
+            # Dirichlet–multinomial shrinkage on the joint simplex (preserves sum=1).
+            p12 = (n * p_obs + k * p_nat) / (n + k)
+            p24 = _extend_12_to_24(p12)
+            p24 = np.maximum(p24, 0.001)
+            cpt[:, i, r] = _normalize(p24)
 
     return cpt
 
@@ -840,7 +926,7 @@ def build_all_cpts(granularity: str = "classic") -> dict[str, np.ndarray]:
         "WaitCategory": build_wait_category_cpt(**geo_kwargs),
         "MortalityRisk": build_mortality_risk_cpt(**geo_kwargs),
         "DelistingRisk": build_delisting_risk_cpt(**geo_kwargs),
-        "CompetingOutcome": build_competing_outcome_cpt(),
+        "CompetingOutcome": build_competing_outcome_cpt(**geo_kwargs),
         "GraftSurvival1yr": build_graft_survival_cpt(**geo_kwargs),
         "CompoundSuccess": build_compound_success_cpt(),
     }

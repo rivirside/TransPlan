@@ -57,8 +57,10 @@ def _reset():
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_dag_has_21_edges():
-    assert len(DAG_EDGES) == 21
+def test_dag_has_20_edges():
+    # 20 after #211: CompetingOutcome's 3 latent parents (WaitCategory,
+    # MortalityRisk, DelistingRisk) were replaced by 2 (Organ, Region).
+    assert len(DAG_EDGES) == 20
 
 
 def test_dag_has_12_nodes():
@@ -135,7 +137,7 @@ def test_model_classic_has_correct_node_count():
 
 def test_model_classic_has_correct_edge_count():
     model = build_model("classic")
-    assert len(model.edges) == 21
+    assert len(model.edges) == 20
 
 
 def test_build_model_caches():

@@ -107,8 +107,11 @@ def test_delisting_risk_cpt_shape():
 
 
 def test_competing_outcome_cpt_shape():
+    # #211: CompetingOutcome is now (4, n_organs, n_regions) — grounded in
+    # observed per-(organ, center) rates, not the old (4,4,3,3) latent CPT.
+    n = len(REGIONS)
     cpt = build_competing_outcome_cpt()
-    assert cpt.shape == (4, 4, 3, 3)
+    assert cpt.shape == (4, 6, n)
 
 
 def test_graft_survival_cpt_shape():
@@ -239,23 +242,49 @@ def test_mortality_risk_age_effect():
     )
 
 
-def test_competing_outcome_transplant_dominant_for_short_wait():
-    """Short wait + low mortality + low delisting → transplant should dominate."""
-    cpt = build_competing_outcome_cpt()
-    # WaitCategory=short(0), MortalityRisk=low(0), DelistingRisk=low(0)
-    p_transplant = cpt[0, 0, 0, 0]
-    assert p_transplant > 0.5, (
-        f"P(transplant | short, low mort, low delist) should be > 0.5, got {p_transplant:.3f}"
+def test_competing_outcome_simplex():
+    """Every (organ, region) cell is a valid distribution summing to 1 (#211)."""
+    import numpy as np
+    from services.bbn_parameterizer import get_regions, get_center_to_region_map
+    g = "full"
+    regions = get_regions(g)
+    cmap = get_center_to_region_map(g)
+    cpt = build_competing_outcome_cpt(regions=regions, n_regions=len(regions),
+                                      center_map=cmap, granularity=g)
+    sums = cpt.sum(axis=0)
+    assert np.allclose(sums, 1.0), f"CompetingOutcome cells must sum to 1; got [{sums.min()},{sums.max()}]"
+
+
+def test_competing_outcome_tracks_observed_rates():
+    """The transplant component must rank-correlate with the centers' OBSERVED
+    transplant rates — the whole point of grounding it empirically (#211)."""
+    import numpy as np
+    from scipy.stats import spearmanr
+    from services.bbn_parameterizer import (
+        get_regions, get_center_to_region_map, _observed_vector_12mo, ORGANS,
     )
+    g = "full"
+    regions = get_regions(g)
+    cmap = get_center_to_region_map(g)
+    cpt = build_competing_outcome_cpt(regions=regions, n_regions=len(regions),
+                                      center_map=cmap, granularity=g)
+    oi = ORGANS.index("kidney")
+    co_tx = np.asarray(cpt[0, oi, :], float).ravel()
+    obs_tx = np.array([_observed_vector_12mo("kidney", r, cmap)[0][0] for r in regions])
+    rho = float(np.asarray(spearmanr(co_tx, obs_tx)[0]))
+    assert rho > 0.9, f"CompetingOutcome transplant prob should track observed rates; rho={rho:.3f}"
 
 
-def test_competing_outcome_mortality_increases_with_risk():
-    """High mortality risk should increase P(mortality outcome)."""
-    cpt = build_competing_outcome_cpt()
-    # moderate wait(1), compare mortality low(0) vs high(2), delisting low(0)
-    p_mort_low = cpt[1, 1, 0, 0]
-    p_mort_high = cpt[1, 1, 2, 0]
-    assert p_mort_high > p_mort_low
+def test_extend_12_to_24_preserves_simplex():
+    """The 12→24-month extension keeps the vector on the simplex exactly (#211)."""
+    import numpy as np
+    from services.bbn_parameterizer import _extend_12_to_24
+    for p12 in ([0.5, 0.1, 0.1, 0.3], [0.9, 0.02, 0.03, 0.05], [0.1, 0.2, 0.1, 0.6]):
+        p24 = _extend_12_to_24(np.array(p12))
+        assert abs(p24.sum() - 1.0) < 1e-9
+        # 24-month event probabilities are >= their 12-month values (more time).
+        assert all(p24[i] >= p12[i] - 1e-9 for i in range(3))
+        assert p24[3] <= p12[3] + 1e-9  # less still-waiting at 24mo
 
 
 def test_compound_success_mortality_is_failure():

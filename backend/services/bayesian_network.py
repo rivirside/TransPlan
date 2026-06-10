@@ -118,10 +118,15 @@ DAG_EDGES = [
     ("Organ", "DelistingRisk"),
     ("Region", "DelistingRisk"),
     ("WaitCategory", "DelistingRisk"),
-    # WaitCategory + MortalityRisk + DelistingRisk → CompetingOutcome
-    ("WaitCategory", "CompetingOutcome"),
-    ("MortalityRisk", "CompetingOutcome"),
-    ("DelistingRisk", "CompetingOutcome"),
+    # Organ + Region → CompetingOutcome (#206/#211, option A).
+    # CompetingOutcome is now grounded directly in the center's OBSERVED 24-month
+    # competing-risk outcomes (SRTR Table B7), not derived from the latent
+    # WaitCategory/MortalityRisk/DelistingRisk states. Parent order here must match
+    # the CPT axis order (Organ, Region) in build_competing_outcome_cpt.
+    # MortalityRisk/DelistingRisk remain in the graph (queryable risk summaries)
+    # but no longer feed CompetingOutcome.
+    ("Organ", "CompetingOutcome"),
+    ("Region", "CompetingOutcome"),
     # Organ + Region → GraftSurvival1yr
     ("Organ", "GraftSurvival1yr"),
     ("Region", "GraftSurvival1yr"),
@@ -383,6 +388,42 @@ def _estimate_time_horizon_probs(wait_probs: list[float]) -> dict[str, float]:
     return {"p6": p_6, "p12": p_12, "p24": p_24, "p36": p_36}
 
 
+def _combine_outcomes(query_result: dict) -> dict:
+    """Combine WaitCategory timing with the observed CompetingOutcome (#206/#211).
+
+    WaitCategory drives transplant *timing* (sensitive to blood type / region /
+    donor supply, so the headline probability varies by patient). The
+    empirically-grounded CompetingOutcome (the center's OBSERVED outcomes)
+    supplies the competing-loss drain q — the share of terminal outcomes lost to
+    death/delisting rather than transplant — and the split of the non-transplant
+    mass into death / delisting / still-waiting. Returns transplant probabilities
+    at 6/12/24/36 months plus the 24-month competing-risk breakdown (which sums
+    to 1 with p_24).
+    """
+    obs_tx, obs_death, obs_delist, obs_wait = query_result["competing_outcome"]
+    time_probs = _estimate_time_horizon_probs(query_result["wait_category"])
+
+    terminal = obs_tx + obs_death + obs_delist
+    q = (obs_death + obs_delist) / terminal if terminal > 1e-9 else 0.0
+    p_24 = time_probs["p24"] * (1.0 - q)
+
+    denom = max(time_probs["p24"], 0.01)
+    p_6 = max(0.0, min(time_probs["p6"] * p_24 / denom, p_24))
+    p_12 = max(p_6, min(time_probs["p12"] * p_24 / denom, p_24))
+    p_36 = max(p_24, min(time_probs["p36"] * p_24 / denom, 1.0))
+
+    nt = obs_death + obs_delist + obs_wait
+    rem = max(0.0, 1.0 - p_24)
+    if nt > 1e-9:
+        p_m, p_d, p_w = rem * obs_death / nt, rem * obs_delist / nt, rem * obs_wait / nt
+    else:
+        p_m = p_d = 0.0
+        p_w = rem
+
+    return {"p_6": p_6, "p_12": p_12, "p_24": p_24, "p_36": p_36,
+            "p_mortality_24": p_m, "p_delisting_24": p_d, "p_waiting_24": p_w}
+
+
 # ──────────────────────────────────────────────────────────────────────
 # Main entry point: simulate_bbn (parallel to monte_carlo.simulate)
 # ──────────────────────────────────────────────────────────────────────
@@ -439,24 +480,12 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
 
             state_abbr = _CITY_STATES.get(region_name, "")
 
-            co_probs = query_result["competing_outcome"]
-            p_transplant_24 = co_probs[0]
-            p_mortality_24 = co_probs[1]
-            p_delisting_24 = co_probs[2]
-            p_waiting_24 = co_probs[3]
+            oc = _combine_outcomes(query_result)
+            p_6, p_12, p_24, p_36 = oc["p_6"], oc["p_12"], oc["p_24"], oc["p_36"]
+            p_mortality_24, p_delisting_24, p_waiting_24 = (
+                oc["p_mortality_24"], oc["p_delisting_24"], oc["p_waiting_24"])
 
-            wait_probs = query_result["wait_category"]
-            time_probs = _estimate_time_horizon_probs(wait_probs)
-            p_6 = time_probs["p6"] * p_transplant_24 / max(time_probs["p24"], 0.01)
-            p_12 = time_probs["p12"] * p_transplant_24 / max(time_probs["p24"], 0.01)
-            p_24 = p_transplant_24
-            p_36 = min(1.0, time_probs["p36"] * p_transplant_24 / max(time_probs["p24"], 0.01))
-
-            p_6 = max(0.0, min(p_6, p_24))
-            p_12 = max(p_6, min(p_12, p_24))
-            p_36 = max(p_24, min(p_36, 1.0))
-
-            median_wait = _estimate_median_wait(wait_probs)
+            median_wait = _estimate_median_wait(query_result["wait_category"])
 
             ci_half = max(0.03, p_24 * 0.10)
             ci_lo = max(0.0, p_24 - ci_half)
@@ -523,24 +552,12 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
                 )
             query_result = region_cache[region]
 
-            co_probs = query_result["competing_outcome"]
-            p_transplant_24 = co_probs[0]
-            p_mortality_24 = co_probs[1]
-            p_delisting_24 = co_probs[2]
-            p_waiting_24 = co_probs[3]
+            oc = _combine_outcomes(query_result)
+            p_6, p_12, p_24, p_36 = oc["p_6"], oc["p_12"], oc["p_24"], oc["p_36"]
+            p_mortality_24, p_delisting_24, p_waiting_24 = (
+                oc["p_mortality_24"], oc["p_delisting_24"], oc["p_waiting_24"])
 
-            wait_probs = query_result["wait_category"]
-            time_probs = _estimate_time_horizon_probs(wait_probs)
-            p_6 = time_probs["p6"] * p_transplant_24 / max(time_probs["p24"], 0.01)
-            p_12 = time_probs["p12"] * p_transplant_24 / max(time_probs["p24"], 0.01)
-            p_24 = p_transplant_24
-            p_36 = min(1.0, time_probs["p36"] * p_transplant_24 / max(time_probs["p24"], 0.01))
-
-            p_6 = max(0.0, min(p_6, p_24))
-            p_12 = max(p_6, min(p_12, p_24))
-            p_36 = max(p_24, min(p_36, 1.0))
-
-            median_wait = _estimate_median_wait(wait_probs)
+            median_wait = _estimate_median_wait(query_result["wait_category"])
 
             ci_half = max(0.03, p_24 * 0.10)
             ci_lo = max(0.0, p_24 - ci_half)
