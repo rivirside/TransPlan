@@ -10,6 +10,8 @@ A patient-facing clinical decision support tool that helps transplant patients i
 
 **All 8 rebuild phases done.** Structural overhaul started March 30, 2026, completed March 31, 2026. Plan: `docs/rebuild-plan.md`
 
+> **June 2026 update — BBN 248-center rebuild + audit (see `docs/bbn-rebuild-plan.md`, `docs/limitations.md`):** The BBN now grounds its core outcome in observed SRTR Table B7 rates per center (replacing magic numbers), via a hybrid p24 (WaitCategory timing × observed competing-loss drain) that preserves blood-type sensitivity. Closed #206, #209, #210, #211, #226 + security/stats (#215, #218, #225, #229); advanced #214. Full-mode build 11.5s→0.39s. Added SRTR per-center calibration (Spearman ρ 0.70–0.89), retrieved+archived historical SRTR data (2018–2025), and restored green CI. Known BBN trade-off tracked at L-072/#238; follow-ups #236/#237. 848 backend tests pass.
+
 ### Rebuild Progress
 
 | Phase | Status | Commits | What Changed |

@@ -25,12 +25,19 @@ All 8 rebuild phases (0-7) are done. The structural overhaul that started March 
 
 ### Post-Rebuild Priorities
 
-1. **#208 comprehensive audit** (33 sub-issues) — deferred during rebuild, now unblocked
-2. **#206/#207** BBN/MCMC model expansion to 248 centers
-3. **Benchmarking** — COMET-Lung comparison is Priority 1 (see `docs/landscape/README.md`)
-4. **Papers** — 9 subprojects in `papers/`, drafts started for Paper 01 (tools) and Paper 03 (equity)
+**Done in the June 2026 session** (see `docs/bbn-rebuild-plan.md`, `docs/limitations.md`):
+- **#206 BBN 248-center rebuild — DONE.** CompetingOutcome now grounded in observed SRTR Table B7 rates (not magic numbers); hybrid p24 (WaitCategory timing × observed competing-loss drain) keeps blood-type sensitivity. Closed #209, #210, #211, #226; advanced #214. Full build 11.5s→0.39s (vectorized). Known trade-off tracked: L-072 / #238 (competing-risk split is center-average, not patient-specific).
+- **Security/stats audit:** closed #215 (CORS), #218 (X-Forwarded-For), #225 (Gini validation), #229 (zero-rate fallback).
+- **Validation:** SRTR per-center calibration (`scripts/run-center-calibration.py`) — Spearman ρ 0.70–0.89. COMET-Lung comparison found infeasible (COMET is population-level, doesn't rank centers) — SRTR calibration is the substitute. Historical SRTR data (2018–2025) retrieved + archived (`data/srtr-archive/`).
+- **CI:** green again (was red since March — `netCDF4` missing + SHUTDOWN_TOKEN bug).
+
+**Still open:**
+1. **#207** MCMC 248-center refit (BBN done; MCMC not)
+2. **#208 audit** — remaining sub-issues (mostly frontend XSS #217, equity scale #216, BBN CPT empirical grounding #213/#214 deepening)
+3. **#237** temporal validation (data now in hand — fit earlier PSR, validate later), **#236** continuous BBN latents, **#238** revisit BBN hybrid
+4. **Papers** — owner-driven; do NOT work on `papers/` (rigor/usability/validation work is pre-approved instead)
 5. **Old page cleanup** — `find-centers.html`, `wait-estimator.html`, `data.html`, `spatial.html` still on disk
-6. **HIGH:** Equity analysis infeasible at scale (11.9M sims), BBN magic numbers uncited, CORS too permissive
+6. **HIGH:** Equity analysis infeasible at scale (11.9M sims, #216)
 
 ## Architecture
 
@@ -117,6 +124,8 @@ See `docs/landscape/` for 7 tool profiles (SRTR, KPSAM/LSAM/TSAM, COMET, LivSim,
 
 ## Open Issues
 
-- **#208:** Comprehensive audit (33 sub-issues) — now unblocked
-- **#206/#207:** BBN/MCMC model expansion to 248 centers
+- **#208:** Comprehensive audit — several sub-issues closed (#209, #210, #211, #215, #218, #225, #226, #229); remaining incl. #213, #214, #216, #217
+- **#207:** MCMC 248-center refit (BBN #206 done)
+- **#236/#237/#238:** continuous BBN latents / temporal validation / revisit BBN hybrid (filed June 2026)
 - **#107:** Face validity review with transplant faculty
+- **Model limitations:** see `docs/limitations.md` (L-072 = BBN hybrid trade-off)
