@@ -13,10 +13,6 @@ router = APIRouter()
 # PID file lives at repo root
 PID_FILE = Path(__file__).parent.parent.parent / ".transplan.pid"
 
-# Optional auth token — set SHUTDOWN_TOKEN env var to require it (issue #51)
-SHUTDOWN_TOKEN = os.environ.get("SHUTDOWN_TOKEN")
-
-
 class ShutdownResponse(BaseModel):
     status: str
 
@@ -28,8 +24,11 @@ def shutdown(authorization: str | None = Header(default=None)) -> ShutdownRespon
     If SHUTDOWN_TOKEN is set, requires Authorization: Bearer <token>.
     Cleans up the PID file, then sends SIGTERM to own process.
     """
-    if SHUTDOWN_TOKEN:
-        expected = f"Bearer {SHUTDOWN_TOKEN}"
+    # Read at request time, not import time — so tokens set after import
+    # (e.g. by tests, or a late-exported env var) are honored (issue #51).
+    shutdown_token = os.environ.get("SHUTDOWN_TOKEN")
+    if shutdown_token:
+        expected = f"Bearer {shutdown_token}"
         if not authorization or authorization != expected:
             raise HTTPException(status_code=403, detail="Invalid or missing shutdown token")
     else:
