@@ -56,3 +56,37 @@ class TestDataShapes:
 
     def test_cost_of_living_not_empty(self, data: TransPlanData):
         assert len(data.cost_of_living) > 0
+
+
+class TestObservedRates:
+    """BBN rebuild Step 0 (#206/#211): srtr-observed-rates.json wired in."""
+
+    ORGANS = ["kidney", "liver", "heart", "lung", "pancreas", "intestine"]
+
+    def test_loaded_without_error(self, data: TransPlanData):
+        assert data.freshness.get("srtr_observed_rates") not in ("missing", "parse_error")
+        assert data.srtr_observed_rates, "srtr_observed_rates is empty"
+
+    def test_all_organs_present(self, data: TransPlanData):
+        for organ in self.ORGANS:
+            assert organ in data.srtr_observed_rates, f"observed rates missing organ: {organ}"
+            assert data.srtr_observed_rates[organ].get("centers"), f"{organ} has no centers"
+
+    def test_observed_outcome_accessor(self, data: TransPlanData):
+        # Every organ should have at least one center whose record is well-formed.
+        for organ in self.ORGANS:
+            centers = data.srtr_observed_rates[organ]["centers"]
+            code = next(iter(centers))
+            rec = data.observed_outcome(organ, code)
+            assert rec is not None
+            assert 0 <= rec["transplant_rate"] <= 100, f"{organ}/{code} tx_rate out of range"
+            # n may be None for tiny cohorts, but if present must be non-negative
+            assert rec.get("n") is None or rec["n"] >= 0
+
+    def test_observed_outcome_unknown_center_returns_none(self, data: TransPlanData):
+        assert data.observed_outcome("kidney", "ZZZZ_NOT_A_CENTER") is None
+
+    def test_observed_national_baseline(self, data: TransPlanData):
+        natl = data.observed_national("kidney")
+        assert "transplant_rate" in natl
+        assert 0 <= natl["transplant_rate"] <= 100

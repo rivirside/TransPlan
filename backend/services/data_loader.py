@@ -51,6 +51,10 @@ class TransPlanData:
     center_contacts: dict = field(default_factory=dict)
     # Acceptance rate factors per center per organ (derived from n_1yr volumes)
     acceptance_rates: dict = field(default_factory=dict)
+    # BBN rebuild (#206): per-center observed 12-month outcome rates from SRTR
+    # Table B7 (transplant/death/delisting + cohort n). Uncapped raw rates —
+    # the keystone for grounding the BBN CompetingOutcome CPT (#211, #226).
+    srtr_observed_rates: dict = field(default_factory=dict)
     # freshness metadata keyed by logical name
     freshness: dict = field(default_factory=dict)
 
@@ -74,6 +78,24 @@ class TransPlanData:
         if not mapping:
             return []
         return [{"city": city, "state": info["state"]} for city, info in mapping.items()]
+
+    def observed_outcome(self, organ: str, center_code: str) -> dict | None:
+        """Per-center observed 12-month outcome rates (%) from SRTR Table B7.
+
+        Returns {transplant_rate, waitlist_death_rate, delisting_rate, n} or
+        None if the center/organ has no observed record. Source of truth for
+        the BBN CompetingOutcome CPT rebuild (#211). See also the national
+        baseline via observed_national(organ).
+        """
+        return (
+            self.srtr_observed_rates.get(organ, {})
+            .get("centers", {})
+            .get(center_code)
+        )
+
+    def observed_national(self, organ: str) -> dict:
+        """National 12-month outcome baseline (%) for *organ* (shrinkage prior)."""
+        return self.srtr_observed_rates.get(organ, {}).get("national", {})
 
     def centers_for_organ(self, organ: str) -> list[dict]:
         """Return centers that perform *organ*, sorted by code.
@@ -149,6 +171,7 @@ def load_all() -> TransPlanData:
     data.center_outcomes = _load_json(DATA_DIR / "post-transplant-outcomes-centers.json", "center_outcomes", data)
     data.center_contacts = _load_json(DATA_DIR / "center-contacts.json", "center_contacts", data)
     data.acceptance_rates = _load_json(DATA_DIR / "acceptance-rates-centers.json", "acceptance_rates", data)
+    data.srtr_observed_rates = _load_json(DATA_DIR / "srtr-observed-rates.json", "srtr_observed_rates", data)
 
     loaded = sum(1 for v in data.freshness.values() if v not in ("missing", "parse_error"))
     logger.info("TransPlan data loaded: %d/%d files OK", loaded, len(data.freshness))
