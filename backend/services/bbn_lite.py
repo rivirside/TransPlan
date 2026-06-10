@@ -192,20 +192,28 @@ class BayesianNet:
 
     def check_model(self) -> bool:
         """
-        Basic validation: every node has a CPD, columns sum to ~1.
+        Basic validation: every node has a CPD, columns sum to 1.
+
+        Tolerance tightened to 1e-6 (#208 Step 7): CPTs are now generated
+        programmatically from observed data (build_all_cpts), where every builder
+        normalizes explicitly. The old atol=0.05 would silently pass a CPT that
+        was 5% un-normalized — a real risk for auto-generated tables. A strict
+        check catches normalization bugs at build time instead of skewing
+        inference.
         """
+        ATOL = 1e-6
         for node in self._nodes:
             if node not in self._cpds:
                 return False
             cpd = self._cpds[node]
             # For a CPD P(node | parents), summing over node (axis 0)
-            # should give ~1 for every parent config
+            # should give ~1 for every parent configuration.
             if cpd.values.ndim == 1:
-                if abs(cpd.values.sum() - 1.0) > 0.05:
+                if abs(cpd.values.sum() - 1.0) > ATOL:
                     return False
             else:
                 col_sums = cpd.values.sum(axis=0)
-                if not np.allclose(col_sums, 1.0, atol=0.05):
+                if not np.allclose(col_sums, 1.0, atol=ATOL):
                     return False
         return True
 

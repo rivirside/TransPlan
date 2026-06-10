@@ -14,7 +14,8 @@ The BBN has 12 nodes arranged in a DAG:
   Outcome (2):   DelistingRisk, CompetingOutcome
   Post-tx (2):   GraftSurvival1yr, CompoundSuccess
 
-All CPTs are TabularCPD objects for pgmpy's BayesianNetwork.
+All CPTs are plain numpy arrays consumed by the in-house bbn_lite engine
+(shape (node_card, *parent_cards)); the project does not use pgmpy.
 """
 import logging
 
