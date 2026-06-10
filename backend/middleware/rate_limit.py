@@ -8,6 +8,7 @@ Limits:
   - Authenticated (API key): 5× higher limits
 """
 
+import os
 import time
 from collections import defaultdict
 from threading import Lock
@@ -61,11 +62,32 @@ RATE_LIMITS = {
 }
 
 
+def _trust_proxy_headers() -> bool:
+    """Whether X-Forwarded-For can be trusted (#218).
+
+    The header is client-spoofable, so it is only honored when the app is
+    known to sit behind a proxy that sanitizes it:
+      - Vercel sets VERCEL=1 in its runtime and overwrites X-Forwarded-For
+        with the real client IP (client-supplied values are stripped).
+      - Other deployments opt in explicitly via TRANSPLAN_TRUST_PROXY=1.
+    """
+    if os.environ.get("VERCEL"):
+        return True
+    return os.environ.get("TRANSPLAN_TRUST_PROXY", "").lower() in ("1", "true", "yes")
+
+
 def _get_client_ip(request: Request) -> str:
-    """Extract client IP, respecting X-Forwarded-For for proxied setups."""
-    forwarded = request.headers.get("x-forwarded-for")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
+    """Extract client IP.
+
+    X-Forwarded-For is only consulted behind a trusted proxy; otherwise a
+    client could spoof the header to dodge rate limits (#218). The rightmost
+    entry is used because it is the one appended by the trusted proxy —
+    leftmost entries can be forged by the client.
+    """
+    if _trust_proxy_headers():
+        forwarded = request.headers.get("x-forwarded-for")
+        if forwarded:
+            return forwarded.split(",")[-1].strip()
     if request.client:
         return request.client.host
     return "unknown"

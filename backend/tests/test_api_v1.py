@@ -122,6 +122,84 @@ class TestRateLimiting:
                 _limiter._windows.pop(f"{ip}:data", None)
 
 
+class TestClientIpExtraction:
+    """X-Forwarded-For is spoofable — only trusted behind a known proxy (#218)."""
+
+    @staticmethod
+    def _make_request(headers=None, client_host="10.0.0.1"):
+        from starlette.requests import Request
+        raw_headers = [(k.lower().encode(), v.encode()) for k, v in (headers or {}).items()]
+        scope = {
+            "type": "http",
+            "method": "GET",
+            "path": "/",
+            "headers": raw_headers,
+            "client": (client_host, 12345),
+        }
+        return Request(scope)
+
+    def test_xff_ignored_without_trusted_proxy(self, monkeypatch):
+        from middleware.rate_limit import _get_client_ip
+        monkeypatch.delenv("VERCEL", raising=False)
+        monkeypatch.delenv("TRANSPLAN_TRUST_PROXY", raising=False)
+        req = self._make_request({"X-Forwarded-For": "1.2.3.4"})
+        assert _get_client_ip(req) == "10.0.0.1"
+
+    def test_xff_honored_on_vercel(self, monkeypatch):
+        from middleware.rate_limit import _get_client_ip
+        monkeypatch.setenv("VERCEL", "1")
+        req = self._make_request({"X-Forwarded-For": "1.2.3.4"})
+        assert _get_client_ip(req) == "1.2.3.4"
+
+    def test_xff_uses_rightmost_entry_behind_proxy(self, monkeypatch):
+        """Leftmost entries are client-forgeable; the proxy appends the real IP."""
+        from middleware.rate_limit import _get_client_ip
+        monkeypatch.setenv("TRANSPLAN_TRUST_PROXY", "1")
+        req = self._make_request({"X-Forwarded-For": "6.6.6.6, 1.2.3.4"})
+        assert _get_client_ip(req) == "1.2.3.4"
+
+    def test_falls_back_to_client_host(self, monkeypatch):
+        from middleware.rate_limit import _get_client_ip
+        monkeypatch.setenv("TRANSPLAN_TRUST_PROXY", "1")
+        req = self._make_request()
+        assert _get_client_ip(req) == "10.0.0.1"
+
+
+class TestCorsOriginRegex:
+    """CORS must not allow arbitrary Vercel subdomains (#215)."""
+
+    @staticmethod
+    def _allowed(origin):
+        import re
+        from main import app
+        for middleware in app.user_middleware:
+            regex = middleware.kwargs.get("allow_origin_regex")
+            if regex:
+                return re.match(regex, origin) is not None
+        raise AssertionError("CORS middleware with allow_origin_regex not found")
+
+    def test_production_domains_allowed(self):
+        assert self._allowed("https://transplant.today")
+        assert self._allowed("https://www.transplant.today")
+        assert self._allowed("http://localhost:3000")
+        assert self._allowed("http://127.0.0.1:8002")
+
+    def test_transplan_vercel_previews_allowed(self):
+        assert self._allowed("https://transplan.vercel.app")
+        assert self._allowed("https://transplan-git-main-team.vercel.app")
+        assert self._allowed("https://transplan-abc123xyz-team.vercel.app")
+
+    def test_arbitrary_vercel_subdomains_rejected(self):
+        assert not self._allowed("https://evil.vercel.app")
+        assert not self._allowed("https://attacker-site.vercel.app")
+        assert not self._allowed("https://transplanfake.vercel.app")
+
+    def test_unrelated_origins_rejected(self):
+        assert not self._allowed("https://evil.com")
+        assert not self._allowed("https://transplant.today.evil.com")
+        assert not self._allowed("http://transplant.today")  # http on prod domain
+
+
 class TestApiKeyAuth:
     """Test API key authentication for higher rate limits."""
 

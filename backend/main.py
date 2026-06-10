@@ -62,10 +62,14 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# CORS kept as fallback for separate frontend/backend dev setups
+# CORS kept as fallback for separate frontend/backend dev setups.
+# Vercel pattern is restricted to this project's deployments (transplan.vercel.app
+# and preview URLs like transplan-<hash>-<team>.vercel.app) rather than any
+# Vercel user's subdomain (#215). Production traffic is same-origin via
+# vercel.json rewrites, so this only affects preview deployments.
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|^https://.*\.vercel\.app$|^https://(www\.)?transplant\.today$",
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|^https://transplan(-[a-z0-9-]+)?\.vercel\.app$|^https://(www\.)?transplant\.today$",
     allow_origins=ALLOWED_ORIGINS,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type", "X-Api-Key"],
