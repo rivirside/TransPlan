@@ -52,6 +52,11 @@ _CPT_WEAK   = [0.05, 0.25, 0.70]   # Variable in opposite tercile
 # "poor" when only the survival percentage (not the HR CI) is available.
 _GRAFT_POOR_MARGIN = 3.0
 
+# Donor-supply effect on median wait (low/medium/high supply). Module-level so
+# the T6 sensitivity sweep (test_bbn_parameterizer) can perturb it and confirm
+# it does not drive center rankings. See build_wait_category_cpt for provenance.
+_DONOR_SUPPLY_WAIT_MULT = [1.2, 1.0, 0.8]
+
 # ──────────────────────────────────────────────────────────────────────
 # Domain enumerations — shared across CPT builders and inference engine
 # ──────────────────────────────────────────────────────────────────────
@@ -335,6 +340,13 @@ def build_wait_category_cpt(regions=None, n_regions=None, center_map=None,
 
     Uses log-normal CDF with adjusted median to compute:
       P(wait <= 6mo), P(6 < wait <= 12), P(12 < wait <= 24), P(wait > 24)
+
+    Boundary provenance (#210): the 6- and 12-month cut-points are SRTR PSR
+    reporting intervals — SRTR publishes waitlist outcomes at _C6 and _C12
+    horizons (Table B7), so these align the discretization with the registry's
+    own reporting tiers. The 24-month cut-point is the model's headline outcome
+    horizon (p_transplant_24mo). These are reporting/horizon conventions, not
+    fitted parameters; documented here rather than retrofitted with a citation.
     """
     from scipy.stats import lognorm
 
@@ -354,9 +366,15 @@ def build_wait_category_cpt(regions=None, n_regions=None, center_map=None,
     n_r = n_regions
     n_ds = 3  # DonorSupply states
 
-    # DonorSupply effect on median: low → 1.2x longer, medium → 1.0, high → 0.8x
-    ds_multipliers = [1.2, 1.0, 0.8]
-    ds_arr = np.array(ds_multipliers)  # (n_ds,)
+    # DonorSupply effect on median wait: low → 1.2× longer, medium → 1.0,
+    # high → 0.8× (#213/#214). These are documented DIRECTIONAL assumptions
+    # (more donor supply ⇒ shorter wait), not fitted: regressing the effect from
+    # observed wait against the donor-supply tercile would be circular, since the
+    # tercile is itself derived from supply-correlated wait factors. The ±20%
+    # magnitude is a calibrated assumption; the model's primary outcome driver
+    # (CompetingOutcome, #211) is fully data-grounded, so this secondary
+    # latent-timing modulation is intentionally conservative. T6 sweeps it.
+    ds_arr = np.array(_DONOR_SUPPLY_WAIT_MULT)  # (n_ds,)
 
     cpt = np.zeros((4, n_o, n_b, n_r, n_ds))
 
@@ -524,7 +542,12 @@ def build_delisting_risk_cpt(regions=None, n_regions=None, center_map=None,
     n_r = n_regions
     n_w = 4  # WaitCategory states
 
-    # Wait category multipliers on delisting (longer wait → more likely to delist)
+    # Wait-category multipliers on delisting (#213/#214): longer time on the
+    # waitlist ⇒ higher delisting risk (too sick / improved / refused). Documented
+    # directional assumptions, not fitted — regressing observed delisting on the
+    # wait category is circular (the category derives from the same wait factors).
+    # Since #211 (CompetingOutcome) now drives outcomes directly from observed
+    # rates, DelistingRisk is a secondary queryable summary; T6 sweeps these.
     wait_delist_mults = [0.5, 0.8, 1.2, 1.8]
 
     rates = np.zeros((n_o, n_r, n_w))

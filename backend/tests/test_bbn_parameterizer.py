@@ -114,6 +114,38 @@ def test_competing_outcome_cpt_shape():
     assert cpt.shape == (4, 6, n)
 
 
+def test_t6_donor_supply_multiplier_does_not_drive_rankings(data):
+    """T6 (#214): the donor-supply wait multiplier is a documented assumption,
+    not fitted. Perturbing it ±20% must not materially reorder center p24
+    rankings — i.e. the rankings are driven by the data-grounded factors
+    (observed rates + per-center wait factors), not this heuristic."""
+    import numpy as np
+    from scipy.stats import spearmanr
+    import services.bbn_parameterizer as bp
+    from services import bayesian_network as bn
+    from models.schemas import PatientProfile
+
+    def ranked_p24(mult):
+        orig = bp._DONOR_SUPPLY_WAIT_MULT
+        bp._DONOR_SUPPLY_WAIT_MULT = mult
+        bn._MODEL_CACHE.clear()
+        try:
+            res = bn.simulate_bbn(PatientProfile(
+                organ="kidney", blood_type="O+", age=50, sex="male",
+                urgency=2, cpra=20, bbn_granularity="full"))
+            return {c.center_code: c.p_transplant_24mo for c in res.cities}
+        finally:
+            bp._DONOR_SUPPLY_WAIT_MULT = orig
+            bn._MODEL_CACHE.clear()
+
+    base = ranked_p24([1.2, 1.0, 0.8])
+    perturbed = ranked_p24([1.44, 1.0, 0.64])  # ±20% on the spread
+    codes = list(base)
+    rho = float(np.asarray(spearmanr([base[c] for c in codes],
+                                     [perturbed[c] for c in codes])[0]))
+    assert rho > 0.95, f"donor-supply multiplier should not drive rankings; rho={rho:.3f}"
+
+
 def test_graft_survival_cpt_shape():
     cpt = build_graft_survival_cpt()
     assert cpt.shape == (3, 6, 22)
