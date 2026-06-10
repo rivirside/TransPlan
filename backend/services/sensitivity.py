@@ -22,6 +22,7 @@ from models.schemas import ParameterImpact, PatientProfile, SensitivityResult
 from services.competing_risks import get_annual_delisting_rate, get_annual_mortality_rate
 from services.copula import draw_correlated_competing_risks
 from services.distributions import get_wait_time_distribution
+from services.stats_utils import rate_to_exponential_scale
 
 logger = logging.getLogger(__name__)
 
@@ -52,10 +53,10 @@ def _p24_single_city(
         urgency=patient.urgency,
         meld=patient.meld,
     )
-    mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
+    mort_scale = rate_to_exponential_scale(annual_mort, "mortality", center_code or city)
 
     annual_delist = get_annual_delisting_rate(organ=patient.organ, city=city, center_code=center_code)
-    delist_scale = 12.0 / annual_delist if annual_delist > 0 else 1e6
+    delist_scale = rate_to_exponential_scale(annual_delist, "delisting", center_code or city)
 
     if patient.use_copula:
         mortality_times, delisting_times = draw_correlated_competing_risks(

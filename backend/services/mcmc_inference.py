@@ -38,6 +38,7 @@ from services.mcmc_survival import (
     trace_exists,
 )
 from services.monte_carlo import CITIES, _get_centers, _get_cities, _get_cod_multiplier
+from services.stats_utils import rate_to_exponential_scale
 
 # Lazy import to avoid circular dependency
 _outcomes_builder = None
@@ -447,8 +448,8 @@ def simulate_mcmc(
                 national_delist * city_delist_factor * center_delist_adj
             )
 
-            mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
-            delist_scale = 12.0 / annual_delist if annual_delist > 0 else 1e6
+            mort_scale = rate_to_exponential_scale(annual_mort, "mortality", code or city)
+            delist_scale = rate_to_exponential_scale(annual_delist, "delisting", code or city)
 
             # Draw competing risk times.
             # The MCMC model learns mort<->delist correlation via shared

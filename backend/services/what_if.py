@@ -20,6 +20,7 @@ from services.copula import draw_correlated_competing_risks
 from services.distributions import get_wait_time_distribution, get_lognorm_params
 from config import COPULA_THETA, ORGAN_COPULA_THETA, SUPPLY_WAIT_ELASTICITY
 from services.monte_carlo import CITIES, _get_cities, _get_cod_multiplier
+from services.stats_utils import rate_to_exponential_scale
 
 logger = logging.getLogger(__name__)
 
@@ -101,10 +102,10 @@ def _run_single(
     annual_mort = get_annual_mortality_rate(
         organ=patient.organ, city=city, urgency=patient.urgency, meld=patient.meld,
     )
-    mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
+    mort_scale = rate_to_exponential_scale(annual_mort, "mortality", city)
 
     annual_delist = get_annual_delisting_rate(organ=patient.organ, city=city)
-    delist_scale = 12.0 / annual_delist if annual_delist > 0 else 1e6
+    delist_scale = rate_to_exponential_scale(annual_delist, "delisting", city)
 
     if patient.use_copula:
         mortality_times, delisting_times = draw_correlated_competing_risks(

@@ -27,6 +27,7 @@ from services.copula import draw_correlated_competing_risks
 from services.data_loader import get_data
 from services.distributions import get_wait_time_distribution
 from services.outcomes import build_outcomes_dict
+from services.stats_utils import rate_to_exponential_scale
 from services.trends import get_city_trends
 
 logger = logging.getLogger(__name__)
@@ -368,8 +369,8 @@ def simulate(
                 annual_mort = annual_mort * tp["mortality_factor"]
                 annual_delist = annual_delist * tp["delisting_factor"]
 
-        mort_scale = 12.0 / annual_mort if annual_mort > 0 else 1e6
-        delist_scale = 12.0 / annual_delist if annual_delist > 0 else 1e6
+        mort_scale = rate_to_exponential_scale(annual_mort, "mortality", code or display_city)
+        delist_scale = rate_to_exponential_scale(annual_delist, "delisting", code or display_city)
 
         if patient.use_copula:
             mortality_times, delisting_times = draw_correlated_competing_risks(
