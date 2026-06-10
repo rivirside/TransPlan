@@ -1,0 +1,4231 @@
+{
+  "_meta": {
+    "source": "SRTR PSR Table B7, release 2511 (srtr.hrsa.gov)",
+    "fields": "12-month observed rates (%): transplant_rate=SAL_TOTTX_C12, waitlist_death_rate=SAL_WLDIED_C12, delisting_rate=sum(REMDET,REMREC,REFTX)",
+    "fetchedAt": "2026-06-10T04:56:00Z"
+  },
+  "kidney": {
+    "centers": {
+      "ALCH": {
+        "transplant_rate": 68.1818,
+        "waitlist_death_rate": 4.5455,
+        "delisting_rate": 0.0,
+        "n": 22
+      },
+      "ALUA": {
+        "transplant_rate": 34.3313,
+        "waitlist_death_rate": 1.7964,
+        "delisting_rate": 3.5928,
+        "n": 501
+      },
+      "ALVA": {
+        "transplant_rate": 21.7391,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 4.3478,
+        "n": 23
+      },
+      "ARCH": {
+        "transplant_rate": 40.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 5
+      },
+      "ARUA": {
+        "transplant_rate": 74.0,
+        "waitlist_death_rate": 1.0,
+        "delisting_rate": 3.5,
+        "n": 200
+      },
+      "AZCH": {
+        "transplant_rate": 45.4545,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 11
+      },
+      "AZGS": {
+        "transplant_rate": 33.0144,
+        "waitlist_death_rate": 0.4785,
+        "delisting_rate": 2.8708,
+        "n": 209
+      },
+      "AZMC": {
+        "transplant_rate": 62.6062,
+        "waitlist_death_rate": 0.8499,
+        "delisting_rate": 0.1416,
+        "n": 706
+      },
+      "AZSJ": {
+        "transplant_rate": 43.0233,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 2.3256,
+        "n": 86
+      },
+      "AZUA": {
+        "transplant_rate": 38.0,
+        "waitlist_death_rate": 0.6667,
+        "delisting_rate": 6.0,
+        "n": 150
+      },
+      "CACH": {
+        "transplant_rate": 40.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 15
+      },
+      "CACL": {
+        "transplant_rate": 51.7241,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 29
+      },
+      "CACS": {
+        "transplant_rate": 31.8702,
+        "waitlist_death_rate": 2.2901,
+        "delisting_rate": 1.145,
+        "n": 524
+      },
+      "CAGH": {
+        "transplant_rate": 13.9241,
+        "waitlist_death_rate": 1.2658,
+        "delisting_rate": 0.6329,
+        "n": 158
+      },
+      "CAIM": {
+        "transplant_rate": 33.0645,
+        "waitlist_death_rate": 2.8226,
+        "delisting_rate": 0.4032,
+        "n": 248
+      },
+      "CALA": {
+        "transplant_rate": 9.5238,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 63
+      },
+      "CALL": {
+        "transplant_rate": 16.5425,
+        "waitlist_death_rate": 2.3845,
+        "delisting_rate": 1.6393,
+        "n": 671
+      },
+      "CAMB": {
+        "transplant_rate": 33.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 15
+      },
+      "CAPC": {
+        "transplant_rate": 31.8182,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 44
+      },
+      "CAPM": {
+        "transplant_rate": 18.3417,
+        "waitlist_death_rate": 3.5176,
+        "delisting_rate": 1.2563,
+        "n": 398
+      },
+      "CARC": {
+        "transplant_rate": 5.8824,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 34
+      },
+      "CASD": {
+        "transplant_rate": 40.6542,
+        "waitlist_death_rate": 0.9346,
+        "delisting_rate": 0.9346,
+        "n": 214
+      },
+      "CASF": {
+        "transplant_rate": 14.71,
+        "waitlist_death_rate": 2.2631,
+        "delisting_rate": 0.4243,
+        "n": 707
+      },
+      "CASH": {
+        "transplant_rate": 21.0843,
+        "waitlist_death_rate": 1.2048,
+        "delisting_rate": 0.0,
+        "n": 166
+      },
+      "CASJ": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 1.0,
+        "delisting_rate": 2.0,
+        "n": 100
+      },
+      "CASM": {
+        "transplant_rate": 21.9118,
+        "waitlist_death_rate": 1.3235,
+        "delisting_rate": 0.4412,
+        "n": 680
+      },
+      "CASU": {
+        "transplant_rate": 9.9217,
+        "waitlist_death_rate": 2.3499,
+        "delisting_rate": 0.0,
+        "n": 383
+      },
+      "CAUC": {
+        "transplant_rate": 28.8496,
+        "waitlist_death_rate": 2.1239,
+        "delisting_rate": 2.1239,
+        "n": 565
+      },
+      "CAUH": {
+        "transplant_rate": 20.5357,
+        "waitlist_death_rate": 4.6429,
+        "delisting_rate": 2.3214,
+        "n": 560
+      },
+      "COCH": {
+        "transplant_rate": 60.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 25
+      },
+      "COPM": {
+        "transplant_rate": 37.0732,
+        "waitlist_death_rate": 2.439,
+        "delisting_rate": 2.9268,
+        "n": 205
+      },
+      "COSL": {
+        "transplant_rate": 30.2326,
+        "waitlist_death_rate": 1.1628,
+        "delisting_rate": 2.3256,
+        "n": 86
+      },
+      "COUC": {
+        "transplant_rate": 45.9384,
+        "waitlist_death_rate": 1.1204,
+        "delisting_rate": 1.4006,
+        "n": 357
+      },
+      "CTHH": {
+        "transplant_rate": 48.1481,
+        "waitlist_death_rate": 2.4691,
+        "delisting_rate": 1.8519,
+        "n": 162
+      },
+      "CTYN": {
+        "transplant_rate": 28.7356,
+        "waitlist_death_rate": 2.682,
+        "delisting_rate": 0.0,
+        "n": 261
+      },
+      "DCCH": {
+        "transplant_rate": 52.381,
+        "waitlist_death_rate": 4.7619,
+        "delisting_rate": 0.0,
+        "n": 21
+      },
+      "DCGU": {
+        "transplant_rate": 43.2,
+        "waitlist_death_rate": 2.4,
+        "delisting_rate": 1.0667,
+        "n": 375
+      },
+      "DCGW": {
+        "transplant_rate": 44.8276,
+        "waitlist_death_rate": 3.4483,
+        "delisting_rate": 2.2989,
+        "n": 87
+      },
+      "DCWR": {
+        "transplant_rate": 58.4906,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 53
+      },
+      "DEAI": {
+        "transplant_rate": 58.3333,
+        "waitlist_death_rate": 16.6667,
+        "delisting_rate": 0.0,
+        "n": 12
+      },
+      "DECC": {
+        "transplant_rate": 36.5385,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 52
+      },
+      "FLCC": {
+        "transplant_rate": 30.2405,
+        "waitlist_death_rate": 2.0619,
+        "delisting_rate": 2.0619,
+        "n": 291
+      },
+      "FLFH": {
+        "transplant_rate": 30.0654,
+        "waitlist_death_rate": 1.3072,
+        "delisting_rate": 0.9804,
+        "n": 306
+      },
+      "FLHM": {
+        "transplant_rate": 20.0,
+        "waitlist_death_rate": 2.2222,
+        "delisting_rate": 11.1111,
+        "n": 45
+      },
+      "FLJM": {
+        "transplant_rate": 49.5292,
+        "waitlist_death_rate": 1.5066,
+        "delisting_rate": 4.5198,
+        "n": 531
+      },
+      "FLLM": {
+        "transplant_rate": 25.7235,
+        "waitlist_death_rate": 2.5723,
+        "delisting_rate": 6.4309,
+        "n": 311
+      },
+      "FLMR": {
+        "transplant_rate": 51.4493,
+        "waitlist_death_rate": 2.1739,
+        "delisting_rate": 1.4493,
+        "n": 276
+      },
+      "FLSH": {
+        "transplant_rate": 12.3457,
+        "waitlist_death_rate": 1.2346,
+        "delisting_rate": 0.0,
+        "n": 81
+      },
+      "FLSL": {
+        "transplant_rate": 37.8819,
+        "waitlist_death_rate": 1.4257,
+        "delisting_rate": 2.8513,
+        "n": 491
+      },
+      "FLTG": {
+        "transplant_rate": 54.0299,
+        "waitlist_death_rate": 1.4925,
+        "delisting_rate": 1.0448,
+        "n": 670
+      },
+      "FLUF": {
+        "transplant_rate": 56.1688,
+        "waitlist_death_rate": 0.3247,
+        "delisting_rate": 3.2468,
+        "n": 308
+      },
+      "GAEH": {
+        "transplant_rate": 38.2353,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 34
+      },
+      "GAEM": {
+        "transplant_rate": 25.3968,
+        "waitlist_death_rate": 2.1164,
+        "delisting_rate": 2.2928,
+        "n": 567
+      },
+      "GAMC": {
+        "transplant_rate": 31.7972,
+        "waitlist_death_rate": 2.765,
+        "delisting_rate": 1.8433,
+        "n": 217
+      },
+      "GAPH": {
+        "transplant_rate": 53.6993,
+        "waitlist_death_rate": 0.9547,
+        "delisting_rate": 1.6706,
+        "n": 419
+      },
+      "HIQM": {
+        "transplant_rate": 24.7191,
+        "waitlist_death_rate": 2.2472,
+        "delisting_rate": 5.618,
+        "n": 89
+      },
+      "IAIM": {
+        "transplant_rate": 49.6552,
+        "waitlist_death_rate": 2.069,
+        "delisting_rate": 0.6897,
+        "n": 145
+      },
+      "IAIV": {
+        "transplant_rate": 39.3939,
+        "waitlist_death_rate": 1.8182,
+        "delisting_rate": 4.2424,
+        "n": 165
+      },
+      "IAVA": {
+        "transplant_rate": 18.9189,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 8.1081,
+        "n": 37
+      },
+      "ILCH": {
+        "transplant_rate": 14.5161,
+        "waitlist_death_rate": 4.8387,
+        "delisting_rate": 0.0,
+        "n": 62
+      },
+      "ILCM": {
+        "transplant_rate": 52.381,
+        "waitlist_death_rate": 2.381,
+        "delisting_rate": 0.0,
+        "n": 42
+      },
+      "ILLU": {
+        "transplant_rate": 55.2707,
+        "waitlist_death_rate": 1.9943,
+        "delisting_rate": 2.5641,
+        "n": 351
+      },
+      "ILMM": {
+        "transplant_rate": 31.0345,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 3.4483,
+        "n": 58
+      },
+      "ILNM": {
+        "transplant_rate": 46.4627,
+        "waitlist_death_rate": 1.1472,
+        "delisting_rate": 2.1033,
+        "n": 523
+      },
+      "ILPL": {
+        "transplant_rate": 45.6853,
+        "waitlist_death_rate": 1.5228,
+        "delisting_rate": 1.5228,
+        "n": 197
+      },
+      "ILSF": {
+        "transplant_rate": 16.129,
+        "waitlist_death_rate": 1.0753,
+        "delisting_rate": 1.0753,
+        "n": 93
+      },
+      "ILUC": {
+        "transplant_rate": 50.2183,
+        "waitlist_death_rate": 3.9301,
+        "delisting_rate": 1.31,
+        "n": 229
+      },
+      "ILUI": {
+        "transplant_rate": 46.8599,
+        "waitlist_death_rate": 2.657,
+        "delisting_rate": 1.4493,
+        "n": 414
+      },
+      "ILVA": {
+        "transplant_rate": 46.0606,
+        "waitlist_death_rate": 1.8182,
+        "delisting_rate": 1.8182,
+        "n": 165
+      },
+      "INIM": {
+        "transplant_rate": 37.4663,
+        "waitlist_death_rate": 1.3477,
+        "delisting_rate": 3.7736,
+        "n": 371
+      },
+      "INSV": {
+        "transplant_rate": 27.7228,
+        "waitlist_death_rate": 0.9901,
+        "delisting_rate": 2.9703,
+        "n": 202
+      },
+      "KSUK": {
+        "transplant_rate": 45.5319,
+        "waitlist_death_rate": 0.8511,
+        "delisting_rate": 2.1277,
+        "n": 235
+      },
+      "KYJH": {
+        "transplant_rate": 31.3043,
+        "waitlist_death_rate": 0.8696,
+        "delisting_rate": 4.3478,
+        "n": 115
+      },
+      "KYKC": {
+        "transplant_rate": 33.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "KYUK": {
+        "transplant_rate": 30.0,
+        "waitlist_death_rate": 4.2424,
+        "delisting_rate": 1.8182,
+        "n": 330
+      },
+      "LACH": {
+        "transplant_rate": 72.2222,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 18
+      },
+      "LAOF": {
+        "transplant_rate": 27.3869,
+        "waitlist_death_rate": 3.2663,
+        "delisting_rate": 2.0101,
+        "n": 398
+      },
+      "LATU": {
+        "transplant_rate": 24.6154,
+        "waitlist_death_rate": 1.5385,
+        "delisting_rate": 3.8462,
+        "n": 260
+      },
+      "LAWK": {
+        "transplant_rate": 23.0769,
+        "waitlist_death_rate": 0.7692,
+        "delisting_rate": 0.0,
+        "n": 130
+      },
+      "MABI": {
+        "transplant_rate": 19.6262,
+        "waitlist_death_rate": 1.8692,
+        "delisting_rate": 2.8037,
+        "n": 107
+      },
+      "MABS": {
+        "transplant_rate": 47.5,
+        "waitlist_death_rate": 1.25,
+        "delisting_rate": 6.25,
+        "n": 80
+      },
+      "MABU": {
+        "transplant_rate": 7.2727,
+        "waitlist_death_rate": 1.8182,
+        "delisting_rate": 0.0,
+        "n": 55
+      },
+      "MACH": {
+        "transplant_rate": 60.0,
+        "waitlist_death_rate": 4.0,
+        "delisting_rate": 0.0,
+        "n": 25
+      },
+      "MALC": {
+        "transplant_rate": 19.3548,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 124
+      },
+      "MAMG": {
+        "transplant_rate": 15.9806,
+        "waitlist_death_rate": 2.9056,
+        "delisting_rate": 0.9685,
+        "n": 413
+      },
+      "MANM": {
+        "transplant_rate": 28.5714,
+        "waitlist_death_rate": 1.5873,
+        "delisting_rate": 3.1746,
+        "n": 63
+      },
+      "MAPB": {
+        "transplant_rate": 10.1124,
+        "waitlist_death_rate": 5.618,
+        "delisting_rate": 3.3708,
+        "n": 178
+      },
+      "MAUM": {
+        "transplant_rate": 12.8205,
+        "waitlist_death_rate": 3.4188,
+        "delisting_rate": 2.5641,
+        "n": 117
+      },
+      "MDJH": {
+        "transplant_rate": 34.5771,
+        "waitlist_death_rate": 0.995,
+        "delisting_rate": 1.4925,
+        "n": 402
+      },
+      "MDUM": {
+        "transplant_rate": 34.4538,
+        "waitlist_death_rate": 4.2017,
+        "delisting_rate": 0.0,
+        "n": 238
+      },
+      "MEMC": {
+        "transplant_rate": 10.2273,
+        "waitlist_death_rate": 2.2727,
+        "delisting_rate": 2.2727,
+        "n": 88
+      },
+      "MIBH": {
+        "transplant_rate": 34.9693,
+        "waitlist_death_rate": 0.6135,
+        "delisting_rate": 2.454,
+        "n": 163
+      },
+      "MICH": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 7
+      },
+      "MIDV": {
+        "transplant_rate": 75.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 8
+      },
+      "MIHF": {
+        "transplant_rate": 28.2051,
+        "waitlist_death_rate": 0.3663,
+        "delisting_rate": 0.7326,
+        "n": 273
+      },
+      "MISJ": {
+        "transplant_rate": 11.1111,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 4.1667,
+        "n": 72
+      },
+      "MISM": {
+        "transplant_rate": 32.6923,
+        "waitlist_death_rate": 1.9231,
+        "delisting_rate": 1.9231,
+        "n": 156
+      },
+      "MIUM": {
+        "transplant_rate": 39.3407,
+        "waitlist_death_rate": 3.5165,
+        "delisting_rate": 2.6374,
+        "n": 455
+      },
+      "MNAN": {
+        "transplant_rate": 24.4444,
+        "waitlist_death_rate": 2.2222,
+        "delisting_rate": 0.0,
+        "n": 45
+      },
+      "MNHC": {
+        "transplant_rate": 35.2941,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 68
+      },
+      "MNMC": {
+        "transplant_rate": 48.2192,
+        "waitlist_death_rate": 1.9178,
+        "delisting_rate": 1.6438,
+        "n": 365
+      },
+      "MNUM": {
+        "transplant_rate": 39.8119,
+        "waitlist_death_rate": 1.2539,
+        "delisting_rate": 1.5674,
+        "n": 319
+      },
+      "MOBH": {
+        "transplant_rate": 41.9552,
+        "waitlist_death_rate": 1.833,
+        "delisting_rate": 1.833,
+        "n": 491
+      },
+      "MOCG": {
+        "transplant_rate": 53.8462,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 13
+      },
+      "MOCH": {
+        "transplant_rate": 93.75,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 16
+      },
+      "MOCM": {
+        "transplant_rate": 26.087,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 4.3478,
+        "n": 23
+      },
+      "MOLH": {
+        "transplant_rate": 35.8621,
+        "waitlist_death_rate": 1.3793,
+        "delisting_rate": 4.1379,
+        "n": 145
+      },
+      "MORH": {
+        "transplant_rate": 36.0248,
+        "waitlist_death_rate": 0.6211,
+        "delisting_rate": 6.2112,
+        "n": 161
+      },
+      "MOSL": {
+        "transplant_rate": 20.8955,
+        "waitlist_death_rate": 2.9851,
+        "delisting_rate": 2.2388,
+        "n": 134
+      },
+      "MOUM": {
+        "transplant_rate": 18.75,
+        "waitlist_death_rate": 3.125,
+        "delisting_rate": 0.0,
+        "n": 32
+      },
+      "MSUM": {
+        "transplant_rate": 42.9787,
+        "waitlist_death_rate": 2.9787,
+        "delisting_rate": 0.8511,
+        "n": 235
+      },
+      "NCBG": {
+        "transplant_rate": 50.3226,
+        "waitlist_death_rate": 1.6129,
+        "delisting_rate": 0.3226,
+        "n": 310
+      },
+      "NCCM": {
+        "transplant_rate": 23.8554,
+        "waitlist_death_rate": 2.4096,
+        "delisting_rate": 2.1687,
+        "n": 415
+      },
+      "NCDU": {
+        "transplant_rate": 34.3458,
+        "waitlist_death_rate": 3.7383,
+        "delisting_rate": 1.4019,
+        "n": 428
+      },
+      "NCEC": {
+        "transplant_rate": 28.8372,
+        "waitlist_death_rate": 2.3256,
+        "delisting_rate": 1.3953,
+        "n": 215
+      },
+      "NCMH": {
+        "transplant_rate": 22.6837,
+        "waitlist_death_rate": 2.2364,
+        "delisting_rate": 0.639,
+        "n": 313
+      },
+      "NDMC": {
+        "transplant_rate": 43.4783,
+        "waitlist_death_rate": 4.3478,
+        "delisting_rate": 4.3478,
+        "n": 23
+      },
+      "NDSL": {
+        "transplant_rate": 61.7021,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 47
+      },
+      "NEUN": {
+        "transplant_rate": 56.2724,
+        "waitlist_death_rate": 1.0753,
+        "delisting_rate": 1.0753,
+        "n": 279
+      },
+      "NHDH": {
+        "transplant_rate": 11.4943,
+        "waitlist_death_rate": 1.1494,
+        "delisting_rate": 1.1494,
+        "n": 87
+      },
+      "NJBI": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "NJHK": {
+        "transplant_rate": 68.7646,
+        "waitlist_death_rate": 0.6993,
+        "delisting_rate": 1.1655,
+        "n": 429
+      },
+      "NJLL": {
+        "transplant_rate": 30.7087,
+        "waitlist_death_rate": 4.7244,
+        "delisting_rate": 2.3622,
+        "n": 127
+      },
+      "NJRW": {
+        "transplant_rate": 24.7619,
+        "waitlist_death_rate": 1.4286,
+        "delisting_rate": 2.381,
+        "n": 210
+      },
+      "NJSB": {
+        "transplant_rate": 35.1129,
+        "waitlist_death_rate": 1.6427,
+        "delisting_rate": 0.616,
+        "n": 487
+      },
+      "NMAQ": {
+        "transplant_rate": 45.0704,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 2.8169,
+        "n": 71
+      },
+      "NMPH": {
+        "transplant_rate": 30.7692,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 78
+      },
+      "NVUM": {
+        "transplant_rate": 53.9568,
+        "waitlist_death_rate": 1.7986,
+        "delisting_rate": 2.518,
+        "n": 278
+      },
+      "NYAM": {
+        "transplant_rate": 20.339,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 1.6949,
+        "n": 59
+      },
+      "NYCC": {
+        "transplant_rate": 43.75,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 16
+      },
+      "NYCP": {
+        "transplant_rate": 43.3566,
+        "waitlist_death_rate": 1.7483,
+        "delisting_rate": 0.6993,
+        "n": 286
+      },
+      "NYDS": {
+        "transplant_rate": 29.4964,
+        "waitlist_death_rate": 2.1583,
+        "delisting_rate": 0.7194,
+        "n": 139
+      },
+      "NYEC": {
+        "transplant_rate": 55.8511,
+        "waitlist_death_rate": 1.5957,
+        "delisting_rate": 2.1277,
+        "n": 188
+      },
+      "NYFL": {
+        "transplant_rate": 22.2892,
+        "waitlist_death_rate": 1.8072,
+        "delisting_rate": 0.6024,
+        "n": 166
+      },
+      "NYMA": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 2.5253,
+        "delisting_rate": 1.0101,
+        "n": 198
+      },
+      "NYMS": {
+        "transplant_rate": 19.7411,
+        "waitlist_death_rate": 3.0744,
+        "delisting_rate": 1.4563,
+        "n": 618
+      },
+      "NYNS": {
+        "transplant_rate": 38.6986,
+        "waitlist_death_rate": 1.3699,
+        "delisting_rate": 1.7123,
+        "n": 292
+      },
+      "NYNY": {
+        "transplant_rate": 47.3389,
+        "waitlist_death_rate": 2.2409,
+        "delisting_rate": 0.0,
+        "n": 357
+      },
+      "NYSB": {
+        "transplant_rate": 31.6667,
+        "waitlist_death_rate": 2.5,
+        "delisting_rate": 0.8333,
+        "n": 120
+      },
+      "NYUC": {
+        "transplant_rate": 59.9542,
+        "waitlist_death_rate": 0.6865,
+        "delisting_rate": 2.0595,
+        "n": 437
+      },
+      "NYUM": {
+        "transplant_rate": 23.3918,
+        "waitlist_death_rate": 1.1696,
+        "delisting_rate": 3.5088,
+        "n": 171
+      },
+      "NYVA": {
+        "transplant_rate": 21.4286,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 14
+      },
+      "NYWC": {
+        "transplant_rate": 34.058,
+        "waitlist_death_rate": 3.6232,
+        "delisting_rate": 2.8986,
+        "n": 138
+      },
+      "OHCC": {
+        "transplant_rate": 65.679,
+        "waitlist_death_rate": 2.716,
+        "delisting_rate": 1.4815,
+        "n": 405
+      },
+      "OHCH": {
+        "transplant_rate": 47.3684,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 19
+      },
+      "OHCM": {
+        "transplant_rate": 89.2857,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 28
+      },
+      "OHCO": {
+        "transplant_rate": 93.4884,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 215
+      },
+      "OHOU": {
+        "transplant_rate": 39.6181,
+        "waitlist_death_rate": 2.148,
+        "delisting_rate": 3.8186,
+        "n": 419
+      },
+      "OHTC": {
+        "transplant_rate": 55.4217,
+        "waitlist_death_rate": 2.4096,
+        "delisting_rate": 3.6145,
+        "n": 83
+      },
+      "OHUC": {
+        "transplant_rate": 63.9098,
+        "waitlist_death_rate": 1.1278,
+        "delisting_rate": 1.1278,
+        "n": 266
+      },
+      "OHUH": {
+        "transplant_rate": 65.3543,
+        "waitlist_death_rate": 0.7874,
+        "delisting_rate": 3.1496,
+        "n": 127
+      },
+      "OKBC": {
+        "transplant_rate": 35.0318,
+        "waitlist_death_rate": 3.1847,
+        "delisting_rate": 2.5478,
+        "n": 157
+      },
+      "OKMD": {
+        "transplant_rate": 57.6923,
+        "waitlist_death_rate": 1.9231,
+        "delisting_rate": 0.0,
+        "n": 52
+      },
+      "OKSJ": {
+        "transplant_rate": 30.1724,
+        "waitlist_death_rate": 1.7241,
+        "delisting_rate": 5.1724,
+        "n": 116
+      },
+      "ORGS": {
+        "transplant_rate": 50.495,
+        "waitlist_death_rate": 0.9901,
+        "delisting_rate": 0.0,
+        "n": 101
+      },
+      "ORUO": {
+        "transplant_rate": 43.4146,
+        "waitlist_death_rate": 0.9756,
+        "delisting_rate": 1.9512,
+        "n": 205
+      },
+      "ORVA": {
+        "transplant_rate": 30.9735,
+        "waitlist_death_rate": 0.885,
+        "delisting_rate": 4.4248,
+        "n": 113
+      },
+      "PAAE": {
+        "transplant_rate": 15.3846,
+        "waitlist_death_rate": 5.7692,
+        "delisting_rate": 3.8462,
+        "n": 208
+      },
+      "PAAG": {
+        "transplant_rate": 42.9577,
+        "waitlist_death_rate": 2.8169,
+        "delisting_rate": 1.4085,
+        "n": 142
+      },
+      "PACH": {
+        "transplant_rate": 91.6667,
+        "waitlist_death_rate": 8.3333,
+        "delisting_rate": 0.0,
+        "n": 12
+      },
+      "PACP": {
+        "transplant_rate": 38.2353,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 34
+      },
+      "PAGM": {
+        "transplant_rate": 23.9316,
+        "waitlist_death_rate": 4.2735,
+        "delisting_rate": 3.4188,
+        "n": 117
+      },
+      "PAHE": {
+        "transplant_rate": 6.4516,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 16.129,
+        "n": 31
+      },
+      "PAHH": {
+        "transplant_rate": 20.2186,
+        "waitlist_death_rate": 2.1858,
+        "delisting_rate": 3.2787,
+        "n": 183
+      },
+      "PALH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 21
+      },
+      "PALV": {
+        "transplant_rate": 50.6977,
+        "waitlist_death_rate": 1.8605,
+        "delisting_rate": 1.3953,
+        "n": 215
+      },
+      "PAPH": {
+        "transplant_rate": 28.9474,
+        "waitlist_death_rate": 2.6316,
+        "delisting_rate": 5.2632,
+        "n": 38
+      },
+      "PAPT": {
+        "transplant_rate": 35.1974,
+        "waitlist_death_rate": 1.9737,
+        "delisting_rate": 0.9868,
+        "n": 304
+      },
+      "PASC": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "PATJ": {
+        "transplant_rate": 19.9346,
+        "waitlist_death_rate": 1.9608,
+        "delisting_rate": 3.5948,
+        "n": 306
+      },
+      "PATU": {
+        "transplant_rate": 16.129,
+        "waitlist_death_rate": 4.6595,
+        "delisting_rate": 3.2258,
+        "n": 279
+      },
+      "PAUP": {
+        "transplant_rate": 17.6955,
+        "waitlist_death_rate": 1.6461,
+        "delisting_rate": 1.4403,
+        "n": 486
+      },
+      "PAVA": {
+        "transplant_rate": 15.5894,
+        "waitlist_death_rate": 2.2814,
+        "delisting_rate": 1.5209,
+        "n": 263
+      },
+      "PRSJ": {
+        "transplant_rate": 23.0337,
+        "waitlist_death_rate": 1.1236,
+        "delisting_rate": 4.4944,
+        "n": 178
+      },
+      "RIRH": {
+        "transplant_rate": 19.2308,
+        "waitlist_death_rate": 2.8846,
+        "delisting_rate": 0.9615,
+        "n": 104
+      },
+      "SCLA": {
+        "transplant_rate": 63.6364,
+        "waitlist_death_rate": 0.6993,
+        "delisting_rate": 2.7972,
+        "n": 143
+      },
+      "SCMU": {
+        "transplant_rate": 36.9676,
+        "waitlist_death_rate": 2.0443,
+        "delisting_rate": 0.8518,
+        "n": 587
+      },
+      "SCPG": {
+        "transplant_rate": 47.9452,
+        "waitlist_death_rate": 2.7397,
+        "delisting_rate": 0.4566,
+        "n": 219
+      },
+      "SDMK": {
+        "transplant_rate": 15.7895,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.8772,
+        "n": 114
+      },
+      "SDSV": {
+        "transplant_rate": 33.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 45
+      },
+      "TNEM": {
+        "transplant_rate": 26.4901,
+        "waitlist_death_rate": 0.6623,
+        "delisting_rate": 0.6623,
+        "n": 151
+      },
+      "TNLB": {
+        "transplant_rate": 85.7143,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 7
+      },
+      "TNMH": {
+        "transplant_rate": 38.1503,
+        "waitlist_death_rate": 2.8902,
+        "delisting_rate": 4.0462,
+        "n": 346
+      },
+      "TNST": {
+        "transplant_rate": 43.8735,
+        "waitlist_death_rate": 2.3715,
+        "delisting_rate": 5.9289,
+        "n": 253
+      },
+      "TNUK": {
+        "transplant_rate": 37.5,
+        "waitlist_death_rate": 1.6667,
+        "delisting_rate": 2.5,
+        "n": 120
+      },
+      "TNVU": {
+        "transplant_rate": 36.8696,
+        "waitlist_death_rate": 1.913,
+        "delisting_rate": 1.7391,
+        "n": 575
+      },
+      "TXAS": {
+        "transplant_rate": 28.7383,
+        "waitlist_death_rate": 1.8692,
+        "delisting_rate": 3.0374,
+        "n": 428
+      },
+      "TXBC": {
+        "transplant_rate": 37.5,
+        "waitlist_death_rate": 0.9146,
+        "delisting_rate": 2.1341,
+        "n": 328
+      },
+      "TXCF": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 9
+      },
+      "TXCM": {
+        "transplant_rate": 68.4211,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 19
+      },
+      "TXDC": {
+        "transplant_rate": 66.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 9
+      },
+      "TXDM": {
+        "transplant_rate": 33.7079,
+        "waitlist_death_rate": 1.1236,
+        "delisting_rate": 1.1236,
+        "n": 89
+      },
+      "TXDR": {
+        "transplant_rate": 29.4118,
+        "waitlist_death_rate": 1.4706,
+        "delisting_rate": 10.2941,
+        "n": 68
+      },
+      "TXDS": {
+        "transplant_rate": 35.9375,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 3.125,
+        "n": 64
+      },
+      "TXFW": {
+        "transplant_rate": 35.443,
+        "waitlist_death_rate": 3.7975,
+        "delisting_rate": 1.2658,
+        "n": 79
+      },
+      "TXHD": {
+        "transplant_rate": 52.1127,
+        "waitlist_death_rate": 1.8779,
+        "delisting_rate": 0.939,
+        "n": 213
+      },
+      "TXHH": {
+        "transplant_rate": 38.8889,
+        "waitlist_death_rate": 2.963,
+        "delisting_rate": 0.3704,
+        "n": 270
+      },
+      "TXHI": {
+        "transplant_rate": 23.1405,
+        "waitlist_death_rate": 3.3058,
+        "delisting_rate": 3.3058,
+        "n": 242
+      },
+      "TXHS": {
+        "transplant_rate": 30.7323,
+        "waitlist_death_rate": 1.4406,
+        "delisting_rate": 2.6411,
+        "n": 833
+      },
+      "TXJS": {
+        "transplant_rate": 41.0526,
+        "waitlist_death_rate": 1.5789,
+        "delisting_rate": 1.0526,
+        "n": 190
+      },
+      "TXLP": {
+        "transplant_rate": 40.8602,
+        "waitlist_death_rate": 1.0753,
+        "delisting_rate": 1.0753,
+        "n": 93
+      },
+      "TXMC": {
+        "transplant_rate": 32.381,
+        "waitlist_death_rate": 0.4762,
+        "delisting_rate": 1.4286,
+        "n": 210
+      },
+      "TXMH": {
+        "transplant_rate": 35.248,
+        "waitlist_death_rate": 2.8721,
+        "delisting_rate": 2.3499,
+        "n": 383
+      },
+      "TXPL": {
+        "transplant_rate": 67.5,
+        "waitlist_death_rate": 3.125,
+        "delisting_rate": 2.5,
+        "n": 160
+      },
+      "TXPM": {
+        "transplant_rate": 38.7755,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 6.1224,
+        "n": 49
+      },
+      "TXSP": {
+        "transplant_rate": 35.2518,
+        "waitlist_death_rate": 1.199,
+        "delisting_rate": 6.9544,
+        "n": 417
+      },
+      "TXSW": {
+        "transplant_rate": 30.6122,
+        "waitlist_death_rate": 2.0408,
+        "delisting_rate": 2.0408,
+        "n": 147
+      },
+      "TXTC": {
+        "transplant_rate": 60.8696,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 46
+      },
+      "TXTX": {
+        "transplant_rate": 34.0164,
+        "waitlist_death_rate": 2.0492,
+        "delisting_rate": 2.8689,
+        "n": 488
+      },
+      "TXUC": {
+        "transplant_rate": 65.5172,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 29
+      },
+      "TXVA": {
+        "transplant_rate": 24.4681,
+        "waitlist_death_rate": 1.0638,
+        "delisting_rate": 5.3191,
+        "n": 94
+      },
+      "UTLD": {
+        "transplant_rate": 55.0459,
+        "waitlist_death_rate": 0.4587,
+        "delisting_rate": 0.9174,
+        "n": 218
+      },
+      "UTMC": {
+        "transplant_rate": 42.1687,
+        "waitlist_death_rate": 3.6145,
+        "delisting_rate": 0.8032,
+        "n": 249
+      },
+      "UTPC": {
+        "transplant_rate": 66.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 9
+      },
+      "VACH": {
+        "transplant_rate": 60.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 5
+      },
+      "VAFH": {
+        "transplant_rate": 36.1775,
+        "waitlist_death_rate": 1.3652,
+        "delisting_rate": 1.7065,
+        "n": 293
+      },
+      "VAHD": {
+        "transplant_rate": 39.3939,
+        "waitlist_death_rate": 1.5152,
+        "delisting_rate": 1.5152,
+        "n": 66
+      },
+      "VAMC": {
+        "transplant_rate": 44.3532,
+        "waitlist_death_rate": 2.6694,
+        "delisting_rate": 2.2587,
+        "n": 487
+      },
+      "VANG": {
+        "transplant_rate": 25.0,
+        "waitlist_death_rate": 1.7045,
+        "delisting_rate": 2.2727,
+        "n": 176
+      },
+      "VAUV": {
+        "transplant_rate": 40.4145,
+        "waitlist_death_rate": 1.5544,
+        "delisting_rate": 1.0363,
+        "n": 386
+      },
+      "VTMC": {
+        "transplant_rate": 16.2162,
+        "waitlist_death_rate": 5.4054,
+        "delisting_rate": 0.0,
+        "n": 37
+      },
+      "WACH": {
+        "transplant_rate": 53.125,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 32
+      },
+      "WASH": {
+        "transplant_rate": 29.0323,
+        "waitlist_death_rate": 1.6129,
+        "delisting_rate": 1.6129,
+        "n": 62
+      },
+      "WASM": {
+        "transplant_rate": 35.3293,
+        "waitlist_death_rate": 1.1976,
+        "delisting_rate": 2.994,
+        "n": 167
+      },
+      "WAUW": {
+        "transplant_rate": 49.5652,
+        "waitlist_death_rate": 0.8696,
+        "delisting_rate": 3.0435,
+        "n": 230
+      },
+      "WAVM": {
+        "transplant_rate": 26.7241,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 3.4483,
+        "n": 116
+      },
+      "WICH": {
+        "transplant_rate": 63.6364,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 11
+      },
+      "WISE": {
+        "transplant_rate": 34.5455,
+        "waitlist_death_rate": 1.8182,
+        "delisting_rate": 2.2727,
+        "n": 220
+      },
+      "WISL": {
+        "transplant_rate": 32.9412,
+        "waitlist_death_rate": 3.5294,
+        "delisting_rate": 7.0588,
+        "n": 85
+      },
+      "WIUW": {
+        "transplant_rate": 52.8967,
+        "waitlist_death_rate": 1.7632,
+        "delisting_rate": 2.0151,
+        "n": 397
+      },
+      "WVCA": {
+        "transplant_rate": 72.7273,
+        "waitlist_death_rate": 1.6529,
+        "delisting_rate": 3.3058,
+        "n": 121
+      },
+      "WVWU": {
+        "transplant_rate": 25.7143,
+        "waitlist_death_rate": 2.8571,
+        "delisting_rate": 8.5714,
+        "n": 35
+      }
+    },
+    "national": {
+      "transplant_rate": 36.7261,
+      "waitlist_death_rate": 1.9407,
+      "delisting_rate": 1.9966
+    }
+  },
+  "liver": {
+    "centers": {
+      "ALCH": {
+        "transplant_rate": 57.1429,
+        "waitlist_death_rate": 7.1429,
+        "delisting_rate": 7.1429,
+        "n": 14
+      },
+      "ALUA": {
+        "transplant_rate": 60.3774,
+        "waitlist_death_rate": 5.6604,
+        "delisting_rate": 8.805,
+        "n": 159
+      },
+      "ARUA": {
+        "transplant_rate": 80.8219,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 4.1096,
+        "n": 73
+      },
+      "AZCH": {
+        "transplant_rate": 75.0,
+        "waitlist_death_rate": 8.3333,
+        "delisting_rate": 8.3333,
+        "n": 12
+      },
+      "AZGS": {
+        "transplant_rate": 85.3333,
+        "waitlist_death_rate": 1.3333,
+        "delisting_rate": 4.0,
+        "n": 75
+      },
+      "AZMC": {
+        "transplant_rate": 86.2974,
+        "waitlist_death_rate": 0.8746,
+        "delisting_rate": 4.9563,
+        "n": 343
+      },
+      "AZSJ": {
+        "transplant_rate": 57.6923,
+        "waitlist_death_rate": 3.8462,
+        "delisting_rate": 7.6923,
+        "n": 26
+      },
+      "AZUA": {
+        "transplant_rate": 42.8571,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 14.2857,
+        "n": 21
+      },
+      "CACH": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "CACL": {
+        "transplant_rate": 58.3333,
+        "waitlist_death_rate": 5.5556,
+        "delisting_rate": 19.4444,
+        "n": 36
+      },
+      "CACS": {
+        "transplant_rate": 80.0,
+        "waitlist_death_rate": 5.0,
+        "delisting_rate": 2.5,
+        "n": 120
+      },
+      "CAGH": {
+        "transplant_rate": 51.1111,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 6.6667,
+        "n": 45
+      },
+      "CALL": {
+        "transplant_rate": 70.0,
+        "waitlist_death_rate": 4.6154,
+        "delisting_rate": 2.3077,
+        "n": 130
+      },
+      "CAMB": {
+        "transplant_rate": 73.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 20.0,
+        "n": 15
+      },
+      "CAPC": {
+        "transplant_rate": 54.0,
+        "waitlist_death_rate": 2.0,
+        "delisting_rate": 20.0,
+        "n": 50
+      },
+      "CAPM": {
+        "transplant_rate": 56.1224,
+        "waitlist_death_rate": 5.102,
+        "delisting_rate": 7.1429,
+        "n": 98
+      },
+      "CARC": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 50.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "CASD": {
+        "transplant_rate": 83.4395,
+        "waitlist_death_rate": 2.5478,
+        "delisting_rate": 7.0064,
+        "n": 157
+      },
+      "CASF": {
+        "transplant_rate": 55.0943,
+        "waitlist_death_rate": 6.0377,
+        "delisting_rate": 5.283,
+        "n": 265
+      },
+      "CASM": {
+        "transplant_rate": 72.4138,
+        "waitlist_death_rate": 3.4483,
+        "delisting_rate": 10.3448,
+        "n": 29
+      },
+      "CASU": {
+        "transplant_rate": 67.284,
+        "waitlist_death_rate": 1.8519,
+        "delisting_rate": 8.0247,
+        "n": 162
+      },
+      "CAUC": {
+        "transplant_rate": 42.1751,
+        "waitlist_death_rate": 7.6923,
+        "delisting_rate": 10.0796,
+        "n": 377
+      },
+      "CAUH": {
+        "transplant_rate": 47.8088,
+        "waitlist_death_rate": 5.1793,
+        "delisting_rate": 11.5538,
+        "n": 251
+      },
+      "COCH": {
+        "transplant_rate": 95.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 20
+      },
+      "COPM": {
+        "transplant_rate": 42.8571,
+        "waitlist_death_rate": 14.2857,
+        "delisting_rate": 28.5714,
+        "n": 7
+      },
+      "COSL": {
+        "transplant_rate": 33.3333,
+        "waitlist_death_rate": 11.1111,
+        "delisting_rate": 19.0476,
+        "n": 63
+      },
+      "COUC": {
+        "transplant_rate": 73.4043,
+        "waitlist_death_rate": 3.1915,
+        "delisting_rate": 3.7234,
+        "n": 188
+      },
+      "CTHH": {
+        "transplant_rate": 45.1613,
+        "waitlist_death_rate": 3.2258,
+        "delisting_rate": 0.0,
+        "n": 62
+      },
+      "CTYN": {
+        "transplant_rate": 30.0,
+        "waitlist_death_rate": 13.3333,
+        "delisting_rate": 8.3333,
+        "n": 60
+      },
+      "DCGU": {
+        "transplant_rate": 64.7619,
+        "waitlist_death_rate": 4.2857,
+        "delisting_rate": 2.381,
+        "n": 210
+      },
+      "DCGW": {
+        "transplant_rate": 64.5161,
+        "waitlist_death_rate": 3.2258,
+        "delisting_rate": 6.4516,
+        "n": 31
+      },
+      "DEAI": {
+        "transplant_rate": 57.1429,
+        "waitlist_death_rate": 28.5714,
+        "delisting_rate": 0.0,
+        "n": 7
+      },
+      "FLCC": {
+        "transplant_rate": 58.8235,
+        "waitlist_death_rate": 4.7059,
+        "delisting_rate": 11.7647,
+        "n": 85
+      },
+      "FLFH": {
+        "transplant_rate": 77.9221,
+        "waitlist_death_rate": 6.4935,
+        "delisting_rate": 2.5974,
+        "n": 77
+      },
+      "FLJM": {
+        "transplant_rate": 68.9655,
+        "waitlist_death_rate": 5.4187,
+        "delisting_rate": 6.4039,
+        "n": 203
+      },
+      "FLLM": {
+        "transplant_rate": 78.125,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 9.375,
+        "n": 32
+      },
+      "FLSL": {
+        "transplant_rate": 79.0598,
+        "waitlist_death_rate": 1.2821,
+        "delisting_rate": 4.2735,
+        "n": 234
+      },
+      "FLTG": {
+        "transplant_rate": 79.1367,
+        "waitlist_death_rate": 3.9568,
+        "delisting_rate": 5.036,
+        "n": 278
+      },
+      "FLUF": {
+        "transplant_rate": 87.6238,
+        "waitlist_death_rate": 0.9901,
+        "delisting_rate": 4.4554,
+        "n": 202
+      },
+      "GAEH": {
+        "transplant_rate": 36.3636,
+        "waitlist_death_rate": 9.0909,
+        "delisting_rate": 0.0,
+        "n": 11
+      },
+      "GAEM": {
+        "transplant_rate": 77.9817,
+        "waitlist_death_rate": 5.5046,
+        "delisting_rate": 5.5046,
+        "n": 109
+      },
+      "GAPH": {
+        "transplant_rate": 62.5551,
+        "waitlist_death_rate": 6.1674,
+        "delisting_rate": 6.6079,
+        "n": 227
+      },
+      "HIQM": {
+        "transplant_rate": 66.6667,
+        "waitlist_death_rate": 14.8148,
+        "delisting_rate": 3.7037,
+        "n": 27
+      },
+      "IAIV": {
+        "transplant_rate": 30.303,
+        "waitlist_death_rate": 12.1212,
+        "delisting_rate": 27.2727,
+        "n": 33
+      },
+      "ILCM": {
+        "transplant_rate": 75.0,
+        "waitlist_death_rate": 12.5,
+        "delisting_rate": 6.25,
+        "n": 16
+      },
+      "ILLU": {
+        "transplant_rate": 77.0115,
+        "waitlist_death_rate": 3.4483,
+        "delisting_rate": 8.046,
+        "n": 87
+      },
+      "ILNM": {
+        "transplant_rate": 78.7879,
+        "waitlist_death_rate": 1.2121,
+        "delisting_rate": 5.4545,
+        "n": 165
+      },
+      "ILPL": {
+        "transplant_rate": 69.5652,
+        "waitlist_death_rate": 1.087,
+        "delisting_rate": 11.9565,
+        "n": 92
+      },
+      "ILUC": {
+        "transplant_rate": 67.9104,
+        "waitlist_death_rate": 5.9701,
+        "delisting_rate": 8.9552,
+        "n": 134
+      },
+      "ILUI": {
+        "transplant_rate": 75.8065,
+        "waitlist_death_rate": 1.6129,
+        "delisting_rate": 3.2258,
+        "n": 62
+      },
+      "INIM": {
+        "transplant_rate": 79.4393,
+        "waitlist_death_rate": 3.271,
+        "delisting_rate": 5.1402,
+        "n": 214
+      },
+      "KSUK": {
+        "transplant_rate": 48.0769,
+        "waitlist_death_rate": 4.8077,
+        "delisting_rate": 2.8846,
+        "n": 104
+      },
+      "KYJH": {
+        "transplant_rate": 82.1429,
+        "waitlist_death_rate": 3.5714,
+        "delisting_rate": 0.0,
+        "n": 28
+      },
+      "KYUK": {
+        "transplant_rate": 51.4851,
+        "waitlist_death_rate": 14.8515,
+        "delisting_rate": 3.9604,
+        "n": 101
+      },
+      "LACH": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "LAOF": {
+        "transplant_rate": 67.5824,
+        "waitlist_death_rate": 5.4945,
+        "delisting_rate": 7.6923,
+        "n": 182
+      },
+      "LATU": {
+        "transplant_rate": 75.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 6.25,
+        "n": 16
+      },
+      "LAWK": {
+        "transplant_rate": 45.4545,
+        "waitlist_death_rate": 4.5455,
+        "delisting_rate": 4.5455,
+        "n": 22
+      },
+      "MABI": {
+        "transplant_rate": 87.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 4.0,
+        "n": 100
+      },
+      "MACH": {
+        "transplant_rate": 73.913,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 23
+      },
+      "MALC": {
+        "transplant_rate": 71.1268,
+        "waitlist_death_rate": 2.8169,
+        "delisting_rate": 6.338,
+        "n": 142
+      },
+      "MAMG": {
+        "transplant_rate": 53.8462,
+        "waitlist_death_rate": 5.1282,
+        "delisting_rate": 5.9829,
+        "n": 117
+      },
+      "MANM": {
+        "transplant_rate": 41.6667,
+        "waitlist_death_rate": 4.1667,
+        "delisting_rate": 29.1667,
+        "n": 24
+      },
+      "MAUM": {
+        "transplant_rate": 54.4304,
+        "waitlist_death_rate": 15.1899,
+        "delisting_rate": 5.0633,
+        "n": 79
+      },
+      "MDJH": {
+        "transplant_rate": 56.0,
+        "waitlist_death_rate": 8.0,
+        "delisting_rate": 5.1429,
+        "n": 175
+      },
+      "MDUM": {
+        "transplant_rate": 51.2195,
+        "waitlist_death_rate": 4.878,
+        "delisting_rate": 6.5041,
+        "n": 123
+      },
+      "MIBH": {
+        "transplant_rate": 63.7931,
+        "waitlist_death_rate": 1.7241,
+        "delisting_rate": 10.3448,
+        "n": 58
+      },
+      "MICH": {
+        "transplant_rate": 75.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "MIHF": {
+        "transplant_rate": 70.7317,
+        "waitlist_death_rate": 3.0488,
+        "delisting_rate": 3.0488,
+        "n": 164
+      },
+      "MIUM": {
+        "transplant_rate": 83.871,
+        "waitlist_death_rate": 3.2258,
+        "delisting_rate": 5.6452,
+        "n": 124
+      },
+      "MNMC": {
+        "transplant_rate": 74.1463,
+        "waitlist_death_rate": 3.9024,
+        "delisting_rate": 4.878,
+        "n": 205
+      },
+      "MNUM": {
+        "transplant_rate": 80.0,
+        "waitlist_death_rate": 6.0,
+        "delisting_rate": 5.3333,
+        "n": 150
+      },
+      "MOBH": {
+        "transplant_rate": 78.5311,
+        "waitlist_death_rate": 1.6949,
+        "delisting_rate": 7.3446,
+        "n": 177
+      },
+      "MOCG": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "MOCH": {
+        "transplant_rate": 81.25,
+        "waitlist_death_rate": 6.25,
+        "delisting_rate": 0.0,
+        "n": 16
+      },
+      "MOCM": {
+        "transplant_rate": 90.9091,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 22
+      },
+      "MOLH": {
+        "transplant_rate": 43.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 16.6667,
+        "n": 30
+      },
+      "MOSL": {
+        "transplant_rate": 48.2143,
+        "waitlist_death_rate": 5.3571,
+        "delisting_rate": 19.6429,
+        "n": 56
+      },
+      "MSUM": {
+        "transplant_rate": 68.8525,
+        "waitlist_death_rate": 3.2787,
+        "delisting_rate": 6.5574,
+        "n": 61
+      },
+      "NCCM": {
+        "transplant_rate": 83.3333,
+        "waitlist_death_rate": 8.8235,
+        "delisting_rate": 1.9608,
+        "n": 102
+      },
+      "NCDU": {
+        "transplant_rate": 88.2682,
+        "waitlist_death_rate": 1.1173,
+        "delisting_rate": 5.5866,
+        "n": 179
+      },
+      "NCMH": {
+        "transplant_rate": 55.5556,
+        "waitlist_death_rate": 4.7619,
+        "delisting_rate": 17.4603,
+        "n": 63
+      },
+      "NEUN": {
+        "transplant_rate": 69.2308,
+        "waitlist_death_rate": 6.1538,
+        "delisting_rate": 5.641,
+        "n": 195
+      },
+      "NJLL": {
+        "transplant_rate": 52.6316,
+        "waitlist_death_rate": 15.7895,
+        "delisting_rate": 14.0351,
+        "n": 57
+      },
+      "NJUH": {
+        "transplant_rate": 60.2941,
+        "waitlist_death_rate": 1.4706,
+        "delisting_rate": 10.2941,
+        "n": 68
+      },
+      "NYCP": {
+        "transplant_rate": 74.6667,
+        "waitlist_death_rate": 3.3333,
+        "delisting_rate": 3.3333,
+        "n": 150
+      },
+      "NYFL": {
+        "transplant_rate": 54.7619,
+        "waitlist_death_rate": 8.7302,
+        "delisting_rate": 14.2857,
+        "n": 126
+      },
+      "NYMA": {
+        "transplant_rate": 70.1754,
+        "waitlist_death_rate": 1.7544,
+        "delisting_rate": 5.2632,
+        "n": 57
+      },
+      "NYMS": {
+        "transplant_rate": 68.3544,
+        "waitlist_death_rate": 8.0169,
+        "delisting_rate": 8.0169,
+        "n": 237
+      },
+      "NYNS": {
+        "transplant_rate": 73.8255,
+        "waitlist_death_rate": 3.3557,
+        "delisting_rate": 8.7248,
+        "n": 149
+      },
+      "NYNY": {
+        "transplant_rate": 61.8182,
+        "waitlist_death_rate": 4.5455,
+        "delisting_rate": 6.3636,
+        "n": 110
+      },
+      "NYUC": {
+        "transplant_rate": 84.0708,
+        "waitlist_death_rate": 1.7699,
+        "delisting_rate": 6.1947,
+        "n": 113
+      },
+      "NYWC": {
+        "transplant_rate": 62.069,
+        "waitlist_death_rate": 8.046,
+        "delisting_rate": 11.4943,
+        "n": 87
+      },
+      "OHCC": {
+        "transplant_rate": 81.3953,
+        "waitlist_death_rate": 4.6512,
+        "delisting_rate": 5.814,
+        "n": 258
+      },
+      "OHCH": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 10
+      },
+      "OHCM": {
+        "transplant_rate": 72.4138,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 6.8966,
+        "n": 29
+      },
+      "OHOU": {
+        "transplant_rate": 78.5,
+        "waitlist_death_rate": 0.5,
+        "delisting_rate": 6.0,
+        "n": 200
+      },
+      "OHUC": {
+        "transplant_rate": 90.7609,
+        "waitlist_death_rate": 1.087,
+        "delisting_rate": 4.3478,
+        "n": 184
+      },
+      "OHUH": {
+        "transplant_rate": 72.973,
+        "waitlist_death_rate": 10.8108,
+        "delisting_rate": 10.8108,
+        "n": 37
+      },
+      "OKBC": {
+        "transplant_rate": 70.7692,
+        "waitlist_death_rate": 2.3077,
+        "delisting_rate": 2.3077,
+        "n": 130
+      },
+      "OKMD": {
+        "transplant_rate": 79.1045,
+        "waitlist_death_rate": 2.9851,
+        "delisting_rate": 2.9851,
+        "n": 67
+      },
+      "ORUO": {
+        "transplant_rate": 68.8525,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 9.8361,
+        "n": 122
+      },
+      "ORVA": {
+        "transplant_rate": 59.0909,
+        "waitlist_death_rate": 9.0909,
+        "delisting_rate": 4.5455,
+        "n": 22
+      },
+      "PAAE": {
+        "transplant_rate": 60.2041,
+        "waitlist_death_rate": 10.2041,
+        "delisting_rate": 10.2041,
+        "n": 98
+      },
+      "PAAG": {
+        "transplant_rate": 80.2469,
+        "waitlist_death_rate": 4.9383,
+        "delisting_rate": 4.9383,
+        "n": 81
+      },
+      "PACH": {
+        "transplant_rate": 77.1429,
+        "waitlist_death_rate": 5.7143,
+        "delisting_rate": 0.0,
+        "n": 35
+      },
+      "PACP": {
+        "transplant_rate": 76.1905,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 14.2857,
+        "n": 21
+      },
+      "PAGM": {
+        "transplant_rate": 40.0,
+        "waitlist_death_rate": 6.6667,
+        "delisting_rate": 3.3333,
+        "n": 30
+      },
+      "PAHE": {
+        "transplant_rate": 29.1667,
+        "waitlist_death_rate": 12.5,
+        "delisting_rate": 16.6667,
+        "n": 24
+      },
+      "PAPT": {
+        "transplant_rate": 73.1844,
+        "waitlist_death_rate": 2.7933,
+        "delisting_rate": 7.2626,
+        "n": 179
+      },
+      "PATJ": {
+        "transplant_rate": 58.6538,
+        "waitlist_death_rate": 9.6154,
+        "delisting_rate": 6.7308,
+        "n": 104
+      },
+      "PATU": {
+        "transplant_rate": 53.3333,
+        "waitlist_death_rate": 13.3333,
+        "delisting_rate": 20.0,
+        "n": 15
+      },
+      "PAUP": {
+        "transplant_rate": 59.9156,
+        "waitlist_death_rate": 4.6414,
+        "delisting_rate": 7.5949,
+        "n": 237
+      },
+      "PAVA": {
+        "transplant_rate": 47.3684,
+        "waitlist_death_rate": 2.6316,
+        "delisting_rate": 7.8947,
+        "n": 38
+      },
+      "PRSJ": {
+        "transplant_rate": 74.2857,
+        "waitlist_death_rate": 2.8571,
+        "delisting_rate": 8.5714,
+        "n": 35
+      },
+      "SCMU": {
+        "transplant_rate": 43.2692,
+        "waitlist_death_rate": 7.6923,
+        "delisting_rate": 2.8846,
+        "n": 104
+      },
+      "SDMK": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "TNLB": {
+        "transplant_rate": 83.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 16.6667,
+        "n": 6
+      },
+      "TNMH": {
+        "transplant_rate": 69.9115,
+        "waitlist_death_rate": 0.885,
+        "delisting_rate": 14.1593,
+        "n": 113
+      },
+      "TNVU": {
+        "transplant_rate": 75.6345,
+        "waitlist_death_rate": 2.0305,
+        "delisting_rate": 8.1218,
+        "n": 197
+      },
+      "TXAS": {
+        "transplant_rate": 81.1024,
+        "waitlist_death_rate": 3.937,
+        "delisting_rate": 6.2992,
+        "n": 127
+      },
+      "TXBC": {
+        "transplant_rate": 59.1667,
+        "waitlist_death_rate": 3.75,
+        "delisting_rate": 5.8333,
+        "n": 240
+      },
+      "TXCM": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 5.5556,
+        "delisting_rate": 5.5556,
+        "n": 18
+      },
+      "TXHD": {
+        "transplant_rate": 60.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 5.7143,
+        "n": 35
+      },
+      "TXHH": {
+        "transplant_rate": 46.1538,
+        "waitlist_death_rate": 15.3846,
+        "delisting_rate": 9.6154,
+        "n": 52
+      },
+      "TXHI": {
+        "transplant_rate": 41.7582,
+        "waitlist_death_rate": 6.5934,
+        "delisting_rate": 12.6374,
+        "n": 182
+      },
+      "TXHS": {
+        "transplant_rate": 53.7634,
+        "waitlist_death_rate": 1.0753,
+        "delisting_rate": 15.0538,
+        "n": 93
+      },
+      "TXMC": {
+        "transplant_rate": 68.0,
+        "waitlist_death_rate": 2.0,
+        "delisting_rate": 8.0,
+        "n": 100
+      },
+      "TXMH": {
+        "transplant_rate": 57.8667,
+        "waitlist_death_rate": 6.9333,
+        "delisting_rate": 9.3333,
+        "n": 375
+      },
+      "TXSP": {
+        "transplant_rate": 42.7948,
+        "waitlist_death_rate": 2.6201,
+        "delisting_rate": 8.2969,
+        "n": 229
+      },
+      "TXTC": {
+        "transplant_rate": 82.7586,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 6.8966,
+        "n": 29
+      },
+      "TXTX": {
+        "transplant_rate": 76.1589,
+        "waitlist_death_rate": 3.3113,
+        "delisting_rate": 8.6093,
+        "n": 151
+      },
+      "TXUC": {
+        "transplant_rate": 77.7778,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 11.1111,
+        "n": 9
+      },
+      "TXVA": {
+        "transplant_rate": 40.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 10.0,
+        "n": 30
+      },
+      "UTLD": {
+        "transplant_rate": 87.037,
+        "waitlist_death_rate": 3.7037,
+        "delisting_rate": 4.321,
+        "n": 162
+      },
+      "UTMC": {
+        "transplant_rate": 57.4468,
+        "waitlist_death_rate": 6.383,
+        "delisting_rate": 18.0851,
+        "n": 94
+      },
+      "UTPC": {
+        "transplant_rate": 42.8571,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 14.2857,
+        "n": 14
+      },
+      "VAMC": {
+        "transplant_rate": 63.5088,
+        "waitlist_death_rate": 5.2632,
+        "delisting_rate": 1.7544,
+        "n": 285
+      },
+      "VAUV": {
+        "transplant_rate": 79.1209,
+        "waitlist_death_rate": 7.6923,
+        "delisting_rate": 4.3956,
+        "n": 91
+      },
+      "WACH": {
+        "transplant_rate": 80.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 13.3333,
+        "n": 15
+      },
+      "WASM": {
+        "transplant_rate": 65.1685,
+        "waitlist_death_rate": 6.7416,
+        "delisting_rate": 10.1124,
+        "n": 89
+      },
+      "WAUW": {
+        "transplant_rate": 74.1176,
+        "waitlist_death_rate": 4.1176,
+        "delisting_rate": 3.5294,
+        "n": 170
+      },
+      "WICH": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "WISE": {
+        "transplant_rate": 39.2857,
+        "waitlist_death_rate": 5.9524,
+        "delisting_rate": 25.0,
+        "n": 84
+      },
+      "WISL": {
+        "transplant_rate": 41.0256,
+        "waitlist_death_rate": 7.6923,
+        "delisting_rate": 12.8205,
+        "n": 39
+      },
+      "WIUW": {
+        "transplant_rate": 69.4118,
+        "waitlist_death_rate": 3.5294,
+        "delisting_rate": 10.0,
+        "n": 170
+      }
+    },
+    "national": {
+      "transplant_rate": 67.1873,
+      "waitlist_death_rate": 4.4742,
+      "delisting_rate": 7.1204
+    }
+  },
+  "heart": {
+    "centers": {
+      "ALCH": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 50.0,
+        "n": 4
+      },
+      "ALUA": {
+        "transplant_rate": 71.875,
+        "waitlist_death_rate": 3.125,
+        "delisting_rate": 0.0,
+        "n": 32
+      },
+      "ARBH": {
+        "transplant_rate": 80.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 8.0,
+        "n": 25
+      },
+      "ARCH": {
+        "transplant_rate": 72.7273,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 27.2727,
+        "n": 11
+      },
+      "AZCH": {
+        "transplant_rate": 66.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 15
+      },
+      "AZGS": {
+        "transplant_rate": 77.7778,
+        "waitlist_death_rate": 1.8519,
+        "delisting_rate": 1.8519,
+        "n": 54
+      },
+      "AZMC": {
+        "transplant_rate": 70.2128,
+        "waitlist_death_rate": 4.2553,
+        "delisting_rate": 10.6383,
+        "n": 47
+      },
+      "CACH": {
+        "transplant_rate": 40.0,
+        "waitlist_death_rate": 10.0,
+        "delisting_rate": 10.0,
+        "n": 10
+      },
+      "CACL": {
+        "transplant_rate": 55.5556,
+        "waitlist_death_rate": 11.1111,
+        "delisting_rate": 0.0,
+        "n": 18
+      },
+      "CACS": {
+        "transplant_rate": 75.9259,
+        "waitlist_death_rate": 2.4691,
+        "delisting_rate": 5.5556,
+        "n": 162
+      },
+      "CALL": {
+        "transplant_rate": 69.4444,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 11.1111,
+        "n": 36
+      },
+      "CAMB": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 20.0,
+        "delisting_rate": 0.0,
+        "n": 10
+      },
+      "CAPC": {
+        "transplant_rate": 80.0,
+        "waitlist_death_rate": 4.0,
+        "delisting_rate": 4.0,
+        "n": 25
+      },
+      "CAPM": {
+        "transplant_rate": 86.6667,
+        "waitlist_death_rate": 10.0,
+        "delisting_rate": 3.3333,
+        "n": 30
+      },
+      "CASD": {
+        "transplant_rate": 90.4348,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 1.7391,
+        "n": 115
+      },
+      "CASF": {
+        "transplant_rate": 75.2381,
+        "waitlist_death_rate": 0.9524,
+        "delisting_rate": 3.8095,
+        "n": 105
+      },
+      "CASG": {
+        "transplant_rate": 88.8889,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 9
+      },
+      "CASH": {
+        "transplant_rate": 88.8889,
+        "waitlist_death_rate": 11.1111,
+        "delisting_rate": 0.0,
+        "n": 18
+      },
+      "CASU": {
+        "transplant_rate": 78.9474,
+        "waitlist_death_rate": 2.1053,
+        "delisting_rate": 2.1053,
+        "n": 95
+      },
+      "CAUC": {
+        "transplant_rate": 87.5,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 6.25,
+        "n": 80
+      },
+      "CAUH": {
+        "transplant_rate": 63.4615,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 3.8462,
+        "n": 52
+      },
+      "COCH": {
+        "transplant_rate": 68.1818,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 18.1818,
+        "n": 22
+      },
+      "COUC": {
+        "transplant_rate": 87.5,
+        "waitlist_death_rate": 2.7778,
+        "delisting_rate": 5.5556,
+        "n": 72
+      },
+      "CTHH": {
+        "transplant_rate": 79.4118,
+        "waitlist_death_rate": 5.8824,
+        "delisting_rate": 5.8824,
+        "n": 34
+      },
+      "CTYN": {
+        "transplant_rate": 82.7586,
+        "waitlist_death_rate": 3.4483,
+        "delisting_rate": 0.0,
+        "n": 29
+      },
+      "DCCH": {
+        "transplant_rate": 62.5,
+        "waitlist_death_rate": 12.5,
+        "delisting_rate": 0.0,
+        "n": 8
+      },
+      "DCWH": {
+        "transplant_rate": 71.1538,
+        "waitlist_death_rate": 3.8462,
+        "delisting_rate": 11.5385,
+        "n": 52
+      },
+      "DEAI": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "FLAC": {
+        "transplant_rate": 62.5,
+        "waitlist_death_rate": 25.0,
+        "delisting_rate": 12.5,
+        "n": 8
+      },
+      "FLCC": {
+        "transplant_rate": 80.0,
+        "waitlist_death_rate": 1.4286,
+        "delisting_rate": 7.1429,
+        "n": 70
+      },
+      "FLFH": {
+        "transplant_rate": 73.4694,
+        "waitlist_death_rate": 2.0408,
+        "delisting_rate": 8.1633,
+        "n": 49
+      },
+      "FLJD": {
+        "transplant_rate": 45.4545,
+        "waitlist_death_rate": 9.0909,
+        "delisting_rate": 18.1818,
+        "n": 11
+      },
+      "FLJM": {
+        "transplant_rate": 27.2727,
+        "waitlist_death_rate": 18.1818,
+        "delisting_rate": 9.0909,
+        "n": 11
+      },
+      "FLLM": {
+        "transplant_rate": 79.4118,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 8.8235,
+        "n": 34
+      },
+      "FLMR": {
+        "transplant_rate": 76.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 6.6667,
+        "n": 30
+      },
+      "FLSL": {
+        "transplant_rate": 88.75,
+        "waitlist_death_rate": 2.5,
+        "delisting_rate": 0.0,
+        "n": 80
+      },
+      "FLTG": {
+        "transplant_rate": 77.2727,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 6.8182,
+        "n": 44
+      },
+      "FLUF": {
+        "transplant_rate": 45.7627,
+        "waitlist_death_rate": 1.6949,
+        "delisting_rate": 13.5593,
+        "n": 59
+      },
+      "GAEH": {
+        "transplant_rate": 76.1905,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 21
+      },
+      "GAEM": {
+        "transplant_rate": 69.1489,
+        "waitlist_death_rate": 6.383,
+        "delisting_rate": 3.1915,
+        "n": 94
+      },
+      "GAPH": {
+        "transplant_rate": 81.6327,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 9.1837,
+        "n": 98
+      },
+      "IAIV": {
+        "transplant_rate": 61.1111,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 11.1111,
+        "n": 18
+      },
+      "ILCH": {
+        "transplant_rate": 48.1481,
+        "waitlist_death_rate": 3.7037,
+        "delisting_rate": 11.1111,
+        "n": 27
+      },
+      "ILCM": {
+        "transplant_rate": 78.7879,
+        "waitlist_death_rate": 3.0303,
+        "delisting_rate": 0.0,
+        "n": 33
+      },
+      "ILLU": {
+        "transplant_rate": 38.0952,
+        "waitlist_death_rate": 4.7619,
+        "delisting_rate": 4.7619,
+        "n": 21
+      },
+      "ILNM": {
+        "transplant_rate": 70.9091,
+        "waitlist_death_rate": 1.8182,
+        "delisting_rate": 7.2727,
+        "n": 55
+      },
+      "ILSF": {
+        "transplant_rate": 38.4615,
+        "waitlist_death_rate": 7.6923,
+        "delisting_rate": 38.4615,
+        "n": 13
+      },
+      "ILUC": {
+        "transplant_rate": 76.25,
+        "waitlist_death_rate": 1.25,
+        "delisting_rate": 2.5,
+        "n": 80
+      },
+      "INIM": {
+        "transplant_rate": 43.5897,
+        "waitlist_death_rate": 10.2564,
+        "delisting_rate": 10.2564,
+        "n": 39
+      },
+      "INLH": {
+        "transplant_rate": 25.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "INSV": {
+        "transplant_rate": 73.5294,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 5.8824,
+        "n": 34
+      },
+      "KSUK": {
+        "transplant_rate": 67.3913,
+        "waitlist_death_rate": 2.1739,
+        "delisting_rate": 8.6957,
+        "n": 46
+      },
+      "KYJH": {
+        "transplant_rate": 55.5556,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 33.3333,
+        "n": 27
+      },
+      "KYKC": {
+        "transplant_rate": 28.5714,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 14.2857,
+        "n": 7
+      },
+      "KYUK": {
+        "transplant_rate": 85.2941,
+        "waitlist_death_rate": 2.9412,
+        "delisting_rate": 5.8824,
+        "n": 34
+      },
+      "LAOF": {
+        "transplant_rate": 51.4286,
+        "waitlist_death_rate": 11.4286,
+        "delisting_rate": 17.1429,
+        "n": 35
+      },
+      "MABI": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 12
+      },
+      "MACH": {
+        "transplant_rate": 47.0588,
+        "waitlist_death_rate": 11.7647,
+        "delisting_rate": 11.7647,
+        "n": 17
+      },
+      "MAMG": {
+        "transplant_rate": 93.1034,
+        "waitlist_death_rate": 1.7241,
+        "delisting_rate": 1.7241,
+        "n": 58
+      },
+      "MANM": {
+        "transplant_rate": 56.0,
+        "waitlist_death_rate": 8.0,
+        "delisting_rate": 0.0,
+        "n": 75
+      },
+      "MAPB": {
+        "transplant_rate": 58.3333,
+        "waitlist_death_rate": 8.3333,
+        "delisting_rate": 0.0,
+        "n": 24
+      },
+      "MDJH": {
+        "transplant_rate": 58.3333,
+        "waitlist_death_rate": 2.7778,
+        "delisting_rate": 19.4444,
+        "n": 36
+      },
+      "MDUM": {
+        "transplant_rate": 54.5455,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 9.0909,
+        "n": 22
+      },
+      "MICH": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "MIHF": {
+        "transplant_rate": 61.2903,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 19.3548,
+        "n": 31
+      },
+      "MISH": {
+        "transplant_rate": 63.6364,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 4.5455,
+        "n": 22
+      },
+      "MIUM": {
+        "transplant_rate": 62.963,
+        "waitlist_death_rate": 9.8765,
+        "delisting_rate": 2.4691,
+        "n": 81
+      },
+      "MNAN": {
+        "transplant_rate": 89.4737,
+        "waitlist_death_rate": 5.2632,
+        "delisting_rate": 0.0,
+        "n": 19
+      },
+      "MNCM": {
+        "transplant_rate": 42.8571,
+        "waitlist_death_rate": 14.2857,
+        "delisting_rate": 0.0,
+        "n": 7
+      },
+      "MNMC": {
+        "transplant_rate": 74.6988,
+        "waitlist_death_rate": 1.2048,
+        "delisting_rate": 2.4096,
+        "n": 83
+      },
+      "MNUM": {
+        "transplant_rate": 75.4386,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 57
+      },
+      "MOBH": {
+        "transplant_rate": 74.5763,
+        "waitlist_death_rate": 3.3898,
+        "delisting_rate": 5.0847,
+        "n": 59
+      },
+      "MOCG": {
+        "transplant_rate": 33.3333,
+        "waitlist_death_rate": 16.6667,
+        "delisting_rate": 16.6667,
+        "n": 6
+      },
+      "MOCH": {
+        "transplant_rate": 57.1429,
+        "waitlist_death_rate": 4.7619,
+        "delisting_rate": 0.0,
+        "n": 21
+      },
+      "MOCM": {
+        "transplant_rate": 80.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 15
+      },
+      "MOLH": {
+        "transplant_rate": 88.8889,
+        "waitlist_death_rate": 2.2222,
+        "delisting_rate": 2.2222,
+        "n": 45
+      },
+      "MSUM": {
+        "transplant_rate": 61.1111,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 18
+      },
+      "NCBG": {
+        "transplant_rate": 90.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 10.0,
+        "n": 10
+      },
+      "NCCM": {
+        "transplant_rate": 81.8182,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 7.7922,
+        "n": 77
+      },
+      "NCDU": {
+        "transplant_rate": 84.9711,
+        "waitlist_death_rate": 4.0462,
+        "delisting_rate": 1.1561,
+        "n": 173
+      },
+      "NCMH": {
+        "transplant_rate": 42.8571,
+        "waitlist_death_rate": 9.5238,
+        "delisting_rate": 23.8095,
+        "n": 21
+      },
+      "NEUN": {
+        "transplant_rate": 76.7442,
+        "waitlist_death_rate": 4.6512,
+        "delisting_rate": 0.0,
+        "n": 43
+      },
+      "NJBI": {
+        "transplant_rate": 71.875,
+        "waitlist_death_rate": 3.125,
+        "delisting_rate": 12.5,
+        "n": 32
+      },
+      "NJRW": {
+        "transplant_rate": 40.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 10.0,
+        "n": 10
+      },
+      "NYCP": {
+        "transplant_rate": 69.0909,
+        "waitlist_death_rate": 1.8182,
+        "delisting_rate": 3.6364,
+        "n": 110
+      },
+      "NYFL": {
+        "transplant_rate": 53.0612,
+        "waitlist_death_rate": 4.0816,
+        "delisting_rate": 4.0816,
+        "n": 49
+      },
+      "NYMA": {
+        "transplant_rate": 80.6452,
+        "waitlist_death_rate": 6.4516,
+        "delisting_rate": 0.0,
+        "n": 31
+      },
+      "NYMS": {
+        "transplant_rate": 81.25,
+        "waitlist_death_rate": 4.1667,
+        "delisting_rate": 0.0,
+        "n": 48
+      },
+      "NYNS": {
+        "transplant_rate": 84.375,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 6.25,
+        "n": 32
+      },
+      "NYNY": {
+        "transplant_rate": 42.8571,
+        "waitlist_death_rate": 3.5714,
+        "delisting_rate": 0.0,
+        "n": 28
+      },
+      "NYUC": {
+        "transplant_rate": 73.2673,
+        "waitlist_death_rate": 5.9406,
+        "delisting_rate": 0.9901,
+        "n": 101
+      },
+      "NYWC": {
+        "transplant_rate": 69.5652,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 19.5652,
+        "n": 46
+      },
+      "OHCC": {
+        "transplant_rate": 45.1923,
+        "waitlist_death_rate": 7.6923,
+        "delisting_rate": 5.7692,
+        "n": 104
+      },
+      "OHCH": {
+        "transplant_rate": 66.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 11.1111,
+        "n": 9
+      },
+      "OHCM": {
+        "transplant_rate": 52.6316,
+        "waitlist_death_rate": 5.2632,
+        "delisting_rate": 0.0,
+        "n": 19
+      },
+      "OHOU": {
+        "transplant_rate": 74.2857,
+        "waitlist_death_rate": 2.8571,
+        "delisting_rate": 8.5714,
+        "n": 35
+      },
+      "OHTC": {
+        "transplant_rate": 86.3636,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 4.5455,
+        "n": 22
+      },
+      "OHUC": {
+        "transplant_rate": 46.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 6.6667,
+        "n": 15
+      },
+      "OHUH": {
+        "transplant_rate": 55.5556,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 11.1111,
+        "n": 18
+      },
+      "OKBC": {
+        "transplant_rate": 52.9412,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 17
+      },
+      "ORSV": {
+        "transplant_rate": 85.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 20
+      },
+      "ORUO": {
+        "transplant_rate": 66.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 15
+      },
+      "PAAG": {
+        "transplant_rate": 79.4118,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 2.9412,
+        "n": 34
+      },
+      "PACH": {
+        "transplant_rate": 55.1724,
+        "waitlist_death_rate": 6.8966,
+        "delisting_rate": 3.4483,
+        "n": 29
+      },
+      "PACP": {
+        "transplant_rate": 52.381,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 9.5238,
+        "n": 21
+      },
+      "PAHE": {
+        "transplant_rate": 52.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 16.0,
+        "n": 25
+      },
+      "PAPT": {
+        "transplant_rate": 87.234,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 4.2553,
+        "n": 47
+      },
+      "PATJ": {
+        "transplant_rate": 56.6667,
+        "waitlist_death_rate": 6.6667,
+        "delisting_rate": 6.6667,
+        "n": 30
+      },
+      "PATU": {
+        "transplant_rate": 83.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 18
+      },
+      "PAUP": {
+        "transplant_rate": 61.5385,
+        "waitlist_death_rate": 3.8462,
+        "delisting_rate": 1.9231,
+        "n": 52
+      },
+      "PRCC": {
+        "transplant_rate": 75.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "SCCH": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 6.25,
+        "delisting_rate": 6.25,
+        "n": 16
+      },
+      "SCMU": {
+        "transplant_rate": 73.6111,
+        "waitlist_death_rate": 1.3889,
+        "delisting_rate": 2.7778,
+        "n": 72
+      },
+      "TNBM": {
+        "transplant_rate": 68.9655,
+        "waitlist_death_rate": 6.8966,
+        "delisting_rate": 0.0,
+        "n": 29
+      },
+      "TNLB": {
+        "transplant_rate": 76.9231,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 7.6923,
+        "n": 13
+      },
+      "TNST": {
+        "transplant_rate": 94.7368,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 1.7544,
+        "n": 57
+      },
+      "TNVU": {
+        "transplant_rate": 81.2865,
+        "waitlist_death_rate": 2.924,
+        "delisting_rate": 3.5088,
+        "n": 171
+      },
+      "TXCM": {
+        "transplant_rate": 65.9574,
+        "waitlist_death_rate": 4.2553,
+        "delisting_rate": 6.383,
+        "n": 47
+      },
+      "TXCT": {
+        "transplant_rate": 55.5556,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 9
+      },
+      "TXDL": {
+        "transplant_rate": 46.6667,
+        "waitlist_death_rate": 20.0,
+        "delisting_rate": 6.6667,
+        "n": 15
+      },
+      "TXHD": {
+        "transplant_rate": 66.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 6.6667,
+        "n": 15
+      },
+      "TXHH": {
+        "transplant_rate": 58.5366,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 7.3171,
+        "n": 41
+      },
+      "TXHI": {
+        "transplant_rate": 67.6471,
+        "waitlist_death_rate": 8.8235,
+        "delisting_rate": 0.0,
+        "n": 34
+      },
+      "TXHS": {
+        "transplant_rate": 56.1644,
+        "waitlist_death_rate": 4.1096,
+        "delisting_rate": 8.2192,
+        "n": 73
+      },
+      "TXJS": {
+        "transplant_rate": 16.6667,
+        "waitlist_death_rate": 16.6667,
+        "delisting_rate": 0.0,
+        "n": 6
+      },
+      "TXMH": {
+        "transplant_rate": 69.2308,
+        "waitlist_death_rate": 1.2821,
+        "delisting_rate": 6.4103,
+        "n": 78
+      },
+      "TXSP": {
+        "transplant_rate": 73.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 5.0,
+        "n": 60
+      },
+      "TXSW": {
+        "transplant_rate": 91.4286,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 2.8571,
+        "n": 35
+      },
+      "TXTC": {
+        "transplant_rate": 64.5161,
+        "waitlist_death_rate": 6.4516,
+        "delisting_rate": 3.2258,
+        "n": 31
+      },
+      "TXTX": {
+        "transplant_rate": 80.8824,
+        "waitlist_death_rate": 1.4706,
+        "delisting_rate": 2.9412,
+        "n": 68
+      },
+      "TXVA": {
+        "transplant_rate": 85.7143,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 7
+      },
+      "UTLD": {
+        "transplant_rate": 73.5294,
+        "waitlist_death_rate": 2.9412,
+        "delisting_rate": 0.0,
+        "n": 34
+      },
+      "UTMC": {
+        "transplant_rate": 63.4146,
+        "waitlist_death_rate": 2.439,
+        "delisting_rate": 4.878,
+        "n": 41
+      },
+      "UTPC": {
+        "transplant_rate": 20.0,
+        "waitlist_death_rate": 5.0,
+        "delisting_rate": 5.0,
+        "n": 20
+      },
+      "VAFH": {
+        "transplant_rate": 79.3651,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 3.1746,
+        "n": 63
+      },
+      "VAMC": {
+        "transplant_rate": 70.4918,
+        "waitlist_death_rate": 1.6393,
+        "delisting_rate": 0.0,
+        "n": 61
+      },
+      "VAMV": {
+        "transplant_rate": 44.4444,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 9
+      },
+      "VANG": {
+        "transplant_rate": 82.1429,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 3.5714,
+        "n": 28
+      },
+      "VAUV": {
+        "transplant_rate": 82.9268,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 2.439,
+        "n": 41
+      },
+      "WACH": {
+        "transplant_rate": 45.8333,
+        "waitlist_death_rate": 4.1667,
+        "delisting_rate": 4.1667,
+        "n": 24
+      },
+      "WASH": {
+        "transplant_rate": 58.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 16.6667,
+        "n": 12
+      },
+      "WAUW": {
+        "transplant_rate": 95.0,
+        "waitlist_death_rate": 1.25,
+        "delisting_rate": 0.0,
+        "n": 80
+      },
+      "WICH": {
+        "transplant_rate": 66.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 8.3333,
+        "n": 12
+      },
+      "WISE": {
+        "transplant_rate": 73.6842,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 10.5263,
+        "n": 38
+      },
+      "WISL": {
+        "transplant_rate": 68.5714,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 2.8571,
+        "n": 35
+      },
+      "WIUW": {
+        "transplant_rate": 83.871,
+        "waitlist_death_rate": 3.2258,
+        "delisting_rate": 6.4516,
+        "n": 31
+      },
+      "WVWU": {
+        "transplant_rate": 83.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 12
+      }
+    },
+    "national": {
+      "transplant_rate": 72.0049,
+      "waitlist_death_rate": 2.8816,
+      "delisting_rate": 5.117
+    }
+  },
+  "lung": {
+    "centers": {
+      "ALUA": {
+        "transplant_rate": 62.069,
+        "waitlist_death_rate": 6.8966,
+        "delisting_rate": 0.0,
+        "n": 29
+      },
+      "AZSJ": {
+        "transplant_rate": 94.5652,
+        "waitlist_death_rate": 1.087,
+        "delisting_rate": 1.087,
+        "n": 92
+      },
+      "AZUA": {
+        "transplant_rate": 82.3529,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 17
+      },
+      "CACS": {
+        "transplant_rate": 90.4762,
+        "waitlist_death_rate": 2.381,
+        "delisting_rate": 0.0,
+        "n": 84
+      },
+      "CAPC": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 50.0,
+        "n": 2
+      },
+      "CASD": {
+        "transplant_rate": 89.2857,
+        "waitlist_death_rate": 5.3571,
+        "delisting_rate": 0.0,
+        "n": 56
+      },
+      "CASF": {
+        "transplant_rate": 92.0792,
+        "waitlist_death_rate": 0.9901,
+        "delisting_rate": 1.9802,
+        "n": 101
+      },
+      "CASU": {
+        "transplant_rate": 77.7778,
+        "waitlist_death_rate": 1.3889,
+        "delisting_rate": 1.3889,
+        "n": 72
+      },
+      "CAUC": {
+        "transplant_rate": 91.0112,
+        "waitlist_death_rate": 3.3708,
+        "delisting_rate": 0.0,
+        "n": 89
+      },
+      "CAUH": {
+        "transplant_rate": 73.0769,
+        "waitlist_death_rate": 7.6923,
+        "delisting_rate": 7.6923,
+        "n": 26
+      },
+      "COUC": {
+        "transplant_rate": 92.4528,
+        "waitlist_death_rate": 3.7736,
+        "delisting_rate": 1.8868,
+        "n": 53
+      },
+      "FLFH": {
+        "transplant_rate": 72.7273,
+        "waitlist_death_rate": 4.5455,
+        "delisting_rate": 4.5455,
+        "n": 22
+      },
+      "FLJM": {
+        "transplant_rate": 89.0411,
+        "waitlist_death_rate": 2.7397,
+        "delisting_rate": 6.8493,
+        "n": 73
+      },
+      "FLSL": {
+        "transplant_rate": 87.5,
+        "waitlist_death_rate": 1.5625,
+        "delisting_rate": 6.25,
+        "n": 64
+      },
+      "FLTG": {
+        "transplant_rate": 78.0,
+        "waitlist_death_rate": 4.0,
+        "delisting_rate": 8.0,
+        "n": 50
+      },
+      "FLUF": {
+        "transplant_rate": 95.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 2.5,
+        "n": 40
+      },
+      "GAEM": {
+        "transplant_rate": 88.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 4.0,
+        "n": 25
+      },
+      "IAIV": {
+        "transplant_rate": 82.6087,
+        "waitlist_death_rate": 4.3478,
+        "delisting_rate": 0.0,
+        "n": 23
+      },
+      "ILLU": {
+        "transplant_rate": 80.0,
+        "waitlist_death_rate": 2.2222,
+        "delisting_rate": 2.2222,
+        "n": 45
+      },
+      "ILNM": {
+        "transplant_rate": 94.6429,
+        "waitlist_death_rate": 1.7857,
+        "delisting_rate": 2.6786,
+        "n": 112
+      },
+      "ILUC": {
+        "transplant_rate": 44.4444,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 9
+      },
+      "INIM": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 54
+      },
+      "KYJH": {
+        "transplant_rate": 95.8333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 4.1667,
+        "n": 24
+      },
+      "KYUK": {
+        "transplant_rate": 93.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 30
+      },
+      "LAOF": {
+        "transplant_rate": 11.1111,
+        "waitlist_death_rate": 11.1111,
+        "delisting_rate": 0.0,
+        "n": 9
+      },
+      "MACH": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 25.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "MAMG": {
+        "transplant_rate": 91.0714,
+        "waitlist_death_rate": 1.7857,
+        "delisting_rate": 0.0,
+        "n": 56
+      },
+      "MAPB": {
+        "transplant_rate": 90.9091,
+        "waitlist_death_rate": 4.5455,
+        "delisting_rate": 0.0,
+        "n": 44
+      },
+      "MDJH": {
+        "transplant_rate": 85.7143,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 42
+      },
+      "MDUM": {
+        "transplant_rate": 86.4865,
+        "waitlist_death_rate": 5.4054,
+        "delisting_rate": 0.0,
+        "n": 37
+      },
+      "MIHF": {
+        "transplant_rate": 54.7619,
+        "waitlist_death_rate": 4.7619,
+        "delisting_rate": 7.1429,
+        "n": 42
+      },
+      "MISH": {
+        "transplant_rate": 82.6923,
+        "waitlist_death_rate": 7.6923,
+        "delisting_rate": 1.9231,
+        "n": 52
+      },
+      "MIUM": {
+        "transplant_rate": 64.2857,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 3.5714,
+        "n": 28
+      },
+      "MNMC": {
+        "transplant_rate": 91.0256,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 1.2821,
+        "n": 78
+      },
+      "MNUM": {
+        "transplant_rate": 97.4359,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 39
+      },
+      "MOBH": {
+        "transplant_rate": 85.0,
+        "waitlist_death_rate": 3.3333,
+        "delisting_rate": 3.3333,
+        "n": 60
+      },
+      "MOCH": {
+        "transplant_rate": 83.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 16.6667,
+        "n": 6
+      },
+      "NCDU": {
+        "transplant_rate": 89.7727,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 1.1364,
+        "n": 88
+      },
+      "NCMH": {
+        "transplant_rate": 61.5385,
+        "waitlist_death_rate": 7.6923,
+        "delisting_rate": 15.3846,
+        "n": 13
+      },
+      "NEUN": {
+        "transplant_rate": 73.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 20.0,
+        "n": 15
+      },
+      "NJBI": {
+        "transplant_rate": 85.7143,
+        "waitlist_death_rate": 7.1429,
+        "delisting_rate": 0.0,
+        "n": 14
+      },
+      "NYCP": {
+        "transplant_rate": 86.4865,
+        "waitlist_death_rate": 4.5045,
+        "delisting_rate": 2.7027,
+        "n": 111
+      },
+      "NYMA": {
+        "transplant_rate": 61.9048,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 9.5238,
+        "n": 21
+      },
+      "NYMS": {
+        "transplant_rate": 73.5294,
+        "waitlist_death_rate": 2.9412,
+        "delisting_rate": 5.8824,
+        "n": 34
+      },
+      "NYNS": {
+        "transplant_rate": 47.3684,
+        "waitlist_death_rate": 10.5263,
+        "delisting_rate": 10.5263,
+        "n": 19
+      },
+      "NYUC": {
+        "transplant_rate": 92.2078,
+        "waitlist_death_rate": 2.5974,
+        "delisting_rate": 0.0,
+        "n": 77
+      },
+      "OHCC": {
+        "transplant_rate": 80.5882,
+        "waitlist_death_rate": 2.9412,
+        "delisting_rate": 6.4706,
+        "n": 170
+      },
+      "OHCH": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "OHCM": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "OHOU": {
+        "transplant_rate": 94.8276,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 3.4483,
+        "n": 58
+      },
+      "OHUH": {
+        "transplant_rate": 78.5714,
+        "waitlist_death_rate": 7.1429,
+        "delisting_rate": 0.0,
+        "n": 14
+      },
+      "OKBC": {
+        "transplant_rate": 75.0,
+        "waitlist_death_rate": 3.125,
+        "delisting_rate": 0.0,
+        "n": 32
+      },
+      "PACH": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 50.0,
+        "n": 2
+      },
+      "PACP": {
+        "transplant_rate": 75.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "PAPT": {
+        "transplant_rate": 92.3077,
+        "waitlist_death_rate": 3.0769,
+        "delisting_rate": 1.5385,
+        "n": 65
+      },
+      "PATU": {
+        "transplant_rate": 79.5276,
+        "waitlist_death_rate": 4.7244,
+        "delisting_rate": 1.5748,
+        "n": 127
+      },
+      "PAUP": {
+        "transplant_rate": 80.0,
+        "waitlist_death_rate": 1.5385,
+        "delisting_rate": 10.7692,
+        "n": 65
+      },
+      "SCMU": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 16
+      },
+      "TNVU": {
+        "transplant_rate": 93.9394,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 1.0101,
+        "n": 99
+      },
+      "TXBC": {
+        "transplant_rate": 84.8485,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 6.0606,
+        "n": 33
+      },
+      "TXHH": {
+        "transplant_rate": 66.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 5.5556,
+        "n": 18
+      },
+      "TXHI": {
+        "transplant_rate": 88.3721,
+        "waitlist_death_rate": 2.3256,
+        "delisting_rate": 6.9767,
+        "n": 86
+      },
+      "TXHS": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "TXMH": {
+        "transplant_rate": 81.7204,
+        "waitlist_death_rate": 5.3763,
+        "delisting_rate": 4.3011,
+        "n": 93
+      },
+      "TXSP": {
+        "transplant_rate": 82.5,
+        "waitlist_death_rate": 7.5,
+        "delisting_rate": 1.25,
+        "n": 80
+      },
+      "TXTC": {
+        "transplant_rate": 83.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 16.6667,
+        "n": 6
+      },
+      "TXTX": {
+        "transplant_rate": 84.2105,
+        "waitlist_death_rate": 2.6316,
+        "delisting_rate": 2.6316,
+        "n": 38
+      },
+      "UTMC": {
+        "transplant_rate": 88.8889,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 36
+      },
+      "VAFH": {
+        "transplant_rate": 78.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 5.0,
+        "n": 60
+      },
+      "VAUV": {
+        "transplant_rate": 88.8889,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 27
+      },
+      "WAUW": {
+        "transplant_rate": 76.1194,
+        "waitlist_death_rate": 2.9851,
+        "delisting_rate": 1.4925,
+        "n": 67
+      },
+      "WISE": {
+        "transplant_rate": 55.5556,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 11.1111,
+        "n": 9
+      },
+      "WIUW": {
+        "transplant_rate": 98.3607,
+        "waitlist_death_rate": 1.6393,
+        "delisting_rate": 0.0,
+        "n": 61
+      }
+    },
+    "national": {
+      "transplant_rate": 85.1178,
+      "waitlist_death_rate": 2.5947,
+      "delisting_rate": 2.9526
+    }
+  },
+  "pancreas": {
+    "centers": {
+      "AZGS": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "AZMC": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "CACS": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "CAGH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "CALL": {
+        "transplant_rate": 33.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 16.6667,
+        "n": 6
+      },
+      "CAPC": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "CASF": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "CASH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "CASU": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "CAUC": {
+        "transplant_rate": 33.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "CAUH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "COUC": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "DCGU": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 22.2222,
+        "n": 9
+      },
+      "FLJM": {
+        "transplant_rate": 41.6667,
+        "waitlist_death_rate": 8.3333,
+        "delisting_rate": 8.3333,
+        "n": 12
+      },
+      "FLSL": {
+        "transplant_rate": 12.5,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 8
+      },
+      "GAEM": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "GAPH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "IAIV": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 5
+      },
+      "ILLU": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "ILNM": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 9
+      },
+      "ILPL": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "ILUC": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "ILUI": {
+        "transplant_rate": 75.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "INIM": {
+        "transplant_rate": 43.75,
+        "waitlist_death_rate": 6.25,
+        "delisting_rate": 0.0,
+        "n": 16
+      },
+      "KYJH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "LAOF": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "LATU": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "LAWK": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "MABI": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "MACH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "MAMG": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 7
+      },
+      "MAPB": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "MDJH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "MDUM": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "MIHF": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "MIUM": {
+        "transplant_rate": 12.5,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 25.0,
+        "n": 8
+      },
+      "MNMC": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "MNUM": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 6.25,
+        "delisting_rate": 12.5,
+        "n": 16
+      },
+      "MOBH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "NCBG": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "NCDU": {
+        "transplant_rate": 33.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "NCMH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 100.0,
+        "n": 1
+      },
+      "NEUN": {
+        "transplant_rate": 55.5556,
+        "waitlist_death_rate": 11.1111,
+        "delisting_rate": 11.1111,
+        "n": 9
+      },
+      "NJHK": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 25.0,
+        "n": 4
+      },
+      "NJRW": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 100.0,
+        "n": 1
+      },
+      "NJSB": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "NVUM": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "NYCP": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 16.6667,
+        "delisting_rate": 0.0,
+        "n": 6
+      },
+      "NYEC": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 100.0,
+        "n": 1
+      },
+      "NYFL": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 100.0,
+        "n": 1
+      },
+      "NYMA": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 50.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "NYMS": {
+        "transplant_rate": 23.0769,
+        "waitlist_death_rate": 7.6923,
+        "delisting_rate": 0.0,
+        "n": 13
+      },
+      "NYNY": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "NYUC": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 10.0,
+        "n": 10
+      },
+      "NYUM": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "OHCC": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 5
+      },
+      "OHCM": {
+        "transplant_rate": 66.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "OHUC": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 50.0,
+        "n": 2
+      },
+      "PAAE": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "PACH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "PALV": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "PAPT": {
+        "transplant_rate": 11.1111,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 9
+      },
+      "PATJ": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 33.3333,
+        "n": 3
+      },
+      "PAUP": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 8
+      },
+      "SCMU": {
+        "transplant_rate": 14.2857,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 7
+      },
+      "SDMK": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "TNMH": {
+        "transplant_rate": 16.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 6
+      },
+      "TNVU": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "TXHD": {
+        "transplant_rate": 33.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "TXHS": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "TXJS": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 100.0,
+        "n": 1
+      },
+      "TXMH": {
+        "transplant_rate": 12.5,
+        "waitlist_death_rate": 12.5,
+        "delisting_rate": 0.0,
+        "n": 8
+      },
+      "TXSW": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "UTMC": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "VAFH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 33.3333,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "VAMC": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "VAUV": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "WAVM": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "WISL": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 50.0,
+        "n": 2
+      },
+      "WIUW": {
+        "transplant_rate": 75.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 8.3333,
+        "n": 12
+      }
+    },
+    "national": {
+      "transplant_rate": 17.3375,
+      "waitlist_death_rate": 2.7864,
+      "delisting_rate": 6.192
+    }
+  },
+  "intestine": {
+    "centers": {
+      "CAPC": {
+        "transplant_rate": 33.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 6
+      },
+      "CAUC": {
+        "transplant_rate": 16.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 6
+      },
+      "DCGU": {
+        "transplant_rate": 70.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 5.0,
+        "n": 20
+      },
+      "FLJM": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 5.5556,
+        "delisting_rate": 5.5556,
+        "n": 18
+      },
+      "ILCM": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "ILUI": {
+        "transplant_rate": 66.6667,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 6
+      },
+      "INIM": {
+        "transplant_rate": 54.5455,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 11
+      },
+      "MACH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "MIHF": {
+        "transplant_rate": 100.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 2
+      },
+      "NCDU": {
+        "transplant_rate": 33.3333,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 3
+      },
+      "NEUN": {
+        "transplant_rate": 63.6364,
+        "waitlist_death_rate": 9.0909,
+        "delisting_rate": 9.0909,
+        "n": 11
+      },
+      "NYCP": {
+        "transplant_rate": 66.6667,
+        "waitlist_death_rate": 16.6667,
+        "delisting_rate": 0.0,
+        "n": 6
+      },
+      "NYMS": {
+        "transplant_rate": 61.5385,
+        "waitlist_death_rate": 7.6923,
+        "delisting_rate": 7.6923,
+        "n": 13
+      },
+      "OHCC": {
+        "transplant_rate": 64.2857,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 7.1429,
+        "n": 14
+      },
+      "OHCM": {
+        "transplant_rate": 50.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 4
+      },
+      "PACH": {
+        "transplant_rate": 0.0,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 1
+      },
+      "PAPT": {
+        "transplant_rate": 27.2727,
+        "waitlist_death_rate": 0.0,
+        "delisting_rate": 0.0,
+        "n": 11
+      }
+    },
+    "national": {
+      "transplant_rate": 53.3333,
+      "waitlist_death_rate": 2.963,
+      "delisting_rate": 3.7037
+    }
+  }
+}

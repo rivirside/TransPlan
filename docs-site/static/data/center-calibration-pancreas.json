@@ -1,0 +1,660 @@
+{
+  "organ": "pancreas",
+  "n_iterations": 2000,
+  "seed": 42,
+  "reference_patient": {
+    "blood_type": "O+",
+    "age": 50,
+    "sex": "male",
+    "urgency": 2,
+    "cpra": null,
+    "meld": null,
+    "las": null
+  },
+  "matched_centers": 78,
+  "stats": {
+    "spearman_p12_vs_txrate": {
+      "rho": 0.459,
+      "p_value": 2.372932024280587e-05,
+      "expected_sign": "positive",
+      "n": 78
+    },
+    "spearman_wait_vs_txrate": {
+      "rho": -0.415,
+      "p_value": 0.0001580410066319443,
+      "expected_sign": "negative",
+      "n": 78
+    },
+    "spearman_p12_vs_txrate_n>=10": {
+      "rho": 0.8986,
+      "p_value": 0.014888622005580315,
+      "n": 6
+    }
+  },
+  "centers": [
+    {
+      "center_code": "NVUM",
+      "center_name": "University Medical Center of Southern Nevada",
+      "predicted_p12": 0.654,
+      "predicted_median_wait": 8.04,
+      "observed_tx_rate": 100.0,
+      "observed_n": 3
+    },
+    {
+      "center_code": "CASU",
+      "center_name": "Stanford Health Care",
+      "predicted_p12": 0.6605,
+      "predicted_median_wait": 8.29,
+      "observed_tx_rate": 100.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "AZMC",
+      "center_name": "Mayo Clinic Hospital",
+      "predicted_p12": 0.625,
+      "predicted_median_wait": 8.52,
+      "observed_tx_rate": 100.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "WIUW",
+      "center_name": "University of Wisconsin Hospital and Clinics",
+      "predicted_p12": 0.6355,
+      "predicted_median_wait": 8.33,
+      "observed_tx_rate": 75.0,
+      "observed_n": 12
+    },
+    {
+      "center_code": "ILUI",
+      "center_name": "University of Illinois Medical Center",
+      "predicted_p12": 0.4255,
+      "predicted_median_wait": 13.15,
+      "observed_tx_rate": 75.0,
+      "observed_n": 4
+    },
+    {
+      "center_code": "OHCM",
+      "center_name": "Children's Hospital Medical Center",
+      "predicted_p12": 0.4285,
+      "predicted_median_wait": 12.74,
+      "observed_tx_rate": 66.6667,
+      "observed_n": 3
+    },
+    {
+      "center_code": "NEUN",
+      "center_name": "The Nebraska Medical Center",
+      "predicted_p12": 0.1095,
+      "predicted_median_wait": 23.98,
+      "observed_tx_rate": 55.5556,
+      "observed_n": 9
+    },
+    {
+      "center_code": "MIHF",
+      "center_name": "Henry Ford Hospital",
+      "predicted_p12": 0.2985,
+      "predicted_median_wait": 16.66,
+      "observed_tx_rate": 50.0,
+      "observed_n": 4
+    },
+    {
+      "center_code": "NYCP",
+      "center_name": "NY Presbyterian Hospital/Columbia Univ. Medical Center",
+      "predicted_p12": 0.0885,
+      "predicted_median_wait": 19.74,
+      "observed_tx_rate": 50.0,
+      "observed_n": 6
+    },
+    {
+      "center_code": "INIM",
+      "center_name": "Indiana University Health",
+      "predicted_p12": 0.3055,
+      "predicted_median_wait": 15.68,
+      "observed_tx_rate": 43.75,
+      "observed_n": 16
+    },
+    {
+      "center_code": "FLJM",
+      "center_name": "Jackson Memorial Hospital University of Miami School of Medicine",
+      "predicted_p12": 0.201,
+      "predicted_median_wait": 16.22,
+      "observed_tx_rate": 41.6667,
+      "observed_n": 12
+    },
+    {
+      "center_code": "CALL",
+      "center_name": "Loma Linda University Medical Center",
+      "predicted_p12": 0.238,
+      "predicted_median_wait": 16.23,
+      "observed_tx_rate": 33.3333,
+      "observed_n": 6
+    },
+    {
+      "center_code": "TXHD",
+      "center_name": "Medical City Dallas Hospital",
+      "predicted_p12": 0.146,
+      "predicted_median_wait": 25.61,
+      "observed_tx_rate": 33.3333,
+      "observed_n": 3
+    },
+    {
+      "center_code": "NCDU",
+      "center_name": "Duke University Hospital",
+      "predicted_p12": 0.132,
+      "predicted_median_wait": 18.26,
+      "observed_tx_rate": 33.3333,
+      "observed_n": 3
+    },
+    {
+      "center_code": "CAUC",
+      "center_name": "University of California at Los Angeles Medical Center",
+      "predicted_p12": 0.009,
+      "predicted_median_wait": 59.75,
+      "observed_tx_rate": 33.3333,
+      "observed_n": 3
+    },
+    {
+      "center_code": "NYMS",
+      "center_name": "Mount Sinai Medical Center",
+      "predicted_p12": 0.013,
+      "predicted_median_wait": 52.07,
+      "observed_tx_rate": 23.0769,
+      "observed_n": 13
+    },
+    {
+      "center_code": "TNMH",
+      "center_name": "Methodist University Hospital",
+      "predicted_p12": 0.0675,
+      "predicted_median_wait": 32.69,
+      "observed_tx_rate": 16.6667,
+      "observed_n": 6
+    },
+    {
+      "center_code": "SCMU",
+      "center_name": "Medical University of South Carolina",
+      "predicted_p12": 0.169,
+      "predicted_median_wait": 23.11,
+      "observed_tx_rate": 14.2857,
+      "observed_n": 7
+    },
+    {
+      "center_code": "TXMH",
+      "center_name": "Houston Methodist Hospital",
+      "predicted_p12": 0.3685,
+      "predicted_median_wait": 13.57,
+      "observed_tx_rate": 12.5,
+      "observed_n": 8
+    },
+    {
+      "center_code": "FLSL",
+      "center_name": "Mayo Clinic Florida",
+      "predicted_p12": 0.0915,
+      "predicted_median_wait": 26.76,
+      "observed_tx_rate": 12.5,
+      "observed_n": 8
+    },
+    {
+      "center_code": "MIUM",
+      "center_name": "University of Michigan Medical Center",
+      "predicted_p12": 0.0105,
+      "predicted_median_wait": 28.76,
+      "observed_tx_rate": 12.5,
+      "observed_n": 8
+    },
+    {
+      "center_code": "PAPT",
+      "center_name": "University of Pittsburgh Medical Center",
+      "predicted_p12": 0.011,
+      "predicted_median_wait": 55.65,
+      "observed_tx_rate": 11.1111,
+      "observed_n": 9
+    },
+    {
+      "center_code": "UTMC",
+      "center_name": "University of Utah Medical Center",
+      "predicted_p12": 0.6525,
+      "predicted_median_wait": 8.26,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "LATU",
+      "center_name": "Tulane Medical Center",
+      "predicted_p12": 0.6585,
+      "predicted_median_wait": 8.26,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "TXSW",
+      "center_name": "Scott and White Memorial Hospital",
+      "predicted_p12": 0.6475,
+      "predicted_median_wait": 8.16,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "MDUM",
+      "center_name": "University of Maryland Medical System",
+      "predicted_p12": 0.524,
+      "predicted_median_wait": 10.71,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "MOBH",
+      "center_name": "Barnes-Jewish Hospital",
+      "predicted_p12": 0.5255,
+      "predicted_median_wait": 10.92,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "ILUC",
+      "center_name": "University of Chicago Medical Center",
+      "predicted_p12": 0.2095,
+      "predicted_median_wait": 20.1,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "LAOF",
+      "center_name": "Ochsner Foundation Hospital",
+      "predicted_p12": 0.18,
+      "predicted_median_wait": 23.48,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "AZGS",
+      "center_name": "Banner-University Medical Center Phoenix",
+      "predicted_p12": 0.1565,
+      "predicted_median_wait": 25.1,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "MACH",
+      "center_name": "Boston Children's Hospital",
+      "predicted_p12": 0.145,
+      "predicted_median_wait": 26.11,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "PACH",
+      "center_name": "UPMC Children's Hospital of Pittsburgh",
+      "predicted_p12": 0.111,
+      "predicted_median_wait": 28.9,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "ILPL",
+      "center_name": "Rush University Medical Center",
+      "predicted_p12": 0.0975,
+      "predicted_median_wait": 30.72,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "TNVU",
+      "center_name": "Vanderbilt University Medical Center",
+      "predicted_p12": 0.0815,
+      "predicted_median_wait": 31.99,
+      "observed_tx_rate": 0.0,
+      "observed_n": 3
+    },
+    {
+      "center_code": "OHUC",
+      "center_name": "University of Cincinnati  Medical Center",
+      "predicted_p12": 0.1115,
+      "predicted_median_wait": 16.42,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "NCMH",
+      "center_name": "University of North Carolina Hospitals",
+      "predicted_p12": 0.1105,
+      "predicted_median_wait": 15.64,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "WISL",
+      "center_name": "Aurora St. Luke's Medical Center",
+      "predicted_p12": 0.093,
+      "predicted_median_wait": 16.99,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "TXJS",
+      "center_name": "University of Texas Medical Branch at Galveston",
+      "predicted_p12": 0.093,
+      "predicted_median_wait": 16.49,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "NJRW",
+      "center_name": "Robert Wood Johnson University Hospital",
+      "predicted_p12": 0.084,
+      "predicted_median_wait": 17.1,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "MAPB",
+      "center_name": "Brigham and Women's Hospital",
+      "predicted_p12": 0.1025,
+      "predicted_median_wait": 16.6,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "PALV",
+      "center_name": "Lehigh Valley Hospital",
+      "predicted_p12": 0.05,
+      "predicted_median_wait": 39.0,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "IAIV",
+      "center_name": "University of Iowa Hospitals and Clinics Transplant Programs",
+      "predicted_p12": 0.055,
+      "predicted_median_wait": 27.87,
+      "observed_tx_rate": 0.0,
+      "observed_n": 5
+    },
+    {
+      "center_code": "CACS",
+      "center_name": "Cedars-Sinai Medical Center",
+      "predicted_p12": 0.044,
+      "predicted_median_wait": 41.22,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "ILNM",
+      "center_name": "Northwestern Memorial Hospital",
+      "predicted_p12": 0.0335,
+      "predicted_median_wait": 43.6,
+      "observed_tx_rate": 0.0,
+      "observed_n": 9
+    },
+    {
+      "center_code": "MNMC",
+      "center_name": "Rochester Methodist Hospital (Mayo Clinic)",
+      "predicted_p12": 0.0335,
+      "predicted_median_wait": 42.45,
+      "observed_tx_rate": 0.0,
+      "observed_n": 4
+    },
+    {
+      "center_code": "NJHK",
+      "center_name": "Hackensack University Medical Center",
+      "predicted_p12": 0.0315,
+      "predicted_median_wait": 29.78,
+      "observed_tx_rate": 0.0,
+      "observed_n": 4
+    },
+    {
+      "center_code": "MABI",
+      "center_name": "Beth Israel Deaconess Medical Center",
+      "predicted_p12": 0.031,
+      "predicted_median_wait": 45.91,
+      "observed_tx_rate": 0.0,
+      "observed_n": 4
+    },
+    {
+      "center_code": "GAPH",
+      "center_name": "Piedmont Hospital",
+      "predicted_p12": 0.0425,
+      "predicted_median_wait": 20.91,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "VAFH",
+      "center_name": "Inova Fairfax Hospital",
+      "predicted_p12": 0.034,
+      "predicted_median_wait": 26.67,
+      "observed_tx_rate": 0.0,
+      "observed_n": 3
+    },
+    {
+      "center_code": "PAAE",
+      "center_name": "Albert Einstein Medical Center",
+      "predicted_p12": 0.0195,
+      "predicted_median_wait": 53.9,
+      "observed_tx_rate": 0.0,
+      "observed_n": 3
+    },
+    {
+      "center_code": "KYJH",
+      "center_name": "Jewish Hospital",
+      "predicted_p12": 0.0135,
+      "predicted_median_wait": 55.27,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "OHCC",
+      "center_name": "The Cleveland Clinic Foundation",
+      "predicted_p12": 0.0305,
+      "predicted_median_wait": 23.77,
+      "observed_tx_rate": 0.0,
+      "observed_n": 5
+    },
+    {
+      "center_code": "CAPC",
+      "center_name": "Lucile Salter Packard Children's Hospital at Stanford",
+      "predicted_p12": 0.0115,
+      "predicted_median_wait": 52.84,
+      "observed_tx_rate": 0.0,
+      "observed_n": 4
+    },
+    {
+      "center_code": "NCBG",
+      "center_name": "Wake Forest Baptist Medical Center",
+      "predicted_p12": 0.015,
+      "predicted_median_wait": 57.03,
+      "observed_tx_rate": 0.0,
+      "observed_n": 3
+    },
+    {
+      "center_code": "NYFL",
+      "center_name": "Strong Memorial Hospital, University of Rochester Medical Center",
+      "predicted_p12": 0.0205,
+      "predicted_median_wait": 23.63,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "CAUH",
+      "center_name": "Keck Hospital of USC",
+      "predicted_p12": 0.0185,
+      "predicted_median_wait": 59.05,
+      "observed_tx_rate": 0.0,
+      "observed_n": 3
+    },
+    {
+      "center_code": "MDJH",
+      "center_name": "Johns Hopkins Hospital",
+      "predicted_p12": 0.012,
+      "predicted_median_wait": 58.51,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "NYUM",
+      "center_name": "State University of New York Upstate Medical University",
+      "predicted_p12": 0.015,
+      "predicted_median_wait": 58.11,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "ILLU",
+      "center_name": "Loyola University Medical Center",
+      "predicted_p12": 0.0065,
+      "predicted_median_wait": 58.01,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "GAEM",
+      "center_name": "Emory University Hospital",
+      "predicted_p12": 0.008,
+      "predicted_median_wait": 61.09,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "NJSB",
+      "center_name": "Saint Barnabas Medical Center",
+      "predicted_p12": 0.0125,
+      "predicted_median_wait": 59.64,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "NYUC",
+      "center_name": "New York University Medical Center",
+      "predicted_p12": 0.0145,
+      "predicted_median_wait": 42.41,
+      "observed_tx_rate": 0.0,
+      "observed_n": 10
+    },
+    {
+      "center_code": "NYNY",
+      "center_name": "New York-Presbyterian Hospital/Weill Cornell Medical Center",
+      "predicted_p12": 0.0085,
+      "predicted_median_wait": 57.69,
+      "observed_tx_rate": 0.0,
+      "observed_n": 3
+    },
+    {
+      "center_code": "PAUP",
+      "center_name": "Hospital of the University of Pennsylvania",
+      "predicted_p12": 0.009,
+      "predicted_median_wait": 31.73,
+      "observed_tx_rate": 0.0,
+      "observed_n": 8
+    },
+    {
+      "center_code": "VAMC",
+      "center_name": "Medical College of Virginia Hospitals",
+      "predicted_p12": 0.011,
+      "predicted_median_wait": 34.04,
+      "observed_tx_rate": 0.0,
+      "observed_n": 3
+    },
+    {
+      "center_code": "VAUV",
+      "center_name": "University of Virginia Health Sciences Center",
+      "predicted_p12": 0.0135,
+      "predicted_median_wait": 33.61,
+      "observed_tx_rate": 0.0,
+      "observed_n": 3
+    },
+    {
+      "center_code": "MAMG",
+      "center_name": "Massachusetts General Hospital",
+      "predicted_p12": 0.0095,
+      "predicted_median_wait": 37.49,
+      "observed_tx_rate": 0.0,
+      "observed_n": 7
+    },
+    {
+      "center_code": "MNUM",
+      "center_name": "University of Minnesota Medical Center, Fairview",
+      "predicted_p12": 0.0115,
+      "predicted_median_wait": 37.15,
+      "observed_tx_rate": 0.0,
+      "observed_n": 16
+    },
+    {
+      "center_code": "CASF",
+      "center_name": "University of California San Francisco Medical Center",
+      "predicted_p12": 0.0065,
+      "predicted_median_wait": 69.98,
+      "observed_tx_rate": 0.0,
+      "observed_n": 3
+    },
+    {
+      "center_code": "COUC",
+      "center_name": "University of Colorado Hospital/Health Science Center",
+      "predicted_p12": 0.011,
+      "predicted_median_wait": 38.89,
+      "observed_tx_rate": 0.0,
+      "observed_n": 4
+    },
+    {
+      "center_code": "DCGU",
+      "center_name": "Georgetown University Medical Center",
+      "predicted_p12": 0.0095,
+      "predicted_median_wait": 30.22,
+      "observed_tx_rate": 0.0,
+      "observed_n": 9
+    },
+    {
+      "center_code": "PATJ",
+      "center_name": "Thomas Jefferson University Hospital",
+      "predicted_p12": 0.0085,
+      "predicted_median_wait": 36.84,
+      "observed_tx_rate": 0.0,
+      "observed_n": 3
+    },
+    {
+      "center_code": "LAWK",
+      "center_name": "Willis-Knighton Medical Center",
+      "predicted_p12": 0.0065,
+      "predicted_median_wait": 27.55,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "CAGH",
+      "center_name": "Scripps Green Hospital",
+      "predicted_p12": 0.009,
+      "predicted_median_wait": 69.67,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "CASH",
+      "center_name": "Sharp Memorial Hospital",
+      "predicted_p12": 0.0045,
+      "predicted_median_wait": 70.28,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "SDMK",
+      "center_name": "Avera McKennan Hospital",
+      "predicted_p12": 0.008,
+      "predicted_median_wait": 27.95,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "NYMA",
+      "center_name": "Montefiore Medical Center",
+      "predicted_p12": 0.008,
+      "predicted_median_wait": 28.63,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "TXHS",
+      "center_name": "Methodist Specialty and Transplant Hospital",
+      "predicted_p12": 0.0065,
+      "predicted_median_wait": 31.64,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    }
+  ]
+}

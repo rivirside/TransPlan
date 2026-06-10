@@ -1,0 +1,172 @@
+{
+  "organ": "intestine",
+  "n_iterations": 2000,
+  "seed": 42,
+  "reference_patient": {
+    "blood_type": "O+",
+    "age": 50,
+    "sex": "male",
+    "urgency": 2,
+    "cpra": null,
+    "meld": null,
+    "las": null
+  },
+  "matched_centers": 17,
+  "stats": {
+    "spearman_p12_vs_txrate": {
+      "rho": 0.6228,
+      "p_value": 0.00757859167510251,
+      "expected_sign": "positive",
+      "n": 17
+    },
+    "spearman_wait_vs_txrate": {
+      "rho": -0.6068,
+      "p_value": 0.00980343347147977,
+      "expected_sign": "negative",
+      "n": 17
+    },
+    "spearman_p12_vs_txrate_n>=10": {
+      "rho": 0.5357,
+      "p_value": 0.21521745567801284,
+      "n": 7
+    }
+  },
+  "centers": [
+    {
+      "center_code": "MIHF",
+      "center_name": "Henry Ford Hospital",
+      "predicted_p12": 0.617,
+      "predicted_median_wait": 7.99,
+      "observed_tx_rate": 100.0,
+      "observed_n": 2
+    },
+    {
+      "center_code": "DCGU",
+      "center_name": "Georgetown University Medical Center",
+      "predicted_p12": 0.73,
+      "predicted_median_wait": 5.17,
+      "observed_tx_rate": 70.0,
+      "observed_n": 20
+    },
+    {
+      "center_code": "ILUI",
+      "center_name": "University of Illinois Medical Center",
+      "predicted_p12": 0.814,
+      "predicted_median_wait": 3.73,
+      "observed_tx_rate": 66.6667,
+      "observed_n": 6
+    },
+    {
+      "center_code": "NYCP",
+      "center_name": "NY Presbyterian Hospital/Columbia Univ. Medical Center",
+      "predicted_p12": 0.6155,
+      "predicted_median_wait": 5.88,
+      "observed_tx_rate": 66.6667,
+      "observed_n": 6
+    },
+    {
+      "center_code": "OHCC",
+      "center_name": "The Cleveland Clinic Foundation",
+      "predicted_p12": 0.5095,
+      "predicted_median_wait": 9.97,
+      "observed_tx_rate": 64.2857,
+      "observed_n": 14
+    },
+    {
+      "center_code": "NEUN",
+      "center_name": "The Nebraska Medical Center",
+      "predicted_p12": 0.3365,
+      "predicted_median_wait": 13.8,
+      "observed_tx_rate": 63.6364,
+      "observed_n": 11
+    },
+    {
+      "center_code": "NYMS",
+      "center_name": "Mount Sinai Medical Center",
+      "predicted_p12": 0.438,
+      "predicted_median_wait": 10.61,
+      "observed_tx_rate": 61.5385,
+      "observed_n": 13
+    },
+    {
+      "center_code": "INIM",
+      "center_name": "Indiana University Health",
+      "predicted_p12": 0.395,
+      "predicted_median_wait": 15.32,
+      "observed_tx_rate": 54.5455,
+      "observed_n": 11
+    },
+    {
+      "center_code": "FLJM",
+      "center_name": "Jackson Memorial Hospital University of Miami School of Medicine",
+      "predicted_p12": 0.5535,
+      "predicted_median_wait": 7.9,
+      "observed_tx_rate": 50.0,
+      "observed_n": 18
+    },
+    {
+      "center_code": "OHCM",
+      "center_name": "Children's Hospital Medical Center",
+      "predicted_p12": 0.4835,
+      "predicted_median_wait": 11.5,
+      "observed_tx_rate": 50.0,
+      "observed_n": 4
+    },
+    {
+      "center_code": "NCDU",
+      "center_name": "Duke University Hospital",
+      "predicted_p12": 0.259,
+      "predicted_median_wait": 13.82,
+      "observed_tx_rate": 33.3333,
+      "observed_n": 3
+    },
+    {
+      "center_code": "CAPC",
+      "center_name": "Lucile Salter Packard Children's Hospital at Stanford",
+      "predicted_p12": 0.1515,
+      "predicted_median_wait": 35.7,
+      "observed_tx_rate": 33.3333,
+      "observed_n": 6
+    },
+    {
+      "center_code": "PAPT",
+      "center_name": "University of Pittsburgh Medical Center",
+      "predicted_p12": 0.1605,
+      "predicted_median_wait": 25.89,
+      "observed_tx_rate": 27.2727,
+      "observed_n": 11
+    },
+    {
+      "center_code": "CAUC",
+      "center_name": "University of California at Los Angeles Medical Center",
+      "predicted_p12": 0.137,
+      "predicted_median_wait": 21.31,
+      "observed_tx_rate": 16.6667,
+      "observed_n": 6
+    },
+    {
+      "center_code": "MACH",
+      "center_name": "Boston Children's Hospital",
+      "predicted_p12": 0.798,
+      "predicted_median_wait": 4.31,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "PACH",
+      "center_name": "UPMC Children's Hospital of Pittsburgh",
+      "predicted_p12": 0.1625,
+      "predicted_median_wait": 34.8,
+      "observed_tx_rate": 0.0,
+      "observed_n": 1
+    },
+    {
+      "center_code": "ILCM",
+      "center_name": "Ann & Robert H. Lurie Children's Hospital of Chicago",
+      "predicted_p12": 0.1595,
+      "predicted_median_wait": 34.36,
+      "observed_tx_rate": 0.0,
+      "observed_n": 2
+    }
+  ]
+}
