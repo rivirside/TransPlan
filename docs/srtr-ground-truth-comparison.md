@@ -70,7 +70,7 @@ The analytical P24 formula `P = integral(f_T(t) * S_M(t) * S_D(t), 0, 24)` uses 
 - Age/sex multipliers on wait time distributions
 - Bootstrap confidence interval computation
 
-For kidney specifically, the long wait times (27-55 month medians) make the 24-month horizon sensitive to the tail behavior of the log-normal distribution, amplifying small parameter differences between the analytical and simulation approaches. The Brier score calibration (BS < 0.001 for all organs) confirms the underlying distributions match; the P24 differences reflect legitimate model features (age/sex adjustments) not present in the simplified analytical formula.
+For kidney specifically, the long wait times (27-55 month medians) make the 24-month horizon sensitive to the tail behavior of the log-normal distribution, amplifying small parameter differences between the analytical and simulation approaches. The very low Brier scores (BS < 0.001 for all organs) should be read with care: they compare the Monte Carlo sampler against the **analytical integral of the same parameters**, so they converge toward zero by construction as iterations increase. This confirms the sampler is unbiased (internal consistency / convergence) — it is **not** evidence of external predictive accuracy against observed patient outcomes. The P24 differences reflect legitimate model features (age/sex adjustments) not present in the simplified analytical formula.
 
 ### Post-Transplant Outcomes (SRTR Observed)
 

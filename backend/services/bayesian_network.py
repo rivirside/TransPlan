@@ -2,7 +2,8 @@
 Bayesian Belief Network inference engine for transplant probability estimation.
 
 Alternative to Monte Carlo simulation (Phase 5 M1, ADR-024).
-Uses pgmpy's VariableElimination for exact inference on a 12-node DAG.
+Uses a self-contained NumPy variable-elimination engine (services.bbn_lite)
+for exact inference on a 12-node DAG — no pgmpy dependency.
 
 The BBN is constructed and cached per granularity level. For each patient query,
 evidence is set on the 5 observable nodes and marginal probabilities are computed

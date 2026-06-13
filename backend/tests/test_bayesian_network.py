@@ -3,7 +3,7 @@ Tests for the BBN inference engine (Phase 5 M1, Issue #38).
 
 Validates:
   - DAG structure (nodes, edges, acyclicity)
-  - Model construction and pgmpy validation
+  - Model construction and CPT/normalization validation (custom NumPy engine)
   - Inference produces valid probability distributions
   - Results match expected patterns for known inputs
   - simulate_bbn produces valid SimulationResult objects
