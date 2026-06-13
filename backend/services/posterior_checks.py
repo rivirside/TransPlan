@@ -47,6 +47,14 @@ class CheckResult:
     discrepancy: float  # |observed - posterior_mean| / observed
     passed: bool
 
+    def __post_init__(self):
+        # Coerce numpy scalar types (np.bool_, np.float64) from comparisons to
+        # native Python types, so consumers and JSON serialization see plain
+        # bool/float.
+        self.inside_ci = bool(self.inside_ci)
+        self.passed = bool(self.passed)
+        self.discrepancy = float(self.discrepancy)
+
 
 @dataclass
 class PosteriorCheckReport:

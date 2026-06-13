@@ -80,8 +80,13 @@ class TestEquityResultStructure:
     def test_returns_equity_result(self, kidney_equity):
         assert isinstance(kidney_equity, EquityAnalysisResult)
 
-    def test_has_22_cities(self, kidney_equity):
-        assert len(kidney_equity.cities) == 22
+    def test_city_count_respects_cap(self, kidney_equity):
+        # Equity returns min(max_centers, available centers). The available
+        # count depends on whether full center data is loaded (248) or the
+        # 22-city fallback is in effect, so assert the contract, not a fixed 22.
+        from services.monte_carlo import _get_centers
+        n_available = len(_get_centers("kidney"))
+        assert len(kidney_equity.cities) == min(30, n_available)
 
     def test_48_profiles_simulated(self, kidney_equity):
         # 8 blood types × 3 age brackets × 2 sexes = 48
@@ -183,7 +188,8 @@ def test_equity_runs_for_all_organs(organ):
     result = compute_equity_analysis(patient, n_iterations=100)
     assert isinstance(result, EquityAnalysisResult)
     assert result.organ == organ
-    assert len(result.cities) == 22
+    from services.monte_carlo import _get_centers
+    assert len(result.cities) == min(30, len(_get_centers(organ)))
 
 
 # -- max_centers parameter --
@@ -218,13 +224,15 @@ class TestMaxCenters:
         assert len(result.cities) == 10
 
     def test_no_capping_when_under_max(self):
-        """When centers <= max_centers, all centers are used."""
+        """When centers <= max_centers, all available centers are used."""
+        from services.monte_carlo import _get_centers
         patient = PatientProfile(
             organ="kidney", blood_type="O+", age=45, sex="male", urgency=2, cpra=50,
         )
-        # Fallback gives 22 centers; max_centers=30 should not cap
-        result = compute_equity_analysis(patient, n_iterations=50, max_centers=30)
-        assert len(result.cities) == 22
+        n_available = len(_get_centers("kidney"))
+        # Set the cap above the available count so no capping occurs.
+        result = compute_equity_analysis(patient, n_iterations=50, max_centers=n_available + 50)
+        assert len(result.cities) == n_available
 
     def test_capped_results_still_valid(self):
         """Capped results still have correct structure and valid metrics."""
