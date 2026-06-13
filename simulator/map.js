@@ -165,7 +165,13 @@
             subdomains: 'abcd'
         }).addTo(_map);
 
-        _markersLayer = L.layerGroup().addTo(_map);
+        // Cluster center markers when the plugin is available (#223 — declutters
+        // the 248-center map); gracefully fall back to a plain layer group if the
+        // markercluster CDN script didn't load.
+        _markersLayer = (typeof L.markerClusterGroup === 'function')
+            ? L.markerClusterGroup({ maxClusterRadius: 45, spiderfyOnMaxZoom: true, chunkedLoading: true })
+            : L.layerGroup();
+        _markersLayer.addTo(_map);
         _homeMarkerLayer = L.layerGroup().addTo(_map);
 
         return _map;
