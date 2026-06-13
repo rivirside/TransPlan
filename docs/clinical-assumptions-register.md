@@ -23,6 +23,8 @@ This is a **LIVING document.** Maintain it as follows:
 
 **Summary:** **120** assumptions tracked after dedupe. **38** still need justification (`uncited` + `assumed` + `heuristic_clamp`). **45** are flagged **high-risk** (`risk_if_wrong = high`); the high-risk entries that are also unjustified form the priority shortlist at the end.
 
+**Recent updates:** PR #279 resolved **MCMC-19** (convergence trace-path bug — diagnostics now run on real fitted traces) and relabeled the MCMC internal-consistency cluster (**MCMC-21/23/24**) with honest "not external validation" framing pointing to the SRTR per-center calibration. The underlying assumptions persist (status unchanged) but the misleading framing is addressed.
+
 ---
 
 ## 1. Scoring (location-suitability engine)
@@ -165,12 +167,12 @@ This is a **LIVING document.** Maintain it as follows:
 | MCMC-16 | mcmc_inference.py:137-146,290 | Clinical (cPRA/MELD/LAS) multiplier via Nashville/A+ reference probe | Deterministic severity adjustment outside Bayesian model | assumed | medium | Comment: too few data points for Bayesian estimation. Severity NOT learned in MCMC; Nashville/A+ arbitrary reference |
 | MCMC-17 | mcmc_inference.py:338,341 | Center→region Nashville fallback | Unmapped center inherits Nashville's posterior params | heuristic_clamp | medium | Silent geographic fallback; could misassign real centers |
 | MCMC-18 | convergence.py:35,101-111 | Convergence thresholds (R-hat<1.01, ESS>400) | Gatekeeper for posterior trustworthiness | assumed | medium | Match Vehtari 2021 standards but uncited in repo |
-| MCMC-19 | convergence.py:14,44 | Convergence trace-path mismatch (mcmc_traces/_trace.nc vs mcmc-traces/{organ}.nc) | Whether diagnostics ever load real traces | uncited | high | BUG-LEVEL: convergence.py uses underscore dir/suffix; fitting writes hyphen dir. Diagnostics return available=False for all real traces — may never run on fitted models |
+| MCMC-19 | convergence.py:42-43 | Convergence trace-path mismatch (mcmc_traces/_trace.nc vs mcmc-traces/{organ}.nc) | Whether diagnostics ever load real traces | resolved | high | ✅ FIXED (PR #279): now resolves via mcmc_survival.trace_path() (single source of truth); tests/test_convergence.py added (was zero coverage) |
 | MCMC-20 | posterior_checks.py:117-273 | Posterior-check pass thresholds (disc <0.20/0.15/0.25, calibration ≥0.60, ρ>0.7, overall ≥70%) | What counts as "adequately capturing" SRTR data | heuristic_clamp | medium | All hand-set, no source. 0.60 calibration explicitly relaxed from 0.90 ideal |
-| MCMC-21 | posterior_checks.py:1-15,95-97 | Posterior checks are internal self-consistency | Reproduces own training inputs, not real outcomes | assumed | high | CRITICAL FRAMING: in-sample diagnostic; single-obs-per-latent makes observed values near-guaranteed inside CIs. NOT external validation |
+| MCMC-21 | posterior_checks.py:1-15,95-97 | Posterior checks are internal self-consistency | Reproduces own training inputs, not real outcomes | assumed | high | Framing addressed (PR #279): docstring now states in-sample internal-consistency, NOT external validation, and points to SRTR calibration. Underlying single-obs-per-latent limitation remains |
 | MCMC-22 | posterior_checks.py:178-184 | city_factor_calibration target 0.90 / pass 0.60 | City-posterior calibration | heuristic_clamp | low | 0.90 correct in principle; 0.60 pass bar arbitrary relaxation |
 | MCMC-23 | cross_validation.py:1-19,196-200 | Cross-engine "validation" is internal-consistency only | MC/BBN/MCMC agree with each other, not reality | assumed | high | #251: module name misleading. All three share SRTR inputs → agreement expected. ρ<0.5 flag hand-set |
-| MCMC-24 | temporal_validation.py:23,48-127 | Temporal walk-forward uses synthetic trend perturbation | Compares run to trend-shifted version of itself | assumed | high | Not true holdout: "test" = same model × slope^1. ρ near-tautological. baseline_median fallback 24.0 hand-set |
+| MCMC-24 | temporal_validation.py:23,48-127 | Temporal walk-forward uses synthetic trend perturbation | Compares run to trend-shifted version of itself | assumed | high | Framing addressed (PR #279): docstring now flags the synthetic fallback as near-tautological / not a true holdout, points to #237. Real out-of-sample temporal validation still outstanding. baseline_median fallback 24.0 hand-set |
 | MCMC-25 | temporal_validation.py:83-84 | Fold seed offset 7919 | RNG decorrelation between folds | heuristic_clamp | low | Arbitrary prime multiplier |
 | MCMC-26 | brier_score.py:11-15 | Brier interpretation thresholds (BS<0.05 excellent, <0.20 "FDA SaMD") | Acceptable calibration quality; invokes FDA SaMD | uncited | medium | "roadmap target" only; no regulatory citation. BS=0.25 no-skill is standard |
 | MCMC-27 | brier_score.py:1-10,51-89 | Brier check is self-consistency (MC vs analytical, same params) | MC matches own analytical expectation, not outcomes | assumed | high | Independence baked into integrand (no copula) → penalizes MC if copula on. External Brier deferred to Phase 4 IRB |
@@ -320,10 +322,10 @@ These are the entries flagged **high-risk** AND still lacking external justifica
 - [ ] **BBN-22** bbn_parameterizer.py:993-994 — Pediatric age clamping to 18-34 (`assumed`). Systematically misrepresents pediatric candidates.
 - [ ] **BBN-26 / docs L-072** bayesian_network.py:439-452 — Hybrid p24 center-AVERAGE competing-loss split (`assumed`). High-acuity patients get average death/delist split.
 - [ ] **MCMC-09** mcmc_survival.py:178-184 — Single-aggregate-observation likelihood (`assumed`). Parameter propagation, not independent survival fit — cross-engine agreement must not be framed as validation.
-- [ ] **MCMC-19** convergence.py:14,44 — Trace-path mismatch (`uncited`, BUG-LEVEL). Convergence diagnostics may never run on real fitted traces.
-- [ ] **MCMC-21** posterior_checks.py:1-15 — Posterior checks are in-sample self-consistency (`assumed`). Not external validation.
-- [ ] **MCMC-23** cross_validation.py — Cross-engine "validation" is internal-consistency only (`assumed`). Misleading module name; agreement expected by construction.
-- [ ] **MCMC-24** temporal_validation.py — Synthetic trend-perturbation "walk-forward" (`assumed`). Near-tautological; not a true temporal holdout.
+- [x] **MCMC-19** convergence.py — Trace-path mismatch. ✅ FIXED (PR #279): convergence now reads the canonical trace path; test coverage added.
+- [x] **MCMC-21** posterior_checks.py — In-sample self-consistency. ✅ Framing addressed (PR #279): docstring relabeled, points to SRTR calibration. (Underlying single-obs limitation remains.)
+- [x] **MCMC-23** cross_validation.py — Cross-engine internal-consistency. ✅ Framing addressed (earlier methods pass): docstring relabeled "concordance, not validation".
+- [x] **MCMC-24** temporal_validation.py — Synthetic trend-perturbation. ✅ Framing addressed (PR #279): relabeled near-tautological; real out-of-sample work tracked in #237.
 - [ ] **MCMC-27** brier_score.py — Self-consistency Brier with independence baked in (`assumed`). Penalizes MC when copula on; external Brier deferred.
 - [ ] **EQSP-05** equity.py:228-229 — Demographic mortality NOT stratified in equity (`assumed`). Understates older-patient disparity.
 - [ ] **EQSP-19** policy_scenarios.py:408-433 — Travel-subsidy tier magnitudes (`assumed`). Explicitly "not empirically validated".
