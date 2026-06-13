@@ -383,6 +383,37 @@ def _estimate_time_horizon_probs(wait_probs: list[float]) -> dict[str, float]:
     return {"p6": p_6, "p12": p_12, "p24": p_24, "p36": p_36}
 
 
+def _scale_time_horizons(
+    time_probs: dict[str, float], p_transplant_24: float
+) -> tuple[float, float, float, float]:
+    """Scale the within-24mo wait-category CDF to the actual P(transplant<=24).
+
+    ``time_probs`` is the cumulative wait distribution; dividing the 6/12mo
+    cumulative by the 24mo cumulative preserves the *conditional* shape of when
+    transplants occur within the first two years, which we then anchor to the
+    competing-outcome node's P(transplant<=24).
+
+    We divide by the true 24mo cumulative (not a magic floor): since p6<=p12<=
+    p24_wait, the conditional ratios are bounded in [0, 1], so the result can
+    never exceed ``p_transplant_24``. Only the exact-zero case is guarded (#244).
+    """
+    p24w = time_probs["p24"]
+    p24 = p_transplant_24
+    if p24w <= 0:
+        # No modeled wait mass within 24mo — can't place transplants earlier.
+        p6 = p12 = 0.0
+        p36 = p24
+    else:
+        p6 = time_probs["p6"] / p24w * p_transplant_24
+        p12 = time_probs["p12"] / p24w * p_transplant_24
+        p36 = time_probs["p36"] / p24w * p_transplant_24
+    # Enforce monotonicity and valid-probability bounds.
+    p6 = max(0.0, min(p6, p24))
+    p12 = max(p6, min(p12, p24))
+    p36 = max(p24, min(p36, 1.0))
+    return p6, p12, p24, p36
+
+
 # ──────────────────────────────────────────────────────────────────────
 # Main entry point: simulate_bbn (parallel to monte_carlo.simulate)
 # ──────────────────────────────────────────────────────────────────────
@@ -447,14 +478,7 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
 
             wait_probs = query_result["wait_category"]
             time_probs = _estimate_time_horizon_probs(wait_probs)
-            p_6 = time_probs["p6"] * p_transplant_24 / max(time_probs["p24"], 0.01)
-            p_12 = time_probs["p12"] * p_transplant_24 / max(time_probs["p24"], 0.01)
-            p_24 = p_transplant_24
-            p_36 = min(1.0, time_probs["p36"] * p_transplant_24 / max(time_probs["p24"], 0.01))
-
-            p_6 = max(0.0, min(p_6, p_24))
-            p_12 = max(p_6, min(p_12, p_24))
-            p_36 = max(p_24, min(p_36, 1.0))
+            p_6, p_12, p_24, p_36 = _scale_time_horizons(time_probs, p_transplant_24)
 
             median_wait = _estimate_median_wait(wait_probs)
 
@@ -531,14 +555,7 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
 
             wait_probs = query_result["wait_category"]
             time_probs = _estimate_time_horizon_probs(wait_probs)
-            p_6 = time_probs["p6"] * p_transplant_24 / max(time_probs["p24"], 0.01)
-            p_12 = time_probs["p12"] * p_transplant_24 / max(time_probs["p24"], 0.01)
-            p_24 = p_transplant_24
-            p_36 = min(1.0, time_probs["p36"] * p_transplant_24 / max(time_probs["p24"], 0.01))
-
-            p_6 = max(0.0, min(p_6, p_24))
-            p_12 = max(p_6, min(p_12, p_24))
-            p_36 = max(p_24, min(p_36, 1.0))
+            p_6, p_12, p_24, p_36 = _scale_time_horizons(time_probs, p_transplant_24)
 
             median_wait = _estimate_median_wait(wait_probs)
 
