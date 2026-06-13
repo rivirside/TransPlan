@@ -21,7 +21,10 @@ COPULA_THETA: float = 1.0
 
 # Per-organ copula θ (L-059 fix). High-acuity organs (heart, lung, intestine) have
 # stronger mortality↔delisting correlation; low-acuity (kidney) have weaker.
-# Values derived from clinical literature on waitlist competing event co-occurrence.
+# NOTE: these are a clinical-acuity HEURISTIC ordering, not yet calibrated to
+# patient-level data — no specific citation backs the exact magnitudes (#255,
+# ADR-025). They encode the qualitative ranking only; treat absolute τ values
+# as illustrative until fit from SRTR microdata.
 # Kendall's τ ≈ θ/(θ+2): kidney 0.29, liver 0.37, heart 0.47, lung 0.43, pancreas 0.31, intestine 0.43.
 ORGAN_COPULA_THETA: dict[str, float] = {
     "kidney": 0.8,     # τ ≈ 0.29 — low acuity, long stable waitlist periods

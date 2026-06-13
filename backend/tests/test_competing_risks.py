@@ -115,7 +115,9 @@ class TestCompetingRisksInSimulation:
         """
         from services.distributions import get_wait_time_distribution
 
-        result = simulate(kidney_patient, n_iterations=2000)
+        # Seed for determinism: this picks the single highest-p24 center and
+        # compares against a tight tolerance, so unseeded MC noise made it flaky.
+        result = simulate(kidney_patient, n_iterations=2000, seed=0)
         # Pick the first center that has a center_code for precise distribution lookup
         center = result.cities[0]
 

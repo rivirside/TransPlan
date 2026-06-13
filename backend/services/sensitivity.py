@@ -43,6 +43,8 @@ def _p24_single_city(
         cpra=patient.cpra,
         meld=patient.meld,
         las=patient.las,
+        age=patient.age,
+        sex=patient.sex,
     )
     transplant_times = dist.rvs(size=n_iterations, random_state=rng)
 

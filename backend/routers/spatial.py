@@ -33,17 +33,24 @@ def query_interpolated_value(
     lat: float = Query(..., ge=24.0, le=50.0, description="Latitude (US mainland)"),
     lon: float = Query(..., ge=-125.0, le=-66.0, description="Longitude (US mainland)"),
     layer: str = Query(..., description="Data layer name (e.g. 'air_quality', 'wait_time_factor_kidney')"),
-    method: str = Query(default="rbf", description="Interpolation method: 'rbf' or 'idw'"),
+    method: str = Query(default="rbf", description="Interpolation method: 'rbf', 'idw', or 'kriging' (returns prediction uncertainty)"),
 ):
-    """Interpolate a single data layer at a given coordinate."""
+    """Interpolate a single data layer at a given coordinate.
+
+    With method='kriging', the response includes a per-point prediction
+    `uncertainty` (Gaussian-process std) and an `extrapolation` flag for points
+    outside the data's convex hull.
+    """
     try:
-        value = interpolate_at(lat, lon, layer, method)
         surface = get_surface(layer, method)
+        value, std = surface.query_with_uncertainty(lat, lon)
         return {
             "lat": lat,
             "lon": lon,
             "layer": layer,
             "value": round(value, 3),
+            "uncertainty": round(std, 3),
+            "extrapolation": not surface.in_hull(lat, lon),
             "stats": surface.stats,
         }
     except ValueError as e:

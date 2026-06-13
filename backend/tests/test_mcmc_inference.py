@@ -353,3 +353,36 @@ class TestErrorHandling:
         patient = PatientProfile(organ="liver", blood_type="A+", age=40, sex="male", urgency=2)
         with pytest.raises(RuntimeError, match="No MCMC trace"):
             simulate_mcmc(patient, n_iterations=200)
+
+
+# ---------------------------------------------------------------------------
+# Reproducibility (#239) — MCMC must honor the `seed` parameter
+# ---------------------------------------------------------------------------
+
+class TestReproducibility:
+    def test_same_seed_gives_identical_results(self, kidney_patient):
+        from services.mcmc_inference import simulate_mcmc
+        r1 = simulate_mcmc(kidney_patient, n_iterations=200, seed=42)
+        r2 = simulate_mcmc(kidney_patient, n_iterations=200, seed=42)
+        p1 = [(c.city, c.p_transplant_24mo, c.median_wait_months) for c in r1.cities]
+        p2 = [(c.city, c.p_transplant_24mo, c.median_wait_months) for c in r2.cities]
+        assert p1 == p2
+
+    def test_seed_used_is_recorded(self, kidney_patient):
+        from services.mcmc_inference import simulate_mcmc
+        result = simulate_mcmc(kidney_patient, n_iterations=200, seed=12345)
+        assert result.seed_used == 12345
+
+    def test_different_seeds_give_different_results(self, kidney_patient):
+        from services.mcmc_inference import simulate_mcmc
+        r1 = simulate_mcmc(kidney_patient, n_iterations=200, seed=1)
+        r2 = simulate_mcmc(kidney_patient, n_iterations=200, seed=2)
+        p1 = [c.p_transplant_24mo for c in r1.cities]
+        p2 = [c.p_transplant_24mo for c in r2.cities]
+        assert p1 != p2
+
+    def test_seed_used_populated_when_seed_omitted(self, kidney_patient):
+        from services.mcmc_inference import simulate_mcmc
+        result = simulate_mcmc(kidney_patient, n_iterations=200)
+        # An auto-generated seed must still be reported so the run is reproducible.
+        assert result.seed_used > 0

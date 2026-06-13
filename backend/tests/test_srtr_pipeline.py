@@ -14,6 +14,11 @@ import importlib.util
 
 import pytest
 
+# The SRTR parser (scripts/parse-srtr-reports.py) imports xlrd, a data-pipeline
+# dependency not bundled on the hosted service. Skip this suite gracefully when
+# it isn't installed rather than erroring at collection.
+pytest.importorskip("xlrd")
+
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "scripts")
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data")
 

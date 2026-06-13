@@ -16,16 +16,9 @@ from services.scoring_explain import explain_all_centers
 router = APIRouter()
 
 
-@router.post("/score", response_model=ScoringResult)
-async def score_centers(patient: PatientProfile):
-    """Score all transplant centers for a patient profile.
-
-    Returns centers ranked by weighted suitability score (8 categories).
-    Uses center-level SRTR data + spatial interpolation for geographic factors.
-    """
-    t0 = time.perf_counter()
-
-    patient_dict = {
+def _patient_to_dict(patient: PatientProfile) -> dict:
+    """Project a PatientProfile to the plain dict the scoring services expect."""
+    return {
         "organ": patient.organ,
         "blood_type": patient.blood_type,
         "age": patient.age,
@@ -39,6 +32,18 @@ async def score_centers(patient: PatientProfile):
         "las": patient.las,
         "adjust_for_cause_of_death": patient.adjust_for_cause_of_death,
     }
+
+
+@router.post("/score", response_model=ScoringResult)
+async def score_centers(patient: PatientProfile):
+    """Score all transplant centers for a patient profile.
+
+    Returns centers ranked by weighted suitability score (8 categories).
+    Uses center-level SRTR data + spatial interpolation for geographic factors.
+    """
+    t0 = time.perf_counter()
+
+    patient_dict = _patient_to_dict(patient)
 
     results = score_all_centers(patient_dict, patient.custom_weights)
 

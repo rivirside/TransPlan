@@ -389,6 +389,32 @@ def _estimate_time_horizon_probs(wait_probs: list[float]) -> dict[str, float]:
     return {"p6": p_6, "p12": p_12, "p24": p_24, "p36": p_36}
 
 
+def _scale_time_horizons(
+    time_probs: dict[str, float], p_transplant_24: float
+) -> tuple[float, float, float, float]:
+    """Scale the within-24mo wait-category CDF to a given P(transplant<=24).
+
+    Divides the 6/12/36mo cumulative by the TRUE 24mo cumulative (not a magic
+    0.01 floor) to preserve the conditional shape: since p6<=p12<=p24_wait, the
+    ratios are bounded in [0, 1], so results never exceed p_transplant_24. Only
+    the exact-zero case is guarded. Fixes the old max(p24,0.01) denominator,
+    which deflated p6/p12 by up to ~2x when <1% of mass fell within 24mo (#244).
+    """
+    p24w = time_probs["p24"]
+    p24 = p_transplant_24
+    if p24w <= 0:
+        p6 = p12 = 0.0
+        p36 = p24
+    else:
+        p6 = time_probs["p6"] / p24w * p_transplant_24
+        p12 = time_probs["p12"] / p24w * p_transplant_24
+        p36 = time_probs["p36"] / p24w * p_transplant_24
+    p6 = max(0.0, min(p6, p24))
+    p12 = max(p6, min(p12, p24))
+    p36 = max(p24, min(p36, 1.0))
+    return p6, p12, p24, p36
+
+
 def _combine_outcomes(query_result: dict) -> dict:
     """Combine WaitCategory timing with the observed CompetingOutcome (#206/#211).
 
@@ -414,10 +440,8 @@ def _combine_outcomes(query_result: dict) -> dict:
     q = (obs_death + obs_delist) / terminal if terminal > 1e-9 else 0.0
     p_24 = time_probs["p24"] * (1.0 - q)
 
-    denom = max(time_probs["p24"], 0.01)
-    p_6 = max(0.0, min(time_probs["p6"] * p_24 / denom, p_24))
-    p_12 = max(p_6, min(time_probs["p12"] * p_24 / denom, p_24))
-    p_36 = max(p_24, min(time_probs["p36"] * p_24 / denom, 1.0))
+    # Scale 6/12/36mo to p_24 using the true conditional denominator (#244).
+    p_6, p_12, _, p_36 = _scale_time_horizons(time_probs, p_24)
 
     nt = obs_death + obs_delist + obs_wait
     rem = max(0.0, 1.0 - p_24)
