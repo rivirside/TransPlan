@@ -67,7 +67,7 @@ def run_simulation(
                     detail=f"MCMC trace not available for {patient.organ}. "
                            f"Run scripts/fit-mcmc-model.py --organ {patient.organ} to generate it.",
                 )
-            return simulate_mcmc(patient, n_iterations=iterations)
+            return simulate_mcmc(patient, n_iterations=iterations, seed=seed)
         return simulate(
             patient, n_iterations=iterations,
             copula_theta_override=copula_theta, elasticity_override=elasticity,

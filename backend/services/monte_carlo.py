@@ -192,11 +192,15 @@ def _bootstrap_ci(outcomes: np.ndarray, event: int, threshold_months: np.ndarray
     """
     if rng is None:
         rng = np.random.default_rng()
+    # Resample from an isolated child generator so the bootstrap does not
+    # consume the caller's RNG stream. Otherwise each center's simulation
+    # draws would depend on the CI computation of every prior center (#243).
+    boot_rng = rng.spawn(1)[0]
     n = len(outcomes)
     proportions = np.empty(n_bootstrap)
     mask = (outcomes == event) & (threshold_months <= time_horizon)
     for i in range(n_bootstrap):
-        idx = rng.integers(0, n, size=n)
+        idx = boot_rng.integers(0, n, size=n)
         proportions[i] = np.mean(mask[idx])
 
     alpha = (1 - confidence) / 2

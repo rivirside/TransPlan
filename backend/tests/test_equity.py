@@ -7,6 +7,27 @@ from models.schemas import EquityAnalysisResult, CityEquity, PatientProfile
 from services.equity import compute_equity_analysis, _gini
 
 
+# -- RNG independence (#241) --
+
+class TestSpawnRngs:
+    def test_reproducible_from_same_seed(self):
+        """Same seed → identical simulation and sampling streams."""
+        from services.equity import _spawn_rngs
+        sim_a, samp_a = _spawn_rngs(99)
+        sim_b, samp_b = _spawn_rngs(99)
+        assert np.array_equal(sim_a.integers(0, 10**9, 8), sim_b.integers(0, 10**9, 8))
+        assert np.array_equal(samp_a.integers(0, 10**9, 8), samp_b.integers(0, 10**9, 8))
+
+    def test_sim_and_sampling_streams_are_independent(self):
+        """The center-sampling RNG must not be the same stream as the simulation
+        RNG — sharing a seed correlates center selection with simulation noise."""
+        from services.equity import _spawn_rngs
+        sim, samp = _spawn_rngs(99)
+        assert not np.array_equal(
+            sim.integers(0, 10**9, 8), samp.integers(0, 10**9, 8)
+        )
+
+
 # -- Fixtures --
 
 @pytest.fixture

@@ -100,6 +100,14 @@ def _simulate_profile_center(
     return p24, median_wait
 
 
+def _spawn_rngs(seed: int) -> tuple[np.random.Generator, np.random.Generator]:
+    """Return (simulation_rng, sampling_rng) as independent substreams of one
+    seed. Using two ``default_rng(seed)`` calls would give identical streams,
+    correlating center selection with simulation noise (#241)."""
+    sim_seed, samp_seed = np.random.SeedSequence(seed).spawn(2)
+    return np.random.default_rng(sim_seed), np.random.default_rng(samp_seed)
+
+
 def compute_equity_analysis(
     patient: PatientProfile,
     n_iterations: int = 200,
@@ -121,7 +129,7 @@ def compute_equity_analysis(
     start = time.perf_counter()
     if seed is None:
         seed = int(np.random.default_rng().integers(0, 2**31))
-    rng = np.random.default_rng(seed)
+    rng, rng_sample = _spawn_rngs(seed)
 
     # --- Generate profile variants ---
     profiles = []
@@ -144,7 +152,6 @@ def compute_equity_analysis(
 
     # Cap centers for performance: top-N by wait-time factor + random sample
     if len(centers) > max_centers:
-        rng_sample = np.random.default_rng(seed)
         # Sort by wait_time_factor (lower = better) and take top half of budget
         top_n = max_centers // 2
         sorted_centers = sorted(centers, key=lambda c: c.get("wait_time_factor", 1.0))

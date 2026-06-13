@@ -216,6 +216,7 @@ def _compute_center_adjustment(center_factor: float, city_factor: float) -> floa
 def simulate_mcmc(
     patient: PatientProfile,
     n_iterations: int | None = None,
+    seed: int | None = None,
 ) -> SimulationResult:
     """
     Run simulation using posterior parameter draws from the MCMC trace.
@@ -248,7 +249,9 @@ def simulate_mcmc(
         )
 
     start = time.perf_counter()
-    rng = np.random.default_rng()
+    if seed is None:
+        seed = int(np.random.default_rng().integers(0, 2**31))
+    rng = np.random.default_rng(seed)
 
     # Draw multiple parameter sets from the posterior.
     # We use N_PARAM_DRAWS independent draws; each draw produces
@@ -573,4 +576,5 @@ def simulate_mcmc(
         iterations=actual_iterations,
         elapsed_seconds=round(elapsed, 3),
         inference_mode="mcmc",
+        seed_used=seed,
     )

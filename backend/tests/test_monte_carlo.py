@@ -64,6 +64,21 @@ class TestBootstrapCI:
         assert 0 <= hi <= 1
         assert lo <= hi
 
+    def test_does_not_advance_callers_rng(self):
+        """#243: bootstrap resampling must not consume the caller's RNG stream,
+        or each center's draws would depend on prior centers' CI computation."""
+        n = 500
+        outcomes = np.zeros(n, dtype=int)
+        times = np.ones(n) * 10.0
+        rng_used = np.random.default_rng(7)
+        rng_ref = np.random.default_rng(7)
+        _bootstrap_ci(outcomes, event=0, threshold_months=times, time_horizon=24, rng=rng_used)
+        # The caller's stream should be untouched by the bootstrap.
+        assert np.array_equal(
+            rng_used.integers(0, 10**9, size=20),
+            rng_ref.integers(0, 10**9, size=20),
+        )
+
 
 # -- Result structure tests --
 
