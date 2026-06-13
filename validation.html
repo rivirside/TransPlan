@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model Validation — transplant.today</title>
+    <title>Model Diagnostics — transplant.today</title>
     <link rel="stylesheet" href="styles.css">
     <script src="dark-mode.js"></script>
     <style>
@@ -305,8 +305,11 @@
 
     <div class="validation-layout">
         <div class="validation-header">
-            <h1>Model Validation</h1>
-            <p>Cross-engine comparison, parameter stability, calibration, and temporal validation diagnostics.</p>
+            <h1>Model Diagnostics</h1>
+            <p>Internal-consistency checks: cross-engine agreement, parameter stability, self-calibration, and temporal stability.</p>
+            <div role="note" style="margin-top:0.75rem;padding:0.75rem 1rem;border-left:4px solid #d97706;background:#fffbeb;border-radius:4px;font-size:0.875rem;line-height:1.5;color:#78350f">
+                <strong>What this is — and isn't.</strong> These are <em>internal-consistency</em> diagnostics: they measure whether the model's engines and assumptions agree with each other and behave stably — <em>not</em> whether predictions match real patient outcomes. The model's external-facing check is the per-center SRTR calibration (Spearman ρ 0.70–0.89; see <code>docs/center-calibration-report.md</code>). Treat the panels below as engineering diagnostics, not clinical validation.
+            </div>
         </div>
 
         <!-- Tab bar -->
@@ -496,8 +499,8 @@
         <!-- ─── Calibration Panel ─── -->
         <div class="val-panel" id="panel-calibration">
             <div class="val-card">
-                <h2>Brier Score Calibration</h2>
-                <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Measures how well predicted probabilities match binarized outcomes across two independent runs. Lower Brier score = better calibration.</p>
+                <h2>Brier Score (Self-Consistency)</h2>
+                <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Self-consistency check: compares the Monte Carlo sampler's probabilities against the analytical expectation of the <em>same</em> SRTR-derived parameters. A low Brier score confirms the sampler is unbiased — it is <strong>not</strong> external calibration against observed patient outcomes (that would need held-out cohort data).</p>
                 <div class="val-form-row">
                     <div class="val-form-group">
                         <label>Organ</label>
@@ -541,8 +544,8 @@
         <!-- ─── Temporal Validation Panel ─── -->
         <div class="val-panel" id="panel-temporal">
             <div class="val-card">
-                <h2>Temporal Walk-Forward Validation</h2>
-                <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Train on years up to Y, test on year Y+1. Measures Spearman ρ between predicted and simulated next-year rankings.</p>
+                <h2>Temporal Walk-Forward (Stability)</h2>
+                <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Train on years up to Y, test on year Y+1 (Spearman ρ of rankings). <strong>Caveat:</strong> when historical data is limited this falls back to a synthetic check that perturbs the model's own trend assumptions — near-tautological, a stability signal rather than a true out-of-sample forecast.</p>
                 <div class="val-form-row">
                     <div class="val-form-group">
                         <label>Organ</label>
