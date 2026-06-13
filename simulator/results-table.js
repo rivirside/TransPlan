@@ -52,6 +52,10 @@
   var _hasHome = false;
   var _tableEl = null;
   var _tbodyEl = null;
+  var _paginationEl = null;
+  var _sorted = [];            // last sorted result array (for paging)
+  var _page = 0;               // current 0-based page
+  var _pageSize = 25;          // rows per page; 0 = show all (#221)
 
   // ── Public API ─────────────────────────────────────────────────────────────
 
@@ -122,6 +126,10 @@
 
     wrapper.appendChild(_tableEl);
     _container.appendChild(wrapper);
+
+    // Pagination controls (rendered/updated by _renderPage) (#221)
+    _paginationEl = _createElement('div', 'results-pagination');
+    _container.appendChild(_paginationEl);
 
     // Initial sort and render rows
     _sortAndRender();
@@ -260,8 +268,73 @@
       }
     });
 
-    _renderRows(sorted);
+    _sorted = sorted;
+    _page = 0;            // reset to first page on (re)sort
+    _renderPage();
     _updateSortIndicators();
+  }
+
+  /** Render the current page of sorted rows + the pagination controls (#221). */
+  function _renderPage() {
+    var total = _sorted.length;
+    var pageSize = (_pageSize && _pageSize > 0) ? _pageSize : total;
+    var pageCount = Math.max(1, Math.ceil(total / pageSize));
+    if (_page >= pageCount) _page = pageCount - 1;
+    if (_page < 0) _page = 0;
+    var start = _page * pageSize;
+    _renderRows(_sorted.slice(start, start + pageSize));
+    _renderPaginationControls(total, pageSize, pageCount, start);
+  }
+
+  /** Build the prev/next/show-all pagination bar. */
+  function _renderPaginationControls(total, pageSize, pageCount, start) {
+    if (!_paginationEl) return;
+    _paginationEl.textContent = '';
+    // Nothing to page through — show a simple count.
+    if (total <= 25 && _pageSize !== 0) {
+      var count = _createElement('span', 'results-pagination-info');
+      count.textContent = total + (total === 1 ? ' center' : ' centers');
+      _paginationEl.appendChild(count);
+      return;
+    }
+
+    var showingAll = (_pageSize === 0) || (pageCount === 1);
+    var info = _createElement('span', 'results-pagination-info');
+    if (showingAll) {
+      info.textContent = 'Showing all ' + total + ' centers';
+    } else {
+      var end = Math.min(start + pageSize, total);
+      info.textContent = 'Showing ' + (start + 1) + '–' + end + ' of ' + total +
+        ' centers · page ' + (_page + 1) + ' of ' + pageCount;
+    }
+    _paginationEl.appendChild(info);
+
+    if (!showingAll) {
+      var prev = _createElement('button', 'results-pagination-btn');
+      prev.type = 'button';
+      prev.textContent = '‹ Prev';
+      prev.disabled = _page === 0;
+      prev.addEventListener('click', function () { _page--; _renderPage(); });
+      _paginationEl.appendChild(prev);
+
+      var next = _createElement('button', 'results-pagination-btn');
+      next.type = 'button';
+      next.textContent = 'Next ›';
+      next.disabled = _page >= pageCount - 1;
+      next.addEventListener('click', function () { _page++; _renderPage(); });
+      _paginationEl.appendChild(next);
+    }
+
+    // Show-all / paginate toggle
+    var toggle = _createElement('button', 'results-pagination-btn results-pagination-toggle');
+    toggle.type = 'button';
+    toggle.textContent = (_pageSize === 0) ? 'Paginate' : 'Show all';
+    toggle.addEventListener('click', function () {
+      _pageSize = (_pageSize === 0) ? 25 : 0;
+      _page = 0;
+      _renderPage();
+    });
+    _paginationEl.appendChild(toggle);
   }
 
   /** Compute distance in miles from homeLocation to a center. */
