@@ -1,10 +1,17 @@
 """
 Posterior predictive checks — Phase 5 M5.
 
-Compares MCMC posterior predictions against observed SRTR statistics to
-validate that the Bayesian model adequately captures the data-generating
-process.  Produces quantitative discrepancy metrics and pass/fail flags
-for paper-quality model validation.
+INTERNAL CONSISTENCY, NOT EXTERNAL VALIDATION (#270 MCMC-21): these are
+in-sample posterior predictive checks — the "observed" values are the same
+aggregate SRTR-derived point estimates the model was fit to, so agreement
+confirms the sampler reproduces its own inputs; it does NOT demonstrate
+predictive accuracy on held-out patients. The project's external-facing check
+is the per-center SRTR calibration (docs/center-calibration-report.md,
+Spearman rho 0.70-0.89), not this module.
+
+Compares MCMC posterior predictions against the observed SRTR statistics used
+to fit the model; produces quantitative discrepancy metrics and pass/fail
+flags (model-adequacy diagnostics).
 
 Checks performed:
   - National median wait: posterior predictive median vs observed

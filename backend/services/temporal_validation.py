@@ -1,11 +1,18 @@
 """
-Temporal walk-forward validation — train on years 1..Y, test on year Y+1.
+Temporal walk-forward analysis — train on years 1..Y, test on year Y+1.
 
 Uses historical_trends data from data/historical-srtr-trends.json (if available).
-Falls back to synthetic validation when historical data is limited.
+
+CAVEAT (#270 MCMC-24): when real historical data is limited this FALLS BACK to a
+synthetic check that perturbs the model's own trend assumptions and then scores
+the model against those perturbations — near-tautological, a persistence/
+self-consistency signal, NOT a true out-of-sample temporal holdout. The genuine
+out-of-sample work (fit on a prior SRTR release, test on the next) is tracked in
+docs/temporal-validation-report.md / #237; treat the synthetic fallback's rho as
+a sanity check only, not evidence of forecast accuracy.
 
 Computes Spearman rank correlation between predicted and "actual"
-(next-year observed) rankings as a proxy for model accuracy.
+(next-year observed) rankings.
 """
 import logging
 import time
