@@ -1,72 +1,75 @@
-"""#268: empirical-Bayes shrinkage of noisy small-volume center factors.
+"""#268: Gamma-Poisson empirical-Bayes shrinkage of noisy per-center
+mortality/delisting factors, computed from raw rates + cohort exposure.
 
-Low-volume centers have unstable mortality/delisting factors (e.g. 0.37 vs
-1.82); shrinking them toward the organ baseline (1.0) in proportion to cohort
-size stabilizes per-center estimates. The shrinkage strength K is the median
-cohort size (data-derived, not a magic constant)."""
-import math
+Replaces the old raw-rate-ratio-clamped-to-[0.3,3.0] approach, whose hard
+clamp piled ~28% of centers onto the 0.3 floor (mostly zero-event small
+centers). EB pulls low-information centers toward the organ rate (factor 1.0)
+by a data-derived amount; high-volume centers keep their signal."""
+import statistics as st
 
 import pytest
 
-from services.data_loader import load_all
+from services.data_loader import load_all, get_data
 
 load_all()
 
 
-class TestShrinkFactor:
-    def test_high_volume_barely_moves(self):
-        from services.competing_risks import _shrink_factor
-        # n >> K → weight ~1 → factor essentially unchanged.
-        assert _shrink_factor(2.0, n=10000, K=100) == pytest.approx(2.0, abs=0.05)
+class TestGammaPoissonEB:
+    def test_no_between_variance_collapses_to_one(self):
+        from services.competing_risks import _gamma_poisson_eb
+        # All units share the same rate → no real between-unit signal → all 1.0.
+        events = [5.0, 10.0, 2.0]
+        exposure = [5.0, 10.0, 2.0]  # rate = 1.0 everywhere
+        assert _gamma_poisson_eb(events, exposure) == pytest.approx([1.0, 1.0, 1.0])
 
-    def test_low_volume_pulled_toward_baseline(self):
-        from services.competing_risks import _shrink_factor
-        # n << K → weight ~0 → factor pulled toward 1.0.
-        shrunk = _shrink_factor(2.0, n=2, K=100)
-        assert 1.0 < shrunk < 1.2
-
-    def test_low_volume_closer_to_baseline_than_high_volume(self):
-        from services.competing_risks import _shrink_factor
-        low = _shrink_factor(0.4, n=5, K=100)    # protective extreme, tiny cohort
-        high = _shrink_factor(0.4, n=5000, K=100)
-        assert abs(low - 1.0) < abs(high - 1.0)
-
-    def test_log_space_symmetry_at_n_equals_k(self):
-        from services.competing_risks import _shrink_factor
-        # At n == K, weight = 0.5 → geometric half-way to 1.0: sqrt(factor).
-        assert _shrink_factor(4.0, n=100, K=100) == pytest.approx(math.sqrt(4.0), abs=1e-6)
-
-    def test_degenerate_inputs_passthrough(self):
-        from services.competing_risks import _shrink_factor
-        assert _shrink_factor(1.5, n=0, K=100) == 1.5   # no cohort info
-        assert _shrink_factor(1.5, n=50, K=0) == 1.5     # no prior strength
-        assert _shrink_factor(0.0, n=50, K=100) == 0.0   # guard nonpositive
+    def test_high_exposure_keeps_signal_low_exposure_shrinks(self):
+        from services.competing_risks import _gamma_poisson_eb
+        # Mostly rate~1 units to establish the prior, plus two rate~3 outliers:
+        # one with tiny exposure (should shrink toward 1) and one with large
+        # exposure (should keep more of its 3x signal).
+        rows = [(1.0, 50.0)] * 20 + [(3.0, 1.0), (3.0, 200.0)]  # (rate, exposure)
+        events = [r * e for r, e in rows]
+        exposure = [e for _, e in rows]
+        ratios = _gamma_poisson_eb(events, exposure)
+        small_ratio, big_ratio = ratios[-2], ratios[-1]
+        assert small_ratio < big_ratio          # tiny center shrunk harder
+        assert big_ratio > 1.5                   # high-exposure outlier keeps signal
+        assert small_ratio < 1.8                 # tiny outlier pulled well down
 
 
-class TestShrinkageStrength:
-    def test_k_is_positive_median_cohort(self):
-        from services.competing_risks import _shrinkage_K
-        K = _shrinkage_K("kidney")
-        assert K > 0
-
-    def test_center_adjustment_shrinks_a_low_volume_center(self):
-        """A low-volume center's stored factor should be pulled toward 1.0 by
-        _center_adjustment relative to its raw stored value."""
-        from services.competing_risks import _center_adjustment, _raw_center_adjustment
-        from services.data_loader import get_data
+class TestCenterFactorsFromData:
+    def test_zero_event_small_center_shrinks_toward_one_not_floor(self):
+        """The key fix: a small center with zero observed delistings used to be
+        clamped to the 0.3 floor; EB pulls it toward ~1.0 (no signal)."""
+        from services.competing_risks import _center_adjustment
         d = get_data()
-        # Find a kidney center with a small cohort and a non-trivial factor.
         target = None
-        for code, organs in d.center_competing_risks.get("center_adjustments", {}).items():
-            raw = organs.get("kidney", {})
+        for code in d.center_competing_risks.get("center_adjustments", {}):
             rec = d.observed_outcome("kidney", code)
-            n = int(rec["n"]) if rec and rec.get("n") else 0
-            mf = raw.get("mortality_factor")
-            if n and 0 < n <= 20 and mf and abs(mf - 1.0) > 0.3:
-                target = (code, n, mf)
+            if rec and rec.get("n") and 0 < int(rec["n"]) <= 25 and (rec.get("delisting_rate") or 0.0) == 0.0:
+                target = code
                 break
-        assert target, "expected at least one low-volume kidney center with an extreme factor"
-        code, n, raw_mf = target
-        shrunk = _center_adjustment(code, "kidney")["mortality_factor"]
-        # Shrunk value is strictly between the raw factor and the baseline 1.0.
-        assert abs(shrunk - 1.0) < abs(raw_mf - 1.0)
+        assert target, "expected a small kidney center with zero observed delistings"
+        df = _center_adjustment(target, "kidney")["delisting_factor"]
+        assert df > 0.6, f"zero-event center should shrink toward 1.0, got {df}"
+
+    def test_factors_centered_near_one(self):
+        from services.competing_risks import _eb_factor_table
+        table = _eb_factor_table("kidney")
+        assert len(table) > 100
+        mfs = [v["mortality_factor"] for v in table.values()]
+        assert all(f > 0 for f in mfs)
+        assert 0.85 < st.median(mfs) < 1.15  # ratios are centered around 1.0
+
+    def test_eb_less_extreme_than_raw_clamped(self):
+        """EB factors should be less dispersed than the raw clamped ratios
+        (the whole point: stop the boundary pile-ups)."""
+        from services.competing_risks import _eb_factor_table, _raw_center_adjustment
+        table = _eb_factor_table("kidney")
+        raw, eb = [], []
+        for code, v in table.items():
+            r = _raw_center_adjustment(code, "kidney")
+            if r.get("mortality_factor"):
+                raw.append(r["mortality_factor"])
+                eb.append(v["mortality_factor"])
+        assert st.pstdev(eb) < st.pstdev(raw)

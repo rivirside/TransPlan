@@ -11,7 +11,6 @@ Rates sourced from data/competing-risks.json (OPTN/SRTR 2023 Annual Data Report)
 """
 import json
 import logging
-import math
 import threading
 from functools import lru_cache
 from pathlib import Path
@@ -63,55 +62,83 @@ def _raw_center_adjustment(center_code: str, organ: str) -> dict[str, float]:
     return center_adj.get(center_code, {}).get(organ, {})
 
 
-def _shrink_factor(factor: float, n: int, K: float) -> float:
-    """Empirical-Bayes shrinkage of a relative factor toward the baseline (1.0).
+def _gamma_poisson_eb(events: list[float], exposure: list[float]) -> list[float]:
+    """Gamma-Poisson empirical-Bayes shrinkage of per-unit rates.
 
-    Center factors are ratios to the organ baseline, so the natural shrinkage
-    target is 1.0 (no center effect). We shrink in log space with weight
-    w = n / (n + K): low-volume centers (small n) are pulled toward 1.0, while
-    high-volume centers (n >> K) keep their observed factor. At n == K the
-    weight is 0.5 (geometric half-way). K is the median cohort size for the
-    organ (data-derived), so it is not a hand-tuned constant (#268)."""
-    if factor <= 0 or n <= 0 or K <= 0:
-        return factor
-    w = n / (n + K)
-    return math.exp(w * math.log(factor))
+    Model: events_i ~ Poisson(mu_i * E_i), with the unknown true rates drawn
+    from a shared prior mu_i ~ Gamma(alpha, beta). The Gamma prior's mean
+    m = alpha/beta and variance sigma2 = alpha/beta**2 are estimated from the
+    data by method of moments (DerSimonian-Laird):
+
+        m      = sum(events) / sum(E)                      # pooled rate
+        sigma2 = max(0, (Q - N*m) / sum(E)),  Q = sum_i E_i*(events_i/E_i - m)^2
+
+    (Q's expectation under no between-unit variance is N*m, since the Poisson
+    sampling variance of r_i = events_i/E_i is ~ m/E_i and E_i * m/E_i = m.)
+
+    Returns the posterior-mean RATE RATIO mu_i / m for each unit:
+        ratio_i = (events_i + alpha) / (E_i + beta) / m
+    High-exposure units keep their observed ratio; low-information units (small
+    E_i, few/zero events) shrink toward 1.0. If there is no detectable
+    between-unit variance (sigma2 == 0) every unit collapses to 1.0.
+    """
+    tot_E = sum(exposure)
+    tot_ev = sum(events)
+    N = len(events)
+    if tot_E <= 0 or tot_ev <= 0 or N == 0:
+        return [1.0] * N
+    m = tot_ev / tot_E
+    Q = sum(e * ((ev / e) - m) ** 2 for ev, e in zip(events, exposure) if e > 0)
+    sigma2 = max(0.0, (Q - N * m) / tot_E)
+    if sigma2 <= 1e-12:
+        return [1.0] * N  # no real between-center signal → full pooling
+    beta = m / sigma2
+    alpha = m * m / sigma2
+    return [((ev + alpha) / (e + beta)) / m for ev, e in zip(events, exposure)]
 
 
 @lru_cache(maxsize=16)
-def _shrinkage_K(organ: str) -> float:
-    """Median observed cohort size (SRTR Table B7 n) across the organ's centers,
-    used as the empirical-Bayes prior strength. Returns 0.0 (→ no shrinkage) if
-    no per-center cohort data is available."""
+def _eb_factor_table(organ: str) -> dict[str, dict[str, float]]:
+    """Per-center EB-shrunk mortality/delisting factors for an organ, computed
+    from the RAW observed rates + cohort size (data_loader.observed_outcome) —
+    NOT the clamped ratios in competing-risks-centers.json (#268).
+
+    Exposure E_i = n_i / 100 (cohort as a patient-time proxy); reconstructed
+    events_i = rate_i * E_i. Shrinkage strength is derived entirely from the
+    data via _gamma_poisson_eb. This dissolves the artificial pile-ups the old
+    [0.3, 3.0] clamp produced (e.g. zero-death small centers, which now shrink
+    to ~1.0 instead of the 0.3 floor)."""
     from services.data_loader import get_data
     d = get_data()
-    ns = []
+    rows = []
     for code in d.center_competing_risks.get("center_adjustments", {}):
         rec = d.observed_outcome(organ, code)
-        if rec and rec.get("n"):
-            ns.append(int(rec["n"]))
-    if not ns:
-        return 0.0
-    ns.sort()
-    return float(ns[len(ns) // 2])
+        if rec and rec.get("n") and int(rec["n"]) > 0:
+            rows.append((
+                code,
+                int(rec["n"]) / 100.0,                       # exposure
+                float(rec.get("waitlist_death_rate") or 0.0),
+                float(rec.get("delisting_rate") or 0.0),
+            ))
+    if not rows:
+        return {}
+    exposure = [r[1] for r in rows]
+    mort_ratio = _gamma_poisson_eb([r[2] * r[1] for r in rows], exposure)
+    delist_ratio = _gamma_poisson_eb([r[3] * r[1] for r in rows], exposure)
+    return {
+        r[0]: {"mortality_factor": mort_ratio[i], "delisting_factor": delist_ratio[i]}
+        for i, r in enumerate(rows)
+    }
 
 
 def _center_adjustment(center_code: str, organ: str) -> dict[str, float]:
-    """Per-organ mortality/delisting factors for a center, with empirical-Bayes
-    shrinkage applied to stabilize noisy low-volume centers (#268)."""
-    from services.data_loader import get_data
-    raw = _raw_center_adjustment(center_code, organ)
-    if not raw:
-        return raw
-    rec = get_data().observed_outcome(organ, center_code)
-    n = int(rec["n"]) if rec and rec.get("n") else 0
-    K = _shrinkage_K(organ)
-    if not (n and K):
-        return raw
-    return {
-        key: (_shrink_factor(val, n, K) if key in ("mortality_factor", "delisting_factor") else val)
-        for key, val in raw.items()
-    }
+    """Per-organ mortality/delisting factors for a center. Uses the empirical-
+    Bayes estimate (from raw rates) where observed data exists (#268), falling
+    back to the stored clamped ratio for centers without observed outcomes."""
+    table = _eb_factor_table(organ)
+    if center_code in table:
+        return table[center_code]
+    return _raw_center_adjustment(center_code, organ)
 
 
 def get_annual_mortality_rate(
