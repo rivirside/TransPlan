@@ -208,6 +208,19 @@
    * @param {string} canvasId - Canvas element ID
    * @param {Array} cities - Array of CityEquity objects (already sorted by Gini ascending)
    */
+  /**
+   * Cap the Gini-by-center bar chart to a readable number of bars (#222).
+   * `cities` is sorted by Gini ascending, so the highest-disparity centers
+   * (most relevant for an equity view) are at the end. Returns the shown
+   * subset (the `max` highest-Gini, still ascending) + the omitted count.
+   */
+  function _capGiniBars(cities, max) {
+    if (!cities || cities.length <= max) {
+      return { shown: cities || [], omitted: 0 };
+    }
+    return { shown: cities.slice(cities.length - max), omitted: cities.length - max };
+  }
+
   function renderGiniByCity(canvasId, cities) {
     var canvas = document.getElementById(canvasId);
     if (!canvas || typeof Chart === 'undefined') return;
@@ -215,8 +228,12 @@
 
     destroyChart(canvasId);
 
-    var labels = cities.map(function (c) { return c.city; });
-    var giniValues = cities.map(function (c) { return c.gini_coefficient; });
+    // #222: equity now spans all 248 centers — cap the bar chart to the most
+    // relevant (highest-disparity) centers so it stays readable/performant.
+    var sel = _capGiniBars(cities, 30);
+    var shown = sel.shown;
+    var labels = shown.map(function (c) { return c.city; });
+    var giniValues = shown.map(function (c) { return c.gini_coefficient; });
     var barColors = giniValues.map(function (g) { return giniColor(g, 0.75); });
     var borderColors = giniValues.map(function (g) { return giniColor(g, 1); });
 
@@ -239,10 +256,15 @@
         maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
+          title: {
+            display: !!sel.omitted,
+            text: 'Top ' + shown.length + ' of ' + cities.length + ' centers by disparity (Gini)',
+            font: { size: 12 }
+          },
           tooltip: {
             callbacks: {
               label: function (ctx) {
-                var city = cities[ctx.dataIndex];
+                var city = shown[ctx.dataIndex];
                 return [
                   'Gini: ' + city.gini_coefficient.toFixed(4),
                   'P24 range: ' + (city.p24_range[0] * 100).toFixed(1) + '% – ' + (city.p24_range[1] * 100).toFixed(1) + '%',
@@ -319,6 +341,7 @@
     renderBloodTypeDisparityChart: renderBloodTypeDisparityChart,
     renderAgeDisparityChart: renderAgeDisparityChart,
     renderGiniByCity: renderGiniByCity,
+    _capGiniBars: _capGiniBars,
     destroyAll: destroyAll,
     getChartImage: getChartImage,
     getChartIds: getChartIds,
