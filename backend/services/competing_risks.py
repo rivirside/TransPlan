@@ -11,7 +11,9 @@ Rates sourced from data/competing-risks.json (OPTN/SRTR 2023 Annual Data Report)
 """
 import json
 import logging
+import math
 import threading
+from functools import lru_cache
 from pathlib import Path
 
 from config import DATA_DIR
@@ -54,11 +56,62 @@ def _ensure_loaded() -> None:
 from services.stats_utils import get_range_multiplier as _get_range_multiplier
 
 
-def _center_adjustment(center_code: str, organ: str) -> dict[str, float]:
-    """Look up per-organ mortality/delisting factors for a center code."""
+def _raw_center_adjustment(center_code: str, organ: str) -> dict[str, float]:
+    """Raw (un-shrunk) per-organ mortality/delisting factors for a center."""
     from services.data_loader import get_data
     center_adj = get_data().center_competing_risks.get("center_adjustments", {})
     return center_adj.get(center_code, {}).get(organ, {})
+
+
+def _shrink_factor(factor: float, n: int, K: float) -> float:
+    """Empirical-Bayes shrinkage of a relative factor toward the baseline (1.0).
+
+    Center factors are ratios to the organ baseline, so the natural shrinkage
+    target is 1.0 (no center effect). We shrink in log space with weight
+    w = n / (n + K): low-volume centers (small n) are pulled toward 1.0, while
+    high-volume centers (n >> K) keep their observed factor. At n == K the
+    weight is 0.5 (geometric half-way). K is the median cohort size for the
+    organ (data-derived), so it is not a hand-tuned constant (#268)."""
+    if factor <= 0 or n <= 0 or K <= 0:
+        return factor
+    w = n / (n + K)
+    return math.exp(w * math.log(factor))
+
+
+@lru_cache(maxsize=16)
+def _shrinkage_K(organ: str) -> float:
+    """Median observed cohort size (SRTR Table B7 n) across the organ's centers,
+    used as the empirical-Bayes prior strength. Returns 0.0 (→ no shrinkage) if
+    no per-center cohort data is available."""
+    from services.data_loader import get_data
+    d = get_data()
+    ns = []
+    for code in d.center_competing_risks.get("center_adjustments", {}):
+        rec = d.observed_outcome(organ, code)
+        if rec and rec.get("n"):
+            ns.append(int(rec["n"]))
+    if not ns:
+        return 0.0
+    ns.sort()
+    return float(ns[len(ns) // 2])
+
+
+def _center_adjustment(center_code: str, organ: str) -> dict[str, float]:
+    """Per-organ mortality/delisting factors for a center, with empirical-Bayes
+    shrinkage applied to stabilize noisy low-volume centers (#268)."""
+    from services.data_loader import get_data
+    raw = _raw_center_adjustment(center_code, organ)
+    if not raw:
+        return raw
+    rec = get_data().observed_outcome(organ, center_code)
+    n = int(rec["n"]) if rec and rec.get("n") else 0
+    K = _shrinkage_K(organ)
+    if not (n and K):
+        return raw
+    return {
+        key: (_shrink_factor(val, n, K) if key in ("mortality_factor", "delisting_factor") else val)
+        for key, val in raw.items()
+    }
 
 
 def get_annual_mortality_rate(
