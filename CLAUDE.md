@@ -121,6 +121,10 @@ npm test                                  # 112 Jest tests (from repo root)
 
 See `docs/landscape/` for 7 tool profiles (SRTR, KPSAM/LSAM/TSAM, COMET, LivSim, TransplantCenterSearch, statistical packages) and the comparison matrix. Benchmarking plan: COMET-Lung rank comparison is Priority 1.
 
+## Clinical Assumptions Register
+
+`docs/clinical-assumptions-register.md` — the living catalog of **every point where a clinical/medical judgment is encoded or clinically-derived data is used** (scoring weights, ABO/MELD/LAS multipliers, hazard model, copula θ, BBN CPTs, MCMC priors, equity/spatial/policy assumptions, the data files + generation clamps). Each entry has a stable ID, location, justification status, and risk. **120 assumptions tracked; 38 still need justification; 45 high-risk** — see the "Priority to justify" shortlist at the bottom. **Keep it updated:** add/adjust a row whenever a clinical value or assumption is introduced, changed, or finally cited.
+
 ## Open Issues
 
 - **#208:** Comprehensive audit — several sub-issues closed (#209, #210, #211, #215, #218, #225, #226, #229); remaining incl. #213, #214, #216, #217
