@@ -71,6 +71,13 @@ class TestSpatial:
         r = client.get("/spatial-grid", params={"layer": "air_quality", "resolution": 10})
         assert r.status_code == 200
 
+    def test_kriging_returns_uncertainty(self):
+        r = client.get("/interpolated-value", params={**NASHVILLE, "layer": "air_quality", "method": "kriging"})
+        assert r.status_code == 200
+        body = r.json()
+        assert body["uncertainty"] > 0
+        assert "extrapolation" in body
+
 
 class TestValidationSmoke:
     def test_calibration_returns_brier_fields(self):
