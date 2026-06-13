@@ -184,6 +184,13 @@ def build_organ_model(data: dict[str, Any]) -> pm.Model:
 
     with pm.Model() as model:
         # ===== Level 0: National hyperpriors =====
+        # HONESTY NOTE (#257): the national-level prior means below are anchored
+        # to the same SRTR-derived point estimates the Monte Carlo engine uses,
+        # with tight sigmas, and the likelihood observes aggregate factors (one
+        # observation per latent, no event/censoring data). The posterior is
+        # therefore pinned near the MC values — this engine quantifies parameter
+        # uncertainty / propagates it; it does NOT independently validate the MC
+        # point estimates. Do not frame cross-engine agreement as validation.
 
         # Log-normal wait time: national median and shape
         log_median_national = pm.Normal(

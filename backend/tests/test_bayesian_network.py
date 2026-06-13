@@ -3,7 +3,7 @@ Tests for the BBN inference engine (Phase 5 M1, Issue #38).
 
 Validates:
   - DAG structure (nodes, edges, acyclicity)
-  - Model construction and pgmpy validation
+  - Model construction and CPT/normalization validation (custom NumPy engine)
   - Inference produces valid probability distributions
   - Results match expected patterns for known inputs
   - simulate_bbn produces valid SimulationResult objects
@@ -159,6 +159,36 @@ def _make_patient(**kwargs) -> PatientProfile:
     )
     defaults.update(kwargs)
     return PatientProfile(**defaults)
+
+
+class TestScaleTimeHorizons:
+    """#244: scaling the within-24mo wait shape to P(transplant<=24)."""
+
+    def test_normal_case_is_monotonic_and_anchors_p24(self):
+        from services.bayesian_network import _scale_time_horizons, _estimate_time_horizon_probs
+        tp = _estimate_time_horizon_probs([0.25, 0.25, 0.25, 0.25])
+        p6, p12, p24, p36 = _scale_time_horizons(tp, p_transplant_24=0.6)
+        assert p24 == 0.6
+        assert 0 <= p6 <= p12 <= p24 <= p36 <= 1.0
+
+    def test_extreme_long_wait_preserves_conditional_shape(self):
+        """When <1% of mass is within 24mo, p6/p12 must keep their true
+        conditional ratio, not be deflated by a magic 0.01 denominator floor."""
+        from services.bayesian_network import _scale_time_horizons, _estimate_time_horizon_probs
+        wp = [0.001, 0.002, 0.002, 0.995]  # p24_wait = 0.005
+        tp = _estimate_time_horizon_probs(wp)
+        pt24 = 0.10
+        p6, p12, p24, p36 = _scale_time_horizons(tp, p_transplant_24=pt24)
+        # True conditional: p6 = (0.001/0.005)*0.10 = 0.02 ; p12 = (0.003/0.005)*0.10 = 0.06
+        assert p6 == pytest.approx(0.02, abs=1e-6)
+        assert p12 == pytest.approx(0.06, abs=1e-6)
+
+    def test_zero_wait_mass_within_24mo_is_safe(self):
+        from services.bayesian_network import _scale_time_horizons, _estimate_time_horizon_probs
+        tp = _estimate_time_horizon_probs([0.0, 0.0, 0.0, 1.0])  # p24_wait = 0
+        p6, p12, p24, p36 = _scale_time_horizons(tp, p_transplant_24=0.10)
+        assert p6 == 0.0 and p12 == 0.0
+        assert p24 == 0.10
 
 
 def test_simulate_bbn_classic_returns_22():

@@ -18,6 +18,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from models.schemas import PatientProfile, SensitivityResult, SimulationResult
+from services.stats_utils import spearman_between as _spearman_between, top5_jaccard as _top5_jaccard
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/validation", tags=["validation"])
@@ -142,24 +143,6 @@ class ConvergenceResult(BaseModel):
 # Helper: ranking → Spearman ρ
 # ---------------------------------------------------------------------------
 
-def _spearman_between(ranks_a: list[str], ranks_b: list[str]) -> Optional[float]:
-    from scipy import stats as sp_stats
-    common = [c for c in ranks_a if c in ranks_b]
-    if len(common) < 3:
-        return None
-    a = [ranks_a.index(c) for c in common]
-    b = [ranks_b.index(c) for c in common]
-    rho, _ = sp_stats.spearmanr(a, b)
-    return float(rho)
-
-
-def _top5_jaccard(ranks_a: list[str], ranks_b: list[str]) -> float:
-    sa, sb = set(ranks_a[:5]), set(ranks_b[:5])
-    if not (sa | sb):
-        return 1.0
-    return len(sa & sb) / len(sa | sb)
-
-
 def _result_to_ranks(result: SimulationResult) -> list[str]:
     return [c.center_code or c.city for c in result.cities]
 
@@ -268,10 +251,12 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
 @router.post("/model-sensitivity", response_model=ModelSensitivityResponse)
 def model_sensitivity(request: ModelSensitivityRequest) -> ModelSensitivityResponse:
     """Sweep a model parameter across its range; return ranking stability."""
+    n_steps = request.n_steps
     try:
         from tier_config import get_tier
         tier = get_tier()
         iters = min(request.base_iterations, tier.max_sensitivity_iterations)
+        n_steps = min(n_steps, tier.max_validation_sweep_steps)
     except Exception:
         iters = request.base_iterations
 
@@ -280,7 +265,7 @@ def model_sensitivity(request: ModelSensitivityRequest) -> ModelSensitivityRespo
         result = sweep_parameter(
             patient=request.patient,
             param=request.param,
-            n_steps=request.n_steps,
+            n_steps=n_steps,
             base_iterations=iters,
             seed=request.seed,
         )
@@ -407,10 +392,14 @@ def calibration_check(request: CalibrationRequest) -> CalibrationResult:
 @router.post("/temporal", response_model=TemporalResult)
 def temporal_validation(request: TemporalRequest) -> TemporalResult:
     """Walk-forward train/test temporal validation."""
+    train_start = request.train_start
     try:
         from tier_config import get_tier
         tier = get_tier()
-        iters = min(request.iterations, tier.max_sensitivity_iterations)
+        iters = min(request.iterations, tier.max_validation_iterations)
+        # Cap the training span to the tier's allowed window (#249).
+        if request.train_end - train_start > tier.max_validation_train_years:
+            train_start = request.train_end - tier.max_validation_train_years
     except Exception:
         iters = request.iterations
 
@@ -418,7 +407,7 @@ def temporal_validation(request: TemporalRequest) -> TemporalResult:
         from services.temporal_validation import run_temporal_validation
         result = run_temporal_validation(
             patient=request.patient,
-            train_start=request.train_start,
+            train_start=train_start,
             train_end=request.train_end,
             test_end=request.test_end,
             iterations=iters,

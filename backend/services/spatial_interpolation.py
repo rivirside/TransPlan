@@ -11,6 +11,7 @@ from functools import lru_cache
 
 import numpy as np
 from scipy.interpolate import RBFInterpolator
+from scipy.spatial import Delaunay
 
 from services.data_loader import get_data
 
@@ -189,6 +190,17 @@ class SpatialSurface:
         self._n_points = len(coords)
         self._mean = float(np.mean(values))
         self._std = float(np.std(values))
+        # Observed value range — used to clamp interpolated/extrapolated output
+        # so a layer can never produce e.g. a negative rate or >100% (#253).
+        self._vmin = float(np.min(values))
+        self._vmax = float(np.max(values))
+        self._coords = coords
+        self._values = values
+        # Convex hull of the data points — queries outside it are extrapolation.
+        try:
+            self._hull = Delaunay(coords) if len(coords) >= 4 else None
+        except Exception:
+            self._hull = None
 
         if method == "rbf":
             self._interpolator = RBFInterpolator(
@@ -197,10 +209,68 @@ class SpatialSurface:
                 smoothing=1.0,
             )
         elif method == "idw":
-            self._coords = coords
-            self._values = values
+            pass  # uses _coords/_values directly
+        elif method == "kriging":
+            self._fit_gp(coords, values)
         else:
             raise ValueError(f"Unknown method: {method}")
+
+    def _fit_gp(self, coords: np.ndarray, values: np.ndarray) -> None:
+        """Fit a Gaussian-process regressor that yields prediction variance.
+
+        Uses an anisotropic RBF kernel (independent length-scales per axis), so
+        the distortion from treating lat/lon degrees as Cartesian is absorbed by
+        the learned per-axis scales rather than biasing distances. Large layers
+        are subsampled (GP fitting is O(n^3)); a smooth field needs far fewer
+        than thousands of points.
+        """
+        try:
+            from sklearn.gaussian_process import GaussianProcessRegressor
+            from sklearn.gaussian_process.kernels import RBF, WhiteKernel, ConstantKernel
+        except ImportError as e:
+            # scikit-learn is a local/dev-tier dependency (too heavy for the
+            # Vercel Lambda bundle). Surface a clean error the router turns
+            # into a 400 rather than a 500.
+            raise ValueError(
+                "kriging interpolation requires scikit-learn (local tier only); "
+                "use method='rbf' or 'idw' on the hosted service"
+            ) from e
+
+        MAX_FIT = 800
+        if len(coords) > MAX_FIT:
+            rng = np.random.default_rng(0)
+            idx = rng.choice(len(coords), size=MAX_FIT, replace=False)
+            coords, values = coords[idx], values[idx]
+
+        kernel = (
+            ConstantKernel(1.0, (1e-2, 1e3))
+            * RBF(length_scale=[2.0, 2.0], length_scale_bounds=(1e-1, 1e2))
+            + WhiteKernel(noise_level=1.0, noise_level_bounds=(1e-3, 1e3))
+        )
+        self._gp = GaussianProcessRegressor(kernel=kernel, normalize_y=True)
+        self._gp.fit(coords, values)
+
+    def in_hull(self, lat: float, lon: float) -> bool:
+        """True if (lat, lon) lies within the convex hull of the data points."""
+        if self._hull is None:
+            return True
+        return bool(self._hull.find_simplex(np.array([lat, lon])) >= 0)
+
+    def _clamp(self, value: float) -> float:
+        return min(max(value, self._vmin), self._vmax)
+
+    def query_with_uncertainty(self, lat: float, lon: float) -> tuple[float, float]:
+        """Return (value, std). Value is clamped to the observed range; std is
+        the GP prediction standard deviation (kriging) and is widened for points
+        that fall outside the data hull (extrapolation) (#266/#253)."""
+        if self.method == "kriging":
+            mean, std = self._gp.predict(np.array([[lat, lon]]), return_std=True)
+            value, sd = float(mean[0]), float(std[0])
+        else:
+            value, sd = self.query(lat, lon), self._std
+        if not self.in_hull(lat, lon):
+            sd += self._std  # extrapolation: inflate uncertainty
+        return self._clamp(value), sd
 
     def query(self, lat: float, lon: float) -> float:
         """Interpolate value at a single point."""
@@ -209,6 +279,9 @@ class SpatialSurface:
             return float(result)
         elif self.method == "idw":
             return self._idw_query(lat, lon)
+        elif self.method == "kriging":
+            mean = self._gp.predict(np.array([[lat, lon]]))
+            return self._clamp(float(mean[0]))
         raise ValueError(f"Unknown method: {self.method}")
 
     def query_batch(self, coords: np.ndarray) -> np.ndarray:
@@ -217,6 +290,9 @@ class SpatialSurface:
             return self._interpolator(coords)
         elif self.method == "idw":
             return np.array([self._idw_query(c[0], c[1]) for c in coords])
+        elif self.method == "kriging":
+            preds = self._gp.predict(coords)
+            return np.clip(preds, self._vmin, self._vmax)
         raise ValueError(f"Unknown method: {self.method}")
 
     def _idw_query(self, lat: float, lon: float, power: float = 2.0) -> float:

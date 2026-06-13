@@ -1,7 +1,7 @@
 {
   "_meta": {
     "source": "SRTR PSR National Center-Level Summary Data (January 2025 release)",
-    "method": "Log-normal fit from center-level P25/P50/P75 wait time percentiles (Table B10)",
+    "method": "Log-normal fit from center-level P25/P50/P75 wait time percentiles (Table B10): mu=ln(median), sigma via the IQR method ln(P75/P25)/(2*0.6745) in scripts/parse-srtr-reports.py:fit_lognormal. NOTE (#256): sigma is CLAMPED to [0.3, 1.2]; the identical log_sigma=1.2 across kidney/liver/heart/intestine are long-wait organs hitting that ceiling (their true IQR-implied sigma exceeds 1.2), NOT a placeholder. The 1.2 ceiling likely understates dispersion (hence the right tail / long-wait probabilities) for these organs and should be re-evaluated against the raw percentiles.",
     "references": [
       "https://www.srtr.org/reports/program-specific-reports/",
       "SRTR PSR Technical Methods: https://www.srtr.org/about-the-data/technical-methods-for-the-program-specific-reports/"

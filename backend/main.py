@@ -17,7 +17,7 @@ _BACKEND_DIR = str(Path(__file__).parent)
 if _BACKEND_DIR not in sys.path:
     sys.path.insert(0, _BACKEND_DIR)
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
@@ -26,8 +26,10 @@ from starlette.staticfiles import StaticFiles
 from starlette.types import Scope
 
 from config import ALLOWED_ORIGINS, DATA_DIR, VERSION
+from middleware.rate_limit import rate_limit
 from routers import centers, equity, health, score, sensitivity, shutdown, simulate, spatial, tier, trends, validation, what_if
 from routers.api_v1 import include_v1_routers
+from security import CORS_ORIGIN_REGEX, SecurityHeadersMiddleware, docs_urls
 from services.data_loader import load_all
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
@@ -35,6 +37,10 @@ logger = logging.getLogger(__name__)
 
 # Repo root is one level above backend/
 REPO_ROOT: Path = Path(__file__).parent.parent
+
+# True when running on Vercel (production). Gates docs exposure (#247).
+_IS_PROD: bool = bool(os.environ.get("VERCEL"))
+_DOCS_URL, _REDOC_URL, _OPENAPI_URL = docs_urls(_IS_PROD)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -58,18 +64,22 @@ app = FastAPI(
         "Contact: tomer@arizona.edu"
     ),
     lifespan=lifespan,
-    docs_url="/docs",
-    redoc_url="/redoc",
+    docs_url=_DOCS_URL,
+    redoc_url=_REDOC_URL,
+    openapi_url=_OPENAPI_URL,
 )
 
+# Baseline security headers on every response (#250).
+app.add_middleware(SecurityHeadersMiddleware)
+
 # CORS kept as fallback for separate frontend/backend dev setups.
-# Vercel pattern is restricted to this project's deployments (transplan.vercel.app
-# and preview URLs like transplan-<hash>-<team>.vercel.app) rather than any
-# Vercel user's subdomain (#215). Production traffic is same-origin via
+# Origin policy is restricted to this project's domains/preview URLs
+# (transplan.vercel.app, transplan-<hash>-<team>.vercel.app) rather than any
+# Vercel user's subdomain (#215/#248). Production traffic is same-origin via
 # vercel.json rewrites, so this only affects preview deployments.
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|^https://transplan(-[a-z0-9-]+)?\.vercel\.app$|^https://(www\.)?transplant\.today$",
+    allow_origin_regex=CORS_ORIGIN_REGEX,
     allow_origins=ALLOWED_ORIGINS,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type", "X-Api-Key"],
@@ -100,19 +110,27 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
     )
 
 
+# Rate-limit dependencies for the unprefixed (production) routes (#245).
+# These are the paths the frontend and Vercel rewrites actually use, so they
+# must be throttled too — not just the /api/v1/* copies. Ops endpoints
+# (health/tier) stay unthrottled for keepalive polling.
+_sim_deps = [Depends(rate_limit("simulation"))]
+_data_deps = [Depends(rate_limit("data"))]
+_spatial_deps = [Depends(rate_limit("spatial"))]
+
 app.include_router(health.router, tags=["ops"])
 app.include_router(tier.router, tags=["ops"])
 if not os.environ.get("VERCEL"):
     app.include_router(shutdown.router, tags=["ops"])
-app.include_router(simulate.router, tags=["simulation"])
-app.include_router(sensitivity.router, tags=["simulation"])
-app.include_router(equity.router, tags=["simulation"])
-app.include_router(what_if.router, tags=["simulation"])
-app.include_router(trends.router, tags=["trends"])
-app.include_router(centers.router, tags=["centers"])
-app.include_router(spatial.router, tags=["spatial"])
-app.include_router(score.router, tags=["scoring"])
-app.include_router(validation.router, tags=["validation"])
+app.include_router(simulate.router, tags=["simulation"], dependencies=_sim_deps)
+app.include_router(sensitivity.router, tags=["simulation"], dependencies=_sim_deps)
+app.include_router(equity.router, tags=["simulation"], dependencies=_sim_deps)
+app.include_router(what_if.router, tags=["simulation"], dependencies=_sim_deps)
+app.include_router(trends.router, tags=["trends"], dependencies=_data_deps)
+app.include_router(centers.router, tags=["centers"], dependencies=_data_deps)
+app.include_router(spatial.router, tags=["spatial"], dependencies=_spatial_deps)
+app.include_router(score.router, tags=["scoring"], dependencies=_sim_deps)
+app.include_router(validation.router, tags=["validation"], dependencies=_sim_deps)
 
 # Public REST API v1 — all endpoints under /api/v1/ with rate limiting (#24)
 include_v1_routers(app)

@@ -1,9 +1,15 @@
 """
-Cross-engine validation service — Phase 5 M5.
+Cross-engine concordance service — Phase 5 M5.
 
-Runs all available inference engines (MC, BBN, MCMC) on the same patient
-profile and compares city rankings, probability estimates, and credible
-intervals.  Produces a structured report for paper-quality analysis.
+IMPORTANT (#251): despite the historical module name, this is NOT statistical
+cross-validation (no train/test holdout, no out-of-sample evaluation). It
+measures *agreement between the three inference engines* (MC, BBN, MCMC) on the
+same inputs — an internal-consistency diagnostic, not validation against
+observed patient outcomes.
+
+Runs all available inference engines on the same patient profile and compares
+city rankings, probability estimates, and credible intervals.  Produces a
+structured report for paper-quality analysis.
 
 Metrics computed:
   - Spearman rank correlation between each engine pair

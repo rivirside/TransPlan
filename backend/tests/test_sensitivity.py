@@ -18,6 +18,27 @@ def liver_patient() -> PatientProfile:
     return PatientProfile(organ="liver", blood_type="A+", age=52, sex="female", urgency=2, meld=20)
 
 
+class TestP24RespectsDemographics:
+    """#254: _p24_single_city must pass age/sex to the wait distribution so
+    equity's p24/Gini actually reflects age and sex variation."""
+
+    def test_p24_responds_to_age(self):
+        young = PatientProfile(organ="kidney", blood_type="O+", age=25, sex="male", urgency=2, cpra=0)
+        old = PatientProfile(organ="kidney", blood_type="O+", age=65, sex="male", urgency=2, cpra=0)
+        # Same seed → identical random draws, so any difference comes purely
+        # from the age-dependent wait distribution.
+        p_young = _p24_single_city(young, "Nashville", 4000, np.random.default_rng(0))
+        p_old = _p24_single_city(old, "Nashville", 4000, np.random.default_rng(0))
+        assert p_young != p_old
+
+    def test_p24_responds_to_sex_for_kidney(self):
+        male = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male", urgency=2, cpra=0)
+        female = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="female", urgency=2, cpra=0)
+        p_male = _p24_single_city(male, "Nashville", 4000, np.random.default_rng(0))
+        p_female = _p24_single_city(female, "Nashville", 4000, np.random.default_rng(0))
+        assert p_male != p_female
+
+
 @pytest.fixture
 def lung_patient() -> PatientProfile:
     return PatientProfile(organ="lung", blood_type="B+", age=38, sex="male", urgency=2, las=50.0)
