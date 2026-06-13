@@ -2,6 +2,16 @@
   "framework": null,
   "outputDirectory": ".",
   "buildCommand": "cd docs-site && npm install && npm run build && rm -rf node_modules",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/simulate", "destination": "/api/index" },
     { "source": "/equity-analysis", "destination": "/api/index" },
