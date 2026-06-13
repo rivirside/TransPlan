@@ -61,11 +61,23 @@ RATE_LIMITS = {
 }
 
 
+def _pick_forwarded_ip(forwarded: str) -> str:
+    """Return the trustworthy IP from an X-Forwarded-For chain.
+
+    The leftmost entry is client-supplied and therefore spoofable; the
+    rightmost is the one appended by the proxy directly in front of us.
+    Using the rightmost prevents a client from bypassing the rate limiter
+    (rotating IPs) or framing a victim's IP by forging the header (#246).
+    """
+    parts = [p.strip() for p in forwarded.split(",") if p.strip()]
+    return parts[-1] if parts else "unknown"
+
+
 def _get_client_ip(request: Request) -> str:
     """Extract client IP, respecting X-Forwarded-For for proxied setups."""
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:
-        return forwarded.split(",")[0].strip()
+        return _pick_forwarded_ip(forwarded)
     if request.client:
         return request.client.host
     return "unknown"

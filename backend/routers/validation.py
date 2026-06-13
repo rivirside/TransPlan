@@ -268,10 +268,12 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
 @router.post("/model-sensitivity", response_model=ModelSensitivityResponse)
 def model_sensitivity(request: ModelSensitivityRequest) -> ModelSensitivityResponse:
     """Sweep a model parameter across its range; return ranking stability."""
+    n_steps = request.n_steps
     try:
         from tier_config import get_tier
         tier = get_tier()
         iters = min(request.base_iterations, tier.max_sensitivity_iterations)
+        n_steps = min(n_steps, tier.max_validation_sweep_steps)
     except Exception:
         iters = request.base_iterations
 
@@ -280,7 +282,7 @@ def model_sensitivity(request: ModelSensitivityRequest) -> ModelSensitivityRespo
         result = sweep_parameter(
             patient=request.patient,
             param=request.param,
-            n_steps=request.n_steps,
+            n_steps=n_steps,
             base_iterations=iters,
             seed=request.seed,
         )
@@ -407,10 +409,14 @@ def calibration_check(request: CalibrationRequest) -> CalibrationResult:
 @router.post("/temporal", response_model=TemporalResult)
 def temporal_validation(request: TemporalRequest) -> TemporalResult:
     """Walk-forward train/test temporal validation."""
+    train_start = request.train_start
     try:
         from tier_config import get_tier
         tier = get_tier()
-        iters = min(request.iterations, tier.max_sensitivity_iterations)
+        iters = min(request.iterations, tier.max_validation_iterations)
+        # Cap the training span to the tier's allowed window (#249).
+        if request.train_end - train_start > tier.max_validation_train_years:
+            train_start = request.train_end - tier.max_validation_train_years
     except Exception:
         iters = request.iterations
 
@@ -418,7 +424,7 @@ def temporal_validation(request: TemporalRequest) -> TemporalResult:
         from services.temporal_validation import run_temporal_validation
         result = run_temporal_validation(
             patient=request.patient,
-            train_start=request.train_start,
+            train_start=train_start,
             train_end=request.train_end,
             test_end=request.test_end,
             iterations=iters,
