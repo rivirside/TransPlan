@@ -12,22 +12,9 @@ client = TestClient(app, raise_server_exceptions=False)
 KIDNEY = {"organ": "kidney", "blood_type": "O+", "age": 45, "sex": "male", "urgency": 2, "cpra": 0}
 
 
-# -- #246: forwarded-IP trust --
-
-class TestForwardedIp:
-    def test_uses_last_entry_not_attacker_supplied_first(self):
-        """The trustworthy hop is the one our proxy appends (rightmost), not
-        the client-supplied leftmost — otherwise the limiter is bypassable."""
-        from middleware.rate_limit import _pick_forwarded_ip
-        assert _pick_forwarded_ip("1.1.1.1, 203.0.113.9") == "203.0.113.9"
-
-    def test_single_value(self):
-        from middleware.rate_limit import _pick_forwarded_ip
-        assert _pick_forwarded_ip("203.0.113.9") == "203.0.113.9"
-
-    def test_strips_whitespace(self):
-        from middleware.rate_limit import _pick_forwarded_ip
-        assert _pick_forwarded_ip("1.1.1.1 ,  203.0.113.9  ") == "203.0.113.9"
+# NOTE: forwarded-IP trust (originally #246) is superseded by main's #218
+# (_trust_proxy_headers + rightmost-hop selection in _get_client_ip), which is
+# covered by tests/test_api_v1.py — so no duplicate test here.
 
 
 # -- #248: CORS origin policy --
