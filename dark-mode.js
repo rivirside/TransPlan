@@ -45,9 +45,6 @@
     localStorage.setItem(STORAGE_KEY, String(isDark));
 
     // Notify Chart.js instances to update colors if available
-    if (window.TransPlanCharts && window.TransPlanCharts.onDarkModeChange) {
-      window.TransPlanCharts.onDarkModeChange(isDark);
-    }
     if (window.TransPlanProbCharts && window.TransPlanProbCharts.onDarkModeChange) {
       window.TransPlanProbCharts.onDarkModeChange(isDark);
     }

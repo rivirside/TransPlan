@@ -18,6 +18,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from models.schemas import PatientProfile, SensitivityResult, SimulationResult
+from services.stats_utils import spearman_between as _spearman_between, top5_jaccard as _top5_jaccard
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/validation", tags=["validation"])
@@ -141,24 +142,6 @@ class ConvergenceResult(BaseModel):
 # ---------------------------------------------------------------------------
 # Helper: ranking → Spearman ρ
 # ---------------------------------------------------------------------------
-
-def _spearman_between(ranks_a: list[str], ranks_b: list[str]) -> Optional[float]:
-    from scipy import stats as sp_stats
-    common = [c for c in ranks_a if c in ranks_b]
-    if len(common) < 3:
-        return None
-    a = [ranks_a.index(c) for c in common]
-    b = [ranks_b.index(c) for c in common]
-    rho, _ = sp_stats.spearmanr(a, b)
-    return float(rho)
-
-
-def _top5_jaccard(ranks_a: list[str], ranks_b: list[str]) -> float:
-    sa, sb = set(ranks_a[:5]), set(ranks_b[:5])
-    if not (sa | sb):
-        return 1.0
-    return len(sa & sb) / len(sa | sb)
-
 
 def _result_to_ranks(result: SimulationResult) -> list[str]:
     return [c.center_code or c.city for c in result.cities]
