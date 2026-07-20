@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "fetchedAt": "2026-07-13T09:02:37.031Z",
-    "source": "EPA AQS API (2767 monitors, ozone + PM2.5, all states)"
+    "fetchedAt": "2026-07-20T08:53:00.626Z",
+    "source": "EPA AQS API (2766 monitors, ozone + PM2.5, all states)"
   },
   "monitors": [
     {
@@ -2795,8 +2795,8 @@
       "value": 0.0403
     },
     {
-      "lat": 29.206667,
-      "lon": -81.0525,
+      "lat": 29.20682,
+      "lon": -81.053102,
       "score": 82,
       "aqi": 37,
       "pollutant": "ozone",
@@ -10193,15 +10193,6 @@
       "value": 0.0472
     },
     {
-      "lat": 40.216779,
-      "lon": -110.182742,
-      "score": 77,
-      "aqi": 46,
-      "pollutant": "ozone",
-      "state": "Utah",
-      "value": 0.0497
-    },
-    {
       "lat": 40.483598,
       "lon": -109.906796,
       "score": 76,
@@ -10209,15 +10200,6 @@
       "pollutant": "ozone",
       "state": "Utah",
       "value": 0.0518
-    },
-    {
-      "lat": 40.206291,
-      "lon": -109.353932,
-      "score": 79,
-      "aqi": 42,
-      "pollutant": "ozone",
-      "state": "Utah",
-      "value": 0.0454
     },
     {
       "lat": 40.497962,
@@ -10245,6 +10227,24 @@
       "pollutant": "ozone",
       "state": "Utah",
       "value": 0.0423
+    },
+    {
+      "lat": 40.206291,
+      "lon": -109.353932,
+      "score": 79,
+      "aqi": 42,
+      "pollutant": "ozone",
+      "state": "Utah",
+      "value": 0.0454
+    },
+    {
+      "lat": 40.216779,
+      "lon": -110.182742,
+      "score": 77,
+      "aqi": 46,
+      "pollutant": "ozone",
+      "state": "Utah",
+      "value": 0.0497
     },
     {
       "lat": 40.569,
@@ -12299,15 +12299,6 @@
       "value": 12.4135
     },
     {
-      "lat": 34.06659,
-      "lon": -118.22688,
-      "score": 71,
-      "aqi": 58,
-      "pollutant": "pm25",
-      "state": "California",
-      "value": 12.6578
-    },
-    {
       "lat": 34.19925,
       "lon": -118.53276,
       "score": 74,
@@ -14045,8 +14036,8 @@
       "value": 6.5172
     },
     {
-      "lat": 29.206667,
-      "lon": -81.0525,
+      "lat": 29.20682,
+      "lon": -81.053102,
       "score": 81,
       "aqi": 39,
       "pollutant": "pm25",
@@ -16943,15 +16934,6 @@
       "value": 6.1691
     },
     {
-      "lat": 39.33746,
-      "lon": -76.58905,
-      "score": 79,
-      "aqi": 43,
-      "pollutant": "pm25",
-      "state": "Maryland",
-      "value": 7.652
-    },
-    {
       "lat": 39.114313,
       "lon": -77.106876,
       "score": 84,
@@ -17058,6 +17040,15 @@
       "pollutant": "pm25",
       "state": "Maryland",
       "value": 6.0923
+    },
+    {
+      "lat": 39.33746,
+      "lon": -76.58905,
+      "score": 79,
+      "aqi": 43,
+      "pollutant": "pm25",
+      "state": "Maryland",
+      "value": 7.652
     },
     {
       "lat": 42.605816,
@@ -21407,15 +21398,6 @@
       "value": 8.3723
     },
     {
-      "lat": 40.50084,
-      "lon": -80.066488,
-      "score": 78,
-      "aqi": 45,
-      "pollutant": "pm25",
-      "state": "Pennsylvania",
-      "value": 8.0896
-    },
-    {
       "lat": 40.294341,
       "lon": -79.885331,
       "score": 80,
@@ -21902,15 +21884,6 @@
       "value": 8.647
     },
     {
-      "lat": 40.008889,
-      "lon": -75.09778,
-      "score": 74,
-      "aqi": 52,
-      "pollutant": "pm25",
-      "state": "Pennsylvania",
-      "value": 9.6097
-    },
-    {
       "lat": 39.991389,
       "lon": -75.080833,
       "score": 77,
@@ -21929,13 +21902,22 @@
       "value": 7.7289
     },
     {
-      "lat": 40.054171,
-      "lon": -74.985166,
+      "lat": 39.922867,
+      "lon": -75.186921,
       "score": 78,
       "aqi": 45,
       "pollutant": "pm25",
       "state": "Pennsylvania",
-      "value": 8.0628
+      "value": 8.0344
+    },
+    {
+      "lat": 40.008889,
+      "lon": -75.09778,
+      "score": 74,
+      "aqi": 52,
+      "pollutant": "pm25",
+      "state": "Pennsylvania",
+      "value": 9.6097
     },
     {
       "lat": 39.991389,
@@ -21947,13 +21929,13 @@
       "value": 8.7345
     },
     {
-      "lat": 39.922867,
-      "lon": -75.186921,
+      "lat": 40.054171,
+      "lon": -74.985166,
       "score": 78,
       "aqi": 45,
       "pollutant": "pm25",
       "state": "Pennsylvania",
-      "value": 8.0344
+      "value": 8.0628
     },
     {
       "lat": 41.844722,
@@ -21981,6 +21963,15 @@
       "pollutant": "pm25",
       "state": "Pennsylvania",
       "value": 8.8199
+    },
+    {
+      "lat": 40.50084,
+      "lon": -80.066488,
+      "score": 78,
+      "aqi": 45,
+      "pollutant": "pm25",
+      "state": "Pennsylvania",
+      "value": 8.0896
     },
     {
       "lat": 40.375644,
