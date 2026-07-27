@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetchedAt": "2026-07-20T08:53:00.626Z",
+    "fetchedAt": "2026-07-27T09:44:36.485Z",
     "source": "EPA AQS API (2766 monitors, ozone + PM2.5, all states)"
   },
   "monitors": [
@@ -13340,7 +13340,7 @@
       "aqi": 38,
       "pollutant": "pm25",
       "state": "Colorado",
-      "value": 6.8389
+      "value": 6.839
     },
     {
       "lat": 39.7861,
