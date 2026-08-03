@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetchedAt": "2026-07-27T09:44:36.485Z",
+    "fetchedAt": "2026-08-03T09:37:43.312Z",
     "source": "EPA AQS API (2766 monitors, ozone + PM2.5, all states)"
   },
   "monitors": [
@@ -866,7 +866,7 @@
       "aqi": 38,
       "pollutant": "ozone",
       "state": "California",
-      "value": 0.0409
+      "value": 0.0412
     },
     {
       "lat": 37.289732,
@@ -2696,8 +2696,8 @@
       "value": 0.0392
     },
     {
-      "lat": 26.602016,
-      "lon": -81.877908,
+      "lat": 26.60177,
+      "lon": -81.87807,
       "score": 82,
       "aqi": 36,
       "pollutant": "ozone",
@@ -13340,7 +13340,7 @@
       "aqi": 38,
       "pollutant": "pm25",
       "state": "Colorado",
-      "value": 6.839
+      "value": 6.8389
     },
     {
       "lat": 39.7861,
@@ -13937,8 +13937,8 @@
       "value": 7.3593
     },
     {
-      "lat": 26.602016,
-      "lon": -81.877908,
+      "lat": 26.60177,
+      "lon": -81.87807,
       "score": 83,
       "aqi": 35,
       "pollutant": "pm25",
@@ -13946,8 +13946,8 @@
       "value": 6.2858
     },
     {
-      "lat": 26.602016,
-      "lon": -81.877908,
+      "lat": 26.60177,
+      "lon": -81.87807,
       "score": 82,
       "aqi": 37,
       "pollutant": "pm25",
@@ -17714,7 +17714,7 @@
       "aqi": 49,
       "pollutant": "pm25",
       "state": "Minnesota",
-      "value": 8.8725
+      "value": 8.7984
     },
     {
       "lat": 44.73846,
@@ -20855,7 +20855,7 @@
       "aqi": 0,
       "pollutant": "pm25",
       "state": "Ohio",
-      "value": 9.0467
+      "value": 9.0369
     },
     {
       "lat": 41.477011,
