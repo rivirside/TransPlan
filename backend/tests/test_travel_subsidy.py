@@ -4,7 +4,7 @@ import pytest
 from services.policy_scenarios import (
     SCENARIOS,
     TRAVEL_SUBSIDY_TIERS,
-    _CITY_COL,
+    _get_city_col,
     list_scenarios,
     get_scenario,
     get_city_multipliers,
@@ -84,26 +84,32 @@ class TestTravelSubsidyCityMultipliers:
         assert len(s.city_adjustments) == 22
 
     def test_high_col_city_gets_larger_wait_reduction(self):
-        """Palo Alto (COL=118, highest) should see more wait reduction than Indianapolis (COL=74, lowest)."""
+        """The highest-RPP city should see more wait reduction than the lowest."""
+        col = _get_city_col()
+        hi, lo = max(col, key=col.get), min(col, key=col.get)
         s = get_scenario("travel_assistance_20k")
-        _, wait_pa = get_city_multipliers(s, "Palo Alto")
-        _, wait_indy = get_city_multipliers(s, "Indianapolis")
-        assert wait_pa < wait_indy, (
+        _, wait_hi = get_city_multipliers(s, hi)
+        _, wait_lo = get_city_multipliers(s, lo)
+        assert wait_hi < wait_lo, (
             f"High-COL city should have lower wait multiplier: "
-            f"Palo Alto={wait_pa}, Indianapolis={wait_indy}"
+            f"{hi}={wait_hi}, {lo}={wait_lo}"
         )
 
     def test_high_col_city_gets_larger_donor_boost(self):
-        """Palo Alto should see more donor boost than Indianapolis."""
+        """The highest-RPP city should see more donor boost than the lowest."""
+        col = _get_city_col()
+        hi, lo = max(col, key=col.get), min(col, key=col.get)
         s = get_scenario("travel_assistance_20k")
-        donor_pa, _ = get_city_multipliers(s, "Palo Alto")
-        donor_indy, _ = get_city_multipliers(s, "Indianapolis")
-        assert donor_pa > donor_indy
+        donor_hi, _ = get_city_multipliers(s, hi)
+        donor_lo, _ = get_city_multipliers(s, lo)
+        assert donor_hi > donor_lo
 
     def test_lowest_col_city_minimal_effect(self):
-        """Indianapolis (COL=74, lowest) should have near-baseline multipliers."""
+        """The lowest-RPP city should have near-baseline multipliers."""
+        col = _get_city_col()
+        lo = min(col, key=col.get)
         s = get_scenario("travel_assistance_5k")
-        donor, wait = get_city_multipliers(s, "Indianapolis")
+        donor, wait = get_city_multipliers(s, lo)
         # With 5k subsidy and lowest COL, effect should be very small
         assert 0.99 <= donor <= 1.01
         assert 0.99 <= wait <= 1.01
@@ -114,7 +120,7 @@ class TestTravelSubsidyCityMultipliers:
             if not sid.startswith("travel_assistance_"):
                 continue
             s = SCENARIOS[sid]
-            for city in _CITY_COL:
+            for city in _get_city_col():
                 donor, wait = get_city_multipliers(s, city)
                 assert 0.8 <= donor <= 1.3, f"{sid}/{city}: donor={donor}"
                 assert 0.8 <= wait <= 1.05, f"{sid}/{city}: wait={wait}"
@@ -173,14 +179,24 @@ class TestDiminishingReturns:
 
 class TestCOLData:
     def test_all_22_cities_in_col_data(self):
-        assert len(_CITY_COL) == 22
+        assert len(_get_city_col()) == 22
 
     def test_col_values_reasonable(self):
-        for city, col in _CITY_COL.items():
-            assert 60 <= col <= 150, f"{city} has unreasonable COL={col}"
+        for city, col in _get_city_col().items():
+            assert 60 <= col <= 160, f"{city} has unreasonable COL={col}"
 
-    def test_palo_alto_highest_col(self):
-        assert max(_CITY_COL, key=_CITY_COL.get) == "Palo Alto"
+    def test_highest_col_is_expensive_coastal_metro(self):
+        col = _get_city_col()
+        assert max(col, key=col.get) in {
+            "San Francisco", "Palo Alto", "New York", "Los Angeles", "Miami", "Seattle",
+        }
 
-    def test_indianapolis_lowest_col(self):
-        assert min(_CITY_COL, key=_CITY_COL.get) == "Indianapolis"
+    def test_lowest_col_is_low_cost_metro(self):
+        col = _get_city_col()
+        assert min(col, key=col.get) in {
+            "Rochester", "Omaha", "Indianapolis", "Cleveland", "St. Louis", "Pittsburgh",
+        }
+
+    def test_col_has_meaningful_spread(self):
+        values = list(_get_city_col().values())
+        assert max(values) - min(values) >= 10

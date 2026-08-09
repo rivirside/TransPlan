@@ -42,6 +42,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from services.data_loader import get_data
+
 logger = logging.getLogger(__name__)
 
 
@@ -360,19 +362,28 @@ _register(PolicyScenario(
 
 
 # --- Travel financial assistance scenarios ---
-# Cost-of-living index per city (BLS CPI-U, national average = 100).
-# Used to compute COL-proportional accessibility gains from travel subsidy.
-_CITY_COL = {
-    "Baltimore": 110, "Chicago": 92, "Cleveland": 91, "Dallas": 85,
-    "Durham": 106, "Houston": 93, "Indianapolis": 74, "Los Angeles": 106,
-    "Madison": 94, "Miami": 99, "Minneapolis": 95, "Nashville": 102,
-    "New York": 107, "Omaha": 81, "Palo Alto": 118, "Philadelphia": 101,
-    "Pittsburgh": 86, "Portland": 106, "Rochester": 86, "San Francisco": 110,
-    "Seattle": 112, "St. Louis": 89,
+# Cost-of-living index per city (BEA Regional Price Parity of each city's
+# MSA, national = 100). Read from the committed snapshot so scenario math
+# stays in sync with the scoring data (#205); the static fallback matches
+# the 2024-vintage snapshot in case the file is missing.
+_CITY_COL_FALLBACK = {
+    "Baltimore": 105, "Chicago": 104, "Cleveland": 94, "Dallas": 103,
+    "Durham": 98, "Houston": 99, "Indianapolis": 96, "Los Angeles": 114,
+    "Madison": 97, "Miami": 114, "Minneapolis": 105, "Nashville": 96,
+    "New York": 113, "Omaha": 92, "Palo Alto": 110, "Philadelphia": 103,
+    "Pittsburgh": 95, "Portland": 105, "Rochester": 91, "San Francisco": 116,
+    "Seattle": 111, "St. Louis": 95,
 }
 
-# National average COL
-_COL_MEAN = sum(_CITY_COL.values()) / len(_CITY_COL)
+
+def _get_city_col() -> dict[str, float]:
+    """City → RPP from the cost-of-living snapshot's legacy city block."""
+    try:
+        cities = get_data().cost_of_living.get("cities", {})
+    except RuntimeError:  # data not loaded yet (import-time access)
+        cities = {}
+    valid = {c: v for c, v in cities.items() if isinstance(v, (int, float))}
+    return valid if len(valid) >= 20 else dict(_CITY_COL_FALLBACK)
 
 # Travel subsidy price points and their modeled effects.
 #
@@ -383,7 +394,7 @@ _COL_MEAN = sum(_CITY_COL.values()) / len(_CITY_COL)
 #   2. Reduces geographic inequality — patients no longer constrained to nearby
 #      centers regardless of quality.
 #   3. The effect is COL-proportional: a $20K subsidy matters more for accessing
-#      a center in Palo Alto (COL=118) than one in Indianapolis (COL=74).
+#      a center in San Francisco (RPP=116) than one in Rochester, MN (RPP=91).
 #
 # We model this as wait_time_multiplier adjustments per city:
 #   - High-COL cities: wait times decrease more (subsidy enables access to centers
@@ -480,12 +491,13 @@ def _travel_subsidy_city_adjustments(
     tier = TRAVEL_SUBSIDY_TIERS[subsidy_amount]
     max_effect = tier["max_col_effect"]
 
-    col_min = min(_CITY_COL.values())
-    col_max = max(_CITY_COL.values())
+    city_col = _get_city_col()
+    col_min = min(city_col.values())
+    col_max = max(city_col.values())
     col_range = col_max - col_min if col_max > col_min else 1
 
     adjustments = {}
-    for city, col in _CITY_COL.items():
+    for city, col in city_col.items():
         # Normalize COL to [0, 1] where 1 = highest COL
         col_normalized = (col - col_min) / col_range
 
@@ -537,7 +549,24 @@ def _register_travel_subsidy_scenarios() -> None:
         ))
 
 
+# Register at import so SCENARIOS is always fully populated. At import time
+# the data snapshot isn't loaded yet (routers import before load_all()), so
+# city adjustments start from _CITY_COL_FALLBACK; the first post-load access
+# re-registers them from the live cost-of-living snapshot (#205).
 _register_travel_subsidy_scenarios()
+_travel_scenarios_refreshed = False
+
+
+def _ensure_travel_subsidy_scenarios() -> None:
+    global _travel_scenarios_refreshed
+    if _travel_scenarios_refreshed:
+        return
+    try:
+        get_data()
+    except RuntimeError:
+        return  # data still not loaded — keep fallback-based registration
+    _register_travel_subsidy_scenarios()  # same ids → clean overwrite
+    _travel_scenarios_refreshed = True
 
 
 # --- Public API ---
@@ -549,6 +578,7 @@ def list_scenarios(organ: Optional[str] = None) -> list[PolicyScenario]:
     If organ is specified, returns scenarios that apply to that organ
     (including scenarios that apply to all organs).
     """
+    _ensure_travel_subsidy_scenarios()
     results = []
     for scenario in SCENARIOS.values():
         if organ and scenario.organs and organ not in scenario.organs:
@@ -559,6 +589,7 @@ def list_scenarios(organ: Optional[str] = None) -> list[PolicyScenario]:
 
 def get_scenario(scenario_id: str) -> Optional[PolicyScenario]:
     """Get a specific scenario by ID."""
+    _ensure_travel_subsidy_scenarios()
     return SCENARIOS.get(scenario_id)
 
 

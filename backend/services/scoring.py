@@ -304,14 +304,22 @@ def _hospital_quality(center_code: str, organ: str, patient: dict) -> float:
 
 # ── Category 5: Geographic & Logistical (10%) ───────────────────────────
 
-def _geographic(lat: float, lon: float) -> float:
-    """Interpolate cost of living and air quality at center coordinates."""
+def _geographic(lat: float, lon: float, center: dict | None = None) -> float:
+    """Cost of living, climate, and air quality at the center's location."""
     score = 0.0
 
-    # Cost of living (40%) — lower is better
-    col = _interpolate("cost_of_living", lat, lon, fallback=100.0)
-    # Normalize: assume range 80-200
-    col_score = max(0, min(100, 100 - ((col - 80) / 120) * 100))
+    # Cost of living (40%) — lower is better. Exact BEA RPP lookup for the
+    # center's metro area (state/nonmetro fallback, #205); only if the RPP
+    # snapshot is missing entirely do we fall back to the national average.
+    col = None
+    if center is not None:
+        col = get_data().cost_of_living_for_center(
+            center.get("code", ""), center.get("state_abbr")
+        )
+    if col is None:
+        col = 100.0
+    # Normalize over the observed BEA RPP range (~84-116; national = 100)
+    col_score = max(0, min(100, 100 - ((col - 80) / 40) * 100))
     score += col_score * 0.40
 
     # Climate (35%) — interpolated from 22-city climate scores, fallback 70
@@ -418,7 +426,7 @@ def score_center(center: dict, patient: dict, weights: dict) -> CenterScoreResul
         "waitTime": _wait_time_score(code, organ, patient),
         "donorAvailability": _donor_availability(state, organ, patient, lat, lon),
         "hospitalQuality": _hospital_quality(code, organ, patient),
-        "geographic": _geographic(lat, lon),
+        "geographic": _geographic(lat, lon, center),
         "healthDemographics": _health_demographics(lat, lon),
         "policy": _policy(state),
         "socioeconomic": _socioeconomic(state),

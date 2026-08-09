@@ -1,0 +1,1974 @@
+{
+ "_meta": {
+  "generatedAt": "2026-08-09T16:41:00Z",
+  "source": "Census Bureau 2024 Gazetteer (CBSA national file), metro areas only",
+  "note": "Static reference \u2014 internal point (centroid) per metropolitan statistical area. Used to place BEA RPP values on the map for the explorer cost-of-living layer."
+ },
+ "cbsas": {
+  "10180": {
+   "name": "Abilene, TX Metro Area",
+   "lat": 32.452,
+   "lon": -99.7187
+  },
+  "10380": {
+   "name": "Aguadilla, PR Metro Area",
+   "lat": 18.3916,
+   "lon": -67.0972
+  },
+  "10420": {
+   "name": "Akron, OH Metro Area",
+   "lat": 41.1466,
+   "lon": -81.3501
+  },
+  "10540": {
+   "name": "Albany, OR Metro Area",
+   "lat": 44.4889,
+   "lon": -122.5372
+  },
+  "10580": {
+   "name": "Albany-Schenectady-Troy, NY Metro Area",
+   "lat": 42.7879,
+   "lon": -73.9423
+  },
+  "10740": {
+   "name": "Albuquerque, NM Metro Area",
+   "lat": 35.1235,
+   "lon": -106.4584
+  },
+  "10900": {
+   "name": "Allentown-Bethlehem-Easton, PA-NJ Metro Area",
+   "lat": 40.7893,
+   "lon": -75.3982
+  },
+  "11020": {
+   "name": "Altoona, PA Metro Area",
+   "lat": 40.4987,
+   "lon": -78.3096
+  },
+  "11100": {
+   "name": "Amarillo, TX Metro Area",
+   "lat": 35.248,
+   "lon": -101.9087
+  },
+  "11180": {
+   "name": "Ames, IA Metro Area",
+   "lat": 42.0361,
+   "lon": -93.698
+  },
+  "11200": {
+   "name": "Amherst Town-Northampton, MA Metro Area",
+   "lat": 42.3395,
+   "lon": -72.6637
+  },
+  "11460": {
+   "name": "Ann Arbor, MI Metro Area",
+   "lat": 42.2522,
+   "lon": -83.8434
+  },
+  "11540": {
+   "name": "Appleton, WI Metro Area",
+   "lat": 44.2906,
+   "lon": -88.3723
+  },
+  "11640": {
+   "name": "Arecibo, PR Metro Area",
+   "lat": 18.4392,
+   "lon": -66.76
+  },
+  "11700": {
+   "name": "Asheville, NC Metro Area",
+   "lat": 35.6163,
+   "lon": -82.5707
+  },
+  "12020": {
+   "name": "Athens-Clarke County, GA Metro Area",
+   "lat": 33.944,
+   "lon": -83.2139
+  },
+  "12060": {
+   "name": "Atlanta-Sandy Springs-Roswell, GA Metro Area",
+   "lat": 33.7324,
+   "lon": -84.3928
+  },
+  "12100": {
+   "name": "Atlantic City-Hammonton, NJ Metro Area",
+   "lat": 39.2862,
+   "lon": -74.7383
+  },
+  "12220": {
+   "name": "Auburn-Opelika, AL Metro Area",
+   "lat": 32.4922,
+   "lon": -85.5271
+  },
+  "12580": {
+   "name": "Baltimore-Columbia-Towson, MD Metro Area",
+   "lat": 39.3044,
+   "lon": -76.5495
+  },
+  "12700": {
+   "name": "Barnstable Town, MA Metro Area",
+   "lat": 41.7061,
+   "lon": -70.1648
+  },
+  "12940": {
+   "name": "Baton Rouge, LA Metro Area",
+   "lat": 30.5152,
+   "lon": -91.1269
+  },
+  "12980": {
+   "name": "Battle Creek, MI Metro Area",
+   "lat": 42.243,
+   "lon": -85.0124
+  },
+  "13020": {
+   "name": "Bay City, MI Metro Area",
+   "lat": 43.6997,
+   "lon": -83.9787
+  },
+  "13820": {
+   "name": "Birmingham, AL Metro Area",
+   "lat": 33.4624,
+   "lon": -86.8143
+  },
+  "14010": {
+   "name": "Bloomington, IL Metro Area",
+   "lat": 40.4946,
+   "lon": -88.8445
+  },
+  "14020": {
+   "name": "Bloomington, IN Metro Area",
+   "lat": 39.2417,
+   "lon": -86.6718
+  },
+  "14260": {
+   "name": "Boise City, ID Metro Area",
+   "lat": 43.0066,
+   "lon": -116.1419
+  },
+  "14460": {
+   "name": "Boston-Cambridge-Newton, MA-NH Metro Area",
+   "lat": 42.5176,
+   "lon": -71.022
+  },
+  "14500": {
+   "name": "Boulder, CO Metro Area",
+   "lat": 40.095,
+   "lon": -105.3977
+  },
+  "14540": {
+   "name": "Bowling Green, KY Metro Area",
+   "lat": 37.0468,
+   "lon": -86.3974
+  },
+  "14740": {
+   "name": "Bremerton-Silverdale-Port Orchard, WA Metro Area",
+   "lat": 47.6397,
+   "lon": -122.6496
+  },
+  "14860": {
+   "name": "Bridgeport-Stamford-Danbury, CT Metro Area",
+   "lat": 41.2524,
+   "lon": -73.3933
+  },
+  "15180": {
+   "name": "Brownsville-Harlingen, TX Metro Area",
+   "lat": 26.1029,
+   "lon": -97.479
+  },
+  "15380": {
+   "name": "Buffalo-Cheektowaga, NY Metro Area",
+   "lat": 43.0444,
+   "lon": -78.7773
+  },
+  "15500": {
+   "name": "Burlington, NC Metro Area",
+   "lat": 36.044,
+   "lon": -79.4006
+  },
+  "15540": {
+   "name": "Burlington-South Burlington, VT Metro Area",
+   "lat": 44.6891,
+   "lon": -73.0412
+  },
+  "15940": {
+   "name": "Canton-Massillon, OH Metro Area",
+   "lat": 40.7111,
+   "lon": -81.2615
+  },
+  "15980": {
+   "name": "Cape Coral-Fort Myers, FL Metro Area",
+   "lat": 26.5633,
+   "lon": -81.9842
+  },
+  "16020": {
+   "name": "Cape Girardeau, MO-IL Metro Area",
+   "lat": 37.3259,
+   "lon": -89.7626
+  },
+  "16180": {
+   "name": "Carson City, NV Metro Area",
+   "lat": 39.1531,
+   "lon": -119.7474
+  },
+  "16300": {
+   "name": "Cedar Rapids, IA Metro Area",
+   "lat": 42.0863,
+   "lon": -91.6311
+  },
+  "16540": {
+   "name": "Chambersburg, PA Metro Area",
+   "lat": 39.9268,
+   "lon": -77.7245
+  },
+  "16580": {
+   "name": "Champaign-Urbana, IL Metro Area",
+   "lat": 40.2345,
+   "lon": -88.2986
+  },
+  "16620": {
+   "name": "Charleston, WV Metro Area",
+   "lat": 38.2832,
+   "lon": -81.4926
+  },
+  "16740": {
+   "name": "Charlotte-Concord-Gastonia, NC-SC Metro Area",
+   "lat": 35.1663,
+   "lon": -80.7973
+  },
+  "16860": {
+   "name": "Chattanooga, TN-GA Metro Area",
+   "lat": 35.0494,
+   "lon": -85.3612
+  },
+  "16980": {
+   "name": "Chicago-Naperville-Elgin, IL-IN Metro Area",
+   "lat": 41.7588,
+   "lon": -87.8419
+  },
+  "17140": {
+   "name": "Cincinnati, OH-KY-IN Metro Area",
+   "lat": 39.0786,
+   "lon": -84.4635
+  },
+  "17410": {
+   "name": "Cleveland, OH Metro Area",
+   "lat": 41.6675,
+   "lon": -81.4305
+  },
+  "17420": {
+   "name": "Cleveland, TN Metro Area",
+   "lat": 35.1381,
+   "lon": -84.6551
+  },
+  "17660": {
+   "name": "Coeur d'Alene, ID Metro Area",
+   "lat": 47.676,
+   "lon": -116.6959
+  },
+  "17860": {
+   "name": "Columbia, MO Metro Area",
+   "lat": 38.9865,
+   "lon": -92.5852
+  },
+  "17900": {
+   "name": "Columbia, SC Metro Area",
+   "lat": 34.0776,
+   "lon": -81.0378
+  },
+  "17980": {
+   "name": "Columbus, GA-AL Metro Area",
+   "lat": 32.4194,
+   "lon": -84.8437
+  },
+  "18020": {
+   "name": "Columbus, IN Metro Area",
+   "lat": 39.2058,
+   "lon": -85.898
+  },
+  "18140": {
+   "name": "Columbus, OH Metro Area",
+   "lat": 39.9686,
+   "lon": -82.8359
+  },
+  "18580": {
+   "name": "Corpus Christi, TX Metro Area",
+   "lat": 27.8948,
+   "lon": -97.4017
+  },
+  "18700": {
+   "name": "Corvallis, OR Metro Area",
+   "lat": 44.4939,
+   "lon": -123.4247
+  },
+  "19100": {
+   "name": "Dallas-Fort Worth-Arlington, TX Metro Area",
+   "lat": 32.8492,
+   "lon": -96.9705
+  },
+  "19140": {
+   "name": "Dalton, GA Metro Area",
+   "lat": 34.797,
+   "lon": -84.8563
+  },
+  "19300": {
+   "name": "Daphne-Fairhope-Foley, AL Metro Area",
+   "lat": 30.6592,
+   "lon": -87.7461
+  },
+  "19340": {
+   "name": "Davenport-Moline-Rock Island, IA-IL Metro Area",
+   "lat": 41.3917,
+   "lon": -90.4601
+  },
+  "19430": {
+   "name": "Dayton-Kettering-Beavercreek, OH Metro Area",
+   "lat": 39.8297,
+   "lon": -84.141
+  },
+  "19460": {
+   "name": "Decatur, AL Metro Area",
+   "lat": 34.4894,
+   "lon": -87.0971
+  },
+  "19660": {
+   "name": "Deltona-Daytona Beach-Ormond Beach, FL Metro Area",
+   "lat": 29.1789,
+   "lon": -81.189
+  },
+  "19740": {
+   "name": "Denver-Aurora-Centennial, CO Metro Area",
+   "lat": 39.4348,
+   "lon": -104.9011
+  },
+  "19780": {
+   "name": "Des Moines-West Des Moines, IA Metro Area",
+   "lat": 41.577,
+   "lon": -93.7597
+  },
+  "19820": {
+   "name": "Detroit-Warren-Dearborn, MI Metro Area",
+   "lat": 42.7218,
+   "lon": -83.2008
+  },
+  "20020": {
+   "name": "Dothan, AL Metro Area",
+   "lat": 31.2455,
+   "lon": -85.4692
+  },
+  "20100": {
+   "name": "Dover, DE Metro Area",
+   "lat": 39.0971,
+   "lon": -75.503
+  },
+  "20260": {
+   "name": "Duluth, MN-WI Metro Area",
+   "lat": 47.3297,
+   "lon": -92.3763
+  },
+  "20500": {
+   "name": "Durham-Chapel Hill, NC Metro Area",
+   "lat": 35.9955,
+   "lon": -79.097
+  },
+  "20740": {
+   "name": "Eau Claire, WI Metro Area",
+   "lat": 44.9387,
+   "lon": -91.2843
+  },
+  "21060": {
+   "name": "Elizabethtown, KY Metro Area",
+   "lat": 37.6512,
+   "lon": -85.8876
+  },
+  "21140": {
+   "name": "Elkhart-Goshen, IN Metro Area",
+   "lat": 41.6007,
+   "lon": -85.864
+  },
+  "21300": {
+   "name": "Elmira, NY Metro Area",
+   "lat": 42.1487,
+   "lon": -76.7525
+  },
+  "21340": {
+   "name": "El Paso, TX Metro Area",
+   "lat": 31.5274,
+   "lon": -105.5213
+  },
+  "21500": {
+   "name": "Erie, PA Metro Area",
+   "lat": 42.118,
+   "lon": -80.0964
+  },
+  "21780": {
+   "name": "Evansville, IN Metro Area",
+   "lat": 38.0491,
+   "lon": -87.5845
+  },
+  "22020": {
+   "name": "Fargo, ND-MN Metro Area",
+   "lat": 46.9149,
+   "lon": -96.9602
+  },
+  "22180": {
+   "name": "Fayetteville, NC Metro Area",
+   "lat": 35.038,
+   "lon": -78.9822
+  },
+  "22420": {
+   "name": "Flint, MI Metro Area",
+   "lat": 43.0211,
+   "lon": -83.7064
+  },
+  "22520": {
+   "name": "Florence-Muscle Shoals, AL Metro Area",
+   "lat": 34.7993,
+   "lon": -87.7194
+  },
+  "23060": {
+   "name": "Fort Wayne, IN Metro Area",
+   "lat": 41.007,
+   "lon": -85.2164
+  },
+  "23420": {
+   "name": "Fresno, CA Metro Area",
+   "lat": 36.8794,
+   "lon": -119.6685
+  },
+  "23540": {
+   "name": "Gainesville, FL Metro Area",
+   "lat": 29.4534,
+   "lon": -82.6663
+  },
+  "23580": {
+   "name": "Gainesville, GA Metro Area",
+   "lat": 34.3176,
+   "lon": -83.8185
+  },
+  "23900": {
+   "name": "Gettysburg, PA Metro Area",
+   "lat": 39.8694,
+   "lon": -77.2177
+  },
+  "24020": {
+   "name": "Glens Falls, NY Metro Area",
+   "lat": 43.4404,
+   "lon": -73.6368
+  },
+  "24340": {
+   "name": "Grand Rapids-Wyoming-Kentwood, MI Metro Area",
+   "lat": 42.9798,
+   "lon": -85.7156
+  },
+  "24420": {
+   "name": "Grants Pass, OR Metro Area",
+   "lat": 42.387,
+   "lon": -123.5716
+  },
+  "24540": {
+   "name": "Greeley, CO Metro Area",
+   "lat": 40.556,
+   "lon": -104.3837
+  },
+  "24580": {
+   "name": "Green Bay, WI Metro Area",
+   "lat": 44.474,
+   "lon": -87.9961
+  },
+  "24660": {
+   "name": "Greensboro-High Point, NC Metro Area",
+   "lat": 36.0252,
+   "lon": -79.7926
+  },
+  "24780": {
+   "name": "Greenville, NC Metro Area",
+   "lat": 35.5925,
+   "lon": -77.3727
+  },
+  "24860": {
+   "name": "Greenville-Anderson-Greer, SC Metro Area",
+   "lat": 34.6837,
+   "lon": -82.4134
+  },
+  "25020": {
+   "name": "Guayama, PR Metro Area",
+   "lat": 17.9792,
+   "lon": -66.0695
+  },
+  "25180": {
+   "name": "Hagerstown-Martinsburg, MD-WV Metro Area",
+   "lat": 39.5544,
+   "lon": -77.9846
+  },
+  "25220": {
+   "name": "Hammond, LA Metro Area",
+   "lat": 30.6213,
+   "lon": -90.4065
+  },
+  "25260": {
+   "name": "Hanford-Corcoran, CA Metro Area",
+   "lat": 36.0725,
+   "lon": -119.8155
+  },
+  "25420": {
+   "name": "Harrisburg-Carlisle, PA Metro Area",
+   "lat": 40.3359,
+   "lon": -77.0505
+  },
+  "25500": {
+   "name": "Harrisonburg, VA Metro Area",
+   "lat": 38.5076,
+   "lon": -78.8853
+  },
+  "25540": {
+   "name": "Hartford-West Hartford-East Hartford, CT Metro Area",
+   "lat": 41.688,
+   "lon": -72.5451
+  },
+  "25620": {
+   "name": "Hattiesburg, MS Metro Area",
+   "lat": 31.1884,
+   "lon": -89.2327
+  },
+  "25860": {
+   "name": "Hickory-Lenoir-Morganton, NC Metro Area",
+   "lat": 35.8143,
+   "lon": -81.4566
+  },
+  "25980": {
+   "name": "Hinesville, GA Metro Area",
+   "lat": 31.7788,
+   "lon": -81.5765
+  },
+  "26300": {
+   "name": "Hot Springs, AR Metro Area",
+   "lat": 34.5789,
+   "lon": -93.1469
+  },
+  "26420": {
+   "name": "Houston-Pasadena-The Woodlands, TX Metro Area",
+   "lat": 29.801,
+   "lon": -95.3426
+  },
+  "26580": {
+   "name": "Huntington-Ashland, WV-KY-OH Metro Area",
+   "lat": 38.3575,
+   "lon": -82.58
+  },
+  "26620": {
+   "name": "Huntsville, AL Metro Area",
+   "lat": 34.7833,
+   "lon": -86.7349
+  },
+  "26820": {
+   "name": "Idaho Falls, ID Metro Area",
+   "lat": 43.6204,
+   "lon": -112.4209
+  },
+  "26900": {
+   "name": "Indianapolis-Carmel-Greenwood, IN Metro Area",
+   "lat": 39.7905,
+   "lon": -86.1243
+  },
+  "26980": {
+   "name": "Iowa City, IA Metro Area",
+   "lat": 41.5178,
+   "lon": -91.6479
+  },
+  "27060": {
+   "name": "Ithaca, NY Metro Area",
+   "lat": 42.453,
+   "lon": -76.4735
+  },
+  "27140": {
+   "name": "Jackson, MS Metro Area",
+   "lat": 32.4263,
+   "lon": -90.1364
+  },
+  "27260": {
+   "name": "Jacksonville, FL Metro Area",
+   "lat": 30.2342,
+   "lon": -81.756
+  },
+  "27500": {
+   "name": "Janesville-Beloit, WI Metro Area",
+   "lat": 42.6699,
+   "lon": -89.0753
+  },
+  "27620": {
+   "name": "Jefferson City, MO Metro Area",
+   "lat": 38.6369,
+   "lon": -92.0889
+  },
+  "27740": {
+   "name": "Johnson City, TN Metro Area",
+   "lat": 36.2658,
+   "lon": -82.3327
+  },
+  "27780": {
+   "name": "Johnstown, PA Metro Area",
+   "lat": 40.5102,
+   "lon": -78.7105
+  },
+  "27860": {
+   "name": "Jonesboro, AR Metro Area",
+   "lat": 35.697,
+   "lon": -90.6502
+  },
+  "27900": {
+   "name": "Joplin, MO-KS Metro Area",
+   "lat": 37.0921,
+   "lon": -94.5007
+  },
+  "28020": {
+   "name": "Kalamazoo-Portage, MI Metro Area",
+   "lat": 42.2463,
+   "lon": -85.5329
+  },
+  "28100": {
+   "name": "Kankakee, IL Metro Area",
+   "lat": 41.1395,
+   "lon": -87.8611
+  },
+  "28140": {
+   "name": "Kansas City, MO-KS Metro Area",
+   "lat": 38.9319,
+   "lon": -94.4438
+  },
+  "28420": {
+   "name": "Kennewick-Richland, WA Metro Area",
+   "lat": 46.3642,
+   "lon": -119.2549
+  },
+  "28450": {
+   "name": "Kenosha, WI Metro Area",
+   "lat": 42.5875,
+   "lon": -87.88
+  },
+  "28700": {
+   "name": "Kingsport-Bristol, TN-VA Metro Area",
+   "lat": 36.6042,
+   "lon": -82.4401
+  },
+  "28740": {
+   "name": "Kingston, NY Metro Area",
+   "lat": 41.9472,
+   "lon": -74.2655
+  },
+  "28880": {
+   "name": "Kiryas Joel-Poughkeepsie-Newburgh, NY Metro Area",
+   "lat": 41.5753,
+   "lon": -74.0339
+  },
+  "28940": {
+   "name": "Knoxville, TN Metro Area",
+   "lat": 36.0445,
+   "lon": -84.1361
+  },
+  "29020": {
+   "name": "Kokomo, IN Metro Area",
+   "lat": 40.4835,
+   "lon": -86.1141
+  },
+  "29100": {
+   "name": "La Crosse-Onalaska, WI-MN Metro Area",
+   "lat": 43.6983,
+   "lon": -91.1101
+  },
+  "29180": {
+   "name": "Lafayette, LA Metro Area",
+   "lat": 30.013,
+   "lon": -92.1366
+  },
+  "29200": {
+   "name": "Lafayette-West Lafayette, IN Metro Area",
+   "lat": 40.4822,
+   "lon": -87.0171
+  },
+  "29340": {
+   "name": "Lake Charles, LA Metro Area",
+   "lat": 30.0385,
+   "lon": -93.1901
+  },
+  "29460": {
+   "name": "Lakeland-Winter Haven, FL Metro Area",
+   "lat": 27.9537,
+   "lon": -81.6935
+  },
+  "29620": {
+   "name": "Lansing-East Lansing, MI Metro Area",
+   "lat": 42.7137,
+   "lon": -84.6054
+  },
+  "29740": {
+   "name": "Las Cruces, NM Metro Area",
+   "lat": 32.3499,
+   "lon": -106.835
+  },
+  "29820": {
+   "name": "Las Vegas-Henderson-North Las Vegas, NV Metro Area",
+   "lat": 36.2141,
+   "lon": -115.0144
+  },
+  "29940": {
+   "name": "Lawrence, KS Metro Area",
+   "lat": 38.8964,
+   "lon": -95.2909
+  },
+  "30020": {
+   "name": "Lawton, OK Metro Area",
+   "lat": 34.5291,
+   "lon": -98.4309
+  },
+  "30140": {
+   "name": "Lebanon, PA Metro Area",
+   "lat": 40.3714,
+   "lon": -76.4648
+  },
+  "30340": {
+   "name": "Lewiston-Auburn, ME Metro Area",
+   "lat": 44.1677,
+   "lon": -70.2074
+  },
+  "30460": {
+   "name": "Lexington-Fayette, KY Metro Area",
+   "lat": 38.1029,
+   "lon": -84.4385
+  },
+  "30500": {
+   "name": "Lexington Park, MD Metro Area",
+   "lat": 38.3127,
+   "lon": -76.5279
+  },
+  "30620": {
+   "name": "Lima, OH Metro Area",
+   "lat": 40.7716,
+   "lon": -84.1061
+  },
+  "30700": {
+   "name": "Lincoln, NE Metro Area",
+   "lat": 40.8174,
+   "lon": -96.8688
+  },
+  "30780": {
+   "name": "Little Rock-North Little Rock-Conway, AR Metro Area",
+   "lat": 34.7558,
+   "lon": -92.4006
+  },
+  "31020": {
+   "name": "Longview-Kelso, WA Metro Area",
+   "lat": 46.1968,
+   "lon": -122.6785
+  },
+  "31080": {
+   "name": "Los Angeles-Long Beach-Anaheim, CA Metro Area",
+   "lat": 34.1087,
+   "lon": -118.1828
+  },
+  "31140": {
+   "name": "Louisville/Jefferson County, KY-IN Metro Area",
+   "lat": 38.2244,
+   "lon": -85.702
+  },
+  "31180": {
+   "name": "Lubbock, TX Metro Area",
+   "lat": 33.4698,
+   "lon": -101.8804
+  },
+  "31420": {
+   "name": "Macon-Bibb County, GA Metro Area",
+   "lat": 32.8562,
+   "lon": -83.7143
+  },
+  "31540": {
+   "name": "Madison, WI Metro Area",
+   "lat": 43.0838,
+   "lon": -89.5977
+  },
+  "31700": {
+   "name": "Manchester-Nashua, NH Metro Area",
+   "lat": 42.9115,
+   "lon": -71.7231
+  },
+  "31860": {
+   "name": "Mankato, MN Metro Area",
+   "lat": 44.1548,
+   "lon": -94.1478
+  },
+  "31900": {
+   "name": "Mansfield, OH Metro Area",
+   "lat": 40.7742,
+   "lon": -82.5428
+  },
+  "32420": {
+   "name": "Mayag\u00fcez, PR Metro Area",
+   "lat": 18.0192,
+   "lon": -67.1666
+  },
+  "32580": {
+   "name": "McAllen-Edinburg-Mission, TX Metro Area",
+   "lat": 26.3964,
+   "lon": -98.181
+  },
+  "32780": {
+   "name": "Medford, OR Metro Area",
+   "lat": 42.4116,
+   "lon": -122.6756
+  },
+  "32820": {
+   "name": "Memphis, TN-MS-AR Metro Area",
+   "lat": 35.0103,
+   "lon": -89.8205
+  },
+  "32900": {
+   "name": "Merced, CA Metro Area",
+   "lat": 37.1948,
+   "lon": -120.7228
+  },
+  "33100": {
+   "name": "Miami-Fort Lauderdale-West Palm Beach, FL Metro Area",
+   "lat": 26.1018,
+   "lon": -80.4788
+  },
+  "33140": {
+   "name": "Michigan City-La Porte, IN Metro Area",
+   "lat": 41.549,
+   "lon": -86.7447
+  },
+  "33220": {
+   "name": "Midland, MI Metro Area",
+   "lat": 43.6482,
+   "lon": -84.3794
+  },
+  "33260": {
+   "name": "Midland, TX Metro Area",
+   "lat": 32.0924,
+   "lon": -101.9945
+  },
+  "33340": {
+   "name": "Milwaukee-Waukesha, WI Metro Area",
+   "lat": 42.9126,
+   "lon": -87.8623
+  },
+  "33460": {
+   "name": "Minneapolis-St. Paul-Bloomington, MN-WI Metro Area",
+   "lat": 45.0967,
+   "lon": -93.2754
+  },
+  "33660": {
+   "name": "Mobile, AL Metro Area",
+   "lat": 30.6846,
+   "lon": -88.1966
+  },
+  "33700": {
+   "name": "Modesto, CA Metro Area",
+   "lat": 37.5623,
+   "lon": -121.0028
+  },
+  "33740": {
+   "name": "Monroe, LA Metro Area",
+   "lat": 32.674,
+   "lon": -92.0583
+  },
+  "33780": {
+   "name": "Monroe, MI Metro Area",
+   "lat": 41.9161,
+   "lon": -83.4871
+  },
+  "33860": {
+   "name": "Montgomery, AL Metro Area",
+   "lat": 32.3656,
+   "lon": -86.4046
+  },
+  "34100": {
+   "name": "Morristown, TN Metro Area",
+   "lat": 36.1155,
+   "lon": -83.3765
+  },
+  "34580": {
+   "name": "Mount Vernon-Anacortes, WA Metro Area",
+   "lat": 48.4933,
+   "lon": -121.8158
+  },
+  "34620": {
+   "name": "Muncie, IN Metro Area",
+   "lat": 40.2275,
+   "lon": -85.3993
+  },
+  "34740": {
+   "name": "Muskegon-Norton Shores, MI Metro Area",
+   "lat": 43.4287,
+   "lon": -86.4209
+  },
+  "34820": {
+   "name": "Myrtle Beach-Conway-North Myrtle Beach, SC Metro Area",
+   "lat": 33.9093,
+   "lon": -78.9767
+  },
+  "34900": {
+   "name": "Napa, CA Metro Area",
+   "lat": 38.5071,
+   "lon": -122.3259
+  },
+  "34940": {
+   "name": "Naples-Marco Island, FL Metro Area",
+   "lat": 26.1188,
+   "lon": -81.401
+  },
+  "34980": {
+   "name": "Nashville-Davidson--Murfreesboro--Franklin, TN Metro Area",
+   "lat": 36.0916,
+   "lon": -86.723
+  },
+  "35300": {
+   "name": "New Haven, CT Metro Area",
+   "lat": 41.2902,
+   "lon": -72.837
+  },
+  "35380": {
+   "name": "New Orleans-Metairie, LA Metro Area",
+   "lat": 29.2824,
+   "lon": -89.5761
+  },
+  "35620": {
+   "name": "New York-Newark-Jersey City, NY-NJ Metro Area",
+   "lat": 40.7354,
+   "lon": -73.8077
+  },
+  "35660": {
+   "name": "Niles, MI Metro Area",
+   "lat": 41.7914,
+   "lon": -86.7425
+  },
+  "35840": {
+   "name": "North Port-Bradenton-Sarasota, FL Metro Area",
+   "lat": 27.3291,
+   "lon": -82.4145
+  },
+  "35980": {
+   "name": "Norwich-New London-Willimantic, CT Metro Area",
+   "lat": 41.4848,
+   "lon": -72.1017
+  },
+  "36220": {
+   "name": "Odessa, TX Metro Area",
+   "lat": 31.8653,
+   "lon": -102.5425
+  },
+  "36260": {
+   "name": "Ogden, UT Metro Area",
+   "lat": 41.1243,
+   "lon": -111.8669
+  },
+  "36420": {
+   "name": "Oklahoma City, OK Metro Area",
+   "lat": 35.431,
+   "lon": -97.507
+  },
+  "36500": {
+   "name": "Olympia-Lacey-Tumwater, WA Metro Area",
+   "lat": 46.9358,
+   "lon": -122.8302
+  },
+  "36540": {
+   "name": "Omaha, NE-IA Metro Area",
+   "lat": 41.2905,
+   "lon": -96.0
+  },
+  "36740": {
+   "name": "Orlando-Kissimmee-Sanford, FL Metro Area",
+   "lat": 28.4344,
+   "lon": -81.3561
+  },
+  "36780": {
+   "name": "Oshkosh-Neenah, WI Metro Area",
+   "lat": 44.0857,
+   "lon": -88.6681
+  },
+  "37100": {
+   "name": "Oxnard-Thousand Oaks-Ventura, CA Metro Area",
+   "lat": 34.3587,
+   "lon": -119.1331
+  },
+  "37140": {
+   "name": "Paducah, KY-IL Metro Area",
+   "lat": 37.0942,
+   "lon": -88.7171
+  },
+  "37620": {
+   "name": "Parkersburg-Vienna, WV Metro Area",
+   "lat": 39.1415,
+   "lon": -81.4604
+  },
+  "37900": {
+   "name": "Peoria, IL Metro Area",
+   "lat": 40.7881,
+   "lon": -89.5146
+  },
+  "37980": {
+   "name": "Philadelphia-Camden-Wilmington, PA-NJ-DE-MD Metro Area",
+   "lat": 39.895,
+   "lon": -75.312
+  },
+  "38060": {
+   "name": "Phoenix-Mesa-Chandler, AZ Metro Area",
+   "lat": 33.1858,
+   "lon": -112.0679
+  },
+  "38240": {
+   "name": "Pinehurst-Southern Pines, NC Metro Area",
+   "lat": 35.3083,
+   "lon": -79.4927
+  },
+  "38300": {
+   "name": "Pittsburgh, PA Metro Area",
+   "lat": 40.4713,
+   "lon": -79.864
+  },
+  "38660": {
+   "name": "Ponce, PR Metro Area",
+   "lat": 18.0229,
+   "lon": -66.6457
+  },
+  "38860": {
+   "name": "Portland-South Portland, ME Metro Area",
+   "lat": 43.6514,
+   "lon": -70.4184
+  },
+  "38900": {
+   "name": "Portland-Vancouver-Hillsboro, OR-WA Metro Area",
+   "lat": 45.6006,
+   "lon": -122.4844
+  },
+  "38940": {
+   "name": "Port St. Lucie, FL Metro Area",
+   "lat": 27.228,
+   "lon": -80.4254
+  },
+  "39300": {
+   "name": "Providence-Warwick, RI-MA Metro Area",
+   "lat": 41.7068,
+   "lon": -71.2867
+  },
+  "39340": {
+   "name": "Provo-Orem-Lehi, UT Metro Area",
+   "lat": 39.8721,
+   "lon": -112.3591
+  },
+  "39380": {
+   "name": "Pueblo, CO Metro Area",
+   "lat": 38.1628,
+   "lon": -104.4847
+  },
+  "39460": {
+   "name": "Punta Gorda, FL Metro Area",
+   "lat": 26.9064,
+   "lon": -82.0037
+  },
+  "39540": {
+   "name": "Racine-Mount Pleasant, WI Metro Area",
+   "lat": 42.7804,
+   "lon": -87.7716
+  },
+  "39580": {
+   "name": "Raleigh-Cary, NC Metro Area",
+   "lat": 35.7567,
+   "lon": -78.4604
+  },
+  "39660": {
+   "name": "Rapid City, SD Metro Area",
+   "lat": 44.1951,
+   "lon": -102.9166
+  },
+  "39740": {
+   "name": "Reading, PA Metro Area",
+   "lat": 40.414,
+   "lon": -75.9269
+  },
+  "39820": {
+   "name": "Redding, CA Metro Area",
+   "lat": 40.7605,
+   "lon": -122.0436
+  },
+  "39900": {
+   "name": "Reno, NV Metro Area",
+   "lat": 40.2511,
+   "lon": -119.5555
+  },
+  "40140": {
+   "name": "Riverside-San Bernardino-Ontario, CA Metro Area",
+   "lat": 34.5385,
+   "lon": -116.1345
+  },
+  "40340": {
+   "name": "Rochester, MN Metro Area",
+   "lat": 43.9498,
+   "lon": -92.3307
+  },
+  "40380": {
+   "name": "Rochester, NY Metro Area",
+   "lat": 43.1847,
+   "lon": -77.5566
+  },
+  "40420": {
+   "name": "Rockford, IL Metro Area",
+   "lat": 42.3312,
+   "lon": -89.0429
+  },
+  "40580": {
+   "name": "Rocky Mount, NC Metro Area",
+   "lat": 35.941,
+   "lon": -77.7985
+  },
+  "40660": {
+   "name": "Rome, GA Metro Area",
+   "lat": 34.2637,
+   "lon": -85.2137
+  },
+  "40900": {
+   "name": "Sacramento-Roseville-Folsom, CA Metro Area",
+   "lat": 38.7903,
+   "lon": -121.0056
+  },
+  "40980": {
+   "name": "Saginaw, MI Metro Area",
+   "lat": 43.3283,
+   "lon": -84.0554
+  },
+  "41060": {
+   "name": "St. Cloud, MN Metro Area",
+   "lat": 45.593,
+   "lon": -94.4884
+  },
+  "41140": {
+   "name": "St. Joseph, MO-KS Metro Area",
+   "lat": 39.8348,
+   "lon": -94.7838
+  },
+  "41180": {
+   "name": "St. Louis, MO-IL Metro Area",
+   "lat": 38.7402,
+   "lon": -90.3458
+  },
+  "41420": {
+   "name": "Salem, OR Metro Area",
+   "lat": 44.9034,
+   "lon": -122.9018
+  },
+  "41540": {
+   "name": "Salisbury, MD Metro Area",
+   "lat": 38.1973,
+   "lon": -75.7693
+  },
+  "41620": {
+   "name": "Salt Lake City-Murray, UT Metro Area",
+   "lat": 40.5729,
+   "lon": -112.9533
+  },
+  "41700": {
+   "name": "San Antonio-New Braunfels, TX Metro Area",
+   "lat": 29.4331,
+   "lon": -98.607
+  },
+  "41780": {
+   "name": "Sandusky, OH Metro Area",
+   "lat": 41.5196,
+   "lon": -82.7946
+  },
+  "41860": {
+   "name": "San Francisco-Oakland-Fremont, CA Metro Area",
+   "lat": 37.7737,
+   "lon": -122.2744
+  },
+  "41940": {
+   "name": "San Jose-Sunnyvale-Santa Clara, CA Metro Area",
+   "lat": 36.9085,
+   "lon": -121.3714
+  },
+  "41980": {
+   "name": "San Juan-Bayam\u00f3n-Caguas, PR Metro Area",
+   "lat": 18.2945,
+   "lon": -66.0368
+  },
+  "42100": {
+   "name": "Santa Cruz-Watsonville, CA Metro Area",
+   "lat": 37.0123,
+   "lon": -122.0078
+  },
+  "42140": {
+   "name": "Santa Fe, NM Metro Area",
+   "lat": 35.5145,
+   "lon": -105.964
+  },
+  "42340": {
+   "name": "Savannah, GA Metro Area",
+   "lat": 32.1093,
+   "lon": -81.2733
+  },
+  "42660": {
+   "name": "Seattle-Tacoma-Bellevue, WA Metro Area",
+   "lat": 47.4906,
+   "lon": -121.834
+  },
+  "42680": {
+   "name": "Sebastian-Vero Beach-West Vero Corridor, FL Metro Area",
+   "lat": 27.7005,
+   "lon": -80.5748
+  },
+  "43300": {
+   "name": "Sherman-Denison, TX Metro Area",
+   "lat": 33.6245,
+   "lon": -96.6758
+  },
+  "43340": {
+   "name": "Shreveport-Bossier City, LA Metro Area",
+   "lat": 32.4377,
+   "lon": -93.7449
+  },
+  "43580": {
+   "name": "Sioux City, IA-NE-SD Metro Area",
+   "lat": 42.508,
+   "lon": -96.3113
+  },
+  "43640": {
+   "name": "Slidell-Mandeville-Covington, LA Metro Area",
+   "lat": 30.41,
+   "lon": -89.952
+  },
+  "43780": {
+   "name": "South Bend-Mishawaka, IN-MI Metro Area",
+   "lat": 41.775,
+   "lon": -86.123
+  },
+  "43900": {
+   "name": "Spartanburg, SC Metro Area",
+   "lat": 34.8346,
+   "lon": -81.8424
+  },
+  "44060": {
+   "name": "Spokane-Spokane Valley, WA Metro Area",
+   "lat": 48.0916,
+   "lon": -117.6635
+  },
+  "44100": {
+   "name": "Springfield, IL Metro Area",
+   "lat": 39.8286,
+   "lon": -89.6961
+  },
+  "44140": {
+   "name": "Springfield, MA Metro Area",
+   "lat": 42.1362,
+   "lon": -72.6356
+  },
+  "44220": {
+   "name": "Springfield, OH Metro Area",
+   "lat": 39.917,
+   "lon": -83.7837
+  },
+  "44300": {
+   "name": "State College, PA Metro Area",
+   "lat": 40.9093,
+   "lon": -77.8477
+  },
+  "44420": {
+   "name": "Staunton-Stuarts Draft, VA Metro Area",
+   "lat": 38.161,
+   "lon": -79.1276
+  },
+  "44700": {
+   "name": "Stockton-Lodi, CA Metro Area",
+   "lat": 37.935,
+   "lon": -121.2722
+  },
+  "44940": {
+   "name": "Sumter, SC Metro Area",
+   "lat": 33.9161,
+   "lon": -80.3824
+  },
+  "45060": {
+   "name": "Syracuse, NY Metro Area",
+   "lat": 43.0065,
+   "lon": -76.1961
+  },
+  "45220": {
+   "name": "Tallahassee, FL Metro Area",
+   "lat": 30.3464,
+   "lon": -84.267
+  },
+  "45940": {
+   "name": "Trenton-Princeton, NJ Metro Area",
+   "lat": 40.2825,
+   "lon": -74.7037
+  },
+  "46060": {
+   "name": "Tucson, AZ Metro Area",
+   "lat": 32.128,
+   "lon": -111.7837
+  },
+  "46140": {
+   "name": "Tulsa, OK Metro Area",
+   "lat": 36.2544,
+   "lon": -96.1773
+  },
+  "46340": {
+   "name": "Tyler, TX Metro Area",
+   "lat": 32.3751,
+   "lon": -95.2689
+  },
+  "46700": {
+   "name": "Vallejo, CA Metro Area",
+   "lat": 38.2672,
+   "lon": -121.9396
+  },
+  "47020": {
+   "name": "Victoria, TX Metro Area",
+   "lat": 28.7315,
+   "lon": -97.197
+  },
+  "47220": {
+   "name": "Vineland, NJ Metro Area",
+   "lat": 39.3284,
+   "lon": -75.1216
+  },
+  "47260": {
+   "name": "Virginia Beach-Chesapeake-Norfolk, VA-NC Metro Area",
+   "lat": 36.8373,
+   "lon": -76.3918
+  },
+  "47460": {
+   "name": "Walla Walla, WA Metro Area",
+   "lat": 46.2546,
+   "lon": -118.4804
+  },
+  "47580": {
+   "name": "Warner Robins, GA Metro Area",
+   "lat": 32.4928,
+   "lon": -83.7111
+  },
+  "47900": {
+   "name": "Washington-Arlington-Alexandria, DC-VA-MD-WV Metro Area",
+   "lat": 38.8298,
+   "lon": -77.4957
+  },
+  "47930": {
+   "name": "Waterbury-Shelton, CT Metro Area",
+   "lat": 41.5189,
+   "lon": -73.0879
+  },
+  "48140": {
+   "name": "Wausau, WI Metro Area",
+   "lat": 44.898,
+   "lon": -89.7578
+  },
+  "48260": {
+   "name": "Weirton-Steubenville, WV-OH Metro Area",
+   "lat": 40.3889,
+   "lon": -80.702
+  },
+  "48620": {
+   "name": "Wichita, KS Metro Area",
+   "lat": 37.6379,
+   "lon": -97.2463
+  },
+  "48680": {
+   "name": "Wildwood-The Villages, FL Metro Area",
+   "lat": 28.7133,
+   "lon": -82.0695
+  },
+  "48700": {
+   "name": "Williamsport, PA Metro Area",
+   "lat": 41.3439,
+   "lon": -77.0553
+  },
+  "49020": {
+   "name": "Winchester, VA-WV Metro Area",
+   "lat": 39.273,
+   "lon": -78.4718
+  },
+  "49180": {
+   "name": "Winston-Salem, NC Metro Area",
+   "lat": 36.0789,
+   "lon": -80.3451
+  },
+  "49340": {
+   "name": "Worcester, MA Metro Area",
+   "lat": 42.3117,
+   "lon": -71.9403
+  },
+  "49620": {
+   "name": "York-Hanover, PA Metro Area",
+   "lat": 39.9218,
+   "lon": -76.7289
+  },
+  "49660": {
+   "name": "Youngstown-Warren, OH Metro Area",
+   "lat": 41.1951,
+   "lon": -80.7651
+  },
+  "49700": {
+   "name": "Yuba City, CA Metro Area",
+   "lat": 39.161,
+   "lon": -121.5118
+  },
+  "17020": {
+   "name": "Chico, CA Metro Area",
+   "lat": 39.6653,
+   "lon": -121.6032
+  },
+  "42020": {
+   "name": "San Luis Obispo-Paso Robles, CA Metro Area",
+   "lat": 35.3882,
+   "lon": -120.4489
+  },
+  "25060": {
+   "name": "Gulfport-Biloxi, MS Metro Area",
+   "lat": 30.4802,
+   "lon": -88.9993
+  },
+  "34060": {
+   "name": "Morgantown, WV Metro Area",
+   "lat": 39.5252,
+   "lon": -79.8019
+  },
+  "40060": {
+   "name": "Richmond, VA Metro Area",
+   "lat": 37.4122,
+   "lon": -77.4437
+  },
+  "48060": {
+   "name": "Watertown-Fort Drum, NY Metro Area",
+   "lat": 43.9964,
+   "lon": -76.053
+  },
+  "27100": {
+   "name": "Jackson, MI Metro Area",
+   "lat": 42.2485,
+   "lon": -84.4209
+  },
+  "36100": {
+   "name": "Ocala, FL Metro Area",
+   "lat": 29.2028,
+   "lon": -82.0431
+  },
+  "41100": {
+   "name": "St. George, UT Metro Area",
+   "lat": 37.2625,
+   "lon": -113.4878
+  },
+  "43100": {
+   "name": "Sheboygan, WI Metro Area",
+   "lat": 43.7387,
+   "lon": -87.7315
+  },
+  "13140": {
+   "name": "Beaumont-Port Arthur, TX Metro Area",
+   "lat": 30.0759,
+   "lon": -94.2027
+  },
+  "22140": {
+   "name": "Farmington, NM Metro Area",
+   "lat": 36.5116,
+   "lon": -108.3246
+  },
+  "24140": {
+   "name": "Goldsboro, NC Metro Area",
+   "lat": 35.3542,
+   "lon": -78.0087
+  },
+  "26140": {
+   "name": "Homosassa Springs, FL Metro Area",
+   "lat": 28.8503,
+   "lon": -82.5956
+  },
+  "39150": {
+   "name": "Prescott Valley-Prescott, AZ Metro Area",
+   "lat": 34.6311,
+   "lon": -112.5772
+  },
+  "27180": {
+   "name": "Jackson, TN Metro Area",
+   "lat": 35.7532,
+   "lon": -88.8827
+  },
+  "44180": {
+   "name": "Springfield, MO Metro Area",
+   "lat": 37.3609,
+   "lon": -93.1803
+  },
+  "42200": {
+   "name": "Santa Maria-Santa Barbara, CA Metro Area",
+   "lat": 34.5367,
+   "lon": -120.0384
+  },
+  "13220": {
+   "name": "Beckley, WV Metro Area",
+   "lat": 37.9057,
+   "lon": -81.1637
+  },
+  "16220": {
+   "name": "Casper, WY Metro Area",
+   "lat": 42.9776,
+   "lon": -106.7682
+  },
+  "20220": {
+   "name": "Dubuque, IA Metro Area",
+   "lat": 42.4635,
+   "lon": -90.8788
+  },
+  "22220": {
+   "name": "Fayetteville-Springdale-Rogers, AR Metro Area",
+   "lat": 36.1164,
+   "lon": -94.0795
+  },
+  "24220": {
+   "name": "Grand Forks, ND-MN Metro Area",
+   "lat": 47.8359,
+   "lon": -96.8427
+  },
+  "40220": {
+   "name": "Roanoke, VA Metro Area",
+   "lat": 37.2862,
+   "lon": -79.9469
+  },
+  "42220": {
+   "name": "Santa Rosa-Petaluma, CA Metro Area",
+   "lat": 38.5252,
+   "lon": -122.9261
+  },
+  "46220": {
+   "name": "Tuscaloosa, AL Metro Area",
+   "lat": 33.0979,
+   "lon": -87.7991
+  },
+  "12260": {
+   "name": "Augusta-Richmond County, GA-SC Metro Area",
+   "lat": 33.4604,
+   "lon": -81.9828
+  },
+  "11260": {
+   "name": "Anchorage, AK Metro Area",
+   "lat": 62.2128,
+   "lon": -149.6782
+  },
+  "15260": {
+   "name": "Brunswick-St. Simons, GA Metro Area",
+   "lat": 31.3017,
+   "lon": -81.5889
+  },
+  "24260": {
+   "name": "Grand Island, NE Metro Area",
+   "lat": 41.0839,
+   "lon": -98.3742
+  },
+  "17300": {
+   "name": "Clarksville, TN-KY Metro Area",
+   "lat": 36.6957,
+   "lon": -87.6243
+  },
+  "24300": {
+   "name": "Grand Junction, CO Metro Area",
+   "lat": 39.0195,
+   "lon": -108.4606
+  },
+  "30300": {
+   "name": "Lewiston, ID-WA Metro Area",
+   "lat": 46.2517,
+   "lon": -116.925
+  },
+  "46300": {
+   "name": "Twin Falls, ID Metro Area",
+   "lat": 42.4404,
+   "lon": -114.5687
+  },
+  "45300": {
+   "name": "Tampa-St. Petersburg-Clearwater, FL Metro Area",
+   "lat": 28.1205,
+   "lon": -82.5252
+  },
+  "47300": {
+   "name": "Visalia, CA Metro Area",
+   "lat": 36.2288,
+   "lon": -118.7811
+  },
+  "48300": {
+   "name": "Wenatchee-East Wenatchee, WA Metro Area",
+   "lat": 47.7661,
+   "lon": -120.2702
+  },
+  "27340": {
+   "name": "Jacksonville, NC Metro Area",
+   "lat": 34.7631,
+   "lon": -77.4995
+  },
+  "31340": {
+   "name": "Lynchburg, VA Metro Area",
+   "lat": 37.3649,
+   "lon": -79.2167
+  },
+  "38340": {
+   "name": "Pittsfield, MA Metro Area",
+   "lat": 42.3715,
+   "lon": -73.2179
+  },
+  "37340": {
+   "name": "Palm Bay-Melbourne-Titusville, FL Metro Area",
+   "lat": 28.2983,
+   "lon": -80.7003
+  },
+  "13380": {
+   "name": "Bellingham, WA Metro Area",
+   "lat": 48.8427,
+   "lon": -121.8364
+  },
+  "22380": {
+   "name": "Flagstaff, AZ Metro Area",
+   "lat": 35.8297,
+   "lon": -111.7737
+  },
+  "26380": {
+   "name": "Houma-Bayou Cane-Thibodaux, LA Metro Area",
+   "lat": 29.3341,
+   "lon": -90.8437
+  },
+  "47380": {
+   "name": "Waco, TX Metro Area",
+   "lat": 31.5921,
+   "lon": -97.286
+  },
+  "12420": {
+   "name": "Austin-Round Rock-San Marcos, TX Metro Area",
+   "lat": 30.2497,
+   "lon": -97.6498
+  },
+  "21420": {
+   "name": "Enid, OK Metro Area",
+   "lat": 36.3781,
+   "lon": -97.7887
+  },
+  "29420": {
+   "name": "Lake Havasu City-Kingman, AZ Metro Area",
+   "lat": 35.7177,
+   "lon": -113.7497
+  },
+  "43420": {
+   "name": "Sierra Vista-Douglas, AZ Metro Area",
+   "lat": 31.8401,
+   "lon": -109.7752
+  },
+  "49420": {
+   "name": "Yakima, WA Metro Area",
+   "lat": 46.4566,
+   "lon": -120.7401
+  },
+  "13460": {
+   "name": "Bend, OR Metro Area",
+   "lat": 44.1538,
+   "lon": -120.8871
+  },
+  "23460": {
+   "name": "Gadsden, AL Metro Area",
+   "lat": 34.0476,
+   "lon": -86.0343
+  },
+  "37460": {
+   "name": "Panama City-Panama City Beach, FL Metro Area",
+   "lat": 30.2732,
+   "lon": -85.6421
+  },
+  "45460": {
+   "name": "Terre Haute, IN Metro Area",
+   "lat": 39.3924,
+   "lon": -87.3471
+  },
+  "11500": {
+   "name": "Anniston-Oxford, AL Metro Area",
+   "lat": 33.7705,
+   "lon": -85.8279
+  },
+  "10500": {
+   "name": "Albany, GA Metro Area",
+   "lat": 31.6447,
+   "lon": -84.1107
+  },
+  "19500": {
+   "name": "Decatur, IL Metro Area",
+   "lat": 39.8602,
+   "lon": -88.9615
+  },
+  "22500": {
+   "name": "Florence, SC Metro Area",
+   "lat": 34.1536,
+   "lon": -79.8062
+  },
+  "24500": {
+   "name": "Great Falls, MT Metro Area",
+   "lat": 47.3166,
+   "lon": -111.3503
+  },
+  "33500": {
+   "name": "Minot, ND Metro Area",
+   "lat": 48.3202,
+   "lon": -101.198
+  },
+  "41500": {
+   "name": "Salinas, CA Metro Area",
+   "lat": 36.2401,
+   "lon": -121.3156
+  },
+  "45500": {
+   "name": "Texarkana, TX-AR Metro Area",
+   "lat": 33.4784,
+   "lon": -94.2072
+  },
+  "46520": {
+   "name": "Urban Honolulu, HI Metro Area",
+   "lat": 21.4614,
+   "lon": -158.202
+  },
+  "12540": {
+   "name": "Bakersfield-Delano, CA Metro Area",
+   "lat": 35.3466,
+   "lon": -118.7295
+  },
+  "22540": {
+   "name": "Fond du Lac, WI Metro Area",
+   "lat": 43.7547,
+   "lon": -88.4933
+  },
+  "29540": {
+   "name": "Lancaster, PA Metro Area",
+   "lat": 40.042,
+   "lon": -76.2502
+  },
+  "33540": {
+   "name": "Missoula, MT Metro Area",
+   "lat": 47.0695,
+   "lon": -114.2627
+  },
+  "38540": {
+   "name": "Pocatello, ID Metro Area",
+   "lat": 42.6929,
+   "lon": -112.229
+  },
+  "42540": {
+   "name": "Scranton--Wilkes-Barre, PA Metro Area",
+   "lat": 41.3229,
+   "lon": -75.8982
+  },
+  "46540": {
+   "name": "Utica-Rome, NY Metro Area",
+   "lat": 43.3323,
+   "lon": -75.1732
+  },
+  "48540": {
+   "name": "Wheeling, WV-OH Metro Area",
+   "lat": 39.9777,
+   "lon": -80.8548
+  },
+  "14580": {
+   "name": "Bozeman, MT Metro Area",
+   "lat": 45.5181,
+   "lon": -111.1639
+  },
+  "20580": {
+   "name": "Eagle Pass, TX Metro Area",
+   "lat": 28.7298,
+   "lon": -100.3167
+  },
+  "12620": {
+   "name": "Bangor, ME Metro Area",
+   "lat": 45.4093,
+   "lon": -68.6666
+  },
+  "43620": {
+   "name": "Sioux Falls, SD-MN Metro Area",
+   "lat": 43.5257,
+   "lon": -96.8754
+  },
+  "21660": {
+   "name": "Eugene-Springfield, OR Metro Area",
+   "lat": 43.9283,
+   "lon": -122.8976
+  },
+  "22660": {
+   "name": "Fort Collins-Loveland, CO Metro Area",
+   "lat": 40.6581,
+   "lon": -105.4868
+  },
+  "28660": {
+   "name": "Killeen-Temple, TX Metro Area",
+   "lat": 31.2027,
+   "lon": -97.7896
+  },
+  "41660": {
+   "name": "San Angelo, TX Metro Area",
+   "lat": 31.3653,
+   "lon": -100.6594
+  },
+  "46660": {
+   "name": "Valdosta, GA Metro Area",
+   "lat": 30.8272,
+   "lon": -83.2436
+  },
+  "48660": {
+   "name": "Wichita Falls, TX Metro Area",
+   "lat": 33.7761,
+   "lon": -98.5019
+  },
+  "16700": {
+   "name": "Charleston-North Charleston, SC Metro Area",
+   "lat": 33.0175,
+   "lon": -80.0099
+  },
+  "29700": {
+   "name": "Laredo, TX Metro Area",
+   "lat": 27.7608,
+   "lon": -99.3408
+  },
+  "42700": {
+   "name": "Sebring, FL Metro Area",
+   "lat": 27.3411,
+   "lon": -81.3424
+  },
+  "13740": {
+   "name": "Billings, MT Metro Area",
+   "lat": 45.6371,
+   "lon": -108.8324
+  },
+  "25740": {
+   "name": "Helena, MT Metro Area",
+   "lat": 46.7157,
+   "lon": -112.1352
+  },
+  "31740": {
+   "name": "Manhattan, KS Metro Area",
+   "lat": 39.2684,
+   "lon": -96.5622
+  },
+  "41740": {
+   "name": "San Diego-Chula Vista-Carlsbad, CA Metro Area",
+   "lat": 33.0236,
+   "lon": -116.7761
+  },
+  "49740": {
+   "name": "Yuma, AZ Metro Area",
+   "lat": 32.7739,
+   "lon": -113.9109
+  },
+  "10780": {
+   "name": "Alexandria, LA Metro Area",
+   "lat": 31.3253,
+   "lon": -92.5468
+  },
+  "13780": {
+   "name": "Binghamton, NY Metro Area",
+   "lat": 42.1639,
+   "lon": -76.0229
+  },
+  "17780": {
+   "name": "College Station-Bryan, TX Metro Area",
+   "lat": 30.7544,
+   "lon": -96.4885
+  },
+  "45780": {
+   "name": "Toledo, OH Metro Area",
+   "lat": 41.5444,
+   "lon": -83.6908
+  },
+  "16820": {
+   "name": "Charlottesville, VA Metro Area",
+   "lat": 37.9491,
+   "lon": -78.5932
+  },
+  "17820": {
+   "name": "Colorado Springs, CO Metro Area",
+   "lat": 38.8455,
+   "lon": -104.6387
+  },
+  "21820": {
+   "name": "Fairbanks-College, AK Metro Area",
+   "lat": 64.6705,
+   "lon": -146.4961
+  },
+  "45820": {
+   "name": "Topeka, KS Metro Area",
+   "lat": 39.0414,
+   "lon": -95.8026
+  },
+  "30860": {
+   "name": "Logan, UT-ID Metro Area",
+   "lat": 41.889,
+   "lon": -111.7874
+  },
+  "37860": {
+   "name": "Pensacola-Ferry Pass-Brent, FL Metro Area",
+   "lat": 30.6086,
+   "lon": -87.1585
+  },
+  "18880": {
+   "name": "Crestview-Fort Walton Beach-Destin, FL Metro Area",
+   "lat": 30.5949,
+   "lon": -86.3582
+  },
+  "13900": {
+   "name": "Bismarck, ND Metro Area",
+   "lat": 46.887,
+   "lon": -100.9796
+  },
+  "22900": {
+   "name": "Fort Smith, AR-OK Metro Area",
+   "lat": 35.4291,
+   "lon": -94.4483
+  },
+  "45900": {
+   "name": "Traverse City, MI Metro Area",
+   "lat": 44.9523,
+   "lon": -85.9083
+  },
+  "48900": {
+   "name": "Wilmington, NC Metro Area",
+   "lat": 34.2537,
+   "lon": -78.0417
+  },
+  "16940": {
+   "name": "Cheyenne, WY Metro Area",
+   "lat": 41.2928,
+   "lon": -104.6604
+  },
+  "20940": {
+   "name": "El Centro, CA Metro Area",
+   "lat": 33.0408,
+   "lon": -115.3554
+  },
+  "25940": {
+   "name": "Hilton Head Island-Bluffton-Port Royal, SC Metro Area",
+   "lat": 32.3868,
+   "lon": -80.8309
+  },
+  "47940": {
+   "name": "Waterloo-Cedar Falls, IA Metro Area",
+   "lat": 42.5368,
+   "lon": -92.4716
+  },
+  "13980": {
+   "name": "Blacksburg-Christiansburg-Radford, VA Metro Area",
+   "lat": 37.1214,
+   "lon": -80.5315
+  },
+  "27980": {
+   "name": "Kahului-Wailuku, HI Metro Area",
+   "lat": 20.8559,
+   "lon": -156.6016
+  },
+  "30980": {
+   "name": "Longview, TX Metro Area",
+   "lat": 32.4316,
+   "lon": -94.6848
+  },
+  "36980": {
+   "name": "Owensboro, KY Metro Area",
+   "lat": 37.6644,
+   "lon": -87.1474
+  }
+ }
+}

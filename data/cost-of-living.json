@@ -1,28 +1,1636 @@
 {
   "_meta": {
-    "fetchedAt": "2026-08-03T09:34:54.830Z",
-    "source": "BLS API v2"
+    "fetchedAt": "2026-08-09T16:44:08.289Z",
+    "source": "BEA Regional Price Parities (MARPP/SARPP bulk files)",
+    "vintage": 2024
   },
-  "New York": 107,
-  "Los Angeles": 106,
-  "Chicago": 92,
-  "Houston": 93,
-  "Dallas": 85,
-  "Philadelphia": 101,
-  "Miami": 99,
-  "San Francisco": 110,
-  "Seattle": 112,
-  "Minneapolis": 95,
-  "St. Louis": 89,
-  "Baltimore": 110,
-  "Cleveland": 91,
-  "Madison": 94,
-  "Rochester": 86,
-  "Durham": 106,
-  "Nashville": 102,
-  "Omaha": 81,
-  "Indianapolis": 74,
-  "Palo Alto": 118,
-  "Portland": 106,
-  "Pittsburgh": 86
+  "vintage": 2024,
+  "msas": {
+    "10180": {
+      "name": "Abilene, TX (Metropolitan Statistical Area)",
+      "rpp": 90.4
+    },
+    "10420": {
+      "name": "Akron, OH (Metropolitan Statistical Area)",
+      "rpp": 93.4
+    },
+    "10500": {
+      "name": "Albany, GA (Metropolitan Statistical Area)",
+      "rpp": 87.7
+    },
+    "10540": {
+      "name": "Albany, OR (Metropolitan Statistical Area)",
+      "rpp": 102.1
+    },
+    "10580": {
+      "name": "Albany-Schenectady-Troy, NY (Metropolitan Statistical Area)",
+      "rpp": 99.6
+    },
+    "10740": {
+      "name": "Albuquerque, NM (Metropolitan Statistical Area)",
+      "rpp": 95.5
+    },
+    "10780": {
+      "name": "Alexandria, LA (Metropolitan Statistical Area)",
+      "rpp": 85.7
+    },
+    "10900": {
+      "name": "Allentown-Bethlehem-Easton, PA-NJ (Metropolitan Statistical Area)",
+      "rpp": 100
+    },
+    "11020": {
+      "name": "Altoona, PA (Metropolitan Statistical Area)",
+      "rpp": 89.5
+    },
+    "11100": {
+      "name": "Amarillo, TX (Metropolitan Statistical Area)",
+      "rpp": 91.8
+    },
+    "11180": {
+      "name": "Ames, IA (Metropolitan Statistical Area)",
+      "rpp": 88.8
+    },
+    "11200": {
+      "name": "Amherst Town-Northampton, MA (Metropolitan Statistical Area)",
+      "rpp": 100.2
+    },
+    "11260": {
+      "name": "Anchorage, AK (Metropolitan Statistical Area)",
+      "rpp": 105.4
+    },
+    "11460": {
+      "name": "Ann Arbor, MI (Metropolitan Statistical Area)",
+      "rpp": 100.9
+    },
+    "11500": {
+      "name": "Anniston-Oxford, AL (Metropolitan Statistical Area)",
+      "rpp": 85.9
+    },
+    "11540": {
+      "name": "Appleton, WI (Metropolitan Statistical Area)",
+      "rpp": 92.4
+    },
+    "11700": {
+      "name": "Asheville, NC (Metropolitan Statistical Area)",
+      "rpp": 96.5
+    },
+    "12020": {
+      "name": "Athens-Clarke County, GA (Metropolitan Statistical Area)",
+      "rpp": 93.3
+    },
+    "12060": {
+      "name": "Atlanta-Sandy Springs-Roswell, GA (Metropolitan Statistical Area)",
+      "rpp": 100.1
+    },
+    "12100": {
+      "name": "Atlantic City-Hammonton, NJ (Metropolitan Statistical Area)",
+      "rpp": 98.9
+    },
+    "12220": {
+      "name": "Auburn-Opelika, AL (Metropolitan Statistical Area)",
+      "rpp": 87.9
+    },
+    "12260": {
+      "name": "Augusta-Richmond County, GA-SC (Metropolitan Statistical Area)",
+      "rpp": 91.9
+    },
+    "12420": {
+      "name": "Austin-Round Rock-San Marcos, TX (Metropolitan Statistical Area)",
+      "rpp": 98.1
+    },
+    "12540": {
+      "name": "Bakersfield-Delano, CA (Metropolitan Statistical Area)",
+      "rpp": 100.9
+    },
+    "12580": {
+      "name": "Baltimore-Columbia-Towson, MD (Metropolitan Statistical Area)",
+      "rpp": 104.5
+    },
+    "12620": {
+      "name": "Bangor, ME (Metropolitan Statistical Area)",
+      "rpp": 96.5
+    },
+    "12700": {
+      "name": "Barnstable Town, MA (Metropolitan Statistical Area)",
+      "rpp": 98.4
+    },
+    "12940": {
+      "name": "Baton Rouge, LA (Metropolitan Statistical Area)",
+      "rpp": 90.8
+    },
+    "12980": {
+      "name": "Battle Creek, MI (Metropolitan Statistical Area)",
+      "rpp": 90.5
+    },
+    "13020": {
+      "name": "Bay City, MI (Metropolitan Statistical Area)",
+      "rpp": 91.9
+    },
+    "13140": {
+      "name": "Beaumont-Port Arthur, TX (Metropolitan Statistical Area)",
+      "rpp": 90
+    },
+    "13220": {
+      "name": "Beckley, WV (Metropolitan Statistical Area)",
+      "rpp": 88.4
+    },
+    "13380": {
+      "name": "Bellingham, WA (Metropolitan Statistical Area)",
+      "rpp": 103.3
+    },
+    "13460": {
+      "name": "Bend, OR (Metropolitan Statistical Area)",
+      "rpp": 103.6
+    },
+    "13740": {
+      "name": "Billings, MT (Metropolitan Statistical Area)",
+      "rpp": 93.5
+    },
+    "13780": {
+      "name": "Binghamton, NY (Metropolitan Statistical Area)",
+      "rpp": 92.9
+    },
+    "13820": {
+      "name": "Birmingham, AL (Metropolitan Statistical Area)",
+      "rpp": 91.6
+    },
+    "13900": {
+      "name": "Bismarck, ND (Metropolitan Statistical Area)",
+      "rpp": 91
+    },
+    "13980": {
+      "name": "Blacksburg-Christiansburg-Radford, VA (Metropolitan Statistical Area)",
+      "rpp": 92.7
+    },
+    "14010": {
+      "name": "Bloomington, IL (Metropolitan Statistical Area)",
+      "rpp": 93.5
+    },
+    "14020": {
+      "name": "Bloomington, IN (Metropolitan Statistical Area)",
+      "rpp": 95.1
+    },
+    "14260": {
+      "name": "Boise City, ID (Metropolitan Statistical Area)",
+      "rpp": 98.4
+    },
+    "14460": {
+      "name": "Boston-Cambridge-Newton, MA-NH (Metropolitan Statistical Area)",
+      "rpp": 108.3
+    },
+    "14500": {
+      "name": "Boulder, CO (Metropolitan Statistical Area)",
+      "rpp": 105.2
+    },
+    "14540": {
+      "name": "Bowling Green, KY (Metropolitan Statistical Area)",
+      "rpp": 90.2
+    },
+    "14580": {
+      "name": "Bozeman, MT (Metropolitan Statistical Area)",
+      "rpp": 102.5
+    },
+    "14740": {
+      "name": "Bremerton-Silverdale-Port Orchard, WA (Metropolitan Statistical Area)",
+      "rpp": 105.6
+    },
+    "14860": {
+      "name": "Bridgeport-Stamford-Danbury, CT Metropolitan Statistical Area",
+      "rpp": 106.9
+    },
+    "15180": {
+      "name": "Brownsville-Harlingen, TX (Metropolitan Statistical Area)",
+      "rpp": 86
+    },
+    "15260": {
+      "name": "Brunswick-St. Simons, GA (Metropolitan Statistical Area)",
+      "rpp": 87.7
+    },
+    "15380": {
+      "name": "Buffalo-Cheektowaga, NY (Metropolitan Statistical Area)",
+      "rpp": 95.8
+    },
+    "15500": {
+      "name": "Burlington, NC (Metropolitan Statistical Area)",
+      "rpp": 93.2
+    },
+    "15540": {
+      "name": "Burlington-South Burlington, VT (Metropolitan Statistical Area)",
+      "rpp": 100.9
+    },
+    "15940": {
+      "name": "Canton-Massillon, OH (Metropolitan Statistical Area)",
+      "rpp": 89.4
+    },
+    "15980": {
+      "name": "Cape Coral-Fort Myers, FL (Metropolitan Statistical Area)",
+      "rpp": 102.3
+    },
+    "16020": {
+      "name": "Cape Girardeau, MO-IL (Metropolitan Statistical Area)",
+      "rpp": 86.1
+    },
+    "16180": {
+      "name": "Carson City, NV (Metropolitan Statistical Area)",
+      "rpp": 98.1
+    },
+    "16220": {
+      "name": "Casper, WY (Metropolitan Statistical Area)",
+      "rpp": 93.8
+    },
+    "16300": {
+      "name": "Cedar Rapids, IA (Metropolitan Statistical Area)",
+      "rpp": 89
+    },
+    "16540": {
+      "name": "Chambersburg, PA (Metropolitan Statistical Area)",
+      "rpp": 94.6
+    },
+    "16580": {
+      "name": "Champaign-Urbana, IL (Metropolitan Statistical Area)",
+      "rpp": 92.7
+    },
+    "16620": {
+      "name": "Charleston, WV (Metropolitan Statistical Area)",
+      "rpp": 88.7
+    },
+    "16700": {
+      "name": "Charleston-North Charleston, SC (Metropolitan Statistical Area)",
+      "rpp": 101
+    },
+    "16740": {
+      "name": "Charlotte-Concord-Gastonia, NC-SC (Metropolitan Statistical Area)",
+      "rpp": 97.3
+    },
+    "16820": {
+      "name": "Charlottesville, VA (Metropolitan Statistical Area)",
+      "rpp": 99.1
+    },
+    "16860": {
+      "name": "Chattanooga, TN-GA (Metropolitan Statistical Area)",
+      "rpp": 91.5
+    },
+    "16940": {
+      "name": "Cheyenne, WY (Metropolitan Statistical Area)",
+      "rpp": 96.5
+    },
+    "16980": {
+      "name": "Chicago-Naperville-Elgin, IL-IN (Metropolitan Statistical Area)",
+      "rpp": 103.6
+    },
+    "17020": {
+      "name": "Chico, CA (Metropolitan Statistical Area)",
+      "rpp": 101.2
+    },
+    "17140": {
+      "name": "Cincinnati, OH-KY-IN (Metropolitan Statistical Area)",
+      "rpp": 95.4
+    },
+    "17300": {
+      "name": "Clarksville, TN-KY (Metropolitan Statistical Area)",
+      "rpp": 90.9
+    },
+    "17410": {
+      "name": "Cleveland, OH (Metropolitan Statistical Area)",
+      "rpp": 93.9
+    },
+    "17420": {
+      "name": "Cleveland, TN (Metropolitan Statistical Area)",
+      "rpp": 88.1
+    },
+    "17660": {
+      "name": "Coeur d'Alene, ID (Metropolitan Statistical Area)",
+      "rpp": 98.3
+    },
+    "17780": {
+      "name": "College Station-Bryan, TX (Metropolitan Statistical Area)",
+      "rpp": 91
+    },
+    "17820": {
+      "name": "Colorado Springs, CO (Metropolitan Statistical Area)",
+      "rpp": 100.7
+    },
+    "17860": {
+      "name": "Columbia, MO (Metropolitan Statistical Area)",
+      "rpp": 89.4
+    },
+    "17900": {
+      "name": "Columbia, SC (Metropolitan Statistical Area)",
+      "rpp": 93.7
+    },
+    "17980": {
+      "name": "Columbus, GA-AL (Metropolitan Statistical Area)",
+      "rpp": 89.3
+    },
+    "18020": {
+      "name": "Columbus, IN (Metropolitan Statistical Area)",
+      "rpp": 93
+    },
+    "18140": {
+      "name": "Columbus, OH (Metropolitan Statistical Area)",
+      "rpp": 95.5
+    },
+    "18580": {
+      "name": "Corpus Christi, TX (Metropolitan Statistical Area)",
+      "rpp": 92.7
+    },
+    "18700": {
+      "name": "Corvallis, OR (Metropolitan Statistical Area)",
+      "rpp": 104
+    },
+    "18880": {
+      "name": "Crestview-Fort Walton Beach-Destin, FL (Metropolitan Statistical Area)",
+      "rpp": 97
+    },
+    "19100": {
+      "name": "Dallas-Fort Worth-Arlington, TX (Metropolitan Statistical Area)",
+      "rpp": 103.1
+    },
+    "19140": {
+      "name": "Dalton, GA (Metropolitan Statistical Area)",
+      "rpp": 89.8
+    },
+    "19300": {
+      "name": "Daphne-Fairhope-Foley, AL (Metropolitan Statistical Area)",
+      "rpp": 94.7
+    },
+    "19340": {
+      "name": "Davenport-Moline-Rock Island, IA-IL (Metropolitan Statistical Area)",
+      "rpp": 89.1
+    },
+    "19430": {
+      "name": "Dayton-Kettering-Beavercreek, OH (Metropolitan Statistical Area)",
+      "rpp": 92.7
+    },
+    "19460": {
+      "name": "Decatur, AL (Metropolitan Statistical Area)",
+      "rpp": 87.2
+    },
+    "19500": {
+      "name": "Decatur, IL (Metropolitan Statistical Area)",
+      "rpp": 88.4
+    },
+    "19660": {
+      "name": "Deltona-Daytona Beach-Ormond Beach, FL (Metropolitan Statistical Area)",
+      "rpp": 99.4
+    },
+    "19740": {
+      "name": "Denver-Aurora-Centennial, CO (Metropolitan Statistical Area)",
+      "rpp": 105.8
+    },
+    "19780": {
+      "name": "Des Moines-West Des Moines, IA (Metropolitan Statistical Area)",
+      "rpp": 91.7
+    },
+    "19820": {
+      "name": "Detroit-Warren-Dearborn, MI (Metropolitan Statistical Area)",
+      "rpp": 100.3
+    },
+    "20020": {
+      "name": "Dothan, AL (Metropolitan Statistical Area)",
+      "rpp": 83.8
+    },
+    "20100": {
+      "name": "Dover, DE (Metropolitan Statistical Area)",
+      "rpp": 97.5
+    },
+    "20220": {
+      "name": "Dubuque, IA (Metropolitan Statistical Area)",
+      "rpp": 87.3
+    },
+    "20260": {
+      "name": "Duluth, MN-WI (Metropolitan Statistical Area)",
+      "rpp": 88.8
+    },
+    "20500": {
+      "name": "Durham-Chapel Hill, NC (Metropolitan Statistical Area)",
+      "rpp": 97.6
+    },
+    "20580": {
+      "name": "Eagle Pass, TX (Metropolitan Statistical Area)",
+      "rpp": 83.8
+    },
+    "20740": {
+      "name": "Eau Claire, WI (Metropolitan Statistical Area)",
+      "rpp": 92.8
+    },
+    "20940": {
+      "name": "El Centro, CA (Metropolitan Statistical Area)",
+      "rpp": 95.2
+    },
+    "21060": {
+      "name": "Elizabethtown, KY (Metropolitan Statistical Area)",
+      "rpp": 90.6
+    },
+    "21140": {
+      "name": "Elkhart-Goshen, IN (Metropolitan Statistical Area)",
+      "rpp": 90.3
+    },
+    "21300": {
+      "name": "Elmira, NY (Metropolitan Statistical Area)",
+      "rpp": 94.4
+    },
+    "21340": {
+      "name": "El Paso, TX (Metropolitan Statistical Area)",
+      "rpp": 89.9
+    },
+    "21420": {
+      "name": "Enid, OK (Metropolitan Statistical Area)",
+      "rpp": 84.3
+    },
+    "21500": {
+      "name": "Erie, PA (Metropolitan Statistical Area)",
+      "rpp": 91
+    },
+    "21660": {
+      "name": "Eugene-Springfield, OR (Metropolitan Statistical Area)",
+      "rpp": 101.6
+    },
+    "21780": {
+      "name": "Evansville, IN (Metropolitan Statistical Area)",
+      "rpp": 91.5
+    },
+    "21820": {
+      "name": "Fairbanks-College, AK (Metropolitan Statistical Area)",
+      "rpp": 103.2
+    },
+    "22020": {
+      "name": "Fargo, ND-MN (Metropolitan Statistical Area)",
+      "rpp": 90.9
+    },
+    "22140": {
+      "name": "Farmington, NM (Metropolitan Statistical Area)",
+      "rpp": 87.7
+    },
+    "22180": {
+      "name": "Fayetteville, NC (Metropolitan Statistical Area)",
+      "rpp": 92
+    },
+    "22220": {
+      "name": "Fayetteville-Springdale-Rogers, AR (Metropolitan Statistical Area)",
+      "rpp": 91.4
+    },
+    "22380": {
+      "name": "Flagstaff, AZ (Metropolitan Statistical Area)",
+      "rpp": 100.3
+    },
+    "22420": {
+      "name": "Flint, MI (Metropolitan Statistical Area)",
+      "rpp": 93
+    },
+    "22500": {
+      "name": "Florence, SC (Metropolitan Statistical Area)",
+      "rpp": 86.8
+    },
+    "22520": {
+      "name": "Florence-Muscle Shoals, AL (Metropolitan Statistical Area)",
+      "rpp": 84.8
+    },
+    "22540": {
+      "name": "Fond du Lac, WI (Metropolitan Statistical Area)",
+      "rpp": 91.6
+    },
+    "22660": {
+      "name": "Fort Collins-Loveland, CO (Metropolitan Statistical Area)",
+      "rpp": 101.1
+    },
+    "22900": {
+      "name": "Fort Smith, AR-OK (Metropolitan Statistical Area)",
+      "rpp": 85.9
+    },
+    "23060": {
+      "name": "Fort Wayne, IN (Metropolitan Statistical Area)",
+      "rpp": 92.6
+    },
+    "23420": {
+      "name": "Fresno, CA (Metropolitan Statistical Area)",
+      "rpp": 102.2
+    },
+    "23460": {
+      "name": "Gadsden, AL (Metropolitan Statistical Area)",
+      "rpp": 85.7
+    },
+    "23540": {
+      "name": "Gainesville, FL (Metropolitan Statistical Area)",
+      "rpp": 96.7
+    },
+    "23580": {
+      "name": "Gainesville, GA (Metropolitan Statistical Area)",
+      "rpp": 96.8
+    },
+    "23900": {
+      "name": "Gettysburg, PA (Metropolitan Statistical Area)",
+      "rpp": 95.4
+    },
+    "24020": {
+      "name": "Glens Falls, NY (Metropolitan Statistical Area)",
+      "rpp": 94.9
+    },
+    "24140": {
+      "name": "Goldsboro, NC (Metropolitan Statistical Area)",
+      "rpp": 88.5
+    },
+    "24220": {
+      "name": "Grand Forks, ND-MN (Metropolitan Statistical Area)",
+      "rpp": 86.7
+    },
+    "24260": {
+      "name": "Grand Island, NE (Metropolitan Statistical Area)",
+      "rpp": 86.7
+    },
+    "24300": {
+      "name": "Grand Junction, CO (Metropolitan Statistical Area)",
+      "rpp": 95.5
+    },
+    "24340": {
+      "name": "Grand Rapids-Wyoming-Kentwood, MI (Metropolitan Statistical Area)",
+      "rpp": 95.5
+    },
+    "24420": {
+      "name": "Grants Pass, OR (Metropolitan Statistical Area)",
+      "rpp": 97.8
+    },
+    "24500": {
+      "name": "Great Falls, MT (Metropolitan Statistical Area)",
+      "rpp": 96.8
+    },
+    "24540": {
+      "name": "Greeley, CO (Metropolitan Statistical Area)",
+      "rpp": 100.2
+    },
+    "24580": {
+      "name": "Green Bay, WI (Metropolitan Statistical Area)",
+      "rpp": 93.1
+    },
+    "24660": {
+      "name": "Greensboro-High Point, NC (Metropolitan Statistical Area)",
+      "rpp": 92.9
+    },
+    "24780": {
+      "name": "Greenville, NC (Metropolitan Statistical Area)",
+      "rpp": 88.4
+    },
+    "24860": {
+      "name": "Greenville-Anderson-Greer, SC (Metropolitan Statistical Area)",
+      "rpp": 93.3
+    },
+    "25060": {
+      "name": "Gulfport-Biloxi, MS (Metropolitan Statistical Area)",
+      "rpp": 90
+    },
+    "25180": {
+      "name": "Hagerstown-Martinsburg, MD-WV (Metropolitan Statistical Area)",
+      "rpp": 94.2
+    },
+    "25220": {
+      "name": "Hammond, LA (Metropolitan Statistical Area)",
+      "rpp": 84.5
+    },
+    "25260": {
+      "name": "Hanford-Corcoran, CA (Metropolitan Statistical Area)",
+      "rpp": 101.6
+    },
+    "25420": {
+      "name": "Harrisburg-Carlisle, PA (Metropolitan Statistical Area)",
+      "rpp": 98.7
+    },
+    "25500": {
+      "name": "Harrisonburg, VA (Metropolitan Statistical Area)",
+      "rpp": 94.9
+    },
+    "25540": {
+      "name": "Hartford-West Hartford-East Hartford, CT (Metropolitan Statistical Area)",
+      "rpp": 102.7
+    },
+    "25620": {
+      "name": "Hattiesburg, MS (Metropolitan Statistical Area)",
+      "rpp": 87.6
+    },
+    "25740": {
+      "name": "Helena, MT (Metropolitan Statistical Area)",
+      "rpp": 95.7
+    },
+    "25860": {
+      "name": "Hickory-Lenoir-Morganton, NC (Metropolitan Statistical Area)",
+      "rpp": 88.5
+    },
+    "25940": {
+      "name": "Hilton Head Island-Bluffton-Port Royal, SC (Metropolitan Statistical Area)",
+      "rpp": 98
+    },
+    "25980": {
+      "name": "Hinesville, GA (Metropolitan Statistical Area)",
+      "rpp": 93.9
+    },
+    "26140": {
+      "name": "Homosassa Springs, FL (Metropolitan Statistical Area)",
+      "rpp": 93.5
+    },
+    "26300": {
+      "name": "Hot Springs, AR (Metropolitan Statistical Area)",
+      "rpp": 85.7
+    },
+    "26380": {
+      "name": "Houma-Bayou Cane-Thibodaux, LA (Metropolitan Statistical Area)",
+      "rpp": 85.1
+    },
+    "26420": {
+      "name": "Houston-Pasadena-The Woodlands, TX (Metropolitan Statistical Area)",
+      "rpp": 98.6
+    },
+    "26580": {
+      "name": "Huntington-Ashland, WV-KY-OH (Metropolitan Statistical Area)",
+      "rpp": 88.4
+    },
+    "26620": {
+      "name": "Huntsville, AL (Metropolitan Statistical Area)",
+      "rpp": 93.1
+    },
+    "26820": {
+      "name": "Idaho Falls, ID (Metropolitan Statistical Area)",
+      "rpp": 94.4
+    },
+    "26900": {
+      "name": "Indianapolis-Carmel-Greenwood, IN (Metropolitan Statistical Area)",
+      "rpp": 95.7
+    },
+    "26980": {
+      "name": "Iowa City, IA (Metropolitan Statistical Area)",
+      "rpp": 91.5
+    },
+    "27060": {
+      "name": "Ithaca, NY (Metropolitan Statistical Area)",
+      "rpp": 103.3
+    },
+    "27100": {
+      "name": "Jackson, MI (Metropolitan Statistical Area)",
+      "rpp": 91.8
+    },
+    "27140": {
+      "name": "Jackson, MS (Metropolitan Statistical Area)",
+      "rpp": 89
+    },
+    "27180": {
+      "name": "Jackson, TN (Metropolitan Statistical Area)",
+      "rpp": 85.5
+    },
+    "27260": {
+      "name": "Jacksonville, FL (Metropolitan Statistical Area)",
+      "rpp": 99.5
+    },
+    "27340": {
+      "name": "Jacksonville, NC (Metropolitan Statistical Area)",
+      "rpp": 92.1
+    },
+    "27500": {
+      "name": "Janesville-Beloit, WI (Metropolitan Statistical Area)",
+      "rpp": 93.7
+    },
+    "27620": {
+      "name": "Jefferson City, MO (Metropolitan Statistical Area)",
+      "rpp": 88
+    },
+    "27740": {
+      "name": "Johnson City, TN (Metropolitan Statistical Area)",
+      "rpp": 87.9
+    },
+    "27780": {
+      "name": "Johnstown, PA (Metropolitan Statistical Area)",
+      "rpp": 85.9
+    },
+    "27860": {
+      "name": "Jonesboro, AR (Metropolitan Statistical Area)",
+      "rpp": 85.9
+    },
+    "27900": {
+      "name": "Joplin, MO-KS (Metropolitan Statistical Area)",
+      "rpp": 85.7
+    },
+    "27980": {
+      "name": "Kahului-Wailuku, HI (Metropolitan Statistical Area)",
+      "rpp": 109.4
+    },
+    "28020": {
+      "name": "Kalamazoo-Portage, MI (Metropolitan Statistical Area)",
+      "rpp": 94.8
+    },
+    "28100": {
+      "name": "Kankakee, IL (Metropolitan Statistical Area)",
+      "rpp": 96.4
+    },
+    "28140": {
+      "name": "Kansas City, MO-KS (Metropolitan Statistical Area)",
+      "rpp": 92.5
+    },
+    "28420": {
+      "name": "Kennewick-Richland, WA (Metropolitan Statistical Area)",
+      "rpp": 100.1
+    },
+    "28450": {
+      "name": "Kenosha, WI (Metropolitan Statistical Area)",
+      "rpp": 101.1
+    },
+    "28660": {
+      "name": "Killeen-Temple, TX (Metropolitan Statistical Area)",
+      "rpp": 91.1
+    },
+    "28700": {
+      "name": "Kingsport-Bristol, TN-VA (Metropolitan Statistical Area)",
+      "rpp": 86.4
+    },
+    "28740": {
+      "name": "Kingston, NY (Metropolitan Statistical Area)",
+      "rpp": 100.7
+    },
+    "28880": {
+      "name": "Kiryas Joel-Poughkeepsie-Newburgh, NY (Metropolitan Statistical Area)",
+      "rpp": 109.4
+    },
+    "28940": {
+      "name": "Knoxville, TN (Metropolitan Statistical Area)",
+      "rpp": 92.6
+    },
+    "29020": {
+      "name": "Kokomo, IN (Metropolitan Statistical Area)",
+      "rpp": 89.6
+    },
+    "29100": {
+      "name": "La Crosse-Onalaska, WI-MN (Metropolitan Statistical Area)",
+      "rpp": 91.8
+    },
+    "29180": {
+      "name": "Lafayette, LA (Metropolitan Statistical Area)",
+      "rpp": 87.2
+    },
+    "29200": {
+      "name": "Lafayette-West Lafayette, IN (Metropolitan Statistical Area)",
+      "rpp": 93.4
+    },
+    "29340": {
+      "name": "Lake Charles, LA (Metropolitan Statistical Area)",
+      "rpp": 85.9
+    },
+    "29420": {
+      "name": "Lake Havasu City-Kingman, AZ (Metropolitan Statistical Area)",
+      "rpp": 94.1
+    },
+    "29460": {
+      "name": "Lakeland-Winter Haven, FL (Metropolitan Statistical Area)",
+      "rpp": 97.1
+    },
+    "29540": {
+      "name": "Lancaster, PA (Metropolitan Statistical Area)",
+      "rpp": 98.3
+    },
+    "29620": {
+      "name": "Lansing-East Lansing, MI (Metropolitan Statistical Area)",
+      "rpp": 95
+    },
+    "29700": {
+      "name": "Laredo, TX (Metropolitan Statistical Area)",
+      "rpp": 87
+    },
+    "29740": {
+      "name": "Las Cruces, NM (Metropolitan Statistical Area)",
+      "rpp": 90.2
+    },
+    "29820": {
+      "name": "Las Vegas-Henderson-North Las Vegas, NV (Metropolitan Statistical Area)",
+      "rpp": 100.2
+    },
+    "29940": {
+      "name": "Lawrence, KS (Metropolitan Statistical Area)",
+      "rpp": 90.2
+    },
+    "30020": {
+      "name": "Lawton, OK (Metropolitan Statistical Area)",
+      "rpp": 85.9
+    },
+    "30140": {
+      "name": "Lebanon, PA (Metropolitan Statistical Area)",
+      "rpp": 93.2
+    },
+    "30300": {
+      "name": "Lewiston, ID-WA (Metropolitan Statistical Area)",
+      "rpp": 91.2
+    },
+    "30340": {
+      "name": "Lewiston-Auburn, ME (Metropolitan Statistical Area)",
+      "rpp": 94.7
+    },
+    "30460": {
+      "name": "Lexington-Fayette, KY (Metropolitan Statistical Area)",
+      "rpp": 92.9
+    },
+    "30500": {
+      "name": "Lexington Park, MD (Metropolitan Statistical Area)",
+      "rpp": 100.8
+    },
+    "30620": {
+      "name": "Lima, OH (Metropolitan Statistical Area)",
+      "rpp": 89.7
+    },
+    "30700": {
+      "name": "Lincoln, NE (Metropolitan Statistical Area)",
+      "rpp": 91.6
+    },
+    "30780": {
+      "name": "Little Rock-North Little Rock-Conway, AR (Metropolitan Statistical Area)",
+      "rpp": 89.4
+    },
+    "30860": {
+      "name": "Logan, UT-ID (Metropolitan Statistical Area)",
+      "rpp": 95.9
+    },
+    "30980": {
+      "name": "Longview, TX (Metropolitan Statistical Area)",
+      "rpp": 89.5
+    },
+    "31020": {
+      "name": "Longview-Kelso, WA (Metropolitan Statistical Area)",
+      "rpp": 97.5
+    },
+    "31080": {
+      "name": "Los Angeles-Long Beach-Anaheim, CA (Metropolitan Statistical Area)",
+      "rpp": 113.6
+    },
+    "31140": {
+      "name": "Louisville/Jefferson County, KY-IN (Metropolitan Statistical Area)",
+      "rpp": 93.1
+    },
+    "31180": {
+      "name": "Lubbock, TX (Metropolitan Statistical Area)",
+      "rpp": 91.3
+    },
+    "31340": {
+      "name": "Lynchburg, VA (Metropolitan Statistical Area)",
+      "rpp": 89.4
+    },
+    "31420": {
+      "name": "Macon-Bibb County, GA (Metropolitan Statistical Area)",
+      "rpp": 88.5
+    },
+    "31540": {
+      "name": "Madison, WI (Metropolitan Statistical Area)",
+      "rpp": 97.3
+    },
+    "31700": {
+      "name": "Manchester-Nashua, NH (Metropolitan Statistical Area)",
+      "rpp": 105.7
+    },
+    "31740": {
+      "name": "Manhattan, KS (Metropolitan Statistical Area)",
+      "rpp": 90.2
+    },
+    "31860": {
+      "name": "Mankato, MN (Metropolitan Statistical Area)",
+      "rpp": 91
+    },
+    "31900": {
+      "name": "Mansfield, OH (Metropolitan Statistical Area)",
+      "rpp": 88.9
+    },
+    "32580": {
+      "name": "McAllen-Edinburg-Mission, TX (Metropolitan Statistical Area)",
+      "rpp": 85.9
+    },
+    "32780": {
+      "name": "Medford, OR (Metropolitan Statistical Area)",
+      "rpp": 101.4
+    },
+    "32820": {
+      "name": "Memphis, TN-MS-AR (Metropolitan Statistical Area)",
+      "rpp": 92.2
+    },
+    "32900": {
+      "name": "Merced, CA (Metropolitan Statistical Area)",
+      "rpp": 98.3
+    },
+    "33100": {
+      "name": "Miami-Fort Lauderdale-West Palm Beach, FL (Metropolitan Statistical Area)",
+      "rpp": 114.2
+    },
+    "33140": {
+      "name": "Michigan City-La Porte, IN (Metropolitan Statistical Area)",
+      "rpp": 91.7
+    },
+    "33220": {
+      "name": "Midland, MI (Metropolitan Statistical Area)",
+      "rpp": 91.9
+    },
+    "33260": {
+      "name": "Midland, TX (Metropolitan Statistical Area)",
+      "rpp": 95.8
+    },
+    "33340": {
+      "name": "Milwaukee-Waukesha, WI (Metropolitan Statistical Area)",
+      "rpp": 96.9
+    },
+    "33460": {
+      "name": "Minneapolis-St. Paul-Bloomington, MN-WI (Metropolitan Statistical Area)",
+      "rpp": 104.8
+    },
+    "33500": {
+      "name": "Minot, ND (Metropolitan Statistical Area)",
+      "rpp": 87
+    },
+    "33540": {
+      "name": "Missoula, MT (Metropolitan Statistical Area)",
+      "rpp": 96.4
+    },
+    "33660": {
+      "name": "Mobile, AL (Metropolitan Statistical Area)",
+      "rpp": 88.1
+    },
+    "33700": {
+      "name": "Modesto, CA (Metropolitan Statistical Area)",
+      "rpp": 104.1
+    },
+    "33740": {
+      "name": "Monroe, LA (Metropolitan Statistical Area)",
+      "rpp": 83.6
+    },
+    "33780": {
+      "name": "Monroe, MI (Metropolitan Statistical Area)",
+      "rpp": 93.5
+    },
+    "33860": {
+      "name": "Montgomery, AL (Metropolitan Statistical Area)",
+      "rpp": 89.7
+    },
+    "34060": {
+      "name": "Morgantown, WV (Metropolitan Statistical Area)",
+      "rpp": 93.3
+    },
+    "34100": {
+      "name": "Morristown, TN (Metropolitan Statistical Area)",
+      "rpp": 86.4
+    },
+    "34580": {
+      "name": "Mount Vernon-Anacortes, WA (Metropolitan Statistical Area)",
+      "rpp": 102.4
+    },
+    "34620": {
+      "name": "Muncie, IN (Metropolitan Statistical Area)",
+      "rpp": 88.1
+    },
+    "34740": {
+      "name": "Muskegon-Norton Shores, MI (Metropolitan Statistical Area)",
+      "rpp": 92.5
+    },
+    "34820": {
+      "name": "Myrtle Beach-Conway-North Myrtle Beach, SC (Metropolitan Statistical Area)",
+      "rpp": 93.6
+    },
+    "34900": {
+      "name": "Napa, CA (Metropolitan Statistical Area)",
+      "rpp": 112.6
+    },
+    "34940": {
+      "name": "Naples-Marco Island, FL (Metropolitan Statistical Area)",
+      "rpp": 103.2
+    },
+    "34980": {
+      "name": "Nashville-Davidson--Murfreesboro--Franklin, TN (Metropolitan Statistical Area)",
+      "rpp": 96.3
+    },
+    "35300": {
+      "name": "New Haven, CT (Metropolitan Statistical Area)",
+      "rpp": 104.6
+    },
+    "35380": {
+      "name": "New Orleans-Metairie, LA (Metropolitan Statistical Area)",
+      "rpp": 92.6
+    },
+    "35620": {
+      "name": "New York-Newark-Jersey City, NY-NJ (Metropolitan Statistical Area)",
+      "rpp": 112.6
+    },
+    "35660": {
+      "name": "Niles, MI (Metropolitan Statistical Area)",
+      "rpp": 92.4
+    },
+    "35840": {
+      "name": "North Port-Bradenton-Sarasota, FL (Metropolitan Statistical Area)",
+      "rpp": 102.4
+    },
+    "35980": {
+      "name": "Norwich-New London-Willimantic, CT (Metropolitan Statistical Area)",
+      "rpp": 100.4
+    },
+    "36100": {
+      "name": "Ocala, FL (Metropolitan Statistical Area)",
+      "rpp": 95.2
+    },
+    "36220": {
+      "name": "Odessa, TX (Metropolitan Statistical Area)",
+      "rpp": 93.9
+    },
+    "36260": {
+      "name": "Ogden, UT (Metropolitan Statistical Area)",
+      "rpp": 100.3
+    },
+    "36420": {
+      "name": "Oklahoma City, OK (Metropolitan Statistical Area)",
+      "rpp": 90.4
+    },
+    "36500": {
+      "name": "Olympia-Lacey-Tumwater, WA (Metropolitan Statistical Area)",
+      "rpp": 103.7
+    },
+    "36540": {
+      "name": "Omaha, NE-IA (Metropolitan Statistical Area)",
+      "rpp": 91.9
+    },
+    "36740": {
+      "name": "Orlando-Kissimmee-Sanford, FL (Metropolitan Statistical Area)",
+      "rpp": 101.4
+    },
+    "36780": {
+      "name": "Oshkosh-Neenah, WI (Metropolitan Statistical Area)",
+      "rpp": 92.9
+    },
+    "36980": {
+      "name": "Owensboro, KY (Metropolitan Statistical Area)",
+      "rpp": 88.6
+    },
+    "37100": {
+      "name": "Oxnard-Thousand Oaks-Ventura, CA (Metropolitan Statistical Area)",
+      "rpp": 110.5
+    },
+    "37140": {
+      "name": "Paducah, KY-IL (Metropolitan Statistical Area)",
+      "rpp": 86.1
+    },
+    "37340": {
+      "name": "Palm Bay-Melbourne-Titusville, FL (Metropolitan Statistical Area)",
+      "rpp": 100
+    },
+    "37460": {
+      "name": "Panama City-Panama City Beach, FL (Metropolitan Statistical Area)",
+      "rpp": 97.3
+    },
+    "37620": {
+      "name": "Parkersburg-Vienna, WV (Metropolitan Statistical Area)",
+      "rpp": 87.1
+    },
+    "37860": {
+      "name": "Pensacola-Ferry Pass-Brent, FL (Metropolitan Statistical Area)",
+      "rpp": 97.7
+    },
+    "37900": {
+      "name": "Peoria, IL (Metropolitan Statistical Area)",
+      "rpp": 91.2
+    },
+    "37980": {
+      "name": "Philadelphia-Camden-Wilmington, PA-NJ-DE-MD (Metropolitan Statistical Area)",
+      "rpp": 102.6
+    },
+    "38060": {
+      "name": "Phoenix-Mesa-Chandler, AZ (Metropolitan Statistical Area)",
+      "rpp": 103.3
+    },
+    "38240": {
+      "name": "Pinehurst-Southern Pines, NC (Metropolitan Statistical Area)",
+      "rpp": 88.3
+    },
+    "38300": {
+      "name": "Pittsburgh, PA (Metropolitan Statistical Area)",
+      "rpp": 94.7
+    },
+    "38340": {
+      "name": "Pittsfield, MA (Metropolitan Statistical Area)",
+      "rpp": 95.1
+    },
+    "38540": {
+      "name": "Pocatello, ID (Metropolitan Statistical Area)",
+      "rpp": 88.9
+    },
+    "38860": {
+      "name": "Portland-South Portland, ME (Metropolitan Statistical Area)",
+      "rpp": 101.9
+    },
+    "38900": {
+      "name": "Portland-Vancouver-Hillsboro, OR-WA (Metropolitan Statistical Area)",
+      "rpp": 105.4
+    },
+    "38940": {
+      "name": "Port St. Lucie, FL (Metropolitan Statistical Area)",
+      "rpp": 100.2
+    },
+    "39150": {
+      "name": "Prescott Valley-Prescott, AZ (Metropolitan Statistical Area)",
+      "rpp": 98.3
+    },
+    "39300": {
+      "name": "Providence-Warwick, RI-MA (Metropolitan Statistical Area)",
+      "rpp": 101.8
+    },
+    "39340": {
+      "name": "Provo-Orem-Lehi, UT (Metropolitan Statistical Area)",
+      "rpp": 98.2
+    },
+    "39380": {
+      "name": "Pueblo, CO (Metropolitan Statistical Area)",
+      "rpp": 91.8
+    },
+    "39460": {
+      "name": "Punta Gorda, FL (Metropolitan Statistical Area)",
+      "rpp": 100.5
+    },
+    "39540": {
+      "name": "Racine-Mount Pleasant, WI (Metropolitan Statistical Area)",
+      "rpp": 96
+    },
+    "39580": {
+      "name": "Raleigh-Cary, NC (Metropolitan Statistical Area)",
+      "rpp": 98.2
+    },
+    "39660": {
+      "name": "Rapid City, SD (Metropolitan Statistical Area)",
+      "rpp": 89.2
+    },
+    "39740": {
+      "name": "Reading, PA (Metropolitan Statistical Area)",
+      "rpp": 97.1
+    },
+    "39820": {
+      "name": "Redding, CA (Metropolitan Statistical Area)",
+      "rpp": 100.7
+    },
+    "39900": {
+      "name": "Reno, NV (Metropolitan Statistical Area)",
+      "rpp": 101
+    },
+    "40060": {
+      "name": "Richmond, VA (Metropolitan Statistical Area)",
+      "rpp": 97.9
+    },
+    "40140": {
+      "name": "Riverside-San Bernardino-Ontario, CA (Metropolitan Statistical Area)",
+      "rpp": 106.4
+    },
+    "40220": {
+      "name": "Roanoke, VA (Metropolitan Statistical Area)",
+      "rpp": 93.6
+    },
+    "40340": {
+      "name": "Rochester, MN (Metropolitan Statistical Area)",
+      "rpp": 90.8
+    },
+    "40380": {
+      "name": "Rochester, NY (Metropolitan Statistical Area)",
+      "rpp": 97
+    },
+    "40420": {
+      "name": "Rockford, IL (Metropolitan Statistical Area)",
+      "rpp": 92.2
+    },
+    "40580": {
+      "name": "Rocky Mount, NC (Metropolitan Statistical Area)",
+      "rpp": 88
+    },
+    "40660": {
+      "name": "Rome, GA (Metropolitan Statistical Area)",
+      "rpp": 90.2
+    },
+    "40900": {
+      "name": "Sacramento-Roseville-Folsom, CA (Metropolitan Statistical Area)",
+      "rpp": 106.7
+    },
+    "40980": {
+      "name": "Saginaw, MI (Metropolitan Statistical Area)",
+      "rpp": 90.9
+    },
+    "41060": {
+      "name": "St. Cloud, MN (Metropolitan Statistical Area)",
+      "rpp": 87.6
+    },
+    "41100": {
+      "name": "St. George, UT (Metropolitan Statistical Area)",
+      "rpp": 97.3
+    },
+    "41140": {
+      "name": "St. Joseph, MO-KS (Metropolitan Statistical Area)",
+      "rpp": 86.4
+    },
+    "41180": {
+      "name": "St. Louis, MO-IL (Metropolitan Statistical Area)",
+      "rpp": 95.1
+    },
+    "41420": {
+      "name": "Salem, OR (Metropolitan Statistical Area)",
+      "rpp": 103.6
+    },
+    "41500": {
+      "name": "Salinas, CA (Metropolitan Statistical Area)",
+      "rpp": 109
+    },
+    "41540": {
+      "name": "Salisbury, MD (Metropolitan Statistical Area)",
+      "rpp": 95.6
+    },
+    "41620": {
+      "name": "Salt Lake City-Murray, UT (Metropolitan Statistical Area)",
+      "rpp": 100.9
+    },
+    "41660": {
+      "name": "San Angelo, TX (Metropolitan Statistical Area)",
+      "rpp": 92.5
+    },
+    "41700": {
+      "name": "San Antonio-New Braunfels, TX (Metropolitan Statistical Area)",
+      "rpp": 94.7
+    },
+    "41740": {
+      "name": "San Diego-Chula Vista-Carlsbad, CA (Metropolitan Statistical Area)",
+      "rpp": 111.9
+    },
+    "41780": {
+      "name": "Sandusky, OH (Metropolitan Statistical Area)",
+      "rpp": 89.3
+    },
+    "41860": {
+      "name": "San Francisco-Oakland-Fremont, CA (Metropolitan Statistical Area)",
+      "rpp": 115.6
+    },
+    "41940": {
+      "name": "San Jose-Sunnyvale-Santa Clara, CA (Metropolitan Statistical Area)",
+      "rpp": 110.4
+    },
+    "42020": {
+      "name": "San Luis Obispo-Paso Robles, CA (Metropolitan Statistical Area)",
+      "rpp": 108.6
+    },
+    "42100": {
+      "name": "Santa Cruz-Watsonville, CA (Metropolitan Statistical Area)",
+      "rpp": 109.9
+    },
+    "42140": {
+      "name": "Santa Fe, NM (Metropolitan Statistical Area)",
+      "rpp": 98.8
+    },
+    "42200": {
+      "name": "Santa Maria-Santa Barbara, CA (Metropolitan Statistical Area)",
+      "rpp": 108.8
+    },
+    "42220": {
+      "name": "Santa Rosa-Petaluma, CA (Metropolitan Statistical Area)",
+      "rpp": 107.8
+    },
+    "42340": {
+      "name": "Savannah, GA (Metropolitan Statistical Area)",
+      "rpp": 95.2
+    },
+    "42540": {
+      "name": "Scranton--Wilkes-Barre, PA (Metropolitan Statistical Area)",
+      "rpp": 93.6
+    },
+    "42660": {
+      "name": "Seattle-Tacoma-Bellevue, WA (Metropolitan Statistical Area)",
+      "rpp": 111.1
+    },
+    "42680": {
+      "name": "Sebastian-Vero Beach-West Vero Corridor, FL (Metropolitan Statistical Area)",
+      "rpp": 98.3
+    },
+    "42700": {
+      "name": "Sebring, FL (Metropolitan Statistical Area)",
+      "rpp": 92.5
+    },
+    "43100": {
+      "name": "Sheboygan, WI (Metropolitan Statistical Area)",
+      "rpp": 94
+    },
+    "43300": {
+      "name": "Sherman-Denison, TX (Metropolitan Statistical Area)",
+      "rpp": 93.8
+    },
+    "43340": {
+      "name": "Shreveport-Bossier City, LA (Metropolitan Statistical Area)",
+      "rpp": 84.8
+    },
+    "43420": {
+      "name": "Sierra Vista-Douglas, AZ (Metropolitan Statistical Area)",
+      "rpp": 89.2
+    },
+    "43580": {
+      "name": "Sioux City, IA-NE-SD (Metropolitan Statistical Area)",
+      "rpp": 86.5
+    },
+    "43620": {
+      "name": "Sioux Falls, SD-MN (Metropolitan Statistical Area)",
+      "rpp": 90.6
+    },
+    "43640": {
+      "name": "Slidell-Mandeville-Covington, LA (Metropolitan Statistical Area)",
+      "rpp": 92.7
+    },
+    "43780": {
+      "name": "South Bend-Mishawaka, IN-MI (Metropolitan Statistical Area)",
+      "rpp": 92.9
+    },
+    "43900": {
+      "name": "Spartanburg, SC (Metropolitan Statistical Area)",
+      "rpp": 91.1
+    },
+    "44060": {
+      "name": "Spokane-Spokane Valley, WA (Metropolitan Statistical Area)",
+      "rpp": 100.3
+    },
+    "44100": {
+      "name": "Springfield, IL (Metropolitan Statistical Area)",
+      "rpp": 92.7
+    },
+    "44140": {
+      "name": "Springfield, MA (Metropolitan Statistical Area)",
+      "rpp": 96.1
+    },
+    "44180": {
+      "name": "Springfield, MO (Metropolitan Statistical Area)",
+      "rpp": 88.6
+    },
+    "44220": {
+      "name": "Springfield, OH (Metropolitan Statistical Area)",
+      "rpp": 90.5
+    },
+    "44300": {
+      "name": "State College, PA (Metropolitan Statistical Area)",
+      "rpp": 96.8
+    },
+    "44420": {
+      "name": "Staunton-Stuarts Draft, VA (Metropolitan Statistical Area)",
+      "rpp": 91.1
+    },
+    "44700": {
+      "name": "Stockton-Lodi, CA (Metropolitan Statistical Area)",
+      "rpp": 105.1
+    },
+    "44940": {
+      "name": "Sumter, SC (Metropolitan Statistical Area)",
+      "rpp": 88
+    },
+    "45060": {
+      "name": "Syracuse, NY (Metropolitan Statistical Area)",
+      "rpp": 95.7
+    },
+    "45220": {
+      "name": "Tallahassee, FL (Metropolitan Statistical Area)",
+      "rpp": 93.9
+    },
+    "45300": {
+      "name": "Tampa-St. Petersburg-Clearwater, FL (Metropolitan Statistical Area)",
+      "rpp": 100.9
+    },
+    "45460": {
+      "name": "Terre Haute, IN (Metropolitan Statistical Area)",
+      "rpp": 87.8
+    },
+    "45500": {
+      "name": "Texarkana, TX-AR (Metropolitan Statistical Area)",
+      "rpp": 84
+    },
+    "45780": {
+      "name": "Toledo, OH (Metropolitan Statistical Area)",
+      "rpp": 91.5
+    },
+    "45820": {
+      "name": "Topeka, KS (Metropolitan Statistical Area)",
+      "rpp": 88.8
+    },
+    "45900": {
+      "name": "Traverse City, MI (Metropolitan Statistical Area)",
+      "rpp": 93.4
+    },
+    "45940": {
+      "name": "Trenton-Princeton, NJ (Metropolitan Statistical Area)",
+      "rpp": 103.2
+    },
+    "46060": {
+      "name": "Tucson, AZ (Metropolitan Statistical Area)",
+      "rpp": 96.9
+    },
+    "46140": {
+      "name": "Tulsa, OK (Metropolitan Statistical Area)",
+      "rpp": 89.2
+    },
+    "46220": {
+      "name": "Tuscaloosa, AL (Metropolitan Statistical Area)",
+      "rpp": 87.7
+    },
+    "46300": {
+      "name": "Twin Falls, ID (Metropolitan Statistical Area)",
+      "rpp": 92.1
+    },
+    "46340": {
+      "name": "Tyler, TX (Metropolitan Statistical Area)",
+      "rpp": 92.2
+    },
+    "46520": {
+      "name": "Urban Honolulu, HI (Metropolitan Statistical Area)",
+      "rpp": 111
+    },
+    "46540": {
+      "name": "Utica-Rome, NY (Metropolitan Statistical Area)",
+      "rpp": 92.7
+    },
+    "46660": {
+      "name": "Valdosta, GA (Metropolitan Statistical Area)",
+      "rpp": 88.3
+    },
+    "46700": {
+      "name": "Vallejo, CA (Metropolitan Statistical Area)",
+      "rpp": 108.5
+    },
+    "47020": {
+      "name": "Victoria, TX (Metropolitan Statistical Area)",
+      "rpp": 89.8
+    },
+    "47220": {
+      "name": "Vineland, NJ (Metropolitan Statistical Area)",
+      "rpp": 96
+    },
+    "47260": {
+      "name": "Virginia Beach-Chesapeake-Norfolk, VA-NC (Metropolitan Statistical Area)",
+      "rpp": 97.9
+    },
+    "47300": {
+      "name": "Visalia, CA (Metropolitan Statistical Area)",
+      "rpp": 99.8
+    },
+    "47380": {
+      "name": "Waco, TX (Metropolitan Statistical Area)",
+      "rpp": 92.6
+    },
+    "47460": {
+      "name": "Walla Walla, WA (Metropolitan Statistical Area)",
+      "rpp": 98.5
+    },
+    "47580": {
+      "name": "Warner Robins, GA (Metropolitan Statistical Area)",
+      "rpp": 93.8
+    },
+    "47900": {
+      "name": "Washington-Arlington-Alexandria, DC-VA-MD-WV (Metropolitan Statistical Area)",
+      "rpp": 108.9
+    },
+    "47930": {
+      "name": "Waterbury-Shelton, CT (Metropolitan Statistical Area)",
+      "rpp": 99.8
+    },
+    "47940": {
+      "name": "Waterloo-Cedar Falls, IA (Metropolitan Statistical Area)",
+      "rpp": 87.1
+    },
+    "48060": {
+      "name": "Watertown-Fort Drum, NY (Metropolitan Statistical Area)",
+      "rpp": 87.7
+    },
+    "48140": {
+      "name": "Wausau, WI (Metropolitan Statistical Area)",
+      "rpp": 92.7
+    },
+    "48260": {
+      "name": "Weirton-Steubenville, WV-OH (Metropolitan Statistical Area)",
+      "rpp": 89
+    },
+    "48300": {
+      "name": "Wenatchee-East Wenatchee, WA (Metropolitan Statistical Area)",
+      "rpp": 103.9
+    },
+    "48540": {
+      "name": "Wheeling, WV-OH (Metropolitan Statistical Area)",
+      "rpp": 88.3
+    },
+    "48620": {
+      "name": "Wichita, KS (Metropolitan Statistical Area)",
+      "rpp": 88.9
+    },
+    "48660": {
+      "name": "Wichita Falls, TX (Metropolitan Statistical Area)",
+      "rpp": 89.5
+    },
+    "48680": {
+      "name": "Wildwood-The Villages, FL (Metropolitan Statistical Area)",
+      "rpp": 85.4
+    },
+    "48700": {
+      "name": "Williamsport, PA (Metropolitan Statistical Area)",
+      "rpp": 92.4
+    },
+    "48900": {
+      "name": "Wilmington, NC (Metropolitan Statistical Area)",
+      "rpp": 96.4
+    },
+    "49020": {
+      "name": "Winchester, VA-WV (Metropolitan Statistical Area)",
+      "rpp": 96.5
+    },
+    "49180": {
+      "name": "Winston-Salem, NC (Metropolitan Statistical Area)",
+      "rpp": 92
+    },
+    "49340": {
+      "name": "Worcester, MA (Metropolitan Statistical Area)",
+      "rpp": 102.5
+    },
+    "49420": {
+      "name": "Yakima, WA (Metropolitan Statistical Area)",
+      "rpp": 95.5
+    },
+    "49620": {
+      "name": "York-Hanover, PA (Metropolitan Statistical Area)",
+      "rpp": 96
+    },
+    "49660": {
+      "name": "Youngstown-Warren, OH (Metropolitan Statistical Area)",
+      "rpp": 87.4
+    },
+    "49700": {
+      "name": "Yuba City, CA (Metropolitan Statistical Area)",
+      "rpp": 104.2
+    },
+    "49740": {
+      "name": "Yuma, AZ (Metropolitan Statistical Area)",
+      "rpp": 92.7
+    }
+  },
+  "states": {
+    "DE": 99.8,
+    "DC": 109.9,
+    "FL": 103.4,
+    "GA": 96.3,
+    "HI": 110,
+    "ID": 95.5,
+    "IL": 100,
+    "IN": 93.3,
+    "IA": 87.8,
+    "KS": 90.1,
+    "KY": 90.2,
+    "LA": 88.2,
+    "ME": 97.1,
+    "MD": 105,
+    "MA": 105.8,
+    "MI": 96.2,
+    "MN": 98.6,
+    "MS": 87,
+    "MO": 90.8,
+    "MT": 94.6,
+    "NE": 90.1,
+    "NV": 100,
+    "NH": 104.2,
+    "NJ": 108.8,
+    "NM": 92.2,
+    "NY": 107.9,
+    "NC": 94.3,
+    "ND": 89,
+    "OH": 92.8,
+    "OK": 87.8,
+    "OR": 103.4,
+    "PA": 97.6,
+    "RI": 102.3,
+    "SC": 93.7,
+    "SD": 88.6,
+    "TN": 91.9,
+    "TX": 97.1,
+    "UT": 98.9,
+    "VT": 98,
+    "VA": 101.1,
+    "WA": 107,
+    "WV": 89.5,
+    "WI": 94.1,
+    "WY": 92.7,
+    "AL": 88.8,
+    "AK": 102.4,
+    "AZ": 100.7,
+    "AR": 86.9,
+    "CA": 110.7,
+    "CO": 103.1,
+    "CT": 103.6
+  },
+  "nonmetroUS": 88.7,
+  "cities": {
+    "New York": 113,
+    "Los Angeles": 114,
+    "Chicago": 104,
+    "Houston": 99,
+    "Dallas": 103,
+    "Philadelphia": 103,
+    "Miami": 114,
+    "San Francisco": 116,
+    "Seattle": 111,
+    "Minneapolis": 105,
+    "St. Louis": 95,
+    "Baltimore": 105,
+    "Cleveland": 94,
+    "Madison": 97,
+    "Rochester": 91,
+    "Durham": 98,
+    "Nashville": 96,
+    "Omaha": 92,
+    "Indianapolis": 96,
+    "Palo Alto": 110,
+    "Portland": 105,
+    "Pittsburgh": 95
+  }
 }

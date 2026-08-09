@@ -55,6 +55,12 @@ class TransPlanData:
     # Table B7 (transplant/death/delisting + cohort n). Uncapped raw rates —
     # the keystone for grounding the BBN CompetingOutcome CPT (#211, #226).
     srtr_observed_rates: dict = field(default_factory=dict)
+    # Cost-of-living upgrade (#205): center → CBSA mapping (static, Census
+    # geocoder) and metro-area centroids (static, Census gazetteer). Together
+    # with the BEA RPP snapshot in cost_of_living these give every center an
+    # exact metro-area cost index instead of a 22-city interpolation.
+    center_cbsa_map: dict = field(default_factory=dict)
+    cbsa_centroids: dict = field(default_factory=dict)
     # freshness metadata keyed by logical name
     freshness: dict = field(default_factory=dict)
 
@@ -107,6 +113,33 @@ class TransPlanData:
             [info for info in all_c.values() if organ in info.get("organs", [])],
             key=lambda c: c.get("code", ""),
         )
+
+    def cost_of_living_for_center(self, center_code: str, state_abbr: str | None = None) -> float | None:
+        """Cost-of-living index (BEA RPP, national = 100) for a center.
+
+        Exact-match chain (#205): the center's metro-area RPP when it sits in
+        an MSA covered by BEA MARPP, else its state RPP (covers micropolitan
+        and rural centers), else the US nonmetro RPP. Returns None only when
+        the RPP snapshot or CBSA map is missing entirely — callers should then
+        fall back to 100.0 (the national average) and say so.
+        """
+        col = self.cost_of_living
+        mapping = self.center_cbsa_map.get("centers", {}).get(center_code, {})
+
+        cbsa = mapping.get("cbsa")
+        msa = col.get("msas", {}).get(cbsa) if cbsa else None
+        if msa and isinstance(msa.get("rpp"), (int, float)):
+            return float(msa["rpp"])
+
+        state = mapping.get("state_abbr") or state_abbr
+        state_rpp = col.get("states", {}).get(state) if state else None
+        if isinstance(state_rpp, (int, float)):
+            return float(state_rpp)
+
+        nonmetro = col.get("nonmetroUS")
+        if isinstance(nonmetro, (int, float)):
+            return float(nonmetro)
+        return None
 
     @property
     def state_full_names(self) -> dict[str, str]:
@@ -172,6 +205,9 @@ def load_all() -> TransPlanData:
     data.center_contacts = _load_json(DATA_DIR / "center-contacts.json", "center_contacts", data)
     data.acceptance_rates = _load_json(DATA_DIR / "acceptance-rates-centers.json", "acceptance_rates", data)
     data.srtr_observed_rates = _load_json(DATA_DIR / "srtr-observed-rates.json", "srtr_observed_rates", data)
+    # Cost-of-living upgrade (#205): static center→CBSA map + metro centroids
+    data.center_cbsa_map = _load_json(DATA_DIR / "center-cbsa-map.json", "center_cbsa_map", data)
+    data.cbsa_centroids = _load_json(DATA_DIR / "cbsa-centroids.json", "cbsa_centroids", data)
 
     loaded = sum(1 for v in data.freshness.values() if v not in ("missing", "parse_error"))
     logger.info("TransPlan data loaded: %d/%d files OK", loaded, len(data.freshness))

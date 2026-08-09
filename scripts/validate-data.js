@@ -130,13 +130,23 @@ if (hospital) {
     }
 }
 
-// 5. Cost of Living
+// 5. Cost of Living (BEA RPP shape: {msas, states, nonmetroUS, cities} — #205)
 const costOfLiving = validateJSON('cost-of-living.json');
 if (costOfLiving) {
     checkStaleness(costOfLiving, 'cost-of-living.json');
-    const { _meta, ...colData } = costOfLiving;
-    checkCityCoverage(colData, 'cost-of-living.json');
-    checkValueRange(colData, 'cost-of-living.json', 50, 300);
+    const nMsas = Object.keys(costOfLiving.msas || {}).length;
+    const nStates = Object.keys(costOfLiving.states || {}).length;
+    if (nMsas < 300) {
+        addWarning(`cost-of-living.json: only ${nMsas} MSAs (expected ≥300)`);
+    }
+    if (nStates < 51) {
+        addWarning(`cost-of-living.json: only ${nStates} states (expected 50+DC)`);
+    }
+    const rppValues = {};
+    for (const [cbsa, m] of Object.entries(costOfLiving.msas || {})) rppValues[cbsa] = m.rpp;
+    Object.assign(rppValues, costOfLiving.states || {});
+    checkValueRange(rppValues, 'cost-of-living.json (RPPs)', 60, 160);
+    checkCityCoverage(costOfLiving.cities || {}, 'cost-of-living.json (legacy cities block)');
 }
 
 // 6. Donor Registration
@@ -147,6 +157,25 @@ if (donor) {
         checkCityCoverage(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)');
         checkValueRange(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)', 0, 100);
     }
+}
+
+// 6b. SRTR-derived model files — every organ block must be present (ERROR,
+// not warning: the 2026-08-05 workflow run wrote organ-less shells over
+// these because data/srtr-raw/ is absent in CI; see parse-srtr-reports.py
+// _write_guarded). Losing an organ block silently degrades the simulator.
+const ORGANS = ['kidney', 'liver', 'heart', 'lung', 'pancreas', 'intestine'];
+for (const srtrFile of ['wait-time-distributions.json', 'competing-risks.json', 'post-transplant-outcomes.json']) {
+    const data = validateJSON(srtrFile);
+    if (data) {
+        const missing = ORGANS.filter(o => !data[o] || typeof data[o] !== 'object');
+        if (missing.length) {
+            addError(`${srtrFile}: missing organ blocks: ${missing.join(', ')}`);
+        }
+    }
+}
+const ptOutcomes = validateJSON('post-transplant-outcomes.json');
+if (ptOutcomes && Object.keys(ptOutcomes.city_outcomes || {}).length === 0) {
+    addError('post-transplant-outcomes.json: city_outcomes is empty');
 }
 
 // 7. Manual files

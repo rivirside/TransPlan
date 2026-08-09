@@ -345,7 +345,14 @@
                     if (data._meta && data._meta.fetchedAt) {
                         fileFetchedDates.push(data._meta.fetchedAt);
                     }
-                    loaded[key] = stripMeta(data);
+                    // cost-of-living.json moved to the BEA RPP shape
+                    // ({msas, states, cities}) — city-keyed consumers
+                    // (algorithm.js) want the legacy cities block (#205)
+                    if (key === 'costOfLiving' && data.cities) {
+                        loaded[key] = data.cities;
+                    } else {
+                        loaded[key] = stripMeta(data);
+                    }
                     sourceStatuses[key] = 'loaded';
                 } else {
                     loaded[key] = DEFAULTS[key] || null;

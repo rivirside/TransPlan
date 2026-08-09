@@ -123,7 +123,7 @@ See `docs/landscape/` for 7 tool profiles (SRTR, KPSAM/LSAM/TSAM, COMET, LivSim,
 
 ## Clinical Assumptions Register
 
-`docs/clinical-assumptions-register.md` — the living catalog of **every point where a clinical/medical judgment is encoded or clinically-derived data is used** (scoring weights, ABO/MELD/LAS multipliers, hazard model, copula θ, BBN CPTs, MCMC priors, equity/spatial/policy assumptions, the data files + generation clamps). Each entry has a stable ID, location, justification status, and risk. **120 assumptions tracked; 38 still need justification; 45 high-risk** — see the "Priority to justify" shortlist at the bottom. **Keep it updated:** add/adjust a row whenever a clinical value or assumption is introduced, changed, or finally cited.
+`docs/clinical-assumptions-register.md` — the living catalog of **every point where a clinical/medical judgment is encoded or clinically-derived data is used** (scoring weights, ABO/MELD/LAS multipliers, hazard model, copula θ, BBN CPTs, MCMC priors, equity/spatial/policy assumptions, the data files + generation clamps). Each entry has a stable ID, location, justification status, and risk. **123 assumptions tracked; 37 still need justification; 45 high-risk** — see the "Priority to justify" shortlist at the bottom. **Keep it updated:** add/adjust a row whenever a clinical value or assumption is introduced, changed, or finally cited.
 
 ## Open Issues
 

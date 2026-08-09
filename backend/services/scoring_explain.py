@@ -555,15 +555,27 @@ def explain_hospital_quality(center_code: str, organ: str, patient: dict) -> tup
 
 # ── Category 5: Geographic ──────────────────────────────────────────────
 
-def explain_geographic(lat: float, lon: float) -> tuple[float, list[dict]]:
+def explain_geographic(lat: float, lon: float, center: dict | None = None) -> tuple[float, list[dict]]:
     components = []
 
-    col = _interpolate("cost_of_living", lat, lon, fallback=100.0)
-    col_score = max(0, min(100, 100 - ((col - 80) / 120) * 100))
+    col = None
+    col_note = None
+    if center is not None:
+        col = get_data().cost_of_living_for_center(
+            center.get("code", ""), center.get("state_abbr")
+        )
+        if col is not None:
+            mapping = get_data().center_cbsa_map.get("centers", {}).get(center.get("code", ""), {})
+            area = mapping.get("cbsa_name") or mapping.get("state_abbr") or "state"
+            col_note = f"BEA Regional Price Parity for {area}; normalized 80→100, 120→0"
+    if col is None:
+        col = 100.0
+        col_note = "RPP data unavailable — national average (100) assumed"
+    col_score = max(0, min(100, 100 - ((col - 80) / 40) * 100))
     components.append(_component(
-        f"Cost of living (index={col:.1f})",
+        f"Cost of living (RPP={col:.1f})",
         col_score, 0.40,
-        f"Spatial interpolation from BLS data at ({lat:.3f}, {lon:.3f}); normalized 80→100, 200→0",
+        col_note,
         raw_input=round(col, 1),
     ))
 
@@ -719,7 +731,7 @@ def explain_center_score(
     wait_score, wait_components, wait_notes = explain_wait_time(code, organ, patient)
     donor_score, donor_components, donor_notes = explain_donor_availability(state, organ, patient, lat, lon)
     quality_score, quality_components = explain_hospital_quality(code, organ, patient)
-    geo_score, geo_components = explain_geographic(lat, lon)
+    geo_score, geo_components = explain_geographic(lat, lon, center)
     health_score, health_components, health_notes = explain_health_demographics(lat, lon)
     policy_score, policy_components = explain_policy(state)
     socio_score, socio_components = explain_socioeconomic(state)
@@ -756,6 +768,7 @@ def explain_center_score(
         "data/post-transplant-outcomes-centers.json",
         "data/donor-registration.json",
         "data/cost-of-living.json",
+        "data/center-cbsa-map.json",
         "data/air-quality.json",
         "data/health-demographics.json",
         "data/manual/policy-tiers.json",

@@ -76,10 +76,23 @@ def _extract_layer_points(layer_name: str) -> tuple[np.ndarray, np.ndarray] | No
                     values.append(float(val))
 
     elif layer_name == "cost_of_living":
-        for city, val in data.cost_of_living.items():
-            if city in _CITY_COORDS and isinstance(val, (int, float)):
-                points.append(_CITY_COORDS[city])
-                values.append(float(val))
+        # Prefer BEA RPP metro-area values (~387 points, #205) placed at
+        # Census gazetteer centroids over the legacy 22-city aggregates.
+        msas = data.cost_of_living.get("msas", {})
+        centroids = data.cbsa_centroids.get("cbsas", {})
+        for cbsa, entry in msas.items():
+            c = centroids.get(cbsa)
+            rpp = entry.get("rpp") if isinstance(entry, dict) else None
+            if c and isinstance(rpp, (int, float)):
+                points.append((c["lat"], c["lon"]))
+                values.append(float(rpp))
+        if not points:
+            # Fallback: legacy city-keyed shape ({city: index})
+            legacy = data.cost_of_living.get("cities", data.cost_of_living)
+            for city, val in legacy.items():
+                if city in _CITY_COORDS and isinstance(val, (int, float)):
+                    points.append(_CITY_COORDS[city])
+                    values.append(float(val))
 
     elif layer_name.startswith("health_"):
         # e.g. "health_diabetesRate", "health_obesityRate"
