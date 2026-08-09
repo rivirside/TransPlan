@@ -1249,6 +1249,55 @@ def parse_all_centers_post_transplant() -> dict:
     return result
 
 
+_ORGAN_KEYS = frozenset(ORGAN_CODES)
+
+
+def _data_keys(d: dict) -> set:
+    """Substantive top-level keys of an output dict (ignores _meta)."""
+    return {k for k in d if k != "_meta"}
+
+
+def _organ_count(d: dict) -> int:
+    return len(_ORGAN_KEYS & _data_keys(d))
+
+
+def _write_guarded(path: str, new_data: dict) -> None:
+    """Write *new_data* to *path* only if it doesn't lose data vs. what's there.
+
+    Guards (same snapshot-first philosophy as fetch-cost-of-living.js):
+      - never write fewer organ blocks than the existing file has;
+      - never drop a substantive top-level section the existing file has;
+      - a section that exists in both must not shrink to empty.
+    On guard failure the existing file is left untouched and a warning is
+    printed — the parse output is treated as degraded, not authoritative.
+    """
+    existing = _load_existing(path)
+    if existing:
+        problems = []
+        if _organ_count(new_data) < _organ_count(existing):
+            problems.append(
+                f"organ blocks would shrink {_organ_count(existing)} → {_organ_count(new_data)}"
+            )
+        for key in _data_keys(existing) - _data_keys(new_data):
+            problems.append(f"section '{key}' would be dropped")
+        for key in _data_keys(existing) & _data_keys(new_data):
+            old_v, new_v = existing[key], new_data[key]
+            if isinstance(old_v, dict) and isinstance(new_v, dict):
+                if len({k for k in old_v if not k.startswith("_")}) > 0 and \
+                   len({k for k in new_v if not k.startswith("_")}) == 0:
+                    problems.append(f"section '{key}' would become empty")
+        if problems:
+            print(f"  REFUSING to write {path} (degraded parse):")
+            for p in problems:
+                print(f"    - {p}")
+            print("    Existing file kept. Ensure data/srtr-raw/ has the current release Excels.")
+            return
+    with open(path, "w") as f:
+        json.dump(new_data, f, indent=2)
+        f.write("\n")
+    print(f"Wrote {path}")
+
+
 def main():
     # Load center mapping
     with open(MAPPING_PATH) as f:
@@ -1278,21 +1327,14 @@ def main():
         print("\n  Skipping historical trends (no historical data in srtr-raw/historical/)")
         print("  Run: python scripts/fetch-srtr-excel.py --historical to download")
 
-    # Write city-level output files
-    with open(WAIT_TIME_OUT, "w") as f:
-        json.dump(wait_data, f, indent=2)
-        f.write("\n")
-    print(f"\nWrote {WAIT_TIME_OUT}")
-
-    with open(COMPETING_OUT, "w") as f:
-        json.dump(outcome_data, f, indent=2)
-        f.write("\n")
-    print(f"Wrote {COMPETING_OUT}")
-
-    with open(OUTCOMES_OUT, "w") as f:
-        json.dump(pt_outcomes, f, indent=2)
-        f.write("\n")
-    print(f"Wrote {OUTCOMES_OUT}")
+    # Write city-level output files — guarded so a degraded parse (e.g. CI,
+    # where data/srtr-raw/ is gitignored and the current-release Excels are
+    # absent) can never clobber good committed data. The 2026-08-05 workflow
+    # run did exactly that: every organ hit "not found, skipping" and the
+    # organ-less shells overwrote all three files on main.
+    _write_guarded(WAIT_TIME_OUT, wait_data)
+    _write_guarded(COMPETING_OUT, outcome_data)
+    _write_guarded(OUTCOMES_OUT, pt_outcomes)
 
     # Phase 6A: Center-level extraction (all ~250 centers)
     if "--all-centers" in sys.argv or "--all" in sys.argv:
