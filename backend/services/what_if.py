@@ -129,7 +129,9 @@ def _run_single(
 
     # Bootstrap CI for p24
     mask = (outcomes == 0) & (event_times <= 24)
-    boot_rng = rng  # Use the same seeded RNG for reproducibility
+    # Resample from an isolated child generator (matches monte_carlo._bootstrap_ci,
+    # #243) so the bootstrap never perturbs the main simulation stream.
+    boot_rng = rng.spawn(1)[0]
     n = len(outcomes)
     proportions = np.empty(200)
     for i in range(200):
