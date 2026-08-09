@@ -127,8 +127,13 @@ See `docs/landscape/` for 7 tool profiles (SRTR, KPSAM/LSAM/TSAM, COMET, LivSim,
 
 ## Open Issues
 
-- **#208:** Comprehensive audit — several sub-issues closed (#209, #210, #211, #215, #218, #225, #226, #229); remaining incl. #213, #214, #216, #217
+Snapshot Aug 9, 2026 (post-cleanup: 20 already-fixed/obsolete issues from the #270 code-review epic were closed with evidence — #202, #205, #221-223, #230, #231, #234, #239-243, #245-248, #256, #263, #265):
+
+- **#285:** Epic — retire the 22-city list (inventory + phased plan; supersedes #205/#234 remainders; #207 is its first phase)
+- **#270:** 2026-06 code-review epic — still-real remainder: #244 (BBN horizon), #249 (tier caps on /score), #251/#252/#254/#257/#258/#259 (statistical validity), #262/#264 (refactors), #260 (donation-banner, blocked on #179), #250 (exact dependency pins)
 - **#207:** MCMC 248-center refit (BBN #206 done)
-- **#236/#237/#238:** continuous BBN latents / temporal validation / revisit BBN hybrid (filed June 2026)
+- **#236/#237/#238, #274/#275:** BBN latents / temporal validation / BBN hybrid / log_sigma ceiling / volume data
 - **#107:** Face validity review with transplant faculty
 - **Model limitations:** see `docs/limitations.md` (L-072 = BBN hybrid trade-off)
+
+**Data-pipeline lesson (2026-08-05 incident):** the SRTR workflow once overwrote three model files with organ-less shells because `data/srtr-raw/` is absent in CI. Every generated data file must have a never-shrink guard (`_write_guarded` in parse-srtr-reports.py, dead-data guards in fetch-cost-of-living.js, organ-block checks in validate-data.js).
