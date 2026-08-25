@@ -58,3 +58,40 @@ def liver_patient() -> PatientProfile:
         urgency=3,
         meld=28,
     )
+
+
+@pytest.fixture(scope="session")
+def pick_center(data):
+    """Runtime center selection by precondition (#341).
+
+    Prefer this over pinning live-data center codes in new tests: the weekly
+    data refresh can retire a program or re-derive a factor, and a pinned
+    code then fails in confusing ways. Returns the first center code
+    satisfying every requested precondition; skips the test if none exists
+    (which itself signals a data problem worth seeing).
+    """
+    def _pick(organ: str | None = None, *, wait_factor: bool = False,
+              outcomes: bool = False, trends: bool = False,
+              all_organs: bool = False) -> str:
+        centers = data.all_centers.get("centers", {})
+        for code, rec in sorted(centers.items()):
+            if organ and organ not in rec.get("organs", []):
+                continue
+            if all_organs and len(rec.get("organs", [])) < 6:
+                continue
+            if wait_factor:
+                wt = data.center_wait_times.get("center_wait_time_factors", {})
+                if not isinstance(wt.get(code, {}).get(organ), (int, float)):
+                    continue
+            if outcomes and data.observed_outcome(organ, code) is None:
+                continue
+            if trends:
+                series = (data.center_trends.get("centers", {})
+                          .get(code, {}).get(organ, {}))
+                if len(series.get("years", [])) < 10:
+                    continue
+            return code
+        pytest.skip(f"no center satisfies preconditions: organ={organ}, "
+                    f"wait_factor={wait_factor}, outcomes={outcomes}, "
+                    f"trends={trends}, all_organs={all_organs}")
+    return _pick
