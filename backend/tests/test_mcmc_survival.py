@@ -22,6 +22,12 @@ from services.mcmc_survival import (
 # ---------------------------------------------------------------------------
 
 class TestLoadOrganData:
+    @pytest.fixture(autouse=True)
+    def _load(self, data):
+        # data singleton required by get_regions (order-dependence fix:
+        # this class failed when the file ran standalone)
+        pass
+
     @pytest.mark.parametrize("organ", ORGANS)
     def test_loads_all_organs(self, organ):
         data = load_organ_data(organ)

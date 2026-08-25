@@ -1,0 +1,431 @@
+{
+ "organs": {
+  "kidney": {
+   "wait": {
+    "raw": {
+     "sigma_center": 0.7082745683890832,
+     "sigma_within": 0.28618593909413287,
+     "frac_signal": 0.8596492947352813,
+     "n_centers": 134,
+     "n_obs": 1072
+    },
+    "raw_ci_95": [
+     0.8181516743994399,
+     0.8929494010352163
+    ],
+    "detrended": {
+     "sigma_center": 0.7085277632106549,
+     "sigma_within": 0.28112732991791795,
+     "frac_signal": 0.8639818104483983,
+     "n_centers": 134,
+     "n_obs": 1072
+    },
+    "detrended_ci_95": [
+     0.8224726347810154,
+     0.8970258549680001
+    ]
+   },
+   "mort": {
+    "raw": {
+     "sigma_center": 0.007844139198112315,
+     "sigma_within": 0.017103726002271297,
+     "frac_signal": 0.17378166398308525,
+     "n_centers": 222,
+     "n_obs": 1776
+    },
+    "raw_ci_95": [
+     0.12241716876479405,
+     0.24106185238184882
+    ],
+    "detrended": {
+     "sigma_center": 0.008196090043212421,
+     "sigma_within": 0.01572814246070088,
+     "frac_signal": 0.2135616458410275,
+     "n_centers": 222,
+     "n_obs": 1776
+    },
+    "detrended_ci_95": [
+     0.15555480644541173,
+     0.2808899952428433
+    ]
+   },
+   "delist": {
+    "raw": {
+     "sigma_center": 0.011472332695128394,
+     "sigma_within": 0.016927194223814078,
+     "frac_signal": 0.31475835164813265,
+     "n_centers": 222,
+     "n_obs": 1776
+    },
+    "raw_ci_95": [
+     0.23717877516243402,
+     0.38954798754025954
+    ],
+    "detrended": {
+     "sigma_center": 0.011838155820964277,
+     "sigma_within": 0.014775309746363267,
+     "frac_signal": 0.3909646091982557,
+     "n_centers": 222,
+     "n_obs": 1776
+    },
+    "detrended_ci_95": [
+     0.3033664360143963,
+     0.46897511101528006
+    ]
+   }
+  },
+  "liver": {
+   "wait": {
+    "raw": {
+     "sigma_center": 0.6050258844317943,
+     "sigma_within": 0.32893361307323615,
+     "frac_signal": 0.7718576894703709,
+     "n_centers": 99,
+     "n_obs": 792
+    },
+    "raw_ci_95": [
+     0.6923909964848713,
+     0.8300249641191941
+    ],
+    "detrended": {
+     "sigma_center": 0.6130083335870931,
+     "sigma_within": 0.17439653692494989,
+     "frac_signal": 0.925123957203165,
+     "n_centers": 99,
+     "n_obs": 792
+    },
+    "detrended_ci_95": [
+     0.8946049841228657,
+     0.9459584858255509
+    ]
+   },
+   "mort": {
+    "raw": {
+     "sigma_center": 0.02180276465423923,
+     "sigma_within": 0.03915655362458267,
+     "frac_signal": 0.23666306722003852,
+     "n_centers": 135,
+     "n_obs": 1080
+    },
+    "raw_ci_95": [
+     0.11308268535081446,
+     0.37802720469577356
+    ],
+    "detrended": {
+     "sigma_center": 0.02264756893844963,
+     "sigma_within": 0.035111551286226894,
+     "frac_signal": 0.29380910918892633,
+     "n_centers": 135,
+     "n_obs": 1080
+    },
+    "detrended_ci_95": [
+     0.1553667518645127,
+     0.44694369354700497
+    ]
+   },
+   "delist": {
+    "raw": {
+     "sigma_center": 0.035410143802150386,
+     "sigma_within": 0.05600063181233809,
+     "frac_signal": 0.2856247921172556,
+     "n_centers": 135,
+     "n_obs": 1080
+    },
+    "raw_ci_95": [
+     0.18618073571956803,
+     0.3892273104667007
+    ],
+    "detrended": {
+     "sigma_center": 0.03642499271998427,
+     "sigma_within": 0.05052579815189024,
+     "frac_signal": 0.3419856829111765,
+     "n_centers": 135,
+     "n_obs": 1080
+    },
+    "detrended_ci_95": [
+     0.2295721133859533,
+     0.4634429517989391
+    ]
+   }
+  },
+  "heart": {
+   "wait": {
+    "raw": {
+     "sigma_center": 0.682311597064616,
+     "sigma_within": 0.4731269685867665,
+     "frac_signal": 0.675297797191871,
+     "n_centers": 125,
+     "n_obs": 1000
+    },
+    "raw_ci_95": [
+     0.5893471811403288,
+     0.7428911945688047
+    ],
+    "detrended": {
+     "sigma_center": 0.6983384640342564,
+     "sigma_within": 0.2164004840966039,
+     "frac_signal": 0.9123879080804335,
+     "n_centers": 125,
+     "n_obs": 1000
+    },
+    "detrended_ci_95": [
+     0.8789258293577488,
+     0.9354764145501187
+    ]
+   },
+   "mort": {
+    "raw": {
+     "sigma_center": 0.018435255096040187,
+     "sigma_within": 0.04851214704161193,
+     "frac_signal": 0.12618730394382904,
+     "n_centers": 130,
+     "n_obs": 1040
+    },
+    "raw_ci_95": [
+     0.066668516920199,
+     0.1862792566620729
+    ],
+    "detrended": {
+     "sigma_center": 0.01971335186748087,
+     "sigma_within": 0.04430990317555087,
+     "frac_signal": 0.165229134762385,
+     "n_centers": 130,
+     "n_obs": 1040
+    },
+    "detrended_ci_95": [
+     0.1038969564305299,
+     0.22780103336022553
+    ]
+   },
+   "delist": {
+    "raw": {
+     "sigma_center": 0.03433286620752008,
+     "sigma_within": 0.06389941160298132,
+     "frac_signal": 0.22401605297796365,
+     "n_centers": 130,
+     "n_obs": 1040
+    },
+    "raw_ci_95": [
+     0.15969722045432613,
+     0.30117601466403937
+    ],
+    "detrended": {
+     "sigma_center": 0.03541358477416147,
+     "sigma_within": 0.05899258027024464,
+     "frac_signal": 0.2649042425190681,
+     "n_centers": 130,
+     "n_obs": 1040
+    },
+    "detrended_ci_95": [
+     0.19412843672904945,
+     0.3481170973584906
+    ]
+   }
+  },
+  "lung": {
+   "wait": {
+    "raw": {
+     "sigma_center": 0.6882941643069785,
+     "sigma_within": 0.37557451091367544,
+     "frac_signal": 0.7705675828624172,
+     "n_centers": 65,
+     "n_obs": 520
+    },
+    "raw_ci_95": [
+     0.659847485641519,
+     0.8469014776404667
+    ],
+    "detrended": {
+     "sigma_center": 0.697232792412343,
+     "sigma_within": 0.20488663128539295,
+     "frac_signal": 0.9205120810541201,
+     "n_centers": 65,
+     "n_obs": 520
+    },
+    "detrended_ci_95": [
+     0.8801914500549322,
+     0.9451033355168023
+    ]
+   },
+   "mort": {
+    "raw": {
+     "sigma_center": 0.035797062801651534,
+     "sigma_within": 0.05153272507729208,
+     "frac_signal": 0.3254795418683029,
+     "n_centers": 67,
+     "n_obs": 536
+    },
+    "raw_ci_95": [
+     0.1317045882825368,
+     0.4675504618063727
+    ],
+    "detrended": {
+     "sigma_center": 0.03660253185257078,
+     "sigma_within": 0.04678778357164593,
+     "frac_signal": 0.3796557983592612,
+     "n_centers": 67,
+     "n_obs": 536
+    },
+    "detrended_ci_95": [
+     0.17390868233539214,
+     0.51933488329648
+    ]
+   },
+   "delist": {
+    "raw": {
+     "sigma_center": 0.017327811415358718,
+     "sigma_within": 0.0498456975371432,
+     "frac_signal": 0.10781672757701714,
+     "n_centers": 67,
+     "n_obs": 536
+    },
+    "raw_ci_95": [
+     0.012481778087312087,
+     0.18633950601347055
+    ],
+    "detrended": {
+     "sigma_center": 0.019331708062439026,
+     "sigma_within": 0.043553397773805125,
+     "frac_signal": 0.1645876561624192,
+     "n_centers": 67,
+     "n_obs": 536
+    },
+    "detrended_ci_95": [
+     0.04493882428198521,
+     0.26621967328822094
+    ]
+   }
+  },
+  "pancreas": {
+   "wait": {
+    "raw": {
+     "sigma_center": 0.9896041600502908,
+     "sigma_within": 0.766535380390107,
+     "frac_signal": 0.6250053237380024,
+     "n_centers": 18,
+     "n_obs": 144
+    },
+    "raw_ci_95": [
+     0.3963960297189189,
+     0.7842258487727237
+    ],
+    "detrended": {
+     "sigma_center": 0.9954286459975158,
+     "sigma_within": 0.7036207244822748,
+     "frac_signal": 0.6668268193132271,
+     "n_centers": 18,
+     "n_obs": 144
+    },
+    "detrended_ci_95": [
+     0.4422058898702877,
+     0.816649243973406
+    ]
+   },
+   "mort": {
+    "raw": {
+     "sigma_center": 0.013417110762611954,
+     "sigma_within": 0.06418267729816532,
+     "frac_signal": 0.041870353732254194,
+     "n_centers": 43,
+     "n_obs": 344
+    },
+    "raw_ci_95": [
+     0.0,
+     0.14277407312290424
+    ],
+    "detrended": {
+     "sigma_center": 0.015098933705821029,
+     "sigma_within": 0.06112073758118256,
+     "frac_signal": 0.05751608671332914,
+     "n_centers": 43,
+     "n_obs": 344
+    },
+    "detrended_ci_95": [
+     0.0,
+     0.17603371739046114
+    ]
+   },
+   "delist": {
+    "raw": {
+     "sigma_center": 0.028530474295533872,
+     "sigma_within": 0.0765407854646538,
+     "frac_signal": 0.12199182126457428,
+     "n_centers": 43,
+     "n_obs": 344
+    },
+    "raw_ci_95": [
+     0.005984003075403742,
+     0.22562119253564458
+    ],
+    "detrended": {
+     "sigma_center": 0.030106076016270904,
+     "sigma_within": 0.07154990596074365,
+     "frac_signal": 0.15041672463896988,
+     "n_centers": 43,
+     "n_obs": 344
+    },
+    "detrended_ci_95": [
+     0.028292117198057035,
+     0.2596424166564602
+    ]
+   }
+  },
+  "intestine": {
+   "wait": {
+    "insufficient": true,
+    "n_centers": 12
+   },
+   "mort": {
+    "raw": {
+     "sigma_center": 0.02418887618209452,
+     "sigma_within": 0.07297849212160291,
+     "frac_signal": 0.09898587178653002,
+     "n_centers": 15,
+     "n_obs": 120
+    },
+    "raw_ci_95": [
+     0.0,
+     0.26990438695480895
+    ],
+    "detrended": {
+     "sigma_center": 0.027555435643906327,
+     "sigma_within": 0.06270771796007853,
+     "frac_signal": 0.1618442576919958,
+     "n_centers": 15,
+     "n_obs": 120
+    },
+    "detrended_ci_95": [
+     0.013382728399633004,
+     0.317620870636833
+    ]
+   },
+   "delist": {
+    "raw": {
+     "sigma_center": 0.017731600513813534,
+     "sigma_within": 0.06685662641890468,
+     "frac_signal": 0.06571808532413839,
+     "n_centers": 15,
+     "n_obs": 120
+    },
+    "raw_ci_95": [
+     0.0,
+     0.201057953599314
+    ],
+    "detrended": {
+     "sigma_center": 0.018706964588225107,
+     "sigma_within": 0.06469529780075131,
+     "frac_signal": 0.07715924697060103,
+     "n_centers": 15,
+     "n_obs": 120
+    },
+    "detrended_ci_95": [
+     0.0,
+     0.21272511770459768
+    ]
+   }
+  }
+ },
+ "_meta": {
+  "method": "Unbalanced one-way random-effects ANOVA on log wait factors (center x release panel from srtr-trends-centers.json); raw = lower bound on signal (within includes real drift); detrended = per-center linear drift removed."
+ }
+}

@@ -152,6 +152,38 @@ def load_organ_data(organ: str, granularity: str = "state") -> dict[str, Any]:
 # Model specification
 # ---------------------------------------------------------------------------
 
+# Empirical signal-fraction priors (#317, replaces the flat Beta(2,2) guess).
+# From scripts/run-panel-variance.py: unbalanced one-way random-effects ANOVA
+# on the center x release panel (~13 SRTR releases) — PER METRIC, because the
+# splits differ enormously: wait factors are dominated by persistent center
+# signal (raw 0.63-0.86) while mortality/delisting rates are mostly
+# release-to-release noise (0.04-0.33; small cohorts make annual death rates
+# very noisy). The flat Beta(2,2) was therefore simultaneously UNDER-trusting
+# center wait differences and OVER-trusting center-specific death rates.
+# Raw (conservative lower-bound) estimates as prior means, clamped to
+# [0.1, 0.9] for Beta shape sanity, concentration 10 (mildly informative).
+# Missing panels (intestine wait: 16 centers) keep Beta(2,2).
+# Source: docs/panel-variance-report.md. Register: MCMC-34 (updated).
+EMPIRICAL_FRAC_SIGNAL = {
+    "kidney":   {"wait": 0.86, "mort": 0.17, "delist": 0.32},
+    "liver":    {"wait": 0.77, "mort": 0.24, "delist": 0.29},
+    "heart":    {"wait": 0.68, "mort": 0.13, "delist": 0.22},
+    "lung":     {"wait": 0.77, "mort": 0.33, "delist": 0.11},
+    "pancreas": {"wait": 0.63, "mort": 0.10, "delist": 0.12},
+    "intestine": {"mort": 0.10, "delist": 0.10},
+}
+_FRAC_PRIOR_CONCENTRATION = 10.0
+
+
+def _frac_signal_prior_params(organ: str, metric: str) -> tuple[float, float]:
+    """(alpha, beta) for the signal-fraction Beta prior of (organ, metric)."""
+    mean = EMPIRICAL_FRAC_SIGNAL.get(organ, {}).get(metric)
+    if mean is None:
+        return 2.0, 2.0
+    mean = min(0.9, max(0.1, mean))
+    return mean * _FRAC_PRIOR_CONCENTRATION, (1.0 - mean) * _FRAC_PRIOR_CONCENTRATION
+
+
 def build_organ_model(data: dict[str, Any]) -> pm.Model:
     """
     Build a PyMC hierarchical model for a single organ.
@@ -232,8 +264,12 @@ def build_organ_model(data: dict[str, Any]) -> pm.Model:
         # explicitly prior-driven signal fraction. Offsets stay CENTERED —
         # with strongly informative per-group likelihoods, centered is the
         # well-conditioned form (non-centering helps only weak-data groups).
+        _organ = data.get("organ", "")
+        wait_a, wait_b = _frac_signal_prior_params(_organ, "wait")
+        mort_a, mort_b = _frac_signal_prior_params(_organ, "mort")
+        delist_a, delist_b = _frac_signal_prior_params(_organ, "delist")
         sigma_total_wait = pm.HalfNormal("sigma_total_wait", sigma=0.5)
-        frac_signal_wait = pm.Beta("frac_signal_wait", alpha=2.0, beta=2.0)
+        frac_signal_wait = pm.Beta("frac_signal_wait", alpha=wait_a, beta=wait_b)
         sigma_city_wait = pm.Deterministic(
             "sigma_city_wait", sigma_total_wait * pm.math.sqrt(frac_signal_wait),
         )
@@ -254,12 +290,12 @@ def build_organ_model(data: dict[str, Any]) -> pm.Model:
         # connected to the offsets — the dead `city_sd` stack — so their
         # posteriors were pure prior.)
         sigma_total_mort = pm.HalfNormal("sigma_total_mort", sigma=0.5)
-        frac_signal_mort = pm.Beta("frac_signal_mort", alpha=2.0, beta=2.0)
+        frac_signal_mort = pm.Beta("frac_signal_mort", alpha=mort_a, beta=mort_b)
         sigma_city_mort = pm.Deterministic(
             "sigma_city_mort", sigma_total_mort * pm.math.sqrt(frac_signal_mort),
         )
         sigma_total_delist = pm.HalfNormal("sigma_total_delist", sigma=0.5)
-        frac_signal_delist = pm.Beta("frac_signal_delist", alpha=2.0, beta=2.0)
+        frac_signal_delist = pm.Beta("frac_signal_delist", alpha=delist_a, beta=delist_b)
         sigma_city_delist = pm.Deterministic(
             "sigma_city_delist", sigma_total_delist * pm.math.sqrt(frac_signal_delist),
         )
