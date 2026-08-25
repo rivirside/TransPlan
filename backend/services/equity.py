@@ -18,7 +18,7 @@ from collections import defaultdict
 import numpy as np
 
 from models.schemas import CityEquity, EquityAnalysisResult, PatientProfile
-from services.monte_carlo import CITIES, _get_centers, _get_cities
+from services.monte_carlo import _get_centers
 from services.sensitivity import _p24_single_city
 from services.competing_risks import get_annual_mortality_rate, get_annual_delisting_rate
 from services.stats_utils import rate_to_exponential_scale

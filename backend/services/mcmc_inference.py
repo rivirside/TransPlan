@@ -37,7 +37,7 @@ from services.mcmc_survival import (
     sample_params_from_trace,
     trace_exists,
 )
-from services.monte_carlo import CITIES, _get_centers, _get_cities, _get_cod_multiplier
+from services.monte_carlo import _get_centers, _get_cod_multiplier
 from services.stats_utils import rate_to_exponential_scale
 
 # Lazy import to avoid circular dependency
