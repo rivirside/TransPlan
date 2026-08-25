@@ -13,7 +13,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 
 | # | Item | Issue | Status |
 |---|------|-------|--------|
-| A1 | scenarios.html posts center *names* as `city` → 400 for ~226/248 centers | #286 | |
+| A1 | scenarios.html posts center *names* as `city` → 400 for ~226/248 centers | #286 | ✅ 2026-08-24 |
 | A2 | brier_score.py drops `center_code`; analytical baseline national vs MC center-adjusted | #287 | |
 | A3 | BBN time-horizon probabilities inflate for long-wait organs | #244 | |
 | A4 | Equity Gini circularity + age/sex input inconsistency | #254 | |
@@ -31,7 +31,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | B6 | MCMC city-level hierarchy (classic trace default) | #207 | |
 | B7 | BBN "classic" 22-city mode selectable in web tier | #293 | |
 | B8 | Silent 1.0-multiplier fallbacks in distributions/competing_risks | see G1 | |
-| B9 | api-client.js sensitivity() 'Nashville' default | fix inline w/ A | |
+| B9 | api-client.js sensitivity() 'Nashville' default | fix inline w/ A | ✅ 2026-08-24 |
 
 ## Phase E — Validation harness (before model work)
 

@@ -147,6 +147,29 @@ class TestWhatIf:
         r = client.post("/what-if", json=body)
         assert r.status_code == 422
 
+    def test_center_code_outside_focus_cities_200(self):
+        """#286: any of the 248 centers must work, not just the 22 focus cities."""
+        body = {
+            "patient": KIDNEY_PATIENT,
+            "city": "Children's of Alabama",  # display label, not a valid city
+            "center_code": "ALCH",
+            "iterations": 100,
+        }
+        r = client.post("/what-if", json=body)
+        assert r.status_code == 200
+        data = r.json()
+        assert data["center_code"] == "ALCH"
+        assert data["state"] == "AL"
+
+    def test_unknown_center_code_400(self):
+        body = {
+            "patient": KIDNEY_PATIENT,
+            "center_code": "ZZZZ",
+            "iterations": 100,
+        }
+        r = client.post("/what-if", json=body)
+        assert r.status_code == 400
+
 
 # ==================== GET /policy-scenarios ====================
 
@@ -208,6 +231,19 @@ class TestPolicyScenario:
         }
         r = client.post("/policy-scenario", json=body)
         assert r.status_code == 404
+
+    def test_center_code_outside_focus_cities_200(self):
+        """#286: policy scenarios must accept any of the 248 centers."""
+        body = {
+            "patient": KIDNEY_PATIENT,
+            "scenario_id": "kidney_250nm",
+            "city": "Children's of Alabama",
+            "center_code": "ALCH",
+            "iterations": 100,
+        }
+        r = client.post("/policy-scenario", json=body)
+        assert r.status_code == 200
+        assert r.json()["center_code"] == "ALCH"
 
 
 # ==================== GET /trends ====================

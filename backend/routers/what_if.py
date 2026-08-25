@@ -61,6 +61,7 @@ def run_what_if(request: WhatIfRequest) -> WhatIfResult:
         return compute_what_if(
             patient=request.patient,
             city=request.city,
+            center_code=request.center_code,
             donor_rate_multiplier=request.donor_rate_multiplier,
             wait_time_multiplier=request.wait_time_multiplier,
             n_iterations=iterations,
@@ -80,7 +81,11 @@ class PolicyScenarioRequest(BaseModel):
     scenario_id: str = Field(description="ID of the predefined policy scenario")
     city: str = Field(
         default="Nashville",
-        description="City to run scenario analysis for",
+        description="City name (legacy) or display label",
+    )
+    center_code: str = Field(
+        default="",
+        description="SRTR center code (preferred over city name)",
     )
     iterations: int = Field(default=500, ge=100, le=2000)
     seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
@@ -91,6 +96,7 @@ class PolicyScenarioResult(BaseModel):
     scenario: PolicyScenario
     city: str
     state: str
+    center_code: str = Field("", description="SRTR center code when the run was center-based")
     donor_rate_multiplier: float = Field(description="Effective multiplier for this city")
     wait_time_multiplier: float = Field(description="Effective multiplier for this city")
     baseline_p24: float
@@ -145,7 +151,9 @@ def run_policy_scenario(request: PolicyScenarioRequest) -> PolicyScenarioResult:
             ),
         )
 
-    # Get effective multipliers for this city
+    # Get effective multipliers. Per-city overrides only exist for the legacy
+    # focus cities; center-based runs fall back to the scenario's global
+    # multipliers until per-center adjustments land (#285).
     donor_mult, wait_mult = get_city_multipliers(scenario, request.city)
 
     # Clamp iterations to tier cap
@@ -154,19 +162,24 @@ def run_policy_scenario(request: PolicyScenarioRequest) -> PolicyScenarioResult:
     iterations = min(request.iterations, tier.max_whatif_iterations)
 
     # Run the what-if engine with scenario-derived multipliers
-    result = compute_what_if(
-        patient=request.patient,
-        city=request.city,
-        donor_rate_multiplier=donor_mult,
-        wait_time_multiplier=wait_mult,
-        n_iterations=iterations,
-        seed=request.seed,
-    )
+    try:
+        result = compute_what_if(
+            patient=request.patient,
+            city=request.city,
+            center_code=request.center_code,
+            donor_rate_multiplier=donor_mult,
+            wait_time_multiplier=wait_mult,
+            n_iterations=iterations,
+            seed=request.seed,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
     return PolicyScenarioResult(
         scenario=scenario,
         city=result.city,
         state=result.state,
+        center_code=result.center_code,
         donor_rate_multiplier=donor_mult,
         wait_time_multiplier=wait_mult,
         baseline_p24=result.baseline_p24,

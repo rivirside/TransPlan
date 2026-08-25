@@ -156,10 +156,14 @@
     try {
       var body = {
         patient: normalizeFormData(formData),
-        city: city || 'Nashville',
-        center_code: city || '',
         iterations: iterations || 300
       };
+      // Callers pass an SRTR center code; the backend prefers center_code and
+      // keeps city only as a display fallback. No hardcoded city default (#285).
+      if (city) {
+        body.city = city;
+        body.center_code = city;
+      }
       if (seed !== undefined && seed !== null) body.seed = seed;
       var response = await fetch(base + '/sensitivity', {
         method: 'POST',
@@ -240,7 +244,7 @@
    * @param {number} [iterations] - Monte Carlo iterations (default 500)
    * @returns {Promise<Object|null>} WhatIfResult or null on failure
    */
-  async function whatIf(formData, city, donorRateMultiplier, waitTimeMultiplier, iterations, seed) {
+  async function whatIf(formData, center, donorRateMultiplier, waitTimeMultiplier, iterations, seed) {
     var base = getBaseUrl();
     var controller = new AbortController();
     var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
@@ -248,11 +252,18 @@
     try {
       var body = {
         patient: normalizeFormData(formData),
-        city: city || 'Nashville',
         donor_rate_multiplier: donorRateMultiplier ?? 1.0,
         wait_time_multiplier: waitTimeMultiplier ?? 1.0,
         iterations: iterations ?? 500
       };
+      // center: {code, label} (preferred, any of the 248 centers) or a
+      // legacy city-name string (#286)
+      if (center && typeof center === 'object') {
+        body.center_code = center.code || '';
+        body.city = center.label || center.code || '';
+      } else if (center) {
+        body.city = center;
+      }
       if (seed !== undefined && seed !== null) body.seed = seed;
       var response = await fetch(base + '/what-if', {
         method: 'POST',
@@ -311,7 +322,7 @@
    * @param {number} [iterations] - Monte Carlo iterations (default 500)
    * @returns {Promise<Object|null>} PolicyScenarioResult or null
    */
-  async function policyScenario(formData, scenarioId, city, iterations, seed) {
+  async function policyScenario(formData, scenarioId, center, iterations, seed) {
     var base = getBaseUrl();
     var controller = new AbortController();
     var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
@@ -320,9 +331,15 @@
       var body = {
         patient: normalizeFormData(formData),
         scenario_id: scenarioId,
-        city: city || 'Nashville',
         iterations: iterations || 500
       };
+      // center: {code, label} (preferred) or a legacy city-name string (#286)
+      if (center && typeof center === 'object') {
+        body.center_code = center.code || '';
+        body.city = center.label || center.code || '';
+      } else if (center) {
+        body.city = center;
+      }
       if (seed !== undefined && seed !== null) body.seed = seed;
       var response = await fetch(base + '/policy-scenario', {
         method: 'POST',

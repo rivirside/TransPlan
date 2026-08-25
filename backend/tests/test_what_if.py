@@ -118,16 +118,18 @@ class TestMultiplierEffects:
         )
         assert result.delta_p24 > 0, f"Shorter waits should improve p24: {result.delta_p24}"
 
-    def test_baseline_multipliers_give_small_delta(self, kidney_patient):
-        """With both multipliers at 1.0, delta should be near zero."""
+    def test_baseline_multipliers_give_zero_delta(self, kidney_patient):
+        """With both multipliers at 1.0, baseline and adjusted share the same
+        seed and draw identical streams, so the delta must be exactly zero.
+        A nonzero delta here means the paired-comparison design is broken and
+        every reported delta carries full Monte Carlo noise."""
         result = compute_what_if(
             kidney_patient, city="Nashville",
             donor_rate_multiplier=1.0, wait_time_multiplier=1.0,
             n_iterations=500,
         )
-        # Monte Carlo noise exists but delta from same-seed paired comparison
-        # should be very small (ideally 0 if same seed, but seeds differ)
-        assert abs(result.delta_p24) < 0.15, f"Baseline-vs-baseline delta too large: {result.delta_p24}"
+        assert result.delta_p24 == 0.0, f"Baseline-vs-baseline delta must be 0: {result.delta_p24}"
+        assert result.baseline_median_wait == result.adjusted_median_wait
 
 
 # -- Median wait --

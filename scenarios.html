@@ -592,8 +592,13 @@
             centerSelect.appendChild(placeholder);
             centers.forEach(function (c) {
                 var opt = document.createElement('option');
-                opt.value = c.city || c.name;
-                opt.textContent = c.city ? (c.city + ', ' + (c.state || '')) : c.name;
+                // Value is the SRTR center code — /what-if and /policy-scenario
+                // validate codes, not display names (#286).
+                opt.value = c.code || c.city || c.name;
+                var label = c.name || c.city || c.code;
+                var st = c.state_abbr || c.state || '';
+                opt.textContent = st ? (label + ', ' + st) : label;
+                opt.setAttribute('data-label', label);
                 centerSelect.appendChild(opt);
             });
             centerSelect.disabled = false;
@@ -752,10 +757,18 @@
         }
 
         // ── Run What-If ──
+        function selectedCenter() {
+            var opt = centerSelect.options[centerSelect.selectedIndex];
+            return {
+                code: centerSelect.value,
+                label: (opt && opt.getAttribute('data-label')) || centerSelect.value
+            };
+        }
+
         runWhatIfBtn.addEventListener('click', function () {
             if (!isFormValid() || !centerSelect.value) return;
             var formData = TransPlanPatientForm.collectFormData('pf');
-            var city = centerSelect.value;
+            var center = selectedCenter();
             var donorMult = parseFloat(donorMultSlider.value);
             var waitMult = parseFloat(waitMultSlider.value);
             var iters = parseInt(whatifIterSlider.value, 10);
@@ -763,7 +776,7 @@
             showLoading('Running what-if analysis...');
             runWhatIfBtn.disabled = true;
 
-            TransPlanAPI.whatIf(formData, city, donorMult, waitMult, iters)
+            TransPlanAPI.whatIf(formData, center, donorMult, waitMult, iters)
                 .then(function (result) {
                     runWhatIfBtn.disabled = false;
                     updateRunButtons();
@@ -785,13 +798,13 @@
             if (!isFormValid() || !centerSelect.value || !policySelect.value) return;
             var formData = TransPlanPatientForm.collectFormData('pf');
             var scenarioId = policySelect.value;
-            var city = centerSelect.value;
+            var center = selectedCenter();
             var iters = parseInt(policyIterSlider.value, 10);
 
             showLoading('Running policy scenario analysis...');
             runPolicyBtn.disabled = true;
 
-            TransPlanAPI.policyScenario(formData, scenarioId, city, iters)
+            TransPlanAPI.policyScenario(formData, scenarioId, center, iters)
                 .then(function (result) {
                     runPolicyBtn.disabled = false;
                     updateRunButtons();

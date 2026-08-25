@@ -114,6 +114,13 @@ class TransPlanData:
             key=lambda c: c.get("code", ""),
         )
 
+    def center_by_code(self, center_code: str) -> dict | None:
+        """Return the center record for *center_code*, or None if unknown.
+
+        Records have: code, name, state, state_abbr, organs, lat, lon.
+        """
+        return self.all_centers.get("centers", {}).get(center_code)
+
     def cost_of_living_for_center(self, center_code: str, state_abbr: str | None = None) -> float | None:
         """Cost-of-living index (BEA RPP, national = 100) for a center.
 

@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 class WhatIfResult(BaseModel):
     city: str
     state: str
+    center_code: str = Field("", description="SRTR center code when the run was center-based")
     donor_rate_multiplier: float
     wait_time_multiplier: float
     baseline_p24: float = Field(ge=0, le=1)
@@ -50,9 +51,10 @@ def _run_single(
     rng: np.random.Generator,
     donor_rate_multiplier: float = 1.0,
     wait_time_multiplier: float = 1.0,
+    center_code: str = "",
 ) -> dict:
     """
-    Run Monte Carlo for a single city with optional multipliers.
+    Run Monte Carlo for a single center or city with optional multipliers.
 
     Returns dict with p24, ci_95, median_wait.
 
@@ -65,6 +67,7 @@ def _run_single(
         organ=patient.organ,
         blood_type=patient.blood_type,
         city=city,
+        center_code=center_code,
         cpra=patient.cpra,
         meld=patient.meld,
         las=patient.las,
@@ -101,10 +104,13 @@ def _run_single(
     # Draw mortality & delisting times
     annual_mort = get_annual_mortality_rate(
         organ=patient.organ, city=city, urgency=patient.urgency, meld=patient.meld,
+        center_code=center_code,
     )
     mort_scale = rate_to_exponential_scale(annual_mort, "mortality", city)
 
-    annual_delist = get_annual_delisting_rate(organ=patient.organ, city=city)
+    annual_delist = get_annual_delisting_rate(
+        organ=patient.organ, city=city, center_code=center_code,
+    )
     delist_scale = rate_to_exponential_scale(annual_delist, "delisting", city)
 
     if patient.use_copula:
@@ -161,36 +167,56 @@ def compute_what_if(
     wait_time_multiplier: float = 1.0,
     n_iterations: int = 500,
     seed: int | None = None,
+    center_code: str = "",
 ) -> WhatIfResult:
     """
-    Run what-if analysis: baseline vs adjusted Monte Carlo for a single city.
+    Run what-if analysis: baseline vs adjusted Monte Carlo for a single center.
 
     Uses paired random seeds so the only difference between baseline and adjusted
     results is the multiplier — this minimizes Monte Carlo noise in the delta.
 
     Parameters
     ----------
+    center_code : SRTR center code (preferred). When given, the run is
+        center-based over any of the 248 centers and *city* is ignored.
+        When empty, *city* is validated against the legacy focus-city list
+        (path retired with #285).
     seed : optional RNG seed for reproducibility. If None, a random seed is
         generated and returned in the result.
     """
     start = time.perf_counter()
 
-    # Validate city name against canonical list (#62)
-    state = None
-    cities = _get_cities()
-    for c in cities:
-        if c["city"] == city:
-            state = c["state"]
-            break
-    if state is None:
-        valid = sorted(c["city"] for c in cities)
-        raise ValueError(f"Unknown city: '{city}'. Valid cities: {valid}")
+    if center_code:
+        from services.data_loader import get_data
+        center = get_data().center_by_code(center_code)
+        if center is None:
+            raise ValueError(f"Unknown center code: '{center_code}'")
+        if patient.organ not in center.get("organs", []):
+            raise ValueError(
+                f"Center {center_code} ({center.get('name', '')}) does not perform "
+                f"{patient.organ} transplants"
+            )
+        city = center.get("name", center_code)
+        state = center.get("state_abbr", "")
+    else:
+        # Validate city name against canonical list (#62)
+        state = None
+        cities = _get_cities()
+        for c in cities:
+            if c["city"] == city:
+                state = c["state"]
+                break
+        if state is None:
+            valid = sorted(c["city"] for c in cities)
+            raise ValueError(f"Unknown city: '{city}'. Valid cities: {valid}")
 
-    # Use paired seeds for baseline vs adjusted comparison
+    # Paired comparison: baseline and adjusted use IDENTICAL random streams
+    # (fresh generators from the same seed), so with neutral multipliers the
+    # delta is exactly 0 and otherwise it is attributable to the multipliers
+    # alone. Spawning two child seeds here would re-introduce full MC noise
+    # into every delta.
     if seed is None:
         seed = int(np.random.default_rng().integers(0, 2**31))
-    seed_seq = np.random.SeedSequence(seed)
-    seed_baseline, seed_adjusted = seed_seq.spawn(2)
 
     # Baseline run (multipliers = 1.0)
     baseline = _run_single(
@@ -198,9 +224,10 @@ def compute_what_if(
         city=city,
         state=state,
         n_iterations=n_iterations,
-        rng=np.random.default_rng(seed_baseline),
+        rng=np.random.default_rng(np.random.SeedSequence(seed)),
         donor_rate_multiplier=1.0,
         wait_time_multiplier=1.0,
+        center_code=center_code,
     )
 
     # Adjusted run (with user's multipliers)
@@ -209,9 +236,10 @@ def compute_what_if(
         city=city,
         state=state,
         n_iterations=n_iterations,
-        rng=np.random.default_rng(seed_adjusted),
+        rng=np.random.default_rng(np.random.SeedSequence(seed)),
         donor_rate_multiplier=donor_rate_multiplier,
         wait_time_multiplier=wait_time_multiplier,
+        center_code=center_code,
     )
 
     elapsed = time.perf_counter() - start
@@ -225,6 +253,7 @@ def compute_what_if(
     return WhatIfResult(
         city=city,
         state=state,
+        center_code=center_code,
         donor_rate_multiplier=donor_rate_multiplier,
         wait_time_multiplier=wait_time_multiplier,
         baseline_p24=baseline["p24"],
