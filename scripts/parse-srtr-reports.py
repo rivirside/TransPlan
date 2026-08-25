@@ -351,6 +351,14 @@ def parse_outcomes(mapping: dict) -> dict:
     # Preserve existing urgency/clinical multipliers
     existing = _load_existing(COMPETING_OUT)
 
+    # Preserve the manual TOP-LEVEL age blocks (SRTR ADR Table 5.3-sourced).
+    # The #104 rewrite dropped them, silently killing the BBN AgeGroup edge
+    # and MCMC inference age modulation for months (found 2026-08-25) —
+    # every regenerate must carry them forward.
+    for manual_key in ("age_mortality_multipliers", "age_organ_overrides"):
+        if existing and manual_key in existing:
+            result[manual_key] = existing[manual_key]
+
     for organ, code in ORGAN_CODES.items():
         excel_path = os.path.join(RAW_DIR, f"csrs_final_tables_2511_{code}.xls")
         if not os.path.exists(excel_path):

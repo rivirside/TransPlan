@@ -374,7 +374,7 @@ def _scale_time_horizons(
     return p6, p12, p24, p36
 
 
-def _combine_outcomes(query_result: dict) -> dict:
+def _combine_outcomes(query_result: dict, mortality_modulation: float = 1.0) -> dict:
     """Combine WaitCategory timing with the observed CompetingOutcome (#206/#211).
 
     WaitCategory drives transplant *timing* (sensitive to blood type / region /
@@ -386,13 +386,36 @@ def _combine_outcomes(query_result: dict) -> dict:
     at 6/12/24/36 months plus the 24-month competing-risk breakdown (which sums
     to 1 with p_24).
 
-    LIMITATION (docs/limitations.md L-072, revisit #238): the competing-risk
-    split is the center's population AVERAGE, not patient-specific — a high-MELD
-    or high-urgency patient gets the center-average death/delisting split.
-    Patient factors reach p24 only through WaitCategory timing. Deliberate v1
-    trade-off (option A + hybrid) over patient-specific modulation (option B).
+    Option B (#238, closes the L-072 v1 trade-off): mortality_modulation
+    scales the observed death hazard to the patient (age x urgency x MELD via
+    competing_risks.get_patient_mortality_multiplier). Transplant hazard is
+    never modulated (double-counting guard, plan Q4); delisting modulation is
+    deferred until sourced patient-level delisting multipliers exist.
     """
     obs_tx, obs_death, obs_delist, obs_wait = query_result["competing_outcome"]
+
+    # Option B (#238): modulate the observed vector by the patient's
+    # mortality multiplier on the CAUSE-SPECIFIC HAZARD scale. Only the
+    # death hazard is scaled — never the transplant hazard (double-counting
+    # guard: WaitCategory already carries the patient's wait signal) and not
+    # delisting (v1; no sourced patient-level delisting modulators). At the
+    # reference multiplier 1.0 this is a bit-exact no-op, so the reference
+    # patient recovers the center's observed vector exactly (the anchor).
+    if mortality_modulation != 1.0:
+        import math
+        p_evt = min(obs_tx + obs_death + obs_delist, 1.0 - 1e-12)
+        if p_evt > 1e-12:
+            h_total = -math.log(1.0 - p_evt)
+            h_tx = h_total * obs_tx / p_evt
+            h_death = h_total * obs_death / p_evt * mortality_modulation
+            h_delist = h_total * obs_delist / p_evt
+            h_new = h_tx + h_death + h_delist
+            p_evt_new = 1.0 - math.exp(-h_new)
+            obs_tx = p_evt_new * h_tx / h_new
+            obs_death = p_evt_new * h_death / h_new
+            obs_delist = p_evt_new * h_delist / h_new
+            obs_wait = max(0.0, 1.0 - p_evt_new)
+
     time_probs = _estimate_time_horizon_probs(query_result["wait_category"])
 
     terminal = obs_tx + obs_death + obs_delist
@@ -486,6 +509,14 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
     age_group = age_to_group(patient.age)
     urgency = str(patient.urgency)
 
+    # Option B (#238): patient-level mortality modulation for the observed
+    # competing-risk vector (age x urgency x MELD; 1.0 for the reference
+    # patient). Computed once — constant across centers for one patient.
+    from services.competing_risks import get_patient_mortality_multiplier
+    mort_modulation = get_patient_mortality_multiplier(
+        organ, age=patient.age, urgency=patient.urgency, meld=patient.meld,
+    )
+
     # Cache BBN results by region (many centers share a region)
     region_cache: dict[str, dict] = {}
 
@@ -518,7 +549,7 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
             )
         query_result = region_cache[region]
 
-        oc = _combine_outcomes(query_result)
+        oc = _combine_outcomes(query_result, mortality_modulation=mort_modulation)
         p_6, p_12, p_24, p_36 = oc["p_6"], oc["p_12"], oc["p_24"], oc["p_36"]
         p_mortality_24, p_delisting_24, p_waiting_24 = (
             oc["p_mortality_24"], oc["p_delisting_24"], oc["p_waiting_24"])

@@ -141,6 +141,18 @@ if (donor) {
     }
 }
 
+// 6a2. Manual age-multiplier blocks in competing-risks.json (ERROR: the #104
+// rewrite silently dropped these, killing the BBN age edge + MCMC inference
+// age modulation — never again)
+const competingRisks = validateJSON('competing-risks.json');
+if (competingRisks) {
+    for (const key of ['age_mortality_multipliers', 'age_organ_overrides']) {
+        if (!competingRisks[key] || Object.keys(competingRisks[key]).length < 2) {
+            addError(`competing-risks.json: manual block '${key}' missing or gutted`);
+        }
+    }
+}
+
 // 6b. SRTR-derived model files — every organ block must be present (ERROR,
 // not warning: the 2026-08-05 workflow run wrote organ-less shells over
 // these because data/srtr-raw/ is absent in CI; see parse-srtr-reports.py
