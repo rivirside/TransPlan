@@ -81,3 +81,28 @@ class TestProvenanceHonesty:
         assert with_center["survival_source"] == "center"
         no_center = build_outcomes_dict("kidney", "x", 0.5, center_code="XXXX")
         assert no_center["survival_source"] == "national"
+
+    def test_bbn_per_center_tags_attached(self):
+        """Regression (2026-08 review): BBN computed tags but dropped them,
+        making summarize() claim every center was fully center-level."""
+        from services.bayesian_network import simulate_bbn
+        p = PatientProfile(organ="intestine", blood_type="A+", age=45,
+                           sex="male", urgency=2, bbn_granularity="state")
+        result = simulate_bbn(p)
+        dq = result.data_quality
+        # Intestine data is sparse — a fully-center-level claim would be false
+        assert dq["fully_center_level"] < dq["centers_total"], (
+            "BBN claims every intestine center is fully center-level — "
+            "per-center tags are not being attached"
+        )
+        tagged = [c for c in result.cities if c.data_quality]
+        assert tagged, "no CityProbability carries data_quality tags"
+
+    def test_bbn_unknown_shortlist_raises(self):
+        """BBN must reject an all-unknown center_codes shortlist like MC."""
+        from services.bayesian_network import simulate_bbn
+        p = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male",
+                           urgency=2, bbn_granularity="state",
+                           center_codes=["ZZZZ"])
+        with pytest.raises(ValueError, match="center_codes"):
+            simulate_bbn(p)

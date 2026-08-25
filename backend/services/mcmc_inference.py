@@ -278,11 +278,10 @@ def simulate_mcmc(
     # regions are states/codes) never matched and every center silently fell
     # back to region index 0 — the refit posterior's per-center effects were
     # unused.
-    try:
-        from services.bbn_parameterizer import get_center_to_region_map
-        center_city_map = get_center_to_region_map(actual_g)
-    except (RuntimeError, ImportError):
-        center_city_map = {}
+    # No fallback to {}: an empty map would skip every center and return an
+    # empty-but-successful SimulationResult (MC's equivalent path raises).
+    from services.bbn_parameterizer import get_center_to_region_map
+    center_city_map = get_center_to_region_map(actual_g)
 
     # Map blood type and urgency to indices
     bt_idx = BLOOD_TYPES.index(patient.blood_type) if patient.blood_type in BLOOD_TYPES else 2  # A+ fallback
@@ -314,57 +313,68 @@ def simulate_mcmc(
         region_avg_delist = _region_averages(center_adj["delist_factors"], center_city_map)
 
     # Iterate over all centers with center-level adjustments (#207/#293)
-    if True:
-        iteration_targets = []
-        for center in _get_centers(patient.organ):
-            code = center.get("code", "")
-            city = center.get("name", center.get("city", ""))
-            state = center.get("state", center.get("state_abbr", ""))
-            lat = center.get("lat")
-            lon = center.get("lon")
+    iteration_targets = []
+    for center in _get_centers(patient.organ):
+        code = center.get("code", "")
+        city = center.get("name", center.get("city", ""))
+        state = center.get("state", center.get("state_abbr", ""))
+        lat = center.get("lat")
+        lon = center.get("lon")
 
-            # Region lookup at the trace's own granularity (#207)
-            region = center_city_map.get(code)
-            cidx = city_to_idx.get(region) if region is not None else None
-            if cidx is None:
-                # No posterior effect exists for this center's region. Skip
-                # honestly instead of the old behavior (silently reusing
-                # region index 0 — a fabricated posterior).
-                logger.debug("No trace region for center %s (region=%s) — skipped", code, region)
-                continue
+        # Region lookup at the trace's own granularity (#207)
+        region = center_city_map.get(code)
+        cidx = city_to_idx.get(region) if region is not None else None
+        if cidx is None:
+            # No posterior effect exists for this center's region. Skip
+            # honestly instead of the old behavior (silently reusing
+            # region index 0 — a fabricated posterior).
+            logger.debug("No trace region for center %s (region=%s) — skipped", code, region)
+            continue
 
-            # Center-level adjustment ratios (#207), relative to what the
-            # trace's region effect already captures:
-            #   full  → the trace region IS this center; ratio must be 1.0
-            #           (anything else double-counts the center factor)
-            #   state → center factor / region-average factor
-            center_wait_adj = 1.0
-            center_mort_adj = 1.0
-            center_delist_adj = 1.0
-            if center_adj is not None and code and actual_g == "state":
-                ref_wait = region_avg_wait.get(region, 1.0)
-                ref_mort = region_avg_mort.get(region, 1.0)
-                ref_delist = region_avg_delist.get(region, 1.0)
+        # Center-level adjustment ratios (#207), relative to what the
+        # trace's region effect already captures:
+        #   full  → the trace region IS this center; ratio must be 1.0
+        #           (anything else double-counts the center factor)
+        #   state → center factor / region-average factor
+        center_wait_adj = 1.0
+        center_mort_adj = 1.0
+        center_delist_adj = 1.0
+        if center_adj is not None and code and actual_g == "state":
+            ref_wait = region_avg_wait.get(region, 1.0)
+            ref_mort = region_avg_mort.get(region, 1.0)
+            ref_delist = region_avg_delist.get(region, 1.0)
 
-                center_wait_adj = _compute_center_adjustment(
-                    center_adj["wait_factors"].get(code, 1.0), ref_wait)
-                center_mort_adj = _compute_center_adjustment(
-                    center_adj["mort_factors"].get(code, 1.0), ref_mort)
-                center_delist_adj = _compute_center_adjustment(
-                    center_adj["delist_factors"].get(code, 1.0), ref_delist)
+            center_wait_adj = _compute_center_adjustment(
+                center_adj["wait_factors"].get(code, 1.0), ref_wait)
+            center_mort_adj = _compute_center_adjustment(
+                center_adj["mort_factors"].get(code, 1.0), ref_mort)
+            center_delist_adj = _compute_center_adjustment(
+                center_adj["delist_factors"].get(code, 1.0), ref_delist)
 
-            iteration_targets.append({
-                "code": code,
-                "city": city,
-                "state": state,
-                "lat": lat,
-                "lon": lon,
-                "name": center.get("name", city),
-                "cidx": cidx,
-                "center_wait_adj": center_wait_adj,
-                "center_mort_adj": center_mort_adj,
-                "center_delist_adj": center_delist_adj,
-            })
+        iteration_targets.append({
+            "code": code,
+            "city": city,
+            "state": state,
+            "lat": lat,
+            "lon": lon,
+            "name": center.get("name", city),
+            "cidx": cidx,
+            "center_wait_adj": center_wait_adj,
+            "center_mort_adj": center_mort_adj,
+            "center_delist_adj": center_delist_adj,
+        })
+
+
+    # L-067 (#304): optional user-defined center set — same contract as MC:
+    # an all-unknown shortlist is an input error, not "run everything".
+    if patient.center_codes:
+        wanted = set(patient.center_codes)
+        iteration_targets = [t for t in iteration_targets if t["code"] in wanted]
+        if not iteration_targets:
+            raise ValueError(
+                f"None of the requested center_codes perform {patient.organ} "
+                f"transplants (or the codes are unknown)."
+            )
 
     city_results: list[CityProbability] = []
 
@@ -518,19 +528,22 @@ def simulate_mcmc(
             "p_still_waiting_24mo": round(p_waiting_24, 4),
         }
 
-        # Post-transplant outcomes (same as standard MC)
+        # Post-transplant outcomes (same as standard MC — center_code is what
+        # resolves center-level SRTR survival; the city arg is display-only)
         outcomes_data = None
         try:
             from services.outcomes import build_outcomes_dict
-            outcomes_data = build_outcomes_dict(patient.organ, city, p_24)
+            outcomes_data = build_outcomes_dict(
+                patient.organ, city, p_24, center_code=code,
+            )
         except Exception:
             pass
 
-        # Historical trends (same as standard MC)
+        # Per-center historical trends (#288 — same as standard MC)
         trends_data = None
         try:
-            from services.trends import get_city_trends
-            trends_data = get_city_trends(patient.organ, city)
+            from services.trends import get_center_trends
+            trends_data = get_center_trends(patient.organ, code)
         except Exception:
             pass
 

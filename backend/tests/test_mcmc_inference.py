@@ -396,3 +396,50 @@ class TestReproducibility:
         result = simulate_mcmc(kidney_patient, n_iterations=200)
         # An auto-generated seed must still be reported so the run is reproducible.
         assert result.seed_used > 0
+
+
+# ---------------------------------------------------------------------------
+# Engine-parity regressions (2026-08 review): shortlist + center-level lookups
+# ---------------------------------------------------------------------------
+
+class TestShortlistAndCenterLookups:
+    def test_center_codes_shortlist_filters(self, kidney_patient):
+        """patient.center_codes must restrict MCMC output like the MC engine."""
+        from services.mcmc_inference import simulate_mcmc
+        full = simulate_mcmc(kidney_patient, n_iterations=200, seed=7)
+        codes = [c.center_code for c in full.cities[:3]]
+        kidney_patient.center_codes = codes
+        short = simulate_mcmc(kidney_patient, n_iterations=200, seed=7)
+        assert sorted(c.center_code for c in short.cities) == sorted(codes)
+
+    def test_unknown_shortlist_raises(self, kidney_patient):
+        """All-unknown shortlist is an input error (same contract as MC)."""
+        from services.mcmc_inference import simulate_mcmc
+        kidney_patient.center_codes = ["ZZZZ", "YYYY"]
+        with pytest.raises(ValueError, match="center_codes"):
+            simulate_mcmc(kidney_patient, n_iterations=200, seed=7)
+
+    def test_outcomes_are_center_level_where_available(self, kidney_patient):
+        """The MCMC engine must pass center_code through to outcomes — without
+        it every center silently reported national survival baselines."""
+        from services.mcmc_inference import simulate_mcmc
+        result = simulate_mcmc(kidney_patient, n_iterations=200, seed=7)
+        center_level = [
+            c for c in result.cities
+            if c.outcomes and c.outcomes.get("survival_source") == "center"
+        ]
+        assert len(center_level) > 0.5 * len(result.cities), (
+            "no center-level outcomes in MCMC results — center_code not "
+            "reaching build_outcomes_dict"
+        )
+
+    def test_trends_use_center_codes(self, kidney_patient):
+        """Trends must come from get_center_trends(organ, code) — the old
+        get_city_trends(center display name) lookup returned None for all."""
+        from services.mcmc_inference import simulate_mcmc
+        result = simulate_mcmc(kidney_patient, n_iterations=200, seed=7)
+        with_trends = [c for c in result.cities if c.trends is not None]
+        assert len(with_trends) > 0.5 * len(result.cities), (
+            "trends null for essentially all centers — center-code lookup "
+            "not wired in the MCMC engine"
+        )

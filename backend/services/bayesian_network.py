@@ -42,7 +42,6 @@ from services.bbn_parameterizer import (
     get_regions,
 )
 from services.outcomes import build_outcomes_dict
-from services.trends import get_city_trends
 
 logger = logging.getLogger(__name__)
 
@@ -496,94 +495,98 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
     from services.monte_carlo import _get_centers
     centers = _get_centers(organ)
 
-    if True:
-        for center in centers:
-            code = center.get("code", "")
-            name = center.get("name", center.get("city", ""))
-            state_full = center.get("state", center.get("state_abbr", ""))
-            lat = center.get("lat")
-            lon = center.get("lon")
+    for center in centers:
+        code = center.get("code", "")
+        name = center.get("name", center.get("city", ""))
+        state_full = center.get("state", center.get("state_abbr", ""))
+        lat = center.get("lat")
+        lon = center.get("lon")
 
-            # Map center to BBN region using the granularity-aware map.
-            # #220: a center with no region is SKIPPED with a log — the old
-            # code silently answered with the alphabetically-first region.
-            region = center_region_map.get(code)
-            if region is None or region not in regions:
-                logger.warning("No BBN region for center %s (region=%s) — skipped", code, region)
-                continue
+        # Map center to BBN region using the granularity-aware map.
+        # #220: a center with no region is SKIPPED with a log — the old
+        # code silently answered with the alphabetically-first region.
+        region = center_region_map.get(code)
+        if region is None or region not in regions:
+            logger.warning("No BBN region for center %s (region=%s) — skipped", code, region)
+            continue
 
-            # Run BBN inference (cached per region)
-            if region not in region_cache:
-                region_cache[region] = _query_city(
-                    model, organ, blood_type, age_group, urgency, region,
-                    regions=regions, node_state_names=state_names,
-                )
-            query_result = region_cache[region]
+        # Run BBN inference (cached per region)
+        if region not in region_cache:
+            region_cache[region] = _query_city(
+                model, organ, blood_type, age_group, urgency, region,
+                regions=regions, node_state_names=state_names,
+            )
+        query_result = region_cache[region]
 
-            oc = _combine_outcomes(query_result)
-            p_6, p_12, p_24, p_36 = oc["p_6"], oc["p_12"], oc["p_24"], oc["p_36"]
-            p_mortality_24, p_delisting_24, p_waiting_24 = (
-                oc["p_mortality_24"], oc["p_delisting_24"], oc["p_waiting_24"])
+        oc = _combine_outcomes(query_result)
+        p_6, p_12, p_24, p_36 = oc["p_6"], oc["p_12"], oc["p_24"], oc["p_36"]
+        p_mortality_24, p_delisting_24, p_waiting_24 = (
+            oc["p_mortality_24"], oc["p_delisting_24"], oc["p_waiting_24"])
 
-            median_wait = _estimate_median_wait(query_result["wait_category"])
+        median_wait = _estimate_median_wait(query_result["wait_category"])
 
-            n_obs = _region_observed_n(organ, region, center_region_map)
-            ci_half = _data_uncertainty_ci(p_24, n_obs)
-            ci_lo = max(0.0, p_24 - ci_half)
-            ci_hi = min(1.0, p_24 + ci_half)
+        n_obs = _region_observed_n(organ, region, center_region_map)
+        ci_half = _data_uncertainty_ci(p_24, n_obs)
+        ci_lo = max(0.0, p_24 - ci_half)
+        ci_hi = min(1.0, p_24 + ci_half)
 
-            competing_risks_24 = {
-                "p_transplant_24mo": round(p_24, 4),
-                "p_mortality_24mo": round(p_mortality_24, 4),
-                "p_delisting_24mo": round(p_delisting_24, 4),
-                "p_still_waiting_24mo": round(p_waiting_24, 4),
-            }
+        competing_risks_24 = {
+            "p_transplant_24mo": round(p_24, 4),
+            "p_mortality_24mo": round(p_mortality_24, 4),
+            "p_delisting_24mo": round(p_delisting_24, 4),
+            "p_still_waiting_24mo": round(p_waiting_24, 4),
+        }
 
-            # Center-level outcomes
-            outcomes_data = None
-            try:
-                outcomes_data = build_outcomes_dict(patient.organ, city=name, p_transplant_24mo=p_24, center_code=code)
-            except (KeyError, FileNotFoundError, ValueError):
-                pass
+        # Center-level outcomes
+        outcomes_data = None
+        try:
+            outcomes_data = build_outcomes_dict(patient.organ, city=name, p_transplant_24mo=p_24, center_code=code)
+        except (KeyError, FileNotFoundError, ValueError):
+            pass
 
-            # Per-center historical trends (#288)
-            trends_data = None
-            try:
-                from services.trends import get_center_trends
-                trends_data = get_center_trends(patient.organ, code)
-            except (KeyError, FileNotFoundError, ValueError):
-                pass
+        # Per-center historical trends (#288)
+        trends_data = None
+        try:
+            from services.trends import get_center_trends
+            trends_data = get_center_trends(patient.organ, code)
+        except (KeyError, FileNotFoundError, ValueError):
+            pass
 
-            # Data-provenance tags (#300/#219 — previously null for BBN runs,
-            # which read as "no degraded inputs" instead of "not measured")
-            from services.provenance import center_data_quality
-            degraded = center_data_quality(patient.organ, code)
+        # Data-provenance tags (#300/#219 — previously null for BBN runs,
+        # which read as "no degraded inputs" instead of "not measured")
+        from services.provenance import center_data_quality
+        degraded = center_data_quality(patient.organ, code)
 
-            city_results.append(CityProbability(
-                city=name,
-                state=state_full,
-                center_code=code,
-                center_name=name,
-                lat=lat,
-                lon=lon,
-                p_transplant_6mo=round(p_6, 4),
-                p_transplant_12mo=round(p_12, 4),
-                p_transplant_24mo=round(p_24, 4),
-                p_transplant_36mo=round(p_36, 4),
-                confidence_interval_95=(round(ci_lo, 4), round(ci_hi, 4)),
-                median_wait_months=round(max(median_wait, 0.1), 2),
-                competing_risks=competing_risks_24,
-                outcomes=outcomes_data,
-                trends=trends_data,
-            ))
+        city_results.append(CityProbability(
+            city=name,
+            state=state_full,
+            center_code=code,
+            center_name=name,
+            lat=lat,
+            lon=lon,
+            p_transplant_6mo=round(p_6, 4),
+            p_transplant_12mo=round(p_12, 4),
+            p_transplant_24mo=round(p_24, 4),
+            p_transplant_36mo=round(p_36, 4),
+            confidence_interval_95=(round(ci_lo, 4), round(ci_hi, 4)),
+            median_wait_months=round(max(median_wait, 0.1), 2),
+            competing_risks=competing_risks_24,
+            outcomes=outcomes_data,
+            trends=trends_data,
+            data_quality=degraded or None,
+        ))
 
     # L-067 (#304): optional user-defined center set (post-filter — the BBN
-    # computes per-region, so restricting output is the meaningful operation)
+    # computes per-region, so restricting output is the meaningful operation).
+    # An all-unknown shortlist raises, matching the MC engine's contract.
     if patient.center_codes:
         wanted = set(patient.center_codes)
-        filtered = [c for c in city_results if c.center_code in wanted]
-        if filtered:
-            city_results = filtered
+        city_results = [c for c in city_results if c.center_code in wanted]
+        if not city_results:
+            raise ValueError(
+                f"None of the requested center_codes perform {patient.organ} "
+                f"transplants (or the codes are unknown)."
+            )
 
     city_results.sort(key=lambda c: c.p_transplant_24mo, reverse=True)
 
