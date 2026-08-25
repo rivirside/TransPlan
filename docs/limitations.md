@@ -497,7 +497,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-067: Custom city set / user-defined focus centers
 - **Severity:** MEDIUM (enhancement)
-- **Status:** DEFERRED
+- **Status:** FIXED (2026-08-25, #304 — center_codes on /score + /simulate, shareable simulator ?centers= URLs, Find-mode "Simulate these N centers" handoff)
 - **Category:** Configuration / UX
 - **What:** Allow users to define their own subset of centers to analyze (e.g., "the 10 centers nearest to me," "all centers in Texas," or a hand-picked list) rather than choosing between the fixed 22-city classic set, ~50 state groups, or all 248 centers.
 - **Why:** The 22-city "classic" set was chosen for SRTR data density but has no clinical justification for any individual patient. A patient in rural Montana cares about different centers than one in NYC. The full 248-center mode is computationally expensive and returns too many results. A user-defined subset would give the right granularity for each patient's situation.
