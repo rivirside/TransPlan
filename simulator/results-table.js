@@ -45,6 +45,9 @@
   var _results = [];           // merged result rows
   var _options = {};           // { homeLocation }
   var _sortKey = 'rank';
+  // #313/#322: center_code -> {rank_lo, rank_hi} from POST /rank-stability.
+  // When present, the rank cell shows the interval instead of a bare number.
+  var _rankIntervals = null;
   var _sortAsc = true;
   var _expandedCode = null;    // currently expanded row center code
   var _selectedCodes = [];     // compare selection (max 3)
@@ -404,6 +407,14 @@
           td.className = 'rank-cell';
           if (row.rank <= 3) td.classList.add('rank-' + row.rank);
           td.textContent = row.rank;
+          var iv = _rankIntervals && _rankIntervals[row.code];
+          if (iv && iv.rank_hi > iv.rank_lo) {
+            var ivSpan = _createElement('span', 'rank-interval');
+            ivSpan.style.cssText = 'display:block;font-size:0.68rem;color:var(--text-muted,#888);font-weight:normal;';
+            ivSpan.textContent = iv.rank_lo + '\u2013' + iv.rank_hi;
+            ivSpan.title = '90% rank interval given each center\'s observed SRTR cohort size \u2014 centers with overlapping intervals are statistically tied';
+            td.appendChild(ivSpan);
+          }
           break;
 
         case 'center':
@@ -879,7 +890,8 @@
   window.SimResultsTable = {
     render: render,
     sort: sort,
-    getSelectedCenters: getSelectedCenters
+    getSelectedCenters: getSelectedCenters,
+    setRankIntervals: function (byCode) { _rankIntervals = byCode || null; }
   };
 
 })();

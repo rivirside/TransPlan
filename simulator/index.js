@@ -393,6 +393,21 @@
       updateSeedDisplay(window.SimResults.getLastSeed());
       renderDataQualityNote(result.data_quality, result.data_vintage);
       refreshTable(true);
+
+      // #313/#322: annotate ranks with bootstrap intervals (background —
+      // the table renders immediately and gains intervals when they arrive)
+      if (window.TransPlanAPI.rankStability && window.SimResultsTable.setRankIntervals) {
+        window.TransPlanAPI.rankStability(formData, 300, window.SimResults.getLastSeed())
+          .then(function (rs) {
+            if (!rs || !rs.centers) return;
+            var byCode = {};
+            rs.centers.forEach(function (c) {
+              byCode[c.center_code] = { rank_lo: c.rank_lo, rank_hi: c.rank_hi };
+            });
+            window.SimResultsTable.setRankIntervals(byCode);
+            refreshTable(true);
+          });
+      }
       refreshMap();
       renderContinueButtons(formData);
 

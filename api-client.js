@@ -643,11 +643,38 @@
   }
 
   // Expose globally
+  /**
+   * POST /rank-stability — bootstrap rank intervals (#313/#322).
+   */
+  async function rankStability(formData, nBoot, seed) {
+    var base = getBaseUrl();
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
+    try {
+      var body = { patient: normalizeFormData(formData), n_boot: nBoot || 300 };
+      if (seed !== undefined && seed !== null) body.seed = seed;
+      var response = await fetch(base + '/rank-stability', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (!response.ok) return null;
+      return await response.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      return null;
+    }
+  }
+
+
   window.TransPlanAPI = {
     simulate: simulate,
     scoreAll: scoreAll,
     scoreExplain: scoreExplain,
     sensitivity: sensitivity,
+    rankStability: rankStability,
     equityAnalysis: equityAnalysis,
     whatIf: whatIf,
     policyScenarios: policyScenarios,
