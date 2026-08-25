@@ -99,3 +99,27 @@ propagation over the same SRTR inputs, not independent validation.
   already surfaces them in MCMC mode (local tier).
 - Registered: MCMC-28 (Beta(2,2) signal-fraction prior — an explicit, honest
   assumption replacing the implicit prior-driven split).
+
+## 2026-08-25 update: empirical signal-fraction priors (#317)
+
+The Beta(2,2) signal-fraction prior (MCMC-09's honest-but-flat guess) is
+replaced by per-(organ, metric) empirical priors measured from the
+center x release panel (scripts/run-panel-variance.py, ~13 SRTR releases,
+random-effects ANOVA with bootstrap CIs):
+
+- wait factors: raw frac_signal 0.63-0.86 (kidney 0.86 [0.82, 0.89])
+- mortality rates: 0.04-0.33 · delisting rates: 0.11-0.32
+
+All six full-granularity traces refit under the new priors (2000 draws x 2
+chains, max R-hat 1.05; intestine's wait fraction keeps Beta(2,2) — its
+16-center panel is insufficient — and retains the expected identifiability
+ridge). Calibration against observed transplant rates (n>=10 cohorts):
+
+| organ  | rho (Beta(2,2) priors) | rho (empirical priors) |
+|--------|------------------------|------------------------|
+| kidney | 0.872                  | 0.889                  |
+| liver  | —                      | 0.765                  |
+| heart  | —                      | 0.768                  |
+| lung   | —                      | 0.695                  |
+
+Full method and caveats: docs/panel-variance-report.md.
