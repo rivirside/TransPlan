@@ -327,3 +327,35 @@ class TestShutdown:
                 del os.environ["SHUTDOWN_TOKEN"]
             else:
                 os.environ["SHUTDOWN_TOKEN"] = orig
+
+
+# ==================== POST /travel-subsidy-analysis ====================
+
+class TestTravelSubsidy:
+    def test_covers_all_centers_by_default(self):
+        """#285: the sweep must cover the full center population, not 22 cities."""
+        body = {"patient": KIDNEY_PATIENT}
+        r = client.post("/travel-subsidy-analysis", json=body)
+        assert r.status_code == 200
+        data = r.json()
+        assert data["total_cities"] > 200, f"only {data['total_cities']} centers analyzed"
+        assert len(data["tiers"]) == 4
+        first = data["tiers"][0]["cities"][0]
+        assert first["center_code"], "results must carry center codes"
+
+    def test_center_codes_filter(self):
+        body = {"patient": KIDNEY_PATIENT, "center_codes": ["ALCH", "ALUA"]}
+        data = client.post("/travel-subsidy-analysis", json=body).json()
+        assert data["total_cities"] == 2
+
+    def test_unknown_codes_400(self):
+        body = {"patient": KIDNEY_PATIENT, "center_codes": ["ZZZZ"]}
+        r = client.post("/travel-subsidy-analysis", json=body)
+        assert r.status_code == 400
+
+    def test_higher_subsidy_larger_system_effect(self):
+        body = {"patient": KIDNEY_PATIENT, "center_codes": ["CASF", "ALUA", "NYCP", "TXHH"]}
+        data = client.post("/travel-subsidy-analysis", json=body).json()
+        deltas = [t["system_delta_p24"] for t in data["tiers"]]
+        assert deltas == sorted(deltas), f"no diminishing-returns curve: {deltas}"
+        assert deltas[-1] >= deltas[0]

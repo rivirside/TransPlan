@@ -195,3 +195,56 @@ class TestScenarioContent:
         for s in SCENARIOS.values():
             assert 0.85 <= s.donor_rate_multiplier <= 1.35, f"{s.id} donor={s.donor_rate_multiplier}"
             assert 0.85 <= s.wait_time_multiplier <= 1.15, f"{s.id} wait={s.wait_time_multiplier}"
+
+
+# ==================== Per-center multipliers (#285) ====================
+
+class TestCenterMultipliers:
+    def test_travel_scenario_uses_center_rpp(self, data):
+        """High-RPP centers must get a larger wait reduction than low-RPP ones."""
+        from services.policy_scenarios import (
+            get_center_multipliers, get_scenario, _center_rpp,
+        )
+        scenario = get_scenario("travel_assistance_20k")
+        rpp = _center_rpp()
+        assert len(rpp) > 200, f"RPP coverage only {len(rpp)} centers"
+        hi = max(rpp, key=rpp.get)
+        lo = min(rpp, key=rpp.get)
+        d_hi, w_hi = get_center_multipliers(scenario, hi)
+        d_lo, w_lo = get_center_multipliers(scenario, lo)
+        assert w_hi < w_lo, f"high-COL {hi} should see bigger wait cut: {w_hi} vs {w_lo}"
+        assert d_hi > d_lo
+
+    def test_non_travel_scenario_falls_back_to_global(self, data):
+        from services.policy_scenarios import get_center_multipliers, get_scenario
+        scenario = get_scenario("kidney_250nm")
+        d, w = get_center_multipliers(scenario, "ALCH")
+        assert (d, w) == (scenario.donor_rate_multiplier, scenario.wait_time_multiplier)
+
+
+class TestClosedFormWhatIf:
+    def test_neutral_multipliers_zero_delta(self, data):
+        from models.schemas import PatientProfile
+        from services.what_if import compute_what_if_closed_form
+        p = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male",
+                           urgency=2, cpra=20)
+        r = compute_what_if_closed_form(p, "ALCH")
+        assert r["delta_p24"] == 0.0
+        assert r["baseline_median_wait"] == r["adjusted_median_wait"]
+
+    def test_shorter_waits_help(self, data):
+        from models.schemas import PatientProfile
+        from services.what_if import compute_what_if_closed_form
+        p = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male",
+                           urgency=2, cpra=20)
+        r = compute_what_if_closed_form(p, "ALCH", wait_time_multiplier=0.8)
+        assert r["delta_p24"] > 0
+        assert r["adjusted_median_wait"] < r["baseline_median_wait"]
+
+    def test_more_donors_help(self, data):
+        from models.schemas import PatientProfile
+        from services.what_if import compute_what_if_closed_form
+        p = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male",
+                           urgency=2, cpra=20)
+        r = compute_what_if_closed_form(p, "ALCH", donor_rate_multiplier=1.5)
+        assert r["delta_p24"] > 0

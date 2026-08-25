@@ -26,8 +26,8 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | B1 | Trends cover 52/248 centers; BBN legacy map defaults to Nashville | #288 | ✅ 2026-08-25 (BBN map retires w/ #293) |
 | B2 | Climate layer interpolated from 22 points (35% of geo score) | #289 | |
 | B3 | Trauma layer + accident hotspots from 22 points | #290 | |
-| B4 | policy_scenarios.py 22-city end to end | #285 | |
-| B5 | what_if.py city validation; travel-subsidy iterates 22 | #285 | |
+| B4 | policy_scenarios.py 22-city end to end | #285 | ✅ travel per-center via RPP; size-based waits on #275 |
+| B5 | what_if.py city validation; travel-subsidy iterates 22 | #285 | ✅ 2026-08-25 |
 | B6 | MCMC city-level hierarchy (classic trace default) | #207 | |
 | B7 | BBN "classic" 22-city mode selectable in web tier | #293 | |
 | B8 | Silent 1.0-multiplier fallbacks in distributions/competing_risks | see G1 | |

@@ -151,10 +151,13 @@ def run_policy_scenario(request: PolicyScenarioRequest) -> PolicyScenarioResult:
             ),
         )
 
-    # Get effective multipliers. Per-city overrides only exist for the legacy
-    # focus cities; center-based runs fall back to the scenario's global
-    # multipliers until per-center adjustments land (#285).
-    donor_mult, wait_mult = get_city_multipliers(scenario, request.city)
+    # Effective multipliers: per-center (BEA RPP-derived for travel scenarios,
+    # #285) when a center code is given; legacy per-city table otherwise.
+    if request.center_code:
+        from services.policy_scenarios import get_center_multipliers
+        donor_mult, wait_mult = get_center_multipliers(scenario, request.center_code)
+    else:
+        donor_mult, wait_mult = get_city_multipliers(scenario, request.city)
 
     # Clamp iterations to tier cap
     from tier_config import get_tier
@@ -200,16 +203,22 @@ class TravelSubsidyRequest(BaseModel):
     patient: PatientProfile
     cities: list[str] = Field(
         default_factory=list,
-        description="Cities to analyze. Empty = all available centers.",
+        description="DEPRECATED (legacy 22-city filter) — use center_codes.",
     )
-    iterations: int = Field(default=500, ge=100, le=2000)
+    center_codes: list[str] = Field(
+        default_factory=list,
+        description="SRTR center codes to analyze. Empty = all centers for the organ.",
+    )
+    iterations: int = Field(default=500, ge=100, le=2000,
+                            description="Ignored since the sweep became closed-form (#285); kept for API compatibility.")
     seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
 
 
 class TravelSubsidyCityResult(BaseModel):
-    """Result for one city at one price point."""
+    """Result for one center at one price point."""
     city: str
     state: str
+    center_code: str = ""
     baseline_p24: float
     adjusted_p24: float
     delta_p24: float
@@ -253,24 +262,28 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
     import time
     start = time.perf_counter()
 
-    from services.monte_carlo import _get_cities
+    from services.data_loader import get_data
+    from services.policy_scenarios import get_center_multipliers
+    from services.what_if import compute_what_if_closed_form
 
-    # Clamp iterations to tier cap
-    from tier_config import get_tier
-    tier = get_tier()
-    clamped_iterations = min(request.iterations, tier.max_whatif_iterations)
-
-    # Determine which cities to analyze
-    all_cities = _get_cities()
-    if request.cities:
-        city_list = [c for c in all_cities if c["city"] in request.cities]
-        if not city_list:
-            raise HTTPException(
-                status_code=400,
-                detail=f"No valid cities found. Check city names.",
-            )
+    # Determine which centers to analyze (#285: all 248, not the 22 cities).
+    # The per-center comparison is closed-form (deterministic competing-risks
+    # integral), so the full center population is cheap and noise-free.
+    all_centers = get_data().centers_for_organ(request.patient.organ)
+    if request.center_codes:
+        wanted = set(request.center_codes)
+        center_list = [c for c in all_centers if c.get("code") in wanted]
+    elif request.cities:
+        # Legacy filter: match against center display names
+        wanted = set(request.cities)
+        center_list = [c for c in all_centers if c.get("name") in wanted]
     else:
-        city_list = all_cities
+        center_list = all_centers
+    if not center_list:
+        raise HTTPException(
+            status_code=400,
+            detail="No valid centers found. Check center_codes.",
+        )
 
     tiers = []
     for amount in sorted(TRAVEL_SUBSIDY_TIERS.keys()):
@@ -280,30 +293,19 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
             continue
 
         city_results = []
-        for city_info in city_list:
-            city = city_info["city"]
-            donor_mult, wait_mult = get_city_multipliers(scenario, city)
-
+        for center in center_list:
+            code = center.get("code", "")
+            donor_mult, wait_mult = get_center_multipliers(scenario, code)
             try:
-                result = compute_what_if(
+                result = compute_what_if_closed_form(
                     patient=request.patient,
-                    city=city,
+                    center_code=code,
                     donor_rate_multiplier=donor_mult,
                     wait_time_multiplier=wait_mult,
-                    n_iterations=clamped_iterations,
-                    seed=request.seed,
                 )
-                city_results.append(TravelSubsidyCityResult(
-                    city=result.city,
-                    state=result.state,
-                    baseline_p24=result.baseline_p24,
-                    adjusted_p24=result.adjusted_p24,
-                    delta_p24=result.delta_p24,
-                    baseline_median_wait=result.baseline_median_wait,
-                    adjusted_median_wait=result.adjusted_median_wait,
-                ))
+                city_results.append(TravelSubsidyCityResult(**result))
             except Exception:
-                logger.warning("Travel subsidy analysis failed for %s at %s", city, scenario_id)
+                logger.warning("Travel subsidy analysis failed for %s at %s", code, scenario_id)
                 continue
 
         if not city_results:
@@ -330,25 +332,28 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
 
     elapsed = time.perf_counter() - start
     logger.info(
-        "Travel subsidy analysis complete: %s, %d tiers × %d cities, %.2fs",
-        request.patient.organ, len(tiers), len(city_list), elapsed,
+        "Travel subsidy analysis complete: %s, %d tiers × %d centers, %.2fs",
+        request.patient.organ, len(tiers), len(center_list), elapsed,
     )
 
     return TravelSubsidyAnalysisResult(
         organ=request.patient.organ,
         tiers=tiers,
-        total_cities=len(city_list),
-        iterations_per_city=clamped_iterations,
+        total_cities=len(center_list),
+        iterations_per_city=0,  # closed-form — no Monte Carlo sampling (#285)
         elapsed_seconds=round(elapsed, 3),
         disclaimers=[
             "This is a demand-side accessibility model. It estimates how "
             "financial assistance for travel/relocation affects transplant "
             "probability by enabling access to better-matched centers.",
-            "Per-city effects are proportional to cost of living. Higher-COL "
-            "cities show larger improvements because the subsidy makes them "
-            "newly accessible to lower-income patients.",
+            "Per-center effects are proportional to each center's BEA cost of "
+            "living (RPP). Higher-COL areas show larger improvements because "
+            "the subsidy makes them newly accessible to lower-income patients.",
+            "Probabilities are computed in closed form (competing-risks "
+            "integral), so results carry no Monte Carlo noise; the copula and "
+            "stochastic cause-of-death adjustments are omitted.",
             "System-wide averages assume equal patient distribution across "
-            "cities. Real-world impact depends on where patients actually live.",
+            "centers. Real-world impact depends on where patients actually live.",
             "Equilibrium effects (increased demand at popular centers) are "
             "approximated. See Tier 2 analysis for full equilibrium modeling.",
             "These are model estimates, not empirical observations. Actual "

@@ -162,6 +162,79 @@ def _run_single(
     }
 
 
+def compute_what_if_closed_form(
+    patient: PatientProfile,
+    center_code: str,
+    donor_rate_multiplier: float = 1.0,
+    wait_time_multiplier: float = 1.0,
+) -> dict:
+    """Deterministic paired what-if for one center (#285): the same
+    competing-risks integral used by equity (#216) instead of Monte Carlo.
+
+    Used by the travel-subsidy sweep, where MC over 248 centers × 4 tiers is
+    both slow and needlessly noisy — the closed form is exact, so baseline vs
+    adjusted differences are attributable to the multipliers alone. The copula
+    and stochastic COD adjustments are omitted (they shift centers
+    near-uniformly and don't change the comparison).
+
+    Returns {city, state, center_code, baseline_p24, adjusted_p24, delta_p24,
+    baseline_median_wait, adjusted_median_wait}.
+    """
+    import scipy.stats
+    from services.data_loader import get_data
+    from services.equity import _grid_p24
+
+    center = get_data().center_by_code(center_code)
+    if center is None:
+        raise ValueError(f"Unknown center code: '{center_code}'")
+    if patient.organ not in center.get("organs", []):
+        raise ValueError(
+            f"Center {center_code} ({center.get('name', '')}) does not perform "
+            f"{patient.organ} transplants"
+        )
+    name = center.get("name", center_code)
+    state = center.get("state_abbr", "")
+
+    dist = get_wait_time_distribution(
+        organ=patient.organ, blood_type=patient.blood_type,
+        center_code=center_code, cpra=patient.cpra, meld=patient.meld,
+        las=patient.las, age=patient.age, sex=patient.sex,
+    )
+    annual_mort = get_annual_mortality_rate(
+        organ=patient.organ, urgency=patient.urgency, meld=patient.meld,
+        center_code=center_code,
+    )
+    annual_delist = get_annual_delisting_rate(
+        organ=patient.organ, center_code=center_code,
+    )
+    mort_scale = rate_to_exponential_scale(annual_mort, "mortality", center_code)
+    delist_scale = rate_to_exponential_scale(annual_delist, "delisting", center_code)
+    inv_total = 1.0 / mort_scale + 1.0 / delist_scale
+
+    # Adjusted distribution: wait multiplier scales the median directly;
+    # donor multiplier divides times with sublinear elasticity (L-056) —
+    # identical mechanics to _run_single.
+    s, loc, scale = get_lognorm_params(dist)
+    eff_donor = (donor_rate_multiplier ** SUPPLY_WAIT_ELASTICITY
+                 if donor_rate_multiplier > 0 else 1.0)
+    adj_scale = scale * wait_time_multiplier / eff_donor
+    adj_dist = scipy.stats.lognorm(s=s, loc=loc, scale=adj_scale)
+
+    baseline_p24 = _grid_p24(dist, inv_total)
+    adjusted_p24 = _grid_p24(adj_dist, inv_total)
+
+    return {
+        "city": name,
+        "state": state,
+        "center_code": center_code,
+        "baseline_p24": round(baseline_p24, 4),
+        "adjusted_p24": round(adjusted_p24, 4),
+        "delta_p24": round(adjusted_p24 - baseline_p24, 4),
+        "baseline_median_wait": round(float(dist.median()), 2),
+        "adjusted_median_wait": round(float(adj_dist.median()), 2),
+    }
+
+
 def compute_what_if(
     patient: PatientProfile,
     city: str = "Nashville",

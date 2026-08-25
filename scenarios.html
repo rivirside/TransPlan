@@ -1002,7 +1002,7 @@
 
             // Per-city breakdown
             if (r.tiers.length > 0) {
-                resultsArea.appendChild(el('h3', '', 'Per-City Breakdown'));
+                resultsArea.appendChild(el('h3', '', 'Per-Center Breakdown'));
                 resultsArea.lastChild.style.cssText = 'font-size:var(--fs-md); font-weight:600; color:var(--text-1); margin-bottom:var(--space-3);';
 
                 var selectWrap = document.createElement('div');
@@ -1071,7 +1071,7 @@
             var thead = document.createElement('thead');
             var headerRow = document.createElement('tr');
             var columns = [
-                { key: 'city', label: 'City' },
+                { key: 'city', label: 'Center' },
                 { key: 'state', label: 'State' },
                 { key: 'baseline_p24', label: 'Baseline P24' },
                 { key: 'adjusted_p24', label: 'Adjusted P24' },

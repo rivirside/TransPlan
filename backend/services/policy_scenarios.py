@@ -593,6 +593,58 @@ def get_scenario(scenario_id: str) -> Optional[PolicyScenario]:
     return SCENARIOS.get(scenario_id)
 
 
+# --- Per-center scenario multipliers (#285 step 2) ---
+
+_center_rpp_cache: dict[str, float] | None = None
+
+
+def _center_rpp() -> dict[str, float]:
+    """BEA RPP per center code for the full SRTR center population (#205)."""
+    global _center_rpp_cache
+    if _center_rpp_cache is None:
+        try:
+            data = get_data()
+        except RuntimeError:
+            return {}
+        out = {}
+        for code, rec in data.all_centers.get("centers", {}).items():
+            col = data.cost_of_living_for_center(code, rec.get("state_abbr"))
+            if isinstance(col, (int, float)):
+                out[code] = float(col)
+        _center_rpp_cache = out
+    return _center_rpp_cache
+
+
+def get_center_multipliers(
+    scenario: PolicyScenario,
+    center_code: str,
+) -> tuple[float, float]:
+    """Effective (donor, wait) multipliers for a specific center (#285).
+
+    Travel-assistance scenarios derive the center's adjustment from its own
+    BEA RPP, normalized over the full 248-center population — the same COL
+    mechanism the legacy per-city table used, no longer limited to 22 cities.
+    Other scenarios fall back to their global multipliers until per-center
+    inputs exist (center volume, #275).
+    """
+    if center_code and scenario.id.startswith("travel_assistance_"):
+        try:
+            amount = int(scenario.id.rsplit("_", 1)[1].rstrip("k")) * 1000
+        except ValueError:
+            amount = None
+        tier = TRAVEL_SUBSIDY_TIERS.get(amount)
+        rpp = _center_rpp()
+        col = rpp.get(center_code)
+        if tier and col is not None and len(rpp) > 1:
+            col_min, col_max = min(rpp.values()), max(rpp.values())
+            col_range = col_max - col_min if col_max > col_min else 1.0
+            norm = (col - col_min) / col_range
+            wait_mult = 1.0 - norm * tier["max_col_effect"]
+            donor_mult = 1.0 + norm * (tier["max_col_effect"] * 0.3)
+            return round(donor_mult, 4), round(wait_mult, 4)
+    return scenario.donor_rate_multiplier, scenario.wait_time_multiplier
+
+
 def get_city_multipliers(
     scenario: PolicyScenario,
     city: str,
