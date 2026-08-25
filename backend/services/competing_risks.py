@@ -37,7 +37,13 @@ def _load_risks() -> dict:
         if organ in raw:
             organs[organ] = raw[organ]
 
-    logger.info("Competing risks loaded for %d organs", len(organs))
+    # Manual top-level age blocks (SRTR ADR Table 5.3). The #104 rewrite
+    # dropped them from the file and their consumers silently defaulted to
+    # 1.0 for months — validate-data.js now guards their presence.
+    organs["_age_mortality_multipliers"] = raw.get("age_mortality_multipliers", {})
+    organs["_age_organ_overrides"] = raw.get("age_organ_overrides", {})
+
+    logger.info("Competing risks loaded for %d organs", len(organs) - 2)
     return organs
 
 
@@ -59,6 +65,56 @@ def _center_adjustment(center_code: str, organ: str) -> dict[str, float]:
     from services.data_loader import get_data
     center_adj = get_data().center_competing_risks.get("center_adjustments", {})
     return center_adj.get(center_code, {}).get(organ, {})
+
+
+def _age_bracket(age: int) -> str:
+    if age < 35:
+        return "18-34"
+    elif age < 50:
+        return "35-49"
+    elif age < 65:
+        return "50-64"
+    return "65+"
+
+
+def get_patient_mortality_multiplier(
+    organ: str,
+    age: int,
+    urgency: int = 2,
+    meld: int | None = None,
+) -> float:
+    """Patient-level waitlist-mortality multiplier: age x urgency x MELD.
+
+    Single source for the modulators shared by the BBN option-B hybrid
+    (#238) and any engine that scales a center-average death hazard to a
+    specific patient. By construction the reference patient (age 50-64,
+    urgency 2, MELD 15-25) returns exactly 1.0 — the anchor property the
+    option-B tests pin.
+
+    Deliberately EXCLUDES the center mortality factor (that is a property
+    of the center, already in the observed vector being modulated) and the
+    transplant hazard (the double-counting guard: WaitCategory carries the
+    patient's wait signal).
+    """
+    _ensure_loaded()
+    organ_data = _RISKS.get(organ, {})
+
+    bracket = _age_bracket(age)
+    overrides = _RISKS.get("_age_organ_overrides", {}).get(organ, {})
+    base_age = _RISKS.get("_age_mortality_multipliers", {})
+    age_mult = overrides.get(bracket, base_age.get(bracket, 1.0))
+    if isinstance(age_mult, str):
+        age_mult = 1.0
+
+    urg_mults = organ_data.get("urgency_mortality_multipliers", {})
+    urg_mult = urg_mults.get(str(urgency), 1.0)
+
+    meld_mult = 1.0
+    if organ == "liver" and meld is not None:
+        meld_mults = organ_data.get("meld_mortality_multipliers", {})
+        meld_mult = _get_range_multiplier(meld, meld_mults)
+
+    return float(age_mult * urg_mult * meld_mult)
 
 
 def get_annual_mortality_rate(

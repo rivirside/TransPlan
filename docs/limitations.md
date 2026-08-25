@@ -532,14 +532,15 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **File:** `backend/services/bbn_parameterizer.py:108`, `backend/services/bayesian_network.py`
 
 ### L-072: BBN p24 is a hybrid — competing-risk split is center-average, not patient-specific
-- **Severity:** MEDIUM
-- **Status:** OPEN (deliberate v1 trade-off — tracked by #238)
+- **Severity:** LOW (was MEDIUM)
+- **Status:** LARGELY FIXED 2026-08-25 (#238 option B implemented — see resolution note below)
 - **Category:** Statistical Model
 - **What:** After the #211 rebuild, the BBN's headline `p_transplant_24mo` is computed by a **hybrid** (`bayesian_network._combine_outcomes`): the **WaitCategory** node drives transplant *timing* (sensitive to blood type / region / donor supply, so p24 varies by patient — AB+ beats O+ by ~0.21), while the empirically-grounded **CompetingOutcome** (the center's OBSERVED SRTR Table B7 outcomes) supplies the competing-loss drain `q = (death+delist)/(tx+death+delist)` and the death/delisting/waiting split of the non-transplant mass.
 - **Why it's a limitation:** the competing-risk split is the center's **population average — not patient-specific.** A high-MELD liver candidate (or older / higher-urgency patient) faces higher true waitlist-death risk than the center's average case mix, but the BBN applies the center-average split; patient factors reach p24 only through WaitCategory *timing*, not through the competing risks. A secondary assumption: `p24 = timing × (1 − q)` treats the competing-loss share as independent of where in the wait-time distribution the patient sits.
 - **Why chosen anyway:** deliberate choice (this session) of the plan's **option A + hybrid** over full patient-specific modulation (**option B / D2a**), to (a) avoid double-counting the wait signal — the observed transplant rate already embeds wait length — and (b) keep the competing-risk structure observed-grounded and low-risk. The grounding is validated (CompetingOutcome transplant prob tracks observed rates at Spearman 0.80–0.99).
 - **How to revisit (#238):** modulate the observed competing-risk vector by patient factors on the cause-specific **hazard scale**, reference-anchored (a reference patient reduces exactly to the center's observed vector), with WaitCategory modulating only death/delisting (plan Q4). Needs careful design + validation.
 - **File:** `backend/services/bayesian_network.py` → `_combine_outcomes`; `docs/bbn-rebuild-plan.md` §2 D2/D2a; related #226 (full credible interval, also deferred).
+- **Resolution (2026-08-25, #238):** option B is implemented. `_combine_outcomes` now modulates the observed competing-risk vector on the cause-specific hazard scale by the patient's mortality multiplier (`competing_risks.get_patient_mortality_multiplier`: age × urgency × MELD), with the reference anchor (age 50-64 / urgency 2 / MELD 15-25 reduces bit-exactly to the observed vector) and the plan-Q4 double-counting guard (the transplant hazard is never modulated). Along the way the `age_mortality_multipliers` data block — silently deleted by the #104 rewrite, which had killed the BBN AgeGroup edge and MCMC-inference age modulation — was restored, parser-preserved, and CI-guarded. **Remaining residue:** delisting is not patient-modulated (no sourced patient-level delisting multipliers), and the `timing × (1−q)` independence assumption stands; both stay tracked here at LOW severity.
 
 ### L-073: BBN does not condition on cPRA / MELD / LAS — clinical severity reaches only the MC engine
 - **Severity:** MEDIUM
