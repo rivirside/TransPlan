@@ -24,8 +24,8 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | # | Item | Issue | Status |
 |---|------|-------|--------|
 | B1 | Trends cover 52/248 centers; BBN legacy map defaults to Nashville | #288 | ✅ 2026-08-25 (BBN map retires w/ #293) |
-| B2 | Climate layer interpolated from 22 points (35% of geo score) | #289 | |
-| B3 | Trauma layer + accident hotspots from 22 points | #290 | |
+| B2 | Climate layer interpolated from 22 points (35% of geo score) | #289 | ✅ 2026-08-25 |
+| B3 | Trauma layer + accident hotspots from 22 points | #290 | ✅ 2026-08-25 |
 | B4 | policy_scenarios.py 22-city end to end | #285 | ✅ travel per-center via RPP; size-based waits on #275 |
 | B5 | what_if.py city validation; travel-subsidy iterates 22 | #285 | ✅ 2026-08-25 |
 | B6 | MCMC city-level hierarchy (classic trace default) | #207 | ✅ full traces fitted; classic retires w/ #293 |
@@ -73,9 +73,9 @@ robustness (G), assumption triage (H), features (I), docs (J).
 
 | # | Item | Issue | Status |
 |---|------|-------|--------|
-| C1 | climate-scores.json → per-center NOAA/county | = B2 | |
+| C1 | climate-scores.json → per-center (NASA POWER) | = B2 | ✅ |
 | C2 | hospital-quality.json → CMS facility + SRTR volumes | #291 | |
-| C3 | traffic-fatalities.json → FARS | = B3 | |
+| C3 | traffic-fatalities.json → FARS | = B3 | ✅ |
 | C4 | donor-registration.json → state registry rates | #292 | |
 | C5 | Retire city fallback blocks (health-demographics, air-quality) | #293 | |
 | C6 | Retire city-wait-time-factors + city_* SRTR blocks | #293 | |

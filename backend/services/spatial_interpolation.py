@@ -143,27 +143,49 @@ def _extract_layer_points(layer_name: str) -> tuple[np.ndarray, np.ndarray] | No
                 values.append(float(factor))
 
     elif layer_name == "climate":
-        # Climate recovery scores from 22 focus cities
-        for city, val in data.climate_scores.items():
-            if city in _CITY_COORDS and isinstance(val, (int, float)):
-                points.append(_CITY_COORDS[city])
-                values.append(float(val))
+        # Per-center NASA POWER-derived climate scores (#289); legacy 22-city
+        # manual scores only as fallback when the center file is absent
+        center_scores = data.center_climate.get("centers", {})
+        if center_scores:
+            all_centers = data.all_centers.get("centers", {})
+            for code, val in center_scores.items():
+                c = all_centers.get(code, {})
+                lat, lon = c.get("lat"), c.get("lon")
+                if lat is not None and lon is not None and isinstance(val, (int, float)):
+                    points.append((lat, lon))
+                    values.append(float(val))
+        else:
+            for city, val in data.climate_scores.items():
+                if city in _CITY_COORDS and isinstance(val, (int, float)):
+                    points.append(_CITY_COORDS[city])
+                    values.append(float(val))
 
     elif layer_name == "trauma":
-        # Traffic/trauma scores from city data + accident hotspots
-        traffic = data.traffic_fatalities
-        trauma_scores = traffic.get("traumaScores", {})
-        for city, val in trauma_scores.items():
-            if city in _CITY_COORDS and isinstance(val, (int, float)):
-                points.append(_CITY_COORDS[city])
-                values.append(float(val))
-        # Also include accident hotspot intensities (0-1 scale → 0-100)
-        for hotspot in traffic.get("accidentHotspots", []):
-            lat, lon = hotspot.get("lat"), hotspot.get("lon")
-            intensity = hotspot.get("intensity")
-            if lat is not None and lon is not None and intensity is not None:
-                points.append((lat, lon))
-                values.append(float(intensity) * 100)
+        # Per-center FARS state-rate trauma scores (#290); legacy 22-city
+        # scores + hotspots only as fallback
+        center_scores = data.center_trauma.get("centers", {})
+        if center_scores:
+            all_centers = data.all_centers.get("centers", {})
+            for code, val in center_scores.items():
+                c = all_centers.get(code, {})
+                lat, lon = c.get("lat"), c.get("lon")
+                if lat is not None and lon is not None and isinstance(val, (int, float)):
+                    points.append((lat, lon))
+                    values.append(float(val))
+        else:
+            traffic = data.traffic_fatalities
+            trauma_scores = traffic.get("traumaScores", {})
+            for city, val in trauma_scores.items():
+                if city in _CITY_COORDS and isinstance(val, (int, float)):
+                    points.append(_CITY_COORDS[city])
+                    values.append(float(val))
+            # Accident hotspot intensities (0-1 scale → 0-100)
+            for hotspot in traffic.get("accidentHotspots", []):
+                lat, lon = hotspot.get("lat"), hotspot.get("lon")
+                intensity = hotspot.get("intensity")
+                if lat is not None and lon is not None and intensity is not None:
+                    points.append((lat, lon))
+                    values.append(float(intensity) * 100)
 
     elif layer_name.startswith("graft_survival_"):
         organ = layer_name[len("graft_survival_"):]

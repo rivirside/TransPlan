@@ -178,6 +178,18 @@ if (ptOutcomes && Object.keys(ptOutcomes.city_outcomes || {}).length === 0) {
     addError('post-transplant-outcomes.json: city_outcomes is empty');
 }
 
+// 6d. Per-center climate/trauma layers (#289/#290) — never-shrink guards
+for (const [file, key, minN] of [['climate-scores-centers.json', 'centers', 240],
+                                 ['trauma-scores-centers.json', 'centers', 240]]) {
+    const data = validateJSON(file);
+    if (data) {
+        const n = Object.keys(data[key] || {}).length;
+        if (n < minN) {
+            addError(`${file}: only ${n} centers (expected >= ${minN})`);
+        }
+    }
+}
+
 // 6c. Per-center trend series (#288) — never-shrink guard: generated from the
 // 15-release SRTR archive, must keep covering the center population.
 const centerTrends = validateJSON('srtr-trends-centers.json');

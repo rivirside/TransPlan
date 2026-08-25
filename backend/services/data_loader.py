@@ -23,6 +23,8 @@ class TransPlanData:
     traffic_fatalities: dict = field(default_factory=dict)
     # data/manual/*.json
     climate_scores: dict = field(default_factory=dict)
+    center_climate: dict = field(default_factory=dict)
+    center_trauma: dict = field(default_factory=dict)
     policy_tiers: dict = field(default_factory=dict)
     socioeconomic: dict = field(default_factory=dict)
     srtr_reports: dict = field(default_factory=dict)
@@ -193,6 +195,8 @@ def load_all() -> TransPlanData:
     data.hospital_quality   = _load_json(DATA_DIR / "hospital-quality.json",    "hospital_quality",   data)
     data.traffic_fatalities = _load_json(DATA_DIR / "traffic-fatalities.json",  "traffic_fatalities", data)
     data.climate_scores     = _load_json(DATA_DIR / "manual/climate-scores.json",  "climate_scores",  data)
+    data.center_climate     = _load_json(DATA_DIR / "climate-scores-centers.json", "center_climate", data)
+    data.center_trauma      = _load_json(DATA_DIR / "trauma-scores-centers.json",  "center_trauma",  data)
     data.policy_tiers       = _load_json(DATA_DIR / "manual/policy-tiers.json",    "policy_tiers",    data)
     data.socioeconomic      = _load_json(DATA_DIR / "manual/socioeconomic.json",   "socioeconomic",   data)
     data.srtr_reports       = _load_json(DATA_DIR / "manual/srtr-reports.json",    "srtr_reports",    data)
