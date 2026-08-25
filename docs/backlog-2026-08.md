@@ -74,7 +74,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | # | Item | Issue | Status |
 |---|------|-------|--------|
 | C1 | climate-scores.json → per-center (NASA POWER) | = B2 | ✅ |
-| C2 | hospital-quality.json → CMS facility + SRTR volumes | #291 | |
+| C2 | hospital-quality.json → SRTR per-center volumes (was 22-city + hash-fabricated) | #291 | ✅ 2026-08-25 |
 | C3 | traffic-fatalities.json → FARS | = B3 | ✅ |
 | C4 | donor-registration.json → per-center SRTR living-donor data | #292 | ✅ 2026-08-25 |
 | C5 | Retire city fallback blocks (health-demographics, air-quality) | #293 | |
