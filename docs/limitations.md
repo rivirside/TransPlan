@@ -497,7 +497,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-067: Custom city set / user-defined focus centers
 - **Severity:** MEDIUM (enhancement)
-- **Status:** DEFERRED
+- **Status:** FIXED (2026-08-25, #304 — center_codes on /score + /simulate, shareable simulator ?centers= URLs, Find-mode "Simulate these N centers" handoff)
 - **Category:** Configuration / UX
 - **What:** Allow users to define their own subset of centers to analyze (e.g., "the 10 centers nearest to me," "all centers in Texas," or a hand-picked list) rather than choosing between the fixed 22-city classic set, ~50 state groups, or all 248 centers.
 - **Why:** The 22-city "classic" set was chosen for SRTR data density but has no clinical justification for any individual patient. A patient in rural Montana cares about different centers than one in NYC. The full 248-center mode is computationally expensive and returns too many results. A user-defined subset would give the right granularity for each patient's situation.
@@ -541,9 +541,38 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **How to revisit (#238):** modulate the observed competing-risk vector by patient factors on the cause-specific **hazard scale**, reference-anchored (a reference patient reduces exactly to the center's observed vector), with WaitCategory modulating only death/delisting (plan Q4). Needs careful design + validation.
 - **File:** `backend/services/bayesian_network.py` → `_combine_outcomes`; `docs/bbn-rebuild-plan.md` §2 D2/D2a; related #226 (full credible interval, also deferred).
 
+### L-073: BBN does not condition on cPRA / MELD / LAS — clinical severity reaches only the MC engine
+- **Severity:** MEDIUM
+- **Status:** OPEN (surface with #236 continuous latents; interacts with #214)
+- **Category:** Statistical Model
+- **What:** `bayesian_network.py` / `bbn_parameterizer.py` contain no cPRA, MELD, or LAS handling at all — WaitCategory conditions on blood type / region / donor supply only. Confirmed 2026-08-24 while closing #244: for a cPRA-98 O+ kidney patient the BBN reports p24 ≈ 0.57 at centers where the MC engine (which applies the cPRA wait multiplier) reports ≈ 0.17. The BBN's *relative* center ranking is less affected (the omission is roughly uniform across centers), but its absolute probabilities are badly over-optimistic for sensitized/high-severity patients.
+- **Why:** users comparing inference modes see a large unexplained gap for exactly the patients who most need accurate numbers; the UI does not currently warn that BBN ignores severity inputs.
+- **How:** (a) short-term: disclose in the UI/docs that BBN mode ignores cPRA/MELD/LAS; (b) with #236's continuous latent rebuild, add clinical severity as a continuous input to the timing latent, reusing the MC multiplier curves as priors.
+- **Files:** `backend/services/bayesian_network.py`, `backend/services/bbn_parameterizer.py`
+
+### L-074: No multi-listing model — per-center probabilities cannot be combined
+- **Severity:** MEDIUM
+- **Status:** OPEN (discovered 2026-08-25 while fact-checking the patient FAQ)
+- **Category:** Statistical Model
+- **What:** There is no multiple-listing logic anywhere in the codebase. `grep -ri "multi.?list"` over `backend/` returns nothing outside test files. `/simulate` returns independent per-center probabilities and nothing combines two registrations into a joint probability.
+- **Why it's a limitation:** multiple listing is one of the highest-leverage decisions a candidate actually makes, and the tool's whole premise is center comparison, so users naturally read two center estimates as combinable. They are not: the two registrations compete for **many of the same organs** (every deceased-donor match run is national and already contains every compatible candidate, so a second listing improves *rank* on donors near the second center rather than opening a disjoint donor pool). The correct combination is therefore neither the sum nor the max, and depends on the overlap between the two centers' proximity catchments.
+- **Interim mitigation (done):** `faq.html#multi-listing-benefit` states explicitly that the simulator does not combine centers and that combined odds beat either alone but by less than the sum.
+- **How to fix:** a joint-probability endpoint taking 2+ center IDs, modelling shared-donor overlap as a function of inter-center distance versus the 250 NM kidney circle (and the acuity circles for liver). Needs a correlation assumption that is currently unsupported by any data we hold, so this should not be shipped as a point estimate without an interval.
+- **Files:** `backend/routers/simulate.py`, `backend/services/monte_carlo.py`
+
+### L-075: Center discretion is captured only as a center-average, never per-subgroup
+- **Severity:** MEDIUM
+- **Status:** OPEN (documented 2026-08-25)
+- **Category:** Statistical Model / Data
+- **What:** Program-level discretion (whether to list a candidate, whether to accept an offer, whether to use A2/A2B, DCD, high-KDPI or HCV+ organs, whether to file urgency status exceptions, and recipient selection in the non-directed-living-donor and out-of-sequence pathways) reaches the model **only** through each center's observed aggregate SRTR numbers. The averaged downstream effect is therefore captured; the distributional effect is not.
+- **Why it's a limitation:** the literature shows this discretion is both large and unevenly applied. Adjusted first-offer acceptance ranges roughly 12%–62% across heart programs, and each 10% higher acceptance is associated with ~27% lower one-year waitlist mortality (JAMA Cardiol 2020). Acceptance also differs *by patient race* at equal priority (Black heart candidates ~24% less likely to have a first offer accepted; smaller gaps for liver and lung — PMC11275659). Out-of-sequence kidney placement grew from ~2.3% of placements in 2020 to ~16% in 2023 with a 0–43% spread across OPOs, and its recipients skew older, male, and privately insured. Our per-center factors cannot express any of this, so **equity analyses that use center factors will understate between-group disparity** at a given center.
+- **Note:** this is a data-availability limit as much as a modelling one. Public SRTR reporting does not break center outcomes down by demographic subgroup finely enough to fit subgroup-specific acceptance.
+- **Opportunity:** SRTR now publishes a risk-adjusted **Offer Acceptance Rate Ratio** per program (OPTN Board approved Dec 2022, effective July 2023, MPSC review below 0.30 adult / 0.35 pediatric). The 2024 program year spans ~0.1 to ~5.12 across 200+ kidney programs. Ingesting this would give a directly observed center-discretion covariate, replacing the current inference-from-outcomes approach. Worth its own issue.
+- **Files:** `backend/services/scoring.py`, `backend/services/outcomes.py`, `backend/routers/equity.py`
+
 ### L-071: Documentation still references "22 cities" in ~15 places
 - **Severity:** LOW
-- **Status:** OPEN
+- **Status:** FIXED (2026-08-25, #305 — docs-site/README swept; remaining mentions are explicitly historical. Backend comments/docstrings retire with the final #293 code deletion.)
 - **Category:** Documentation
 - **What:** After expanding all 3 inference engines to support 248 centers via granularity modes, ~15 documentation references in `docs/status.md`, `docs-site/docs/` (architecture, frontend, data-pipeline, FAQ, roadmap, testing, data-curation), and backend comments/docstrings still say "22 cities" as if it were a hard limit. The functional code and tests have been updated, but prose documentation has not.
 - **Why:** Misleading for new contributors and reviewers who read the docs and think the system is limited to 22 cities. Should reflect the current state: 22 cities is the "classic" default, with state (~50) and full (248) modes available.

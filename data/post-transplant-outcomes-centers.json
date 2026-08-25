@@ -10046,8 +10046,6 @@
         "performance_rating": "insufficient_data"
       },
       "lung": {
-        "graft_survival_3yr": 0.0,
-        "patient_survival_3yr": 0.0,
         "performance_rating": "insufficient_data"
       },
       "intestine": {

@@ -49,13 +49,6 @@ class TestApiV1Endpoints:
         assert "centers" in data or "cities" in data
         assert "total" in data
 
-    def test_centers_focus_only(self, client):
-        r = client.get("/api/v1/centers?focus_only=true")
-        assert r.status_code == 200
-        data = r.json()
-        assert "cities" in data
-        assert data["total"] <= 22
-
     def test_spatial_layers(self, client):
         r = client.get("/api/v1/spatial-layers")
         assert r.status_code == 200

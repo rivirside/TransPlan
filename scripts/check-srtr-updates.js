@@ -94,9 +94,8 @@ The SRTR program-specific reports page has been updated. New biannual data may b
 - [ ] Visit [SRTR Reports](https://www.srtr.org/reports/program-specific-reports/)
 - [ ] Download updated center volume and outcome data
 - [ ] Update \`data/manual/srtr-reports.json\` with new volumes
-- [ ] Update \`data/hospital-quality.json\` centerReputation scores if needed
 - [ ] Update specializations list if centers have changed focus areas
-- [ ] Verify all 22 cities have current data
+- [ ] Verify all SRTR centers have current data (never-shrink guards in scripts/validate-data.js)
 - [ ] Commit and push updates
 
 *This issue was automatically created by the SRTR check workflow.*`;

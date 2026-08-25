@@ -20,7 +20,7 @@ The Python backend (FastAPI) is now deployed as a Vercel serverless function, ma
 
 ## Phase 4: All-Program Expansion (Complete)
 
-The simulation engine now covers all 248 SRTR transplant centers (previously limited to 22 cities). Center-level data for wait-time factors, competing risks, and post-transplant outcomes was already available; Phase 4 rewired the services to use center codes instead of city names. All simulation parameters (iterations, copula theta, supply-wait elasticity) are now adjustable via API query params. The BBN and MCMC engines map 248 centers to 22 regions as an interim measure; full center-level BBN (#206) and MCMC (#207) are planned.
+The simulation engine now covers all 248 SRTR transplant centers (previously limited to 22 cities). Center-level data for wait-time factors, competing risks, and post-transplant outcomes was already available; Phase 4 rewired the services to use center codes instead of city names. All simulation parameters (iterations, copula theta, supply-wait elasticity) are now adjustable via API query params. The BBN (#206, June 2026) and MCMC (#207, August 2026) engines now both run at full 248-center granularity; the interim 22-region mapping is retired.
 
 ## Phase 5: Advanced Modeling
 

@@ -31,6 +31,7 @@ def _patient_to_dict(patient: PatientProfile) -> dict:
         "meld": patient.meld,
         "las": patient.las,
         "adjust_for_cause_of_death": patient.adjust_for_cause_of_death,
+        "center_codes": patient.center_codes,
     }
 
 
@@ -62,12 +63,23 @@ async def score_centers(patient: PatientProfile):
         for r in results
     ]
 
+    # Data-provenance summary (#219): /score previously had no channel at all
+    from services.provenance import center_data_quality, summarize
+    from services.scoring import unavailable_spatial_layers
+    tag_lists = [center_data_quality(patient.organ, c.code) for c in centers]
+    dq = summarize(tag_lists) if centers else None
+    if dq is not None:
+        # competing risks are not a scoring input — drop that family here
+        dq.pop("competing_risks", None)
+        dq["spatial_layers_unavailable"] = unavailable_spatial_layers()
+
     elapsed = time.perf_counter() - t0
     return ScoringResult(
         patient=patient,
         centers=centers,
         total_centers=len(centers),
         elapsed_seconds=round(elapsed, 3),
+        data_quality=dq,
     )
 
 
@@ -89,23 +101,14 @@ async def score_centers_with_provenance(
 
     `limit` controls how many top-ranked centers receive provenance trails
     (computing provenance for all 248 centers is ~10x slower than scoring alone).
+    The active tier caps the effective limit (#249).
     """
     t0 = time.perf_counter()
 
-    patient_dict = {
-        "organ": patient.organ,
-        "blood_type": patient.blood_type,
-        "age": patient.age,
-        "sex": patient.sex,
-        "urgency": patient.urgency,
-        "insurance": patient.insurance,
-        "weight_lbs": patient.weight_lbs,
-        "height_inches": patient.height_inches,
-        "cpra": patient.cpra,
-        "meld": patient.meld,
-        "las": patient.las,
-        "adjust_for_cause_of_death": patient.adjust_for_cause_of_death,
-    }
+    from tier_config import get_tier
+    limit = min(limit, get_tier().max_score_explain_limit)
+
+    patient_dict = _patient_to_dict(patient)  # single source of truth (#262)
 
     # Run the production scoring path (preserves ranking + tests)
     results = score_all_centers(patient_dict, patient.custom_weights)

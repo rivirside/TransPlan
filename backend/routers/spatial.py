@@ -21,6 +21,17 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+_VALID_ORGANS = {"kidney", "liver", "heart", "lung", "pancreas", "intestine"}
+
+
+def _validate_organ(organ: str) -> None:
+    """#220: every organ-parameterized spatial endpoint rejects unknown organs
+    with a 400 instead of silently building empty layer names."""
+    if organ not in _VALID_ORGANS:
+        raise HTTPException(status_code=400,
+                            detail=f"Unknown organ '{organ}'. Valid: {sorted(_VALID_ORGANS)}")
+
+
 @router.get("/spatial-layers")
 def list_spatial_layers():
     """List all available spatial interpolation layers."""
@@ -67,6 +78,7 @@ def query_interpolated_profile(
     Interpolate all relevant layers at a single coordinate.
     Returns a complete spatial profile for location scoring.
     """
+    _validate_organ(organ)
     results = {}
     layers_to_query = [
         "air_quality",
@@ -81,18 +93,22 @@ def query_interpolated_profile(
         f"graft_survival_{organ}",
     ]
 
+    unavailable = []
     for layer in layers_to_query:
         try:
             value = interpolate_at(lat, lon, layer)
             results[layer] = round(value, 3)
         except ValueError:
+            # #220: a null value and an unavailable layer are different facts
             results[layer] = None
+            unavailable.append(layer)
 
     return {
         "lat": lat,
         "lon": lon,
         "organ": organ,
         "values": results,
+        "layers_unavailable": unavailable,
         "interpolation_method": "rbf",
     }
 
@@ -104,6 +120,7 @@ def query_allocation_circles(
     organ: str = Query(default="kidney", description="Organ type"),
 ):
     """UNOS allocation circle analysis at a coordinate."""
+    _validate_organ(organ)
     return allocation_circles(lat, lon, organ)
 
 
@@ -114,6 +131,7 @@ def query_distance_score(
     organ: str = Query(default="kidney", description="Organ type"),
 ):
     """Composite distance/geography score at a coordinate."""
+    _validate_organ(organ)
     return distance_score(lat, lon, organ)
 
 
@@ -179,6 +197,8 @@ def query_location_delta(
     Returns delta values for each interpolation layer ("air quality +15, cost -8").
     Phase 6B issue #131.
     """
+    _validate_organ(organ)
+    unavailable = []
     layers = [
         "air_quality",
         "cost_of_living",
@@ -203,10 +223,12 @@ def query_location_delta(
             }
         except ValueError:
             deltas[layer] = None
+            unavailable.append(layer)
 
     return {
         "home": {"lat": home_lat, "lon": home_lon},
         "center": {"lat": center_lat, "lon": center_lon},
         "organ": organ,
         "deltas": deltas,
+        "layers_unavailable": unavailable,
     }

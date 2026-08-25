@@ -5,9 +5,10 @@ from services.policy_scenarios import (
     SCENARIOS,
     PolicyScenario,
     CityAdjustment,
-    list_scenarios,
+    _center_size_classes,
+    get_center_multipliers,
     get_scenario,
-    get_city_multipliers,
+    list_scenarios,
 )
 
 
@@ -86,80 +87,85 @@ class TestGetScenario:
         assert get_scenario("nonexistent") is None
 
 
-# --- get_city_multipliers ---
+# --- get_center_multipliers: size-class adjustments (#285) ---
 
-class TestGetCityMultipliers:
+class TestSizeClassMultipliers:
+    """The 2021 250nm-circle / continuous-distribution scenarios apply
+    volume-quartile size-class adjustments to EVERY classified center —
+    replacing the legacy 22-city hand tables (2026-08 review)."""
+
+    @pytest.fixture(autouse=True)
+    def _load(self, data):
+        pass
+
+    def _center_of_class(self, cls: str) -> str:
+        classes = _center_size_classes("kidney")
+        assert classes, "no kidney size classes derivable from trend volumes"
+        code = next((c for c, k in classes.items() if k == cls), None)
+        assert code, f"no kidney center classified {cls}"
+        return code
+
     def test_kidney_250nm_large_center(self):
         """Large centers should see donor reduction and wait increase."""
         s = get_scenario("kidney_250nm")
-        donor, wait = get_city_multipliers(s, "New York")
+        donor, wait = get_center_multipliers(s, self._center_of_class("large"))
         assert donor < 1.0  # less donor access
         assert wait > 1.0   # longer waits
 
     def test_kidney_250nm_small_center(self):
         """Small centers should see donor improvement and wait decrease."""
         s = get_scenario("kidney_250nm")
-        donor, wait = get_city_multipliers(s, "Madison")
-        assert donor > 1.0  # more donor access
-        assert wait < 1.0   # shorter waits
-
-    def test_kidney_250nm_medium_center(self):
-        """Medium centers should see moderate improvement."""
-        s = get_scenario("kidney_250nm")
-        donor, wait = get_city_multipliers(s, "Nashville")
+        donor, wait = get_center_multipliers(s, self._center_of_class("small"))
         assert donor > 1.0
         assert wait < 1.0
-        # Moderate — less improvement than small centers
-        donor_small, _ = get_city_multipliers(s, "Madison")
+
+    def test_kidney_250nm_medium_center(self):
+        """Medium centers see moderate improvement — less than small ones."""
+        s = get_scenario("kidney_250nm")
+        donor, wait = get_center_multipliers(s, self._center_of_class("medium"))
+        assert donor > 1.0
+        assert wait < 1.0
+        donor_small, _ = get_center_multipliers(s, self._center_of_class("small"))
         assert donor < donor_small
 
     def test_continuous_distribution_stronger_than_250nm(self):
-        """Continuous distribution should have larger effect than 250nm circles."""
         s_250 = get_scenario("kidney_250nm")
         s_cd = get_scenario("continuous_distribution")
+        small = self._center_of_class("small")
+        large = self._center_of_class("large")
+        d_250, _ = get_center_multipliers(s_250, small, organ="kidney")
+        d_cd, _ = get_center_multipliers(s_cd, small, organ="kidney")
+        assert d_cd > d_250  # more donor improvement for small centers
+        d_250_l, _ = get_center_multipliers(s_250, large, organ="kidney")
+        d_cd_l, _ = get_center_multipliers(s_cd, large, organ="kidney")
+        assert d_cd_l < d_250_l  # more donor reduction for large centers
 
-        # For small centers, continuous distribution gives more improvement
-        d_250, _ = get_city_multipliers(s_250, "Omaha")
-        d_cd, _ = get_city_multipliers(s_cd, "Omaha")
-        assert d_cd > d_250  # more donor improvement
-
-        # For large centers, continuous distribution penalizes more
-        d_250_ny, _ = get_city_multipliers(s_250, "New York")
-        d_cd_ny, _ = get_city_multipliers(s_cd, "New York")
-        assert d_cd_ny < d_250_ny  # more donor reduction
-
-    def test_dcd_global_multiplier_no_city_overrides(self):
-        """DCD uses global multipliers (no per-city overrides)."""
+    def test_dcd_global_multiplier_no_overrides(self):
+        """DCD uses global multipliers (no size-class overrides)."""
         s = get_scenario("increased_dcd")
-        donor, wait = get_city_multipliers(s, "Nashville")
-        assert donor == s.donor_rate_multiplier
-        assert wait == s.wait_time_multiplier
-        # Same for any city
-        donor2, wait2 = get_city_multipliers(s, "New York")
-        assert donor == donor2
-        assert wait == wait2
+        a = get_center_multipliers(s, self._center_of_class("small"), organ="kidney")
+        b = get_center_multipliers(s, self._center_of_class("large"), organ="kidney")
+        assert a == b == (s.donor_rate_multiplier, s.wait_time_multiplier)
 
     def test_hcv_global_multiplier(self):
-        """HCV+ uses global multipliers."""
         s = get_scenario("hcv_positive_donors")
-        donor, wait = get_city_multipliers(s, "Pittsburgh")
+        donor, wait = get_center_multipliers(s, "PAPT", organ="kidney")
         assert donor == s.donor_rate_multiplier
         assert wait == s.wait_time_multiplier
 
-    def test_all_22_cities_have_multipliers(self):
-        """Every TransPlan city should return valid multipliers."""
-        cities = [
-            "Pittsburgh", "Baltimore", "Philadelphia", "New York", "Minneapolis",
-            "Madison", "Chicago", "Cleveland", "St. Louis", "Indianapolis",
-            "Omaha", "Rochester", "Nashville", "Durham", "Miami",
-            "Dallas", "Houston", "Portland", "Seattle", "San Francisco",
-            "Los Angeles", "Palo Alto",
-        ]
+    def test_all_classified_centers_have_sane_multipliers(self):
+        """Every classified center returns bounded multipliers for every scenario."""
+        codes = list(_center_size_classes("kidney"))[:40]
         for s in SCENARIOS.values():
-            for city in cities:
-                donor, wait = get_city_multipliers(s, city)
-                assert 0.5 <= donor <= 2.0, f"{s.id}/{city}: donor={donor}"
-                assert 0.5 <= wait <= 2.0, f"{s.id}/{city}: wait={wait}"
+            for code in codes:
+                donor, wait = get_center_multipliers(s, code, organ="kidney")
+                assert 0.5 <= donor <= 2.0, f"{s.id}/{code}: donor={donor}"
+                assert 0.5 <= wait <= 2.0, f"{s.id}/{code}: wait={wait}"
+
+    def test_unclassified_center_falls_back_to_global(self):
+        s = get_scenario("kidney_250nm")
+        d, w = get_center_multipliers(s, "ZZZZ", organ="kidney")
+        assert (d, w) == (s.donor_rate_multiplier, s.wait_time_multiplier)
 
 
 # --- Scenario content quality ---
@@ -182,9 +188,9 @@ class TestScenarioContent:
         s = get_scenario("hcv_positive_donors")
         assert set(s.organs) == {"kidney", "liver"}
 
-    def test_kidney_250nm_has_22_city_overrides(self):
+    def test_kidney_250nm_has_size_class_overrides(self):
         s = get_scenario("kidney_250nm")
-        assert len(s.city_adjustments) == 22
+        assert set(s.size_class_adjustments) == {"large", "small", "medium"}
 
     def test_all_scenarios_have_references(self):
         for s in SCENARIOS.values():
@@ -195,3 +201,56 @@ class TestScenarioContent:
         for s in SCENARIOS.values():
             assert 0.85 <= s.donor_rate_multiplier <= 1.35, f"{s.id} donor={s.donor_rate_multiplier}"
             assert 0.85 <= s.wait_time_multiplier <= 1.15, f"{s.id} wait={s.wait_time_multiplier}"
+
+
+# ==================== Per-center multipliers (#285) ====================
+
+class TestCenterMultipliers:
+    def test_travel_scenario_uses_center_rpp(self, data):
+        """High-RPP centers must get a larger wait reduction than low-RPP ones."""
+        from services.policy_scenarios import (
+            get_center_multipliers, get_scenario, _center_rpp,
+        )
+        scenario = get_scenario("travel_assistance_20k")
+        rpp, _, _ = _center_rpp()
+        assert len(rpp) > 200, f"RPP coverage only {len(rpp)} centers"
+        hi = max(rpp, key=rpp.get)
+        lo = min(rpp, key=rpp.get)
+        d_hi, w_hi = get_center_multipliers(scenario, hi)
+        d_lo, w_lo = get_center_multipliers(scenario, lo)
+        assert w_hi < w_lo, f"high-COL {hi} should see bigger wait cut: {w_hi} vs {w_lo}"
+        assert d_hi > d_lo
+
+    def test_global_only_scenario_ignores_center(self, data):
+        from services.policy_scenarios import get_center_multipliers, get_scenario
+        scenario = get_scenario("increased_dcd")
+        d, w = get_center_multipliers(scenario, "ALCH", organ="kidney")
+        assert (d, w) == (scenario.donor_rate_multiplier, scenario.wait_time_multiplier)
+
+
+class TestClosedFormWhatIf:
+    def test_neutral_multipliers_zero_delta(self, data):
+        from models.schemas import PatientProfile
+        from services.what_if import compute_what_if_closed_form
+        p = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male",
+                           urgency=2, cpra=20)
+        r = compute_what_if_closed_form(p, "ALCH")
+        assert r["delta_p24"] == 0.0
+        assert r["baseline_median_wait"] == r["adjusted_median_wait"]
+
+    def test_shorter_waits_help(self, data):
+        from models.schemas import PatientProfile
+        from services.what_if import compute_what_if_closed_form
+        p = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male",
+                           urgency=2, cpra=20)
+        r = compute_what_if_closed_form(p, "ALCH", wait_time_multiplier=0.8)
+        assert r["delta_p24"] > 0
+        assert r["adjusted_median_wait"] < r["baseline_median_wait"]
+
+    def test_more_donors_help(self, data):
+        from models.schemas import PatientProfile
+        from services.what_if import compute_what_if_closed_form
+        p = PatientProfile(organ="kidney", blood_type="O+", age=45, sex="male",
+                           urgency=2, cpra=20)
+        r = compute_what_if_closed_form(p, "ALCH", donor_rate_multiplier=1.5)
+        assert r["delta_p24"] > 0

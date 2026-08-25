@@ -77,7 +77,7 @@ The frontend is plain HTML/CSS/JS with no bundler. This avoids build toolchain c
 
 ### Graceful Degradation
 
-If the backend is not running (e.g., GitHub Pages fallback), the frontend falls back silently to Phase 1, providing deterministic scores for 22 cities only. When the backend is available (Vercel deployment), the simulator covers all 248 SRTR centers filtered by the patient's organ.
+The simulator requires the backend (Vercel deployment or local uvicorn) and covers all 248 SRTR centers filtered by the patient's organ. The old client-side 22-city fallback scorer was retired (#293): with no backend, the UI reports the backend as unavailable rather than silently serving a degraded scorer.
 
 ### Data at Rest vs Runtime
 
@@ -91,7 +91,7 @@ Public API data is fetched by GitHub Actions on a weekly or bimonthly schedule a
 |------|---------|
 | `index.html` | Landing page: features, how-it-works, CTA to simulator |
 | `simulator.html` | Simulation tool: form, 3-tab results, modals, map, methodology |
-| `algorithm.js` | Phase 1 scoring engine: 8 categories (fallback for 22 cities when backend unavailable) |
+| `scoring-constants.js` | Scoring category constants for the weight-slider UI (parity-tested against `backend/services/scoring.py`) |
 | `script.js` | UI orchestration: form, results display, map controls, city detail modal, comparison |
 | `api-client.js` | API client: POST /simulate, /sensitivity, /equity-analysis, graceful fallback |
 | `probability-charts.js` | CDF line charts, competing risks bars, tornado sensitivity chart (Chart.js) |

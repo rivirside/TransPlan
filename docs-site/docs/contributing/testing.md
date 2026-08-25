@@ -20,7 +20,7 @@ npm test
 
 ### What's Tested
 
-The algorithm tests verify blood type compatibility scoring for all organs, cPRA sensitivity for kidney (0%, 50%, 80%+), MELD scoring for liver (low, medium, high urgency), LAS scoring for lung, BMI/height/weight scoring, all 8 category weight combinations, full integration through `calculateScores()` returning valid scores for all 22 cities, and edge cases including missing fields, extreme values, and null inputs.
+Scoring is tested on the backend (`backend/tests/test_scoring.py` and `test_scoring_explain.py`): blood type compatibility for all organs, cPRA sensitivity for kidney, MELD scoring for liver, LAS scoring for lung, and all 8 categories over the full 248-center set. The legacy client-side scorer (`algorithm.js`) and its Jest suite were retired (#293); the remaining frontend constants are guarded by `backend/tests/test_constants_parity.py` against `scoring-constants.js`.
 
 The utils tests verify that `deepMerge()` correctly merges nested objects, that `mergeDataFile()` preserves existing data when new data is empty and updates only keys present in new data, and that the `CITIES` array contains exactly the 22 expected cities.
 
@@ -79,7 +79,7 @@ The schema tests validate PatientProfile for all organ and blood type combinatio
 
 The distribution tests verify that LogNormal parameters are loaded for all organ and blood type combinations, that city factor multipliers are applied correctly, that cPRA multipliers increase wait time at 80%+, that MELD multipliers decrease wait time at high scores, and that sampled wait times are always positive.
 
-The Monte Carlo tests confirm that 1,000 iterations complete for all 22 cities, that `p_transplant_*` probabilities fall within [0, 1], that cities are ranked by `p_transplant_24mo` descending, that the 95% CI lower bound does not exceed the point estimate, and that the full run completes in under 2 seconds.
+The Monte Carlo tests confirm that iterations complete for every center that performs the organ (up to 248), that `p_transplant_*` probabilities fall within [0, 1], that centers are ranked by `p_transplant_24mo` descending, that the 95% CI lower bound does not exceed the point estimate, and that runs complete within the time budget.
 
 The competing risks tests check that all risk components sum to 1.0 within floating point tolerance (meaning `p_transplant + p_mortality + p_delisting + p_still_waiting = 1.0`), that all components are non-negative, and that organ-specific rates differ appropriately (for example, heart has higher mortality rates than kidney).
 

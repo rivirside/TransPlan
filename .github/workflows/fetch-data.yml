@@ -40,10 +40,6 @@ jobs:
         run: node scripts/fetch-air-quality.js
         continue-on-error: true
 
-      - name: Fetch hospital quality data (CMS)
-        run: node scripts/fetch-hospital-quality.js
-        continue-on-error: true
-
       - name: Fetch cost of living data (BLS)
         run: node scripts/fetch-cost-of-living.js
         continue-on-error: true

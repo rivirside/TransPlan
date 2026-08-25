@@ -14,43 +14,24 @@ from fastapi import APIRouter, HTTPException
 logger = logging.getLogger(__name__)
 from pydantic import BaseModel, Field
 
-from models.schemas import PatientProfile
+from models.schemas import (
+    PatientProfile,
+    WhatIfRequest,
+    PolicyScenarioRequest,
+    TravelSubsidyRequest,
+    TravelSubsidyCityResult,
+    TravelSubsidyTierResult,
+    TravelSubsidyAnalysisResult,
+)
 from services.what_if import compute_what_if, WhatIfResult
 from services.policy_scenarios import (
-    PolicyScenario, list_scenarios, get_scenario, get_city_multipliers,
-    TRAVEL_SUBSIDY_TIERS,
+    PolicyScenario, list_scenarios, get_scenario, TRAVEL_SUBSIDY_TIERS,
 )
 
 router = APIRouter()
 
 
 # --- Raw multiplier endpoint (unchanged) ---
-
-class WhatIfRequest(BaseModel):
-    patient: PatientProfile
-    city: str = Field(
-        default="Nashville",
-        description="City name (legacy) or display label",
-    )
-    center_code: str = Field(
-        default="",
-        description="SRTR center code (preferred over city name)",
-    )
-    donor_rate_multiplier: float = Field(
-        default=1.0,
-        ge=0.5,
-        le=2.0,
-        description="Multiplier for donor availability. >1 = more donors (shorter waits), <1 = fewer donors (longer waits)",
-    )
-    wait_time_multiplier: float = Field(
-        default=1.0,
-        ge=0.5,
-        le=2.0,
-        description="Multiplier for base wait time distribution. >1 = longer waits, <1 = shorter waits",
-    )
-    iterations: int = Field(default=500, ge=100, le=2000)
-    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
-
 
 @router.post("/what-if", response_model=WhatIfResult)
 def run_what_if(request: WhatIfRequest) -> WhatIfResult:
@@ -61,6 +42,7 @@ def run_what_if(request: WhatIfRequest) -> WhatIfResult:
         return compute_what_if(
             patient=request.patient,
             city=request.city,
+            center_code=request.center_code,
             donor_rate_multiplier=request.donor_rate_multiplier,
             wait_time_multiplier=request.wait_time_multiplier,
             n_iterations=iterations,
@@ -75,22 +57,12 @@ def run_what_if(request: WhatIfRequest) -> WhatIfResult:
 
 # --- Policy scenario endpoints (Phase 4 M4) ---
 
-class PolicyScenarioRequest(BaseModel):
-    patient: PatientProfile
-    scenario_id: str = Field(description="ID of the predefined policy scenario")
-    city: str = Field(
-        default="Nashville",
-        description="City to run scenario analysis for",
-    )
-    iterations: int = Field(default=500, ge=100, le=2000)
-    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
-
-
 class PolicyScenarioResult(BaseModel):
     """Result of a policy scenario analysis."""
     scenario: PolicyScenario
     city: str
     state: str
+    center_code: str = Field("", description="SRTR center code when the run was center-based")
     donor_rate_multiplier: float = Field(description="Effective multiplier for this city")
     wait_time_multiplier: float = Field(description="Effective multiplier for this city")
     baseline_p24: float
@@ -103,6 +75,8 @@ class PolicyScenarioResult(BaseModel):
     iterations: int
     elapsed_seconds: float
     seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
+    data_quality: Optional[list[str]] = Field(
+        None, description="Degraded-input provenance tags for this center (#300)")
 
 
 @router.get("/policy-scenarios", response_model=list[PolicyScenario])
@@ -145,8 +119,12 @@ def run_policy_scenario(request: PolicyScenarioRequest) -> PolicyScenarioResult:
             ),
         )
 
-    # Get effective multipliers for this city
-    donor_mult, wait_mult = get_city_multipliers(scenario, request.city)
+    # Effective multipliers: per-center (BEA RPP-derived for travel scenarios,
+    # #285). center_code is required — compute_what_if 400s without it.
+    from services.policy_scenarios import get_center_multipliers
+    donor_mult, wait_mult = get_center_multipliers(
+        scenario, request.center_code, organ=request.patient.organ,
+    )
 
     # Clamp iterations to tier cap
     from tier_config import get_tier
@@ -154,19 +132,24 @@ def run_policy_scenario(request: PolicyScenarioRequest) -> PolicyScenarioResult:
     iterations = min(request.iterations, tier.max_whatif_iterations)
 
     # Run the what-if engine with scenario-derived multipliers
-    result = compute_what_if(
-        patient=request.patient,
-        city=request.city,
-        donor_rate_multiplier=donor_mult,
-        wait_time_multiplier=wait_mult,
-        n_iterations=iterations,
-        seed=request.seed,
-    )
+    try:
+        result = compute_what_if(
+            patient=request.patient,
+            city=request.city,
+            center_code=request.center_code,
+            donor_rate_multiplier=donor_mult,
+            wait_time_multiplier=wait_mult,
+            n_iterations=iterations,
+            seed=request.seed,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
     return PolicyScenarioResult(
         scenario=scenario,
         city=result.city,
         state=result.state,
+        center_code=result.center_code,
         donor_rate_multiplier=donor_mult,
         wait_time_multiplier=wait_mult,
         baseline_p24=result.baseline_p24,
@@ -178,55 +161,12 @@ def run_policy_scenario(request: PolicyScenarioRequest) -> PolicyScenarioResult:
         adjusted_median_wait=result.adjusted_median_wait,
         iterations=result.iterations,
         elapsed_seconds=result.elapsed_seconds,
+        seed_used=result.seed_used,
+        data_quality=result.data_quality,
     )
 
 
 # --- Travel subsidy multi-price-point comparison (#141) ---
-
-class TravelSubsidyRequest(BaseModel):
-    patient: PatientProfile
-    cities: list[str] = Field(
-        default_factory=list,
-        description="Cities to analyze. Empty = all available centers.",
-    )
-    iterations: int = Field(default=500, ge=100, le=2000)
-    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
-
-
-class TravelSubsidyCityResult(BaseModel):
-    """Result for one city at one price point."""
-    city: str
-    state: str
-    baseline_p24: float
-    adjusted_p24: float
-    delta_p24: float
-    baseline_median_wait: float
-    adjusted_median_wait: float
-
-
-class TravelSubsidyTierResult(BaseModel):
-    """Result for one price point across all cities."""
-    subsidy_amount: int
-    label: str
-    scenario_id: str
-    system_avg_baseline_p24: float = Field(description="Average P(transplant ≤ 24mo) across all cities, no subsidy")
-    system_avg_adjusted_p24: float = Field(description="Average P(transplant ≤ 24mo) across all cities, with subsidy")
-    system_delta_p24: float = Field(description="System-wide improvement in average P24")
-    system_avg_baseline_wait: float
-    system_avg_adjusted_wait: float
-    cities: list[TravelSubsidyCityResult]
-
-
-class TravelSubsidyAnalysisResult(BaseModel):
-    """Full multi-price-point travel subsidy comparison."""
-    organ: str
-    tiers: list[TravelSubsidyTierResult]
-    total_cities: int
-    iterations_per_city: int
-    elapsed_seconds: float
-    seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
-    disclaimers: list[str]
-
 
 @router.post("/travel-subsidy-analysis", response_model=TravelSubsidyAnalysisResult)
 def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyAnalysisResult:
@@ -240,24 +180,39 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
     import time
     start = time.perf_counter()
 
-    from services.monte_carlo import _get_cities
+    from services.data_loader import get_data
+    from services.policy_scenarios import get_center_multipliers
+    from services.what_if import closed_form_adjusted, closed_form_baseline
 
-    # Clamp iterations to tier cap
-    from tier_config import get_tier
-    tier = get_tier()
-    clamped_iterations = min(request.iterations, tier.max_whatif_iterations)
-
-    # Determine which cities to analyze
-    all_cities = _get_cities()
-    if request.cities:
-        city_list = [c for c in all_cities if c["city"] in request.cities]
-        if not city_list:
-            raise HTTPException(
-                status_code=400,
-                detail=f"No valid cities found. Check city names.",
-            )
+    # Determine which centers to analyze (#285: all 248, not the 22 cities).
+    # The per-center comparison is closed-form (deterministic competing-risks
+    # integral), so the full center population is cheap and noise-free.
+    all_centers = get_data().centers_for_organ(request.patient.organ)
+    if request.center_codes:
+        wanted = set(request.center_codes)
+        center_list = [c for c in all_centers if c.get("code") in wanted]
+    elif request.cities:
+        # Legacy filter: match against center display names
+        wanted = set(request.cities)
+        center_list = [c for c in all_centers if c.get("name") in wanted]
     else:
-        city_list = all_cities
+        center_list = all_centers
+    if not center_list:
+        raise HTTPException(
+            status_code=400,
+            detail="No valid centers found. Check center_codes.",
+        )
+
+    # The baseline half (validation, wait dist, competing hazards, baseline
+    # p24) is tier-invariant — compute it once per center, not once per
+    # tier×center (2026-08 review).
+    baselines = {}
+    for center in center_list:
+        code = center.get("code", "")
+        try:
+            baselines[code] = closed_form_baseline(request.patient, code)
+        except Exception:
+            logger.warning("Travel subsidy baseline failed for %s", code)
 
     tiers = []
     for amount in sorted(TRAVEL_SUBSIDY_TIERS.keys()):
@@ -267,30 +222,15 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
             continue
 
         city_results = []
-        for city_info in city_list:
-            city = city_info["city"]
-            donor_mult, wait_mult = get_city_multipliers(scenario, city)
-
+        for code, baseline in baselines.items():
+            donor_mult, wait_mult = get_center_multipliers(
+                scenario, code, organ=request.patient.organ,
+            )
             try:
-                result = compute_what_if(
-                    patient=request.patient,
-                    city=city,
-                    donor_rate_multiplier=donor_mult,
-                    wait_time_multiplier=wait_mult,
-                    n_iterations=clamped_iterations,
-                    seed=request.seed,
-                )
-                city_results.append(TravelSubsidyCityResult(
-                    city=result.city,
-                    state=result.state,
-                    baseline_p24=result.baseline_p24,
-                    adjusted_p24=result.adjusted_p24,
-                    delta_p24=result.delta_p24,
-                    baseline_median_wait=result.baseline_median_wait,
-                    adjusted_median_wait=result.adjusted_median_wait,
-                ))
+                result = closed_form_adjusted(baseline, donor_mult, wait_mult)
+                city_results.append(TravelSubsidyCityResult(**result))
             except Exception:
-                logger.warning("Travel subsidy analysis failed for %s at %s", city, scenario_id)
+                logger.warning("Travel subsidy analysis failed for %s at %s", code, scenario_id)
                 continue
 
         if not city_results:
@@ -317,25 +257,28 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
 
     elapsed = time.perf_counter() - start
     logger.info(
-        "Travel subsidy analysis complete: %s, %d tiers × %d cities, %.2fs",
-        request.patient.organ, len(tiers), len(city_list), elapsed,
+        "Travel subsidy analysis complete: %s, %d tiers × %d centers, %.2fs",
+        request.patient.organ, len(tiers), len(center_list), elapsed,
     )
 
     return TravelSubsidyAnalysisResult(
         organ=request.patient.organ,
         tiers=tiers,
-        total_cities=len(city_list),
-        iterations_per_city=clamped_iterations,
+        total_cities=len(center_list),
+        iterations_per_city=0,  # closed-form — no Monte Carlo sampling (#285)
         elapsed_seconds=round(elapsed, 3),
         disclaimers=[
             "This is a demand-side accessibility model. It estimates how "
             "financial assistance for travel/relocation affects transplant "
             "probability by enabling access to better-matched centers.",
-            "Per-city effects are proportional to cost of living. Higher-COL "
-            "cities show larger improvements because the subsidy makes them "
-            "newly accessible to lower-income patients.",
+            "Per-center effects are proportional to each center's BEA cost of "
+            "living (RPP). Higher-COL areas show larger improvements because "
+            "the subsidy makes them newly accessible to lower-income patients.",
+            "Probabilities are computed in closed form (competing-risks "
+            "integral), so results carry no Monte Carlo noise; the copula and "
+            "stochastic cause-of-death adjustments are omitted.",
             "System-wide averages assume equal patient distribution across "
-            "cities. Real-world impact depends on where patients actually live.",
+            "centers. Real-world impact depends on where patients actually live.",
             "Equilibrium effects (increased demand at popular centers) are "
             "approximated. See Tier 2 analysis for full equilibrium modeling.",
             "These are model estimates, not empirical observations. Actual "

@@ -91,7 +91,7 @@ def _run_mcmc(patient: PatientProfile, n_iterations: int) -> SimulationResult | 
     """Run MCMC engine (requires fitted trace; uses pre-fitted posterior, no seed needed)."""
     try:
         from services.mcmc_inference import is_available, simulate_mcmc
-        if not is_available(patient.organ):
+        if not is_available(patient.organ, getattr(patient, "bbn_granularity", "classic")):
             logger.info("MCMC trace not available for %s, skipping", patient.organ)
             return None
         return simulate_mcmc(patient, n_iterations=n_iterations)

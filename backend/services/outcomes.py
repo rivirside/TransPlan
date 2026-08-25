@@ -27,24 +27,18 @@ def _get_outcomes_data() -> dict:
 
 def get_city_outcomes(organ: str, city: str = "", center_code: str = "") -> dict | None:
     """
-    Get post-transplant outcomes for a specific center/city and organ.
-    Prefers center-code lookup; falls back to city-level data.
+    Get post-transplant outcomes for a specific center and organ.
+    Center-code lookup only (#293: the 22-city city_outcomes block was
+    retired); *city* is accepted for signature compatibility but unused.
     Returns None if data is unavailable.
     """
     if organ not in VALID_ORGANS:
         return None
+    if not center_code:
+        return None
     data = get_data()
-    # Prefer center-code lookup from center-level outcomes
-    if center_code:
-        center_outcomes = data.center_outcomes.get("center_outcomes", {})
-        center_data = center_outcomes.get(center_code, {})
-        result = center_data.get(organ)
-        if result:
-            return result
-    # Fall back to city-level outcomes
-    city_outcomes = _get_outcomes_data().get("city_outcomes", {})
-    city_data = city_outcomes.get(city, {})
-    return city_data.get(organ) or None
+    center_outcomes = data.center_outcomes.get("center_outcomes", {})
+    return center_outcomes.get(center_code, {}).get(organ) or None
 
 
 def get_national_baselines(organ: str) -> dict | None:
@@ -116,6 +110,21 @@ def build_outcomes_dict(organ: str, city: str = "", p_transplant_24mo: float = 0
         return None
 
     result = {}
+
+    # #219: say whether the survival figures are this CENTER's data or the
+    # national baseline — the old dict wrote national averages into the
+    # center-named keys with no discriminator. The getters fall back PER
+    # FIELD, so a single either-or flag would relabel a national patient-
+    # survival figure as center data whenever graft data exists (2026-08
+    # review): "mixed" marks that case explicitly.
+    center_gs = outcomes.get("graft_survival_1yr") if outcomes else None
+    center_ps = outcomes.get("patient_survival_1yr") if outcomes else None
+    if center_gs is not None and center_ps is not None:
+        result["survival_source"] = "center"
+    elif center_gs is None and center_ps is None:
+        result["survival_source"] = "national"
+    else:
+        result["survival_source"] = "mixed"
 
     # Graft survival
     gs_1yr = get_graft_survival_1yr(organ, city, center_code=center_code)

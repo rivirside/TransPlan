@@ -19,7 +19,7 @@ from services.competing_risks import get_annual_delisting_rate, get_annual_morta
 from services.copula import draw_correlated_competing_risks
 from services.distributions import get_wait_time_distribution, get_lognorm_params
 from config import COPULA_THETA, ORGAN_COPULA_THETA, SUPPLY_WAIT_ELASTICITY
-from services.monte_carlo import CITIES, _get_cities, _get_cod_multiplier
+from services.monte_carlo import _get_cod_multiplier
 from services.stats_utils import rate_to_exponential_scale
 
 logger = logging.getLogger(__name__)
@@ -28,6 +28,9 @@ logger = logging.getLogger(__name__)
 class WhatIfResult(BaseModel):
     city: str
     state: str
+    center_code: str = Field("", description="SRTR center code when the run was center-based")
+    data_quality: list[str] | None = Field(
+        None, description="Degraded-input tags for this center (#300)")
     donor_rate_multiplier: float
     wait_time_multiplier: float
     baseline_p24: float = Field(ge=0, le=1)
@@ -50,9 +53,10 @@ def _run_single(
     rng: np.random.Generator,
     donor_rate_multiplier: float = 1.0,
     wait_time_multiplier: float = 1.0,
+    center_code: str = "",
 ) -> dict:
     """
-    Run Monte Carlo for a single city with optional multipliers.
+    Run Monte Carlo for a single center or city with optional multipliers.
 
     Returns dict with p24, ci_95, median_wait.
 
@@ -65,9 +69,12 @@ def _run_single(
         organ=patient.organ,
         blood_type=patient.blood_type,
         city=city,
+        center_code=center_code,
         cpra=patient.cpra,
         meld=patient.meld,
         las=patient.las,
+        age=patient.age,
+        sex=patient.sex,
     )
 
     # Apply wait_time_multiplier by scaling the distribution's scale parameter.
@@ -101,10 +108,13 @@ def _run_single(
     # Draw mortality & delisting times
     annual_mort = get_annual_mortality_rate(
         organ=patient.organ, city=city, urgency=patient.urgency, meld=patient.meld,
+        center_code=center_code,
     )
     mort_scale = rate_to_exponential_scale(annual_mort, "mortality", city)
 
-    annual_delist = get_annual_delisting_rate(organ=patient.organ, city=city)
+    annual_delist = get_annual_delisting_rate(
+        organ=patient.organ, city=city, center_code=center_code,
+    )
     delist_scale = rate_to_exponential_scale(annual_delist, "delisting", city)
 
     if patient.use_copula:
@@ -154,6 +164,110 @@ def _run_single(
     }
 
 
+def closed_form_baseline(patient: PatientProfile, center_code: str) -> dict:
+    """Tier-invariant half of the closed-form what-if for one center:
+    validation, wait distribution, competing hazards, baseline p24/median.
+
+    Split out so multi-tier sweeps (travel subsidy: 4 tiers × 248 centers)
+    compute it once per center instead of once per tier×center — only the
+    adjusted distribution depends on the multipliers (2026-08 review).
+    """
+    from services.data_loader import get_data
+    from services.equity import _grid_p24
+
+    center = get_data().center_by_code(center_code)
+    if center is None:
+        raise ValueError(f"Unknown center code: '{center_code}'")
+    if patient.organ not in center.get("organs", []):
+        raise ValueError(
+            f"Center {center_code} ({center.get('name', '')}) does not perform "
+            f"{patient.organ} transplants"
+        )
+
+    dist = get_wait_time_distribution(
+        organ=patient.organ, blood_type=patient.blood_type,
+        center_code=center_code, cpra=patient.cpra, meld=patient.meld,
+        las=patient.las, age=patient.age, sex=patient.sex,
+    )
+    annual_mort = get_annual_mortality_rate(
+        organ=patient.organ, urgency=patient.urgency, meld=patient.meld,
+        center_code=center_code,
+    )
+    annual_delist = get_annual_delisting_rate(
+        organ=patient.organ, center_code=center_code,
+    )
+    mort_scale = rate_to_exponential_scale(annual_mort, "mortality", center_code)
+    delist_scale = rate_to_exponential_scale(annual_delist, "delisting", center_code)
+    inv_total = 1.0 / mort_scale + 1.0 / delist_scale
+
+    s, loc, scale = get_lognorm_params(dist)
+    return {
+        "city": center.get("name", center_code),
+        "state": center.get("state_abbr", ""),
+        "center_code": center_code,
+        "s": s,
+        "loc": loc,
+        "scale": scale,
+        "inv_total": inv_total,
+        "baseline_p24": _grid_p24(dist, inv_total),
+        "baseline_median_wait": float(dist.median()),
+    }
+
+
+def closed_form_adjusted(baseline: dict, donor_rate_multiplier: float = 1.0,
+                         wait_time_multiplier: float = 1.0) -> dict:
+    """Apply multipliers to a closed_form_baseline result.
+
+    Wait multiplier scales the median directly; donor multiplier divides
+    times with sublinear elasticity (L-056) — identical mechanics to
+    _run_single.
+    """
+    import scipy.stats
+    from services.equity import _grid_p24
+
+    eff_donor = (donor_rate_multiplier ** SUPPLY_WAIT_ELASTICITY
+                 if donor_rate_multiplier > 0 else 1.0)
+    adj_scale = baseline["scale"] * wait_time_multiplier / eff_donor
+    adj_dist = scipy.stats.lognorm(
+        s=baseline["s"], loc=baseline["loc"], scale=adj_scale)
+    adjusted_p24 = _grid_p24(adj_dist, baseline["inv_total"])
+
+    return {
+        "city": baseline["city"],
+        "state": baseline["state"],
+        "center_code": baseline["center_code"],
+        "baseline_p24": round(baseline["baseline_p24"], 4),
+        "adjusted_p24": round(adjusted_p24, 4),
+        "delta_p24": round(adjusted_p24 - baseline["baseline_p24"], 4),
+        "baseline_median_wait": round(baseline["baseline_median_wait"], 2),
+        "adjusted_median_wait": round(float(adj_dist.median()), 2),
+    }
+
+
+def compute_what_if_closed_form(
+    patient: PatientProfile,
+    center_code: str,
+    donor_rate_multiplier: float = 1.0,
+    wait_time_multiplier: float = 1.0,
+) -> dict:
+    """Deterministic paired what-if for one center (#285): the same
+    competing-risks integral used by equity (#216) instead of Monte Carlo.
+
+    Used by the travel-subsidy sweep, where MC over 248 centers × 4 tiers is
+    both slow and needlessly noisy — the closed form is exact, so baseline vs
+    adjusted differences are attributable to the multipliers alone. The copula
+    and stochastic COD adjustments are omitted (they shift centers
+    near-uniformly and don't change the comparison).
+
+    Returns {city, state, center_code, baseline_p24, adjusted_p24, delta_p24,
+    baseline_median_wait, adjusted_median_wait}.
+    """
+    return closed_form_adjusted(
+        closed_form_baseline(patient, center_code),
+        donor_rate_multiplier, wait_time_multiplier,
+    )
+
+
 def compute_what_if(
     patient: PatientProfile,
     city: str = "Nashville",
@@ -161,36 +275,49 @@ def compute_what_if(
     wait_time_multiplier: float = 1.0,
     n_iterations: int = 500,
     seed: int | None = None,
+    center_code: str = "",
 ) -> WhatIfResult:
     """
-    Run what-if analysis: baseline vs adjusted Monte Carlo for a single city.
+    Run what-if analysis: baseline vs adjusted Monte Carlo for a single center.
 
     Uses paired random seeds so the only difference between baseline and adjusted
     results is the multiplier — this minimizes Monte Carlo noise in the delta.
 
     Parameters
     ----------
+    center_code : SRTR center code (required since #285/#293 — the run is
+        center-based over any of the 248 centers). *city* is accepted for
+        backward compatibility but ignored; the response echoes the center's
+        display name.
     seed : optional RNG seed for reproducibility. If None, a random seed is
         generated and returned in the result.
     """
     start = time.perf_counter()
 
-    # Validate city name against canonical list (#62)
-    state = None
-    cities = _get_cities()
-    for c in cities:
-        if c["city"] == city:
-            state = c["state"]
-            break
-    if state is None:
-        valid = sorted(c["city"] for c in cities)
-        raise ValueError(f"Unknown city: '{city}'. Valid cities: {valid}")
+    if not center_code:
+        raise ValueError(
+            "center_code is required — the legacy 22-city mode was retired "
+            "(#285). Pick a center code from GET /centers."
+        )
+    from services.data_loader import get_data
+    center = get_data().center_by_code(center_code)
+    if center is None:
+        raise ValueError(f"Unknown center code: '{center_code}'")
+    if patient.organ not in center.get("organs", []):
+        raise ValueError(
+            f"Center {center_code} ({center.get('name', '')}) does not perform "
+            f"{patient.organ} transplants"
+        )
+    city = center.get("name", center_code)
+    state = center.get("state_abbr", "")
 
-    # Use paired seeds for baseline vs adjusted comparison
+    # Paired comparison: baseline and adjusted use IDENTICAL random streams
+    # (fresh generators from the same seed), so with neutral multipliers the
+    # delta is exactly 0 and otherwise it is attributable to the multipliers
+    # alone. Spawning two child seeds here would re-introduce full MC noise
+    # into every delta.
     if seed is None:
         seed = int(np.random.default_rng().integers(0, 2**31))
-    seed_seq = np.random.SeedSequence(seed)
-    seed_baseline, seed_adjusted = seed_seq.spawn(2)
 
     # Baseline run (multipliers = 1.0)
     baseline = _run_single(
@@ -198,9 +325,10 @@ def compute_what_if(
         city=city,
         state=state,
         n_iterations=n_iterations,
-        rng=np.random.default_rng(seed_baseline),
+        rng=np.random.default_rng(np.random.SeedSequence(seed)),
         donor_rate_multiplier=1.0,
         wait_time_multiplier=1.0,
+        center_code=center_code,
     )
 
     # Adjusted run (with user's multipliers)
@@ -209,9 +337,10 @@ def compute_what_if(
         city=city,
         state=state,
         n_iterations=n_iterations,
-        rng=np.random.default_rng(seed_adjusted),
+        rng=np.random.default_rng(np.random.SeedSequence(seed)),
         donor_rate_multiplier=donor_rate_multiplier,
         wait_time_multiplier=wait_time_multiplier,
+        center_code=center_code,
     )
 
     elapsed = time.perf_counter() - start
@@ -222,9 +351,14 @@ def compute_what_if(
         adjusted["p24"] - baseline["p24"], elapsed,
     )
 
+    from services.provenance import center_data_quality
+    dq = center_data_quality(patient.organ, center_code) if center_code else None
+
     return WhatIfResult(
         city=city,
         state=state,
+        center_code=center_code,
+        data_quality=dq or None,
         donor_rate_multiplier=donor_rate_multiplier,
         wait_time_multiplier=wait_time_multiplier,
         baseline_p24=baseline["p24"],

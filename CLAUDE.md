@@ -114,7 +114,7 @@ cd backend && ../.venv/bin/python -m pytest -q  # without activating venv
 # netCDF4/h5netcdf backends in requirements.txt to serialize traces — without
 # them they error out, which looks like a pymc-version problem but isn't.)
 
-npm test                                  # 112 Jest tests (from repo root)
+npm test                                  # 44 Jest tests (from repo root)
 ```
 
 ## Landscape & Benchmarking

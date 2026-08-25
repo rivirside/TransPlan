@@ -275,8 +275,6 @@ def parse_wait_times(mapping: dict) -> dict:
     # Preserve existing blood type and clinical multipliers
     existing = _load_existing(WAIT_TIME_OUT)
 
-    city_factors = {}
-
     for organ, code in ORGAN_CODES.items():
         excel_path = os.path.join(RAW_DIR, f"csrs_final_tables_2511_{code}.xls")
         if not os.path.exists(excel_path):
@@ -327,43 +325,8 @@ def parse_wait_times(mapping: dict) -> dict:
 
         result[organ] = organ_entry
 
-        # Extract city-level wait time factors from center percentiles
-        # Use effective_median (derived from mu, handles censored national P50)
-        for city, info in mapping["cities"].items():
-            ctr_data = _get_row_by_code(sheet, info["primary"], ctr_cols)
-            if not ctr_data:
-                for alt_code in info.get("alternates", []):
-                    ctr_data = _get_row_by_code(sheet, alt_code, ctr_cols)
-                    if ctr_data:
-                        break
-
-            if ctr_data:
-                factor = _compute_city_factor(ctr_data, effective_median, nat_data)
-                if factor is not None:
-                    if city not in city_factors:
-                        city_factors[city] = {}
-                    city_factors[city][organ] = factor
-                    continue
-
-            print(f"  WARNING: No {organ} data for {city} ({info['primary']}), using 1.0")
-
-    # Compute average city factor across organs (for the aggregate city_wait_time_factors)
-    city_wait_time_factors = {
-        "_notes": "Relative to national average (1.0). Computed as average center-median / national-median across available organs. Source: SRTR Table B10."
-    }
-    for city in mapping["cities"]:
-        if city in city_factors and city_factors[city]:
-            factors = list(city_factors[city].values())
-            avg = sum(factors) / len(factors)
-            city_wait_time_factors[city] = round(avg, 2)
-        else:
-            # Fall back to existing value
-            if existing and "city_wait_time_factors" in existing:
-                city_wait_time_factors[city] = existing["city_wait_time_factors"].get(city, 1.0)
-            else:
-                city_wait_time_factors[city] = 1.0
-
-    result["city_wait_time_factors"] = city_wait_time_factors
+    # (#293: the 22-city city_wait_time_factors block is no longer emitted —
+    # per-center factors live in wait-time-distributions-centers.json.)
     return result
 
 
@@ -387,10 +350,6 @@ def parse_outcomes(mapping: dict) -> dict:
 
     # Preserve existing urgency/clinical multipliers
     existing = _load_existing(COMPETING_OUT)
-
-    city_adjustments = {
-        "_notes": "Center-level mortality and delisting factors relative to national average. Source: SRTR Table B7."
-    }
 
     for organ, code in ORGAN_CODES.items():
         excel_path = os.path.join(RAW_DIR, f"csrs_final_tables_2511_{code}.xls")
@@ -432,68 +391,8 @@ def parse_outcomes(mapping: dict) -> dict:
 
         result[organ] = organ_entry
 
-        # City-level adjustment factors
-        for city, info in mapping["cities"].items():
-            primary_code = info["primary"]
-            ctr_data = _get_row_by_code(sheet, primary_code, ctr_cols)
-
-            if not ctr_data:
-                for alt_code in info.get("alternates", []):
-                    ctr_data = _get_row_by_code(sheet, alt_code, ctr_cols)
-                    if ctr_data:
-                        break
-
-            if ctr_data:
-                ctr_mortality = (ctr_data.get("died_waitlist") or 0) / 100.0
-                ctr_delisting = sum(
-                    (ctr_data.get(k) or 0) for k in ["removed_worsened", "removed_improved", "removed_refused", "removed_other"]
-                ) / 100.0
-
-                mort_factor = (ctr_mortality / nat_mortality) if nat_mortality > 0 else 1.0
-                delist_factor = (ctr_delisting / nat_delisting) if nat_delisting > 0 else 1.0
-
-                # Clamp to reasonable range
-                mort_factor = round(max(0.3, min(mort_factor, 3.0)), 2)
-                delist_factor = round(max(0.3, min(delist_factor, 3.0)), 2)
-
-                if city not in city_adjustments or not isinstance(city_adjustments.get(city), dict):
-                    city_adjustments[city] = {}
-                if not isinstance(city_adjustments[city], dict) or "_notes" in city_adjustments.get(city, {}):
-                    city_adjustments[city] = {}
-
-                # Average across organs for this city
-                if "mortality_factors" not in city_adjustments[city]:
-                    city_adjustments[city]["mortality_factors"] = []
-                    city_adjustments[city]["delisting_factors"] = []
-                city_adjustments[city]["mortality_factors"].append(mort_factor)
-                city_adjustments[city]["delisting_factors"].append(delist_factor)
-
-    # Average the per-organ factors into single city adjustments
-    final_adjustments = {
-        "_notes": "Center-level mortality and delisting factors relative to national average. Averaged across available organs. Source: SRTR Table B7."
-    }
-    for city in mapping["cities"]:
-        if city in city_adjustments and isinstance(city_adjustments[city], dict):
-            ca = city_adjustments[city]
-            if "mortality_factors" in ca and ca["mortality_factors"]:
-                mort = sum(ca["mortality_factors"]) / len(ca["mortality_factors"])
-                delist = sum(ca["delisting_factors"]) / len(ca["delisting_factors"])
-                final_adjustments[city] = {
-                    "mortality_factor": round(mort, 2),
-                    "delisting_factor": round(delist, 2),
-                }
-            else:
-                final_adjustments[city] = {"mortality_factor": 1.0, "delisting_factor": 1.0}
-        else:
-            # Fall back to existing
-            if existing and "city_adjustments" in existing:
-                final_adjustments[city] = existing["city_adjustments"].get(
-                    city, {"mortality_factor": 1.0, "delisting_factor": 1.0}
-                )
-            else:
-                final_adjustments[city] = {"mortality_factor": 1.0, "delisting_factor": 1.0}
-
-    result["city_adjustments"] = final_adjustments
+    # (#293: the 22-city city_adjustments block is no longer emitted —
+    # per-center factors live in competing-risks-centers.json.)
     return result
 
 
@@ -585,8 +484,6 @@ def parse_post_transplant_outcomes(mapping: dict) -> dict:
         }
     }
 
-    city_outcomes = {}
-
     for organ, code in ORGAN_CODES.items():
         excel_path = os.path.join(RAW_DIR, f"csrs_final_tables_2511_{code}.xls")
         if not os.path.exists(excel_path):
@@ -632,79 +529,8 @@ def parse_post_transplant_outcomes(mapping: dict) -> dict:
 
         print(f"  {organ}: national graft 1yr={nat_gs_1yr}, patient 1yr={nat_ps_1yr}")
 
-        # --- Per-city extraction ---
-        for city, info in mapping["cities"].items():
-            # Look up graft survival for this center
-            gs_data = _get_row_by_code(gs_sheet, info["primary"], gs_ctr_cols)
-            if not gs_data:
-                for alt_code in info.get("alternates", []):
-                    gs_data = _get_row_by_code(gs_sheet, alt_code, gs_ctr_cols)
-                    if gs_data:
-                        break
-
-            # Look up patient survival
-            ps_data = None
-            if ps_sheet:
-                ps_data = _get_row_by_code(ps_sheet, info["primary"], ps_ctr_cols)
-                if not ps_data:
-                    for alt_code in info.get("alternates", []):
-                        ps_data = _get_row_by_code(ps_sheet, alt_code, ps_ctr_cols)
-                        if ps_data:
-                            break
-
-            if not gs_data:
-                continue
-
-            # Check sample size
-            n_1yr = gs_data.get("graft_n_1yr")
-            if n_1yr is not None and n_1yr < MIN_N_OUTCOMES:
-                print(f"    {city} {organ}: N={n_1yr} < {MIN_N_OUTCOMES}, skipping")
-                continue
-
-            # Build city outcome entry
-            entry = {}
-            gs_1yr = gs_data.get("graft_survival_1yr")
-            gs_3yr = gs_data.get("graft_survival_3yr")
-            gs_hr = gs_data.get("graft_hr_1yr")
-            gs_hr_lo = gs_data.get("graft_hr_lo")
-            gs_hr_hi = gs_data.get("graft_hr_hi")
-
-            if gs_1yr is not None:
-                entry["graft_survival_1yr"] = round(gs_1yr, 1)
-            if gs_3yr is not None:
-                entry["graft_survival_3yr"] = round(gs_3yr, 1)
-            if gs_hr is not None:
-                entry["graft_hr_1yr"] = round(gs_hr, 3)
-            if gs_hr_lo is not None and gs_hr_hi is not None:
-                entry["graft_hr_1yr_ci"] = [round(gs_hr_lo, 3), round(gs_hr_hi, 3)]
-            if n_1yr is not None:
-                entry["n_1yr"] = int(n_1yr)
-
-            # Patient survival
-            if ps_data:
-                ps_1yr = ps_data.get("patient_survival_1yr")
-                ps_3yr = ps_data.get("patient_survival_3yr")
-                ps_hr = ps_data.get("patient_hr_1yr")
-                ps_hr_lo = ps_data.get("patient_hr_lo")
-                ps_hr_hi = ps_data.get("patient_hr_hi")
-
-                if ps_1yr is not None:
-                    entry["patient_survival_1yr"] = round(ps_1yr, 1)
-                if ps_3yr is not None:
-                    entry["patient_survival_3yr"] = round(ps_3yr, 1)
-                if ps_hr is not None:
-                    entry["patient_hr_1yr"] = round(ps_hr, 3)
-                if ps_hr_lo is not None and ps_hr_hi is not None:
-                    entry["patient_hr_1yr_ci"] = [round(ps_hr_lo, 3), round(ps_hr_hi, 3)]
-
-            # Performance rating based on graft survival HR
-            entry["performance_rating"] = _performance_rating(gs_hr, gs_hr_lo, gs_hr_hi)
-
-            if city not in city_outcomes:
-                city_outcomes[city] = {}
-            city_outcomes[city][organ] = entry
-
-    result["city_outcomes"] = city_outcomes
+    # (#293: the 22-city city_outcomes block is no longer emitted —
+    # per-center outcomes live in post-transplant-outcomes-centers.json.)
     return result
 
 
@@ -1208,9 +1034,12 @@ def parse_all_centers_post_transplant() -> dict:
             gs_hr_lo = gs_data.get("graft_hr_lo")
             gs_hr_hi = gs_data.get("graft_hr_hi")
 
-            if gs_1yr is not None:
+            # 0.0% survival is an empty/censored SRTR cell, not an observed
+            # rate — emitting it would show "0% survival" in the UI (found by
+            # the 2026-08 range-sanity test: OHCM lung 3yr).
+            if gs_1yr:
                 entry["graft_survival_1yr"] = round(gs_1yr, 1)
-            if gs_3yr is not None:
+            if gs_3yr:
                 entry["graft_survival_3yr"] = round(gs_3yr, 1)
             if gs_hr is not None:
                 entry["graft_hr_1yr"] = round(gs_hr, 3)
@@ -1226,9 +1055,9 @@ def parse_all_centers_post_transplant() -> dict:
                 ps_hr = ps_data.get("patient_hr_1yr")
                 ps_hr_lo = ps_data.get("patient_hr_lo")
                 ps_hr_hi = ps_data.get("patient_hr_hi")
-                if ps_1yr is not None:
+                if ps_1yr:
                     entry["patient_survival_1yr"] = round(ps_1yr, 1)
-                if ps_3yr is not None:
+                if ps_3yr:
                     entry["patient_survival_3yr"] = round(ps_3yr, 1)
                 if ps_hr is not None:
                     entry["patient_hr_1yr"] = round(ps_hr, 3)
@@ -1271,6 +1100,10 @@ def _write_guarded(path: str, new_data: dict) -> None:
     On guard failure the existing file is left untouched and a warning is
     printed — the parse output is treated as degraded, not authoritative.
     """
+    # Deliberately retired sections (#293): the 22-city blocks are no longer
+    # emitted — dropping them is the intended migration, not data loss.
+    _RETIRED_SECTIONS = {"city_wait_time_factors", "city_adjustments", "city_outcomes"}
+
     existing = _load_existing(path)
     if existing:
         problems = []
@@ -1278,7 +1111,7 @@ def _write_guarded(path: str, new_data: dict) -> None:
             problems.append(
                 f"organ blocks would shrink {_organ_count(existing)} → {_organ_count(new_data)}"
             )
-        for key in _data_keys(existing) - _data_keys(new_data):
+        for key in _data_keys(existing) - _data_keys(new_data) - _RETIRED_SECTIONS:
             problems.append(f"section '{key}' would be dropped")
         for key in _data_keys(existing) & _data_keys(new_data):
             old_v, new_v = existing[key], new_data[key]
@@ -1360,10 +1193,8 @@ def main():
         print(f"Wrote {CENTERS_OUTCOMES_OUT} ({centers_outcomes['_meta']['totalCenters']} centers)")
 
     # Summary
-    n_organs = len([k for k in wait_data if not k.startswith("_") and k != "city_wait_time_factors"])
-    n_cities = len([k for k in wait_data.get("city_wait_time_factors", {}) if not k.startswith("_")])
-    n_outcomes_cities = len(pt_outcomes.get("city_outcomes", {}))
-    print(f"\nSummary: {n_organs} organs, {n_cities} cities with wait time factors, {n_outcomes_cities} cities with post-transplant outcomes")
+    n_organs = len([k for k in wait_data if not k.startswith("_")])
+    print(f"\nSummary: {n_organs} organs (city_* blocks retired, #293)")
     if "--all-centers" in sys.argv or "--all" in sys.argv:
         print(f"  Center-level: wait={centers_wait['_meta']['totalCenters']}, competing={centers_competing['_meta']['totalCenters']}, outcomes={centers_outcomes['_meta']['totalCenters']} centers")
 

@@ -76,20 +76,17 @@ REGIONS = [
     "Los Angeles", "Palo Alto",
 ]
 
-# Keep a copy for classic-mode backward compatibility
-_CLASSIC_REGIONS = list(REGIONS)
-
 
 def get_regions(granularity: str = "state") -> list[str]:
     """Return the region list for the given BBN granularity level.
 
     Modes:
-      - "classic": 22 cities (original behavior)
-      - "state":   ~50 US state abbreviations (centers grouped by state)
-      - "full":    ~248 individual SRTR center codes
+      - "state": ~50 US state abbreviations (centers grouped by state)
+      - "full":  ~248 individual SRTR center codes
+    ("classic" — the legacy 22-city mode — was retired, #285/#293.)
     """
     if granularity == "classic":
-        return list(_CLASSIC_REGIONS)
+        raise ValueError("The 22-city 'classic' granularity was retired (#293); use 'state' or 'full'.")
     from services.data_loader import get_data
     data = get_data()
     all_centers = data.all_centers.get("centers", {})
@@ -109,23 +106,14 @@ def get_center_to_region_map(granularity: str = "state") -> dict[str, str]:
     all_centers = data.all_centers.get("centers", {})
     if granularity == "state":
         return {code: c.get("state_abbr", "XX") for code, c in all_centers.items()}
-    # "classic" mode — delegate to bayesian_network's mapping.
-    # NOTE: Deferred import to avoid circular dependency. bbn_parameterizer is
-    # imported by bayesian_network at module level; importing bayesian_network
-    # here at call time breaks the cycle. Do not move to top-level imports.
-    from services.bayesian_network import _get_center_region_map
-    return _get_center_region_map()
+    raise ValueError("The 22-city 'classic' granularity was retired (#293); use 'state' or 'full'.")
 
 
 def _region_factor(region: str, organ: str, granularity: str,
                    center_map: dict, field: str) -> float | None:
     """Return the average center-level factor for all centers in a BBN region.
 
-    Returns None for 'classic' mode so the caller can fall back to
-    legacy city-level data lookups.
     """
-    if granularity == "classic":
-        return None
     from services.data_loader import get_data
     data = get_data()
     codes = [c for c, r in center_map.items() if r == region]
@@ -247,7 +235,7 @@ def _compute_cod_multiplier(organ: str, state_abbrev: str) -> float:
 
 
 def build_donor_supply_cpt(regions=None, n_regions=None, center_map=None,
-                           granularity="classic") -> np.ndarray:
+                           granularity="state") -> np.ndarray:
     """
     Build CPT for DonorSupply node.
 
@@ -260,7 +248,9 @@ def build_donor_supply_cpt(regions=None, n_regions=None, center_map=None,
     The composite is discretized into low/medium/high terciles.
     """
     if regions is None:
-        regions = REGIONS
+        regions = get_regions(granularity)
+        if center_map is None:
+            center_map = get_center_to_region_map(granularity)
     if n_regions is None:
         n_regions = len(regions)
 
@@ -284,9 +274,7 @@ def build_donor_supply_cpt(regions=None, n_regions=None, center_map=None,
             bt_factor = 1.0 / bt_mult if bt_mult > 0 else 1.0
 
             for k, region in enumerate(regions):
-                if granularity == "classic":
-                    state = _CITY_STATE.get(region, "")
-                elif granularity == "state":
+                if granularity == "state":
                     # Region IS the state abbreviation
                     state = region
                 else:
@@ -332,7 +320,7 @@ def build_donor_supply_cpt(regions=None, n_regions=None, center_map=None,
 # ──────────────────────────────────────────────────────────────────────
 
 def build_wait_category_cpt(regions=None, n_regions=None, center_map=None,
-                            granularity="classic") -> np.ndarray:
+                            granularity="state") -> np.ndarray:
     """
     Build CPT for WaitCategory node.
 
@@ -352,15 +340,14 @@ def build_wait_category_cpt(regions=None, n_regions=None, center_map=None,
     from scipy.stats import lognorm
 
     if regions is None:
-        regions = REGIONS
+        regions = get_regions(granularity)
+        if center_map is None:
+            center_map = get_center_to_region_map(granularity)
     if n_regions is None:
         n_regions = len(regions)
 
     data = _get_bbn_data()
     wt = data.get("wait_time", {})
-    city_factors = wt.get("city_wait_time_factors", {})
-    # Remove _notes key
-    city_factors = {k: v for k, v in city_factors.items() if k != "_notes"}
 
     n_o = len(ORGANS)
     n_b = len(BLOOD_TYPES)
@@ -395,8 +382,7 @@ def build_wait_category_cpt(regions=None, n_regions=None, center_map=None,
         bt_arr = np.array([bt_mults.get(bt, 1.0) for bt in BLOOD_TYPES])  # (n_b,)
         region_arr = np.empty(n_r)
         for k, region in enumerate(regions):
-            rf = _region_factor(region, organ, granularity, center_map, "wait_time_factor")
-            region_arr[k] = city_factors.get(region, 1.0) if rf is None else rf
+            region_arr[k] = _region_factor(region, organ, granularity, center_map, "wait_time_factor")
 
         # Adjusted median per (BloodType, Region, DonorSupply) via broadcasting.
         adjusted_median = (
@@ -434,7 +420,7 @@ def build_wait_category_cpt(regions=None, n_regions=None, center_map=None,
 # ──────────────────────────────────────────────────────────────────────
 
 def build_mortality_risk_cpt(regions=None, n_regions=None, center_map=None,
-                             granularity="classic") -> np.ndarray:
+                             granularity="state") -> np.ndarray:
     """
     Build CPT for MortalityRisk node.
 
@@ -442,13 +428,14 @@ def build_mortality_risk_cpt(regions=None, n_regions=None, center_map=None,
     Axes:  [MortalityRisk states, Organ, AgeGroup, Urgency, Region]
     """
     if regions is None:
-        regions = REGIONS
+        regions = get_regions(granularity)
+        if center_map is None:
+            center_map = get_center_to_region_map(granularity)
     if n_regions is None:
         n_regions = len(regions)
 
     data = _get_bbn_data()
     cr = data.get("competing_risks", {})
-    city_adj = cr.get("city_adjustments", {})
     age_mults = cr.get("age_mortality_multipliers", {})
     age_overrides = cr.get("age_organ_overrides", {})
 
@@ -478,18 +465,8 @@ def build_mortality_risk_cpt(regions=None, n_regions=None, center_map=None,
                 urg_mult = urg_mults.get(str(urgency), 1.0)
 
                 for r, region in enumerate(regions):
-                    # Get region mortality factor
-                    rf = _region_factor(region, organ, granularity, center_map,
-                                        "mortality_factor")
-                    if rf is None:
-                        # Classic mode — use city-level lookup
-                        city_data = city_adj.get(region, {})
-                        region_mort = city_data.get("mortality_factor", 1.0)
-                        if isinstance(region_mort, str):
-                            region_mort = 1.0
-                    else:
-                        region_mort = rf
-
+                    region_mort = _region_factor(region, organ, granularity,
+                                                 center_map, "mortality_factor")
                     rates[i, a, u, r] = base_rate * urg_mult * age_mult * region_mort
 
     # Tercile thresholds computed PER ORGAN (#209): mortality-rate distributions
@@ -523,7 +500,7 @@ def build_mortality_risk_cpt(regions=None, n_regions=None, center_map=None,
 # ──────────────────────────────────────────────────────────────────────
 
 def build_delisting_risk_cpt(regions=None, n_regions=None, center_map=None,
-                             granularity="classic") -> np.ndarray:
+                             granularity="state") -> np.ndarray:
     """
     Build CPT for DelistingRisk node.
 
@@ -531,13 +508,14 @@ def build_delisting_risk_cpt(regions=None, n_regions=None, center_map=None,
     Axes:  [DelistingRisk states, Organ, Region, WaitCategory]
     """
     if regions is None:
-        regions = REGIONS
+        regions = get_regions(granularity)
+        if center_map is None:
+            center_map = get_center_to_region_map(granularity)
     if n_regions is None:
         n_regions = len(regions)
 
     data = _get_bbn_data()
     cr = data.get("competing_risks", {})
-    city_adj = cr.get("city_adjustments", {})
 
     n_o = len(ORGANS)
     n_r = n_regions
@@ -558,17 +536,8 @@ def build_delisting_risk_cpt(regions=None, n_regions=None, center_map=None,
         base_rate = organ_data.get("annual_delisting_rate", 0.05)
 
         for r, region in enumerate(regions):
-            # Get region delisting factor
-            rf = _region_factor(region, organ, granularity, center_map,
-                                "delisting_factor")
-            if rf is None:
-                # Classic mode — use city-level lookup
-                city_data = city_adj.get(region, {})
-                region_delist = city_data.get("delisting_factor", 1.0)
-                if isinstance(region_delist, str):
-                    region_delist = 1.0
-            else:
-                region_delist = rf
+            region_delist = _region_factor(region, organ, granularity,
+                                           center_map, "delisting_factor")
 
             for w in range(n_w):
                 rates[i, r, w] = base_rate * region_delist * wait_delist_mults[w]
@@ -716,7 +685,7 @@ def _extend_12_to_24(p12: np.ndarray) -> np.ndarray:
 
 
 def build_competing_outcome_cpt(regions=None, n_regions=None, center_map=None,
-                                granularity="classic") -> np.ndarray:
+                                granularity="state") -> np.ndarray:
     """
     Build CPT for CompetingOutcome node — empirically grounded (#206/#211, opt A).
 
@@ -731,7 +700,9 @@ def build_competing_outcome_cpt(regions=None, n_regions=None, center_map=None,
     the center's own observed population outcomes (option A).
     """
     if regions is None:
-        regions = REGIONS
+        regions = get_regions(granularity)
+        if center_map is None:
+            center_map = get_center_to_region_map(granularity)
     if n_regions is None:
         n_regions = len(regions)
 
@@ -760,7 +731,7 @@ def build_competing_outcome_cpt(regions=None, n_regions=None, center_map=None,
 # ──────────────────────────────────────────────────────────────────────
 
 def build_graft_survival_cpt(regions=None, n_regions=None, center_map=None,
-                             granularity="classic") -> np.ndarray:
+                             granularity="state") -> np.ndarray:
     """
     Build CPT for GraftSurvival1yr node.
 
@@ -768,13 +739,14 @@ def build_graft_survival_cpt(regions=None, n_regions=None, center_map=None,
     Axes:  [GraftSurvival states, Organ, Region]
     """
     if regions is None:
-        regions = REGIONS
+        regions = get_regions(granularity)
+        if center_map is None:
+            center_map = get_center_to_region_map(granularity)
     if n_regions is None:
         n_regions = len(regions)
 
     data = _get_bbn_data()
     outcomes = data.get("outcomes", {})
-    city_outcomes = outcomes.get("city_outcomes", {})
 
     n_o = len(ORGANS)
     n_r = n_regions
@@ -811,8 +783,6 @@ def build_graft_survival_cpt(regions=None, n_regions=None, center_map=None,
             # legacy city lookup.
             graft_1yr = _region_factor(region, organ, granularity, center_map,
                                        "graft_survival_1yr")
-            if graft_1yr is None:
-                graft_1yr = city_outcomes.get(region, {}).get(organ, {}).get("graft_survival_1yr")
 
             if graft_1yr is not None and nat_graft is not None:
                 if graft_1yr >= nat_graft:
@@ -930,7 +900,7 @@ def build_region_prior(n_regions: int | None = None) -> np.ndarray:
 # Master builder — constructs all CPTs at once
 # ──────────────────────────────────────────────────────────────────────
 
-def build_all_cpts(granularity: str = "classic") -> dict[str, np.ndarray]:
+def build_all_cpts(granularity: str = "state") -> dict[str, np.ndarray]:
     """
     Build all CPTs for the BBN. Returns dict of node_name → CPT array.
 

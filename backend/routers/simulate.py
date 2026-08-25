@@ -21,7 +21,7 @@ def run_simulation(
     ),
     copula_theta: float = Query(default=None, ge=0.1, le=5.0, description="Override Clayton copula theta (use_copula must be true)"),
     elasticity: float = Query(default=None, ge=0.1, le=1.0, description="Override supply-wait elasticity (default 0.65)"),
-    bbn_granularity: str = Query(default="state", description="BBN region granularity: 'classic' (22), 'state' (~50), 'full' (248)"),
+    bbn_granularity: str = Query(default="state", description="BBN region granularity: 'state' (~50) or 'full' (248 centers)"),
     seed: int = Query(default=None, ge=0, le=2147483647, description="RNG seed for reproducibility"),
     model_acceptance: bool = Query(default=False, description="Model center-level organ acceptance rates"),
     model_score_drift: bool = Query(default=False, description="Model MELD/LAS score progression during wait"),
@@ -35,7 +35,11 @@ def run_simulation(
         if inference_mode not in tier.allowed_inference_modes:
             raise HTTPException(400, f"Inference mode '{inference_mode}' not available in {tier.name} tier")
         if bbn_granularity not in tier.allowed_bbn_granularity:
-            bbn_granularity = tier.allowed_bbn_granularity[-1]
+            # Coerce unknown/legacy values (e.g. the retired "classic") the
+            # same way the schema validator does: to "state", never silently
+            # up to the costlier "full" (2026-08 review).
+            bbn_granularity = ("state" if "state" in tier.allowed_bbn_granularity
+                               else tier.allowed_bbn_granularity[0])
         if tier.copula_theta_locked:
             copula_theta = None
         if tier.elasticity_locked:
@@ -61,7 +65,7 @@ def run_simulation(
                     detail="MCMC inference unavailable (missing pymc/arviz dependencies)",
                 )
             patient.bbn_granularity = bbn_granularity
-            if not is_available(patient.organ):
+            if not is_available(patient.organ, bbn_granularity):
                 raise HTTPException(
                     status_code=503,
                     detail=f"MCMC trace not available for {patient.organ}. "
@@ -76,6 +80,9 @@ def run_simulation(
         )
     except HTTPException:
         raise
+    except ValueError as e:
+        # e.g. an empty/unknown center_codes shortlist (#304)
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Simulation failed for %s/%s", patient.organ, inference_mode)
         raise HTTPException(status_code=500, detail="Simulation failed — see server logs") from e

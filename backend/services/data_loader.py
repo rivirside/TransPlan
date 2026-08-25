@@ -19,12 +19,13 @@ class TransPlanData:
     cost_of_living: dict = field(default_factory=dict)
     donor_registration: dict = field(default_factory=dict)
     health_demographics: dict = field(default_factory=dict)
-    hospital_quality: dict = field(default_factory=dict)
     traffic_fatalities: dict = field(default_factory=dict)
     # data/manual/*.json
     climate_scores: dict = field(default_factory=dict)
+    center_climate: dict = field(default_factory=dict)
+    living_donors: dict = field(default_factory=dict)
+    center_trauma: dict = field(default_factory=dict)
     policy_tiers: dict = field(default_factory=dict)
-    socioeconomic: dict = field(default_factory=dict)
     srtr_reports: dict = field(default_factory=dict)
     # M2: Cause-of-death by region (organ-specific donor availability)
     cause_of_death: dict = field(default_factory=dict)
@@ -32,6 +33,7 @@ class TransPlanData:
     post_transplant_outcomes: dict = field(default_factory=dict)
     # Phase 4 M3: Historical SRTR trends for multi-year analysis
     historical_trends: dict = field(default_factory=dict)
+    center_trends: dict = field(default_factory=dict)
     # Phase 5 M1: Wait-time distributions (log-normal params, blood type multipliers)
     wait_time_distributions: dict = field(default_factory=dict)
     # Phase 5 M1: Competing risks (mortality/delisting rates, multipliers)
@@ -41,8 +43,6 @@ class TransPlanData:
     air_quality_monitors: dict = field(default_factory=dict)
     # Phase 6A: All SRTR centers (~250) with coordinates and organ programs
     all_centers: dict = field(default_factory=dict)
-    # Phase 6A: Center-to-city mapping for 22 focus cities
-    center_mapping: dict = field(default_factory=dict)
     # Phase 6A: Center-level data (all ~250 centers)
     center_wait_times: dict = field(default_factory=dict)
     center_competing_risks: dict = field(default_factory=dict)
@@ -74,17 +74,6 @@ class TransPlanData:
         """Shortcut to organ → city → annual volume."""
         return self.srtr_reports.get("centerVolumes", {})
 
-    @property
-    def cities(self) -> list[dict[str, str]]:
-        """
-        The 22 focus cities as [{city, state}, ...].
-        Derived from srtr-center-mapping.json at load time.
-        """
-        mapping = self.center_mapping.get("cities", {})
-        if not mapping:
-            return []
-        return [{"city": city, "state": info["state"]} for city, info in mapping.items()]
-
     def observed_outcome(self, organ: str, center_code: str) -> dict | None:
         """Per-center observed 12-month outcome rates (%) from SRTR Table B7.
 
@@ -113,6 +102,13 @@ class TransPlanData:
             [info for info in all_c.values() if organ in info.get("organs", [])],
             key=lambda c: c.get("code", ""),
         )
+
+    def center_by_code(self, center_code: str) -> dict | None:
+        """Return the center record for *center_code*, or None if unknown.
+
+        Records have: code, name, state, state_abbr, organs, lat, lon.
+        """
+        return self.all_centers.get("centers", {}).get(center_code)
 
     def cost_of_living_for_center(self, center_code: str, state_abbr: str | None = None) -> float | None:
         """Cost-of-living index (BEA RPP, national = 100) for a center.
@@ -176,21 +172,29 @@ def _load_json(path: Path, name: str, data: TransPlanData) -> dict:
 def load_all() -> TransPlanData:
     """Load all data files and return a TransPlanData singleton."""
     global _DATA
+    # Drop derived caches keyed on the previous snapshot (tests reload data)
+    try:
+        from services.trends import get_center_trend_projection
+        get_center_trend_projection.cache_clear()
+    except ImportError:
+        pass
     data = TransPlanData()
 
     data.air_quality        = _load_json(DATA_DIR / "air-quality.json",         "air_quality",        data)
     data.cost_of_living     = _load_json(DATA_DIR / "cost-of-living.json",      "cost_of_living",     data)
     data.donor_registration = _load_json(DATA_DIR / "donor-registration.json",  "donor_registration", data)
     data.health_demographics= _load_json(DATA_DIR / "health-demographics.json", "health_demographics",data)
-    data.hospital_quality   = _load_json(DATA_DIR / "hospital-quality.json",    "hospital_quality",   data)
     data.traffic_fatalities = _load_json(DATA_DIR / "traffic-fatalities.json",  "traffic_fatalities", data)
     data.climate_scores     = _load_json(DATA_DIR / "manual/climate-scores.json",  "climate_scores",  data)
+    data.center_climate     = _load_json(DATA_DIR / "climate-scores-centers.json", "center_climate", data)
+    data.living_donors      = _load_json(DATA_DIR / "living-donor-centers.json", "living_donors", data)
+    data.center_trauma      = _load_json(DATA_DIR / "trauma-scores-centers.json",  "center_trauma",  data)
     data.policy_tiers       = _load_json(DATA_DIR / "manual/policy-tiers.json",    "policy_tiers",    data)
-    data.socioeconomic      = _load_json(DATA_DIR / "manual/socioeconomic.json",   "socioeconomic",   data)
     data.srtr_reports       = _load_json(DATA_DIR / "manual/srtr-reports.json",    "srtr_reports",    data)
     data.cause_of_death     = _load_json(DATA_DIR / "cause-of-death-by-region.json", "cause_of_death", data)
     data.post_transplant_outcomes = _load_json(DATA_DIR / "post-transplant-outcomes.json", "post_transplant_outcomes", data)
     data.historical_trends = _load_json(DATA_DIR / "srtr-historical.json", "historical_trends", data)
+    data.center_trends = _load_json(DATA_DIR / "srtr-trends-centers.json", "center_trends", data)
     data.wait_time_distributions = _load_json(DATA_DIR / "wait-time-distributions.json", "wait_time_distributions", data)
     data.competing_risks = _load_json(DATA_DIR / "competing-risks.json", "competing_risks", data)
     # Phase 6B: Dense spatial data (county/monitor level)
@@ -198,7 +202,6 @@ def load_all() -> TransPlanData:
     data.air_quality_monitors = _load_json(DATA_DIR / "air-quality-monitors.json", "air_quality_monitors", data)
     # Phase 6A: All centers + center mapping + center-level data
     data.all_centers = _load_json(DATA_DIR / "srtr-all-centers.json", "all_centers", data)
-    data.center_mapping = _load_json(DATA_DIR / "srtr-center-mapping.json", "center_mapping", data)
     data.center_wait_times = _load_json(DATA_DIR / "wait-time-distributions-centers.json", "center_wait_times", data)
     data.center_competing_risks = _load_json(DATA_DIR / "competing-risks-centers.json", "center_competing_risks", data)
     data.center_outcomes = _load_json(DATA_DIR / "post-transplant-outcomes-centers.json", "center_outcomes", data)

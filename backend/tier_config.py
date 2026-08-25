@@ -23,6 +23,7 @@ class TierConfig:
     max_validation_iterations: int
     max_validation_sweep_steps: int
     max_validation_train_years: int
+    max_score_explain_limit: int
     # Trend projection cap
     max_trend_years: float
 
@@ -31,7 +32,9 @@ WEB_TIER = TierConfig(
     name="web",
     max_iterations=1000,
     allowed_inference_modes=("monte_carlo", "bayesian"),
-    allowed_bbn_granularity=("classic", "state"),
+    # #285/#293: the 22-city "classic" mode is retired from the API surface;
+    # "full" is web-safe since the #206 rebuild (full-mode build 0.39s).
+    allowed_bbn_granularity=("state", "full"),
     copula_theta_locked=True,
     elasticity_locked=True,
     # Equity p24 is now closed-form (#216), so the full center set runs in <1s
@@ -44,6 +47,9 @@ WEB_TIER = TierConfig(
     max_validation_iterations=300,
     max_validation_sweep_steps=6,
     max_validation_train_years=3,
+    # Provenance trails are ~10x scoring cost; cap the web tier well under 248
+    # so ?limit=248 can't be used to soak serverless CPU (#249).
+    max_score_explain_limit=50,
     max_trend_years=2.0,
 )
 
@@ -51,7 +57,7 @@ LOCAL_TIER = TierConfig(
     name="local",
     max_iterations=10000,
     allowed_inference_modes=("monte_carlo", "bayesian", "mcmc"),
-    allowed_bbn_granularity=("classic", "state", "full"),
+    allowed_bbn_granularity=("state", "full"),
     copula_theta_locked=False,
     elasticity_locked=False,
     max_equity_centers=248,
@@ -62,6 +68,7 @@ LOCAL_TIER = TierConfig(
     max_validation_iterations=1000,
     max_validation_sweep_steps=10,
     max_validation_train_years=6,
+    max_score_explain_limit=248,
     max_trend_years=5.0,
 )
 

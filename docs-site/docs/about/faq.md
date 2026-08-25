@@ -8,7 +8,7 @@ sidebar_position: 1
 
 ### What is TransPlan?
 
-TransPlan is a patient-facing clinical decision support tool that helps transplant patients explore which US cities might offer better transplant outcomes for their specific clinical profile. It scores 22 cities across 8 categories and models transplant probability distributions using Monte Carlo simulation.
+TransPlan is a patient-facing clinical decision support tool that helps transplant patients explore which US cities might offer better transplant outcomes for their specific clinical profile. It scores all 248 SRTR transplant centers across 8 categories and models transplant probability distributions using Monte Carlo simulation.
 
 ### Is TransPlan medical advice?
 
@@ -40,7 +40,13 @@ Higher MELD means shorter expected wait time because allocation priority increas
 
 ### What is LAS?
 
-**Lung Allocation Score** is a score from 0 to 100 that prioritizes lung transplant candidates based on their medical urgency and expected post-transplant benefit. Higher LAS means higher priority and shorter expected wait.
+**Lung Allocation Score** is a score from 0 to 100 that prioritized lung transplant candidates based on their medical urgency and expected post-transplant benefit. Higher LAS means higher priority and shorter expected wait.
+
+:::warning Retired in real-world allocation
+OPTN replaced LAS with the **Composite Allocation Score (CAS)** on March 9, 2023. CAS sums weighted points across medical urgency, expected post-transplant survival, biological disadvantage, placement efficiency (distance), pediatric priority, and prior living donor status, rather than balancing urgency against benefit alone.
+
+TransPlan's `las` API parameter and its lung wait multipliers still use the retired LAS scale. This is a known modelling gap, tracked as `SCORE-09` and `DATA-04` in the [clinical assumptions register](https://github.com/rivir/TransPlan/blob/main/docs/clinical-assumptions-register.md). Lung estimates should be read with that caveat.
+:::
 
 ### What is a competing risk?
 

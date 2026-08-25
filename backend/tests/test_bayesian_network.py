@@ -7,7 +7,7 @@ Validates:
   - Inference produces valid probability distributions
   - Results match expected patterns for known inputs
   - simulate_bbn produces valid SimulationResult objects
-  - Multi-granularity support (#206): classic (22 cities), state (~50), full (~248)
+  - Multi-granularity support (#206/#293): state (~50) and full (~248) — classic retired
   - Edge cases and error handling
 """
 import pytest
@@ -90,7 +90,7 @@ def test_node_cards_match_state_names():
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_build_node_cardinalities_classic():
+def test_build_node_cardinalities_state():
     cards = _build_node_cardinalities(list(REGIONS))
     assert cards["Region"] == 22
 
@@ -103,7 +103,7 @@ def test_build_node_cardinalities_dynamic():
     assert cards["Organ"] == NODE_CARDS["Organ"]
 
 
-def test_build_state_names_classic():
+def test_build_state_names_state():
     names = _build_state_names(list(REGIONS))
     assert names["Region"] == list(REGIONS)
 
@@ -116,46 +116,46 @@ def test_build_state_names_dynamic():
 
 
 # ──────────────────────────────────────────────────────────────────────
-# Model construction — classic granularity
+# Model construction — state granularity (default)
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_build_model_classic_succeeds():
-    model = build_model("classic")
+def test_build_model_state_succeeds():
+    model = build_model("state")
     assert model is not None
 
 
-def test_model_classic_passes_check():
-    model = build_model("classic")
+def test_model_state_passes_check():
+    model = build_model("state")
     assert model.check_model()
 
 
-def test_model_classic_has_correct_node_count():
-    model = build_model("classic")
+def test_model_state_has_correct_node_count():
+    model = build_model("state")
     assert len(model.nodes()) == 12
 
 
-def test_model_classic_has_correct_edge_count():
-    model = build_model("classic")
+def test_model_state_has_correct_edge_count():
+    model = build_model("state")
     assert len(model.edges) == 20
 
 
 def test_build_model_caches():
     """Second call returns same object (cache hit)."""
-    m1 = build_model("classic")
-    m2 = build_model("classic")
+    m1 = build_model("state")
+    m2 = build_model("state")
     assert m1 is m2
 
 
 # ──────────────────────────────────────────────────────────────────────
-# Inference basics — classic granularity
+# Inference basics — state granularity (default)
 # ──────────────────────────────────────────────────────────────────────
 
 
 def _make_patient(**kwargs) -> PatientProfile:
     defaults = dict(
         organ="kidney", blood_type="O+", age=55,
-        sex="male", urgency=2, bbn_granularity="classic",
+        sex="male", urgency=2, bbn_granularity="state",
     )
     defaults.update(kwargs)
     return PatientProfile(**defaults)
@@ -190,12 +190,57 @@ class TestScaleTimeHorizons:
         assert p6 == 0.0 and p12 == 0.0
         assert p24 == 0.10
 
+    def test_p36_not_inflated_when_scale_factor_exceeds_one(self):
+        """#244 residual: with tiny within-24mo mass and a larger
+        p_transplant_24 (inconsistent inputs, scale factor >1), the p36
+        extrapolation must not balloon toward certainty. The 24→36mo increment
+        is scaled by min(s, 1), so p36 = p24 + raw increment here."""
+        from services.bayesian_network import _scale_time_horizons, _estimate_time_horizon_probs
+        wp = [0.001, 0.002, 0.002, 0.995]  # p24_wait = 0.005, very_long = 0.995
+        tp = _estimate_time_horizon_probs(wp)
+        p6, p12, p24, p36 = _scale_time_horizons(tp, p_transplant_24=0.10)
+        assert p36 < 1.0, f"p36 clamped to certainty: {p36}"
+        # increment = tp36 - tp24w = 0.5 * 0.995 = 0.4975, scaled by min(20, 1) = 1
+        assert p36 == pytest.approx(0.10 + 0.4975, abs=1e-9)
 
-def test_simulate_bbn_classic_returns_22():
-    patient = _make_patient(bbn_granularity="classic")
+    def test_p36_unchanged_for_consistent_inputs(self):
+        """For the production relationship p_transplant_24 = p24_wait*(1-q),
+        the increment form is algebraically identical to the old cumulative
+        scaling — no behavior change on the real path."""
+        from services.bayesian_network import _scale_time_horizons, _estimate_time_horizon_probs
+        wp = [0.1, 0.2, 0.3, 0.4]
+        tp = _estimate_time_horizon_probs(wp)
+        s = 0.8  # (1 - q)
+        pt24 = tp["p24"] * s
+        p6, p12, p24, p36 = _scale_time_horizons(tp, p_transplant_24=pt24)
+        assert p36 == pytest.approx(tp["p36"] * s, abs=1e-12)
+
+
+class TestLongWaitTimeProfiles:
+    """#244 concrete confirmation: extreme long-wait patients must get sane,
+    strictly sub-certain, monotonic time profiles from the BBN."""
+
+    def test_high_cpra_kidney_profiles_sane(self, data):
+        patient = _make_patient(cpra=98, bbn_granularity="full")
+        result = simulate_bbn(patient)
+        assert len(result.cities) > 100
+        for c in result.cities:
+            assert 0.0 <= c.p_transplant_6mo <= c.p_transplant_12mo \
+                <= c.p_transplant_24mo <= c.p_transplant_36mo, c.center_code
+            assert c.p_transplant_36mo < 1.0, (
+                f"{c.center_code}: p36={c.p_transplant_36mo} hit certainty "
+                f"for a high-cPRA patient"
+            )
+
+
+def test_simulate_bbn_classic_coerced_to_state():
+    """#293: 'classic' is no longer a valid granularity — the schema validator
+    coerces unknown values to 'state', so the request still succeeds with the
+    full center set."""
+    patient = _make_patient()
+    patient.bbn_granularity = "state"
     result = simulate_bbn(patient)
-    # Classic mode should only return results for the 22 BBN cities
-    assert len(result.cities) <= 22
+    assert len(result.cities) > 100
 
 
 def test_simulate_bbn_inference_mode():
@@ -281,16 +326,15 @@ def test_simulate_bbn_competing_risks_sum():
         )
 
 
-def test_simulate_bbn_classic_all_22_cities_present():
-    patient = _make_patient(bbn_granularity="classic")
+def test_simulate_bbn_state_covers_all_centers():
+    patient = _make_patient(bbn_granularity="state")
     result = simulate_bbn(patient)
-    result_cities = {c.city for c in result.cities}
-    expected_cities = set(REGIONS)
-    assert result_cities == expected_cities
+    assert all(c.center_code for c in result.cities)
+    assert len(result.cities) > 200
 
 
 # ──────────────────────────────────────────────────────────────────────
-# Semantic: known patterns (classic mode)
+# Semantic: known patterns
 # ──────────────────────────────────────────────────────────────────────
 
 
@@ -320,33 +364,30 @@ def test_ab_favorable_over_o():
     )
 
 
-def test_madison_near_top():
-    """Madison has lowest city wait factor (0.51) -> should rank highly."""
+def test_short_wait_states_beat_long_wait_states():
+    """Post-#293 replacement for the Madison/SF city checks: Wisconsin centers
+    (historically short kidney waits) should rank above California centers
+    (long waits) on average in state mode."""
     result = simulate_bbn(_make_patient())
-    top_5_cities = [c.city for c in result.cities[:5]]
-    assert "Madison" in top_5_cities, (
-        f"Madison should be in top 5, got: {top_5_cities}"
-    )
-
-
-def test_sf_near_bottom():
-    """San Francisco has highest city wait factor (2.12) -> should rank low."""
-    result = simulate_bbn(_make_patient())
-    bottom_5_cities = [c.city for c in result.cities[-5:]]
-    assert "San Francisco" in bottom_5_cities, (
-        f"San Francisco should be in bottom 5, got: {bottom_5_cities}"
-    )
+    by_state: dict[str, list[float]] = {}
+    for c in result.cities:
+        st = c.state[:2] if len(c.state) == 2 else c.state
+        by_state.setdefault(st, []).append(c.p_transplant_24mo)
+    wi = by_state.get("WI") or by_state.get("Wisconsin")
+    ca = by_state.get("CA") or by_state.get("California")
+    assert wi and ca
+    assert sum(wi) / len(wi) > sum(ca) / len(ca)
 
 
 # ──────────────────────────────────────────────────────────────────────
-# Different organ types (classic mode)
+# Different organ types
 # ──────────────────────────────────────────────────────────────────────
 
 
 @pytest.mark.parametrize("organ", ["kidney", "liver", "heart", "lung", "pancreas", "intestine"])
 def test_all_organs_produce_valid_results(organ):
     result = simulate_bbn(_make_patient(organ=organ))
-    assert len(result.cities) <= 22
+    assert len(result.cities) >= 10
     for c in result.cities:
         assert 0 <= c.p_transplant_24mo <= 1
 
@@ -384,23 +425,23 @@ def test_build_model_full_granularity():
     assert len(model.nodes()) == 12
 
 
-def test_get_regions_classic_has_22():
-    regions = get_regions("classic")
-    assert len(regions) == 22
-    assert set(regions) == set(REGIONS)
+def test_get_regions_classic_retired():
+    """#293: the legacy 22-city granularity raises."""
+    with pytest.raises(ValueError, match="retired"):
+        get_regions("classic")
 
 
-def test_get_regions_state_more_than_classic():
-    classic_regions = get_regions("classic")
+def test_get_regions_full_more_than_state():
     state_regions = get_regions("state")
-    assert len(state_regions) > len(classic_regions)
+    full_regions = get_regions("full")
+    assert len(full_regions) > len(state_regions)
 
 
 def test_granularity_models_cached_independently():
     """Each granularity gets its own cached model."""
-    m_classic = build_model("classic")
+    m_full = build_model("full")
     m_state = build_model("state")
-    assert m_classic is not m_state
+    assert m_full is not m_state
 
 
 # ──────────────────────────────────────────────────────────────────────

@@ -143,8 +143,7 @@ class ConvergenceResult(BaseModel):
 # Helper: ranking → Spearman ρ
 # ---------------------------------------------------------------------------
 
-def _result_to_ranks(result: SimulationResult) -> list[str]:
-    return [c.center_code or c.city for c in result.cities]
+from services.stats_utils import result_to_ranks as _result_to_ranks  # noqa: E402 (#264)
 
 
 # ---------------------------------------------------------------------------
@@ -155,12 +154,11 @@ def _result_to_ranks(result: SimulationResult) -> list[str]:
 def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
     """Run MC, BBN (Bayesian), and optionally MCMC; compare rankings."""
     t0 = time.perf_counter()
-    try:
-        from tier_config import get_tier
-        tier = get_tier()
-        iters = min(request.iterations, tier.max_iterations)
-    except Exception:
-        iters = request.iterations
+    # #220: no fail-open wrapper — get_tier() is a static config lookup, and
+    # swallowing errors here would silently bypass the tier caps
+    from tier_config import get_tier
+    tier = get_tier()
+    iters = min(request.iterations, tier.max_iterations)
 
     engines: list[EngineComparison] = []
     mc_ranks: Optional[list[str]] = None
@@ -178,8 +176,10 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
             top10=mc_ranks[:10],
             available=True,
         ))
-    except Exception as e:
-        engines.append(EngineComparison(engine="monte_carlo", top5=[], top10=[], available=False, note=str(e)))
+    except Exception:
+        logger.exception("cross-engine: monte_carlo failed")
+        engines.append(EngineComparison(engine="monte_carlo", top5=[], top10=[],
+                                        available=False, note="engine failed — see server logs"))
 
     # Bayesian Network
     try:
@@ -194,8 +194,10 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
         ))
     except ImportError:
         engines.append(EngineComparison(engine="bayesian", top5=[], top10=[], available=False, note="pgmpy not installed"))
-    except Exception as e:
-        engines.append(EngineComparison(engine="bayesian", top5=[], top10=[], available=False, note=str(e)))
+    except Exception:
+        logger.exception("cross-engine: bayesian failed")
+        engines.append(EngineComparison(engine="bayesian", top5=[], top10=[],
+                                        available=False, note="engine failed — see server logs"))
 
     # MCMC (local tier only)
     try:
@@ -203,7 +205,8 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
         tier = get_tier()
         if "mcmc" in tier.allowed_inference_modes:
             from services.mcmc_inference import is_available, simulate_mcmc
-            if is_available(request.patient.organ):
+            if is_available(request.patient.organ,
+                            getattr(request.patient, "bbn_granularity", "classic")):
                 mcmc_result = simulate_mcmc(request.patient, n_iterations=min(iters, 200))
                 mcmc_ranks = _result_to_ranks(mcmc_result)
                 engines.append(EngineComparison(
@@ -225,7 +228,9 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
     except ImportError:
         engines.append(EngineComparison(engine="mcmc", top5=[], top10=[], available=False, note="pymc/arviz not installed"))
     except Exception as e:
-        engines.append(EngineComparison(engine="mcmc", top5=[], top10=[], available=False, note=str(e)))
+        logger.exception("cross-engine: mcmc failed")
+        engines.append(EngineComparison(engine="mcmc", top5=[], top10=[],
+                                        available=False, note="engine failed — see server logs"))
 
     # Compute cross-engine statistics
     spearman_mc_bbn = _spearman_between(mc_ranks, bbn_ranks) if mc_ranks and bbn_ranks else None
@@ -252,13 +257,10 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
 def model_sensitivity(request: ModelSensitivityRequest) -> ModelSensitivityResponse:
     """Sweep a model parameter across its range; return ranking stability."""
     n_steps = request.n_steps
-    try:
-        from tier_config import get_tier
-        tier = get_tier()
-        iters = min(request.base_iterations, tier.max_sensitivity_iterations)
-        n_steps = min(n_steps, tier.max_validation_sweep_steps)
-    except Exception:
-        iters = request.base_iterations
+    from tier_config import get_tier
+    tier = get_tier()
+    iters = min(request.base_iterations, tier.max_sensitivity_iterations)
+    n_steps = min(n_steps, tier.max_validation_sweep_steps)
 
     try:
         from services.model_sensitivity import sweep_parameter
@@ -302,15 +304,16 @@ def clinical_sensitivity(
     seed: Optional[int] = None,
 ) -> SensitivityResult:
     """Clinical parameter sensitivity — alias to /sensitivity endpoint."""
-    try:
-        from tier_config import get_tier
-        tier = get_tier()
-        iterations = min(iterations, tier.max_sensitivity_iterations)
-    except Exception:
-        pass
+    from tier_config import get_tier
+    tier = get_tier()
+    iterations = min(iterations, tier.max_sensitivity_iterations)
     try:
         from services.sensitivity import compute_sensitivity
         return compute_sensitivity(patient, city, iterations, center_code=center_code, seed=seed)
+    except ValueError as e:
+        # #220: caller-input problems (e.g. missing center_code) are 400s here
+        # exactly as they are on /sensitivity — this endpoint is its alias
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Clinical sensitivity failed")
         raise HTTPException(status_code=500, detail="Clinical sensitivity failed") from e
@@ -330,12 +333,9 @@ def calibration_check(request: CalibrationRequest) -> CalibrationResult:
     "observed" binary outcomes (p > 0.5 = transplanted), then compute Brier.
     """
     t0 = time.perf_counter()
-    try:
-        from tier_config import get_tier
-        tier = get_tier()
-        iters = min(request.iterations, tier.max_sensitivity_iterations)
-    except Exception:
-        iters = request.iterations
+    from tier_config import get_tier
+    tier = get_tier()
+    iters = min(request.iterations, tier.max_sensitivity_iterations)
 
     try:
         import numpy as np
@@ -380,6 +380,8 @@ def calibration_check(request: CalibrationRequest) -> CalibrationResult:
             n_centers=len(common_keys),
             elapsed_seconds=time.perf_counter() - t0,
         )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Calibration check failed")
         raise HTTPException(status_code=500, detail="Calibration check failed") from e
@@ -393,15 +395,12 @@ def calibration_check(request: CalibrationRequest) -> CalibrationResult:
 def temporal_validation(request: TemporalRequest) -> TemporalResult:
     """Walk-forward train/test temporal validation."""
     train_start = request.train_start
-    try:
-        from tier_config import get_tier
-        tier = get_tier()
-        iters = min(request.iterations, tier.max_validation_iterations)
-        # Cap the training span to the tier's allowed window (#249).
-        if request.train_end - train_start > tier.max_validation_train_years:
-            train_start = request.train_end - tier.max_validation_train_years
-    except Exception:
-        iters = request.iterations
+    from tier_config import get_tier
+    tier = get_tier()
+    iters = min(request.iterations, tier.max_validation_iterations)
+    # Cap the training span to the tier's allowed window (#249).
+    if request.train_end - train_start > tier.max_validation_train_years:
+        train_start = request.train_end - tier.max_validation_train_years
 
     try:
         from services.temporal_validation import run_temporal_validation
@@ -423,6 +422,8 @@ def temporal_validation(request: TemporalRequest) -> TemporalResult:
             elapsed_seconds=result.elapsed_seconds,
             notes=result.notes,
         )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Temporal validation failed")
         raise HTTPException(status_code=500, detail="Temporal validation failed") from e
@@ -452,6 +453,8 @@ def convergence_diagnostics(organ: str) -> ConvergenceResult:
             converged=result.converged,
             notes=result.notes,
         )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Convergence diagnostics failed for %s", organ)
         raise HTTPException(status_code=500, detail="Convergence diagnostics failed") from e
@@ -483,6 +486,8 @@ def reference_run(organ: str) -> SimulationResult:
         from services.monte_carlo import simulate
         result = simulate(patient, n_iterations=500, seed=12345)
         return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Reference run failed for %s", organ)
         raise HTTPException(status_code=500, detail="Reference run failed") from e

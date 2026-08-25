@@ -42,59 +42,12 @@ from services.bbn_parameterizer import (
     get_regions,
 )
 from services.outcomes import build_outcomes_dict
-from services.trends import get_city_trends
 
 logger = logging.getLogger(__name__)
 
 # City → state abbreviation (mirrors monte_carlo.py)
-_CITY_STATES = {
-    "Pittsburgh": "PA", "Baltimore": "MD", "Philadelphia": "PA",
-    "New York": "NY", "Minneapolis": "MN", "Madison": "WI",
-    "Chicago": "IL", "Cleveland": "OH", "St. Louis": "MO",
-    "Indianapolis": "IN", "Omaha": "NE", "Rochester": "MN",
-    "Nashville": "TN", "Durham": "NC", "Miami": "FL",
-    "Dallas": "TX", "Houston": "TX", "Portland": "OR",
-    "Seattle": "WA", "San Francisco": "CA", "Los Angeles": "CA",
-    "Palo Alto": "CA",
-}
-
-# Inverted: state abbreviation → first BBN region in that state
-_STATE_TO_REGION = {}
-for _city, _st in _CITY_STATES.items():
-    _STATE_TO_REGION.setdefault(_st, _city)
-
-# Center code → BBN region cache (built lazily)
-_CENTER_REGION_MAP: dict[str, str] | None = None
-
-
-def _get_center_region_map() -> dict[str, str]:
-    """Build center_code -> BBN region (one of 22 cities) mapping."""
-    global _CENTER_REGION_MAP
-    if _CENTER_REGION_MAP is not None:
-        return _CENTER_REGION_MAP
-
-    from services.data_loader import get_data
-    data = get_data()
-
-    # 1) Direct mapping from srtr-center-mapping.json
-    mapping = data.center_mapping.get("cities", {})
-    code_to_region: dict[str, str] = {}
-    for city_name, info in mapping.items():
-        primary = info.get("primary", "")
-        if primary:
-            code_to_region[primary] = city_name
-        for alt in info.get("alternates", []):
-            code_to_region[alt] = city_name
-
-    # 2) State-based fallback for unmapped centers
-    all_centers = data.all_centers.get("centers", {})
-    for code, info in all_centers.items():
-        if code not in code_to_region:
-            st = info.get("state_abbr", "")
-            code_to_region[code] = _STATE_TO_REGION.get(st, "Nashville")
-
-    _CENTER_REGION_MAP = code_to_region
-    return code_to_region
+# (#293: the legacy 22-city region maps — _CITY_STATES, _STATE_TO_REGION,
+# _get_center_region_map — were removed with the classic granularity.)
 
 # ──────────────────────────────────────────────────────────────────────
 # DAG edges (19 edges, 12 nodes)
@@ -140,7 +93,6 @@ DAG_EDGES = [
 # Node cardinalities and state names
 # ──────────────────────────────────────────────────────────────────────
 
-# Legacy module-level dicts (classic 22-city model) — kept for backward
 # compatibility with code that imports NODE_CARDS / NODE_STATE_NAMES directly.
 NODE_CARDS = {
     "Organ": len(ORGANS),
@@ -328,8 +280,8 @@ def _query_city(
     """
     valid_regions = regions if regions is not None else REGIONS
     if city not in valid_regions:
-        # Fallback: first region in list (safe default)
-        city = valid_regions[0]
+        # #220: never answer for a different region than the one requested
+        raise ValueError(f"Unknown BBN region: '{city}'")
 
     # Use module-level state names as fallback
     state_names = node_state_names if node_state_names is not None else NODE_STATE_NAMES
@@ -406,9 +358,16 @@ def _scale_time_horizons(
         p6 = p12 = 0.0
         p36 = p24
     else:
-        p6 = time_probs["p6"] / p24w * p_transplant_24
-        p12 = time_probs["p12"] / p24w * p_transplant_24
-        p36 = time_probs["p36"] / p24w * p_transplant_24
+        s = p_transplant_24 / p24w
+        p6 = time_probs["p6"] * s
+        p12 = time_probs["p12"] * s
+        # p36 scales the 24→36mo INCREMENT with the conversion factor capped
+        # at 1. On the production path s = (1-q) <= 1 and this is algebraically
+        # identical to scaling the cumulative; but if a caller ever passes
+        # p_transplant_24 > p24w (s > 1), cumulative scaling extrapolates the
+        # excess into the 24-36mo window and clamps p36 to certainty for
+        # exactly the long-wait cases this function exists to protect (#244).
+        p36 = p24 + (time_probs["p36"] - p24w) * min(s, 1.0)
     p6 = max(0.0, min(p6, p24))
     p12 = max(p6, min(p12, p24))
     p36 = max(p24, min(p36, 1.0))
@@ -502,9 +461,9 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
     that perform the patient's organ.
 
     The BBN Region node size adapts to ``patient.bbn_granularity``:
-      - "classic": 22 cities — only centers mapped to those 22 BBN cities
-      - "state":   ~50 states — all centers
-      - "full":    ~248 centers — all centers
+      - "state": ~50 states — all centers
+      - "full":  ~248 centers — all centers
+    (The legacy 22-city "classic" mode was retired — #285/#293.)
 
     Centers sharing a region receive the same BBN probabilities but
     different post-transplant outcomes (center-level data).
@@ -519,9 +478,6 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
     regions = get_regions(granularity)
     center_region_map = get_center_to_region_map(granularity)
 
-    # Keep legacy map for backward-compatible trend lookups
-    legacy_center_region_map = _get_center_region_map()
-
     # Build state name mapping for index lookups
     state_names = _build_state_names(regions)
 
@@ -535,143 +491,102 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
 
     city_results: list[CityProbability] = []
 
-    if granularity == "classic":
-        # Classic mode: one result per BBN region (22 cities).
-        # Use the region name as the display city and look up representative
-        # center info for lat/lon/state from the legacy _CITY_STATES mapping.
-        for region_name in regions:
-            query_result = _query_city(
-                model, organ, blood_type, age_group, urgency, region_name,
+    # One result per SRTR center (state / full granularity).
+    from services.monte_carlo import _get_centers
+    centers = _get_centers(organ)
+
+    for center in centers:
+        code = center.get("code", "")
+        name = center.get("name", center.get("city", ""))
+        state_full = center.get("state", center.get("state_abbr", ""))
+        lat = center.get("lat")
+        lon = center.get("lon")
+
+        # Map center to BBN region using the granularity-aware map.
+        # #220: a center with no region is SKIPPED with a log — the old
+        # code silently answered with the alphabetically-first region.
+        region = center_region_map.get(code)
+        if region is None or region not in regions:
+            logger.warning("No BBN region for center %s (region=%s) — skipped", code, region)
+            continue
+
+        # Run BBN inference (cached per region)
+        if region not in region_cache:
+            region_cache[region] = _query_city(
+                model, organ, blood_type, age_group, urgency, region,
                 regions=regions, node_state_names=state_names,
             )
-            region_cache[region_name] = query_result
+        query_result = region_cache[region]
 
-            state_abbr = _CITY_STATES.get(region_name, "")
+        oc = _combine_outcomes(query_result)
+        p_6, p_12, p_24, p_36 = oc["p_6"], oc["p_12"], oc["p_24"], oc["p_36"]
+        p_mortality_24, p_delisting_24, p_waiting_24 = (
+            oc["p_mortality_24"], oc["p_delisting_24"], oc["p_waiting_24"])
 
-            oc = _combine_outcomes(query_result)
-            p_6, p_12, p_24, p_36 = oc["p_6"], oc["p_12"], oc["p_24"], oc["p_36"]
-            p_mortality_24, p_delisting_24, p_waiting_24 = (
-                oc["p_mortality_24"], oc["p_delisting_24"], oc["p_waiting_24"])
+        median_wait = _estimate_median_wait(query_result["wait_category"])
 
-            median_wait = _estimate_median_wait(query_result["wait_category"])
+        n_obs = _region_observed_n(organ, region, center_region_map)
+        ci_half = _data_uncertainty_ci(p_24, n_obs)
+        ci_lo = max(0.0, p_24 - ci_half)
+        ci_hi = min(1.0, p_24 + ci_half)
 
-            n_obs = _region_observed_n(organ, region_name, center_region_map)
-            ci_half = _data_uncertainty_ci(p_24, n_obs)
-            ci_lo = max(0.0, p_24 - ci_half)
-            ci_hi = min(1.0, p_24 + ci_half)
+        competing_risks_24 = {
+            "p_transplant_24mo": round(p_24, 4),
+            "p_mortality_24mo": round(p_mortality_24, 4),
+            "p_delisting_24mo": round(p_delisting_24, 4),
+            "p_still_waiting_24mo": round(p_waiting_24, 4),
+        }
 
-            competing_risks_24 = {
-                "p_transplant_24mo": round(p_24, 4),
-                "p_mortality_24mo": round(p_mortality_24, 4),
-                "p_delisting_24mo": round(p_delisting_24, 4),
-                "p_still_waiting_24mo": round(p_waiting_24, 4),
-            }
+        # Center-level outcomes
+        outcomes_data = None
+        try:
+            outcomes_data = build_outcomes_dict(patient.organ, city=name, p_transplant_24mo=p_24, center_code=code)
+        except (KeyError, FileNotFoundError, ValueError):
+            pass
 
-            outcomes_data = None
-            try:
-                outcomes_data = build_outcomes_dict(patient.organ, city=region_name, p_transplant_24mo=p_24)
-            except (KeyError, FileNotFoundError, ValueError):
-                pass
+        # Per-center historical trends (#288)
+        trends_data = None
+        try:
+            from services.trends import get_center_trends
+            trends_data = get_center_trends(patient.organ, code)
+        except (KeyError, FileNotFoundError, ValueError):
+            pass
 
-            trends_data = None
-            try:
-                trends_data = get_city_trends(patient.organ, region_name)
-            except (KeyError, FileNotFoundError, ValueError):
-                pass
+        # Data-provenance tags (#300/#219 — previously null for BBN runs,
+        # which read as "no degraded inputs" instead of "not measured")
+        from services.provenance import center_data_quality
+        degraded = center_data_quality(patient.organ, code)
 
-            city_results.append(CityProbability(
-                city=region_name,
-                state=state_abbr,
-                center_code="",
-                center_name=region_name,
-                lat=None,
-                lon=None,
-                p_transplant_6mo=round(p_6, 4),
-                p_transplant_12mo=round(p_12, 4),
-                p_transplant_24mo=round(p_24, 4),
-                p_transplant_36mo=round(p_36, 4),
-                confidence_interval_95=(round(ci_lo, 4), round(ci_hi, 4)),
-                median_wait_months=round(max(median_wait, 0.1), 2),
-                competing_risks=competing_risks_24,
-                outcomes=outcomes_data,
-                trends=trends_data,
-            ))
-    else:
-        # State / full mode: one result per SRTR center.
-        from services.monte_carlo import _get_centers
-        centers = _get_centers(organ)
+        city_results.append(CityProbability(
+            city=name,
+            state=state_full,
+            center_code=code,
+            center_name=name,
+            lat=lat,
+            lon=lon,
+            p_transplant_6mo=round(p_6, 4),
+            p_transplant_12mo=round(p_12, 4),
+            p_transplant_24mo=round(p_24, 4),
+            p_transplant_36mo=round(p_36, 4),
+            confidence_interval_95=(round(ci_lo, 4), round(ci_hi, 4)),
+            median_wait_months=round(max(median_wait, 0.1), 2),
+            competing_risks=competing_risks_24,
+            outcomes=outcomes_data,
+            trends=trends_data,
+            data_quality=degraded or None,
+        ))
 
-        for center in centers:
-            code = center.get("code", "")
-            name = center.get("name", center.get("city", ""))
-            state_full = center.get("state", center.get("state_abbr", ""))
-            lat = center.get("lat")
-            lon = center.get("lon")
-
-            # Map center to BBN region using the granularity-aware map
-            region = center_region_map.get(code, regions[0] if regions else "Nashville")
-            if region not in regions:
-                region = regions[0] if regions else "Nashville"
-
-            # Run BBN inference (cached per region)
-            if region not in region_cache:
-                region_cache[region] = _query_city(
-                    model, organ, blood_type, age_group, urgency, region,
-                    regions=regions, node_state_names=state_names,
-                )
-            query_result = region_cache[region]
-
-            oc = _combine_outcomes(query_result)
-            p_6, p_12, p_24, p_36 = oc["p_6"], oc["p_12"], oc["p_24"], oc["p_36"]
-            p_mortality_24, p_delisting_24, p_waiting_24 = (
-                oc["p_mortality_24"], oc["p_delisting_24"], oc["p_waiting_24"])
-
-            median_wait = _estimate_median_wait(query_result["wait_category"])
-
-            n_obs = _region_observed_n(organ, region, center_region_map)
-            ci_half = _data_uncertainty_ci(p_24, n_obs)
-            ci_lo = max(0.0, p_24 - ci_half)
-            ci_hi = min(1.0, p_24 + ci_half)
-
-            competing_risks_24 = {
-                "p_transplant_24mo": round(p_24, 4),
-                "p_mortality_24mo": round(p_mortality_24, 4),
-                "p_delisting_24mo": round(p_delisting_24, 4),
-                "p_still_waiting_24mo": round(p_waiting_24, 4),
-            }
-
-            # Center-level outcomes
-            outcomes_data = None
-            try:
-                outcomes_data = build_outcomes_dict(patient.organ, city=name, p_transplant_24mo=p_24, center_code=code)
-            except (KeyError, FileNotFoundError, ValueError):
-                pass
-
-            # Trends use the legacy 22-city region for lookup
-            legacy_region = legacy_center_region_map.get(code, center.get("city", "Nashville"))
-            trends_data = None
-            try:
-                trends_data = get_city_trends(patient.organ, legacy_region)
-            except (KeyError, FileNotFoundError, ValueError):
-                pass
-
-            city_results.append(CityProbability(
-                city=name,
-                state=state_full,
-                center_code=code,
-                center_name=name,
-                lat=lat,
-                lon=lon,
-                p_transplant_6mo=round(p_6, 4),
-                p_transplant_12mo=round(p_12, 4),
-                p_transplant_24mo=round(p_24, 4),
-                p_transplant_36mo=round(p_36, 4),
-                confidence_interval_95=(round(ci_lo, 4), round(ci_hi, 4)),
-                median_wait_months=round(max(median_wait, 0.1), 2),
-                competing_risks=competing_risks_24,
-                outcomes=outcomes_data,
-                trends=trends_data,
-            ))
+    # L-067 (#304): optional user-defined center set (post-filter — the BBN
+    # computes per-region, so restricting output is the meaningful operation).
+    # An all-unknown shortlist raises, matching the MC engine's contract.
+    if patient.center_codes:
+        wanted = set(patient.center_codes)
+        city_results = [c for c in city_results if c.center_code in wanted]
+        if not city_results:
+            raise ValueError(
+                f"None of the requested center_codes perform {patient.organ} "
+                f"transplants (or the codes are unknown)."
+            )
 
     city_results.sort(key=lambda c: c.p_transplant_24mo, reverse=True)
 
@@ -681,10 +596,16 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
         patient.organ, patient.blood_type, granularity, elapsed, len(city_results), len(region_cache),
     )
 
+    dq_summary = None
+    if city_results:
+        from services.provenance import summarize
+        dq_summary = summarize([c.data_quality or [] for c in city_results])
+
     return SimulationResult(
         patient=patient,
         cities=city_results,
         iterations=0,
         elapsed_seconds=round(elapsed, 3),
         inference_mode="bayesian",
+        data_quality=dq_summary,
     )

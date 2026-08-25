@@ -68,6 +68,12 @@ A patient-facing clinical decision support tool that helps transplant patients i
 | 7.1 | Bootstrap sample size (n=200) likely insufficient | Fixed: raised to n=1000 in rebuild |
 | 7.2 | Exponential hazard assumes constant rate | Partially addressed: score drift F3 models time-varying priority |
 
+> **Staleness note (2026-08-25):** the tables below are the June 2026 snapshot and
+> are NOT current. Since then: #209/#210/#211/#215/#216/#218/#225/#226/#229 closed
+> (June), the Aug 9 cleanup closed 20 more, and the Aug 2026 sweep closed
+> #206/#237/#244/#249/#254/#261/#269/#286-#288/#294/#295/#306. The live sources of
+> truth are the GitHub issue tracker and `docs/backlog-2026-08.md`.
+
 **Still Open — HIGH (8):** #209-#216
 | # | GH | Issue |
 |---|-----|-------|
@@ -481,7 +487,7 @@ TransPlan/
     design.md             <- Read when touching UI/UX/CSS
     adr-log.md            <- Grep-searchable decision log
     roadmap.md            <- Phased development plan (5 phases)
-    limitations.md        <- Issue tracker (65 items, L-001 through L-065)
+    limitations.md        <- Issue tracker (73 items, L-001 through L-073)
     brand-bible.md        <- Grep-searchable visual identity
 ```
 
@@ -502,7 +508,7 @@ TransPlan/
 
 ## Known Limitations
 
-**65 tracked issues** in `docs/limitations.md`. Read when auditing data quality or planning future work.
+**73 tracked issues** (L-001–L-073) in `docs/limitations.md`. Read when auditing data quality or planning future work. The counts below are the March 2026 snapshot; see the file itself for current status (notably L-060/L-061/L-063–L-073).
 
 | Status | Count | Details |
 |--------|-------|---------|

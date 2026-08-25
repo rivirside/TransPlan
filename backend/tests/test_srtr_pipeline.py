@@ -99,17 +99,6 @@ class TestWaitTimeDistributions:
             for bt, mult in wait_data[organ]["blood_type_multipliers"].items():
                 assert mult > 0, f"{organ} {bt} multiplier should be positive"
 
-    def test_city_wait_time_factors_has_all_cities(self, wait_data):
-        factors = wait_data["city_wait_time_factors"]
-        for city in CITIES:
-            assert city in factors, f"Missing city factor: {city}"
-
-    def test_city_factors_reasonable_range(self, wait_data):
-        factors = wait_data["city_wait_time_factors"]
-        for city in CITIES:
-            f = factors[city]
-            assert 0.3 <= f <= 3.0, f"{city} factor={f} out of range [0.3, 3.0]"
-
     def test_meta_has_source(self, wait_data):
         assert "_meta" in wait_data
         assert "source" in wait_data["_meta"]
@@ -132,20 +121,16 @@ class TestWaitTimeDistributions:
                 f"Lung ({lung}) should be faster than {organ}"
 
 
-class TestCityFactorSanity:
-    """Sanity checks based on known transplant geography."""
+class TestCenterFactorSanity:
+    """Sanity checks based on known transplant geography (#293: per-center)."""
 
-    def test_sf_longer_than_average(self, wait_data):
-        """San Francisco / California is known for long kidney waits."""
-        assert wait_data["city_wait_time_factors"]["San Francisco"] > 1.0
-
-    def test_la_longer_than_average(self, wait_data):
-        assert wait_data["city_wait_time_factors"]["Los Angeles"] > 1.0
-
-    def test_variation_exists(self, wait_data):
-        """There should be meaningful variation across cities."""
-        factors = [v for k, v in wait_data["city_wait_time_factors"].items() if not k.startswith("_")]
-        assert max(factors) - min(factors) > 0.5, "City factors should vary by at least 0.5"
+    def test_variation_exists(self, data):
+        """There should be meaningful variation across centers."""
+        from services.data_loader import get_data
+        factors = [per.get("kidney") for per in
+                   get_data().center_wait_times.get("center_wait_time_factors", {}).values()
+                   if isinstance(per.get("kidney"), (int, float))]
+        assert max(factors) - min(factors) > 0.5, "Center factors should vary by at least 0.5"
 
 
 # ---------- competing-risks.json tests ----------
@@ -187,21 +172,6 @@ class TestCompetingRisks:
             for i in range(1, 4):
                 assert mult[str(i)] <= mult[str(i + 1)], \
                     f"{organ}: urgency {i} mult should be <= urgency {i+1}"
-
-    def test_city_adjustments_has_all_cities(self, competing_data):
-        adjs = competing_data["city_adjustments"]
-        for city in CITIES:
-            assert city in adjs, f"Missing city adjustment: {city}"
-            assert "mortality_factor" in adjs[city]
-            assert "delisting_factor" in adjs[city]
-
-    def test_city_adjustment_factors_reasonable(self, competing_data):
-        adjs = competing_data["city_adjustments"]
-        for city in CITIES:
-            mf = adjs[city]["mortality_factor"]
-            df = adjs[city]["delisting_factor"]
-            assert 0.3 <= mf <= 3.0, f"{city} mortality_factor={mf} out of range"
-            assert 0.3 <= df <= 3.0, f"{city} delisting_factor={df} out of range"
 
     def test_liver_has_meld_multipliers(self, competing_data):
         """Liver should have MELD-based mortality multipliers."""

@@ -32,7 +32,7 @@ backend/
     data_loader.py      <- Loads data/*.json at startup; centers_for_organ() filter
     monte_carlo.py      <- Monte Carlo engine (all centers for organ x N iterations)
     bayesian_network.py <- BBN exact inference (22-region DAG, mapped to 248 centers)
-    mcmc_inference.py   <- MCMC posterior sampling (22-city traces, mapped to 248 centers)
+    mcmc_inference.py   <- MCMC posterior sampling (per-center traces at state/full granularity)
     distributions.py    <- Log-normal wait time distributions (city + center-code lookup)
     competing_risks.py  <- Exponential mortality/delisting (city + center-code lookup)
     outcomes.py         <- Post-transplant outcomes (center-level data for 243 centers)

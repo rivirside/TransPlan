@@ -22,37 +22,35 @@ from config import DATA_DIR
 logger = logging.getLogger(__name__)
 
 _DISTRIBUTIONS: dict | None = None
-_CITY_FACTORS: dict[str, float] = {}
 _lock = threading.Lock()
 
 
-def _load_distributions() -> tuple[dict, dict[str, float]]:
-    """Load distribution parameters from JSON. Called once at first use."""
+def _load_distributions() -> dict:
+    """Load distribution parameters from JSON. Called once at first use.
+
+    (#293: the 22-city city_wait_time_factors block was retired — location
+    adjustment is center-code-based only.)
+    """
     path = DATA_DIR / "wait-time-distributions.json"
     with open(path, "r", encoding="utf-8") as f:
         raw = json.load(f)
 
-    city_factors = raw.get("city_wait_time_factors", {})
-    # Remove non-city keys
-    city_factors = {k: v for k, v in city_factors.items() if k != "_notes"}
-
-    # Build per-organ distribution params
     organs = {}
     for organ in ("kidney", "liver", "heart", "lung", "pancreas", "intestine"):
         if organ in raw:
             organs[organ] = raw[organ]
 
-    logger.info("Distribution params loaded for %d organs, %d cities", len(organs), len(city_factors))
-    return organs, city_factors
+    logger.info("Distribution params loaded for %d organs", len(organs))
+    return organs
 
 
 def _ensure_loaded() -> None:
     """Lazy-load distribution data on first call (thread-safe)."""
-    global _DISTRIBUTIONS, _CITY_FACTORS
+    global _DISTRIBUTIONS
     if _DISTRIBUTIONS is None:
         with _lock:
             if _DISTRIBUTIONS is None:  # double-checked locking
-                _DISTRIBUTIONS, _CITY_FACTORS = _load_distributions()
+                _DISTRIBUTIONS = _load_distributions()
 
 
 # Issue #64: Use shared implementation from stats_utils
@@ -111,7 +109,7 @@ def get_wait_time_distribution(
     blood_type : str
         ABO/Rh blood type, e.g. "O+", "AB-".
     city : str
-        City name matching keys in city_wait_time_factors.
+        Display label only — the location factor comes from center_code (#293).
     cpra : int, optional
         Calculated Panel Reactive Antibody (kidney only, 0-100).
     meld : int, optional
@@ -131,48 +129,62 @@ def get_wait_time_distribution(
     """
     _ensure_loaded()
 
-    organ_params = _DISTRIBUTIONS.get(organ)
-    if organ_params is None:
+    if _DISTRIBUTIONS.get(organ) is None:
         # Fallback: generic 24-month median
         logger.warning("No distribution params for organ '%s', using fallback", organ)
         return scipy.stats.lognorm(s=0.8, scale=24.0)
 
+    # (city is display-only — the location factor comes from center_code, #293)
+    sigma, adjusted_median = get_wait_time_params(
+        organ, blood_type, cpra=cpra, meld=meld, las=las,
+        age=age, sex=sex, center_code=center_code,
+    )
+    # scipy.stats.lognorm(s=sigma, scale=exp(mu)) has median = scale = exp(mu)
+    # So scale = adjusted_median gives the desired median directly
+    return scipy.stats.lognorm(s=sigma, scale=adjusted_median)
+
+
+def get_wait_time_params(
+    organ: str,
+    blood_type: str,
+    cpra: int | None = None,
+    meld: int | None = None,
+    las: float | None = None,
+    age: int | None = None,
+    sex: str | None = None,
+    center_code: str = "",
+) -> tuple[float, float]:
+    """(sigma, adjusted_median) of the wait-time lognormal.
+
+    Single source of the multiplier chain: national median × blood type ×
+    center factor × clinical score × age/sex. get_wait_time_distribution
+    freezes a scipy lognorm from these; hot vectorized paths (equity's
+    48-profiles × 248-centers sweep) evaluate lognorm.pdf directly instead —
+    freezing ~11k distributions per request was the dominant cost
+    (2026-08 review).
+    """
+    _ensure_loaded()
+    organ_params = _DISTRIBUTIONS.get(organ)
+    if organ_params is None:
+        return 0.8, 24.0
     median = organ_params["national_median_months"]
     sigma = organ_params["log_sigma"]
-
-    # Blood type modifier
     bt_mult = organ_params.get("blood_type_multipliers", {}).get(blood_type, 1.0)
-
-    # Location modifier — prefer center-code lookup, fall back to city name
+    city_mult = 1.0
     if center_code:
         from services.data_loader import get_data
         center_factors = get_data().center_wait_times.get("center_wait_time_factors", {})
         city_mult = center_factors.get(center_code, {}).get(organ, 1.0)
-    else:
-        city_mult = _CITY_FACTORS.get(city, 1.0)
-
-    # Organ-specific clinical modifiers
     clinical_mult = 1.0
     clinical_multipliers = organ_params.get("clinical_multipliers", {})
-
     if organ == "kidney" and cpra is not None and "cpra" in clinical_multipliers:
         clinical_mult = _get_range_multiplier(cpra, clinical_multipliers["cpra"])
-
     if organ == "liver" and meld is not None and "meld" in clinical_multipliers:
         clinical_mult = _get_range_multiplier(meld, clinical_multipliers["meld"])
-
     if organ == "lung" and las is not None and "las" in clinical_multipliers:
         clinical_mult = _get_range_multiplier(las, clinical_multipliers["las"])
-
-    # Age/sex demographic modifier (issue #48)
     demo_mult = _age_sex_multiplier(organ, age, sex)
-
-    # Adjusted median = national × blood_type × city × clinical × demographics
-    adjusted_median = median * bt_mult * city_mult * clinical_mult * demo_mult
-
-    # scipy.stats.lognorm(s=sigma, scale=exp(mu)) has median = scale = exp(mu)
-    # So scale = adjusted_median gives the desired median directly
-    return scipy.stats.lognorm(s=sigma, scale=adjusted_median)
+    return sigma, median * bt_mult * city_mult * clinical_mult * demo_mult
 
 
 def get_drift_adjusted_multiplier(
@@ -314,12 +326,6 @@ def get_lognorm_params(dist) -> tuple[float, float, float]:
     loc = dist.kwds.get('loc', 0)
     scale = dist.kwds.get('scale', 1.0)
     return s, loc, scale
-
-
-def get_city_factors() -> dict[str, float]:
-    """Return the city wait time factor dict (for inspection/testing)."""
-    _ensure_loaded()
-    return dict(_CITY_FACTORS)
 
 
 def get_organ_params(organ: str) -> dict | None:

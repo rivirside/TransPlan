@@ -19,35 +19,35 @@ from config import DATA_DIR
 logger = logging.getLogger(__name__)
 
 _RISKS: dict | None = None
-_CITY_ADJUSTMENTS: dict[str, dict[str, float]] = {}
 _lock = threading.Lock()
 
 
-def _load_risks() -> tuple[dict, dict]:
-    """Load competing risks parameters from JSON."""
+def _load_risks() -> dict:
+    """Load competing risks parameters from JSON.
+
+    (#293: the 22-city city_adjustments block was retired — location
+    adjustment is center-code-based only.)
+    """
     path = DATA_DIR / "competing-risks.json"
     with open(path, "r", encoding="utf-8") as f:
         raw = json.load(f)
-
-    city_adj = raw.get("city_adjustments", {})
-    city_adj = {k: v for k, v in city_adj.items() if k != "_notes"}
 
     organs = {}
     for organ in ("kidney", "liver", "heart", "lung", "pancreas", "intestine"):
         if organ in raw:
             organs[organ] = raw[organ]
 
-    logger.info("Competing risks loaded for %d organs, %d cities", len(organs), len(city_adj))
-    return organs, city_adj
+    logger.info("Competing risks loaded for %d organs", len(organs))
+    return organs
 
 
 def _ensure_loaded() -> None:
     """Lazy-load competing risks data on first call (thread-safe)."""
-    global _RISKS, _CITY_ADJUSTMENTS
+    global _RISKS
     if _RISKS is None:
         with _lock:
             if _RISKS is None:  # double-checked locking
-                _RISKS, _CITY_ADJUSTMENTS = _load_risks()
+                _RISKS = _load_risks()
 
 
 # Issue #64: Use shared implementation from stats_utils
@@ -94,13 +94,12 @@ def get_annual_mortality_rate(
         meld_mults = organ_data.get("meld_mortality_multipliers", {})
         meld_mult = _get_range_multiplier(meld, meld_mults)
 
-    # Location adjustment — prefer center-code, fall back to city
+    # Location adjustment — center-code only (#293: 22-city fallback retired;
+    # no code → neutral 1.0, surfaced via data_quality provenance)
+    city_mult = 1.0
     if center_code:
         adj = _center_adjustment(center_code, organ)
         city_mult = adj.get("mortality_factor", 1.0)
-    else:
-        city_adj = _CITY_ADJUSTMENTS.get(city, {})
-        city_mult = city_adj.get("mortality_factor", 1.0)
 
     return base * urg_mult * meld_mult * city_mult
 
@@ -117,12 +116,10 @@ def get_annual_delisting_rate(organ: str, city: str = "", center_code: str = "")
 
     base = organ_data["annual_delisting_rate"]
 
+    city_mult = 1.0
     if center_code:
         adj = _center_adjustment(center_code, organ)
         city_mult = adj.get("delisting_factor", 1.0)
-    else:
-        city_adj = _CITY_ADJUSTMENTS.get(city, {})
-        city_mult = city_adj.get("delisting_factor", 1.0)
 
     return base * city_mult
 
@@ -132,8 +129,3 @@ def get_organ_risks(organ: str) -> dict | None:
     _ensure_loaded()
     return _RISKS.get(organ)
 
-
-def get_city_adjustments() -> dict[str, dict[str, float]]:
-    """Return city adjustment factors (for inspection/testing)."""
-    _ensure_loaded()
-    return dict(_CITY_ADJUSTMENTS)

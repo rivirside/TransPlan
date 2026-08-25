@@ -86,13 +86,6 @@ class TestWaitTimeDistributions:
             sigma = self.wt[organ].get("log_sigma", 0)
             assert 0.1 <= sigma <= 3.0, f"{organ} log_sigma {sigma} out of range"
 
-    def test_city_wait_time_factors_present(self):
-        factors = self.wt.get("city_wait_time_factors", {})
-        for city in EXPECTED_CITIES:
-            assert city in factors, f"Missing city factor for {city}"
-            val = factors[city]
-            assert 0.3 <= val <= 3.0, f"{city} factor {val} out of range"
-
 
 # ──────────────────────────────────────────────────────────────────────
 # competing-risks.json
@@ -139,11 +132,6 @@ class TestCompetingRisks:
                     f"{organ} urgency multipliers not monotonic: {vals}"
                 )
 
-    def test_city_adjustments_present(self):
-        adj = self.cr.get("city_adjustments", {})
-        for city in EXPECTED_CITIES:
-            assert city in adj, f"Missing city adjustment for {city}"
-
 
 # ──────────────────────────────────────────────────────────────────────
 # post-transplant-outcomes.json
@@ -179,19 +167,24 @@ class TestPostTransplantOutcomes:
                     f"{organ}: 1yr survival ({gs1}) should >= 3yr ({gs3})"
                 )
 
-    def test_city_outcomes_present(self):
-        city_out = self.outcomes.get("city_outcomes", {})
-        for city in EXPECTED_CITIES:
-            assert city in city_out, f"Missing city outcomes for {city}"
-
-    def test_city_graft_survival_in_range(self):
-        city_out = self.outcomes.get("city_outcomes", {})
-        for city in EXPECTED_CITIES:
-            city_data = city_out.get(city, {})
-            for organ in EXPECTED_ORGANS:
-                organ_data = city_data.get(organ, {})
-                gs1 = organ_data.get("graft_survival_1yr")
-                if gs1 is not None:
-                    assert 50.0 <= gs1 <= 100.0, (
-                        f"{city}/{organ} 1yr graft survival {gs1} out of range"
-                    )
+    def test_center_survival_in_range(self):
+        """Range-sanity over the per-center outcomes file (2026-08 review:
+        the old city_outcomes version went vacuous when that block was
+        retired — a unit-slip like 970.0 would have passed unnoticed)."""
+        centers = _load("post-transplant-outcomes-centers.json").get(
+            "center_outcomes", {})
+        assert len(centers) > 200, f"only {len(centers)} centers with outcomes"
+        checked = 0
+        for code, organs in centers.items():
+            for organ, rec in organs.items():
+                if not isinstance(rec, dict):
+                    continue
+                for key in ("graft_survival_1yr", "patient_survival_1yr",
+                            "graft_survival_3yr", "patient_survival_3yr"):
+                    val = rec.get(key)
+                    if val is not None:
+                        assert 30.0 <= val <= 100.0, (
+                            f"{code}/{organ} {key} = {val} out of range"
+                        )
+                        checked += 1
+        assert checked > 500, f"only {checked} survival values checked — vacuous"

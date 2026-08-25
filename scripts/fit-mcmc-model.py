@@ -3,7 +3,7 @@
 Offline MCMC model fitting script — Phase 5 M3.
 
 Fits a PyMC hierarchical survival model for one or all organs and saves
-the posterior trace to data/mcmc-traces/{organ}.nc.
+the posterior trace to data/mcmc-traces/{organ}-{granularity}.nc.
 
 Usage:
     # Fit a single organ (quick test)
@@ -55,6 +55,7 @@ def fit_and_save(
     target_accept: float,
     strict: bool = False,
     granularity: str = "classic",
+    cores: int | None = None,
 ) -> None:
     """Fit model for one organ and save the trace."""
     logger.info("=" * 60)
@@ -79,6 +80,7 @@ def fit_and_save(
         n_tune=n_tune,
         target_accept=target_accept,
         granularity=granularity,
+        cores=cores,
     )
 
     # Save trace
@@ -123,6 +125,10 @@ def fit_and_save(
 
 
 def main():
+    # state/full granularity resolves regions through the data_loader singleton
+    from services.data_loader import load_all
+    load_all()
+
     parser = argparse.ArgumentParser(description="Fit MCMC hierarchical survival model")
     parser.add_argument("--organ", choices=ORGANS, help="Organ to fit")
     parser.add_argument("--all", action="store_true", help="Fit all 6 organs")
@@ -132,8 +138,10 @@ def main():
     parser.add_argument("--target-accept", type=float, default=0.90, help="NUTS target acceptance (default: 0.90)")
     parser.add_argument("--quick", action="store_true", help="Quick mode: 100 samples, 1 chain, 50 tune")
     parser.add_argument("--strict", action="store_true", help="Block trace save if R-hat >= 1.01 or ESS < 400")
-    parser.add_argument("--granularity", choices=["classic", "state", "full"], default="classic",
-                        help="Region granularity (classic=22 cities, state=~50, full=~248)")
+    parser.add_argument("--cores", type=int, default=None,
+                        help="Sampler cores (1 = sequential chains; use when parallel workers die)")
+    parser.add_argument("--granularity", choices=["state", "full"], default="full",
+                        help="Region granularity (state=~50, full=~248 centers; classic retired #293)")
 
     args = parser.parse_args()
 
@@ -157,6 +165,7 @@ def main():
             target_accept=args.target_accept,
             strict=args.strict,
             granularity=args.granularity,
+            cores=args.cores,
         )
 
     total_elapsed = time.perf_counter() - total_start

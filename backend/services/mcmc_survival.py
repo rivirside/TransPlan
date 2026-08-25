@@ -42,10 +42,16 @@ BLOOD_TYPES = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"]
 URGENCY_LEVELS = [1, 2, 3, 4]
 
 
-def trace_path(organ: str, granularity: str = "classic") -> Path:
-    """Return the path for a trace file at the given granularity."""
+def trace_path(organ: str, granularity: str = "state") -> Path:
+    """Return the path for a trace file at the given granularity.
+
+    (#293: the legacy 22-city 'classic' granularity and its bare {organ}.nc
+    trace naming are retired.)
+    """
     if granularity == "classic":
-        return TRACE_DIR / f"{organ}.nc"
+        raise ValueError(
+            "The 22-city 'classic' granularity was retired (#293); use 'state' or 'full'."
+        )
     return TRACE_DIR / f"{organ}-{granularity}.nc"
 
 
@@ -53,7 +59,7 @@ def trace_path(organ: str, granularity: str = "classic") -> Path:
 # Data loading
 # ---------------------------------------------------------------------------
 
-def load_organ_data(organ: str, granularity: str = "classic") -> dict[str, Any]:
+def load_organ_data(organ: str, granularity: str = "state") -> dict[str, Any]:
     """Load and prepare all observed data for a single organ model.
 
     Parameters
@@ -62,9 +68,9 @@ def load_organ_data(organ: str, granularity: str = "classic") -> dict[str, Any]:
         One of ORGANS.
     granularity : str
         Region granularity for the model:
-        - "classic": 22 cities (original behavior)
-        - "state":   ~50 US states (centers grouped by state)
-        - "full":    ~248 individual SRTR center codes
+        - "state": ~50 US states (centers grouped by state)
+        - "full":  ~248 individual SRTR center codes
+        ("classic" — the legacy 22-city mode — was retired, #293.)
     """
     # National-level organ data (needed for all granularities)
     with open(DATA_DIR / "wait-time-distributions.json") as f:
@@ -93,19 +99,8 @@ def load_organ_data(organ: str, granularity: str = "classic") -> dict[str, Any]:
     }
 
     if granularity == "classic":
-        # Classic 22-city behavior
-        city_factors_raw = wt_data.get("city_wait_time_factors", {})
-        cities = sorted(k for k in city_factors_raw if not k.startswith("_"))
-        city_wait_factors = np.array([city_factors_raw[c] for c in cities], dtype=np.float64)
-
-        city_adj_raw = cr_data.get("city_adjustments", {})
-        city_mort_factors = np.array(
-            [city_adj_raw.get(c, {}).get("mortality_factor", 1.0) for c in cities],
-            dtype=np.float64,
-        )
-        city_delist_factors = np.array(
-            [city_adj_raw.get(c, {}).get("delisting_factor", 1.0) for c in cities],
-            dtype=np.float64,
+        raise ValueError(
+            "The 22-city 'classic' granularity was retired (#293); use 'state' or 'full'."
         )
     else:
         # state / full: Use center-level data with dynamic region grouping
@@ -226,8 +221,22 @@ def build_organ_model(data: dict[str, Any]) -> pm.Model:
         # copula θ at query time.  Wait-time offsets remain independent
         # (supply-side; different causal pathway from mortality/delisting).
 
-        # Wait-time city offsets (independent — supply-driven)
-        sigma_city_wait = pm.HalfNormal("sigma_city_wait", sigma=0.4)
+        # Wait-time city offsets (independent — supply-driven).
+        #
+        # IDENTIFIABILITY (#207, MCMC-09): with ONE observation per center,
+        # obs_i ~ N(offset_i, σ_obs) with offset_i ~ N(0, σ_city) identifies
+        # only σ_city² + σ_obs²; the split is prior-driven. Sampling σ_city
+        # and σ_obs separately puts NUTS on that ridge (kidney full-mode fit:
+        # R-hat 1.07–1.08, ESS ~40 in both centered and non-centered forms).
+        # Reparameterize honestly: sample the IDENTIFIED total spread and an
+        # explicitly prior-driven signal fraction. Offsets stay CENTERED —
+        # with strongly informative per-group likelihoods, centered is the
+        # well-conditioned form (non-centering helps only weak-data groups).
+        sigma_total_wait = pm.HalfNormal("sigma_total_wait", sigma=0.5)
+        frac_signal_wait = pm.Beta("frac_signal_wait", alpha=2.0, beta=2.0)
+        sigma_city_wait = pm.Deterministic(
+            "sigma_city_wait", sigma_total_wait * pm.math.sqrt(frac_signal_wait),
+        )
         city_wait_offset = pm.Normal(
             "city_wait_offset",
             mu=0,
@@ -235,21 +244,40 @@ def build_organ_model(data: dict[str, Any]) -> pm.Model:
             shape=n_cities,
         )
 
-        # Mortality × Delisting: shared frailty via LKJ-Cholesky
-        sigma_city_mort = pm.HalfNormal("sigma_city_mort", sigma=0.4)
-        sigma_city_delist = pm.HalfNormal("sigma_city_delist", sigma=0.4)
-        city_sd = pm.math.stack([sigma_city_mort, sigma_city_delist])
-
-        # LKJ prior: η=2 weakly favors small correlations (regularization)
-        chol, corr, stds = pm.LKJCholeskyCov(
-            "city_mort_delist_chol",
-            n=2,
-            eta=2.0,
-            sd_dist=pm.HalfNormal.dist(sigma=0.4),
-            compute_corr=True,
+        # Mortality × Delisting: shared frailty with an LKJ correlation prior
+        # (η=2 weakly favors small correlations). Same identifiability ridge
+        # as the wait side (one observation per center), so the same
+        # total-spread × signal-fraction reparameterization is applied to
+        # each dimension; the 2x2 Cholesky is built explicitly from the
+        # derived city sigmas and the LKJ correlation. (The old code also had
+        # a bug: separate sigma_city_mort/delist HalfNormals were never
+        # connected to the offsets — the dead `city_sd` stack — so their
+        # posteriors were pure prior.)
+        sigma_total_mort = pm.HalfNormal("sigma_total_mort", sigma=0.5)
+        frac_signal_mort = pm.Beta("frac_signal_mort", alpha=2.0, beta=2.0)
+        sigma_city_mort = pm.Deterministic(
+            "sigma_city_mort", sigma_total_mort * pm.math.sqrt(frac_signal_mort),
+        )
+        sigma_total_delist = pm.HalfNormal("sigma_total_delist", sigma=0.5)
+        frac_signal_delist = pm.Beta("frac_signal_delist", alpha=2.0, beta=2.0)
+        sigma_city_delist = pm.Deterministic(
+            "sigma_city_delist", sigma_total_delist * pm.math.sqrt(frac_signal_delist),
         )
 
-        # (n_cities, 2) joint offsets — columns: [mort, delist]
+        # LKJ(η) on a 2x2 correlation is exactly ρ = 2·Beta(η, η) − 1
+        # (version-proof; this pymc's LKJCorr API lacks return_matrix).
+        rho_beta = pm.Beta("mort_delist_rho_beta", alpha=2.0, beta=2.0)
+        rho = 2.0 * rho_beta - 1.0
+
+        # Explicit 2x2 Cholesky: [[σm, 0], [σd·ρ, σd·√(1-ρ²)]]
+        chol = pm.math.stack([
+            pm.math.stack([sigma_city_mort, 0.0]),
+            pm.math.stack([sigma_city_delist * rho,
+                           sigma_city_delist * pm.math.sqrt(1.0 - rho ** 2)]),
+        ])
+
+        # (n_cities, 2) joint offsets — columns: [mort, delist]. Centered
+        # (see identifiability note above).
         city_joint_offset = pm.MvNormal(
             "city_joint_offset",
             mu=0,
@@ -266,7 +294,7 @@ def build_organ_model(data: dict[str, Any]) -> pm.Model:
         )
 
         # Expose the learned correlation as a named deterministic
-        pm.Deterministic("mort_delist_corr", corr[0, 1])
+        pm.Deterministic("mort_delist_corr", rho)
 
         # ===== Level 2: Patient-level effects =====
 
@@ -292,9 +320,17 @@ def build_organ_model(data: dict[str, Any]) -> pm.Model:
         # Our SRTR-derived point estimates are noisy observations of the
         # true underlying parameters.  Observation noise is learned.
 
-        sigma_obs_wait = pm.HalfNormal("sigma_obs_wait", sigma=0.15)
-        sigma_obs_mort = pm.HalfNormal("sigma_obs_mort", sigma=0.15)
-        sigma_obs_delist = pm.HalfNormal("sigma_obs_delist", sigma=0.15)
+        # sigma_obs_wait is the complement of the wait signal fraction (see
+        # identifiability note above): total² = city² + obs².
+        sigma_obs_wait = pm.Deterministic(
+            "sigma_obs_wait", sigma_total_wait * pm.math.sqrt(1.0 - frac_signal_wait),
+        )
+        sigma_obs_mort = pm.Deterministic(
+            "sigma_obs_mort", sigma_total_mort * pm.math.sqrt(1.0 - frac_signal_mort),
+        )
+        sigma_obs_delist = pm.Deterministic(
+            "sigma_obs_delist", sigma_total_delist * pm.math.sqrt(1.0 - frac_signal_delist),
+        )
         sigma_obs_bt = pm.HalfNormal("sigma_obs_bt", sigma=0.10)
         sigma_obs_urg = pm.HalfNormal("sigma_obs_urg", sigma=0.10)
 
@@ -353,7 +389,8 @@ def fit_organ_model(
     n_tune: int = 1000,
     random_seed: int = 42,
     target_accept: float = 0.90,
-    granularity: str = "classic",
+    granularity: str = "state",
+    cores: int | None = None,
 ) -> az.InferenceData:
     """
     Build and fit the hierarchical model for one organ.
@@ -378,6 +415,9 @@ def fit_organ_model(
             target_accept=target_accept,
             return_inferencedata=True,
             progressbar=True,
+            # cores=1 runs chains sequentially — needed in environments where
+            # pymc's fork/spawn workers die (headless shells on macOS)
+            **({"cores": cores} if cores else {}),
         )
 
     # Add metadata
@@ -393,7 +433,7 @@ def fit_organ_model(
     return trace
 
 
-def save_trace(organ: str, trace: az.InferenceData, granularity: str = "classic") -> Path:
+def save_trace(organ: str, trace: az.InferenceData, granularity: str = "state") -> Path:
     """Save an ArviZ trace to NetCDF file."""
     path = trace_path(organ, granularity)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -402,7 +442,7 @@ def save_trace(organ: str, trace: az.InferenceData, granularity: str = "classic"
     return path
 
 
-def load_trace(organ: str, granularity: str = "classic") -> az.InferenceData | None:
+def load_trace(organ: str, granularity: str = "state") -> az.InferenceData | None:
     """Load a cached ArviZ trace.  Returns None if not found."""
     path = trace_path(organ, granularity)
     if not path.exists():
@@ -412,9 +452,23 @@ def load_trace(organ: str, granularity: str = "classic") -> az.InferenceData | N
     return trace
 
 
-def trace_exists(organ: str, granularity: str = "classic") -> bool:
+def trace_exists(organ: str, granularity: str = "state") -> bool:
     """Check whether a cached trace file exists for the given organ."""
     return trace_path(organ, granularity).exists()
+
+
+def find_fitted_granularity(organ: str) -> str | None:
+    """First granularity with a fitted trace on disk (state preferred).
+
+    Validation consumers (posterior_checks, convergence) must resolve the
+    trace the same way inference does — fit-mcmc-model.py defaults to
+    --granularity full, so a bare default of "state" would report "no trace"
+    for organs /simulate happily serves (2026-08 review finding).
+    """
+    for g in ("state", "full"):
+        if trace_exists(organ, g):
+            return g
+    return None
 
 
 # ---------------------------------------------------------------------------

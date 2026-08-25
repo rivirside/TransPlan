@@ -88,9 +88,8 @@ All engines produce: per-city transplant probabilities at 6/12/24/36 months, 95%
 |--------|--------|------|
 | NHTSA FARS (traffic fatalities) | `fetch-traffic.js` | None |
 | EPA AQS (air quality) | `fetch-air-quality.js` | `EPA_EMAIL`, `EPA_API_KEY` |
-| CMS Provider Data (hospitals) | `fetch-hospital-quality.js` | None |
 | BLS (cost of living) | `fetch-cost-of-living.js` | `BLS_API_KEY` |
-| CDC PLACES (health, 22 cities) | `fetch-health-data.js` | None |
+| CDC PLACES (health, ~3,100 counties) | `fetch-health-data.js` | None |
 | CDC PLACES (health, 2,956 counties) | `fetch-health-data-counties.js` | None |
 | EPA AQS (per-monitor air quality) | `fetch-air-quality-monitors.js` | `EPA_EMAIL`, `EPA_API_KEY` |
 | CDC WONDER (cause of death) | `fetch-cod-data.js` | None |

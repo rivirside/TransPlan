@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from models.schemas import PatientProfile, SimulationResult
-from services.monte_carlo import simulate, CITIES, _bootstrap_ci, _get_cod_multiplier
+from services.monte_carlo import simulate, _bootstrap_ci, _get_cod_multiplier
 
 
 def test_bootstrap_default_1000():

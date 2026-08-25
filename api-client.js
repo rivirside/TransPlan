@@ -66,6 +66,11 @@
       profile.custom_weights = formData.weights;
     }
 
+    // L-067 (#304): user-defined center shortlist
+    if (Array.isArray(formData.centerCodes) && formData.centerCodes.length) {
+      profile.center_codes = formData.centerCodes;
+    }
+
     return profile;
   }
 
@@ -156,10 +161,14 @@
     try {
       var body = {
         patient: normalizeFormData(formData),
-        city: city || 'Nashville',
-        center_code: city || '',
         iterations: iterations || 300
       };
+      // Callers pass an SRTR center code; the backend prefers center_code and
+      // keeps city only as a display fallback. No hardcoded city default (#285).
+      if (city) {
+        body.city = city;
+        body.center_code = city;
+      }
       if (seed !== undefined && seed !== null) body.seed = seed;
       var response = await fetch(base + '/sensitivity', {
         method: 'POST',
@@ -240,7 +249,7 @@
    * @param {number} [iterations] - Monte Carlo iterations (default 500)
    * @returns {Promise<Object|null>} WhatIfResult or null on failure
    */
-  async function whatIf(formData, city, donorRateMultiplier, waitTimeMultiplier, iterations, seed) {
+  async function whatIf(formData, center, donorRateMultiplier, waitTimeMultiplier, iterations, seed) {
     var base = getBaseUrl();
     var controller = new AbortController();
     var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
@@ -248,11 +257,20 @@
     try {
       var body = {
         patient: normalizeFormData(formData),
-        city: city || 'Nashville',
         donor_rate_multiplier: donorRateMultiplier ?? 1.0,
         wait_time_multiplier: waitTimeMultiplier ?? 1.0,
         iterations: iterations ?? 500
       };
+      // center: {code, label} (preferred, any of the 248 centers) or a bare
+      // SRTR center-code string. The legacy city-name mode was retired
+      // (#285/#286): the backend rejects requests without center_code.
+      if (center && typeof center === 'object') {
+        body.center_code = center.code || '';
+        body.city = center.label || center.code || '';
+      } else if (center) {
+        body.center_code = center;
+        body.city = center;
+      }
       if (seed !== undefined && seed !== null) body.seed = seed;
       var response = await fetch(base + '/what-if', {
         method: 'POST',
@@ -311,7 +329,7 @@
    * @param {number} [iterations] - Monte Carlo iterations (default 500)
    * @returns {Promise<Object|null>} PolicyScenarioResult or null
    */
-  async function policyScenario(formData, scenarioId, city, iterations, seed) {
+  async function policyScenario(formData, scenarioId, center, iterations, seed) {
     var base = getBaseUrl();
     var controller = new AbortController();
     var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
@@ -320,9 +338,17 @@
       var body = {
         patient: normalizeFormData(formData),
         scenario_id: scenarioId,
-        city: city || 'Nashville',
         iterations: iterations || 500
       };
+      // center: {code, label} (preferred) or a bare SRTR center-code string
+      // (the legacy city-name mode was retired, #285/#286)
+      if (center && typeof center === 'object') {
+        body.center_code = center.code || '';
+        body.city = center.label || center.code || '';
+      } else if (center) {
+        body.center_code = center;
+        body.city = center;
+      }
       if (seed !== undefined && seed !== null) body.seed = seed;
       var response = await fetch(base + '/policy-scenario', {
         method: 'POST',
@@ -373,14 +399,12 @@
    * Fetch the list of transplant centers from GET /centers.
    * @param {Object} [options] - Query options
    * @param {string} [options.organ] - Filter by organ program
-   * @param {boolean} [options.focusOnly] - Return only 22 focus cities
    * @returns {Promise<Object|null>} {centers: [...], total: N} or null
    */
   async function fetchCenters(options) {
     var base = getBaseUrl();
     var params = [];
     if (options && options.organ) params.push('organ=' + encodeURIComponent(options.organ));
-    if (options && options.focusOnly) params.push('focus_only=true');
     var url = base + '/centers' + (params.length ? '?' + params.join('&') : '');
     var controller = new AbortController();
     var timeoutId = setTimeout(function () { controller.abort(); }, 5000);

@@ -200,7 +200,6 @@
                             <label class="setting-row" id="sim-bbn-row" style="display:none">
                                 <span class="setting-label">BBN Granularity</span>
                                 <select id="sim-bbn-granularity" class="setting-select">
-                                    <option value="classic">Classic (22 cities)</option>
                                     <option value="state" selected>State (~50)</option>
                                     <option value="full">Full (248 centers)</option>
                                 </select>
@@ -358,8 +357,7 @@
     </script>
 
     <!-- Core data / algorithm (needed for scoring weights) -->
-    <script src="data-loader.js"></script>
-    <script src="algorithm.js"></script>
+    <script src="scoring-constants.js"></script>
     <script src="weight-config.js"></script>
 
     <!-- API + export -->

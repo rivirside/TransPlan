@@ -101,7 +101,6 @@
 
   var centersData = null;       // from srtr-all-centers.json
   var waitData = null;          // from wait-time-distributions-centers.json
-  var volumeData = null;        // from hospital-quality.json
   var outcomeData = null;       // from post-transplant-outcomes-centers.json
 
   var activeOrgan = 'All';
@@ -185,7 +184,7 @@
           }
         }
         color = waitColor(factor);
-      } else if (encoding === 'center-volume' && volumeData) {
+      } else if (encoding === 'center-volume' && outcomeData) {
         var vol = getCenterVolume(c, organ);
         color = volumeColor(vol, 400);
         radius = 4 + Math.min(8, (vol || 0) / 50);
@@ -222,27 +221,15 @@
   }
 
   function getCenterVolume(center, organ) {
-    if (!volumeData || !volumeData.centerVolumes) return null;
+    // Real per-center SRTR 1-yr cohort volume (#291). The old path matched
+    // 22 city-keyed volumes against center names and, on a miss, INVENTED a
+    // hash-based volume — every unmatched center displayed synthetic data.
+    // Centers without SRTR volume now honestly return null (grey marker).
+    if (!outcomeData || !outcomeData.center_outcomes) return null;
     var organKey = organ === 'All' ? 'kidney' : organ.toLowerCase();
-    var organVolumes = volumeData.centerVolumes[organKey];
-    if (!organVolumes) return null;
-
-    // Volume data is keyed by city name; try matching center name
-    var name = center.name || '';
-    var bestMatch = null;
-    var bestScore = 0;
-    Object.keys(organVolumes).forEach(function (city) {
-      if (name.indexOf(city) !== -1) {
-        var score = city.length;
-        if (score > bestScore) { bestScore = score; bestMatch = city; }
-      }
-    });
-    if (!bestMatch) {
-      // Deterministic fallback based on center code
-      var h = Math.abs(hashCode(center.code));
-      return 30 + (h % 300);
-    }
-    return organVolumes[bestMatch];
+    var rec = (outcomeData.center_outcomes[center.code] || {})[organKey];
+    if (rec && typeof rec.n_1yr === 'number') return rec.n_1yr;
+    return null;
   }
 
   function getCenterSurvival(center, organ) {
@@ -313,7 +300,7 @@
     }
 
     // Volume stat
-    if (volumeData) {
+    if (outcomeData) {
       var vol = getCenterVolume(center, activeOrgan);
       if (vol != null) stats.appendChild(createStatRow('Annual volume', String(Math.round(vol))));
     }
@@ -463,10 +450,7 @@
     if (key === 'center-wait' && !waitData) {
       promises.push(loadJSON('data/wait-time-distributions-centers.json').then(function (d) { waitData = d; }));
     }
-    if (key === 'center-volume' && !volumeData) {
-      promises.push(loadJSON('data/hospital-quality.json').then(function (d) { volumeData = d; }));
-    }
-    if (key === 'center-survival' && !outcomeData) {
+    if ((key === 'center-volume' || key === 'center-survival') && !outcomeData) {
       promises.push(loadJSON('data/post-transplant-outcomes-centers.json').then(function (d) { outcomeData = d; }));
     }
 
@@ -1286,7 +1270,7 @@
     // Determine which center-layer columns to include
     var extraCols = [];
     if (activeLayers['center-wait'] && waitData) extraCols.push('wait_factor');
-    if (activeLayers['center-volume'] && volumeData) extraCols.push('volume');
+    if (activeLayers['center-volume'] && outcomeData) extraCols.push('volume');
     if (activeLayers['center-survival'] && outcomeData) extraCols.push('survival_1yr');
     if (activeLayers['center-composite']) extraCols.push('composite_score');
 

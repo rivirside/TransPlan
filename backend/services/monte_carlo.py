@@ -32,31 +32,8 @@ from services.trends import get_city_trends
 
 logger = logging.getLogger(__name__)
 
-# Fallback 22 cities — used only when data_loader hasn't loaded yet (e.g. tests)
-_FALLBACK_CITIES = [
-    {"city": "Pittsburgh", "state": "PA"},
-    {"city": "Baltimore", "state": "MD"},
-    {"city": "Philadelphia", "state": "PA"},
-    {"city": "New York", "state": "NY"},
-    {"city": "Minneapolis", "state": "MN"},
-    {"city": "Madison", "state": "WI"},
-    {"city": "Chicago", "state": "IL"},
-    {"city": "Cleveland", "state": "OH"},
-    {"city": "St. Louis", "state": "MO"},
-    {"city": "Indianapolis", "state": "IN"},
-    {"city": "Omaha", "state": "NE"},
-    {"city": "Rochester", "state": "MN"},
-    {"city": "Nashville", "state": "TN"},
-    {"city": "Durham", "state": "NC"},
-    {"city": "Miami", "state": "FL"},
-    {"city": "Dallas", "state": "TX"},
-    {"city": "Houston", "state": "TX"},
-    {"city": "Portland", "state": "OR"},
-    {"city": "Seattle", "state": "WA"},
-    {"city": "San Francisco", "state": "CA"},
-    {"city": "Los Angeles", "state": "CA"},
-    {"city": "Palo Alto", "state": "CA"},
-]
+# (#293: the 22-city _FALLBACK_CITIES list was retired — the data files
+# must be loaded via load_all() before simulation.)
 
 # Fallback state abbreviation to full name
 _FALLBACK_STATE_NAMES = {
@@ -69,27 +46,22 @@ _FALLBACK_STATE_NAMES = {
 }
 
 
-def _get_cities() -> list[dict[str, str]]:
-    """Get city list from data_loader, falling back to hardcoded list."""
-    try:
-        cities = get_data().cities
-        return cities if cities else _FALLBACK_CITIES
-    except RuntimeError:
-        return _FALLBACK_CITIES
-
-
 def _get_centers(organ: str) -> list[dict]:
-    """Get all SRTR centers that perform *organ*, falling back to 22 cities."""
+    """Get all SRTR centers that perform *organ*.
+
+    (#293: the 22-city fallback was retired — an empty result means the data
+    files are not loaded, which is an error worth surfacing, not papering over.)
+    """
     try:
         centers = get_data().centers_for_organ(organ)
-        return centers if centers else _FALLBACK_CITIES
-    except RuntimeError:
-        return _FALLBACK_CITIES
-
-
-# Module-level CITIES kept for backward compat (tests, imports).
-# Production code uses _get_centers(organ) which loads from data files.
-CITIES = _FALLBACK_CITIES
+    except RuntimeError as e:
+        # #220: an empty 200 response would misreport a server-side problem
+        raise RuntimeError(
+            "Center data not loaded — call load_all() before simulating"
+        ) from e
+    if not centers:
+        raise RuntimeError(f"No centers found for organ {organ} — data files missing?")
+    return centers
 
 
 def _get_state_full_name(state_abbrev: str) -> str | None:
@@ -218,6 +190,11 @@ def _get_acceptance_rate(organ: str, center_code: str) -> float:
     """
     data = get_data()
     ar = data.acceptance_rates
+    if not ar.get("national_acceptance_rates"):
+        # #219: with the acceptance file missing, the old 0.25 default silently
+        # QUADRUPLED every modeled wait. No data → no thinning.
+        logger.warning("acceptance-rates data missing — acceptance thinning disabled")
+        return 1.0
     national = ar.get("national_acceptance_rates", {}).get(organ, 0.25)
     factor = ar.get("center_acceptance_factors", {}).get(center_code, {}).get(organ, 1.0)
     return min(national * factor, 1.0)
@@ -262,27 +239,24 @@ def simulate(
     rng = np.random.default_rng(seed)
     city_results: list[CityProbability] = []
 
-    # --- F2: Pre-compute trend projections for 22 cities ---
-    trend_projections: dict[str, dict[str, float]] = {}
-    center_to_trend_city: dict[str, str] = {}
+    # --- F2: Trend projections — per-center (#288), covering every center
+    # with archived SRTR history instead of the 52 reachable via the legacy
+    # 22-city mapping. The city path survives only for code-less fallback rows.
     if trend_years > 0:
-        from services.trends import get_trend_projection
-        data = get_data()
-        mapping = data.center_mapping.get("cities", {})
-        # Build reverse map: center_code → city_name
-        for city_name, info in mapping.items():
-            primary = info.get("primary", "")
-            if primary:
-                center_to_trend_city[primary] = city_name
-            for alt in info.get("alternates", []):
-                center_to_trend_city[alt] = city_name
-        # Pre-compute projections for each city
-        for city_name in mapping:
-            trend_projections[city_name] = get_trend_projection(
-                patient.organ, city_name, years_forward=trend_years,
+        from services.trends import get_center_trend_projection, get_trend_projection
+
+    # L-067 (#304): optional user-defined center set
+    centers_to_run = _get_centers(patient.organ)
+    if patient.center_codes:
+        wanted = set(patient.center_codes)
+        centers_to_run = [c for c in centers_to_run if c.get("code") in wanted]
+        if not centers_to_run:
+            raise ValueError(
+                f"None of the requested center_codes perform {patient.organ} "
+                f"transplants (or the codes are unknown)."
             )
 
-    for center in _get_centers(patient.organ):
+    for center in centers_to_run:
         # Center records have {code, name, state, state_abbr, lat, lon, ...}
         # Fallback records (22-city mode) have {city, state}
         code = center.get("code", "")
@@ -294,6 +268,10 @@ def simulate(
         # Display label: use city name for fallback, center name for full mode
         display_city = center.get("city", name)
 
+        # --- Data-provenance tags (#300): make silent fallbacks visible.
+        from services.provenance import center_data_quality
+        degraded = center_data_quality(patient.organ, code)
+
         # --- Draw transplant times from log-normal ---
         dist = get_wait_time_distribution(
             organ=patient.organ,
@@ -303,6 +281,8 @@ def simulate(
             cpra=patient.cpra,
             meld=patient.meld,
             las=patient.las,
+            age=patient.age,
+            sex=patient.sex,
         )
         transplant_times = dist.rvs(size=n_iterations, random_state=rng)
 
@@ -366,12 +346,17 @@ def simulate(
 
         # --- F2: Apply trend projections to rates ---
         if trend_years > 0:
-            tc = center_to_trend_city.get(code)
-            if tc and tc in trend_projections:
-                tp = trend_projections[tc]
-                transplant_times = transplant_times * tp["wait_time_factor"]
-                annual_mort = annual_mort * tp["mortality_factor"]
-                annual_delist = annual_delist * tp["delisting_factor"]
+            if code:
+                tp = get_center_trend_projection(
+                    patient.organ, code, years_forward=trend_years,
+                )
+            else:
+                tp = get_trend_projection(
+                    patient.organ, display_city, years_forward=trend_years,
+                )
+            transplant_times = transplant_times * tp["wait_time_factor"]
+            annual_mort = annual_mort * tp["mortality_factor"]
+            annual_delist = annual_delist * tp["delisting_factor"]
 
         mort_scale = rate_to_exponential_scale(annual_mort, "mortality", code or display_city)
         delist_scale = rate_to_exponential_scale(annual_delist, "delisting", code or display_city)
@@ -426,10 +411,14 @@ def simulate(
         except (KeyError, FileNotFoundError, ValueError) as e:
             logger.warning("Outcomes data unavailable for %s/%s: %s", patient.organ, code or display_city, e)
 
-        # Historical trends (city-level — center-level trends not yet available)
+        # Historical trends — per-center when a code exists (#288), city fallback
         trends_data = None
         try:
-            trends_data = get_city_trends(patient.organ, display_city)
+            if code:
+                from services.trends import get_center_trends
+                trends_data = get_center_trends(patient.organ, code)
+            if trends_data is None:
+                trends_data = get_city_trends(patient.organ, display_city)
         except (KeyError, FileNotFoundError, ValueError):
             pass
 
@@ -449,9 +438,16 @@ def simulate(
             competing_risks=competing_risks_24,
             outcomes=outcomes_data,
             trends=trends_data,
+            data_quality=degraded or None,
         ))
 
     city_results.sort(key=lambda c: c.p_transplant_24mo, reverse=True)
+
+    # Response-level provenance summary (#300)
+    dq_summary = None
+    if city_results:
+        from services.provenance import summarize
+        dq_summary = summarize([c.data_quality or [] for c in city_results])
 
     elapsed = time.perf_counter() - start
     n_centers = len(city_results)
@@ -466,4 +462,5 @@ def simulate(
         iterations=n_iterations,
         elapsed_seconds=round(elapsed, 3),
         seed_used=seed,
+        data_quality=dq_summary,
     )

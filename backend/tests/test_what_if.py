@@ -22,29 +22,30 @@ def liver_patient() -> PatientProfile:
 
 class TestWhatIfResultStructure:
     def test_returns_what_if_result(self, kidney_patient):
-        result = compute_what_if(kidney_patient, city="Nashville", n_iterations=200)
+        result = compute_what_if(kidney_patient, center_code="TNVU", n_iterations=200)
         assert isinstance(result, WhatIfResult)
 
-    def test_city_preserved(self, kidney_patient):
-        result = compute_what_if(kidney_patient, city="Pittsburgh", n_iterations=200)
-        assert result.city == "Pittsburgh"
+    def test_center_preserved(self, kidney_patient):
+        result = compute_what_if(kidney_patient, center_code="PAPT", n_iterations=200)
+        assert result.center_code == "PAPT"
+        assert result.city == "University of Pittsburgh Medical Center"
         assert result.state == "PA"
 
     def test_multipliers_preserved(self, kidney_patient):
         result = compute_what_if(
-            kidney_patient, city="Nashville",
+            kidney_patient, center_code="TNVU",
             donor_rate_multiplier=1.5, wait_time_multiplier=0.8, n_iterations=200,
         )
         assert result.donor_rate_multiplier == 1.5
         assert result.wait_time_multiplier == 0.8
 
     def test_elapsed_recorded(self, kidney_patient):
-        result = compute_what_if(kidney_patient, city="Nashville", n_iterations=200)
+        result = compute_what_if(kidney_patient, center_code="TNVU", n_iterations=200)
         assert result.elapsed_seconds > 0
         assert result.elapsed_seconds < 10
 
     def test_iterations_preserved(self, kidney_patient):
-        result = compute_what_if(kidney_patient, city="Nashville", n_iterations=300)
+        result = compute_what_if(kidney_patient, center_code="TNVU", n_iterations=300)
         assert result.iterations == 300
 
 
@@ -52,26 +53,26 @@ class TestWhatIfResultStructure:
 
 class TestProbabilityValidity:
     def test_baseline_in_valid_range(self, kidney_patient):
-        result = compute_what_if(kidney_patient, city="Nashville", n_iterations=300)
+        result = compute_what_if(kidney_patient, center_code="TNVU", n_iterations=300)
         assert 0 <= result.baseline_p24 <= 1
 
     def test_adjusted_in_valid_range(self, kidney_patient):
         result = compute_what_if(
-            kidney_patient, city="Nashville",
+            kidney_patient, center_code="TNVU",
             donor_rate_multiplier=1.5, n_iterations=300,
         )
         assert 0 <= result.adjusted_p24 <= 1
 
     def test_delta_is_correct_difference(self, kidney_patient):
         result = compute_what_if(
-            kidney_patient, city="Nashville",
+            kidney_patient, center_code="TNVU",
             donor_rate_multiplier=1.3, n_iterations=300,
         )
         expected_delta = round(result.adjusted_p24 - result.baseline_p24, 4)
         assert result.delta_p24 == expected_delta
 
     def test_confidence_intervals_valid(self, kidney_patient):
-        result = compute_what_if(kidney_patient, city="Nashville", n_iterations=300)
+        result = compute_what_if(kidney_patient, center_code="TNVU", n_iterations=300)
         assert result.baseline_ci_95[0] <= result.baseline_p24 <= result.baseline_ci_95[1] or \
             abs(result.baseline_ci_95[0] - result.baseline_p24) < 0.05
         assert result.adjusted_ci_95[0] <= result.adjusted_ci_95[1]
@@ -83,7 +84,7 @@ class TestMultiplierEffects:
     def test_more_donors_improves_p24(self, kidney_patient):
         """donor_rate_multiplier > 1 should increase p24 (more donors → shorter waits)."""
         result = compute_what_if(
-            kidney_patient, city="Nashville",
+            kidney_patient, center_code="TNVU",
             donor_rate_multiplier=1.5, wait_time_multiplier=1.0,
             n_iterations=500,
         )
@@ -93,7 +94,7 @@ class TestMultiplierEffects:
     def test_fewer_donors_worsens_p24(self, kidney_patient):
         """donor_rate_multiplier < 1 should decrease p24 (fewer donors → longer waits)."""
         result = compute_what_if(
-            kidney_patient, city="Nashville",
+            kidney_patient, center_code="TNVU",
             donor_rate_multiplier=0.5, wait_time_multiplier=1.0,
             n_iterations=500,
         )
@@ -103,7 +104,7 @@ class TestMultiplierEffects:
     def test_longer_waits_worsen_p24(self, kidney_patient):
         """wait_time_multiplier > 1 should decrease p24 (longer base waits)."""
         result = compute_what_if(
-            kidney_patient, city="Nashville",
+            kidney_patient, center_code="TNVU",
             donor_rate_multiplier=1.0, wait_time_multiplier=1.5,
             n_iterations=500,
         )
@@ -112,35 +113,37 @@ class TestMultiplierEffects:
     def test_shorter_waits_improve_p24(self, kidney_patient):
         """wait_time_multiplier < 1 should increase p24 (shorter base waits)."""
         result = compute_what_if(
-            kidney_patient, city="Nashville",
+            kidney_patient, center_code="TNVU",
             donor_rate_multiplier=1.0, wait_time_multiplier=0.5,
             n_iterations=500,
         )
         assert result.delta_p24 > 0, f"Shorter waits should improve p24: {result.delta_p24}"
 
-    def test_baseline_multipliers_give_small_delta(self, kidney_patient):
-        """With both multipliers at 1.0, delta should be near zero."""
+    def test_baseline_multipliers_give_zero_delta(self, kidney_patient):
+        """With both multipliers at 1.0, baseline and adjusted share the same
+        seed and draw identical streams, so the delta must be exactly zero.
+        A nonzero delta here means the paired-comparison design is broken and
+        every reported delta carries full Monte Carlo noise."""
         result = compute_what_if(
-            kidney_patient, city="Nashville",
+            kidney_patient, center_code="TNVU",
             donor_rate_multiplier=1.0, wait_time_multiplier=1.0,
             n_iterations=500,
         )
-        # Monte Carlo noise exists but delta from same-seed paired comparison
-        # should be very small (ideally 0 if same seed, but seeds differ)
-        assert abs(result.delta_p24) < 0.15, f"Baseline-vs-baseline delta too large: {result.delta_p24}"
+        assert result.delta_p24 == 0.0, f"Baseline-vs-baseline delta must be 0: {result.delta_p24}"
+        assert result.baseline_median_wait == result.adjusted_median_wait
 
 
 # -- Median wait --
 
 class TestMedianWait:
     def test_median_wait_positive(self, kidney_patient):
-        result = compute_what_if(kidney_patient, city="Nashville", n_iterations=300)
+        result = compute_what_if(kidney_patient, center_code="TNVU", n_iterations=300)
         assert result.baseline_median_wait > 0
         assert result.adjusted_median_wait > 0
 
     def test_more_donors_shortens_median_wait(self, kidney_patient):
         result = compute_what_if(
-            kidney_patient, city="Nashville",
+            kidney_patient, center_code="TNVU",
             donor_rate_multiplier=2.0, wait_time_multiplier=1.0,
             n_iterations=500,
         )
@@ -154,7 +157,8 @@ class TestAllOrgans:
     @pytest.mark.parametrize("organ", ["kidney", "liver", "heart", "lung", "pancreas", "intestine"])
     def test_what_if_runs_for_organ(self, organ):
         patient = PatientProfile(organ=organ, blood_type="A+", age=40, sex="male", urgency=2)
-        result = compute_what_if(patient, city="Nashville", donor_rate_multiplier=1.2, n_iterations=200)
+        # CASU (Stanford) performs all six organs
+        result = compute_what_if(patient, center_code="CASU", donor_rate_multiplier=1.2, n_iterations=200)
         assert isinstance(result, WhatIfResult)
         assert 0 <= result.baseline_p24 <= 1
         assert 0 <= result.adjusted_p24 <= 1

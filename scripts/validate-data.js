@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 /**
  * Post-fetch data validation.
- * Checks: JSON syntax, expected schema, value ranges, coverage of all 22 cities, staleness.
+ * Checks: JSON syntax, expected schema, value ranges, per-center coverage floors, staleness.
  */
 
 const fs = require('fs');
 const path = require('path');
-const { CITIES, DATA_DIR } = require('./utils');
+const { DATA_DIR } = require('./utils');  // (#293: CI no longer defends 22-city coverage)
 
-const CITY_NAMES = CITIES.map(c => c.city);
 const STALE_THRESHOLD_DAYS = 90;
 
 let errors = [];
@@ -40,14 +39,6 @@ function validateJSON(filename) {
     }
 }
 
-function checkCityCoverage(data, filename, skipKeys = ['_meta']) {
-    const keys = Object.keys(data).filter(k => !skipKeys.includes(k));
-    const missing = CITY_NAMES.filter(city => !keys.includes(city));
-    if (missing.length > 0) {
-        addWarning(`${filename} missing cities: ${missing.join(', ')}`);
-    }
-}
-
 function checkValueRange(data, filename, min, max, skipKeys = ['_meta']) {
     for (const [key, value] of Object.entries(data)) {
         if (skipKeys.includes(key)) continue;
@@ -72,6 +63,15 @@ function checkStaleness(data, filename) {
     }
 }
 
+function checkCoverageFloor(obj, filename, floor) {
+    // Never-shrink guard (2026-08-05 incident class): a fetch that merges a
+    // near-empty API result must FAIL validation, not pass vacuously.
+    const n = Object.keys(obj || {}).filter(k => k !== '_meta').length;
+    if (n < floor) {
+        addError(`${filename}: only ${n} entries (never-shrink floor: ${floor})`);
+    }
+}
+
 // === Run Validations ===
 
 console.log('Validating TransPlan data files...\n');
@@ -81,7 +81,7 @@ const airQuality = validateJSON('air-quality.json');
 if (airQuality) {
     checkStaleness(airQuality, 'air-quality.json');
     const { _meta, ...aqData } = airQuality;
-    checkCityCoverage(aqData, 'air-quality.json');
+    checkCoverageFloor(aqData, 'air-quality.json', 20);
     checkValueRange(aqData, 'air-quality.json', 0, 100);
 }
 
@@ -89,8 +89,8 @@ if (airQuality) {
 const traffic = validateJSON('traffic-fatalities.json');
 if (traffic) {
     checkStaleness(traffic, 'traffic-fatalities.json');
+    checkCoverageFloor(traffic.traumaScores, 'traffic-fatalities.json (traumaScores)', 20);
     if (traffic.traumaScores) {
-        checkCityCoverage(traffic.traumaScores, 'traffic-fatalities.json (traumaScores)');
         checkValueRange(traffic.traumaScores, 'traffic-fatalities.json (traumaScores)', 0, 100);
     }
 }
@@ -100,7 +100,7 @@ const health = validateJSON('health-demographics.json');
 if (health) {
     checkStaleness(health, 'health-demographics.json');
     const { _meta, ...hdData } = health;
-    checkCityCoverage(hdData, 'health-demographics.json');
+    checkCoverageFloor(hdData, 'health-demographics.json', 20);
     for (const [city, metrics] of Object.entries(hdData)) {
         if (typeof metrics === 'object' && metrics !== null) {
             if (metrics.diabetesRate != null && (metrics.diabetesRate < 0 || metrics.diabetesRate > 30)) {
@@ -108,23 +108,6 @@ if (health) {
             }
             if (metrics.obesityRate != null && (metrics.obesityRate < 0 || metrics.obesityRate > 60)) {
                 addWarning(`health-demographics.json: ${city} obesityRate = ${metrics.obesityRate} (expected 0-60)`);
-            }
-        }
-    }
-}
-
-// 4. Hospital Quality
-const hospital = validateJSON('hospital-quality.json');
-if (hospital) {
-    checkStaleness(hospital, 'hospital-quality.json');
-    if (hospital.centerReputation) {
-        checkCityCoverage(hospital.centerReputation, 'hospital-quality.json (centerReputation)');
-        checkValueRange(hospital.centerReputation, 'hospital-quality.json (centerReputation)', 50, 100);
-    }
-    if (hospital.centerVolumes) {
-        for (const organ of ['kidney', 'liver', 'heart', 'lung', 'pancreas', 'intestine']) {
-            if (hospital.centerVolumes[organ]) {
-                checkCityCoverage(hospital.centerVolumes[organ], `hospital-quality.json (${organ} volumes)`);
             }
         }
     }
@@ -146,15 +129,14 @@ if (costOfLiving) {
     for (const [cbsa, m] of Object.entries(costOfLiving.msas || {})) rppValues[cbsa] = m.rpp;
     Object.assign(rppValues, costOfLiving.states || {});
     checkValueRange(rppValues, 'cost-of-living.json (RPPs)', 60, 160);
-    checkCityCoverage(costOfLiving.cities || {}, 'cost-of-living.json (legacy cities block)');
 }
 
 // 6. Donor Registration
 const donor = validateJSON('donor-registration.json');
 if (donor) {
     checkStaleness(donor, 'donor-registration.json');
+    checkCoverageFloor(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)', 20);
     if (donor.livingDonorProgramStrength) {
-        checkCityCoverage(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)');
         checkValueRange(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)', 0, 100);
     }
 }
@@ -173,13 +155,40 @@ for (const srtrFile of ['wait-time-distributions.json', 'competing-risks.json', 
         }
     }
 }
-const ptOutcomes = validateJSON('post-transplant-outcomes.json');
-if (ptOutcomes && Object.keys(ptOutcomes.city_outcomes || {}).length === 0) {
-    addError('post-transplant-outcomes.json: city_outcomes is empty');
+
+// 6d. Per-center climate/trauma layers (#289/#290) — never-shrink guards
+for (const [file, key, minN] of [['climate-scores-centers.json', 'centers', 240],
+                                 ['trauma-scores-centers.json', 'centers', 240]]) {
+    const data = validateJSON(file);
+    if (data) {
+        const n = Object.keys(data[key] || {}).length;
+        if (n < minN) {
+            addError(`${file}: only ${n} centers (expected >= ${minN})`);
+        }
+    }
+}
+
+// 6e. Per-center living-donor scores (#292)
+const livingDonors = validateJSON('living-donor-centers.json');
+if (livingDonors) {
+    const nk = Object.keys(livingDonors.scores?.kidney || {}).length;
+    if (nk < 180) addError(`living-donor-centers.json: only ${nk} kidney centers (expected >= 180)`);
+    const nl = Object.keys(livingDonors.scores?.liver || {}).length;
+    if (nl < 45) addError(`living-donor-centers.json: only ${nl} liver centers (expected >= 45)`);
+}
+
+// 6c. Per-center trend series (#288) — never-shrink guard: generated from the
+// 15-release SRTR archive, must keep covering the center population.
+const centerTrends = validateJSON('srtr-trends-centers.json');
+if (centerTrends) {
+    const n = Object.keys(centerTrends.centers || {}).length;
+    if (n < 200) {
+        addError(`srtr-trends-centers.json: only ${n} centers (expected >= 200) — regenerate with scripts/generate-center-trends.py`);
+    }
 }
 
 // 7. Manual files
-for (const manualFile of ['manual/climate-scores.json', 'manual/policy-tiers.json', 'manual/socioeconomic.json']) {
+for (const manualFile of ['manual/climate-scores.json', 'manual/policy-tiers.json']) {
     const data = validateJSON(manualFile);
     if (data) {
         checkStaleness(data, manualFile);

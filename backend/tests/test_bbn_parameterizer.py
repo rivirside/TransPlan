@@ -83,25 +83,25 @@ def test_discrete_states_nonempty():
 
 
 def test_donor_supply_cpt_shape():
-    n = len(REGIONS)
+    n = len(get_regions("state"))  # default granularity is state post-#293
     cpt = build_donor_supply_cpt()
     assert cpt.shape == (3, 6, 8, n)
 
 
 def test_wait_category_cpt_shape():
-    n = len(REGIONS)
+    n = len(get_regions("state"))
     cpt = build_wait_category_cpt()
     assert cpt.shape == (4, 6, 8, n, 3)
 
 
 def test_mortality_risk_cpt_shape():
-    n = len(REGIONS)
+    n = len(get_regions("state"))
     cpt = build_mortality_risk_cpt()
     assert cpt.shape == (3, 6, 4, 4, n)
 
 
 def test_delisting_risk_cpt_shape():
-    n = len(REGIONS)
+    n = len(get_regions("state"))
     cpt = build_delisting_risk_cpt()
     assert cpt.shape == (3, 6, n, 4)
 
@@ -109,7 +109,7 @@ def test_delisting_risk_cpt_shape():
 def test_competing_outcome_cpt_shape():
     # #211: CompetingOutcome is now (4, n_organs, n_regions) — grounded in
     # observed per-(organ, center) rates, not the old (4,4,3,3) latent CPT.
-    n = len(REGIONS)
+    n = len(get_regions("state"))
     cpt = build_competing_outcome_cpt()
     assert cpt.shape == (4, 6, n)
 
@@ -147,8 +147,9 @@ def test_t6_donor_supply_multiplier_does_not_drive_rankings(data):
 
 
 def test_graft_survival_cpt_shape():
+    n = len(get_regions("state"))
     cpt = build_graft_survival_cpt()
-    assert cpt.shape == (3, 6, 22)
+    assert cpt.shape == (3, 6, n)
 
 
 def test_graft_survival_hr_ci_significance():
@@ -423,10 +424,10 @@ def test_age_to_group_boundaries():
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_get_regions_classic_returns_22():
-    regions = get_regions("classic")
-    assert len(regions) == 22
-    assert "Pittsburgh" in regions
+def test_get_regions_classic_raises():
+    """#293: the legacy 22-city granularity is retired."""
+    with pytest.raises(ValueError, match="retired"):
+        get_regions("classic")
 
 
 def test_get_regions_state_returns_states():
@@ -457,11 +458,10 @@ def test_get_center_to_region_map_full():
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_build_all_cpts_classic_region_shape():
-    cpts = build_all_cpts(granularity="classic")
-    # Region prior should have 22 values
-    region_cpt = cpts["Region"]
-    assert region_cpt.shape[0] == 22
+def test_build_all_cpts_classic_raises():
+    """#293: the legacy 22-city granularity is retired."""
+    with pytest.raises(ValueError, match="retired"):
+        build_all_cpts(granularity="classic")
 
 
 def test_build_all_cpts_state_region_shape():

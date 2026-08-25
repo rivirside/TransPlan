@@ -42,54 +42,26 @@ def _reset():
 
 def _make_patient(**kwargs) -> PatientProfile:
     defaults = dict(organ="kidney", blood_type="O+", age=55, sex="male", urgency=2,
-                    bbn_granularity="classic")
+                    bbn_granularity="full")
     defaults.update(kwargs)
     return PatientProfile(**defaults)
 
 
 def _rank_correlation(patient: PatientProfile, mc_iters: int = 500) -> float:
-    """Compute Spearman rank correlation between BBN and MC city rankings.
+    """Spearman rank correlation between BBN and MC center rankings.
 
-    Post-Phase 6A: MC returns 248 centers (keyed by center_code), BBN returns
-    22 cities (keyed by city name). We aggregate MC results to the city level
-    (mean p24 per city) before comparing.
+    Post-#293 both engines return per-center results keyed by center_code,
+    so the comparison is direct — no more lossy 22-city aggregation.
     """
     mc_result = simulate_mc(patient, n_iterations=mc_iters)
     bbn_result = simulate_bbn(patient)
 
-    # BBN uses .city (e.g. "Nashville"), MC uses .center_code (e.g. "TNLB")
-    bbn_map = {c.city: c.p_transplant_24mo for c in bbn_result.cities}
+    bbn_map = {c.center_code: c.p_transplant_24mo for c in bbn_result.cities if c.center_code}
+    mc_map = {c.center_code: c.p_transplant_24mo for c in mc_result.cities if c.center_code}
 
-    # Aggregate MC center-level results to city-level via center_mapping
-    # Mapping is city_name → {primary: "CODE", alternates: [...]}
-    # We need the reverse: center_code → city_name
-    try:
-        data = get_data()
-        cities_map = data.center_mapping.get("cities", {})
-        code_to_city: dict[str, str] = {}
-        for city_name, info in cities_map.items():
-            primary = info.get("primary", "")
-            if primary:
-                code_to_city[primary] = city_name
-            for alt in info.get("alternates", []):
-                code_to_city[alt] = city_name
-
-        city_p24s: dict[str, list[float]] = {}
-        for c in mc_result.cities:
-            code = c.center_code or c.city
-            city_name = code_to_city.get(code, c.city)
-            city_p24s.setdefault(city_name, []).append(c.p_transplant_24mo)
-        mc_map = {city: float(np.mean(vals)) for city, vals in city_p24s.items()}
-    except Exception:
-        # Fallback: direct .city matching (pre-Phase 6A data)
-        mc_map = {c.city: c.p_transplant_24mo for c in mc_result.cities}
-
-    cities = sorted(mc_map.keys() & bbn_map.keys())
-    assert len(cities) >= 10, f"Too few overlapping cities: {len(cities)}"
-    mc_vals = [mc_map[c] for c in cities]
-    bbn_vals = [bbn_map[c] for c in cities]
-
-    rho, _ = spearmanr(mc_vals, bbn_vals)
+    codes = sorted(mc_map.keys() & bbn_map.keys())
+    assert len(codes) >= 10, f"Too few overlapping centers: {len(codes)}"
+    rho, _ = spearmanr([mc_map[c] for c in codes], [bbn_map[c] for c in codes])
     return rho
 
 
@@ -174,7 +146,12 @@ def test_bbn_kidney_p24_range():
     """Kidney O+ p24 should be in 0.2-0.9 range (not degenerate)."""
     result = simulate_bbn(_make_patient(organ="kidney", blood_type="O+"))
     p24s = [c.p_transplant_24mo for c in result.cities]
-    assert min(p24s) > 0.1, f"Min p24 too low: {min(p24s):.3f}"
+    # Full granularity surfaces genuinely slow individual centers that the
+    # old 22-city aggregates hid; the floor guards against degeneracy, not
+    # against real slow centers (#293).
+    assert min(p24s) > 0.01, f"Min p24 degenerate: {min(p24s):.3f}"
+    import numpy as _np
+    assert _np.median(p24s) > 0.2, "median center p24 should be non-degenerate"
     assert max(p24s) < 0.95, f"Max p24 too high: {max(p24s):.3f}"
 
 
@@ -200,7 +177,7 @@ def test_bbn_competing_risks_plausible():
         cr = c.competing_risks
         # Transplant should be the dominant outcome at 24mo for most cities
         # (mortality and delisting are secondary)
-        assert cr["p_transplant_24mo"] > 0.1, f"{c.city}: p_transplant too low"
+        assert cr["p_transplant_24mo"] > 0.01, f"{c.city}: p_transplant degenerate"
         assert cr["p_mortality_24mo"] < 0.5, f"{c.city}: p_mortality too high"
         assert cr["p_delisting_24mo"] < 0.5, f"{c.city}: p_delisting too high"
 

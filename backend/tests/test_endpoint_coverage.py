@@ -26,12 +26,6 @@ class TestCenters:
         assert r.status_code == 200
         assert all("kidney" in c.get("organs", []) for c in r.json()["centers"])
 
-    def test_focus_only_returns_cities(self):
-        r = client.get("/centers", params={"focus_only": True})
-        assert r.status_code == 200
-        assert r.json()["total"] > 0
-        assert "cities" in r.json()
-
     def test_detail_for_valid_code(self):
         code = client.get("/centers").json()["centers"][0]["code"]
         r = client.get(f"/centers/{code}")

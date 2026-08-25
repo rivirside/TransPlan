@@ -35,17 +35,26 @@ class PatientProfile(BaseModel):
     # Phase 6 #206: BBN region granularity
     bbn_granularity: str = Field(
         "state",
-        description="BBN region node granularity: 'classic' (22 cities), 'state' (~50 states), 'full' (248 centers)"
+        description="BBN region node granularity: 'state' (~50 states) or 'full' (248 centers)"
     )
     # Phase 4 M1: Configurable scoring weights (frontend concern, passed through for export fidelity)
     custom_weights: Optional[dict[str, float]] = Field(
         None,
         description="Custom scoring weights as { category: decimal_fraction }. 8 keys, all >= 0, sum ~1.0"
     )
+    # L-067 (#304): user-defined center set
+    center_codes: Optional[list[str]] = Field(
+        None,
+        max_length=248,
+        description="Restrict scoring/simulation to these SRTR center codes "
+                    "(a user's shortlist). None/empty = all centers for the organ."
+    )
 
     @model_validator(mode="after")
     def validate_bbn_granularity(self):
-        if self.bbn_granularity not in ("classic", "state", "full"):
+        # #293: 'classic' (22 cities) retired — coerce it (and anything
+        # unknown) to the state default
+        if self.bbn_granularity not in ("state", "full"):
             self.bbn_granularity = "state"
         return self
 
@@ -93,6 +102,12 @@ class CityProbability(BaseModel):
         None,
         description="{ p_transplant, p_mortality, p_delisting, p_still_waiting } at 24 months"
     )
+    data_quality: Optional[list[str]] = Field(
+        None,
+        description="Degraded-input tags for this center (#300): e.g. "
+                    "'wait_time_national_default', 'competing_risks_national_default', "
+                    "'no_observed_outcomes'. None/empty = fully center-level inputs."
+    )
     outcomes: Optional[dict] = Field(
         None,
         description="Post-transplant: graft/patient survival, hazard ratio, compound success metric"
@@ -116,6 +131,12 @@ class SimulationResult(BaseModel):
     inference_mode: Literal["monte_carlo", "bayesian", "mcmc"] = Field(
         default="monte_carlo",
         description="Which inference engine produced this result"
+    )
+    data_quality: Optional[dict] = Field(
+        None,
+        description="Response-level data-provenance summary (#300): per input "
+                    "family, how many centers used center-level data vs fell "
+                    "back to national defaults."
     )
 
 
@@ -141,6 +162,12 @@ class ScoringResult(BaseModel):
     centers: list[CenterScore]
     total_centers: int
     elapsed_seconds: float
+    data_quality: Optional[dict] = Field(
+        None,
+        description="Data-provenance summary (#219): per-center wait-factor/"
+                    "outcomes coverage and any spatial layers that fell back "
+                    "to constants."
+    )
 
 
 # ── Provenance schemas (for ?explain=true) ──────────────────────────────
@@ -226,6 +253,8 @@ class SensitivityResult(BaseModel):
     iterations: int
     elapsed_seconds: float
     seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
+    data_quality: Optional[list[str]] = Field(
+        None, description="Degraded-input tags for the analyzed center (#300)")
 
 
 class DemographicGroup(BaseModel):
@@ -241,6 +270,18 @@ class CityEquity(BaseModel):
     center_code: str = ""
     center_name: str = ""
     gini_coefficient: float = Field(ge=0, le=1, description="0=equality, 1=total inequality")
+    gini_weighted: Optional[float] = Field(
+        None, ge=0, le=1,
+        description="Gini with cells population-weighted (US blood-type prevalence × approx OPTN waitlist age/sex mix)"
+    )
+    gini_between_blood_type: Optional[float] = Field(
+        None, ge=0, le=1,
+        description="Weighted Gini of the 8 blood-type mean p24s — the ABO-matching (biology) component"
+    )
+    gini_within_blood_type: Optional[float] = Field(
+        None, ge=0, le=1,
+        description="Weighted mean of within-blood-type Ginis (age/sex variation) — the non-ABO component"
+    )
     p24_range: tuple[float, float] = Field(description="(min, max) of p_transplant_24mo across profiles")
     median_wait_range: tuple[float, float] = Field(description="(min, max) median wait months across profiles")
     dimension_disparities: dict[str, list[dict]] = Field(
@@ -253,6 +294,16 @@ class EquityAnalysisResult(BaseModel):
     organ: str
     cities: list[CityEquity] = Field(description="Per-city equity metrics, sorted by gini ascending")
     overall_gini: float = Field(ge=0, le=1, description="Gini across all profiles x all cities")
+    overall_gini_weighted: Optional[float] = Field(
+        None, ge=0, le=1, description="Population-weighted Gini across all profiles x all centers"
+    )
+    overall_gini_between_blood_type: Optional[float] = Field(
+        None, ge=0, le=1, description="ABO-matching (biology) component of overall inequality"
+    )
+    overall_gini_within_blood_type: Optional[float] = Field(
+        None, ge=0, le=1,
+        description="Non-ABO component of overall inequality (geography + age/sex within blood type)"
+    )
     profiles_simulated: int = Field(description="Total demographic profiles in matrix")
     iterations_per_profile: int
     elapsed_seconds: float
@@ -267,3 +318,103 @@ class HealthResponse(BaseModel):
         description="{ file_name: fetched_at_iso } for each loaded data file"
     )
     data_files_loaded: int
+
+
+# ── What-if / policy-scenario request-response models (#264: moved from
+# routers/what_if.py; PolicyScenarioResult stays in the router because it
+# embeds the service-defined PolicyScenario type) ─────────────────────────
+
+class WhatIfRequest(BaseModel):
+    patient: PatientProfile
+    center_code: str = Field(
+        min_length=1,
+        description="SRTR center code — REQUIRED (the legacy city-name mode "
+                    "was retired, #285; requests without it are rejected)",
+    )
+    city: str = Field(
+        default="",
+        description="Optional display label only — ignored by the model "
+                    "(the location factor comes from center_code)",
+    )
+    donor_rate_multiplier: float = Field(
+        default=1.0,
+        ge=0.5,
+        le=2.0,
+        description="Multiplier for donor availability. >1 = more donors (shorter waits), <1 = fewer donors (longer waits)",
+    )
+    wait_time_multiplier: float = Field(
+        default=1.0,
+        ge=0.5,
+        le=2.0,
+        description="Multiplier for base wait time distribution. >1 = longer waits, <1 = shorter waits",
+    )
+    iterations: int = Field(default=500, ge=100, le=2000)
+    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
+
+
+class PolicyScenarioRequest(BaseModel):
+    patient: PatientProfile
+    scenario_id: str = Field(description="ID of the predefined policy scenario")
+    center_code: str = Field(
+        min_length=1,
+        description="SRTR center code — REQUIRED (the legacy city-name mode "
+                    "was retired, #285; requests without it are rejected)",
+    )
+    city: str = Field(
+        default="",
+        description="Optional display label only — ignored by the model "
+                    "(the location factor comes from center_code)",
+    )
+    iterations: int = Field(default=500, ge=100, le=2000)
+    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
+
+
+class TravelSubsidyRequest(BaseModel):
+    patient: PatientProfile
+    cities: list[str] = Field(
+        default_factory=list,
+        description="DEPRECATED (legacy 22-city filter) — use center_codes.",
+    )
+    center_codes: list[str] = Field(
+        default_factory=list,
+        description="SRTR center codes to analyze. Empty = all centers for the organ.",
+    )
+    iterations: int = Field(default=500, ge=100, le=2000,
+                            description="Ignored since the sweep became closed-form (#285); kept for API compatibility.")
+    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
+
+
+class TravelSubsidyCityResult(BaseModel):
+    """Result for one center at one price point."""
+    city: str
+    state: str
+    center_code: str = ""
+    baseline_p24: float
+    adjusted_p24: float
+    delta_p24: float
+    baseline_median_wait: float
+    adjusted_median_wait: float
+
+
+class TravelSubsidyTierResult(BaseModel):
+    """Result for one price point across all cities."""
+    subsidy_amount: int
+    label: str
+    scenario_id: str
+    system_avg_baseline_p24: float = Field(description="Average P(transplant ≤ 24mo) across all cities, no subsidy")
+    system_avg_adjusted_p24: float = Field(description="Average P(transplant ≤ 24mo) across all cities, with subsidy")
+    system_delta_p24: float = Field(description="System-wide improvement in average P24")
+    system_avg_baseline_wait: float
+    system_avg_adjusted_wait: float
+    cities: list[TravelSubsidyCityResult]
+
+
+class TravelSubsidyAnalysisResult(BaseModel):
+    """Full multi-price-point travel subsidy comparison."""
+    organ: str
+    tiers: list[TravelSubsidyTierResult]
+    total_cities: int
+    iterations_per_city: int
+    elapsed_seconds: float
+    seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
+    disclaimers: list[str]

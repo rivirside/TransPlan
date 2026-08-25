@@ -88,7 +88,6 @@ export BLS_API_KEY=your_key
 
 node scripts/fetch-traffic.js
 node scripts/fetch-air-quality.js
-node scripts/fetch-hospital-quality.js
 node scripts/fetch-cost-of-living.js
 node scripts/fetch-health-data.js
 node scripts/validate-data.js

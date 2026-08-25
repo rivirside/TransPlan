@@ -7,7 +7,6 @@ from services.competing_risks import (
     get_annual_mortality_rate,
     get_annual_delisting_rate,
     get_organ_risks,
-    get_city_adjustments,
 )
 from services.monte_carlo import simulate
 
@@ -22,17 +21,23 @@ class TestCompetingRisksDataLoading:
             assert "annual_mortality_rate" in risks
             assert "annual_delisting_rate" in risks
 
-    def test_city_adjustments_loaded(self, data):
-        adj = get_city_adjustments()
-        assert len(adj) >= 1
-        assert "Pittsburgh" in adj
-        assert "mortality_factor" in adj["Pittsburgh"]
-        assert "delisting_factor" in adj["Pittsburgh"]
+    def test_center_adjustments_loaded(self, data):
+        """#293: location adjustments are per-center only now."""
+        from services.data_loader import get_data
+        adj = get_data().center_competing_risks.get("center_adjustments", {})
+        assert len(adj) >= 200
 
-    def test_city_adjustment_factors_plausible(self, data):
-        for city, adj in get_city_adjustments().items():
-            assert 0.3 <= adj["mortality_factor"] <= 3.0, f"Implausible mortality factor for {city}"
-            assert 0.3 <= adj["delisting_factor"] <= 3.0, f"Implausible delisting factor for {city}"
+    def test_center_adjustment_factors_plausible(self, data):
+        from services.data_loader import get_data
+        adj = get_data().center_competing_risks.get("center_adjustments", {})
+        for code, per_organ in adj.items():
+            for organ, rec in per_organ.items():
+                if not isinstance(rec, dict):
+                    continue
+                for key in ("mortality_factor", "delisting_factor"):
+                    v = rec.get(key)
+                    if isinstance(v, (int, float)):
+                        assert 0.3 <= v <= 3.0, f"Implausible {key} for {code}/{organ}: {v}"
 
 
 # -- Rate computation tests --
@@ -52,11 +57,18 @@ class TestRateComputation:
         r_high = get_annual_mortality_rate("liver", "Nashville", urgency=2, meld=38)
         assert r_high > r_low * 2, "High MELD should greatly increase mortality risk"
 
-    def test_city_adjustment_lowers_rate(self, data):
-        """Rochester (top hospital) should have lower mortality than LA."""
-        r_roch = get_annual_mortality_rate("kidney", "Rochester", urgency=2)
-        r_la = get_annual_mortality_rate("kidney", "Los Angeles", urgency=2)
-        assert r_roch < r_la, "Rochester should have lower mortality than LA"
+    def test_center_adjustment_moves_rate(self, data):
+        """#293: center factors (not city names) adjust mortality — a
+        high-mortality-factor center must exceed a low-factor one."""
+        from services.data_loader import get_data
+        adj = get_data().center_competing_risks["center_adjustments"]
+        factors = {c: p.get("kidney", {}).get("mortality_factor") for c, p in adj.items()}
+        factors = {c: v for c, v in factors.items() if isinstance(v, (int, float))}
+        hi = max(factors, key=factors.get)
+        lo = min(factors, key=factors.get)
+        r_hi = get_annual_mortality_rate("kidney", center_code=hi, urgency=2)
+        r_lo = get_annual_mortality_rate("kidney", center_code=lo, urgency=2)
+        assert r_hi > r_lo
 
     def test_delisting_rate_plausible(self, data):
         for organ in ("kidney", "liver", "heart", "lung", "pancreas", "intestine"):

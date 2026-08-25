@@ -5,7 +5,6 @@ import scipy.stats
 
 from services.distributions import (
     get_wait_time_distribution,
-    get_city_factors,
     get_organ_params,
     _get_range_multiplier,
 )
@@ -35,15 +34,18 @@ class TestDataLoading:
             assert "log_sigma" in params
             assert "blood_type_multipliers" in params
 
-    def test_city_factors_loaded(self):
-        factors = get_city_factors()
-        assert len(factors) >= 22, f"Expected at least 22 cities, got {len(factors)}"
-        assert "Pittsburgh" in factors
-        assert "Los Angeles" in factors
+    def test_center_factors_loaded(self, data):
+        """#293: location factors are per-center only now."""
+        from services.data_loader import get_data
+        factors = get_data().center_wait_times.get("center_wait_time_factors", {})
+        assert len(factors) >= 200
 
-    def test_city_factors_plausible_range(self):
-        for city, factor in get_city_factors().items():
-            assert 0.3 <= factor <= 3.0, f"Implausible city factor for {city}: {factor}"
+    def test_center_factors_plausible_range(self, data):
+        from services.data_loader import get_data
+        factors = get_data().center_wait_times.get("center_wait_time_factors", {})
+        for code, per_organ in factors.items():
+            for organ, f in per_organ.items():
+                assert 0.3 <= f <= 3.0, f"Implausible factor {code}/{organ}: {f}"
 
     def test_all_blood_types_present_per_organ(self):
         expected_types = {"O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"}
@@ -58,14 +60,15 @@ class TestDistributionShape:
         dist = get_wait_time_distribution("kidney", "O+", "Pittsburgh")
         assert isinstance(dist, scipy.stats.rv_continuous) or hasattr(dist, "rvs")
 
-    def test_median_matches_adjusted_value(self):
+    def test_median_matches_adjusted_value(self, data):
         """Verify that the distribution median equals the adjusted national median."""
+        from services.data_loader import get_data
         params = get_organ_params("kidney")
         bt_mult = params["blood_type_multipliers"]["A+"]
-        city_mult = get_city_factors()["Cleveland"]
-        expected_median = params["national_median_months"] * bt_mult * city_mult
+        center_mult = get_data().center_wait_times["center_wait_time_factors"]["OHCC"]["kidney"]
+        expected_median = params["national_median_months"] * bt_mult * center_mult
 
-        dist = get_wait_time_distribution("kidney", "A+", "Cleveland")
+        dist = get_wait_time_distribution("kidney", "A+", center_code="OHCC")
         assert abs(dist.median() - expected_median) < 0.01
 
     def test_samples_are_positive(self):
@@ -126,23 +129,31 @@ class TestClinicalMultipliers:
         dist_high = get_wait_time_distribution("lung", "B+", "Durham", las=75)
         assert dist_high.median() < dist_low.median() * 0.5, "High LAS should be much shorter wait"
 
-    def test_no_clinical_score_uses_base(self):
+    def test_no_clinical_score_uses_base(self, data):
         """If cPRA/MELD/LAS not provided, clinical multiplier should be 1.0."""
+        from services.data_loader import get_data
         params = get_organ_params("kidney")
         bt_mult = params["blood_type_multipliers"]["O+"]
-        city_mult = get_city_factors()["Pittsburgh"]
-        expected = params["national_median_months"] * bt_mult * city_mult
+        center_mult = get_data().center_wait_times["center_wait_time_factors"]["PAPT"]["kidney"]
+        expected = params["national_median_months"] * bt_mult * center_mult
 
-        dist = get_wait_time_distribution("kidney", "O+", "Pittsburgh")
+        dist = get_wait_time_distribution("kidney", "O+", center_code="PAPT")
         assert abs(dist.median() - expected) < 0.01
 
 
 class TestCityEffects:
-    def test_large_city_longer_wait(self):
-        """LA/SF/NY (factor >1.0) should have longer waits than Omaha/Minneapolis (factor <1.0)."""
-        dist_la = get_wait_time_distribution("kidney", "O+", "Los Angeles")
-        dist_omaha = get_wait_time_distribution("kidney", "O+", "Omaha")
-        assert dist_la.median() > dist_omaha.median()
+    def test_high_factor_center_longer_wait(self, data):
+        """#293: location effects are per-center. A high-factor center should
+        wait longer than a low-factor one."""
+        from services.data_loader import get_data
+        factors = {c: p.get("kidney") for c, p in
+                   get_data().center_wait_times["center_wait_time_factors"].items()
+                   if isinstance(p.get("kidney"), (int, float))}
+        hi = max(factors, key=factors.get)
+        lo = min(factors, key=factors.get)
+        dist_hi = get_wait_time_distribution("kidney", "O+", center_code=hi)
+        dist_lo = get_wait_time_distribution("kidney", "O+", center_code=lo)
+        assert dist_hi.median() > dist_lo.median()
 
     def test_unknown_city_uses_national_average(self):
         """Unknown city gets factor 1.0 (national average)."""
