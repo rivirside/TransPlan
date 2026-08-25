@@ -28,7 +28,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | B3 | Trauma layer + accident hotspots from 22 points | #290 | |
 | B4 | policy_scenarios.py 22-city end to end | #285 | ✅ travel per-center via RPP; size-based waits on #275 |
 | B5 | what_if.py city validation; travel-subsidy iterates 22 | #285 | ✅ 2026-08-25 |
-| B6 | MCMC city-level hierarchy (classic trace default) | #207 | |
+| B6 | MCMC city-level hierarchy (classic trace default) | #207 | ✅ full traces fitted; classic retires w/ #293 |
 | B7 | BBN "classic" 22-city mode selectable in web tier | #293 | |
 | B8 | Silent 1.0-multiplier fallbacks in distributions/competing_risks | see G1 | visible via #300 on /simulate |
 | B9 | api-client.js sensitivity() 'Nashville' default | fix inline w/ A | ✅ 2026-08-24 |
@@ -41,7 +41,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | E2 | Assumption sensitivity sweep (T6): ±20% perturbation, rank stability | #294 | ✅ 2026-08-25 |
 | E3 | Decile calibration (T-calibration): predicted vs observed mortality | #295 | ✅ 2026-08-25 |
 | E4 | Cross-iteration model comparison | #137 | |
-| E5 | MCMC calibration via run-center-calibration after #207 | #207 | |
+| E5 | MCMC calibration via run-center-calibration after #207 | #207 | ✅ ρ 0.64–0.80 (docs/mcmc-248-refit-report.md) |
 | E6 | Reframe MCMC as calibrated-uncertainty, not validation (L-061) | #257 | ✅ docs/UI reframed 2026-08-25 |
 | E7 | Close #269 COMET-Lung (infeasible, documented) | #269 ✅ CLOSED | |
 | E8 | MCMC-09/27 framing fixes | #257 | ✅ (validation.html header) |
@@ -50,7 +50,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 
 | # | Item | Issue | Status |
 |---|------|-------|--------|
-| F1 | MCMC 248-center refit | #207 | |
+| F1 | MCMC 248-center refit | #207 | ✅ 2026-08-25 |
 | F2 | Continuous BBN latents (replace terciles) | #236 | |
 | F3 | Patient-specific competing-risk split (L-072) | #238 | |
 | F4 | log_sigma clamp ceiling 1.2 (SURV-13/DATA-07) | #274 | |
