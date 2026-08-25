@@ -1,0 +1,557 @@
+{
+ "_meta": {
+  "generated": "2026-08-25T04:03:33Z",
+  "script": "scripts/run-decile-calibration.py",
+  "min_cohort_n": 10,
+  "min_centers": 30,
+  "method": "Centers bucketed into deciles of the model prediction; per-decile mean prediction vs mean observed SRTR rate. Monotonicity/proportionality check, not level identity (reference-patient prediction vs case-mix rate)."
+ },
+ "transplant": {
+  "kidney": {
+   "n_centers": 218,
+   "decile_rows": [
+    {
+     "decile": 1,
+     "n_centers": 22,
+     "mean_predicted": 0.031,
+     "mean_observed": 0.1561
+    },
+    {
+     "decile": 2,
+     "n_centers": 22,
+     "mean_predicted": 0.0513,
+     "mean_observed": 0.2122
+    },
+    {
+     "decile": 3,
+     "n_centers": 22,
+     "mean_predicted": 0.0801,
+     "mean_observed": 0.2688
+    },
+    {
+     "decile": 4,
+     "n_centers": 22,
+     "mean_predicted": 0.1094,
+     "mean_observed": 0.3131
+    },
+    {
+     "decile": 5,
+     "n_centers": 21,
+     "mean_predicted": 0.1443,
+     "mean_observed": 0.3232
+    },
+    {
+     "decile": 6,
+     "n_centers": 22,
+     "mean_predicted": 0.1725,
+     "mean_observed": 0.3579
+    },
+    {
+     "decile": 7,
+     "n_centers": 22,
+     "mean_predicted": 0.2321,
+     "mean_observed": 0.4352
+    },
+    {
+     "decile": 8,
+     "n_centers": 22,
+     "mean_predicted": 0.303,
+     "mean_observed": 0.4614
+    },
+    {
+     "decile": 9,
+     "n_centers": 22,
+     "mean_predicted": 0.3996,
+     "mean_observed": 0.5242
+    },
+    {
+     "decile": 10,
+     "n_centers": 21,
+     "mean_predicted": 0.5107,
+     "mean_observed": 0.6852
+    }
+   ],
+   "decile_spearman": 1.0,
+   "ols_slope": 0.9774,
+   "ols_intercept": 0.1749
+  },
+  "liver": {
+   "n_centers": 135,
+   "decile_rows": [
+    {
+     "decile": 1,
+     "n_centers": 14,
+     "mean_predicted": 0.3311,
+     "mean_observed": 0.4336
+    },
+    {
+     "decile": 2,
+     "n_centers": 13,
+     "mean_predicted": 0.3721,
+     "mean_observed": 0.5001
+    },
+    {
+     "decile": 3,
+     "n_centers": 14,
+     "mean_predicted": 0.4635,
+     "mean_observed": 0.545
+    },
+    {
+     "decile": 4,
+     "n_centers": 13,
+     "mean_predicted": 0.5787,
+     "mean_observed": 0.6393
+    },
+    {
+     "decile": 5,
+     "n_centers": 14,
+     "mean_predicted": 0.6706,
+     "mean_observed": 0.6402
+    },
+    {
+     "decile": 6,
+     "n_centers": 13,
+     "mean_predicted": 0.7403,
+     "mean_observed": 0.7283
+    },
+    {
+     "decile": 7,
+     "n_centers": 14,
+     "mean_predicted": 0.797,
+     "mean_observed": 0.6937
+    },
+    {
+     "decile": 8,
+     "n_centers": 13,
+     "mean_predicted": 0.8366,
+     "mean_observed": 0.7558
+    },
+    {
+     "decile": 9,
+     "n_centers": 14,
+     "mean_predicted": 0.8762,
+     "mean_observed": 0.7781
+    },
+    {
+     "decile": 10,
+     "n_centers": 13,
+     "mean_predicted": 0.9192,
+     "mean_observed": 0.8116
+    }
+   ],
+   "decile_spearman": 0.9879,
+   "ols_slope": 0.581,
+   "ols_intercept": 0.2699
+  },
+  "heart": {
+   "n_centers": 130,
+   "decile_rows": [
+    {
+     "decile": 1,
+     "n_centers": 13,
+     "mean_predicted": 0.5763,
+     "mean_observed": 0.4396
+    },
+    {
+     "decile": 2,
+     "n_centers": 13,
+     "mean_predicted": 0.604,
+     "mean_observed": 0.5301
+    },
+    {
+     "decile": 3,
+     "n_centers": 13,
+     "mean_predicted": 0.6288,
+     "mean_observed": 0.6032
+    },
+    {
+     "decile": 4,
+     "n_centers": 13,
+     "mean_predicted": 0.7233,
+     "mean_observed": 0.6554
+    },
+    {
+     "decile": 5,
+     "n_centers": 13,
+     "mean_predicted": 0.8081,
+     "mean_observed": 0.7123
+    },
+    {
+     "decile": 6,
+     "n_centers": 13,
+     "mean_predicted": 0.8686,
+     "mean_observed": 0.7407
+    },
+    {
+     "decile": 7,
+     "n_centers": 13,
+     "mean_predicted": 0.9031,
+     "mean_observed": 0.7234
+    },
+    {
+     "decile": 8,
+     "n_centers": 13,
+     "mean_predicted": 0.9327,
+     "mean_observed": 0.7923
+    },
+    {
+     "decile": 9,
+     "n_centers": 13,
+     "mean_predicted": 0.9575,
+     "mean_observed": 0.8284
+    },
+    {
+     "decile": 10,
+     "n_centers": 13,
+     "mean_predicted": 0.9757,
+     "mean_observed": 0.866
+    }
+   ],
+   "decile_spearman": 0.9879,
+   "ols_slope": 0.8396,
+   "ols_intercept": 0.0193
+  },
+  "lung": {
+   "n_centers": 61,
+   "decile_rows": [
+    {
+     "decile": 1,
+     "n_centers": 7,
+     "mean_predicted": 0.8988,
+     "mean_observed": 0.6452
+    },
+    {
+     "decile": 2,
+     "n_centers": 6,
+     "mean_predicted": 0.9376,
+     "mean_observed": 0.7688
+    },
+    {
+     "decile": 3,
+     "n_centers": 6,
+     "mean_predicted": 0.9526,
+     "mean_observed": 0.8101
+    },
+    {
+     "decile": 4,
+     "n_centers": 6,
+     "mean_predicted": 0.9662,
+     "mean_observed": 0.8072
+    },
+    {
+     "decile": 5,
+     "n_centers": 6,
+     "mean_predicted": 0.9724,
+     "mean_observed": 0.8524
+    },
+    {
+     "decile": 6,
+     "n_centers": 6,
+     "mean_predicted": 0.9786,
+     "mean_observed": 0.83
+    },
+    {
+     "decile": 7,
+     "n_centers": 6,
+     "mean_predicted": 0.9849,
+     "mean_observed": 0.8924
+    },
+    {
+     "decile": 8,
+     "n_centers": 6,
+     "mean_predicted": 0.9893,
+     "mean_observed": 0.8895
+    },
+    {
+     "decile": 9,
+     "n_centers": 6,
+     "mean_predicted": 0.9927,
+     "mean_observed": 0.9394
+    },
+    {
+     "decile": 10,
+     "n_centers": 6,
+     "mean_predicted": 0.997,
+     "mean_observed": 0.9521
+    }
+   ],
+   "decile_spearman": 0.9636,
+   "ols_slope": 2.8729,
+   "ols_intercept": -1.9394
+  }
+ },
+ "mortality": {
+  "kidney": {
+   "n_centers": 218,
+   "decile_rows": [
+    {
+     "decile": 1,
+     "n_centers": 22,
+     "mean_predicted": 0.0058,
+     "mean_observed": 0.0005
+    },
+    {
+     "decile": 2,
+     "n_centers": 22,
+     "mean_predicted": 0.0058,
+     "mean_observed": 0.0002
+    },
+    {
+     "decile": 3,
+     "n_centers": 22,
+     "mean_predicted": 0.0077,
+     "mean_observed": 0.0068
+    },
+    {
+     "decile": 4,
+     "n_centers": 22,
+     "mean_predicted": 0.0112,
+     "mean_observed": 0.0113
+    },
+    {
+     "decile": 5,
+     "n_centers": 21,
+     "mean_predicted": 0.0146,
+     "mean_observed": 0.0146
+    },
+    {
+     "decile": 6,
+     "n_centers": 22,
+     "mean_predicted": 0.0178,
+     "mean_observed": 0.0178
+    },
+    {
+     "decile": 7,
+     "n_centers": 22,
+     "mean_predicted": 0.0209,
+     "mean_observed": 0.0209
+    },
+    {
+     "decile": 8,
+     "n_centers": 22,
+     "mean_predicted": 0.0246,
+     "mean_observed": 0.0245
+    },
+    {
+     "decile": 9,
+     "n_centers": 22,
+     "mean_predicted": 0.031,
+     "mean_observed": 0.031
+    },
+    {
+     "decile": 10,
+     "n_centers": 21,
+     "mean_predicted": 0.0459,
+     "mean_observed": 0.0523
+    }
+   ],
+   "decile_spearman": 0.997,
+   "ols_slope": 1.2211,
+   "ols_intercept": -0.0046
+  },
+  "liver": {
+   "n_centers": 135,
+   "decile_rows": [
+    {
+     "decile": 1,
+     "n_centers": 14,
+     "mean_predicted": 0.0134,
+     "mean_observed": 0.0048
+    },
+    {
+     "decile": 2,
+     "n_centers": 13,
+     "mean_predicted": 0.0134,
+     "mean_observed": 0.0036
+    },
+    {
+     "decile": 3,
+     "n_centers": 14,
+     "mean_predicted": 0.0166,
+     "mean_observed": 0.0128
+    },
+    {
+     "decile": 4,
+     "n_centers": 13,
+     "mean_predicted": 0.0288,
+     "mean_observed": 0.0288
+    },
+    {
+     "decile": 5,
+     "n_centers": 14,
+     "mean_predicted": 0.0355,
+     "mean_observed": 0.0355
+    },
+    {
+     "decile": 6,
+     "n_centers": 13,
+     "mean_predicted": 0.0451,
+     "mean_observed": 0.0451
+    },
+    {
+     "decile": 7,
+     "n_centers": 14,
+     "mean_predicted": 0.0535,
+     "mean_observed": 0.0535
+    },
+    {
+     "decile": 8,
+     "n_centers": 13,
+     "mean_predicted": 0.0633,
+     "mean_observed": 0.0633
+    },
+    {
+     "decile": 9,
+     "n_centers": 14,
+     "mean_predicted": 0.0825,
+     "mean_observed": 0.0826
+    },
+    {
+     "decile": 10,
+     "n_centers": 13,
+     "mean_predicted": 0.1253,
+     "mean_observed": 0.1323
+    }
+   ],
+   "decile_spearman": 0.997,
+   "ols_slope": 1.1143,
+   "ols_intercept": -0.007
+  },
+  "heart": {
+   "n_centers": 130,
+   "decile_rows": [
+    {
+     "decile": 1,
+     "n_centers": 13,
+     "mean_predicted": 0.0086,
+     "mean_observed": 0.0
+    },
+    {
+     "decile": 2,
+     "n_centers": 13,
+     "mean_predicted": 0.0086,
+     "mean_observed": 0.0
+    },
+    {
+     "decile": 3,
+     "n_centers": 13,
+     "mean_predicted": 0.0086,
+     "mean_observed": 0.0
+    },
+    {
+     "decile": 4,
+     "n_centers": 13,
+     "mean_predicted": 0.0086,
+     "mean_observed": 0.0
+    },
+    {
+     "decile": 5,
+     "n_centers": 13,
+     "mean_predicted": 0.0138,
+     "mean_observed": 0.0132
+    },
+    {
+     "decile": 6,
+     "n_centers": 13,
+     "mean_predicted": 0.0238,
+     "mean_observed": 0.0238
+    },
+    {
+     "decile": 7,
+     "n_centers": 13,
+     "mean_predicted": 0.034,
+     "mean_observed": 0.034
+    },
+    {
+     "decile": 8,
+     "n_centers": 13,
+     "mean_predicted": 0.0452,
+     "mean_observed": 0.0452
+    },
+    {
+     "decile": 9,
+     "n_centers": 13,
+     "mean_predicted": 0.0688,
+     "mean_observed": 0.0689
+    },
+    {
+     "decile": 10,
+     "n_centers": 13,
+     "mean_predicted": 0.0864,
+     "mean_observed": 0.1163
+    }
+   ],
+   "decile_spearman": 1.0,
+   "ols_slope": 1.3454,
+   "ols_intercept": -0.0111
+  },
+  "lung": {
+   "n_centers": 61,
+   "decile_rows": [
+    {
+     "decile": 1,
+     "n_centers": 7,
+     "mean_predicted": 0.0078,
+     "mean_observed": 0.0
+    },
+    {
+     "decile": 2,
+     "n_centers": 6,
+     "mean_predicted": 0.0078,
+     "mean_observed": 0.0
+    },
+    {
+     "decile": 3,
+     "n_centers": 6,
+     "mean_predicted": 0.0078,
+     "mean_observed": 0.0
+    },
+    {
+     "decile": 4,
+     "n_centers": 6,
+     "mean_predicted": 0.0109,
+     "mean_observed": 0.0083
+    },
+    {
+     "decile": 5,
+     "n_centers": 6,
+     "mean_predicted": 0.0189,
+     "mean_observed": 0.0189
+    },
+    {
+     "decile": 6,
+     "n_centers": 6,
+     "mean_predicted": 0.027,
+     "mean_observed": 0.0271
+    },
+    {
+     "decile": 7,
+     "n_centers": 6,
+     "mean_predicted": 0.0327,
+     "mean_observed": 0.0328
+    },
+    {
+     "decile": 8,
+     "n_centers": 6,
+     "mean_predicted": 0.0444,
+     "mean_observed": 0.0444
+    },
+    {
+     "decile": 9,
+     "n_centers": 6,
+     "mean_predicted": 0.0581,
+     "mean_observed": 0.0582
+    },
+    {
+     "decile": 10,
+     "n_centers": 6,
+     "mean_predicted": 0.0756,
+     "mean_observed": 0.0804
+    }
+   ],
+   "decile_spearman": 1.0,
+   "ols_slope": 1.1528,
+   "ols_intercept": -0.0065
+  }
+ }
+}

@@ -39,7 +39,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 |---|------|-------|--------|
 | E1 | Per-release Table B10 parse → fit-on-N/predict-N+k forecast test | #237 | ✅ 2026-08-24 |
 | E2 | Assumption sensitivity sweep (T6): ±20% perturbation, rank stability | #294 | ✅ 2026-08-25 |
-| E3 | Decile calibration (T-calibration): predicted vs observed mortality | #295 | |
+| E3 | Decile calibration (T-calibration): predicted vs observed mortality | #295 | ✅ 2026-08-25 |
 | E4 | Cross-iteration model comparison | #137 | |
 | E5 | MCMC calibration via run-center-calibration after #207 | #207 | |
 | E6 | Reframe MCMC as calibrated-uncertainty, not validation (L-061) | #257 | |
