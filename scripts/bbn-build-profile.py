@@ -81,7 +81,7 @@ def main():
           f"{'CPT bytes':>11} {'query':>9}")
     print("-" * 64)
     rows = []
-    for g in ("classic", "state", "full"):
+    for g in ("state", "full"):  # classic retired (#293)
         r = profile_granularity(g)
         rows.append(r)
         print(f"{r['granularity']:<10} {r['n_regions']:>8} {r['build_s']*1000:>7.0f}ms "

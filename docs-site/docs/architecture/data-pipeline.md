@@ -40,7 +40,6 @@ All scripts live in `scripts/` and share a common `utils.js` module with retry l
 # Run all fetch scripts locally
 node scripts/fetch-traffic.js
 node scripts/fetch-air-quality.js       # EPA_EMAIL + EPA_API_KEY required
-node scripts/fetch-hospital-quality.js
 node scripts/fetch-cost-of-living.js    # BLS_API_KEY required
 node scripts/fetch-health-data.js
 node scripts/validate-data.js           # post-fetch validation

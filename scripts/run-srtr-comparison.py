@@ -26,23 +26,24 @@ import numpy as np
 REPO_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(REPO_ROOT / "backend"))
 
-from services.data_loader import load_all  # noqa: E402
-from services.monte_carlo import simulate, CITIES  # noqa: E402
-from services.distributions import get_wait_time_distribution, get_organ_params, get_city_factors  # noqa: E402
+from services.data_loader import get_data, load_all  # noqa: E402
+from services.monte_carlo import simulate  # noqa: E402
+from services.distributions import get_organ_params  # noqa: E402
 from services.competing_risks import get_annual_mortality_rate, get_annual_delisting_rate  # noqa: E402
 from models.schemas import PatientProfile  # noqa: E402
 
 # Load all data
 load_all()
 
-# Spot-check pairs: city, organ
+# Spot-check pairs: SRTR center code, organ (#285: center codes replaced
+# the legacy 22-city mode)
 SPOT_CHECKS = [
-    ("Houston", "kidney"),
-    ("Pittsburgh", "liver"),
-    ("Chicago", "kidney"),
-    ("Cleveland", "heart"),
-    ("Minneapolis", "lung"),
-    ("Nashville", "liver"),
+    ("TXHH", "kidney"),   # Memorial Hermann, Houston
+    ("PAPT", "liver"),    # UPMC Pittsburgh
+    ("ILNM", "kidney"),   # Northwestern, Chicago
+    ("OHCC", "heart"),    # Cleveland Clinic
+    ("MNUM", "lung"),     # University of Minnesota
+    ("TNVU", "liver"),    # Vanderbilt, Nashville
 ]
 
 # Standard baseline patient for each organ
@@ -59,7 +60,7 @@ def baseline_patient(organ: str) -> PatientProfile:
     return PatientProfile(**base)
 
 
-def get_srtr_observed(city: str, organ: str) -> dict:
+def get_srtr_observed(center_code: str, organ: str) -> dict:
     """
     Extract observed SRTR values from our data files.
 
@@ -69,36 +70,45 @@ def get_srtr_observed(city: str, organ: str) -> dict:
     """
     observed = {}
 
-    # Wait time: national median × city factor × blood type multiplier
+    # Wait time: national median × center factor × blood type multiplier
     organ_params = get_organ_params(organ)
-    city_factors = get_city_factors()
+    center_factors = (get_data().center_wait_times
+                      .get("center_wait_time_factors", {})
+                      .get(center_code, {}))
 
     if organ_params:
         national_median = organ_params["national_median_months"]
-        city_factor = city_factors.get(city, 1.0)
+        center_factor = center_factors.get(organ)
+        center_factor = center_factor if isinstance(center_factor, (int, float)) else 1.0
         bt_mult = organ_params.get("blood_type_multipliers", {}).get("O+", 1.0)
         observed["national_median_months"] = national_median
-        observed["city_wait_factor"] = city_factor
-        observed["expected_median_months"] = round(national_median * city_factor * bt_mult, 2)
+        observed["center_wait_factor"] = center_factor
+        observed["expected_median_months"] = round(national_median * center_factor * bt_mult, 2)
         observed["log_sigma"] = organ_params.get("log_sigma", 1.2)
 
-    # Mortality and delisting rates
-    observed["annual_mortality_rate"] = get_annual_mortality_rate(organ, city, urgency=2)
-    observed["annual_delisting_rate"] = get_annual_delisting_rate(organ, city)
+    # Mortality and delisting rates (center-level)
+    observed["annual_mortality_rate"] = get_annual_mortality_rate(
+        organ, "", urgency=2, center_code=center_code)
+    observed["annual_delisting_rate"] = get_annual_delisting_rate(
+        organ, "", center_code=center_code)
 
-    # Post-transplant outcomes
-    data_path = REPO_ROOT / "data" / "post-transplant-outcomes.json"
+    # Post-transplant outcomes (per-center file)
+    data_path = REPO_ROOT / "data" / "post-transplant-outcomes-centers.json"
     with open(data_path) as f:
-        outcomes_data = json.load(f)
+        centers_outcomes = json.load(f)
 
-    city_outcomes = outcomes_data.get("city_outcomes", {}).get(city, {}).get(organ, {})
-    if city_outcomes:
-        observed["graft_survival_1yr"] = city_outcomes.get("graft_survival_1yr")
-        observed["patient_survival_1yr"] = city_outcomes.get("patient_survival_1yr")
-        observed["graft_survival_3yr"] = city_outcomes.get("graft_survival_3yr")
-        observed["patient_survival_3yr"] = city_outcomes.get("patient_survival_3yr")
-        observed["performance_rating"] = city_outcomes.get("performance_rating")
-        observed["n_1yr"] = city_outcomes.get("n_1yr")
+    center_out = (centers_outcomes.get("center_outcomes", {})
+                  .get(center_code, {}).get(organ, {}))
+    if center_out:
+        observed["graft_survival_1yr"] = center_out.get("graft_survival_1yr")
+        observed["patient_survival_1yr"] = center_out.get("patient_survival_1yr")
+        observed["graft_survival_3yr"] = center_out.get("graft_survival_3yr")
+        observed["patient_survival_3yr"] = center_out.get("patient_survival_3yr")
+        observed["performance_rating"] = center_out.get("performance_rating")
+        observed["n_1yr"] = center_out.get("n_1yr")
+
+    with open(REPO_ROOT / "data" / "post-transplant-outcomes.json") as f:
+        outcomes_data = json.load(f)
 
     # National outcomes for context
     national = outcomes_data.get(organ, {})
@@ -109,12 +119,12 @@ def get_srtr_observed(city: str, organ: str) -> dict:
     return observed
 
 
-def run_simulation_for_city(patient: PatientProfile, target_city: str, n_iterations: int = 1000) -> dict:
-    """Run MC simulation and extract results for a specific city."""
+def run_simulation_for_city(patient: PatientProfile, target_code: str, n_iterations: int = 1000) -> dict:
+    """Run MC simulation and extract results for a specific center."""
     result = simulate(patient, n_iterations=n_iterations)
 
     for city_result in result.cities:
-        if city_result.city == target_city:
+        if city_result.center_code == target_code:
             return {
                 "p_transplant_24mo": city_result.p_transplant_24mo,
                 "p_transplant_12mo": city_result.p_transplant_12mo,
@@ -124,7 +134,7 @@ def run_simulation_for_city(patient: PatientProfile, target_city: str, n_iterati
                 "rank": result.cities.index(city_result) + 1,
             }
 
-    return {"error": f"City {target_city} not found in simulation results"}
+    return {"error": f"Center {target_code} not found in simulation results"}
 
 
 def compute_discrepancy(predicted: float, observed: float) -> dict:
@@ -139,23 +149,23 @@ def compute_discrepancy(predicted: float, observed: float) -> dict:
 
 def main():
     print("TransPlan SRTR Ground-Truth Comparison")
-    print(f"Spot-checking {len(SPOT_CHECKS)} city/organ pairs")
+    print(f"Spot-checking {len(SPOT_CHECKS)} center/organ pairs")
     print()
 
     all_comparisons = []
     flags_summary = {"OK": 0, "WARN": 0, "FLAG": 0}
 
-    for city, organ in SPOT_CHECKS:
+    for code, organ in SPOT_CHECKS:
         print(f"\n{'='*70}")
-        print(f"  {city} / {organ}")
+        print(f"  {code} / {organ}")
         print(f"{'='*70}")
 
         patient = baseline_patient(organ)
-        observed = get_srtr_observed(city, organ)
-        predicted = run_simulation_for_city(patient, city)
+        observed = get_srtr_observed(code, organ)
+        predicted = run_simulation_for_city(patient, code)
 
         comparison = {
-            "city": city,
+            "city": code,
             "organ": organ,
             "patient": {
                 "blood_type": patient.blood_type,
@@ -268,7 +278,7 @@ def main():
 
         # --- Simulation metadata ---
         if "rank" in predicted:
-            print(f"  City rank:    #{predicted['rank']} of 22 cities")
+            print(f"  Center rank:  #{predicted['rank']} of all centers")
             print(f"  95% CI:       {predicted.get('confidence_interval_95', 'N/A')}")
 
         all_comparisons.append(comparison)
@@ -283,15 +293,21 @@ def main():
         patient = baseline_patient(organ)
         result = simulate(patient, n_iterations=1000)
 
-        spot_cities = [c for c, o in SPOT_CHECKS if o == organ]
-        if not spot_cities:
+        spot_codes = [c for c, o in SPOT_CHECKS if o == organ]
+        if not spot_codes:
             continue
 
-        print(f"\n  {organ.upper()} — Full city ranking (spot-check cities highlighted):")
+        print(f"\n  {organ.upper()} — Top-25 center ranking (spot-check centers highlighted):")
+        shown = 0
         for i, city_result in enumerate(result.cities):
-            marker = " ◄◄" if city_result.city in spot_cities else ""
-            print(f"    #{i+1:2d}  {city_result.city:<16s}  p24={city_result.p_transplant_24mo:.4f}  "
+            hit = city_result.center_code in spot_codes
+            if i >= 25 and not hit:
+                continue
+            marker = " ◄◄" if hit else ""
+            print(f"    #{i+1:3d}  {city_result.center_code:<5s} {city_result.city[:30]:<30s}  "
+                  f"p24={city_result.p_transplant_24mo:.4f}  "
                   f"wait={city_result.median_wait_months:.1f}mo{marker}")
+            shown += 1
 
     # --- Summary ---
     print(f"\n{'='*70}")

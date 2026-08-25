@@ -50,16 +50,18 @@ def _make_patient(**kwargs) -> PatientProfile:
     return PatientProfile(**defaults)
 
 
-def _p24_avg(patient: PatientProfile, cities: list[str], n: int = N_ITERATIONS) -> float:
-    """Average p24 across multiple cities for stability."""
+def _p24_avg(patient: PatientProfile, centers: list[str], n: int = N_ITERATIONS) -> float:
+    """Average p24 across multiple centers for stability (#285: center codes —
+    a bare city name would silently fall back to national factors)."""
     rng = np.random.default_rng(SEED)
-    total = sum(_p24_single_city(patient, c, n, rng) for c in cities)
-    return total / len(cities)
+    total = sum(_p24_single_city(patient, "", n, rng, center_code=c)
+                for c in centers)
+    return total / len(centers)
 
 
-# Representative cities for averaging
-REP_CITIES = ["Houston", "Pittsburgh", "Cleveland", "Nashville", "Chicago",
-              "New York", "Los Angeles", "San Francisco", "Minneapolis", "Philadelphia"]
+# Representative SRTR centers for averaging
+REP_CITIES = ["TXHH", "PAPT", "OHCC", "TNVU", "ILNM",
+              "NYCP", "CASU", "CASF", "MNUM", "PAUP"]
 
 results = []
 
@@ -230,8 +232,11 @@ def test_age_mortality():
 # ──────────────────────────────────────────────────────────────────────
 
 def test_policy_helps_small_centers():
-    """Under 250nm circle policy, small centers (Madison, Omaha) should improve."""
-    from services.policy_scenarios import get_scenario, get_city_multipliers
+    """Under the 250nm circle policy, small (bottom-quartile volume) kidney
+    centers should improve (#285: size classes replaced the 22-city tables)."""
+    from services.policy_scenarios import (
+        _center_size_classes, get_center_multipliers, get_scenario,
+    )
     from services.what_if import compute_what_if
 
     scenario = get_scenario("kidney_250nm")
@@ -239,18 +244,23 @@ def test_policy_helps_small_centers():
         return False, {"error": "kidney_250nm scenario not found"}
 
     patient = _make_patient(organ="kidney")
-    small_centers = ["Madison", "Omaha", "Rochester"]
+    classes = _center_size_classes("kidney")
+    small_centers = [c for c, k in classes.items() if k == "small"][:3]
+    if len(small_centers) < 3:
+        return False, {"error": "fewer than 3 small kidney centers classified"}
     improvements = {}
 
-    for city in small_centers:
-        donor_mult, wait_mult = get_city_multipliers(scenario, city)
+    for code in small_centers:
+        donor_mult, wait_mult = get_center_multipliers(
+            scenario, code, organ="kidney",
+        )
         result = compute_what_if(
-            patient=patient, city=city,
+            patient=patient, center_code=code,
             donor_rate_multiplier=donor_mult,
             wait_time_multiplier=wait_mult,
             n_iterations=N_ITERATIONS,
         )
-        improvements[city] = round(result.delta_p24, 4)
+        improvements[code] = round(result.delta_p24, 4)
 
     # At least 2 of 3 small centers should improve (delta > 0)
     n_improved = sum(1 for d in improvements.values() if d > 0)

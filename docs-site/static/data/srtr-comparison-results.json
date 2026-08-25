@@ -1,7 +1,7 @@
 {
   "spot_checks": [
     {
-      "city": "Houston",
+      "city": "TXHH",
       "organ": "kidney",
       "patient": {
         "blood_type": "O+",
@@ -12,76 +12,76 @@
       },
       "observed": {
         "national_median_months": 27.4,
-        "city_wait_factor": 1.53,
-        "expected_median_months": 54.5,
+        "center_wait_factor": 2.08,
+        "expected_median_months": 74.09,
         "log_sigma": 1.2,
-        "annual_mortality_rate": 0.033174,
-        "annual_delisting_rate": 0.033575,
-        "graft_survival_1yr": 95.7,
+        "annual_mortality_rate": 0.029682,
+        "annual_delisting_rate": 0.014875,
+        "graft_survival_1yr": 97.4,
         "patient_survival_1yr": 97.7,
-        "graft_survival_3yr": 90.6,
-        "patient_survival_3yr": 94.1,
+        "graft_survival_3yr": 93.8,
+        "patient_survival_3yr": 94.6,
         "performance_rating": "as_expected",
-        "n_1yr": 530,
+        "n_1yr": 196,
         "national_graft_survival_1yr": 95.0,
         "national_patient_survival_1yr": 97.3
       },
       "predicted": {
-        "p_transplant_24mo": 0.137,
-        "p_transplant_12mo": 0.052,
-        "median_wait_months": 51.24,
+        "p_transplant_24mo": 0.092,
+        "p_transplant_12mo": 0.036,
+        "median_wait_months": 78.96,
         "confidence_interval_95": [
-          0.12,
-          0.162
+          0.073,
+          0.11
         ],
         "competing_risks": {
-          "p_transplant_24mo": 0.137,
-          "p_mortality_24mo": 0.059,
-          "p_delisting_24mo": 0.059,
-          "p_still_waiting_24mo": 0.745
+          "p_transplant_24mo": 0.092,
+          "p_mortality_24mo": 0.053,
+          "p_delisting_24mo": 0.021,
+          "p_still_waiting_24mo": 0.834
         },
-        "rank": 20
+        "rank": 195
       },
       "metrics": [
         {
           "name": "Median Wait (months)",
-          "observed": 54.5,
-          "predicted": 51.24,
-          "abs_diff": 3.26,
-          "pct_diff": 6.0,
+          "observed": 74.09,
+          "predicted": 78.96,
+          "abs_diff": 4.87,
+          "pct_diff": 6.6,
           "flag": "OK"
         },
         {
           "name": "Annual Mortality Rate",
-          "observed": 0.0332,
-          "predicted": 0.0299,
+          "observed": 0.0297,
+          "predicted": 0.0269,
           "predicted_note": "implied from 24mo simulation",
-          "abs_diff": 0.0032,
-          "pct_diff": 9.7,
+          "abs_diff": 0.0028,
+          "pct_diff": 9.5,
           "flag": "OK"
         },
         {
           "name": "Annual Delisting Rate",
-          "observed": 0.0336,
-          "predicted": 0.0299,
+          "observed": 0.0149,
+          "predicted": 0.0106,
           "predicted_note": "implied from 24mo simulation",
-          "abs_diff": 0.0036,
-          "pct_diff": 10.8,
-          "flag": "OK"
+          "abs_diff": 0.0043,
+          "pct_diff": 29.0,
+          "flag": "FLAG"
         },
         {
           "name": "P(transplant \u2264 24mo)",
-          "observed": 0.2294,
+          "observed": 0.1649,
           "observed_note": "analytical from same parameters",
-          "predicted": 0.137,
-          "abs_diff": 0.0924,
-          "pct_diff": 40.3,
+          "predicted": 0.092,
+          "abs_diff": 0.0729,
+          "pct_diff": 44.2,
           "flag": "FLAG"
         }
       ]
     },
     {
-      "city": "Pittsburgh",
+      "city": "PAPT",
       "organ": "liver",
       "patient": {
         "blood_type": "O+",
@@ -92,11 +92,11 @@
       },
       "observed": {
         "national_median_months": 4.6,
-        "city_wait_factor": 1.42,
-        "expected_median_months": 8.16,
+        "center_wait_factor": 0.83,
+        "expected_median_months": 4.77,
         "log_sigma": 1.2,
         "annual_mortality_rate": 0.027714,
-        "annual_delisting_rate": 0.08375400000000001,
+        "annual_delisting_rate": 0.100298,
         "graft_survival_1yr": 89.0,
         "patient_survival_1yr": 91.4,
         "graft_survival_3yr": 84.6,
@@ -107,61 +107,61 @@
         "national_patient_survival_1yr": 94.3
       },
       "predicted": {
-        "p_transplant_24mo": 0.745,
-        "p_transplant_12mo": 0.587,
-        "median_wait_months": 7.29,
+        "p_transplant_24mo": 0.863,
+        "p_transplant_12mo": 0.748,
+        "median_wait_months": 4.27,
         "confidence_interval_95": [
-          0.724,
-          0.7701
+          0.84,
+          0.883
         ],
         "competing_risks": {
-          "p_transplant_24mo": 0.745,
-          "p_mortality_24mo": 0.024,
-          "p_delisting_24mo": 0.078,
-          "p_still_waiting_24mo": 0.153
+          "p_transplant_24mo": 0.863,
+          "p_mortality_24mo": 0.011,
+          "p_delisting_24mo": 0.056,
+          "p_still_waiting_24mo": 0.07
         },
-        "rank": 16
+        "rank": 64
       },
       "metrics": [
         {
           "name": "Median Wait (months)",
-          "observed": 8.16,
-          "predicted": 7.29,
-          "abs_diff": 0.87,
-          "pct_diff": 10.7,
+          "observed": 4.77,
+          "predicted": 4.27,
+          "abs_diff": 0.5,
+          "pct_diff": 10.5,
           "flag": "OK"
         },
         {
           "name": "Annual Mortality Rate",
           "observed": 0.0277,
-          "predicted": 0.0121,
+          "predicted": 0.0055,
           "predicted_note": "implied from 24mo simulation",
-          "abs_diff": 0.0156,
-          "pct_diff": 56.4,
+          "abs_diff": 0.0222,
+          "pct_diff": 80.1,
           "flag": "FLAG"
         },
         {
           "name": "Annual Delisting Rate",
-          "observed": 0.0838,
-          "predicted": 0.0398,
+          "observed": 0.1003,
+          "predicted": 0.0284,
           "predicted_note": "implied from 24mo simulation",
-          "abs_diff": 0.044,
-          "pct_diff": 52.5,
+          "abs_diff": 0.0719,
+          "pct_diff": 71.7,
           "flag": "FLAG"
         },
         {
           "name": "P(transplant \u2264 24mo)",
-          "observed": 0.7595,
+          "observed": 0.8558,
           "observed_note": "analytical from same parameters",
-          "predicted": 0.745,
-          "abs_diff": 0.0145,
-          "pct_diff": 1.9,
+          "predicted": 0.863,
+          "abs_diff": 0.0072,
+          "pct_diff": 0.8,
           "flag": "OK"
         }
       ]
     },
     {
-      "city": "Chicago",
+      "city": "ILNM",
       "organ": "kidney",
       "patient": {
         "blood_type": "O+",
@@ -172,11 +172,11 @@
       },
       "observed": {
         "national_median_months": 27.4,
-        "city_wait_factor": 0.77,
-        "expected_median_months": 27.43,
+        "center_wait_factor": 0.68,
+        "expected_median_months": 24.22,
         "log_sigma": 1.2,
-        "annual_mortality_rate": 0.009118,
-        "annual_delisting_rate": 0.034425000000000004,
+        "annual_mortality_rate": 0.011446,
+        "annual_delisting_rate": 0.05737500000000001,
         "graft_survival_1yr": 96.6,
         "patient_survival_1yr": 98.2,
         "graft_survival_3yr": 90.0,
@@ -187,61 +187,61 @@
         "national_patient_survival_1yr": 97.3
       },
       "predicted": {
-        "p_transplant_24mo": 0.345,
-        "p_transplant_12mo": 0.173,
-        "median_wait_months": 29.66,
+        "p_transplant_24mo": 0.33,
+        "p_transplant_12mo": 0.175,
+        "median_wait_months": 28.57,
         "confidence_interval_95": [
-          0.314,
-          0.374
+          0.301,
+          0.36
         ],
         "competing_risks": {
-          "p_transplant_24mo": 0.345,
-          "p_mortality_24mo": 0.013,
-          "p_delisting_24mo": 0.051,
-          "p_still_waiting_24mo": 0.591
+          "p_transplant_24mo": 0.33,
+          "p_mortality_24mo": 0.008,
+          "p_delisting_24mo": 0.087,
+          "p_still_waiting_24mo": 0.575
         },
-        "rank": 3
+        "rank": 84
       },
       "metrics": [
         {
           "name": "Median Wait (months)",
-          "observed": 27.43,
-          "predicted": 29.66,
-          "abs_diff": 2.23,
-          "pct_diff": 8.1,
-          "flag": "OK"
+          "observed": 24.22,
+          "predicted": 28.57,
+          "abs_diff": 4.35,
+          "pct_diff": 18.0,
+          "flag": "WARN"
         },
         {
           "name": "Annual Mortality Rate",
-          "observed": 0.0091,
-          "predicted": 0.0065,
+          "observed": 0.0114,
+          "predicted": 0.004,
           "predicted_note": "implied from 24mo simulation",
-          "abs_diff": 0.0026,
-          "pct_diff": 28.5,
+          "abs_diff": 0.0074,
+          "pct_diff": 65.0,
           "flag": "FLAG"
         },
         {
           "name": "Annual Delisting Rate",
-          "observed": 0.0344,
-          "predicted": 0.0258,
+          "observed": 0.0574,
+          "predicted": 0.0445,
           "predicted_note": "implied from 24mo simulation",
-          "abs_diff": 0.0086,
-          "pct_diff": 25.0,
+          "abs_diff": 0.0129,
+          "pct_diff": 22.5,
           "flag": "WARN"
         },
         {
           "name": "P(transplant \u2264 24mo)",
-          "observed": 0.4368,
+          "observed": 0.4659,
           "observed_note": "analytical from same parameters",
-          "predicted": 0.345,
-          "abs_diff": 0.0918,
-          "pct_diff": 21.0,
-          "flag": "WARN"
+          "predicted": 0.33,
+          "abs_diff": 0.1359,
+          "pct_diff": 29.2,
+          "flag": "FLAG"
         }
       ]
     },
     {
-      "city": "Cleveland",
+      "city": "OHCC",
       "organ": "heart",
       "patient": {
         "blood_type": "O+",
@@ -252,11 +252,11 @@
       },
       "observed": {
         "national_median_months": 2.2,
-        "city_wait_factor": 1.25,
-        "expected_median_months": 3.3,
+        "center_wait_factor": 3.0,
+        "expected_median_months": 7.92,
         "log_sigma": 1.2,
-        "annual_mortality_rate": 0.03283199999999999,
-        "annual_delisting_rate": 0.10919300000000001,
+        "annual_mortality_rate": 0.07689599999999999,
+        "annual_delisting_rate": 0.096057,
         "graft_survival_1yr": 97.6,
         "patient_survival_1yr": 97.5,
         "graft_survival_3yr": 89.8,
@@ -267,61 +267,61 @@
         "national_patient_survival_1yr": 92.4
       },
       "predicted": {
-        "p_transplant_24mo": 0.898,
-        "p_transplant_12mo": 0.822,
-        "median_wait_months": 3.03,
+        "p_transplant_24mo": 0.788,
+        "p_transplant_12mo": 0.62,
+        "median_wait_months": 6.97,
         "confidence_interval_95": [
-          0.882,
-          0.916
+          0.762,
+          0.812
         ],
         "competing_risks": {
-          "p_transplant_24mo": 0.898,
-          "p_mortality_24mo": 0.014,
-          "p_delisting_24mo": 0.048,
-          "p_still_waiting_24mo": 0.04
+          "p_transplant_24mo": 0.788,
+          "p_mortality_24mo": 0.037,
+          "p_delisting_24mo": 0.046,
+          "p_still_waiting_24mo": 0.129
         },
-        "rank": 16
+        "rank": 109
       },
       "metrics": [
         {
           "name": "Median Wait (months)",
-          "observed": 3.3,
-          "predicted": 3.03,
-          "abs_diff": 0.27,
-          "pct_diff": 8.2,
+          "observed": 7.92,
+          "predicted": 6.97,
+          "abs_diff": 0.95,
+          "pct_diff": 12.0,
           "flag": "OK"
         },
         {
           "name": "Annual Mortality Rate",
-          "observed": 0.0328,
-          "predicted": 0.007,
+          "observed": 0.0769,
+          "predicted": 0.0187,
           "predicted_note": "implied from 24mo simulation",
-          "abs_diff": 0.0258,
-          "pct_diff": 78.6,
+          "abs_diff": 0.0582,
+          "pct_diff": 75.7,
           "flag": "FLAG"
         },
         {
           "name": "Annual Delisting Rate",
-          "observed": 0.1092,
-          "predicted": 0.0243,
+          "observed": 0.0961,
+          "predicted": 0.0233,
           "predicted_note": "implied from 24mo simulation",
-          "abs_diff": 0.0849,
-          "pct_diff": 77.8,
+          "abs_diff": 0.0728,
+          "pct_diff": 75.8,
           "flag": "FLAG"
         },
         {
           "name": "P(transplant \u2264 24mo)",
-          "observed": 0.8997,
+          "observed": 0.738,
           "observed_note": "analytical from same parameters",
-          "predicted": 0.898,
-          "abs_diff": 0.0017,
-          "pct_diff": 0.2,
+          "predicted": 0.788,
+          "abs_diff": 0.05,
+          "pct_diff": 6.8,
           "flag": "OK"
         }
       ]
     },
     {
-      "city": "Minneapolis",
+      "city": "MNUM",
       "organ": "lung",
       "patient": {
         "blood_type": "O+",
@@ -332,11 +332,11 @@
       },
       "observed": {
         "national_median_months": 1.4,
-        "city_wait_factor": 1.14,
+        "center_wait_factor": 1.14,
         "expected_median_months": 1.76,
         "log_sigma": 1.14,
-        "annual_mortality_rate": 0.025123,
-        "annual_delisting_rate": 0.041159999999999995,
+        "annual_mortality_rate": 0.007769999999999999,
+        "annual_delisting_rate": 0.025872,
         "graft_survival_1yr": 90.9,
         "patient_survival_1yr": 91.5,
         "graft_survival_3yr": 67.3,
@@ -347,61 +347,61 @@
         "national_patient_survival_1yr": 90.2
       },
       "predicted": {
-        "p_transplant_24mo": 0.991,
-        "p_transplant_12mo": 0.986,
-        "median_wait_months": 0.89,
+        "p_transplant_24mo": 0.995,
+        "p_transplant_12mo": 0.988,
+        "median_wait_months": 0.9,
         "confidence_interval_95": [
-          0.985,
-          0.996
+          0.99,
+          0.999
         ],
         "competing_risks": {
-          "p_transplant_24mo": 0.991,
-          "p_mortality_24mo": 0.004,
-          "p_delisting_24mo": 0.004,
-          "p_still_waiting_24mo": 0.001
+          "p_transplant_24mo": 0.995,
+          "p_mortality_24mo": 0.0,
+          "p_delisting_24mo": 0.003,
+          "p_still_waiting_24mo": 0.002
         },
-        "rank": 5
+        "rank": 16
       },
       "metrics": [
         {
           "name": "Median Wait (months)",
           "observed": 1.76,
-          "predicted": 0.89,
-          "abs_diff": 0.87,
-          "pct_diff": 49.4,
+          "predicted": 0.9,
+          "abs_diff": 0.86,
+          "pct_diff": 48.9,
           "flag": "FLAG"
         },
         {
           "name": "Annual Mortality Rate",
-          "observed": 0.0251,
-          "predicted": 0.002,
+          "observed": 0.0078,
+          "predicted": 0.0,
           "predicted_note": "implied from 24mo simulation",
-          "abs_diff": 0.0231,
-          "pct_diff": 92.0,
+          "abs_diff": 0.0078,
+          "pct_diff": 100.0,
           "flag": "FLAG"
         },
         {
           "name": "Annual Delisting Rate",
-          "observed": 0.0412,
-          "predicted": 0.002,
+          "observed": 0.0259,
+          "predicted": 0.0015,
           "predicted_note": "implied from 24mo simulation",
-          "abs_diff": 0.0392,
-          "pct_diff": 95.1,
+          "abs_diff": 0.0244,
+          "pct_diff": 94.2,
           "flag": "FLAG"
         },
         {
           "name": "P(transplant \u2264 24mo)",
-          "observed": 0.9731,
+          "observed": 0.9809,
           "observed_note": "analytical from same parameters",
-          "predicted": 0.991,
-          "abs_diff": 0.0179,
-          "pct_diff": 1.8,
+          "predicted": 0.995,
+          "abs_diff": 0.0141,
+          "pct_diff": 1.4,
           "flag": "OK"
         }
       ]
     },
     {
-      "city": "Nashville",
+      "city": "TNVU",
       "organ": "liver",
       "patient": {
         "blood_type": "O+",
@@ -412,11 +412,11 @@
       },
       "observed": {
         "national_median_months": 4.6,
-        "city_wait_factor": 0.82,
-        "expected_median_months": 4.71,
+        "center_wait_factor": 1.17,
+        "expected_median_months": 6.73,
         "log_sigma": 1.2,
-        "annual_mortality_rate": 0.027266999999999996,
-        "annual_delisting_rate": 0.076516,
+        "annual_mortality_rate": 0.020114999999999997,
+        "annual_delisting_rate": 0.09616200000000001,
         "graft_survival_1yr": 91.9,
         "patient_survival_1yr": 95.7,
         "graft_survival_3yr": 85.2,
@@ -427,55 +427,55 @@
         "national_patient_survival_1yr": 94.3
       },
       "predicted": {
-        "p_transplant_24mo": 0.876,
-        "p_transplant_12mo": 0.755,
-        "median_wait_months": 4.17,
+        "p_transplant_24mo": 0.785,
+        "p_transplant_12mo": 0.64,
+        "median_wait_months": 6.02,
         "confidence_interval_95": [
-          0.855,
-          0.896
+          0.76,
+          0.809
         ],
         "competing_risks": {
-          "p_transplant_24mo": 0.876,
-          "p_mortality_24mo": 0.018,
-          "p_delisting_24mo": 0.041,
-          "p_still_waiting_24mo": 0.065
+          "p_transplant_24mo": 0.785,
+          "p_mortality_24mo": 0.005,
+          "p_delisting_24mo": 0.07,
+          "p_still_waiting_24mo": 0.14
         },
-        "rank": 4
+        "rank": 85
       },
       "metrics": [
         {
           "name": "Median Wait (months)",
-          "observed": 4.71,
-          "predicted": 4.17,
-          "abs_diff": 0.54,
-          "pct_diff": 11.5,
+          "observed": 6.73,
+          "predicted": 6.02,
+          "abs_diff": 0.71,
+          "pct_diff": 10.5,
           "flag": "OK"
         },
         {
           "name": "Annual Mortality Rate",
-          "observed": 0.0273,
-          "predicted": 0.009,
+          "observed": 0.0201,
+          "predicted": 0.0025,
           "predicted_note": "implied from 24mo simulation",
-          "abs_diff": 0.0182,
-          "pct_diff": 66.8,
+          "abs_diff": 0.0176,
+          "pct_diff": 87.6,
           "flag": "FLAG"
         },
         {
           "name": "Annual Delisting Rate",
-          "observed": 0.0765,
-          "predicted": 0.0207,
+          "observed": 0.0962,
+          "predicted": 0.0356,
           "predicted_note": "implied from 24mo simulation",
-          "abs_diff": 0.0558,
-          "pct_diff": 72.9,
+          "abs_diff": 0.0605,
+          "pct_diff": 62.9,
           "flag": "FLAG"
         },
         {
           "name": "P(transplant \u2264 24mo)",
-          "observed": 0.8676,
+          "observed": 0.7991,
           "observed_note": "analytical from same parameters",
-          "predicted": 0.876,
-          "abs_diff": 0.0084,
-          "pct_diff": 1.0,
+          "predicted": 0.785,
+          "abs_diff": 0.0141,
+          "pct_diff": 1.8,
           "flag": "OK"
         }
       ]
@@ -483,8 +483,8 @@
   ],
   "summary": {
     "total_metrics": 24,
-    "ok": 11,
+    "ok": 9,
     "warn": 2,
-    "flag": 11
+    "flag": 13
   }
 }

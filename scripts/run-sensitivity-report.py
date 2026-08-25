@@ -27,11 +27,19 @@ load_all()
 
 ORGANS = ["kidney", "liver", "heart", "lung", "pancreas", "intestine"]
 
-# 22 cities to sweep sensitivity across (sample of representative cities)
-SENSITIVITY_CITIES = [
-    "Houston", "Pittsburgh", "Phoenix", "Cleveland",
-    "Minneapolis", "Nashville", "New York", "Los Angeles",
-    "Chicago", "San Francisco",
+# Representative SRTR centers to sweep sensitivity across (#285: the service
+# is center-code based; the legacy city-name mode was retired)
+SENSITIVITY_CENTERS = [
+    "TXHH",  # Houston Methodist
+    "PAPT",  # UPMC Pittsburgh
+    "AZMC",  # Mayo Clinic Arizona (Phoenix)
+    "OHCC",  # Cleveland Clinic
+    "MNUM",  # University of Minnesota (Minneapolis)
+    "TNVU",  # Vanderbilt (Nashville)
+    "NYCP",  # NewYork-Presbyterian/Columbia
+    "CASU",  # Stanford (multi-organ)
+    "ILNM",  # Northwestern (Chicago)
+    "CASF",  # UCSF (San Francisco)
 ]
 
 # 3 patient profiles per organ: standard, rare, extreme
@@ -89,11 +97,12 @@ def run_sweep() -> dict:
             print(f"    Blood type: {patient.blood_type}, Urgency: {patient.urgency}")
 
             city_sweeps = []
-            for city in SENSITIVITY_CITIES:
-                result = compute_sensitivity(patient, city=city, n_iterations=n_iterations)
+            for code in SENSITIVITY_CENTERS:
+                result = compute_sensitivity(patient, center_code=code,
+                                             n_iterations=n_iterations)
 
                 city_data = {
-                    "city": city,
+                    "city": code,
                     "impacts": [],
                 }
                 for impact in result.impacts:
@@ -141,7 +150,7 @@ def run_sweep() -> dict:
             organ_results["profiles"].append(profile_result)
             all_profile_impacts.append(avg_swings)
 
-            print(f"    Average parameter swings (across {len(SENSITIVITY_CITIES)} cities):")
+            print(f"    Average parameter swings (across {len(SENSITIVITY_CENTERS)} centers):")
             for param, swing in sorted_params:
                 bar = "█" * int(swing * 100)
                 print(f"      {param:30s}  {swing:.4f}  {bar}")
@@ -166,7 +175,7 @@ def run_sweep() -> dict:
 def main():
     print("TransPlan Sensitivity Analysis Report Generator")
     print(f"Organs: {', '.join(ORGANS)}")
-    print(f"Cities: {', '.join(SENSITIVITY_CITIES)}")
+    print(f"Centers: {', '.join(SENSITIVITY_CENTERS)}")
     print(f"Profiles per organ: 3 (standard, rare, extreme)")
     print()
 
