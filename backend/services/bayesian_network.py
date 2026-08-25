@@ -47,54 +47,8 @@ from services.trends import get_city_trends
 logger = logging.getLogger(__name__)
 
 # City → state abbreviation (mirrors monte_carlo.py)
-_CITY_STATES = {
-    "Pittsburgh": "PA", "Baltimore": "MD", "Philadelphia": "PA",
-    "New York": "NY", "Minneapolis": "MN", "Madison": "WI",
-    "Chicago": "IL", "Cleveland": "OH", "St. Louis": "MO",
-    "Indianapolis": "IN", "Omaha": "NE", "Rochester": "MN",
-    "Nashville": "TN", "Durham": "NC", "Miami": "FL",
-    "Dallas": "TX", "Houston": "TX", "Portland": "OR",
-    "Seattle": "WA", "San Francisco": "CA", "Los Angeles": "CA",
-    "Palo Alto": "CA",
-}
-
-# Inverted: state abbreviation → first BBN region in that state
-_STATE_TO_REGION = {}
-for _city, _st in _CITY_STATES.items():
-    _STATE_TO_REGION.setdefault(_st, _city)
-
-# Center code → BBN region cache (built lazily)
-_CENTER_REGION_MAP: dict[str, str] | None = None
-
-
-def _get_center_region_map() -> dict[str, str]:
-    """Build center_code -> BBN region (one of 22 cities) mapping."""
-    global _CENTER_REGION_MAP
-    if _CENTER_REGION_MAP is not None:
-        return _CENTER_REGION_MAP
-
-    from services.data_loader import get_data
-    data = get_data()
-
-    # 1) Direct mapping from srtr-center-mapping.json
-    mapping = data.center_mapping.get("cities", {})
-    code_to_region: dict[str, str] = {}
-    for city_name, info in mapping.items():
-        primary = info.get("primary", "")
-        if primary:
-            code_to_region[primary] = city_name
-        for alt in info.get("alternates", []):
-            code_to_region[alt] = city_name
-
-    # 2) State-based fallback for unmapped centers
-    all_centers = data.all_centers.get("centers", {})
-    for code, info in all_centers.items():
-        if code not in code_to_region:
-            st = info.get("state_abbr", "")
-            code_to_region[code] = _STATE_TO_REGION.get(st, "Nashville")
-
-    _CENTER_REGION_MAP = code_to_region
-    return code_to_region
+# (#293: the legacy 22-city region maps — _CITY_STATES, _STATE_TO_REGION,
+# _get_center_region_map — were removed with the classic granularity.)
 
 # ──────────────────────────────────────────────────────────────────────
 # DAG edges (19 edges, 12 nodes)
@@ -140,7 +94,6 @@ DAG_EDGES = [
 # Node cardinalities and state names
 # ──────────────────────────────────────────────────────────────────────
 
-# Legacy module-level dicts (classic 22-city model) — kept for backward
 # compatibility with code that imports NODE_CARDS / NODE_STATE_NAMES directly.
 NODE_CARDS = {
     "Organ": len(ORGANS),
@@ -509,9 +462,9 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
     that perform the patient's organ.
 
     The BBN Region node size adapts to ``patient.bbn_granularity``:
-      - "classic": 22 cities — only centers mapped to those 22 BBN cities
-      - "state":   ~50 states — all centers
-      - "full":    ~248 centers — all centers
+      - "state": ~50 states — all centers
+      - "full":  ~248 centers — all centers
+    (The legacy 22-city "classic" mode was retired — #285/#293.)
 
     Centers sharing a region receive the same BBN probabilities but
     different post-transplant outcomes (center-level data).
@@ -526,9 +479,6 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
     regions = get_regions(granularity)
     center_region_map = get_center_to_region_map(granularity)
 
-    # Keep legacy map for backward-compatible trend lookups
-    legacy_center_region_map = _get_center_region_map()
-
     # Build state name mapping for index lookups
     state_names = _build_state_names(regions)
 
@@ -542,72 +492,11 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
 
     city_results: list[CityProbability] = []
 
-    if granularity == "classic":
-        # Classic mode: one result per BBN region (22 cities).
-        # Use the region name as the display city and look up representative
-        # center info for lat/lon/state from the legacy _CITY_STATES mapping.
-        for region_name in regions:
-            query_result = _query_city(
-                model, organ, blood_type, age_group, urgency, region_name,
-                regions=regions, node_state_names=state_names,
-            )
-            region_cache[region_name] = query_result
+    # One result per SRTR center (state / full granularity).
+    from services.monte_carlo import _get_centers
+    centers = _get_centers(organ)
 
-            state_abbr = _CITY_STATES.get(region_name, "")
-
-            oc = _combine_outcomes(query_result)
-            p_6, p_12, p_24, p_36 = oc["p_6"], oc["p_12"], oc["p_24"], oc["p_36"]
-            p_mortality_24, p_delisting_24, p_waiting_24 = (
-                oc["p_mortality_24"], oc["p_delisting_24"], oc["p_waiting_24"])
-
-            median_wait = _estimate_median_wait(query_result["wait_category"])
-
-            n_obs = _region_observed_n(organ, region_name, center_region_map)
-            ci_half = _data_uncertainty_ci(p_24, n_obs)
-            ci_lo = max(0.0, p_24 - ci_half)
-            ci_hi = min(1.0, p_24 + ci_half)
-
-            competing_risks_24 = {
-                "p_transplant_24mo": round(p_24, 4),
-                "p_mortality_24mo": round(p_mortality_24, 4),
-                "p_delisting_24mo": round(p_delisting_24, 4),
-                "p_still_waiting_24mo": round(p_waiting_24, 4),
-            }
-
-            outcomes_data = None
-            try:
-                outcomes_data = build_outcomes_dict(patient.organ, city=region_name, p_transplant_24mo=p_24)
-            except (KeyError, FileNotFoundError, ValueError):
-                pass
-
-            trends_data = None
-            try:
-                trends_data = get_city_trends(patient.organ, region_name)
-            except (KeyError, FileNotFoundError, ValueError):
-                pass
-
-            city_results.append(CityProbability(
-                city=region_name,
-                state=state_abbr,
-                center_code="",
-                center_name=region_name,
-                lat=None,
-                lon=None,
-                p_transplant_6mo=round(p_6, 4),
-                p_transplant_12mo=round(p_12, 4),
-                p_transplant_24mo=round(p_24, 4),
-                p_transplant_36mo=round(p_36, 4),
-                confidence_interval_95=(round(ci_lo, 4), round(ci_hi, 4)),
-                median_wait_months=round(max(median_wait, 0.1), 2),
-                competing_risks=competing_risks_24,
-                outcomes=outcomes_data,
-                trends=trends_data,
-            ))
-    else:
-        # State / full mode: one result per SRTR center.
-        from services.monte_carlo import _get_centers
-        centers = _get_centers(organ)
-
+    if True:
         for center in centers:
             code = center.get("code", "")
             name = center.get("name", center.get("city", ""))
@@ -654,11 +543,11 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
             except (KeyError, FileNotFoundError, ValueError):
                 pass
 
-            # Trends use the legacy 22-city region for lookup
-            legacy_region = legacy_center_region_map.get(code, center.get("city", "Nashville"))
+            # Per-center historical trends (#288)
             trends_data = None
             try:
-                trends_data = get_city_trends(patient.organ, legacy_region)
+                from services.trends import get_center_trends
+                trends_data = get_center_trends(patient.organ, code)
             except (KeyError, FileNotFoundError, ValueError):
                 pass
 

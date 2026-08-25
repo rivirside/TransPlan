@@ -7,7 +7,7 @@ explicit, reviewed golden update rather than slipping through silently.
 BBN inference is exact (no RNG), so outputs are fully deterministic and we can
 compare rounded values exactly — no tolerance needed.
 
-Covers all three granularities (classic, state, full) across three organs.
+Covers both granularities (state, full) across three organs — classic retired (#293).
 "full" (248 regions) builds in ~0.4s after the WaitCategory vectorization, so
 it is no longer too slow to snapshot.
 
@@ -29,7 +29,7 @@ REFERENCE_PATIENTS = {
     "liver_A+":  dict(organ="liver",  blood_type="A+", age=55, sex="female", urgency=3, meld=22),
     "lung_O+":   dict(organ="lung",   blood_type="O+", age=60, sex="male", urgency=2, las=50.0),
 }
-GRANULARITIES = ("classic", "state", "full")
+GRANULARITIES = ("state", "full")
 
 
 def _snapshot() -> dict:

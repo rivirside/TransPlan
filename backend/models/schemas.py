@@ -52,7 +52,9 @@ class PatientProfile(BaseModel):
 
     @model_validator(mode="after")
     def validate_bbn_granularity(self):
-        if self.bbn_granularity not in ("classic", "state", "full"):
+        # #293: 'classic' (22 cities) retired — coerce it (and anything
+        # unknown) to the state default
+        if self.bbn_granularity not in ("state", "full"):
             self.bbn_granularity = "state"
         return self
 
