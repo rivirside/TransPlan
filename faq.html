@@ -89,13 +89,14 @@
             <details class="faq-item">
                 <summary>How does blood type affect my wait time?</summary>
                 <div class="faq-answer">
-                    <p>Blood type significantly affects organ allocation because donors and recipients must be blood-type compatible. The impact varies by organ:</p>
+                    <p>Blood type affects allocation because donors and recipients have to be compatible, which changes the size of the donor pool available to you:</p>
                     <ul>
-                        <li><strong>Type O</strong> — can only receive from type O donors (longest wait for kidneys)</li>
-                        <li><strong>Type A</strong> — can receive from types A and O</li>
-                        <li><strong>Type B</strong> — can receive from types B and O (often longer waits due to fewer B donors)</li>
-                        <li><strong>Type AB</strong> — universal recipient, can receive from any blood type (shortest wait)</li>
+                        <li><strong>Type O</strong> can receive only from type O donors, and waits longest for a kidney</li>
+                        <li><strong>Type A</strong> can receive from types A and O</li>
+                        <li><strong>Type B</strong> can receive from types B and O, and often waits longer because there are fewer type B donors</li>
+                        <li><strong>Type AB</strong> can receive from any blood type and generally waits the least</li>
                     </ul>
+                    <p>There is one important exception that is easy to miss. Since the kidney allocation system changed in December 2014, type B candidates can also accept kidneys from certain A and AB donors whose subtype is A2 (also written non-A1 and non-A1B). These organs behave like type O for a type B recipient, and taking them can meaningfully shorten a type B candidate's wait. The catch is that offering this is a program decision, not an automatic one: OPTN has reported that the large majority of transplant programs perform none of these transplants at all. If you are type B, ask your program directly whether it accepts A2 and A2B kidneys, because a program that does not is leaving that shortcut unused. See <a href="#what-my-program-decides">what does my transplant program decide</a>.</p>
                     <p>transplant.today incorporates blood type into its Monte Carlo simulation to estimate personalized wait time probabilities.</p>
                 </div>
             </details>
@@ -114,19 +115,76 @@
                 </div>
             </details>
 
-            <details class="faq-item">
+            <details class="faq-item" id="how-allocation-works">
                 <summary>How are organs allocated in the United States?</summary>
                 <div class="faq-answer">
-                    <p>UNOS (United Network for Organ Sharing) manages the national organ allocation system. When a donor organ becomes available, UNOS generates a match list based on:</p>
+                    <p>Deceased-donor allocation works in two layers, and it is worth keeping them separate because they are governed by different people.</p>
+                    <p><strong>The national layer.</strong> Each time a deceased donor's organs become available, UNOS runs one computerized "match run" for that donor under OPTN policy. It produces a ranked list of candidates. The ranking depends on:</p>
                     <ul>
-                        <li><strong>Medical urgency</strong> — sicker patients may receive priority</li>
-                        <li><strong>Blood type compatibility</strong> — must be ABO-compatible</li>
-                        <li><strong>Tissue typing / HLA matching</strong> — especially important for kidneys</li>
-                        <li><strong>Time on waitlist</strong> — longer-waiting patients get priority</li>
-                        <li><strong>Geographic proximity</strong> — organs are offered locally first, then regionally, then nationally</li>
-                        <li><strong>Organ-specific scores</strong> — MELD (liver), LAS (lung), heart allocation tiers</li>
+                        <li><strong>Medical urgency</strong>, scored differently for each organ (MELD for liver, status tiers for heart, the Composite Allocation Score for lung)</li>
+                        <li><strong>Blood type compatibility</strong>, which is required</li>
+                        <li><strong>Tissue typing and sensitization</strong> (cPRA), which matter most for kidney</li>
+                        <li><strong>Accrued waiting time</strong>, which weighs most heavily for kidney</li>
+                        <li><strong>Distance from the donor hospital</strong>, measured in nautical miles rather than by state or region</li>
+                        <li><strong>Pediatric priority and prior living donor priority</strong></li>
                     </ul>
-                    <p>Learn more on our <a href="education.html">Education</a> page or at <a href="https://unos.org" target="_blank" rel="noopener">unos.org</a>.</p>
+                    <p><strong>The program layer.</strong> Your transplant program decides whether to list you at all, and whether to accept each organ it is offered on your behalf. Those decisions belong to the program rather than to OPTN policy, and they differ substantially between centers. See <a href="#what-my-program-decides">what does my transplant program decide</a> below.</p>
+                    <p>Learn more on our <a href="education.html">Education</a> page or at <a href="https://unos.org/transplant/how-we-match-organs/" target="_blank" rel="noopener">unos.org</a>.</p>
+                </div>
+            </details>
+
+            <details class="faq-item" id="what-my-program-decides">
+                <summary>What does my transplant program decide, and what does the national system decide?</summary>
+                <div class="faq-answer">
+                    <p>The national system decides the <em>order</em> in which candidates are offered a particular deceased-donor organ. Your program decides almost everything around that order, and those decisions are where much of the difference between centers comes from.</p>
+                    <p><strong>Set by OPTN policy, identical everywhere:</strong> the ranking logic of the match run for each deceased donor. A program cannot move its own patient up the list.</p>
+                    <p><strong>Decided by your program:</strong></p>
+                    <ul>
+                        <li><strong>Whether to list you.</strong> Federal regulation (42 CFR 482.90) requires each program to use written patient selection criteria and to document which criteria it applied to you. It does not tell programs what those criteria should be. Age limits, BMI thresholds, sobriety periods, psychosocial requirements, and caregiver-support requirements are set center by center and vary widely.</li>
+                        <li><strong>Whether to accept an offer for you.</strong> When the match run reaches your name, your program decides accept or decline, usually within about an hour, and often without contacting you.</li>
+                        <li><strong>Which kinds of organs it is willing to use</strong>, such as higher-KDPI kidneys, donation after circulatory death, hepatitis C positive donors, or A2 and A2B kidneys for type B candidates.</li>
+                        <li><strong>Whether to request an urgency status exception</strong> for you, for heart, liver, and lung. The requested upgrade takes effect immediately and is reviewed by a regional or national review board afterward, so how aggressively your center files exceptions affects your priority.</li>
+                        <li><strong>Which of its own patients gets the organ</strong>, in the specific pathways described in the next question.</li>
+                    </ul>
+                    <p>One practical note. Programs must give you a copy of their written selection criteria if you ask, but they are not required to publish them. A 2025 review of 255 US kidney program websites found only about 2.6 percent of the selection-criteria items that guidelines recommend disclosing were actually posted online. Ask your coordinator for the written criteria rather than assuming the website is complete.</p>
+                    <p>Sources: <a href="https://www.ecfr.gov/current/title-42/chapter-IV/subchapter-G/part-482/subpart-E" target="_blank" rel="noopener">42 CFR 482 subpart E</a>, <a href="https://ai.jmir.org/2025/1/e74066" target="_blank" rel="noopener">JMIR AI 2025 transparency study</a>, <a href="https://www.hrsa.gov/optn/about/governance/review-boards" target="_blank" rel="noopener">OPTN review boards</a>.</p>
+                </div>
+            </details>
+
+            <details class="faq-item" id="program-picks-recipient">
+                <summary>Can my transplant program choose which of its own patients gets an organ?</summary>
+                <div class="faq-answer">
+                    <p>Yes, in specific situations. Most of the time the match run sets the order and the program only accepts or declines. But there are pathways where the program itself selects the recipient from among its own listed candidates, which means two programs with identical waiting lists could genuinely choose different people.</p>
+                    <p><strong>Non-directed living donors.</strong> When someone donates a kidney without a specific recipient in mind, no deceased-donor match run applies, because the national algorithm is built around deceased-donor characteristics. The program decides which of its candidates receives that kidney, or enters the donor into a paired-exchange chain. OPTN policy explicitly leaves the choice of who receives a chain-ending kidney to the transplant hospital. How the program weighs time waiting against medical urgency, expected benefit, or degree of sensitization is its own judgment, made through its selection committee. Note that most US paired exchange runs through private registries such as the National Kidney Registry and the Alliance for Paired Kidney Donation rather than OPTN's own smaller program, and their rules differ, so ask which registry your center uses.</p>
+                    <p><strong>Allocation out of sequence.</strong> When an organ is at risk of not being placed, because many centers have declined it or because time and logistics threaten its viability, it may be placed outside the strict match-run order. The organ procurement organization approaches a center directly, and the accepting center then chooses which of its own candidates receives it.</p>
+                    <p>This practice grew quickly, from about 2.3 percent of deceased-donor kidney placements in 2020 to roughly 16 percent by 2023, and it varied enormously between organ procurement organizations, from none at all to more than 40 percent. That growth drew serious criticism, because recipients of these organs skew toward patients who are older, male, and privately insured, while candidates who are highly sensitized or pediatric can be passed over.</p>
+                    <p><strong>This area is actively changing right now.</strong> In February 2025 HRSA directed the OPTN that the governing federal regulations do not actually authorize out-of-sequence offers as they had been practiced, and told the OPTN to build formal expedited-placement policy instead. Draft proposals went to HRSA and the OPTN board in January 2026 and were still under review as of August 2026. If you are reading this to understand current rules, check the OPTN site rather than relying on this paragraph. One narrower pathway, expedited liver placement, has been settled policy since March 2021.</p>
+                    <p>So if your ethics course framed this as a committee deciding how to prioritize among a program's existing candidates for an available organ, that describes real pathways rather than a hypothetical.</p>
+                    <p>Sources: <a href="https://www.hrsa.gov/optn/policies-bylaws/policy-issues/allocation-out-of-sequence-aoos" target="_blank" rel="noopener">OPTN allocation out of sequence</a>, <a href="https://www.hrsa.gov/sites/default/files/hrsa/optn/hrsa-directive-to-optn-on-aoos-022125.pdf" target="_blank" rel="noopener">HRSA directive, February 2025</a>, <a href="https://amjtransplant.org/article/S1600-6135(24)00525-2/abstract" target="_blank" rel="noopener">prevalence of out-of-sequence kidney allocation</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8720056/" target="_blank" rel="noopener">chain-end allocation study</a>.</p>
+                </div>
+            </details>
+
+            <details class="faq-item" id="program-oversight">
+                <summary>Who oversees the decisions my program makes about me?</summary>
+                <div class="faq-answer">
+                    <p>Oversight is real but it is mostly internal to the program, which surprises many patients.</p>
+                    <p><strong>The selection committee.</strong> Listing decisions are made by a multidisciplinary committee, typically surgeons, physicians, coordinators, social workers, dietitians, and often a psychologist or psychiatrist. Programs are expected to have a defined, documented selection process, but no federal rule prescribes who sits on the committee or how it votes, and published reviews describe committee practice as varying considerably between centers.</p>
+                    <p><strong>Hospital ethics committees.</strong> Many programs bring difficult cases to an institutional ethics committee, and this is where the ethics oversight taught in medical school lives. It is standard practice rather than a federal requirement for individual candidate selection.</p>
+                    <p><strong>The independent living donor advocate.</strong> For living donation there is a specific mandated safeguard. Every program doing living-donor transplants must provide an independent living donor advocate, required by 42 CFR 482.98(d) and by OPTN policy. The advocate represents the donor's interests, not the recipient's or the program's, must be knowledgeable about living donation, medical ethics, and informed consent, and must not be routinely involved in the program's transplant activities. Prospective donors have to be told who this person is and how to reach them.</p>
+                    <p><strong>Above all of it, OPTN itself.</strong> Worth knowing that OPTN governance is currently mid-restructuring. Since 2023 the federal government has been breaking the single long-standing contractor model into multiple contractors, and an independent 34-member OPTN board was announced in June 2025. Allocation rules are being made by a structure still in transition.</p>
+                    <p>Sources: <a href="https://www.law.cornell.edu/cfr/text/42/482.98" target="_blank" rel="noopener">42 CFR 482.98</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12129203/" target="_blank" rel="noopener">review of selection committee ethics</a>, <a href="https://www.hrsa.gov/optn-modernization/updates/may-2026" target="_blank" rel="noopener">HRSA OPTN modernization updates</a>.</p>
+                </div>
+            </details>
+
+            <details class="faq-item" id="why-centers-differ">
+                <summary>Why do two centers with similar patients get different results?</summary>
+                <div class="faq-answer">
+                    <p>Largely because they make different decisions about which organs to accept. This is one of the better-measured effects in transplant research.</p>
+                    <p>For heart transplant, after adjusting for donor, recipient, and geographic differences, centers varied from about 12 percent to about 62 percent in how often they accepted the first organ they were offered for a candidate. Each 10 percent increase in a center's adjusted acceptance rate was associated with roughly a 27 percent lower risk of dying on the waitlist. Candidates at the most conservative centers had the highest waitlist mortality.</p>
+                    <p>The part that matters most: organs accepted at first rank showed no worse five-year survival or graft failure than organs accepted further down the list. Declining aggressively did not buy better outcomes for the patients who eventually got transplanted. It mostly meant longer waits and more deaths before transplant.</p>
+                    <p>Acceptance behavior also varies by patient. One analysis found Black heart candidates were about 24 percent less likely than white candidates to have a first offer accepted on their behalf, with smaller gaps for liver and lung. Because the national score does not account for what a center does with an offer, this kind of variation compounds rather than corrects existing disadvantage.</p>
+                    <p>This is worth asking your program about directly. Reasonable questions: what fraction of offers do you accept for patients like me, will you use higher-KDPI or DCD or hepatitis C positive donors, and how quickly would you expect to accept something for me.</p>
+                    <p>Sources: <a href="https://jamanetwork.com/journals/jamacardiology/fullarticle/2764757" target="_blank" rel="noopener">JAMA Cardiology on center offer acceptance</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11275659/" target="_blank" rel="noopener">racial gaps in offer acceptance</a>.</p>
                 </div>
             </details>
 
@@ -155,45 +213,55 @@
                 </div>
             </details>
 
-            <details class="faq-item">
-                <summary>Can I transfer my waitlist position to another center?</summary>
+            <details class="faq-item" id="waiting-time-transfer">
+                <summary>Do I lose my accrued waiting time if I add or switch centers?</summary>
                 <div class="faq-answer">
-                    <p>You cannot directly transfer your accumulated wait time from one center to another. However, UNOS policy does allow your wait time at one center to count toward priority at another center if you transfer your care.</p>
-                    <p>The specifics depend on the organ and the centers involved. Your transplant coordinator at both centers can help navigate the transfer process. This is another reason why <a href="compare.html">comparing centers</a> before listing is valuable.</p>
+                    <p>It depends on the organ, and the difference is bigger than most patients expect.</p>
+                    <p><strong>Kidney: your time is not tied to a center at all.</strong> Kidney waiting time starts at the earlier of the day you began regular dialysis or the day a documented eGFR or creatinine clearance of 20 mL/min or less was recorded. That is a clinical milestone, not a registration date, so any kidney program calculating your qualifying date arrives at the same answer. Adding a second center does not reset your clock. Since July 27, 2022, this calculation is race-neutral, and candidates whose earlier eGFR values were adjusted for race can have waiting time restored.</p>
+                    <p><strong>Liver, heart, lung, and intestine: the clock is per program.</strong> Waiting time at each hospital starts on the day that hospital listed you, so a new listing starts a new clock there. This matters less than it sounds, because for these organs medical urgency (MELD or PELD, status tier, Composite Allocation Score) drives allocation far more than accrued time does.</p>
+                    <p>Separately from adding a center, you can formally request that your primary waiting time transfer between programs when you move your care. Both programs have to agree. Ask the coordinators at both centers to start this, and confirm in writing that it went through before you rely on it.</p>
                 </div>
             </details>
 
             <details class="faq-item">
                 <summary>What happens if I become too sick for transplant?</summary>
                 <div class="faq-answer">
-                    <p>If your health deteriorates significantly, the transplant team may temporarily place you "on hold" (Status 7 for kidneys) or remove you from the waitlist. This can happen if:</p>
+                    <p>If your health deteriorates significantly, the transplant team may make your listing <strong>inactive</strong> (older documents call this Status 7) or remove you from the waitlist. This can happen if:</p>
                     <ul>
                         <li>You develop an active infection</li>
                         <li>A new cancer diagnosis requires treatment first</li>
                         <li>Your overall condition makes surgery too risky</li>
                     </ul>
-                    <p>Being removed from the waitlist doesn't mean you can never be re-listed. Once the issue is resolved, your team can re-activate your listing, and your prior wait time is preserved. The "Removed (too ill)" statistic shown on our center pages reflects these cases.</p>
+                    <p>Going inactive is not the same as being removed. Kidney candidates keep accruing waiting time while inactive, and once the issue resolves your team can reactivate the listing. But an inactive listing receives no organ offers, so the accruing time only pays off if you actually get reactivated, and studies of the kidney waitlist have found that many candidates listed as inactive never are. It is reasonable to ask your team directly what has to change for you to become active again, and to keep asking. The "Removed (too ill)" statistic on our center pages reflects candidates who came off the list entirely.</p>
                 </div>
             </details>
 
-            <details class="faq-item">
+            <details class="faq-item" id="allocation-geography">
                 <summary>How does geographic distance affect organ offers?</summary>
                 <div class="faq-answer">
-                    <p>Since 2021, UNOS uses concentric distance circles (measured in nautical miles from the donor hospital) for most organs. Organs are offered first to patients within 250 nautical miles, then 500, then nationally. This replaced the older regional/DSA-based system.</p>
-                    <p>This means your center's proximity to donor hospitals matters. Centers in areas with higher donor rates (often correlated with traffic fatality rates and donor registration rates) may have shorter wait times. transplant.today factors this into its scoring.</p>
+                    <p>Distance is measured in nautical miles from the <strong>donor hospital</strong> to the hospital where you are listed. Donation Service Areas and UNOS regions, the older fixed boundaries, have been removed from allocation. The details differ by organ:</p>
+                    <ul>
+                        <li><strong>Kidney and pancreas</strong> (since March 15, 2021): candidates within a 250 nautical mile circle around the donor hospital are considered first. Inside that circle you earn up to 2 proximity points, scaling down to zero at the edge. If the organ travels further, candidates outside the circle can earn up to 4 proximity points, scaling down out to 2,500 nautical miles.</li>
+                        <li><strong>Liver and intestine</strong> (since February 4, 2020): "acuity circles" of 150, 250, and 500 nautical miles, entered in an order that depends on MELD or PELD score and Status 1 urgency.</li>
+                        <li><strong>Lung</strong> (since March 9, 2023): distance is one weighted component of the Composite Allocation Score rather than a separate circle step. Its weight was raised from 10 to 15 points after the initial rollout.</li>
+                        <li><strong>Heart</strong>: urgency status tiers, each offered within 250 nautical miles before widening.</li>
+                    </ul>
+                    <p>Because distance is measured to your listing hospital, where you are listed changes which match runs you appear on. Centers drawing on areas with more donors relative to demand tend to have shorter waits. transplant.today factors donor supply and allocation distance into its scoring.</p>
+                    <p>OPTN is gradually replacing circles with "continuous distribution," a single weighted score. Lung has moved; kidney, liver, and heart are still in development as of August 2026.</p>
                 </div>
             </details>
 
-            <details class="faq-item">
-                <summary>What are cPRA, MELD, and LAS scores?</summary>
+            <details class="faq-item" id="clinical-scores">
+                <summary>What are cPRA, MELD, and CAS scores?</summary>
                 <div class="faq-answer">
-                    <p>These are organ-specific clinical scores used in allocation:</p>
+                    <p>These are the organ-specific clinical scores used in allocation:</p>
                     <ul>
-                        <li><strong>cPRA (Calculated Panel Reactive Antibodies)</strong> — Kidney. Measures how sensitized you are to donor antigens. Higher cPRA (0-100%) means fewer compatible donors, so highly sensitized patients get priority points.</li>
-                        <li><strong>MELD (Model for End-Stage Liver Disease)</strong> — Liver. Predicts 90-day mortality without transplant using lab values (bilirubin, INR, creatinine). Scores range from 6-40; higher = sicker = more priority.</li>
-                        <li><strong>LAS (Lung Allocation Score)</strong> — Lung. Balances urgency (risk of death without transplant) against expected post-transplant survival. Higher LAS = more priority.</li>
+                        <li><strong>cPRA (calculated panel reactive antibody)</strong>, kidney. Measures how sensitized you are to donor antigens. A higher cPRA, on a 0 to 100 percent scale, means fewer compatible donors, so highly sensitized candidates earn priority points to offset that.</li>
+                        <li><strong>MELD (Model for End-Stage Liver Disease)</strong>, liver. Predicts short-term mortality without transplant from lab values including bilirubin, INR, creatinine, and sodium. Scores run from 6 to 40, and a higher score means more priority.</li>
+                        <li><strong>CAS (Composite Allocation Score)</strong>, lung. Replaced the Lung Allocation Score on March 9, 2023. Rather than a single urgency-versus-benefit score, CAS adds up weighted points across medical urgency, expected post-transplant survival, biological disadvantage such as blood type and height, placement efficiency (distance), pediatric priority, and prior living donor status. The weights have already been revised once since 2023, so check the OPTN CAS calculator for the current table.</li>
                     </ul>
-                    <p>transplant.today lets you enter these scores in the simulator for more personalized wait time estimates. Learn more on our <a href="education.html">Education</a> page.</p>
+                    <p>Heart uses urgency status tiers rather than a single composite score.</p>
+                    <p>transplant.today lets you enter these scores in the simulator for more personalized wait time estimates. One caveat we want to be upfront about: the simulator's lung input still uses the retired LAS scale rather than CAS, which we track as a known limitation. Learn more on our <a href="education.html">Education</a> page.</p>
                 </div>
             </details>
 
