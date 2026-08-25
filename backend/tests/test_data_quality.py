@@ -106,3 +106,47 @@ class TestProvenanceHonesty:
                            center_codes=["ZZZZ"])
         with pytest.raises(ValueError, match="center_codes"):
             simulate_bbn(p)
+
+
+class TestExtensibleProvenance:
+    """#340: the tag registry is data-driven — new families must not require
+    touching every consumer, and /score must not mutate a shared dict."""
+
+    def test_five_tag_families(self):
+        from services import provenance
+        assert len(provenance.ALL_TAGS) == 5
+        assert provenance.TAG_ACCEPTANCE in provenance.ALL_TAGS
+        assert provenance.TAG_TRENDS in provenance.ALL_TAGS
+
+    def test_summary_covers_every_family(self, kidney_patient):
+        from services import provenance
+        result = simulate(kidney_patient, n_iterations=100, seed=1)
+        dq = result.data_quality
+        for tag in provenance.ALL_TAGS:
+            family = provenance.FAMILIES[tag][0]
+            assert family in dq, f"summary missing family {family}"
+            fam = dq[family]
+            assert sum(fam.values()) == dq["centers_total"]
+
+    def test_acceptance_tag_fires_for_missing_center_factor(self):
+        from services.provenance import center_data_quality, TAG_ACCEPTANCE
+        from services.data_loader import get_data
+        ar = get_data().acceptance_rates.get("center_acceptance_factors", {})
+        # find a kidney center without an acceptance factor
+        centers = get_data().centers_for_organ("kidney")
+        missing = next((c["code"] for c in centers
+                        if "kidney" not in ar.get(c["code"], {})), None)
+        if missing is None:
+            pytest.skip("every kidney center has an acceptance factor")
+        assert TAG_ACCEPTANCE in center_data_quality("kidney", missing)
+
+    def test_scoring_summary_shape(self):
+        """The /score summary excludes non-scoring families WITHOUT mutating
+        the shared summarize() result."""
+        from services.provenance import scoring_summary
+        dq = scoring_summary("kidney", ["PAPT", "OHCC", "ZZZZ"],
+                             spatial_layers_unavailable=["air_quality"])
+        assert "competing_risks" not in dq
+        assert dq["centers_total"] == 3
+        assert dq["spatial_layers_unavailable"] == ["air_quality"]
+        assert "wait_time_factors" in dq

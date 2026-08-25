@@ -451,10 +451,8 @@ def simulate(
     city_results.sort(key=lambda c: c.p_transplant_24mo, reverse=True)
 
     # Response-level provenance summary (#300)
-    dq_summary = None
-    if city_results:
-        from services.provenance import summarize
-        dq_summary = summarize([c.data_quality or [] for c in city_results])
+    from services.provenance import summarize_cities
+    dq_summary = summarize_cities(city_results)
     vintage = get_data().srtr_vintage()
 
     elapsed = time.perf_counter() - start

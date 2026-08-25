@@ -235,11 +235,24 @@
     if (degraded === 0) {
       el.textContent = 'Data: center-level SRTR inputs for all ' + dq.centers_total + ' centers.' + vintageText;
     } else {
+      // Render every family the backend reports (#340: extensible — new tag
+      // families appear here without a frontend change)
+      var labels = {
+        wait_time_factors: 'wait', competing_risks: 'risk',
+        observed_outcomes: 'outcomes', acceptance_rates: 'acceptance',
+        trend_series: 'trends'
+      };
+      var parts = [];
+      Object.keys(dq).forEach(function (key) {
+        var fam = dq[key];
+        if (!fam || typeof fam !== 'object' || Array.isArray(fam)) return;
+        var bad = (fam.national_default !== undefined) ? fam.national_default : fam.missing;
+        if (typeof bad === 'number' && bad > 0) {
+          parts.push(bad + ' ' + (labels[key] || key.replace(/_/g, ' ')));
+        }
+      });
       el.textContent = 'Data note: ' + degraded + ' of ' + dq.centers_total +
-        ' centers use partial national-default inputs (' +
-        (dq.wait_time_factors ? dq.wait_time_factors.national_default : 0) + ' wait, ' +
-        (dq.competing_risks ? dq.competing_risks.national_default : 0) + ' risk, ' +
-        (dq.observed_outcomes ? dq.observed_outcomes.missing : 0) + ' outcomes).' + vintageText;
+        ' centers use partial national-default inputs (' + parts.join(', ') + ').' + vintageText;
     }
     el.style.display = '';
   }
