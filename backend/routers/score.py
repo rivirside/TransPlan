@@ -73,6 +73,7 @@ async def score_centers(patient: PatientProfile):
         dq.pop("competing_risks", None)
         dq["spatial_layers_unavailable"] = unavailable_spatial_layers()
 
+    from services.data_loader import get_data
     elapsed = time.perf_counter() - t0
     return ScoringResult(
         patient=patient,
@@ -80,6 +81,7 @@ async def score_centers(patient: PatientProfile):
         total_centers=len(centers),
         elapsed_seconds=round(elapsed, 3),
         data_quality=dq,
+        data_vintage=get_data().srtr_vintage(),
     )
 
 

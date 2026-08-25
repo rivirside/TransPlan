@@ -455,6 +455,7 @@ def simulate(
     if city_results:
         from services.provenance import summarize
         dq_summary = summarize([c.data_quality or [] for c in city_results])
+    vintage = get_data().srtr_vintage()
 
     elapsed = time.perf_counter() - start
     n_centers = len(city_results)
@@ -470,4 +471,5 @@ def simulate(
         elapsed_seconds=round(elapsed, 3),
         seed_used=seed,
         data_quality=dq_summary,
+        data_vintage=vintage,
     )

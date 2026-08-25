@@ -63,6 +63,8 @@ class TransPlanData:
     cbsa_centroids: dict = field(default_factory=dict)
     # freshness metadata keyed by logical name
     freshness: dict = field(default_factory=dict)
+    # {name: {source, fetched}} from each file's _meta (#334 vintage disclosure)
+    sources: dict = field(default_factory=dict)
 
     @property
     def wait_time_factors(self) -> dict[str, float]:
@@ -73,6 +75,25 @@ class TransPlanData:
     def center_volumes(self) -> dict[str, dict[str, int]]:
         """Shortcut to organ → city → annual volume."""
         return self.srtr_reports.get("centerVolumes", {})
+
+    def srtr_vintage(self) -> dict:
+        """Which SRTR release the model inputs come from (#334).
+
+        Results reflect the cohorts behind that release (typically 1-3 years
+        old) — surfaced on responses so users never mistake them for
+        current-day allocation behavior.
+        """
+        wt = self.sources.get("wait_time_distributions", {}) or {}
+        return {
+            "srtr_source": wt.get("source", ""),
+            "fetched": wt.get("fetched", ""),
+            "note": (
+                "Estimates are built from SRTR program-specific report data; "
+                "they reflect the patient cohorts behind that release "
+                "(typically 1-3 years before its date), not real-time "
+                "allocation behavior."
+            ),
+        }
 
     def observed_outcome(self, organ: str, center_code: str) -> dict | None:
         """Per-center observed 12-month outcome rates (%) from SRTR Table B7.
@@ -157,6 +178,10 @@ def _load_json(path: Path, name: str, data: TransPlanData) -> dict:
             raw = json.load(f)
         meta = raw.get("_meta", {})
         data.freshness[name] = meta.get("fetchedAt", "unknown")
+        data.sources[name] = {
+            "source": meta.get("source", ""),
+            "fetched": meta.get("fetchedAt", ""),
+        }
         # Strip _meta so callers get clean dicts
         return {k: v for k, v in raw.items() if k != "_meta"}
     except FileNotFoundError:

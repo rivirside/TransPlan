@@ -10,7 +10,12 @@ class PatientProfile(BaseModel):
         pattern=r"^(A|B|AB|O)[+-]$",
         examples=["O+", "A-", "AB+"],
     )
-    age: int = Field(..., ge=1, le=99)
+    age: int = Field(
+        ..., ge=18, le=99,
+        description="Adult (18+) candidates only: every multiplier is "
+                    "adult-derived and pediatric allocation is a different "
+                    "system — a sub-18 input would silently get wrong "
+                    "numbers. Pediatric mode is tracked in #335.")
     sex: Literal["male", "female"]
     urgency: int = Field(..., ge=1, le=4)
     insurance: Optional[Literal["medicare", "medicaid", "private", "uninsured"]] = None
@@ -18,8 +23,19 @@ class PatientProfile(BaseModel):
     height_inches: Optional[float] = Field(None, gt=0, lt=120)
     # Organ-specific scores
     cpra: Optional[int] = Field(None, ge=0, le=100, description="Kidney only: % panel reactive antibodies")
-    meld: Optional[int] = Field(None, ge=6, le=40, description="Liver only: MELD score")
-    las: Optional[float] = Field(None, ge=0, le=100, description="Lung only: Lung Allocation Score")
+    meld: Optional[int] = Field(None, ge=6, le=40, description="Liver only: MELD 3.0 score (the score in use since 2023; 6-40)")
+    las: Optional[float] = Field(
+        None, ge=0, le=100,
+        description="Lung only: legacy Lung Allocation Score (superseded by "
+                    "CAS in March 2023). If omitted and cas is given, an "
+                    "effective LAS is derived via the documented quantile "
+                    "mapping (#303)")
+    cas: Optional[float] = Field(
+        None, ge=0, le=100,
+        description="Lung only: Composite Allocation Score (the score in use "
+                    "since March 2023). Mapped to an effective LAS for the "
+                    "LAS-era multiplier tables — see "
+                    "distributions.cas_to_effective_las (#303)")
     # Relocation comparison
     home_center: Optional[str] = Field(None, description="Patient's current transplant listing center (city name)")
     # Organ-specific donor availability adjustment
@@ -49,6 +65,18 @@ class PatientProfile(BaseModel):
         description="Restrict scoring/simulation to these SRTR center codes "
                     "(a user's shortlist). None/empty = all centers for the organ."
     )
+
+    @model_validator(mode="after")
+    def derive_las_from_cas(self):
+        # #303: CAS is what lung patients receive today; the multiplier
+        # tables are LAS-era. An explicit las wins; otherwise derive it so
+        # every downstream consumer (which reads .las) works unchanged.
+        # The derived value is visible in the echoed patient — no silent
+        # rewriting of a user-entered field.
+        if self.cas is not None and self.las is None:
+            from services.distributions import cas_to_effective_las
+            self.las = cas_to_effective_las(self.cas)
+        return self
 
     @model_validator(mode="after")
     def validate_bbn_granularity(self):
@@ -138,6 +166,12 @@ class SimulationResult(BaseModel):
                     "family, how many centers used center-level data vs fell "
                     "back to national defaults."
     )
+    data_vintage: Optional[dict] = Field(
+        None,
+        description="Which SRTR release the inputs come from (#334) — "
+                    "estimates reflect that release's cohorts, not "
+                    "real-time allocation behavior",
+    )
 
 
 class CenterScore(BaseModel):
@@ -167,6 +201,12 @@ class ScoringResult(BaseModel):
         description="Data-provenance summary (#219): per-center wait-factor/"
                     "outcomes coverage and any spatial layers that fell back "
                     "to constants."
+    )
+    data_vintage: Optional[dict] = Field(
+        None,
+        description="Which SRTR release the inputs come from (#334) — "
+                    "estimates reflect that release's cohorts, not "
+                    "real-time allocation behavior",
     )
 
 
