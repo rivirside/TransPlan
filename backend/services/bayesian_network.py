@@ -680,6 +680,14 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
                 trends=trends_data,
             ))
 
+    # L-067 (#304): optional user-defined center set (post-filter — the BBN
+    # computes per-region, so restricting output is the meaningful operation)
+    if patient.center_codes:
+        wanted = set(patient.center_codes)
+        filtered = [c for c in city_results if c.center_code in wanted]
+        if filtered:
+            city_results = filtered
+
     city_results.sort(key=lambda c: c.p_transplant_24mo, reverse=True)
 
     elapsed = time.perf_counter() - start

@@ -105,9 +105,14 @@ def _get_trace(organ: str, granularity: str = "classic"):
     return trace
 
 
-def is_available(organ: str) -> bool:
-    """Check if MCMC inference is available for the given organ."""
-    return trace_exists(organ)
+def is_available(organ: str, granularity: str = "classic") -> bool:
+    """Check if MCMC inference is available for the given organ.
+
+    Granularity-aware (#207): a trace at the requested granularity OR any
+    coarser fallback (state → classic) counts as available — mirroring the
+    fallback _get_trace actually performs.
+    """
+    return _select_trace(organ, granularity)[0] is not None
 
 
 def _get_age_bracket(age: int) -> str:

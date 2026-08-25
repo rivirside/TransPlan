@@ -452,6 +452,11 @@ def score_all_centers(patient: dict, custom_weights: dict | None = None) -> list
     """Score all 248 centers for a patient profile, return sorted by total desc."""
     data = get_data()
     centers = data.all_centers.get("centers", {})
+    # L-067 (#304): optional user-defined center set
+    requested = patient.get("center_codes")
+    if requested:
+        wanted = set(requested)
+        centers = {code: c for code, c in centers.items() if code in wanted}
 
     # Resolve weights
     weights = dict(DEFAULT_WEIGHTS)

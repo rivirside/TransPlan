@@ -226,8 +226,22 @@ def build_organ_model(data: dict[str, Any]) -> pm.Model:
         # copula θ at query time.  Wait-time offsets remain independent
         # (supply-side; different causal pathway from mortality/delisting).
 
-        # Wait-time city offsets (independent — supply-driven)
-        sigma_city_wait = pm.HalfNormal("sigma_city_wait", sigma=0.4)
+        # Wait-time city offsets (independent — supply-driven).
+        #
+        # IDENTIFIABILITY (#207, MCMC-09): with ONE observation per center,
+        # obs_i ~ N(offset_i, σ_obs) with offset_i ~ N(0, σ_city) identifies
+        # only σ_city² + σ_obs²; the split is prior-driven. Sampling σ_city
+        # and σ_obs separately puts NUTS on that ridge (kidney full-mode fit:
+        # R-hat 1.07–1.08, ESS ~40 in both centered and non-centered forms).
+        # Reparameterize honestly: sample the IDENTIFIED total spread and an
+        # explicitly prior-driven signal fraction. Offsets stay CENTERED —
+        # with strongly informative per-group likelihoods, centered is the
+        # well-conditioned form (non-centering helps only weak-data groups).
+        sigma_total_wait = pm.HalfNormal("sigma_total_wait", sigma=0.5)
+        frac_signal_wait = pm.Beta("frac_signal_wait", alpha=2.0, beta=2.0)
+        sigma_city_wait = pm.Deterministic(
+            "sigma_city_wait", sigma_total_wait * pm.math.sqrt(frac_signal_wait),
+        )
         city_wait_offset = pm.Normal(
             "city_wait_offset",
             mu=0,
@@ -235,21 +249,40 @@ def build_organ_model(data: dict[str, Any]) -> pm.Model:
             shape=n_cities,
         )
 
-        # Mortality × Delisting: shared frailty via LKJ-Cholesky
-        sigma_city_mort = pm.HalfNormal("sigma_city_mort", sigma=0.4)
-        sigma_city_delist = pm.HalfNormal("sigma_city_delist", sigma=0.4)
-        city_sd = pm.math.stack([sigma_city_mort, sigma_city_delist])
-
-        # LKJ prior: η=2 weakly favors small correlations (regularization)
-        chol, corr, stds = pm.LKJCholeskyCov(
-            "city_mort_delist_chol",
-            n=2,
-            eta=2.0,
-            sd_dist=pm.HalfNormal.dist(sigma=0.4),
-            compute_corr=True,
+        # Mortality × Delisting: shared frailty with an LKJ correlation prior
+        # (η=2 weakly favors small correlations). Same identifiability ridge
+        # as the wait side (one observation per center), so the same
+        # total-spread × signal-fraction reparameterization is applied to
+        # each dimension; the 2x2 Cholesky is built explicitly from the
+        # derived city sigmas and the LKJ correlation. (The old code also had
+        # a bug: separate sigma_city_mort/delist HalfNormals were never
+        # connected to the offsets — the dead `city_sd` stack — so their
+        # posteriors were pure prior.)
+        sigma_total_mort = pm.HalfNormal("sigma_total_mort", sigma=0.5)
+        frac_signal_mort = pm.Beta("frac_signal_mort", alpha=2.0, beta=2.0)
+        sigma_city_mort = pm.Deterministic(
+            "sigma_city_mort", sigma_total_mort * pm.math.sqrt(frac_signal_mort),
+        )
+        sigma_total_delist = pm.HalfNormal("sigma_total_delist", sigma=0.5)
+        frac_signal_delist = pm.Beta("frac_signal_delist", alpha=2.0, beta=2.0)
+        sigma_city_delist = pm.Deterministic(
+            "sigma_city_delist", sigma_total_delist * pm.math.sqrt(frac_signal_delist),
         )
 
-        # (n_cities, 2) joint offsets — columns: [mort, delist]
+        # LKJ(η) on a 2x2 correlation is exactly ρ = 2·Beta(η, η) − 1
+        # (version-proof; this pymc's LKJCorr API lacks return_matrix).
+        rho_beta = pm.Beta("mort_delist_rho_beta", alpha=2.0, beta=2.0)
+        rho = 2.0 * rho_beta - 1.0
+
+        # Explicit 2x2 Cholesky: [[σm, 0], [σd·ρ, σd·√(1-ρ²)]]
+        chol = pm.math.stack([
+            pm.math.stack([sigma_city_mort, 0.0]),
+            pm.math.stack([sigma_city_delist * rho,
+                           sigma_city_delist * pm.math.sqrt(1.0 - rho ** 2)]),
+        ])
+
+        # (n_cities, 2) joint offsets — columns: [mort, delist]. Centered
+        # (see identifiability note above).
         city_joint_offset = pm.MvNormal(
             "city_joint_offset",
             mu=0,
@@ -266,7 +299,7 @@ def build_organ_model(data: dict[str, Any]) -> pm.Model:
         )
 
         # Expose the learned correlation as a named deterministic
-        pm.Deterministic("mort_delist_corr", corr[0, 1])
+        pm.Deterministic("mort_delist_corr", rho)
 
         # ===== Level 2: Patient-level effects =====
 
@@ -292,9 +325,17 @@ def build_organ_model(data: dict[str, Any]) -> pm.Model:
         # Our SRTR-derived point estimates are noisy observations of the
         # true underlying parameters.  Observation noise is learned.
 
-        sigma_obs_wait = pm.HalfNormal("sigma_obs_wait", sigma=0.15)
-        sigma_obs_mort = pm.HalfNormal("sigma_obs_mort", sigma=0.15)
-        sigma_obs_delist = pm.HalfNormal("sigma_obs_delist", sigma=0.15)
+        # sigma_obs_wait is the complement of the wait signal fraction (see
+        # identifiability note above): total² = city² + obs².
+        sigma_obs_wait = pm.Deterministic(
+            "sigma_obs_wait", sigma_total_wait * pm.math.sqrt(1.0 - frac_signal_wait),
+        )
+        sigma_obs_mort = pm.Deterministic(
+            "sigma_obs_mort", sigma_total_mort * pm.math.sqrt(1.0 - frac_signal_mort),
+        )
+        sigma_obs_delist = pm.Deterministic(
+            "sigma_obs_delist", sigma_total_delist * pm.math.sqrt(1.0 - frac_signal_delist),
+        )
         sigma_obs_bt = pm.HalfNormal("sigma_obs_bt", sigma=0.10)
         sigma_obs_urg = pm.HalfNormal("sigma_obs_urg", sigma=0.10)
 

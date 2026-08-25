@@ -380,3 +380,33 @@ class TestScoreExplainTierCap:
         data = r.json()
         n_prov = len(data.get("provenance", data.get("centers_with_provenance", [])) or [])
         assert n_prov > 50
+
+
+# ==================== center_codes shortlist (#304 / L-067) ====================
+
+class TestCenterCodesShortlist:
+    def test_score_restricts_to_shortlist(self):
+        body = {**KIDNEY_PATIENT, "center_codes": ["ALCH", "ALUA", "TNVU"]}
+        data = client.post("/score", json=body).json()
+        codes = {c["code"] for c in data["centers"]}
+        assert codes == {"ALCH", "ALUA", "TNVU"}
+
+    def test_simulate_restricts_to_shortlist(self):
+        body = {**KIDNEY_PATIENT, "center_codes": ["ALCH", "TNVU"]}
+        data = client.post("/simulate?iterations=100", json=body).json()
+        codes = {c["center_code"] for c in data["cities"]}
+        assert codes == {"ALCH", "TNVU"}
+
+    def test_simulate_unknown_codes_400(self):
+        body = {**KIDNEY_PATIENT, "center_codes": ["ZZZZ"]}
+        r = client.post("/simulate?iterations=100", json=body)
+        assert r.status_code == 400
+
+    def test_bbn_restricts_to_shortlist(self):
+        body = {**KIDNEY_PATIENT, "center_codes": ["ALCH", "TNVU"],
+                "bbn_granularity": "full"}
+        r = client.post("/simulate?iterations=100&inference_mode=bayesian&bbn_granularity=full",
+                        json=body)
+        assert r.status_code == 200
+        codes = {c["center_code"] for c in r.json()["cities"]}
+        assert codes == {"ALCH", "TNVU"}

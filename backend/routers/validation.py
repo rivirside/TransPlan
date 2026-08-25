@@ -203,7 +203,8 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
         tier = get_tier()
         if "mcmc" in tier.allowed_inference_modes:
             from services.mcmc_inference import is_available, simulate_mcmc
-            if is_available(request.patient.organ):
+            if is_available(request.patient.organ,
+                            getattr(request.patient, "bbn_granularity", "classic")):
                 mcmc_result = simulate_mcmc(request.patient, n_iterations=min(iters, 200))
                 mcmc_ranks = _result_to_ranks(mcmc_result)
                 engines.append(EngineComparison(

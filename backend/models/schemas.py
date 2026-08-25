@@ -42,6 +42,13 @@ class PatientProfile(BaseModel):
         None,
         description="Custom scoring weights as { category: decimal_fraction }. 8 keys, all >= 0, sum ~1.0"
     )
+    # L-067 (#304): user-defined center set
+    center_codes: Optional[list[str]] = Field(
+        None,
+        max_length=248,
+        description="Restrict scoring/simulation to these SRTR center codes "
+                    "(a user's shortlist). None/empty = all centers for the organ."
+    )
 
     @model_validator(mode="after")
     def validate_bbn_granularity(self):

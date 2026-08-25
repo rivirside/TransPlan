@@ -31,6 +31,7 @@ def _patient_to_dict(patient: PatientProfile) -> dict:
         "meld": patient.meld,
         "las": patient.las,
         "adjust_for_cause_of_death": patient.adjust_for_cause_of_death,
+        "center_codes": patient.center_codes,
     }
 
 
@@ -96,20 +97,7 @@ async def score_centers_with_provenance(
     from tier_config import get_tier
     limit = min(limit, get_tier().max_score_explain_limit)
 
-    patient_dict = {
-        "organ": patient.organ,
-        "blood_type": patient.blood_type,
-        "age": patient.age,
-        "sex": patient.sex,
-        "urgency": patient.urgency,
-        "insurance": patient.insurance,
-        "weight_lbs": patient.weight_lbs,
-        "height_inches": patient.height_inches,
-        "cpra": patient.cpra,
-        "meld": patient.meld,
-        "las": patient.las,
-        "adjust_for_cause_of_death": patient.adjust_for_cause_of_death,
-    }
+    patient_dict = _patient_to_dict(patient)  # single source of truth (#262)
 
     # Run the production scoring path (preserves ranking + tests)
     results = score_all_centers(patient_dict, patient.custom_weights)

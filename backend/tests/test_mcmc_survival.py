@@ -149,7 +149,8 @@ class TestBuildOrganModel:
     def test_free_rvs_count(self):
         data = load_organ_data("kidney")
         model = build_organ_model(data)
-        # 19 named free RV groups
+        # 19 named free RV groups (#207 reparameterization: total-spread +
+        # signal-fraction pairs for wait/mort/delist, Beta-derived LKJ rho)
         assert len(model.free_RVs) == 19
 
     def test_observed_rvs_count(self):
@@ -176,19 +177,35 @@ class TestBuildOrganModel:
         assert "city_delist_offset" in det_names
         assert "mort_delist_corr" in det_names
 
-    def test_joint_offset_in_free_rvs(self):
-        """Model should have city_joint_offset (MvNormal) as a free RV."""
+    def test_wait_variance_reparameterized(self):
+        """#207/MCMC-09: with one observation per center only the TOTAL wait
+        spread is identified — the model samples sigma_total_wait and an
+        explicitly prior-driven signal fraction instead of riding the
+        sigma_city/sigma_obs ridge (which gave R-hat 1.07-1.08 at 248
+        groups)."""
         data = load_organ_data("kidney")
         model = build_organ_model(data)
         free_rv_names = {rv.name for rv in model.free_RVs}
-        assert "city_joint_offset" in free_rv_names
+        det_names = {d.name for d in model.deterministics}
+        # Identified total spread + prior-driven signal fraction are the
+        # free RVs; the derived city/obs sigmas are Deterministics.
+        assert "sigma_total_wait" in free_rv_names
+        assert "frac_signal_wait" in free_rv_names
+        assert "sigma_total_mort" in free_rv_names
+        assert "frac_signal_mort" in free_rv_names
+        assert "sigma_city_wait" in det_names
+        assert "sigma_obs_wait" in det_names
+        assert "city_joint_offset" in free_rv_names  # centered (strong per-group data)
 
-    def test_lkj_cholesky_in_free_rvs(self):
-        """Model should have LKJ Cholesky factor as a free RV."""
+    def test_lkj_correlation_prior_present(self):
+        """The mort/delist correlation carries an LKJ(η=2) prior, implemented
+        as ρ = 2·Beta(2,2) − 1 (exact for a 2x2 correlation matrix)."""
         data = load_organ_data("kidney")
         model = build_organ_model(data)
         free_rv_names = {rv.name for rv in model.free_RVs}
-        assert "city_mort_delist_chol" in free_rv_names
+        det_names = {d.name for d in model.deterministics}
+        assert "mort_delist_rho_beta" in free_rv_names
+        assert "mort_delist_corr" in det_names
 
     @pytest.mark.parametrize("organ", ORGANS)
     def test_model_builds_all_organs(self, organ):
@@ -201,8 +218,7 @@ class TestBuildOrganModel:
         data = load_organ_data("kidney")
         model = build_organ_model(data)
         n_free = sum(v.type.shape.eval() if hasattr(v.type.shape, 'eval') else np.prod(v.type.shape) for v in model.free_RVs)
-        # Should have ~92 free parameters
-        # (but count method varies, just check model built)
+        # Count method varies, just check model built (19 groups post-#207)
         assert len(model.free_RVs) == 19
 
     def test_model_builds_state_granularity(self, data):

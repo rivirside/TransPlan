@@ -268,7 +268,18 @@ def simulate(
     if trend_years > 0:
         from services.trends import get_center_trend_projection, get_trend_projection
 
-    for center in _get_centers(patient.organ):
+    # L-067 (#304): optional user-defined center set
+    centers_to_run = _get_centers(patient.organ)
+    if patient.center_codes:
+        wanted = set(patient.center_codes)
+        centers_to_run = [c for c in centers_to_run if c.get("code") in wanted]
+        if not centers_to_run:
+            raise ValueError(
+                f"None of the requested center_codes perform {patient.organ} "
+                f"transplants (or the codes are unknown)."
+            )
+
+    for center in centers_to_run:
         # Center records have {code, name, state, state_abbr, lat, lon, ...}
         # Fallback records (22-city mode) have {city, state}
         code = center.get("code", "")

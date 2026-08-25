@@ -61,7 +61,7 @@ def run_simulation(
                     detail="MCMC inference unavailable (missing pymc/arviz dependencies)",
                 )
             patient.bbn_granularity = bbn_granularity
-            if not is_available(patient.organ):
+            if not is_available(patient.organ, bbn_granularity):
                 raise HTTPException(
                     status_code=503,
                     detail=f"MCMC trace not available for {patient.organ}. "
@@ -76,6 +76,9 @@ def run_simulation(
         )
     except HTTPException:
         raise
+    except ValueError as e:
+        # e.g. an empty/unknown center_codes shortlist (#304)
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Simulation failed for %s/%s", patient.organ, inference_mode)
         raise HTTPException(status_code=500, detail="Simulation failed — see server logs") from e

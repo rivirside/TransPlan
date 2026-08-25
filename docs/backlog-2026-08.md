@@ -118,7 +118,7 @@ get sourced or refit. Register updated per item.
 
 | # | Item | Issue | Status |
 |---|------|-------|--------|
-| I1 | User-defined center sets (L-067) | #304 | |
+| I1 | User-defined center sets (L-067) | #304 | backend ✅ 2026-08-25; UI follow-up open |
 | I2 | Rh factor input | #180 | |
 | I3 | Mobile responsiveness w/ large results | #224 | |
 | I4 | Print button scope / methodology linking | #197 / #198 | |
@@ -133,7 +133,7 @@ get sourced or refit. Register updated per item.
 | J2 | Inference-mode availability docs | #232 | |
 | J3 | Equity disclaimers hardcoded | #235 | |
 | J4 | BBN docstrings claim pgmpy | #258 | |
-| J5 | Refactors: patient_dict dedup, slim routers | #262 / #264 | |
+| J5 | Refactors: patient_dict dedup, slim routers | #262 ✅ / #264 | |
 
 ## Parked (cannot do solo)
 
