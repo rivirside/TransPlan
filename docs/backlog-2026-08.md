@@ -42,9 +42,9 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | E3 | Decile calibration (T-calibration): predicted vs observed mortality | #295 | ✅ 2026-08-25 |
 | E4 | Cross-iteration model comparison | #137 | |
 | E5 | MCMC calibration via run-center-calibration after #207 | #207 | |
-| E6 | Reframe MCMC as calibrated-uncertainty, not validation (L-061) | #257 | |
+| E6 | Reframe MCMC as calibrated-uncertainty, not validation (L-061) | #257 | ✅ docs/UI reframed 2026-08-25 |
 | E7 | Close #269 COMET-Lung (infeasible, documented) | #269 ✅ CLOSED | |
-| E8 | MCMC-09/27 framing fixes | #257 | |
+| E8 | MCMC-09/27 framing fixes | #257 | ✅ (validation.html header) |
 
 ## Phase F — Model improvements (judged by Phase E numbers)
 

@@ -354,6 +354,7 @@ def fit_organ_model(
     random_seed: int = 42,
     target_accept: float = 0.90,
     granularity: str = "classic",
+    cores: int | None = None,
 ) -> az.InferenceData:
     """
     Build and fit the hierarchical model for one organ.
@@ -378,6 +379,9 @@ def fit_organ_model(
             target_accept=target_accept,
             return_inferencedata=True,
             progressbar=True,
+            # cores=1 runs chains sequentially — needed in environments where
+            # pymc's fork/spawn workers die (headless shells on macOS)
+            **({"cores": cores} if cores else {}),
         )
 
     # Add metadata

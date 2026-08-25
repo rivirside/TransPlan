@@ -56,7 +56,7 @@ TransPlan does NOT claim to replace SRTR, KPSAM/LSAM/TSAM, or COMET. Instead, it
 
 1. **Integration breadth:** Only tool combining competing risks simulation, multi-criteria scoring (8 categories), spatial environmental data (24 layers), equity auditing (Gini), and policy scenario comparison in one platform.
 
-2. **Multi-engine validation:** Three independent inference approaches (MC, BBN, MCMC) cross-validated against each other — no other transplant tool does this.
+2. **Multi-engine uncertainty analysis:** Three inference engines (MC, BBN, MCMC) run on the same inputs with agreement diagnostics. Note the honest framing (#257): the engines share SRTR-derived inputs — MCMC priors are anchored to the same point estimates the MC engine uses — so cross-engine agreement is an internal-consistency check and uncertainty-propagation exercise, **not** independent validation. External evidence comes from the SRTR per-center calibration (ρ 0.70–0.89) and the temporal forecast test (fit on release N, predict N+k at the persistence ceiling; `docs/temporal-forecast-report.md`).
 
 3. **Patient accessibility:** Interactive web interface with both patient-oriented and professional tools. TransplantCenterSearch.org is the only comparable patient-facing tool, but it's descriptive (no modeling).
 
