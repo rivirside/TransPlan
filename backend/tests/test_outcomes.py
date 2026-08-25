@@ -53,26 +53,26 @@ class TestNationalBaselines:
 
 class TestCityOutcomes:
     def test_known_city_has_kidney_outcomes(self, data):
-        outcomes = get_city_outcomes("kidney", "Cleveland")
+        outcomes = get_city_outcomes("kidney", center_code="OHCC")
         assert outcomes is not None
         assert "graft_survival_1yr" in outcomes
         assert "patient_survival_1yr" in outcomes
         assert "performance_rating" in outcomes
 
     def test_performance_rating_valid_values(self, data):
-        outcomes = get_city_outcomes("kidney", "Cleveland")
+        outcomes = get_city_outcomes("kidney", center_code="OHCC")
         assert outcomes["performance_rating"] in (
             "better_than_expected", "as_expected", "worse_than_expected"
         )
 
     def test_unknown_city_returns_none(self, data):
-        assert get_city_outcomes("kidney", "Atlantis") is None
+        assert get_city_outcomes("kidney", center_code="XXXX") is None
 
     def test_invalid_organ_returns_none(self):
-        assert get_city_outcomes("spleen", "Cleveland") is None
+        assert get_city_outcomes("spleen", center_code="OHCC") is None
 
     def test_hazard_ratio_and_ci_present(self, data):
-        outcomes = get_city_outcomes("kidney", "Pittsburgh")
+        outcomes = get_city_outcomes("kidney", center_code="PAPT")
         assert outcomes is not None
         assert outcomes["graft_hr_1yr"] > 0
         ci = outcomes["graft_hr_1yr_ci"]
@@ -80,7 +80,7 @@ class TestCityOutcomes:
         assert ci[0] < ci[1]
 
     def test_n_1yr_present_and_positive(self, data):
-        outcomes = get_city_outcomes("kidney", "Pittsburgh")
+        outcomes = get_city_outcomes("kidney", center_code="PAPT")
         assert outcomes["n_1yr"] > 0
 
 
@@ -90,7 +90,7 @@ class TestCityOutcomes:
 
 class TestSurvivalHelpers:
     def test_graft_survival_returns_center_value(self, data):
-        gs = get_graft_survival_1yr("kidney", "Cleveland")
+        gs = get_graft_survival_1yr("kidney", center_code="OHCC")
         assert gs is not None
         assert 80.0 <= gs <= 100.0
 
@@ -101,7 +101,7 @@ class TestSurvivalHelpers:
         assert gs == national
 
     def test_patient_survival_returns_center_value(self, data):
-        ps = get_patient_survival_1yr("kidney", "Cleveland")
+        ps = get_patient_survival_1yr("kidney", center_code="OHCC")
         assert ps is not None
         assert 80.0 <= ps <= 100.0
 
@@ -153,7 +153,7 @@ class TestCompoundSuccess:
 
 class TestBuildOutcomesDict:
     def test_returns_dict_for_known_city(self, data):
-        result = build_outcomes_dict("kidney", "Cleveland", 0.6)
+        result = build_outcomes_dict("kidney", "Cleveland", 0.6, center_code="OHCC")
         assert result is not None
         assert "graft_survival_1yr" in result
         assert "patient_survival_1yr" in result
@@ -161,26 +161,26 @@ class TestBuildOutcomesDict:
 
     def test_survival_values_are_decimals(self, data):
         """build_outcomes_dict converts percentages to 0-1 decimals."""
-        result = build_outcomes_dict("kidney", "Cleveland", 0.6)
+        result = build_outcomes_dict("kidney", "Cleveland", 0.6, center_code="OHCC")
         assert 0.0 < result["graft_survival_1yr"] <= 1.0
         assert 0.0 < result["patient_survival_1yr"] <= 1.0
 
     def test_compound_success_bounded(self, data):
-        result = build_outcomes_dict("kidney", "Cleveland", 0.6)
+        result = build_outcomes_dict("kidney", "Cleveland", 0.6, center_code="OHCC")
         assert 0.0 < result["compound_success"] <= 1.0
 
     def test_national_baselines_included(self, data):
-        result = build_outcomes_dict("kidney", "Cleveland", 0.6)
+        result = build_outcomes_dict("kidney", "Cleveland", 0.6, center_code="OHCC")
         assert "national_graft_survival_1yr" in result
         assert "national_patient_survival_1yr" in result
 
     def test_hazard_ratio_included(self, data):
-        result = build_outcomes_dict("kidney", "Pittsburgh", 0.5)
+        result = build_outcomes_dict("kidney", "Pittsburgh", 0.5, center_code="PAPT")
         assert "graft_hr_1yr" in result
         assert "graft_hr_1yr_ci" in result
 
     def test_performance_rating_included(self, data):
-        result = build_outcomes_dict("kidney", "Pittsburgh", 0.5)
+        result = build_outcomes_dict("kidney", "Pittsburgh", 0.5, center_code="PAPT")
         assert "performance_rating" in result
 
     def test_unknown_city_uses_national_baselines(self, data):

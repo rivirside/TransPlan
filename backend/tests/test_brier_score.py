@@ -39,11 +39,17 @@ class TestAnalyticalProbability:
         p_high = _analytical_p_transplant_12mo("liver", "A+", "Nashville", meld=35)
         assert p_high > p_low
 
-    def test_short_wait_city_higher_probability(self, data):
-        """Low city factor (St. Louis 0.57) should beat high city factor (San Francisco 2.12)."""
-        p_stl = _analytical_p_transplant_12mo("kidney", "O+", "St. Louis")
-        p_sf = _analytical_p_transplant_12mo("kidney", "O+", "San Francisco")
-        assert p_stl > p_sf
+    def test_short_wait_center_higher_probability(self, data):
+        """Low center wait factor should beat a high one (#293: per-center)."""
+        from services.data_loader import get_data
+        factors = {c: p.get("kidney") for c, p in
+                   get_data().center_wait_times["center_wait_time_factors"].items()
+                   if isinstance(p.get("kidney"), (int, float))}
+        lo = min(factors, key=factors.get)
+        hi = max(factors, key=factors.get)
+        p_lo = _analytical_p_transplant_12mo("kidney", "O+", "x", center_code=lo)
+        p_hi = _analytical_p_transplant_12mo("kidney", "O+", "x", center_code=hi)
+        assert p_lo > p_hi
 
 
 # -- Brier score structure tests --

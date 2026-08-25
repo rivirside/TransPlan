@@ -187,25 +187,19 @@ def _load_center_adjustments(organ: str) -> dict:
     }
 
 
-_region_avg_cache: dict[int, dict[str, float]] = {}
-
-
-def _region_average(center_factors: dict[str, float],
-                    center_region_map: dict[str, str], region: str) -> float:
-    """Mean center factor over all centers in *region* — the reference the
-    state-granularity trace effect was fit against (mirrors
-    mcmc_survival.load_organ_data's region aggregation)."""
-    cache_key = id(center_factors)
-    per_region = _region_avg_cache.get(cache_key)
-    if per_region is None:
-        sums: dict[str, list[float]] = {}
-        for code, factor in center_factors.items():
-            r = center_region_map.get(code)
-            if r is not None and isinstance(factor, (int, float)):
-                sums.setdefault(r, []).append(float(factor))
-        per_region = {r: sum(v) / len(v) for r, v in sums.items() if v}
-        _region_avg_cache[cache_key] = per_region
-    return per_region.get(region, 1.0)
+def _region_averages(center_factors: dict[str, float],
+                     center_region_map: dict[str, str]) -> dict[str, float]:
+    """Mean center factor per region — the reference the state-granularity
+    trace effect was fit against (mirrors mcmc_survival.load_organ_data's
+    region aggregation). Computed once per simulate call; NEVER cache this by
+    id(dict) — CPython reuses object ids after garbage collection.
+    """
+    sums: dict[str, list[float]] = {}
+    for code, factor in center_factors.items():
+        r = center_region_map.get(code)
+        if r is not None and isinstance(factor, (int, float)):
+            sums.setdefault(r, []).append(float(factor))
+    return {r: sum(v) / len(v) for r, v in sums.items() if v}
 
 
 def _compute_center_adjustment(center_factor: float, city_factor: float) -> float:
@@ -313,6 +307,12 @@ def simulate_mcmc(
     except Exception as e:
         logger.warning("Could not load center adjustments: %s — proceeding without", e)
 
+    region_avg_wait = region_avg_mort = region_avg_delist = {}
+    if center_adj is not None and actual_g == "state":
+        region_avg_wait = _region_averages(center_adj["wait_factors"], center_city_map)
+        region_avg_mort = _region_averages(center_adj["mort_factors"], center_city_map)
+        region_avg_delist = _region_averages(center_adj["delist_factors"], center_city_map)
+
     # Iterate over all centers with center-level adjustments (#207/#293)
     if True:
         iteration_targets = []
@@ -342,9 +342,9 @@ def simulate_mcmc(
             center_mort_adj = 1.0
             center_delist_adj = 1.0
             if center_adj is not None and code and actual_g == "state":
-                ref_wait = _region_average(center_adj["wait_factors"], center_city_map, region)
-                ref_mort = _region_average(center_adj["mort_factors"], center_city_map, region)
-                ref_delist = _region_average(center_adj["delist_factors"], center_city_map, region)
+                ref_wait = region_avg_wait.get(region, 1.0)
+                ref_mort = region_avg_mort.get(region, 1.0)
+                ref_delist = region_avg_delist.get(region, 1.0)
 
                 center_wait_adj = _compute_center_adjustment(
                     center_adj["wait_factors"].get(code, 1.0), ref_wait)

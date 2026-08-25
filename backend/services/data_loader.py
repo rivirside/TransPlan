@@ -76,17 +76,6 @@ class TransPlanData:
         """Shortcut to organ → city → annual volume."""
         return self.srtr_reports.get("centerVolumes", {})
 
-    @property
-    def cities(self) -> list[dict[str, str]]:
-        """
-        The 22 focus cities as [{city, state}, ...].
-        Derived from srtr-center-mapping.json at load time.
-        """
-        mapping = self.center_mapping.get("cities", {})
-        if not mapping:
-            return []
-        return [{"city": city, "state": info["state"]} for city, info in mapping.items()]
-
     def observed_outcome(self, organ: str, center_code: str) -> dict | None:
         """Per-center observed 12-month outcome rates (%) from SRTR Table B7.
 

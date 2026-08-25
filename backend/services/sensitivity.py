@@ -95,20 +95,18 @@ def compute_sensitivity(
     """
     start = time.perf_counter()
 
-    # Validate center_code or city name
-    from services.monte_carlo import _get_centers, _get_cities
-    if center_code:
-        from services.data_loader import get_data
-        all_centers = get_data().all_centers.get("centers", {})
-        if center_code not in all_centers:
-            raise ValueError(f"Unknown center code: '{center_code}'")
-        # Use center name as display label
-        city = all_centers[center_code].get("name", city)
-    else:
-        valid_cities = {c["city"] for c in _get_cities()}
-        if city not in valid_cities:
-            # Also check center names
-            pass  # Allow any city name through for backward compat
+    # center_code is required (#293: the legacy 22-city mode was retired)
+    if not center_code:
+        raise ValueError(
+            "center_code is required — the legacy 22-city mode was retired "
+            "(#285). Pick a center code from GET /centers."
+        )
+    from services.data_loader import get_data
+    all_centers = get_data().all_centers.get("centers", {})
+    if center_code not in all_centers:
+        raise ValueError(f"Unknown center code: '{center_code}'")
+    # Use center name as display label
+    city = all_centers[center_code].get("name", city)
 
     if seed is None:
         seed = int(np.random.default_rng().integers(0, 2**31))

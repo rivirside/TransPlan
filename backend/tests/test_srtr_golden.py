@@ -86,13 +86,6 @@ class TestWaitTimeDistributions:
             sigma = self.wt[organ].get("log_sigma", 0)
             assert 0.1 <= sigma <= 3.0, f"{organ} log_sigma {sigma} out of range"
 
-    def test_city_wait_time_factors_present(self):
-        factors = self.wt.get("city_wait_time_factors", {})
-        for city in EXPECTED_CITIES:
-            assert city in factors, f"Missing city factor for {city}"
-            val = factors[city]
-            assert 0.3 <= val <= 3.0, f"{city} factor {val} out of range"
-
 
 # ──────────────────────────────────────────────────────────────────────
 # competing-risks.json
@@ -139,11 +132,6 @@ class TestCompetingRisks:
                     f"{organ} urgency multipliers not monotonic: {vals}"
                 )
 
-    def test_city_adjustments_present(self):
-        adj = self.cr.get("city_adjustments", {})
-        for city in EXPECTED_CITIES:
-            assert city in adj, f"Missing city adjustment for {city}"
-
 
 # ──────────────────────────────────────────────────────────────────────
 # post-transplant-outcomes.json
@@ -178,11 +166,6 @@ class TestPostTransplantOutcomes:
                 assert gs1 >= gs3, (
                     f"{organ}: 1yr survival ({gs1}) should >= 3yr ({gs3})"
                 )
-
-    def test_city_outcomes_present(self):
-        city_out = self.outcomes.get("city_outcomes", {})
-        for city in EXPECTED_CITIES:
-            assert city in city_out, f"Missing city outcomes for {city}"
 
     def test_city_graft_survival_in_range(self):
         city_out = self.outcomes.get("city_outcomes", {})

@@ -32,31 +32,8 @@ from services.trends import get_city_trends
 
 logger = logging.getLogger(__name__)
 
-# Fallback 22 cities — used only when data_loader hasn't loaded yet (e.g. tests)
-_FALLBACK_CITIES = [
-    {"city": "Pittsburgh", "state": "PA"},
-    {"city": "Baltimore", "state": "MD"},
-    {"city": "Philadelphia", "state": "PA"},
-    {"city": "New York", "state": "NY"},
-    {"city": "Minneapolis", "state": "MN"},
-    {"city": "Madison", "state": "WI"},
-    {"city": "Chicago", "state": "IL"},
-    {"city": "Cleveland", "state": "OH"},
-    {"city": "St. Louis", "state": "MO"},
-    {"city": "Indianapolis", "state": "IN"},
-    {"city": "Omaha", "state": "NE"},
-    {"city": "Rochester", "state": "MN"},
-    {"city": "Nashville", "state": "TN"},
-    {"city": "Durham", "state": "NC"},
-    {"city": "Miami", "state": "FL"},
-    {"city": "Dallas", "state": "TX"},
-    {"city": "Houston", "state": "TX"},
-    {"city": "Portland", "state": "OR"},
-    {"city": "Seattle", "state": "WA"},
-    {"city": "San Francisco", "state": "CA"},
-    {"city": "Los Angeles", "state": "CA"},
-    {"city": "Palo Alto", "state": "CA"},
-]
+# (#293: the 22-city _FALLBACK_CITIES list was retired — the data files
+# must be loaded via load_all() before simulation.)
 
 # Fallback state abbreviation to full name
 _FALLBACK_STATE_NAMES = {
@@ -69,27 +46,20 @@ _FALLBACK_STATE_NAMES = {
 }
 
 
-def _get_cities() -> list[dict[str, str]]:
-    """Get city list from data_loader, falling back to hardcoded list."""
-    try:
-        cities = get_data().cities
-        return cities if cities else _FALLBACK_CITIES
-    except RuntimeError:
-        return _FALLBACK_CITIES
-
-
 def _get_centers(organ: str) -> list[dict]:
-    """Get all SRTR centers that perform *organ*, falling back to 22 cities."""
+    """Get all SRTR centers that perform *organ*.
+
+    (#293: the 22-city fallback was retired — an empty result means the data
+    files are not loaded, which is an error worth surfacing, not papering over.)
+    """
     try:
         centers = get_data().centers_for_organ(organ)
-        return centers if centers else _FALLBACK_CITIES
     except RuntimeError:
-        return _FALLBACK_CITIES
-
-
-# Module-level CITIES kept for backward compat (tests, imports).
-# Production code uses _get_centers(organ) which loads from data files.
-CITIES = _FALLBACK_CITIES
+        logger.error("Center data not loaded — call load_all() before simulating")
+        return []
+    if not centers:
+        logger.error("No centers found for organ %s — data files missing?", organ)
+    return centers
 
 
 def _get_state_full_name(state_abbrev: str) -> str | None:

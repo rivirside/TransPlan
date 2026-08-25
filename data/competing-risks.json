@@ -6,7 +6,7 @@
       "https://www.srtr.org/reports/program-specific-reports/"
     ],
     "fetchedAt": "2026-03-20T20:19:55Z",
-    "notes": "Center-level rates from SRTR Table B7. Urgency and clinical multipliers retained from literature estimates."
+    "notes": "Center-level rates from SRTR Table B7. Urgency and clinical multipliers retained from literature estimates. (#293: the legacy 22-city block was retired 2026-08-25 \u2014 per-center data lives in the *-centers.json files.)"
   },
   "kidney": {
     "annual_mortality_rate": 0.0194,
@@ -72,97 +72,6 @@
       "2": 1.0,
       "3": 1.5,
       "4": 2.5
-    }
-  },
-  "city_adjustments": {
-    "_notes": "Center-level mortality and delisting factors relative to national average. Averaged across available organs. Source: SRTR Table B7.",
-    "Pittsburgh": {
-      "mortality_factor": 0.62,
-      "delisting_factor": 0.81
-    },
-    "Baltimore": {
-      "mortality_factor": 0.77,
-      "delisting_factor": 0.92
-    },
-    "Philadelphia": {
-      "mortality_factor": 0.82,
-      "delisting_factor": 1.33
-    },
-    "New York": {
-      "mortality_factor": 1.67,
-      "delisting_factor": 1.09
-    },
-    "Minneapolis": {
-      "mortality_factor": 0.97,
-      "delisting_factor": 0.7
-    },
-    "Madison": {
-      "mortality_factor": 0.75,
-      "delisting_factor": 0.67
-    },
-    "Chicago": {
-      "mortality_factor": 0.47,
-      "delisting_factor": 0.81
-    },
-    "Cleveland": {
-      "mortality_factor": 1.14,
-      "delisting_factor": 1.33
-    },
-    "St. Louis": {
-      "mortality_factor": 0.82,
-      "delisting_factor": 0.69
-    },
-    "Indianapolis": {
-      "mortality_factor": 1.21,
-      "delisting_factor": 0.72
-    },
-    "Omaha": {
-      "mortality_factor": 1.64,
-      "delisting_factor": 1.11
-    },
-    "Rochester": {
-      "mortality_factor": 0.58,
-      "delisting_factor": 0.93
-    },
-    "Nashville": {
-      "mortality_factor": 0.61,
-      "delisting_factor": 0.74
-    },
-    "Durham": {
-      "mortality_factor": 0.75,
-      "delisting_factor": 1.48
-    },
-    "Miami": {
-      "mortality_factor": 1.82,
-      "delisting_factor": 1.26
-    },
-    "Dallas": {
-      "mortality_factor": 0.72,
-      "delisting_factor": 1.07
-    },
-    "Houston": {
-      "mortality_factor": 1.71,
-      "delisting_factor": 0.79
-    },
-    "Portland": {
-      "mortality_factor": 0.37,
-      "delisting_factor": 0.9
-    },
-    "Seattle": {
-      "mortality_factor": 0.74,
-      "delisting_factor": 0.5
-    },
-    "San Francisco": {
-      "mortality_factor": 0.71,
-      "delisting_factor": 0.57
-    },
-    "Los Angeles": {
-      "mortality_factor": 0.83,
-      "delisting_factor": 0.96
-    },
-    "Palo Alto": {
-      "mortality_factor": 0.58,
-      "delisting_factor": 1.19
     }
   }
 }

@@ -156,10 +156,6 @@ for (const srtrFile of ['wait-time-distributions.json', 'competing-risks.json', 
         }
     }
 }
-const ptOutcomes = validateJSON('post-transplant-outcomes.json');
-if (ptOutcomes && Object.keys(ptOutcomes.city_outcomes || {}).length === 0) {
-    addError('post-transplant-outcomes.json: city_outcomes is empty');
-}
 
 // 6d. Per-center climate/trauma layers (#289/#290) — never-shrink guards
 for (const [file, key, minN] of [['climate-scores-centers.json', 'centers', 240],

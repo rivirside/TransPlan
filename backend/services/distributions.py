@@ -22,37 +22,35 @@ from config import DATA_DIR
 logger = logging.getLogger(__name__)
 
 _DISTRIBUTIONS: dict | None = None
-_CITY_FACTORS: dict[str, float] = {}
 _lock = threading.Lock()
 
 
-def _load_distributions() -> tuple[dict, dict[str, float]]:
-    """Load distribution parameters from JSON. Called once at first use."""
+def _load_distributions() -> dict:
+    """Load distribution parameters from JSON. Called once at first use.
+
+    (#293: the 22-city city_wait_time_factors block was retired — location
+    adjustment is center-code-based only.)
+    """
     path = DATA_DIR / "wait-time-distributions.json"
     with open(path, "r", encoding="utf-8") as f:
         raw = json.load(f)
 
-    city_factors = raw.get("city_wait_time_factors", {})
-    # Remove non-city keys
-    city_factors = {k: v for k, v in city_factors.items() if k != "_notes"}
-
-    # Build per-organ distribution params
     organs = {}
     for organ in ("kidney", "liver", "heart", "lung", "pancreas", "intestine"):
         if organ in raw:
             organs[organ] = raw[organ]
 
-    logger.info("Distribution params loaded for %d organs, %d cities", len(organs), len(city_factors))
-    return organs, city_factors
+    logger.info("Distribution params loaded for %d organs", len(organs))
+    return organs
 
 
 def _ensure_loaded() -> None:
     """Lazy-load distribution data on first call (thread-safe)."""
-    global _DISTRIBUTIONS, _CITY_FACTORS
+    global _DISTRIBUTIONS
     if _DISTRIBUTIONS is None:
         with _lock:
             if _DISTRIBUTIONS is None:  # double-checked locking
-                _DISTRIBUTIONS, _CITY_FACTORS = _load_distributions()
+                _DISTRIBUTIONS = _load_distributions()
 
 
 # Issue #64: Use shared implementation from stats_utils
@@ -143,13 +141,14 @@ def get_wait_time_distribution(
     # Blood type modifier
     bt_mult = organ_params.get("blood_type_multipliers", {}).get(blood_type, 1.0)
 
-    # Location modifier — prefer center-code lookup, fall back to city name
+    # Location modifier — center-code lookup only (#293: the 22-city name
+    # fallback was retired; without a center_code the location factor is
+    # national-neutral 1.0, surfaced via the data_quality provenance tags)
+    city_mult = 1.0
     if center_code:
         from services.data_loader import get_data
         center_factors = get_data().center_wait_times.get("center_wait_time_factors", {})
         city_mult = center_factors.get(center_code, {}).get(organ, 1.0)
-    else:
-        city_mult = _CITY_FACTORS.get(city, 1.0)
 
     # Organ-specific clinical modifiers
     clinical_mult = 1.0
@@ -314,12 +313,6 @@ def get_lognorm_params(dist) -> tuple[float, float, float]:
     loc = dist.kwds.get('loc', 0)
     scale = dist.kwds.get('scale', 1.0)
     return s, loc, scale
-
-
-def get_city_factors() -> dict[str, float]:
-    """Return the city wait time factor dict (for inspection/testing)."""
-    _ensure_loaded()
-    return dict(_CITY_FACTORS)
 
 
 def get_organ_params(organ: str) -> dict | None:

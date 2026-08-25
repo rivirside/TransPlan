@@ -7,7 +7,7 @@
       "SRTR PSR Technical Methods: https://www.srtr.org/about-the-data/technical-methods-for-the-program-specific-reports/"
     ],
     "fetchedAt": "2026-03-20T20:19:53Z",
-    "notes": "Empirical center-level data from SRTR. Blood type and clinical multipliers retained from literature-derived estimates (Table B10 does not stratify by blood type)."
+    "notes": "Empirical center-level data from SRTR. Blood type and clinical multipliers retained from literature-derived estimates (Table B10 does not stratify by blood type). (#293: the legacy 22-city block was retired 2026-08-25 \u2014 per-center data lives in the *-centers.json files.)"
   },
   "kidney": {
     "national_median_months": 27.4,
@@ -119,30 +119,5 @@
       "AB-": 0.85
     },
     "clinical_multipliers": {}
-  },
-  "city_wait_time_factors": {
-    "_notes": "Relative to national average (1.0). Computed as average center-median / national-median across available organs. Source: SRTR Table B10.",
-    "Pittsburgh": 1.42,
-    "Baltimore": 1.49,
-    "Philadelphia": 1.74,
-    "New York": 1.07,
-    "Minneapolis": 1.14,
-    "Madison": 0.51,
-    "Chicago": 0.77,
-    "Cleveland": 1.25,
-    "St. Louis": 0.57,
-    "Indianapolis": 1.11,
-    "Omaha": 0.87,
-    "Rochester": 1.01,
-    "Nashville": 0.82,
-    "Durham": 0.78,
-    "Miami": 1.01,
-    "Dallas": 0.76,
-    "Houston": 1.53,
-    "Portland": 1.31,
-    "Seattle": 1.07,
-    "San Francisco": 2.12,
-    "Los Angeles": 1.82,
-    "Palo Alto": 1.2
   }
 }

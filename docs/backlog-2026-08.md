@@ -78,7 +78,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | C3 | traffic-fatalities.json → FARS | = B3 | ✅ |
 | C4 | donor-registration.json → per-center SRTR living-donor data | #292 | ✅ 2026-08-25 |
 | C5 | Retire city fallback blocks (health-demographics, air-quality) | #293 | |
-| C6 | Retire city-wait-time-factors + city_* SRTR blocks | #293 | |
+| C6 | Retire city_* SRTR blocks | #293 | ✅ 2026-08-25 |
 | C7 | Delete cost-of-living legacy cities block | #293 | |
 | C8 | Per-center trends from srtr-observed-rates-historical | = B1 | ✅ 2026-08-25 |
 | C9 | Retire srtr-center-mapping.json | #293 | |

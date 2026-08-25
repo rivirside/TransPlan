@@ -27,24 +27,18 @@ def _get_outcomes_data() -> dict:
 
 def get_city_outcomes(organ: str, city: str = "", center_code: str = "") -> dict | None:
     """
-    Get post-transplant outcomes for a specific center/city and organ.
-    Prefers center-code lookup; falls back to city-level data.
+    Get post-transplant outcomes for a specific center and organ.
+    Center-code lookup only (#293: the 22-city city_outcomes block was
+    retired); *city* is accepted for signature compatibility but unused.
     Returns None if data is unavailable.
     """
     if organ not in VALID_ORGANS:
         return None
+    if not center_code:
+        return None
     data = get_data()
-    # Prefer center-code lookup from center-level outcomes
-    if center_code:
-        center_outcomes = data.center_outcomes.get("center_outcomes", {})
-        center_data = center_outcomes.get(center_code, {})
-        result = center_data.get(organ)
-        if result:
-            return result
-    # Fall back to city-level outcomes
-    city_outcomes = _get_outcomes_data().get("city_outcomes", {})
-    city_data = city_outcomes.get(city, {})
-    return city_data.get(organ) or None
+    center_outcomes = data.center_outcomes.get("center_outcomes", {})
+    return center_outcomes.get(center_code, {}).get(organ) or None
 
 
 def get_national_baselines(organ: str) -> dict | None:

@@ -87,15 +87,21 @@ class TestSimulate:
 
 class TestSensitivity:
     def test_returns_200(self):
-        body = {"patient": KIDNEY_PATIENT, "city": "Nashville", "iterations": 100}
+        body = {"patient": KIDNEY_PATIENT, "center_code": "TNVU", "iterations": 100}
         r = client.post("/sensitivity", json=body)
         assert r.status_code == 200
 
     def test_response_has_impacts(self):
-        body = {"patient": KIDNEY_PATIENT, "city": "Nashville", "iterations": 100}
+        body = {"patient": KIDNEY_PATIENT, "center_code": "TNVU", "iterations": 100}
         data = client.post("/sensitivity", json=body).json()
         assert "impacts" in data
         assert "city" in data
+
+    def test_city_only_400(self):
+        """#293: the legacy 22-city mode is retired."""
+        body = {"patient": KIDNEY_PATIENT, "city": "Nashville", "iterations": 100}
+        r = client.post("/sensitivity", json=body)
+        assert r.status_code == 400
 
 
 # ==================== POST /equity-analysis ====================
