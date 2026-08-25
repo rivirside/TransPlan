@@ -444,3 +444,34 @@ class TestValidationErrorHandling:
                 assert engine["note"] in ("engine failed — see server logs",
                                           "MCMC not in tier", "pgmpy not installed") or \
                     "No trace" in engine["note"] or "tier" in engine["note"].lower()
+
+
+# ==================== Spatial router consistency (#220) ====================
+
+class TestSpatialConsistency:
+    def test_unknown_organ_400_profile(self):
+        r = client.get("/interpolated-profile", params={"lat": 36.1, "lon": -86.8, "organ": "spleen"})
+        assert r.status_code == 400
+
+    def test_unknown_organ_400_delta(self):
+        r = client.get("/location-delta", params={
+            "home_lat": 36.1, "home_lon": -86.8,
+            "center_lat": 40.0, "center_lon": -83.0, "organ": "spleen"})
+        assert r.status_code == 400
+
+    def test_profile_reports_unavailable_layers(self):
+        r = client.get("/interpolated-profile", params={"lat": 36.1, "lon": -86.8, "organ": "kidney"})
+        assert r.status_code == 200
+        assert "layers_unavailable" in r.json()
+
+
+class TestScoreDataQuality:
+    def test_score_reports_provenance(self):
+        """#219: /score had ~20 silent fallback constants and no visibility."""
+        data = client.post("/score", json=KIDNEY_PATIENT).json()
+        dq = data["data_quality"]
+        assert dq is not None
+        assert dq["centers_total"] == data["total_centers"]
+        assert "wait_time_factors" in dq
+        assert "spatial_layers_unavailable" in dq
+        assert "competing_risks" not in dq  # not a scoring input

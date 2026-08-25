@@ -162,6 +162,12 @@ class ScoringResult(BaseModel):
     centers: list[CenterScore]
     total_centers: int
     elapsed_seconds: float
+    data_quality: Optional[dict] = Field(
+        None,
+        description="Data-provenance summary (#219): per-center wait-factor/"
+                    "outcomes coverage and any spatial layers that fell back "
+                    "to constants."
+    )
 
 
 # ── Provenance schemas (for ?explain=true) ──────────────────────────────

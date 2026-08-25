@@ -154,12 +154,11 @@ from services.stats_utils import result_to_ranks as _result_to_ranks  # noqa: E4
 def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
     """Run MC, BBN (Bayesian), and optionally MCMC; compare rankings."""
     t0 = time.perf_counter()
-    try:
-        from tier_config import get_tier
-        tier = get_tier()
-        iters = min(request.iterations, tier.max_iterations)
-    except Exception:
-        iters = request.iterations
+    # #220: no fail-open wrapper — get_tier() is a static config lookup, and
+    # swallowing errors here would silently bypass the tier caps
+    from tier_config import get_tier
+    tier = get_tier()
+    iters = min(request.iterations, tier.max_iterations)
 
     engines: list[EngineComparison] = []
     mc_ranks: Optional[list[str]] = None
@@ -258,13 +257,10 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
 def model_sensitivity(request: ModelSensitivityRequest) -> ModelSensitivityResponse:
     """Sweep a model parameter across its range; return ranking stability."""
     n_steps = request.n_steps
-    try:
-        from tier_config import get_tier
-        tier = get_tier()
-        iters = min(request.base_iterations, tier.max_sensitivity_iterations)
-        n_steps = min(n_steps, tier.max_validation_sweep_steps)
-    except Exception:
-        iters = request.base_iterations
+    from tier_config import get_tier
+    tier = get_tier()
+    iters = min(request.base_iterations, tier.max_sensitivity_iterations)
+    n_steps = min(n_steps, tier.max_validation_sweep_steps)
 
     try:
         from services.model_sensitivity import sweep_parameter
@@ -308,12 +304,9 @@ def clinical_sensitivity(
     seed: Optional[int] = None,
 ) -> SensitivityResult:
     """Clinical parameter sensitivity — alias to /sensitivity endpoint."""
-    try:
-        from tier_config import get_tier
-        tier = get_tier()
-        iterations = min(iterations, tier.max_sensitivity_iterations)
-    except Exception:
-        pass
+    from tier_config import get_tier
+    tier = get_tier()
+    iterations = min(iterations, tier.max_sensitivity_iterations)
     try:
         from services.sensitivity import compute_sensitivity
         return compute_sensitivity(patient, city, iterations, center_code=center_code, seed=seed)
@@ -340,12 +333,9 @@ def calibration_check(request: CalibrationRequest) -> CalibrationResult:
     "observed" binary outcomes (p > 0.5 = transplanted), then compute Brier.
     """
     t0 = time.perf_counter()
-    try:
-        from tier_config import get_tier
-        tier = get_tier()
-        iters = min(request.iterations, tier.max_sensitivity_iterations)
-    except Exception:
-        iters = request.iterations
+    from tier_config import get_tier
+    tier = get_tier()
+    iters = min(request.iterations, tier.max_sensitivity_iterations)
 
     try:
         import numpy as np
@@ -405,15 +395,12 @@ def calibration_check(request: CalibrationRequest) -> CalibrationResult:
 def temporal_validation(request: TemporalRequest) -> TemporalResult:
     """Walk-forward train/test temporal validation."""
     train_start = request.train_start
-    try:
-        from tier_config import get_tier
-        tier = get_tier()
-        iters = min(request.iterations, tier.max_validation_iterations)
-        # Cap the training span to the tier's allowed window (#249).
-        if request.train_end - train_start > tier.max_validation_train_years:
-            train_start = request.train_end - tier.max_validation_train_years
-    except Exception:
-        iters = request.iterations
+    from tier_config import get_tier
+    tier = get_tier()
+    iters = min(request.iterations, tier.max_validation_iterations)
+    # Cap the training span to the tier's allowed window (#249).
+    if request.train_end - train_start > tier.max_validation_train_years:
+        train_start = request.train_end - tier.max_validation_train_years
 
     try:
         from services.temporal_validation import run_temporal_validation

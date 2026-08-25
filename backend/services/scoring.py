@@ -52,6 +52,12 @@ VOLUME_THRESHOLDS = {
 _spatial_cache: dict[str, object] = {}
 
 
+def unavailable_spatial_layers() -> list[str]:
+    """Layers whose surface could not be built — scoring used their fallback
+    constants instead (#219: surfaced in ScoringResult.data_quality)."""
+    return sorted(k for k, v in _spatial_cache.items() if v is None)
+
+
 def _get_spatial_surface(layer_name: str):
     """Get or create a cached SpatialSurface for a given layer."""
     if layer_name not in _spatial_cache:

@@ -98,7 +98,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | # | Item | Issue | Status |
 |---|------|-------|--------|
 | G1 | `data_quality` provenance field in API responses (visible fallbacks) | #300 (refs #212/#227/#228) | ✅ 2026-08-25 (simulate/what-if/sensitivity + UI) |
-| G2 | Inconsistent fallback patterns / error handling | #219 / #220 | top-10 misleading behaviors fixed 2026-08-25; full audit posted |
+| G2 | Inconsistent fallback patterns / error handling | #219 / #220 | ✅ major fixes + /score provenance + spatial/tier consistency; residue documented on issues |
 | G3 | Synthetic-baseline guard (GEN-13/14/15) | #300 | covered by _write_guarded + validate-data organ-block errors |
 | G4 | OPO-level cause-of-death proportions | #301 | |
 | G5 | Data vintage refresh (CDC 2017, donor reg 2018) | #302 | |

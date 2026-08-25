@@ -63,12 +63,23 @@ async def score_centers(patient: PatientProfile):
         for r in results
     ]
 
+    # Data-provenance summary (#219): /score previously had no channel at all
+    from services.provenance import center_data_quality, summarize
+    from services.scoring import unavailable_spatial_layers
+    tag_lists = [center_data_quality(patient.organ, c.code) for c in centers]
+    dq = summarize(tag_lists) if centers else None
+    if dq is not None:
+        # competing risks are not a scoring input — drop that family here
+        dq.pop("competing_risks", None)
+        dq["spatial_layers_unavailable"] = unavailable_spatial_layers()
+
     elapsed = time.perf_counter() - t0
     return ScoringResult(
         patient=patient,
         centers=centers,
         total_centers=len(centers),
         elapsed_seconds=round(elapsed, 3),
+        data_quality=dq,
     )
 
 
