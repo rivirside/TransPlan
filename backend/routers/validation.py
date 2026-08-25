@@ -177,8 +177,10 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
             top10=mc_ranks[:10],
             available=True,
         ))
-    except Exception as e:
-        engines.append(EngineComparison(engine="monte_carlo", top5=[], top10=[], available=False, note=str(e)))
+    except Exception:
+        logger.exception("cross-engine: monte_carlo failed")
+        engines.append(EngineComparison(engine="monte_carlo", top5=[], top10=[],
+                                        available=False, note="engine failed — see server logs"))
 
     # Bayesian Network
     try:
@@ -193,8 +195,10 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
         ))
     except ImportError:
         engines.append(EngineComparison(engine="bayesian", top5=[], top10=[], available=False, note="pgmpy not installed"))
-    except Exception as e:
-        engines.append(EngineComparison(engine="bayesian", top5=[], top10=[], available=False, note=str(e)))
+    except Exception:
+        logger.exception("cross-engine: bayesian failed")
+        engines.append(EngineComparison(engine="bayesian", top5=[], top10=[],
+                                        available=False, note="engine failed — see server logs"))
 
     # MCMC (local tier only)
     try:
@@ -225,7 +229,9 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
     except ImportError:
         engines.append(EngineComparison(engine="mcmc", top5=[], top10=[], available=False, note="pymc/arviz not installed"))
     except Exception as e:
-        engines.append(EngineComparison(engine="mcmc", top5=[], top10=[], available=False, note=str(e)))
+        logger.exception("cross-engine: mcmc failed")
+        engines.append(EngineComparison(engine="mcmc", top5=[], top10=[],
+                                        available=False, note="engine failed — see server logs"))
 
     # Compute cross-engine statistics
     spearman_mc_bbn = _spearman_between(mc_ranks, bbn_ranks) if mc_ranks and bbn_ranks else None
@@ -311,6 +317,10 @@ def clinical_sensitivity(
     try:
         from services.sensitivity import compute_sensitivity
         return compute_sensitivity(patient, city, iterations, center_code=center_code, seed=seed)
+    except ValueError as e:
+        # #220: caller-input problems (e.g. missing center_code) are 400s here
+        # exactly as they are on /sensitivity — this endpoint is its alias
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Clinical sensitivity failed")
         raise HTTPException(status_code=500, detail="Clinical sensitivity failed") from e
@@ -380,6 +390,8 @@ def calibration_check(request: CalibrationRequest) -> CalibrationResult:
             n_centers=len(common_keys),
             elapsed_seconds=time.perf_counter() - t0,
         )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Calibration check failed")
         raise HTTPException(status_code=500, detail="Calibration check failed") from e
@@ -423,6 +435,8 @@ def temporal_validation(request: TemporalRequest) -> TemporalResult:
             elapsed_seconds=result.elapsed_seconds,
             notes=result.notes,
         )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Temporal validation failed")
         raise HTTPException(status_code=500, detail="Temporal validation failed") from e
@@ -452,6 +466,8 @@ def convergence_diagnostics(organ: str) -> ConvergenceResult:
             converged=result.converged,
             notes=result.notes,
         )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Convergence diagnostics failed for %s", organ)
         raise HTTPException(status_code=500, detail="Convergence diagnostics failed") from e
@@ -483,6 +499,8 @@ def reference_run(organ: str) -> SimulationResult:
         from services.monte_carlo import simulate
         result = simulate(patient, n_iterations=500, seed=12345)
         return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.exception("Reference run failed for %s", organ)
         raise HTTPException(status_code=500, detail="Reference run failed") from e

@@ -423,3 +423,24 @@ class TestCenterCodesShortlist:
         assert r.status_code == 200
         codes = {c["center_code"] for c in r.json()["cities"]}
         assert codes == {"ALCH", "TNVU"}
+
+
+# ==================== Validation router error handling (#220) ====================
+
+class TestValidationErrorHandling:
+    def test_clinical_sensitivity_maps_value_error_to_400(self):
+        """The alias must behave like /sensitivity: missing center_code = 400,
+        not 500."""
+        r = client.post("/validation/clinical-sensitivity", json=KIDNEY_PATIENT)
+        assert r.status_code == 400
+        assert "center_code" in r.json()["detail"]
+
+    def test_cross_engine_notes_never_leak_exception_text(self):
+        body = {"patient": KIDNEY_PATIENT, "iterations": 100}
+        r = client.post("/validation/cross-engine", json=body)
+        assert r.status_code == 200
+        for engine in r.json()["engines"]:
+            if not engine["available"]:
+                assert engine["note"] in ("engine failed — see server logs",
+                                          "MCMC not in tier", "pgmpy not installed") or \
+                    "No trace" in engine["note"] or "tier" in engine["note"].lower()

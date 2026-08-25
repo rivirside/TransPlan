@@ -56,3 +56,28 @@ class TestDataQuality:
         # or (if data is complete) everything consistent
         assert dq["fully_center_level"] + sum(
             1 for c in result.cities if c.data_quality) == dq["centers_total"]
+
+
+class TestProvenanceHonesty:
+    """#219: 'no center code' must never read as 'fully center-level'."""
+
+    def test_empty_code_returns_all_tags(self):
+        from services.provenance import center_data_quality, ALL_TAGS
+        assert center_data_quality("kidney", "") == ALL_TAGS
+
+    def test_bbn_results_carry_data_quality(self, kidney_patient):
+        """#219 item 4: data_quality was null for BBN runs, reading as 'no
+        degraded inputs' instead of 'not measured'."""
+        from services.bayesian_network import simulate_bbn
+        result = simulate_bbn(kidney_patient)
+        assert result.data_quality is not None
+        assert result.data_quality["centers_total"] == len(result.cities)
+
+    def test_outcomes_declare_survival_source(self, kidney_patient):
+        """#219 item 2: national averages were written into center-named
+        survival fields with no discriminator."""
+        from services.outcomes import build_outcomes_dict
+        with_center = build_outcomes_dict("kidney", "x", 0.5, center_code="ALUA")
+        assert with_center["survival_source"] == "center"
+        no_center = build_outcomes_dict("kidney", "x", 0.5, center_code="XXXX")
+        assert no_center["survival_source"] == "national"

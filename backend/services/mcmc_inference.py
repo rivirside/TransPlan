@@ -534,6 +534,8 @@ def simulate_mcmc(
         except Exception:
             pass
 
+        from services.provenance import center_data_quality as _cdq
+        _degraded = _cdq(patient.organ, code)
         city_results.append(CityProbability(
             city=city,
             state=state,
@@ -550,6 +552,7 @@ def simulate_mcmc(
             competing_risks=competing_risks_24,
             outcomes=outcomes_data,
             trends=trends_data,
+            data_quality=_degraded or None,
         ))
 
     # Sort by p_transplant_24mo descending
@@ -564,6 +567,11 @@ def simulate_mcmc(
         actual_iterations, N_PARAM_DRAWS, iters_per_draw, elapsed,
     )
 
+    dq_summary = None
+    if city_results:
+        from services.provenance import summarize
+        dq_summary = summarize([c.data_quality or [] for c in city_results])
+
     return SimulationResult(
         patient=patient,
         cities=city_results,
@@ -571,4 +579,5 @@ def simulate_mcmc(
         elapsed_seconds=round(elapsed, 3),
         inference_mode="mcmc",
         seed_used=seed,
+        data_quality=dq_summary,
     )

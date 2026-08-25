@@ -11,15 +11,22 @@ TAG_RISK = "competing_risks_national_default"
 TAG_OUTCOMES = "no_observed_outcomes"
 
 
+ALL_TAGS = [TAG_WAIT, TAG_RISK, TAG_OUTCOMES]
+
+
 def center_data_quality(organ: str, center_code: str) -> list[str]:
-    """Degraded-input tags for one center. Empty list = fully center-level."""
+    """Degraded-input tags for one center. Empty list = fully center-level.
+
+    #219: with no center_code (or data not loaded) NOTHING is center-level,
+    so all tags apply — an empty list here would assert the opposite.
+    """
     if not center_code:
-        return []
+        return list(ALL_TAGS)
     tags: list[str] = []
     try:
         data = get_data()
     except RuntimeError:
-        return []
+        return list(ALL_TAGS)
     wt = data.center_wait_times.get("center_wait_time_factors", {}).get(center_code, {})
     if not isinstance(wt.get(organ), (int, float)):
         tags.append(TAG_WAIT)

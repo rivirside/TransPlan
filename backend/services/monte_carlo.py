@@ -54,11 +54,13 @@ def _get_centers(organ: str) -> list[dict]:
     """
     try:
         centers = get_data().centers_for_organ(organ)
-    except RuntimeError:
-        logger.error("Center data not loaded — call load_all() before simulating")
-        return []
+    except RuntimeError as e:
+        # #220: an empty 200 response would misreport a server-side problem
+        raise RuntimeError(
+            "Center data not loaded — call load_all() before simulating"
+        ) from e
     if not centers:
-        logger.error("No centers found for organ %s — data files missing?", organ)
+        raise RuntimeError(f"No centers found for organ {organ} — data files missing?")
     return centers
 
 
@@ -188,6 +190,11 @@ def _get_acceptance_rate(organ: str, center_code: str) -> float:
     """
     data = get_data()
     ar = data.acceptance_rates
+    if not ar.get("national_acceptance_rates"):
+        # #219: with the acceptance file missing, the old 0.25 default silently
+        # QUADRUPLED every modeled wait. No data → no thinning.
+        logger.warning("acceptance-rates data missing — acceptance thinning disabled")
+        return 1.0
     national = ar.get("national_acceptance_rates", {}).get(organ, 0.25)
     factor = ar.get("center_acceptance_factors", {}).get(center_code, {}).get(organ, 1.0)
     return min(national * factor, 1.0)

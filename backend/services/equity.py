@@ -286,8 +286,15 @@ def _compute_equity_core(
     # Optional deliberate cap (default: analyze ALL centers — analytic p24 makes
     # this feasible, so no silent sampling).
     if max_centers is not None and len(centers) > max_centers:
-        sorted_centers = sorted(centers, key=lambda c: c.get("wait_time_factor", 1.0))
-        centers = sorted_centers[:max_centers]
+        # #219: the old key c.get("wait_time_factor") never existed on center
+        # records, so the cap silently truncated by input order while claiming
+        # wait-factor ordering. Sort by the real per-organ wait factor.
+        from services.data_loader import get_data
+        cwt = get_data().center_wait_times.get("center_wait_time_factors", {})
+        centers = sorted(
+            centers,
+            key=lambda c: cwt.get(c.get("code", ""), {}).get(patient.organ, 1.0),
+        )[:max_centers]
 
     logger.info(
         "Equity analysis (analytic): %s, %d profiles x %d centers",

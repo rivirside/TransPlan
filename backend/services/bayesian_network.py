@@ -281,8 +281,8 @@ def _query_city(
     """
     valid_regions = regions if regions is not None else REGIONS
     if city not in valid_regions:
-        # Fallback: first region in list (safe default)
-        city = valid_regions[0]
+        # #220: never answer for a different region than the one requested
+        raise ValueError(f"Unknown BBN region: '{city}'")
 
     # Use module-level state names as fallback
     state_names = node_state_names if node_state_names is not None else NODE_STATE_NAMES
@@ -504,10 +504,13 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
             lat = center.get("lat")
             lon = center.get("lon")
 
-            # Map center to BBN region using the granularity-aware map
-            region = center_region_map.get(code, regions[0] if regions else "Nashville")
-            if region not in regions:
-                region = regions[0] if regions else "Nashville"
+            # Map center to BBN region using the granularity-aware map.
+            # #220: a center with no region is SKIPPED with a log — the old
+            # code silently answered with the alphabetically-first region.
+            region = center_region_map.get(code)
+            if region is None or region not in regions:
+                logger.warning("No BBN region for center %s (region=%s) — skipped", code, region)
+                continue
 
             # Run BBN inference (cached per region)
             if region not in region_cache:
@@ -551,6 +554,11 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
             except (KeyError, FileNotFoundError, ValueError):
                 pass
 
+            # Data-provenance tags (#300/#219 — previously null for BBN runs,
+            # which read as "no degraded inputs" instead of "not measured")
+            from services.provenance import center_data_quality
+            degraded = center_data_quality(patient.organ, code)
+
             city_results.append(CityProbability(
                 city=name,
                 state=state_full,
@@ -585,10 +593,16 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
         patient.organ, patient.blood_type, granularity, elapsed, len(city_results), len(region_cache),
     )
 
+    dq_summary = None
+    if city_results:
+        from services.provenance import summarize
+        dq_summary = summarize([c.data_quality or [] for c in city_results])
+
     return SimulationResult(
         patient=patient,
         cities=city_results,
         iterations=0,
         elapsed_seconds=round(elapsed, 3),
         inference_mode="bayesian",
+        data_quality=dq_summary,
     )

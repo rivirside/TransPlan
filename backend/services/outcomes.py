@@ -111,6 +111,14 @@ def build_outcomes_dict(organ: str, city: str = "", p_transplant_24mo: float = 0
 
     result = {}
 
+    # #219: say whether the survival figures are this CENTER's data or the
+    # national baseline — the old dict wrote national averages into the
+    # center-named keys with no discriminator.
+    center_gs = outcomes.get("graft_survival_1yr") if outcomes else None
+    center_ps = outcomes.get("patient_survival_1yr") if outcomes else None
+    result["survival_source"] = "center" if (center_gs is not None or
+                                             center_ps is not None) else "national"
+
     # Graft survival
     gs_1yr = get_graft_survival_1yr(organ, city, center_code=center_code)
     if gs_1yr is not None:
