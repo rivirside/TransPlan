@@ -37,7 +37,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 
 | # | Item | Issue | Status |
 |---|------|-------|--------|
-| E1 | Per-release Table B10 parse → fit-on-N/predict-N+k forecast test | #237 | |
+| E1 | Per-release Table B10 parse → fit-on-N/predict-N+k forecast test | #237 | ✅ 2026-08-24 |
 | E2 | Assumption sensitivity sweep (T6): ±20% perturbation, rank stability | #294 | |
 | E3 | Decile calibration (T-calibration): predicted vs observed mortality | #295 | |
 | E4 | Cross-iteration model comparison | #137 | |
