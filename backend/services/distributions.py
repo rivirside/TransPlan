@@ -109,7 +109,7 @@ def get_wait_time_distribution(
     blood_type : str
         ABO/Rh blood type, e.g. "O+", "AB-".
     city : str
-        City name matching keys in city_wait_time_factors.
+        Display label only — the location factor comes from center_code (#293).
     cpra : int, optional
         Calculated Panel Reactive Antibody (kidney only, 0-100).
     meld : int, optional

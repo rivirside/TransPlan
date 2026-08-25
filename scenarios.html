@@ -975,7 +975,7 @@
 
             var titleOrgan = r.organ.charAt(0).toUpperCase() + r.organ.slice(1);
             resultsArea.appendChild(el('h2', 'results-title', 'Travel Subsidy Analysis: ' + titleOrgan));
-            resultsArea.appendChild(el('div', 'results-subtitle', r.total_cities + ' cities analyzed, ' + r.iterations_per_city + ' iterations per city'));
+            resultsArea.appendChild(el('div', 'results-subtitle', r.total_cities + ' centers analyzed (closed-form, deterministic)'));
 
             // Tier summary cards
             var tierGrid = el('div', 'tier-grid');

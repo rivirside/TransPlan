@@ -76,9 +76,6 @@ REGIONS = [
     "Los Angeles", "Palo Alto",
 ]
 
-# Keep a copy for classic-mode backward compatibility
-_CLASSIC_REGIONS = list(REGIONS)
-
 
 def get_regions(granularity: str = "state") -> list[str]:
     """Return the region list for the given BBN granularity level.

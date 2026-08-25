@@ -95,7 +95,7 @@ The SRTR program-specific reports page has been updated. New biannual data may b
 - [ ] Download updated center volume and outcome data
 - [ ] Update \`data/manual/srtr-reports.json\` with new volumes
 - [ ] Update specializations list if centers have changed focus areas
-- [ ] Verify all 22 cities have current data
+- [ ] Verify all SRTR centers have current data (never-shrink guards in scripts/validate-data.js)
 - [ ] Commit and push updates
 
 *This issue was automatically created by the SRTR check workflow.*`;
