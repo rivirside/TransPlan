@@ -21,7 +21,7 @@
             <p><strong>This tool is designed for research purposes</strong> to help inform policy decision-making in transplantation.</p>
             <p>While validation for clinical use is planned, <strong>this tool is not currently intended to inform medical or financial decisions.</strong></p>
             <p><strong>Nothing on this site should be construed as medical or financial advice.</strong></p>
-            <p>This is an independent, open-source research project built on publicly available data. Use it to explore trends and inform discussion—not to replace conversations with your transplant team or financial advisors.</p>
+            <p>This is an independent, open-source research project built on publicly available data. Use it to explore trends and inform discussion, not to replace conversations with your transplant team or financial advisors.</p>
           </div>
           <button class="disclaimer-confirm">I Understand</button>
         </div>
