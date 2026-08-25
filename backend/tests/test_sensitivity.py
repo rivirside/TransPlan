@@ -180,6 +180,8 @@ class TestAllOrgans:
     @pytest.mark.parametrize("organ", ["kidney", "liver", "heart", "lung", "pancreas", "intestine"])
     def test_sensitivity_runs_for_organ(self, organ):
         patient = PatientProfile(organ=organ, blood_type="A+", age=40, sex="male", urgency=2)
-        result = compute_sensitivity(patient, center_code="TNVU", n_iterations=200)
+        # PAPT performs all six organs — TNVU lacks intestine, and #348's
+        # organ check now (correctly) rejects that combination.
+        result = compute_sensitivity(patient, center_code="PAPT", n_iterations=200)
         assert len(result.impacts) >= 1  # at least urgency
         assert all(0 <= imp.p24_baseline <= 1 for imp in result.impacts)

@@ -175,14 +175,7 @@ def closed_form_baseline(patient: PatientProfile, center_code: str) -> dict:
     from services.data_loader import get_data
     from services.equity import _grid_p24
 
-    center = get_data().center_by_code(center_code)
-    if center is None:
-        raise ValueError(f"Unknown center code: '{center_code}'")
-    if patient.organ not in center.get("organs", []):
-        raise ValueError(
-            f"Center {center_code} ({center.get('name', '')}) does not perform "
-            f"{patient.organ} transplants"
-        )
+    center = get_data().resolve_center(center_code, organ=patient.organ)
 
     dist = get_wait_time_distribution(
         organ=patient.organ, blood_type=patient.blood_type,
@@ -294,20 +287,8 @@ def compute_what_if(
     """
     start = time.perf_counter()
 
-    if not center_code:
-        raise ValueError(
-            "center_code is required — the legacy 22-city mode was retired "
-            "(#285). Pick a center code from GET /centers."
-        )
     from services.data_loader import get_data
-    center = get_data().center_by_code(center_code)
-    if center is None:
-        raise ValueError(f"Unknown center code: '{center_code}'")
-    if patient.organ not in center.get("organs", []):
-        raise ValueError(
-            f"Center {center_code} ({center.get('name', '')}) does not perform "
-            f"{patient.organ} transplants"
-        )
+    center = get_data().resolve_center(center_code, organ=patient.organ)
     city = center.get("name", center_code)
     state = center.get("state_abbr", "")
 
