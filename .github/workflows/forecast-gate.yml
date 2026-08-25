@@ -1,0 +1,38 @@
+name: Temporal Forecast Gate
+
+# Standing validation harness (#308): re-run the fit-on-N/predict-N+k
+# forecast over the archived SRTR releases and fail if out-of-sample rank
+# concordance drops below the per-organ floors. Runs after the archive
+# fetcher's schedule (5th of Feb/Mar/Aug/Sep) so a new release is gated the
+# day it lands, plus monthly as a drift check, plus on demand.
+
+on:
+  schedule:
+    # Day after fetch-srtr-historical.yml (5th 12:00 UTC), and monthly
+    - cron: '0 12 6 2,3,8,9 *'
+    - cron: '0 9 15 * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'data/srtr-archive/**'
+      - 'scripts/run-temporal-forecast.py'
+      - 'scripts/check-forecast-gate.py'
+
+permissions:
+  contents: read
+
+jobs:
+  forecast-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+      - name: Regenerate the temporal forecast from the archive
+        run: python scripts/run-temporal-forecast.py
+      - name: Gate on out-of-sample concordance floors
+        run: python scripts/check-forecast-gate.py
