@@ -95,18 +95,12 @@ def compute_sensitivity(
     """
     start = time.perf_counter()
 
-    # center_code is required (#293: the legacy 22-city mode was retired)
-    if not center_code:
-        raise ValueError(
-            "center_code is required — the legacy 22-city mode was retired "
-            "(#285). Pick a center code from GET /centers."
-        )
+    # center_code is required (#293); organ membership now enforced too —
+    # sensitivity used to happily analyze centers that don't perform the
+    # patient's organ while what-if 400'd on the same input (#348).
     from services.data_loader import get_data
-    all_centers = get_data().all_centers.get("centers", {})
-    if center_code not in all_centers:
-        raise ValueError(f"Unknown center code: '{center_code}'")
-    # Use center name as display label
-    city = all_centers[center_code].get("name", city)
+    center = get_data().resolve_center(center_code, organ=patient.organ)
+    city = center.get("name", city)
 
     if seed is None:
         seed = int(np.random.default_rng().integers(0, 2**31))

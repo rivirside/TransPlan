@@ -91,3 +91,41 @@ class TestObservedRates:
         natl = data.observed_national("kidney")
         assert "transplant_rate" in natl
         assert 0 <= natl["transplant_rate"] <= 100
+
+
+class TestResolveCenter:
+    """#348: one shared center-lookup validator — the block was triplicated
+    across what_if (x2) and sensitivity with DIVERGENT semantics (sensitivity
+    skipped the organ check entirely)."""
+
+    def test_resolves_known_center(self, data):
+        from services.data_loader import get_data
+        c = get_data().resolve_center("PAPT")
+        assert c["code"] == "PAPT"
+        assert "name" in c and "organs" in c
+
+    def test_empty_code_raises(self, data):
+        from services.data_loader import get_data
+        with pytest.raises(ValueError, match="center_code is required"):
+            get_data().resolve_center("")
+
+    def test_unknown_code_raises(self, data):
+        from services.data_loader import get_data
+        with pytest.raises(ValueError, match="Unknown center code"):
+            get_data().resolve_center("ZZZZ")
+
+    def test_organ_membership_enforced(self, data):
+        from services.data_loader import get_data
+        # CALA (Harbor UCLA) is kidney-only
+        with pytest.raises(ValueError, match="does not perform"):
+            get_data().resolve_center("CALA", organ="heart")
+
+    def test_sensitivity_now_rejects_wrong_organ(self, data):
+        """The divergence this issue exists for: sensitivity happily analyzed
+        centers that don't perform the patient's organ."""
+        from models.schemas import PatientProfile
+        from services.sensitivity import compute_sensitivity
+        p = PatientProfile(organ="heart", blood_type="O+", age=50, sex="male",
+                           urgency=2)
+        with pytest.raises(ValueError, match="does not perform"):
+            compute_sensitivity(p, center_code="CALA", n_iterations=50)

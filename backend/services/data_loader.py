@@ -131,6 +131,29 @@ class TransPlanData:
         """
         return self.all_centers.get("centers", {}).get(center_code)
 
+    def resolve_center(self, center_code: str, organ: str | None = None) -> dict:
+        """Validate a center code and return its record (#348).
+
+        Single source for the lookup/validation ritual that was triplicated
+        across what_if and sensitivity with divergent semantics. Raises
+        ValueError (-> 400 at the routers) on: empty code, unknown code, or
+        — when *organ* is given — a center that does not perform it.
+        """
+        if not center_code:
+            raise ValueError(
+                "center_code is required — the legacy 22-city mode was retired "
+                "(#285). Pick a center code from GET /centers."
+            )
+        center = self.center_by_code(center_code)
+        if center is None:
+            raise ValueError(f"Unknown center code: '{center_code}'")
+        if organ is not None and organ not in center.get("organs", []):
+            raise ValueError(
+                f"Center {center_code} ({center.get('name', '')}) does not "
+                f"perform {organ} transplants"
+            )
+        return center
+
     def cost_of_living_for_center(self, center_code: str, state_abbr: str | None = None) -> float | None:
         """Cost-of-living index (BEA RPP, national = 100) for a center.
 
