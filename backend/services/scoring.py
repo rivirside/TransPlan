@@ -205,7 +205,7 @@ def _cod_multiplier(state: str, organ: str) -> float | None:
     return state_score / nat_avg if nat_avg > 0 else None
 
 
-def _donor_availability(state: str, organ: str, patient: dict, lat: float = 0.0, lon: float = 0.0) -> float:
+def _donor_availability(state: str, organ: str, patient: dict, lat: float = 0.0, lon: float = 0.0, code: str = "") -> float:
     """State-level donor availability scoring."""
     data = get_data()
     score = 0.0
@@ -234,14 +234,17 @@ def _donor_availability(state: str, organ: str, patient: dict, lat: float = 0.0,
     pop = state_pop_scores.get(state, 60)
     score += (pop / 100) * 100 * 0.25
 
-    # Living donor program (28%) — state average fallback
-    ldp = (data.donor_registration.get("livingDonorProgramStrength") or {})
-    # Try center's city first, then generic state score
-    living_score = 75  # national average fallback
-    for city_name, val in ldp.items():
-        if city_name in state:
-            living_score = val
-            break
+    # Living donor program (28%) — per-center SRTR Table D1 living-donor
+    # counts, log-normalized within organ (#292). Living donation exists only
+    # for kidney/liver; other organs get the neutral national value. (The old
+    # 22-city livingDonorProgramStrength lookup matched city names as
+    # substrings of STATE names, which never hit — this component was a
+    # constant 75 for every center.)
+    living_score = 75.0
+    if organ in ("kidney", "liver") and code:
+        s = data.living_donors.get("scores", {}).get(organ, {}).get(code)
+        if isinstance(s, (int, float)):
+            living_score = float(s)
     score += living_score * 0.28
 
     # Traffic/trauma (8%) — interpolated from hotspot data, fallback 65
@@ -424,7 +427,7 @@ def score_center(center: dict, patient: dict, weights: dict) -> CenterScoreResul
     breakdown = {
         "medicalCompatibility": _medical_compatibility(patient),
         "waitTime": _wait_time_score(code, organ, patient),
-        "donorAvailability": _donor_availability(state, organ, patient, lat, lon),
+        "donorAvailability": _donor_availability(state, organ, patient, lat, lon, code),
         "hospitalQuality": _hospital_quality(code, organ, patient),
         "geographic": _geographic(lat, lon, center),
         "healthDemographics": _health_demographics(lat, lon),

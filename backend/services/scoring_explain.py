@@ -377,6 +377,7 @@ def explain_wait_time(center_code: str, organ: str, patient: dict) -> tuple[floa
 
 def explain_donor_availability(
     state: str, organ: str, patient: dict, lat: float, lon: float,
+    center_code: str = "",
 ) -> tuple[float, list[dict], str | None]:
     data = get_data()
     components = []
@@ -414,14 +415,18 @@ def explain_donor_availability(
         raw_input=pop,
     ))
 
-    ldp = (data.donor_registration.get("livingDonorProgramStrength") or {})
-    living_score = 75
-    living_source = "data/donor-registration.json: fallback to national avg (75)"
-    for city_name, val in ldp.items():
-        if city_name in state:
-            living_score = val
-            living_source = f"data/donor-registration.json: {city_name} living donor program ({val})"
-            break
+    # Per-center SRTR Table D1 living-donor counts (#292); kidney/liver only
+    living_score = 75.0
+    living_source = "neutral national value (living donation exists only for kidney/liver)"
+    if organ in ("kidney", "liver") and center_code:
+        s = data.living_donors.get("scores", {}).get(organ, {}).get(center_code)
+        n = data.living_donors.get("counts", {}).get(organ, {}).get(center_code)
+        if isinstance(s, (int, float)):
+            living_score = float(s)
+            living_source = (f"data/living-donor-centers.json: {n} living donors/yr "
+                             f"(SRTR Table D1), log-normalized → {s}")
+        else:
+            living_source = "data/living-donor-centers.json: center not in Table D1 — national avg (75)"
     components.append(_component(
         "Living donor program strength",
         living_score, 0.28,
@@ -729,7 +734,8 @@ def explain_center_score(
     # Compute each category with provenance
     med_score, med_components = explain_medical_compatibility(patient)
     wait_score, wait_components, wait_notes = explain_wait_time(code, organ, patient)
-    donor_score, donor_components, donor_notes = explain_donor_availability(state, organ, patient, lat, lon)
+    donor_score, donor_components, donor_notes = explain_donor_availability(
+        state, organ, patient, lat, lon, center_code=code)
     quality_score, quality_components = explain_hospital_quality(code, organ, patient)
     geo_score, geo_components = explain_geographic(lat, lon, center)
     health_score, health_components, health_notes = explain_health_demographics(lat, lon)

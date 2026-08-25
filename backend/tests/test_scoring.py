@@ -133,3 +133,38 @@ class TestScoreAllCenters:
         assert r.state_abbr  # 2-letter abbreviation
         assert r.lat != 0
         assert r.lon != 0
+
+
+# ==================== Living-donor component (#292) ====================
+
+class TestLivingDonorComponent:
+    def test_center_level_data_loaded(self, data):
+        from services.data_loader import get_data
+        scores = get_data().living_donors.get("scores", {})
+        assert len(scores.get("kidney", {})) >= 180
+        assert len(scores.get("liver", {})) >= 50
+
+    def test_kidney_scores_vary_by_center(self, data):
+        """The 28% living-donor component was previously a constant 75 for
+        every center (dead city-in-state substring match). Centers with big
+        vs zero living-donor programs must now score differently."""
+        from services.scoring import _donor_availability
+        from services.data_loader import get_data
+        counts = get_data().living_donors["counts"]["kidney"]
+        hi = max(counts, key=counts.get)
+        lo = next(c for c, n in counts.items() if n == 0)
+        patient = {"organ": "kidney", "blood_type": "O+", "age": 45,
+                   "sex": "male", "urgency": 2}
+        s_hi = _donor_availability("California", "kidney", patient, code=hi)
+        s_lo = _donor_availability("California", "kidney", patient, code=lo)
+        assert s_hi > s_lo, f"{hi}({counts[hi]} donors) {s_hi} vs {lo}(0) {s_lo}"
+
+    def test_non_living_organs_neutral(self, data):
+        """Hearts have no living donation — the component must be neutral and
+        identical regardless of center."""
+        from services.scoring import _donor_availability
+        patient = {"organ": "heart", "blood_type": "O+", "age": 45,
+                   "sex": "male", "urgency": 2}
+        s1 = _donor_availability("California", "heart", patient, code="CASU")
+        s2 = _donor_availability("California", "heart", patient, code="CACS")
+        assert s1 == s2

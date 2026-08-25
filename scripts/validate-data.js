@@ -190,6 +190,13 @@ for (const [file, key, minN] of [['climate-scores-centers.json', 'centers', 240]
     }
 }
 
+// 6e. Per-center living-donor scores (#292)
+const livingDonors = validateJSON('living-donor-centers.json');
+if (livingDonors) {
+    const nk = Object.keys(livingDonors.scores?.kidney || {}).length;
+    if (nk < 180) addError(`living-donor-centers.json: only ${nk} kidney centers (expected >= 180)`);
+}
+
 // 6c. Per-center trend series (#288) — never-shrink guard: generated from the
 // 15-release SRTR archive, must keep covering the center population.
 const centerTrends = validateJSON('srtr-trends-centers.json');

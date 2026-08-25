@@ -76,7 +76,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | C1 | climate-scores.json → per-center (NASA POWER) | = B2 | ✅ |
 | C2 | hospital-quality.json → CMS facility + SRTR volumes | #291 | |
 | C3 | traffic-fatalities.json → FARS | = B3 | ✅ |
-| C4 | donor-registration.json → state registry rates | #292 | |
+| C4 | donor-registration.json → per-center SRTR living-donor data | #292 | ✅ 2026-08-25 |
 | C5 | Retire city fallback blocks (health-demographics, air-quality) | #293 | |
 | C6 | Retire city-wait-time-factors + city_* SRTR blocks | #293 | |
 | C7 | Delete cost-of-living legacy cities block | #293 | |
