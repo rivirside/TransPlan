@@ -138,3 +138,35 @@ get sourced or refit. Register updated per item.
 ## Parked (cannot do solo)
 
 - L-060 patient-level SRTR (DUA) · #107 faculty review · #179 BMC account (blocks part of #260)
+
+## Phase K — Pre-merge self-review (2026-08-25)
+
+Full 8-angle code review of `main...backlog-2026-08` (line-by-line diff scan,
+removed-behavior audit, cross-file tracer, reuse, simplification, efficiency,
+altitude, CLAUDE.md conventions). 10 confirmed findings reported and ALL fixed:
+
+| # | Finding | Fix commit |
+|---|---------|-----------|
+| K1 | BBN dropped computed data_quality tags → false "fully center-level" claim | engine-parity commit |
+| K2 | MCMC engine never migrated to center-code outcomes/trends (national survival, null trends) | engine-parity commit |
+| K3 | center_codes shortlist ignored by MCMC, silently dropped by BBN on no-match | engine-parity commit |
+| K4 | posterior_checks/convergence missed -full.nc traces (validation said "no trace" while /simulate worked) | find_fitted_granularity |
+| K5 | kidney_250nm/continuous per-city adjustments dead in production → volume-quartile size classes for ALL centers | policy size-class commit |
+| K6 | npm fetch:all invoked deleted fetch-hospital-quality.js | scripts commit |
+| K7 | 4 maintenance scripts broken by the 22-city retirement (srtr-comparison, sensitivity-report, clinical-backtest, bbn-build-profile) | scripts commit |
+| K8 | City-keyed weekly data files lost never-shrink guards | validate-data floors |
+| K9 | Equity 48-profile loop ~3.5s CPU/request → vectorized to 0.23s (get_wait_time_params) | equity perf commit |
+| K10 | Schemas advertised the retired city-only mode (Nashville default → guaranteed 400) | schema-required commit |
+
+Cleanup batch alongside: survival_source "mixed" honesty, PolicyScenarioResult
+data_quality/seed_used passthrough, travel-subsidy baseline computed once per
+center, granularity coercion parity (state, not full), NASA POWER -999 guard
+(and OHCM lung 0.0-survival artifact scrubbed + parser filter), trends
+projection lru_cache, register duplicate-ID/format fixes (EQSP-32, MCMC-34),
+scoring-constants.js IIFE, dead _CLASSIC_REGIONS/get_city_multipliers/22-city
+machinery deleted, last "22 cities" strings retired.
+
+Known deferred (documented, not blocking merge): shared srtr_xls_utils module
+for the parser/forecast script duplication; centralized provenance assembly
+layer; test suites pin live-data center codes (fixture hardening); state
+population table dedup (fetch-trauma vs fetch-traffic).
