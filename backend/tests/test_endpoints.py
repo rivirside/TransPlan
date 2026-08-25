@@ -359,3 +359,24 @@ class TestTravelSubsidy:
         deltas = [t["system_delta_p24"] for t in data["tiers"]]
         assert deltas == sorted(deltas), f"no diminishing-returns curve: {deltas}"
         assert deltas[-1] >= deltas[0]
+
+
+# ==================== /score/explain tier cap (#249) ====================
+
+class TestScoreExplainTierCap:
+    def test_web_tier_caps_provenance_limit(self, monkeypatch):
+        monkeypatch.setenv("TRANSPLAN_TIER", "web")
+        r = client.post("/score/explain?limit=248", json=KIDNEY_PATIENT)
+        assert r.status_code == 200
+        data = r.json()
+        n_prov = len(data.get("provenance", data.get("centers_with_provenance", [])) or [])
+        # Web tier cap is 50 — a 248 request must not return 248 trails
+        assert 0 < n_prov <= 50, f"web tier returned {n_prov} provenance trails"
+
+    def test_local_tier_allows_full(self, monkeypatch):
+        monkeypatch.setenv("TRANSPLAN_TIER", "local")
+        r = client.post("/score/explain?limit=60", json=KIDNEY_PATIENT)
+        assert r.status_code == 200
+        data = r.json()
+        n_prov = len(data.get("provenance", data.get("centers_with_provenance", [])) or [])
+        assert n_prov > 50

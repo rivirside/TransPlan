@@ -103,7 +103,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | G4 | OPO-level cause-of-death proportions | #301 | |
 | G5 | Data vintage refresh (CDC 2017, donor reg 2018) | #302 | |
 | G6 | LAS → CAS migration (lung allocation, 2023) | #303 | |
-| G7 | Tier caps on /score, /score/explain | #249 | |
+| G7 | Tier caps on /score, /score/explain | #249 | ✅ 2026-08-25 |
 | G8 | Security headers + exact pins | #250 | |
 | G9 | Circular import bbn_parameterizer ↔ bayesian_network (L-070) | #298 | |
 

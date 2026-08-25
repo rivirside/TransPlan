@@ -89,8 +89,12 @@ async def score_centers_with_provenance(
 
     `limit` controls how many top-ranked centers receive provenance trails
     (computing provenance for all 248 centers is ~10x slower than scoring alone).
+    The active tier caps the effective limit (#249).
     """
     t0 = time.perf_counter()
+
+    from tier_config import get_tier
+    limit = min(limit, get_tier().max_score_explain_limit)
 
     patient_dict = {
         "organ": patient.organ,
