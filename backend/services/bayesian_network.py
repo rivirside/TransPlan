@@ -406,9 +406,16 @@ def _scale_time_horizons(
         p6 = p12 = 0.0
         p36 = p24
     else:
-        p6 = time_probs["p6"] / p24w * p_transplant_24
-        p12 = time_probs["p12"] / p24w * p_transplant_24
-        p36 = time_probs["p36"] / p24w * p_transplant_24
+        s = p_transplant_24 / p24w
+        p6 = time_probs["p6"] * s
+        p12 = time_probs["p12"] * s
+        # p36 scales the 24→36mo INCREMENT with the conversion factor capped
+        # at 1. On the production path s = (1-q) <= 1 and this is algebraically
+        # identical to scaling the cumulative; but if a caller ever passes
+        # p_transplant_24 > p24w (s > 1), cumulative scaling extrapolates the
+        # excess into the 24-36mo window and clamps p36 to certainty for
+        # exactly the long-wait cases this function exists to protect (#244).
+        p36 = p24 + (time_probs["p36"] - p24w) * min(s, 1.0)
     p6 = max(0.0, min(p6, p24))
     p12 = max(p6, min(p12, p24))
     p36 = max(p24, min(p36, 1.0))

@@ -190,6 +190,48 @@ class TestScaleTimeHorizons:
         assert p6 == 0.0 and p12 == 0.0
         assert p24 == 0.10
 
+    def test_p36_not_inflated_when_scale_factor_exceeds_one(self):
+        """#244 residual: with tiny within-24mo mass and a larger
+        p_transplant_24 (inconsistent inputs, scale factor >1), the p36
+        extrapolation must not balloon toward certainty. The 24→36mo increment
+        is scaled by min(s, 1), so p36 = p24 + raw increment here."""
+        from services.bayesian_network import _scale_time_horizons, _estimate_time_horizon_probs
+        wp = [0.001, 0.002, 0.002, 0.995]  # p24_wait = 0.005, very_long = 0.995
+        tp = _estimate_time_horizon_probs(wp)
+        p6, p12, p24, p36 = _scale_time_horizons(tp, p_transplant_24=0.10)
+        assert p36 < 1.0, f"p36 clamped to certainty: {p36}"
+        # increment = tp36 - tp24w = 0.5 * 0.995 = 0.4975, scaled by min(20, 1) = 1
+        assert p36 == pytest.approx(0.10 + 0.4975, abs=1e-9)
+
+    def test_p36_unchanged_for_consistent_inputs(self):
+        """For the production relationship p_transplant_24 = p24_wait*(1-q),
+        the increment form is algebraically identical to the old cumulative
+        scaling — no behavior change on the real path."""
+        from services.bayesian_network import _scale_time_horizons, _estimate_time_horizon_probs
+        wp = [0.1, 0.2, 0.3, 0.4]
+        tp = _estimate_time_horizon_probs(wp)
+        s = 0.8  # (1 - q)
+        pt24 = tp["p24"] * s
+        p6, p12, p24, p36 = _scale_time_horizons(tp, p_transplant_24=pt24)
+        assert p36 == pytest.approx(tp["p36"] * s, abs=1e-12)
+
+
+class TestLongWaitTimeProfiles:
+    """#244 concrete confirmation: extreme long-wait patients must get sane,
+    strictly sub-certain, monotonic time profiles from the BBN."""
+
+    def test_high_cpra_kidney_profiles_sane(self, data):
+        patient = _make_patient(cpra=98, bbn_granularity="full")
+        result = simulate_bbn(patient)
+        assert len(result.cities) > 100
+        for c in result.cities:
+            assert 0.0 <= c.p_transplant_6mo <= c.p_transplant_12mo \
+                <= c.p_transplant_24mo <= c.p_transplant_36mo, c.center_code
+            assert c.p_transplant_36mo < 1.0, (
+                f"{c.center_code}: p36={c.p_transplant_36mo} hit certainty "
+                f"for a high-cPRA patient"
+            )
+
 
 def test_simulate_bbn_classic_returns_22():
     patient = _make_patient(bbn_granularity="classic")

@@ -541,6 +541,15 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **How to revisit (#238):** modulate the observed competing-risk vector by patient factors on the cause-specific **hazard scale**, reference-anchored (a reference patient reduces exactly to the center's observed vector), with WaitCategory modulating only death/delisting (plan Q4). Needs careful design + validation.
 - **File:** `backend/services/bayesian_network.py` → `_combine_outcomes`; `docs/bbn-rebuild-plan.md` §2 D2/D2a; related #226 (full credible interval, also deferred).
 
+### L-073: BBN does not condition on cPRA / MELD / LAS — clinical severity reaches only the MC engine
+- **Severity:** MEDIUM
+- **Status:** OPEN (surface with #236 continuous latents; interacts with #214)
+- **Category:** Statistical Model
+- **What:** `bayesian_network.py` / `bbn_parameterizer.py` contain no cPRA, MELD, or LAS handling at all — WaitCategory conditions on blood type / region / donor supply only. Confirmed 2026-08-24 while closing #244: for a cPRA-98 O+ kidney patient the BBN reports p24 ≈ 0.57 at centers where the MC engine (which applies the cPRA wait multiplier) reports ≈ 0.17. The BBN's *relative* center ranking is less affected (the omission is roughly uniform across centers), but its absolute probabilities are badly over-optimistic for sensitized/high-severity patients.
+- **Why:** users comparing inference modes see a large unexplained gap for exactly the patients who most need accurate numbers; the UI does not currently warn that BBN ignores severity inputs.
+- **How:** (a) short-term: disclose in the UI/docs that BBN mode ignores cPRA/MELD/LAS; (b) with #236's continuous latent rebuild, add clinical severity as a continuous input to the timing latent, reusing the MC multiplier curves as priors.
+- **Files:** `backend/services/bayesian_network.py`, `backend/services/bbn_parameterizer.py`
+
 ### L-071: Documentation still references "22 cities" in ~15 places
 - **Severity:** LOW
 - **Status:** OPEN
