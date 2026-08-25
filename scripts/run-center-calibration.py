@@ -57,17 +57,18 @@ SEED = 42
 MIN_N = 10
 
 
+import importlib.util as _ilu
+_rp_spec = _ilu.spec_from_file_location(
+    "reference_patients", Path(__file__).parent / "reference_patients.py")
+_rp = _ilu.module_from_spec(_rp_spec)
+_rp_spec.loader.exec_module(_rp)
+reference_patient_kwargs = _rp.reference_patient_kwargs
+
+
 def reference_patient(organ: str) -> PatientProfile:
-    """A single, clearly-stated reference candidate per organ."""
-    base = {"organ": organ, "blood_type": "O+", "urgency": 2, "age": 50,
-            "sex": "male", "adjust_for_cause_of_death": False}
-    if organ == "kidney":
-        base["cpra"] = 20
-    elif organ == "liver":
-        base["meld"] = 22
-    elif organ == "lung":
-        base["las"] = 50.0
-    return PatientProfile(**base)
+    """A single, clearly-stated reference candidate per organ (#339: shared
+    definition in scripts/reference_patients.py)."""
+    return PatientProfile(**reference_patient_kwargs(organ))
 
 
 def _spearman(x, y):

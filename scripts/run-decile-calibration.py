@@ -46,13 +46,22 @@ ORGANS = ["kidney", "liver", "heart", "lung", "pancreas", "intestine"]
 MIN_N = 10
 MIN_CENTERS = 30  # need enough centers for deciles to mean anything
 
+import importlib.util as _ilu
+_rp_spec = _ilu.spec_from_file_location(
+    "reference_patients", Path(__file__).parent / "reference_patients.py")
+_rp = _ilu.module_from_spec(_rp_spec)
+_rp_spec.loader.exec_module(_rp)
+reference_patient_kwargs = _rp.reference_patient_kwargs
+
+# #339: identical to run-center-calibration.py BY CONSTRUCTION — one shared
+# definition instead of a parity claim in a comment.
 REF = {
-    "kidney": dict(blood_type="O+", age=50, sex="male", urgency=2, cpra=20, meld=None, las=None),
-    "liver": dict(blood_type="O+", age=50, sex="male", urgency=2, cpra=None, meld=22, las=None),
-    "heart": dict(blood_type="O+", age=50, sex="male", urgency=2, cpra=None, meld=None, las=None),
-    "lung": dict(blood_type="O+", age=50, sex="male", urgency=2, cpra=None, meld=None, las=50.0),
-    "pancreas": dict(blood_type="O+", age=50, sex="male", urgency=2, cpra=None, meld=None, las=None),
-    "intestine": dict(blood_type="O+", age=50, sex="male", urgency=2, cpra=None, meld=None, las=None),
+    organ: {
+        **{"cpra": None, "meld": None, "las": None},
+        **{k: v for k, v in reference_patient_kwargs(organ).items()
+           if k not in ("organ", "adjust_for_cause_of_death")},
+    }
+    for organ in _rp.ORGANS
 }
 
 
