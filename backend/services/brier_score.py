@@ -24,7 +24,7 @@ from scipy.integrate import quad
 from models.schemas import PatientProfile
 from services.competing_risks import get_annual_delisting_rate, get_annual_mortality_rate
 from services.distributions import get_wait_time_distribution
-from services.monte_carlo import simulate, CITIES
+from services.monte_carlo import simulate
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +56,7 @@ def _analytical_p_transplant_12mo(
     cpra: int | None = None,
     meld: int | None = None,
     las: float | None = None,
+    center_code: str = "",
 ) -> float:
     """
     Compute P(transplant first AND within 12 months) analytically.
@@ -67,10 +68,17 @@ def _analytical_p_transplant_12mo(
     S_M is the mortality survival function (exponential),
     and S_D is the delisting survival function (exponential).
     """
-    dist = get_wait_time_distribution(organ, blood_type, city, cpra, meld, las)
+    # center_code must reach the getters — with only a display name they
+    # silently fall back to national factors and the analytical baseline
+    # stops matching the center-adjusted MC side (#287)
+    dist = get_wait_time_distribution(
+        organ, blood_type, city, cpra, meld, las, center_code=center_code,
+    )
 
-    annual_mort = get_annual_mortality_rate(organ, city, urgency, meld)
-    annual_delist = get_annual_delisting_rate(organ, city)
+    annual_mort = get_annual_mortality_rate(
+        organ, city, urgency, meld, center_code=center_code,
+    )
+    annual_delist = get_annual_delisting_rate(organ, city, center_code=center_code)
 
     # Monthly hazard rates
     monthly_mort = annual_mort / 12.0
@@ -119,6 +127,7 @@ def compute_brier_score(
         p_mc = city_prob.p_transplant_12mo
         p_an = _analytical_p_transplant_12mo(
             organ, blood_type, city_prob.city, urgency, cpra, meld, las,
+            center_code=city_prob.center_code,
         )
         se = (p_mc - p_an) ** 2
         squared_errors.append(se)

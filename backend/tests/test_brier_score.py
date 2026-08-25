@@ -118,3 +118,83 @@ class TestValidateAllOrgans:
             assert result.brier_score < 0.08, (
                 f"{organ}: Brier={result.brier_score:.4f} exceeds threshold"
             )
+
+
+# -- Center-code threading (#287) --
+
+class TestCenterCodeThreading:
+    """The analytical benchmark must use the same center-level factors as the
+    MC side. Before #287 it passed a display name as `city` and never passed
+    center_code, so every center factor silently defaulted to 1.0 and the
+    analytical baseline was effectively national."""
+
+    def test_analytical_uses_center_code(self, data, monkeypatch):
+        from services import brier_score as bs
+
+        seen = {}
+        real_dist = bs.get_wait_time_distribution
+        real_mort = bs.get_annual_mortality_rate
+        real_delist = bs.get_annual_delisting_rate
+
+        def spy_dist(*a, **kw):
+            seen["dist"] = kw.get("center_code", "")
+            return real_dist(*a, **kw)
+
+        def spy_mort(*a, **kw):
+            seen["mort"] = kw.get("center_code", "")
+            return real_mort(*a, **kw)
+
+        def spy_delist(*a, **kw):
+            seen["delist"] = kw.get("center_code", "")
+            return real_delist(*a, **kw)
+
+        monkeypatch.setattr(bs, "get_wait_time_distribution", spy_dist)
+        monkeypatch.setattr(bs, "get_annual_mortality_rate", spy_mort)
+        monkeypatch.setattr(bs, "get_annual_delisting_rate", spy_delist)
+
+        _analytical_p_transplant_12mo(
+            "kidney", "O+", "Children's of Alabama", center_code="ALCH",
+        )
+        assert seen == {"dist": "ALCH", "mort": "ALCH", "delist": "ALCH"}
+
+    def test_compute_brier_threads_center_codes(self, data, monkeypatch):
+        """compute_brier_score must pass each simulated center's code through
+        to the analytical benchmark, not just its display name."""
+        from services import brier_score as bs
+
+        codes_seen = []
+        real = bs._analytical_p_transplant_12mo
+
+        def spy(*a, **kw):
+            codes_seen.append(kw.get("center_code", ""))
+            return real(*a, **kw)
+
+        monkeypatch.setattr(bs, "_analytical_p_transplant_12mo", spy)
+
+        result = bs.compute_brier_score("intestine", "A+", n_iterations=200)
+        assert result.n_cities >= 1
+        assert codes_seen, "analytical benchmark never called"
+        # In 248-center mode every simulated row carries a center code
+        assert all(c for c in codes_seen), f"empty center_code in {codes_seen[:5]}"
+
+    def test_center_factors_change_analytical_value(self, data):
+        """Two centers with different center-level factors must give different
+        analytical probabilities — identical values would mean the factors are
+        being dropped again."""
+        from services.data_loader import get_data
+
+        wt = get_data().center_wait_times.get("center_wait_time_factors", {})
+        # pick two kidney centers with clearly different wait factors
+        kidney = {
+            code: f.get("kidney") for code, f in wt.items()
+            if isinstance(f, dict) and isinstance(f.get("kidney"), (int, float))
+        }
+        assert len(kidney) > 2, "need center wait factors for this test"
+        lo = min(kidney, key=kidney.get)
+        hi = max(kidney, key=kidney.get)
+        p_lo = _analytical_p_transplant_12mo("kidney", "O+", "x", center_code=lo)
+        p_hi = _analytical_p_transplant_12mo("kidney", "O+", "x", center_code=hi)
+        assert p_lo != p_hi
+        assert p_lo > p_hi, (
+            f"lower wait factor should mean higher p12: {lo}={p_lo}, {hi}={p_hi}"
+        )
