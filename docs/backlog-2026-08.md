@@ -77,7 +77,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | C2 | hospital-quality.json → SRTR per-center volumes (was 22-city + hash-fabricated) | #291 | ✅ 2026-08-25 |
 | C3 | traffic-fatalities.json → FARS | = B3 | ✅ |
 | C4 | donor-registration.json → per-center SRTR living-donor data | #292 | ✅ 2026-08-25 |
-| C5 | Retire city fallback blocks (health-demographics, air-quality) | #293 | |
+| C5 | City fallback blocks (health-demographics, air-quality) | #285 | fetchers keep them as spatial fallback; retire with dense-only migration |
 | C6 | Retire city_* SRTR blocks | #293 | ✅ 2026-08-25 |
 | C7 | Delete cost-of-living legacy cities block | #293 | |
 | C8 | Per-center trends from srtr-observed-rates-historical | = B1 | ✅ 2026-08-25 |
@@ -87,7 +87,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 
 | # | Item | Issue | Status |
 |---|------|-------|--------|
-| D1 | Retire algorithm.js, DEFAULTS, CITIES, checkCityCoverage, classic mode | #293 | algorithm.js+data-loader.js ✅ 2026-08-25; CITIES/classic remain |
+| D1 | Retire algorithm.js, DEFAULTS, CITIES, checkCityCoverage, classic mode | #293 | ✅ CLOSED 2026-08-25 (fetcher CITIES → #285) |
 | D2 | Dead frontend: charts.js, url-sharing.js, donation-banner.js | #260 | charts/url-sharing already gone; banner blocked on #179 |
 | D3 | Old pages already deleted; 17 broken links to them FIXED 2026-08-25 | #293 | ✅ |
 | D4 | _FALLBACK_CITIES + unused CITIES imports | #293 | ✅ 2026-08-25 |
