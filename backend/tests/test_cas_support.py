@@ -78,3 +78,18 @@ class TestCasEndToEnd:
         result = simulate(p, n_iterations=100, seed=5)
         assert result.cities
         assert result.patient.cas == 36.0
+
+
+class TestPediatricGate:
+    """#335 phase 1: sub-18 inputs are rejected, not silently mis-modeled."""
+
+    def test_pediatric_age_rejected(self):
+        with pytest.raises(Exception) as exc:
+            PatientProfile(organ="kidney", blood_type="O+", age=12, sex="male",
+                           urgency=2)
+        assert "age" in str(exc.value)
+
+    def test_adult_boundary_accepted(self):
+        p = PatientProfile(organ="kidney", blood_type="O+", age=18, sex="male",
+                           urgency=2)
+        assert p.age == 18

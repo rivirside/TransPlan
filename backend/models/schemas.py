@@ -10,7 +10,12 @@ class PatientProfile(BaseModel):
         pattern=r"^(A|B|AB|O)[+-]$",
         examples=["O+", "A-", "AB+"],
     )
-    age: int = Field(..., ge=1, le=99)
+    age: int = Field(
+        ..., ge=18, le=99,
+        description="Adult (18+) candidates only: every multiplier is "
+                    "adult-derived and pediatric allocation is a different "
+                    "system — a sub-18 input would silently get wrong "
+                    "numbers. Pediatric mode is tracked in #335.")
     sex: Literal["male", "female"]
     urgency: int = Field(..., ge=1, le=4)
     insurance: Optional[Literal["medicare", "medicaid", "private", "uninsured"]] = None
