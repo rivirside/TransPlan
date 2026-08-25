@@ -29,8 +29,9 @@ class TestCenterTrendData:
         centers = get_data().center_trends.get("centers", {})
         assert len(centers) > 200, f"only {len(centers)} centers have trend series"
 
-    def test_series_shape(self):
-        s = get_data().center_trends["centers"]["ALCH"]["kidney"]
+    def test_series_shape(self, pick_center):
+        code = pick_center("kidney", trends=True)
+        s = get_data().center_trends["centers"][code]["kidney"]
         assert len(s["years"]) == len(s["median_wait_months"]) == len(s["mortality_rate"])
         assert len(s["years"]) >= 10  # 15 releases, minus any gaps
 
@@ -47,8 +48,9 @@ class TestCenterTrendProjection:
         assert p == {"wait_time_factor": 1.0, "mortality_factor": 1.0,
                      "delisting_factor": 1.0}
 
-    def test_zero_years_neutral(self):
-        p = get_center_trend_projection("kidney", "ALCH", years_forward=0.0)
+    def test_zero_years_neutral(self, pick_center):
+        p = get_center_trend_projection("kidney", pick_center("kidney", trends=True),
+                                        years_forward=0.0)
         assert p["wait_time_factor"] == 1.0
 
     def test_some_center_has_significant_trend(self):
@@ -99,9 +101,10 @@ class TestCoverageBeyondLegacyMapping:
 
 
 class TestCenterTrendsDisplay:
-    def test_get_center_trends_shape(self):
-        t = get_center_trends("kidney", "ALCH")
+    def test_get_center_trends_shape(self, pick_center):
+        code = pick_center("kidney", trends=True)
+        t = get_center_trends("kidney", code)
         assert t is not None
-        assert t["center_code"] == "ALCH"
+        assert t["center_code"] == code
         assert "wait_time_trend" in t and "sparklines" in t
         assert len(t["sparklines"]["years"]) >= 10
