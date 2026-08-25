@@ -8,11 +8,9 @@ EXPECTED_FILES = [
     "cost_of_living",
     "donor_registration",
     "health_demographics",
-    "hospital_quality",
     "traffic_fatalities",
     "climate_scores",
     "policy_tiers",
-    "socioeconomic",
     "srtr_reports",
 ]
 
@@ -51,8 +49,11 @@ class TestDataShapes:
         spec = data.srtr_reports.get("specializations", {})
         assert isinstance(spec, dict), "srtr_reports.specializations should be a dict"
 
-    def test_hospital_quality_not_empty(self, data: TransPlanData):
-        assert len(data.hospital_quality) > 0
+    def test_center_climate_not_empty(self, data: TransPlanData):
+        # hospital-quality.json/socioeconomic.json retired (#293); the
+        # per-center replacements must be present instead
+        assert len(data.center_climate.get("centers", {})) >= 240
+        assert len(data.center_trauma.get("centers", {})) >= 240
 
     def test_cost_of_living_not_empty(self, data: TransPlanData):
         assert len(data.cost_of_living) > 0

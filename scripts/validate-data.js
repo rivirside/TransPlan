@@ -113,23 +113,6 @@ if (health) {
     }
 }
 
-// 4. Hospital Quality
-const hospital = validateJSON('hospital-quality.json');
-if (hospital) {
-    checkStaleness(hospital, 'hospital-quality.json');
-    if (hospital.centerReputation) {
-        checkCityCoverage(hospital.centerReputation, 'hospital-quality.json (centerReputation)');
-        checkValueRange(hospital.centerReputation, 'hospital-quality.json (centerReputation)', 50, 100);
-    }
-    if (hospital.centerVolumes) {
-        for (const organ of ['kidney', 'liver', 'heart', 'lung', 'pancreas', 'intestine']) {
-            if (hospital.centerVolumes[organ]) {
-                checkCityCoverage(hospital.centerVolumes[organ], `hospital-quality.json (${organ} volumes)`);
-            }
-        }
-    }
-}
-
 // 5. Cost of Living (BEA RPP shape: {msas, states, nonmetroUS, cities} — #205)
 const costOfLiving = validateJSON('cost-of-living.json');
 if (costOfLiving) {
@@ -208,7 +191,7 @@ if (centerTrends) {
 }
 
 // 7. Manual files
-for (const manualFile of ['manual/climate-scores.json', 'manual/policy-tiers.json', 'manual/socioeconomic.json']) {
+for (const manualFile of ['manual/climate-scores.json', 'manual/policy-tiers.json']) {
     const data = validateJSON(manualFile);
     if (data) {
         checkStaleness(data, manualFile);
