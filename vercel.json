@@ -39,6 +39,10 @@
       "destination": "/api/index"
     },
     {
+      "source": "/rank-stability",
+      "destination": "/api/index"
+    },
+    {
       "source": "/score",
       "destination": "/api/index"
     },

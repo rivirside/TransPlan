@@ -27,7 +27,7 @@ from starlette.types import Scope
 
 from config import ALLOWED_ORIGINS, DATA_DIR, VERSION
 from middleware.rate_limit import rate_limit
-from routers import centers, equity, health, score, sensitivity, shutdown, simulate, spatial, tier, trends, validation, what_if
+from routers import centers, equity, health, score, sensitivity, shutdown, simulate, spatial, tier, trends, validation, what_if, rank_stability
 from routers.api_v1 import include_v1_routers
 from security import CORS_ORIGIN_REGEX, SecurityHeadersMiddleware, docs_urls
 from services.data_loader import load_all
@@ -126,6 +126,7 @@ app.include_router(simulate.router, tags=["simulation"], dependencies=_sim_deps)
 app.include_router(sensitivity.router, tags=["simulation"], dependencies=_sim_deps)
 app.include_router(equity.router, tags=["simulation"], dependencies=_sim_deps)
 app.include_router(what_if.router, tags=["simulation"], dependencies=_sim_deps)
+app.include_router(rank_stability.router, tags=["simulation"], dependencies=_sim_deps)
 app.include_router(trends.router, tags=["trends"], dependencies=_data_deps)
 app.include_router(centers.router, tags=["centers"], dependencies=_data_deps)
 app.include_router(spatial.router, tags=["spatial"], dependencies=_spatial_deps)
