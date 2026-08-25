@@ -33,3 +33,7 @@ notebooks/
 __pycache__/
 .pytest_cache/
 .DS_Store
+
+# Root dev toolchain (Jest/Babel) — must never enter the Python function
+# bundle (#343). Root install is also skipped via vercel.json installCommand.
+node_modules/
