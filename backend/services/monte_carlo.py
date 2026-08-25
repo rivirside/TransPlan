@@ -17,6 +17,7 @@ The event that occurs first determines the outcome.
 """
 import logging
 import time
+import zlib
 
 import numpy as np
 
@@ -236,7 +237,6 @@ def simulate(
     start = time.perf_counter()
     if seed is None:
         seed = int(np.random.default_rng().integers(0, 2**31))
-    rng = np.random.default_rng(seed)
     city_results: list[CityProbability] = []
 
     # --- F2: Trend projections — per-center (#288), covering every center
@@ -267,6 +267,13 @@ def simulate(
         lon = center.get("lon")
         # Display label: use city name for fallback, center name for full mode
         display_city = center.get("city", name)
+
+        # Per-center RNG stream keyed on (seed, code) — NOT a stream shared
+        # across the loop, whose draws would depend on which other centers
+        # run. Guarantees shortlist isolation: filtering to a center subset
+        # reproduces exactly the full run's values for those centers
+        # (caught by the #312 property suite).
+        rng = np.random.default_rng([seed, zlib.crc32(code.encode() or b"national")])
 
         # --- Data-provenance tags (#300): make silent fallbacks visible.
         from services.provenance import center_data_quality
