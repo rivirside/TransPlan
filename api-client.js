@@ -51,6 +51,9 @@
     if (formData.organ === 'lung' && formData.las) {
       profile.las = parseFloat(formData.las);
     }
+    if (formData.organ === 'lung' && formData.cas) {
+      profile.cas = parseFloat(formData.cas);
+    }
 
     // Relocation comparison
     if (formData.homeCenter) profile.home_center = formData.homeCenter;

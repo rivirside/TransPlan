@@ -144,6 +144,34 @@ def get_wait_time_distribution(
     return scipy.stats.lognorm(s=sigma, scale=adjusted_median)
 
 
+def cas_to_effective_las(cas: float) -> float:
+    """Map a lung Composite Allocation Score to an effective LAS (#303).
+
+    OPTN replaced LAS with CAS on 2023-03-09; the multiplier tables are
+    LAS-era. This mapping quantile-matches the AT-TRANSPLANT score
+    distributions from the OPTN/SRTR 2023 Annual Data Report, Table LU 7:
+      CAS 29 -> LAS 35  (~21st percentile of transplanted candidates)
+      CAS 31 -> LAS 43  (~51st percentile)
+      CAS 36 -> LAS 60  (~77th percentile)
+    Piecewise-linear through the anchors, extrapolated at segment slope and
+    clamped to [0, 100]. Documented approximation (register DATA-41): it
+    equates urgency PERCENTILES among transplanted candidates, which is the
+    quantity the wait multiplier bands encode.
+    """
+    anchors = [(29.0, 35.0), (31.0, 43.0), (36.0, 60.0)]
+    if cas <= anchors[0][0]:
+        slope = (anchors[1][1] - anchors[0][1]) / (anchors[1][0] - anchors[0][0])
+        las = anchors[0][1] - slope * (anchors[0][0] - cas)
+    elif cas >= anchors[-1][0]:
+        slope = (anchors[-1][1] - anchors[1][1]) / (anchors[-1][0] - anchors[1][0])
+        las = anchors[-1][1] + slope * (cas - anchors[-1][0])
+    else:
+        (x0, y0), (x1, y1) = (anchors[0], anchors[1]) if cas <= anchors[1][0] \
+            else (anchors[1], anchors[2])
+        las = y0 + (y1 - y0) * (cas - x0) / (x1 - x0)
+    return float(min(100.0, max(0.0, las)))
+
+
 def get_wait_time_params(
     organ: str,
     blood_type: str,

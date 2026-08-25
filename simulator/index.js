@@ -80,6 +80,7 @@
     if (cpra) data.cpra = cpra.value;
     var meld = val('meld'); if (meld) data.meld = meld;
     var las = val('las');   if (las)  data.las  = las;
+    var cas = val('cas');   if (cas)  data.cas  = cas;
 
     // Boolean flags
     data.adjustForCauseOfDeath = checked('adjustCauseOfDeath');
@@ -144,6 +145,7 @@
 
     setVal('meld', params.get('meld'));
     setVal('las', params.get('las'));
+    setVal('cas', params.get('cas'));
 
     if (params.get('cop') === '1') setChecked('useCopula', true);
     if (params.get('cod') === '1') setChecked('adjustCauseOfDeath', true);

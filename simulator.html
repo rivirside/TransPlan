@@ -62,9 +62,16 @@
                                 <input type="number" id="meld" min="6" max="40" placeholder="6–40 (optional)">
                             </div>
 
+                            <div class="form-group conditional-field" id="cas-group" data-organ="lung" style="display:none;">
+                                <label for="cas">CAS Score</label>
+                                <input type="number" id="cas" min="0" max="100" step="0.1" placeholder="0–100 (optional)">
+                                <small class="field-help">Composite Allocation Score (in use since March 2023). Mapped to the model's LAS-era tables via a documented approximation.</small>
+                            </div>
+
                             <div class="form-group conditional-field" id="las-group" data-organ="lung" style="display:none;">
-                                <label for="las">LAS</label>
+                                <label for="las">LAS (legacy, pre-2023)</label>
                                 <input type="number" id="las" min="0" max="100" placeholder="0–100 (optional)">
+                                <small class="field-help">Only if you have an old LAS; an explicit LAS overrides the CAS mapping.</small>
                             </div>
 
                             <div class="form-group">

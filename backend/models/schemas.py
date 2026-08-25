@@ -19,7 +19,18 @@ class PatientProfile(BaseModel):
     # Organ-specific scores
     cpra: Optional[int] = Field(None, ge=0, le=100, description="Kidney only: % panel reactive antibodies")
     meld: Optional[int] = Field(None, ge=6, le=40, description="Liver only: MELD 3.0 score (the score in use since 2023; 6-40)")
-    las: Optional[float] = Field(None, ge=0, le=100, description="Lung only: Lung Allocation Score")
+    las: Optional[float] = Field(
+        None, ge=0, le=100,
+        description="Lung only: legacy Lung Allocation Score (superseded by "
+                    "CAS in March 2023). If omitted and cas is given, an "
+                    "effective LAS is derived via the documented quantile "
+                    "mapping (#303)")
+    cas: Optional[float] = Field(
+        None, ge=0, le=100,
+        description="Lung only: Composite Allocation Score (the score in use "
+                    "since March 2023). Mapped to an effective LAS for the "
+                    "LAS-era multiplier tables — see "
+                    "distributions.cas_to_effective_las (#303)")
     # Relocation comparison
     home_center: Optional[str] = Field(None, description="Patient's current transplant listing center (city name)")
     # Organ-specific donor availability adjustment
@@ -49,6 +60,18 @@ class PatientProfile(BaseModel):
         description="Restrict scoring/simulation to these SRTR center codes "
                     "(a user's shortlist). None/empty = all centers for the organ."
     )
+
+    @model_validator(mode="after")
+    def derive_las_from_cas(self):
+        # #303: CAS is what lung patients receive today; the multiplier
+        # tables are LAS-era. An explicit las wins; otherwise derive it so
+        # every downstream consumer (which reads .las) works unchanged.
+        # The derived value is visible in the echoed patient — no silent
+        # rewriting of a user-entered field.
+        if self.cas is not None and self.las is None:
+            from services.distributions import cas_to_effective_las
+            self.las = cas_to_effective_las(self.cas)
+        return self
 
     @model_validator(mode="after")
     def validate_bbn_granularity(self):
