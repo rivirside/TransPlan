@@ -63,6 +63,15 @@ function checkStaleness(data, filename) {
     }
 }
 
+function checkCoverageFloor(obj, filename, floor) {
+    // Never-shrink guard (2026-08-05 incident class): a fetch that merges a
+    // near-empty API result must FAIL validation, not pass vacuously.
+    const n = Object.keys(obj || {}).filter(k => k !== '_meta').length;
+    if (n < floor) {
+        addError(`${filename}: only ${n} entries (never-shrink floor: ${floor})`);
+    }
+}
+
 // === Run Validations ===
 
 console.log('Validating TransPlan data files...\n');
@@ -72,6 +81,7 @@ const airQuality = validateJSON('air-quality.json');
 if (airQuality) {
     checkStaleness(airQuality, 'air-quality.json');
     const { _meta, ...aqData } = airQuality;
+    checkCoverageFloor(aqData, 'air-quality.json', 20);
     checkValueRange(aqData, 'air-quality.json', 0, 100);
 }
 
@@ -79,6 +89,7 @@ if (airQuality) {
 const traffic = validateJSON('traffic-fatalities.json');
 if (traffic) {
     checkStaleness(traffic, 'traffic-fatalities.json');
+    checkCoverageFloor(traffic.traumaScores, 'traffic-fatalities.json (traumaScores)', 20);
     if (traffic.traumaScores) {
         checkValueRange(traffic.traumaScores, 'traffic-fatalities.json (traumaScores)', 0, 100);
     }
@@ -89,6 +100,7 @@ const health = validateJSON('health-demographics.json');
 if (health) {
     checkStaleness(health, 'health-demographics.json');
     const { _meta, ...hdData } = health;
+    checkCoverageFloor(hdData, 'health-demographics.json', 20);
     for (const [city, metrics] of Object.entries(hdData)) {
         if (typeof metrics === 'object' && metrics !== null) {
             if (metrics.diabetesRate != null && (metrics.diabetesRate < 0 || metrics.diabetesRate > 30)) {
@@ -123,6 +135,7 @@ if (costOfLiving) {
 const donor = validateJSON('donor-registration.json');
 if (donor) {
     checkStaleness(donor, 'donor-registration.json');
+    checkCoverageFloor(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)', 20);
     if (donor.livingDonorProgramStrength) {
         checkValueRange(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)', 0, 100);
     }
@@ -160,6 +173,8 @@ const livingDonors = validateJSON('living-donor-centers.json');
 if (livingDonors) {
     const nk = Object.keys(livingDonors.scores?.kidney || {}).length;
     if (nk < 180) addError(`living-donor-centers.json: only ${nk} kidney centers (expected >= 180)`);
+    const nl = Object.keys(livingDonors.scores?.liver || {}).length;
+    if (nl < 45) addError(`living-donor-centers.json: only ${nl} liver centers (expected >= 45)`);
 }
 
 // 6c. Per-center trend series (#288) — never-shrink guard: generated from the
