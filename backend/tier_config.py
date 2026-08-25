@@ -32,7 +32,9 @@ WEB_TIER = TierConfig(
     name="web",
     max_iterations=1000,
     allowed_inference_modes=("monte_carlo", "bayesian"),
-    allowed_bbn_granularity=("classic", "state"),
+    # #285/#293: the 22-city "classic" mode is retired from the API surface;
+    # "full" is web-safe since the #206 rebuild (full-mode build 0.39s).
+    allowed_bbn_granularity=("state", "full"),
     copula_theta_locked=True,
     elasticity_locked=True,
     # Equity p24 is now closed-form (#216), so the full center set runs in <1s
@@ -55,7 +57,7 @@ LOCAL_TIER = TierConfig(
     name="local",
     max_iterations=10000,
     allowed_inference_modes=("monte_carlo", "bayesian", "mcmc"),
-    allowed_bbn_granularity=("classic", "state", "full"),
+    allowed_bbn_granularity=("state", "full"),
     copula_theta_locked=False,
     elasticity_locked=False,
     max_equity_centers=248,

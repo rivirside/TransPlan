@@ -29,7 +29,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | B4 | policy_scenarios.py 22-city end to end | #285 | ✅ travel per-center via RPP; size-based waits on #275 |
 | B5 | what_if.py city validation; travel-subsidy iterates 22 | #285 | ✅ 2026-08-25 |
 | B6 | MCMC city-level hierarchy (classic trace default) | #207 | ✅ full traces fitted; classic retires w/ #293 |
-| B7 | BBN "classic" 22-city mode selectable in web tier | #293 | |
+| B7 | BBN "classic" 22-city mode selectable in web tier | #293 | ✅ removed from tiers/UI 2026-08-25 |
 | B8 | Silent 1.0-multiplier fallbacks in distributions/competing_risks | see G1 | visible via #300 on /simulate |
 | B9 | api-client.js sensitivity() 'Nashville' default | fix inline w/ A | ✅ 2026-08-24 |
 

@@ -35,7 +35,7 @@ class PatientProfile(BaseModel):
     # Phase 6 #206: BBN region granularity
     bbn_granularity: str = Field(
         "state",
-        description="BBN region node granularity: 'classic' (22 cities), 'state' (~50 states), 'full' (248 centers)"
+        description="BBN region node granularity: 'state' (~50 states) or 'full' (248 centers)"
     )
     # Phase 4 M1: Configurable scoring weights (frontend concern, passed through for export fidelity)
     custom_weights: Optional[dict[str, float]] = Field(

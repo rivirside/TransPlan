@@ -21,7 +21,7 @@ def run_simulation(
     ),
     copula_theta: float = Query(default=None, ge=0.1, le=5.0, description="Override Clayton copula theta (use_copula must be true)"),
     elasticity: float = Query(default=None, ge=0.1, le=1.0, description="Override supply-wait elasticity (default 0.65)"),
-    bbn_granularity: str = Query(default="state", description="BBN region granularity: 'classic' (22), 'state' (~50), 'full' (248)"),
+    bbn_granularity: str = Query(default="state", description="BBN region granularity: 'state' (~50) or 'full' (248 centers)"),
     seed: int = Query(default=None, ge=0, le=2147483647, description="RNG seed for reproducibility"),
     model_acceptance: bool = Query(default=False, description="Model center-level organ acceptance rates"),
     model_score_drift: bool = Query(default=False, description="Model MELD/LAS score progression during wait"),

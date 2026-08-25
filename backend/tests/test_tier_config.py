@@ -22,7 +22,10 @@ def test_web_tier_caps():
     tier = WEB_TIER
     assert tier.max_iterations == 1000
     assert "mcmc" not in tier.allowed_inference_modes
-    assert "full" not in tier.allowed_bbn_granularity
+    # #293: classic (22 cities) is retired from the API surface; full is
+    # web-safe since the #206 rebuild
+    assert "classic" not in tier.allowed_bbn_granularity
+    assert "full" in tier.allowed_bbn_granularity
     assert tier.copula_theta_locked is True
     assert tier.elasticity_locked is True
 
@@ -32,6 +35,7 @@ def test_local_tier_caps():
     assert tier.max_iterations == 10000
     assert "mcmc" in tier.allowed_inference_modes
     assert "full" in tier.allowed_bbn_granularity
+    assert "classic" not in tier.allowed_bbn_granularity
     assert tier.copula_theta_locked is False
     assert tier.elasticity_locked is False
 

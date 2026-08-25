@@ -16,7 +16,7 @@
     caps: {
       max_iterations: 1000,
       allowed_inference_modes: ['monte_carlo', 'bayesian'],
-      allowed_bbn_granularity: ['classic', 'state'],
+      allowed_bbn_granularity: ['state', 'full'],
       copula_theta_locked: true,
       elasticity_locked: true,
       max_equity_centers: 30,
