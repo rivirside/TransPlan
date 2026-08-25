@@ -87,9 +87,9 @@ robustness (G), assumption triage (H), features (I), docs (J).
 
 | # | Item | Issue | Status |
 |---|------|-------|--------|
-| D1 | Retire algorithm.js, DEFAULTS, CITIES, checkCityCoverage, classic mode | #293 | |
-| D2 | Dead frontend: charts.js, url-sharing.js, donation-banner.js | #260 | |
-| D3 | Delete old pages: find-centers, wait-estimator, data, spatial .html | #293 | |
+| D1 | Retire algorithm.js, DEFAULTS, CITIES, checkCityCoverage, classic mode | #293 | algorithm.js+data-loader.js ✅ 2026-08-25; CITIES/classic remain |
+| D2 | Dead frontend: charts.js, url-sharing.js, donation-banner.js | #260 | charts/url-sharing already gone; banner blocked on #179 |
+| D3 | Old pages already deleted; 17 broken links to them FIXED 2026-08-25 | #293 | ✅ |
 | D4 | _FALLBACK_CITIES + unused CITIES imports | #293 | |
 | D5 | Close #206 (done — CLOSED 2026-08-24), prune stale golden tests as files retire | #206 ✅ | |
 

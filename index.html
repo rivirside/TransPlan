@@ -97,7 +97,7 @@
                     <div class="step-number">The Problem</div>
                     <h2>They are not created equal.</h2>
                     <p>Kidney wait times across U.S. transplant centers range from roughly <a href="https://www.srtr.org/transplant-centers/" target="_blank" rel="noopener"><strong>8 months</strong></a> at the most favorable programs to <strong>over 11 years</strong> at the most competitive. The same organ, the same blood type, the same medical urgency — but the choice of center determines when, or whether, a transplant happens.</p>
-                    <p>Two hospitals 40 miles apart can differ by years of expected waiting. A patient listed in Phoenix may be transplanted within months. Their counterpart at a high-volume Boston center, who chose it for its reputation, may wait a decade. This is not a function of how sick they are. It is a function of <a href="wait-estimator.html">which program they chose</a>.</p>
+                    <p>Two hospitals 40 miles apart can differ by years of expected waiting. A patient listed in Phoenix may be transplanted within months. Their counterpart at a high-volume Boston center, who chose it for its reputation, may wait a decade. This is not a function of how sick they are. It is a function of <a href="centers.html?mode=estimate">which program they chose</a>.</p>
                     <p>Each center is colored from <span style="color:#2d9e5c;font-weight:600;">green</span> (shorter waits) to <span style="color:#e05252;font-weight:600;">red</span> (longer waits). The gradient is not random. It mirrors regional organ supply, accumulated waitlist pressure, and decades of uneven policy.</p>
                     <div class="data-source">Wait data from <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener"><strong>OPTN</strong></a> (Organ Procurement and Transplantation Network)</div>
                     <div class="step-nav">
@@ -158,7 +158,7 @@
                     <h2><a href="docs-site/build/architecture/overview" target="_blank" rel="noopener">Monte Carlo simulation</a> with competing risks.</h2>
                     <p>For each of the 248 centers, we run 1,000 simulation iterations modeling the probability of receiving a transplant at 6, 12, 24, and 36 months. Each iteration draws on <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener"><strong>OPTN</strong></a> historical offer and acceptance rates and organ-specific donor flow by region. Critically, each iteration accounts for <em>competing risks</em>: the chance of transplant, the chance of dying while waiting, and the chance of removal for other medical reasons.</p>
                     <p>A 48-profile demographic matrix runs each center across blood types, age brackets, and sex to evaluate equity. We then compute a <a href="docs-site/build/architecture/scoring" target="_blank" rel="noopener">Gini coefficient</a> per center, a standard measure of distributional inequity, to identify programs where certain patient profiles are systematically disadvantaged relative to others at the same institution.</p>
-                    <div class="highlight"><a href="data.html">What-if scenarios</a> let researchers adjust donor rates, OPO performance, and wait-time multipliers to model how <a href="https://unos.org" target="_blank" rel="noopener">UNOS</a> policy changes would shift transplant probabilities in real time.</div>
+                    <div class="highlight"><a href="scenarios.html">What-if scenarios</a> let researchers adjust donor rates, OPO performance, and wait-time multipliers to model how <a href="https://unos.org" target="_blank" rel="noopener">UNOS</a> policy changes would shift transplant probabilities in real time.</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(4)">Back</button>
                         <button class="step-btn primary" onclick="goStep(6)">Next</button>
@@ -237,7 +237,7 @@
                 </div>
 
                 <div class="map-simplified-note">
-                    Visualizations here are simplified for storytelling. Visit the <a href="data.html">Data page</a> for full interactive layers with real values.
+                    Visualizations here are simplified for storytelling. Visit the <a href="explorer.html">Explorer page</a> for full interactive layers with real values.
                 </div>
             </div>
         </div>
@@ -250,8 +250,8 @@
             </div>
             <div class="post-story-actions">
                 <a href="organ-guides.html" class="btn-warm-ghost">Resources</a>
-                <a href="find-centers.html" class="btn-warm-accent-ghost">Tools</a>
-                <a href="data.html" class="btn-warm-secondary">Explore data map</a>
+                <a href="centers.html?mode=find" class="btn-warm-accent-ghost">Tools</a>
+                <a href="explorer.html" class="btn-warm-secondary">Explore data map</a>
                 <a href="simulator.html" class="btn-warm-primary">Launch Simulator</a>
             </div>
         </div>
@@ -327,7 +327,7 @@
                         </button>
                         <div class="acc-body" hidden>
                             <p>The policy simulation layer lets researchers adjust key upstream variables: OPO conversion efficiency, donor registration rates, geographic allocation rule widths, and cold ischemia transport constraints. Scenarios run in real time using the same Monte Carlo engine, so changes cascade through center-level wait-time probabilities immediately.</p>
-                            <a href="data.html" class="acc-link">Explore what-if scenarios →</a>
+                            <a href="scenarios.html" class="acc-link">Explore what-if scenarios →</a>
                         </div>
                     </div>
                 </div>
@@ -338,11 +338,11 @@
         <div class="resources-section">
             <div class="resources-title">Tools and Guides</div>
             <div class="resources-grid">
-                <a href="find-centers.html" class="resource-card">
+                <a href="centers.html?mode=find" class="resource-card">
                     <h3>Find My Centers</h3>
                     <p>Locate transplant programs near you based on organ type and location.</p>
                 </a>
-                <a href="wait-estimator.html" class="resource-card">
+                <a href="centers.html?mode=estimate" class="resource-card">
                     <h3>Wait Estimator</h3>
                     <p>Estimate wait times with Monte Carlo simulation for any center and profile.</p>
                 </a>
