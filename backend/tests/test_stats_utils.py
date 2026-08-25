@@ -56,3 +56,43 @@ class TestGetRangeMultiplier:
 
     def test_no_match_returns_one(self):
         assert get_range_multiplier(200, {"0-20": 0.5}) == 1.0
+
+
+# -- Weighted Gini (#254) --
+
+class TestWeightedGini:
+    def test_equal_weights_match_unweighted(self):
+        from services.stats_utils import gini, gini_weighted
+        vals = np.array([0.1, 0.2, 0.3, 0.4, 0.9])
+        w = np.ones(5)
+        assert abs(gini_weighted(vals, w) - gini(vals)) < 1e-12
+
+    def test_zero_weight_cells_ignored(self):
+        from services.stats_utils import gini, gini_weighted
+        vals = np.array([0.1, 0.2, 0.3, 5.0])
+        w = np.array([1.0, 1.0, 1.0, 0.0])
+        assert abs(gini_weighted(vals, w) - gini(vals[:3])) < 1e-12
+
+    def test_perfect_equality_zero(self):
+        from services.stats_utils import gini_weighted
+        assert gini_weighted(np.array([0.4, 0.4, 0.4]), np.array([0.2, 0.5, 0.3])) == 0.0
+
+    def test_weight_scaling_invariant(self):
+        from services.stats_utils import gini_weighted
+        vals = np.array([0.1, 0.5, 0.9])
+        w = np.array([0.2, 0.3, 0.5])
+        g1 = gini_weighted(vals, w)
+        g2 = gini_weighted(vals, w * 100)
+        assert abs(g1 - g2) < 1e-12
+
+    def test_rejects_negative_values(self):
+        from services.stats_utils import gini_weighted
+        with pytest.raises(ValueError):
+            gini_weighted(np.array([-0.1, 0.5]), np.array([1.0, 1.0]))
+
+    def test_known_two_point_case(self):
+        """Two cells, one holds everything: weighted Gini = weight share of
+        the zero cell. With w=(0.75, 0.25) and values (0, x): G = 0.75."""
+        from services.stats_utils import gini_weighted
+        g = gini_weighted(np.array([0.0, 1.0]), np.array([0.75, 0.25]))
+        assert abs(g - 0.75) < 1e-9

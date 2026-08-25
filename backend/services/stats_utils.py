@@ -41,6 +41,42 @@ def gini(values: np.ndarray) -> float:
     return max(0.0, float((2 * np.sum(idx * s) - (n + 1) * np.sum(s)) / (n * np.sum(s))))
 
 
+def gini_weighted(values: np.ndarray, weights: np.ndarray) -> float:
+    """Population-weighted Gini coefficient via the discrete Lorenz curve.
+
+    Equivalent to the pairwise definition
+        G = sum_ij w_i w_j |x_i - x_j| / (2 W^2 mu_w)
+    but computed in O(n log n). With equal weights it reduces exactly to
+    ``gini()``. Zero-weight cells are ignored; weight scale is irrelevant.
+
+    Raises:
+        ValueError: on negative/non-finite values or weights.
+    """
+    values = np.asarray(values, dtype=float)
+    weights = np.asarray(weights, dtype=float)
+    if values.shape != weights.shape:
+        raise ValueError("gini_weighted() values and weights must match in length")
+    if not (np.all(np.isfinite(values)) and np.all(np.isfinite(weights))):
+        raise ValueError("gini_weighted() requires finite values and weights")
+    if np.any(values < 0) or np.any(weights < 0):
+        raise ValueError("gini_weighted() is only defined for non-negative inputs")
+
+    mask = weights > 0
+    values, weights = values[mask], weights[mask]
+    if len(values) < 2 or np.sum(values * weights) == 0:
+        return 0.0
+
+    order = np.argsort(values, kind="stable")
+    x, w = values[order], weights[order]
+    cum_w = np.cumsum(w)
+    cum_v = np.cumsum(x * w)
+    p = cum_w / cum_w[-1]
+    lorenz = cum_v / cum_v[-1]
+    p_prev = np.concatenate(([0.0], p[:-1]))
+    l_prev = np.concatenate(([0.0], lorenz[:-1]))
+    return max(0.0, float(1.0 - np.sum((p - p_prev) * (lorenz + l_prev))))
+
+
 def rate_to_exponential_scale(annual_rate: float, event: str, context: str = "") -> float:
     """Convert an annual event rate to an exponential scale in months.
 

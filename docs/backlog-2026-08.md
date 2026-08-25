@@ -16,7 +16,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | A1 | scenarios.html posts center *names* as `city` → 400 for ~226/248 centers | #286 | ✅ 2026-08-24 |
 | A2 | brier_score.py drops `center_code`; analytical baseline national vs MC center-adjusted | #287 | ✅ 2026-08-24 |
 | A3 | BBN time-horizon probabilities inflate for long-wait organs | #244 | |
-| A4 | Equity Gini circularity + age/sex input inconsistency | #254 | |
+| A4 | Equity Gini circularity + age/sex input inconsistency | #254 | ✅ 2026-08-24 |
 | A5 | dark-mode.js loaded twice (was scenarios.html by Aug 2026) | #261 | ✅ 2026-08-24 |
 
 ## Phase B — Silent 22-city result skew (epic #285)

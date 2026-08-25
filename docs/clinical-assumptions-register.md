@@ -21,7 +21,7 @@ This is a **LIVING document.** Maintain it as follows:
 | `uncited` | Hand-set with no source and no documented rationale. |
 | `heuristic_clamp` | A numerical floor/ceiling/cap/guard or fixed-band heuristic, not a clinical estimate. |
 
-**Summary:** **123** assumptions tracked after dedupe. **37** still need justification (`uncited` + `assumed` + `heuristic_clamp`) — SCORE-22 and EQSP-18 moved to `data_derived` with the 2026-08 BEA RPP upgrade (#205), DATA-37 (Puerto Rico placeholder) added as `assumed`. **45** are flagged **high-risk** (`risk_if_wrong = high`); the high-risk entries that are also unjustified form the priority shortlist at the end.
+**Summary:** **125** assumptions tracked after dedupe. **38** still need justification (`uncited` + `assumed` + `heuristic_clamp`) — SCORE-22 and EQSP-18 moved to `data_derived` with the 2026-08 BEA RPP upgrade (#205), DATA-37 (Puerto Rico placeholder) added as `assumed`; EQSP-30 (`literature`) and EQSP-31 (`assumed`) added with the #254 weighted-Gini fix. **45** are flagged **high-risk** (`risk_if_wrong = high`); the high-risk entries that are also unjustified form the priority shortlist at the end.
 
 **Recent updates:** PR #279 resolved **MCMC-19** (convergence trace-path bug — diagnostics now run on real fitted traces) and relabeled the MCMC internal-consistency cluster (**MCMC-21/23/24**) with honest "not external validation" framing pointing to the SRTR per-center calibration. The underlying assumptions persist (status unchanged) but the misleading framing is addressed.
 
@@ -299,6 +299,8 @@ These are validation/face-validity results rather than parameters, recorded so r
 | ID | Location | Assumption / Result | Status | Risk | Source / Notes |
 |----|----------|--------------------|--------|------|----------------|
 | EQSP-29 | clinical-backtest-report.md:15 | 250nm circles help small centers (3/3 improved) | data_derived | low | Backtest seed 42, 1000 iters; PASS. Confirms direction only (cross-links EQSP-13) |
+| EQSP-30 | equity.py BLOOD_TYPE_PREVALENCE | US blood-type prevalence weights (O+ 37.4% … AB- 0.6%) for weighted equity Gini (#254) | Population weighting of the 48 demographic cells | literature | low | American Red Cross / Stanford Blood Center US distribution; sums to 1.000 |
+| EQSP-31 | equity.py AGE_BRACKET_WEIGHTS / SEX_WEIGHTS | Waitlist age mix (11/38/51%) and sex mix (60/40 M/F) for weighted equity Gini (#254) | Population weighting of the 48 demographic cells | assumed | medium | Approximate adult OPTN waitlist composition (OPTN/SRTR ADR); not per-organ — refine with per-organ waitlist data |
 | EQSP-30 | center-calibration-report.md:17 | Center calibration Spearman ρ (kidney 0.89 … pancreas 0.46) | data_derived | medium | Internal-consistency (B10/B7 inputs vs B7 tx-rate); pancreas weakest. Substitute for infeasible COMET-Lung |
 | MCMC-31 | temporal-validation-report.md:26 | Temporal out-of-sample concordance ρ (kidney 0.77 … intestine 0.29) | data_derived | medium | 15 releases 2018-2025; heart/intestine weak. Varies ground-truth release, not training release |
 | MCMC-32 | srtr-ground-truth-comparison.md:35 | Discrepancy thresholds OK/WARN/FLAG (15%/25%) | heuristic_clamp | low | Author-chosen bands. Brier BS<0.001 explicitly convergence-by-construction, not external accuracy |

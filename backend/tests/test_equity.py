@@ -245,3 +245,68 @@ class TestMaxCenters:
         # Exactly the 10 lowest wait_time_factor codes (C000..C009).
         result_codes = {c.center_code for c in result.cities}
         assert result_codes == {f"C{i:03d}" for i in range(10)}
+
+
+# -- #254: age/sex must reach p24; weighting; ABO decomposition --
+
+class TestAgeSexInP24:
+    def test_age_groups_have_different_p24(self, kidney_equity):
+        """Before #254, p24 was computed per blood type only, so all age
+        brackets showed identical p24 while median_wait differed — the Gini
+        never saw age/sex variation."""
+        found_difference = False
+        for city in kidney_equity.cities:
+            ages = city.dimension_disparities.get("age_bracket", [])
+            p24s = {a["p24"] for a in ages}
+            if len(p24s) > 1:
+                found_difference = True
+                break
+        assert found_difference, "age brackets show identical p24 at every center"
+
+    def test_sex_groups_have_different_p24_for_kidney(self, kidney_equity):
+        """Kidney has a male wait multiplier, so sex must move p24 too."""
+        found_difference = False
+        for city in kidney_equity.cities:
+            sexes = city.dimension_disparities.get("sex", [])
+            p24s = {s["p24"] for s in sexes}
+            if len(p24s) > 1:
+                found_difference = True
+                break
+        assert found_difference, "sexes show identical p24 at every center"
+
+    def test_older_age_lower_p24(self, kidney_equity):
+        """55-70 has a 1.10 wait multiplier vs 0.95 for 18-34, so its p24
+        must be lower at any given center."""
+        city = kidney_equity.cities[0]
+        by_label = {a["value"]: a["p24"] for a in city.dimension_disparities["age_bracket"]}
+        assert by_label["55-70"] < by_label["18-34"]
+
+
+class TestWeightedGini:
+    def test_weighted_fields_present(self, kidney_equity):
+        assert kidney_equity.overall_gini_weighted is not None
+        assert 0 <= kidney_equity.overall_gini_weighted <= 1
+        for city in kidney_equity.cities:
+            assert city.gini_weighted is not None
+            assert 0 <= city.gini_weighted <= 1
+
+    def test_weighted_differs_from_unweighted(self, kidney_equity):
+        """AB+ (3.4% of population) has the shortest waits; equal weighting
+        overstates its share, so the weighted Gini should differ."""
+        assert kidney_equity.overall_gini_weighted != kidney_equity.overall_gini
+
+
+class TestAboDecomposition:
+    def test_decomposition_fields_present(self, kidney_equity):
+        assert kidney_equity.overall_gini_between_blood_type is not None
+        assert kidney_equity.overall_gini_within_blood_type is not None
+        for city in kidney_equity.cities:
+            assert city.gini_between_blood_type is not None
+            assert city.gini_within_blood_type is not None
+
+    def test_abo_biology_dominates_within_center(self, kidney_equity):
+        """For kidney, ABO matching drives most profile variation at a fixed
+        center — between-blood-type inequality should exceed the within-type
+        (age/sex) inequality."""
+        city = kidney_equity.cities[0]
+        assert city.gini_between_blood_type > city.gini_within_blood_type

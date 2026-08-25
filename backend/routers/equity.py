@@ -1,4 +1,4 @@
-"""POST /equity-analysis — Demographic equity analysis endpoint."""
+"""POST /equity-analysis and /bias-audit — demographic equity endpoints."""
 import logging
 from typing import Optional
 
@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from models.schemas import EquityAnalysisResult, PatientProfile
-from services.equity import compute_equity_analysis
+from services.equity import compute_equity_analysis, compute_bias_audit
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -48,3 +48,24 @@ def run_equity_analysis(request: EquityAnalysisRequest) -> EquityAnalysisResult:
     except Exception as e:
         logger.exception("Equity analysis failed for %s", request.patient.organ)
         raise HTTPException(status_code=500, detail="Equity analysis failed — see server logs") from e
+
+
+@router.post("/bias-audit")
+def run_bias_audit_endpoint(request: EquityAnalysisRequest):
+    """Publication-grade bias metrics (disparity ratios, Cohen's d) computed
+    from the equity analysis' per-profile results (#254 — previously unwired)."""
+    try:
+        from tier_config import get_tier
+        tier = get_tier()
+        if request.max_centers is None:
+            centers = tier.max_equity_centers
+        else:
+            centers = min(request.max_centers, tier.max_equity_centers)
+        return compute_bias_audit(
+            request.patient,
+            seed=request.seed,
+            max_centers=centers,
+        )
+    except Exception as e:
+        logger.exception("Bias audit failed for %s", request.patient.organ)
+        raise HTTPException(status_code=500, detail="Bias audit failed — see server logs") from e

@@ -241,6 +241,18 @@ class CityEquity(BaseModel):
     center_code: str = ""
     center_name: str = ""
     gini_coefficient: float = Field(ge=0, le=1, description="0=equality, 1=total inequality")
+    gini_weighted: Optional[float] = Field(
+        None, ge=0, le=1,
+        description="Gini with cells population-weighted (US blood-type prevalence × approx OPTN waitlist age/sex mix)"
+    )
+    gini_between_blood_type: Optional[float] = Field(
+        None, ge=0, le=1,
+        description="Weighted Gini of the 8 blood-type mean p24s — the ABO-matching (biology) component"
+    )
+    gini_within_blood_type: Optional[float] = Field(
+        None, ge=0, le=1,
+        description="Weighted mean of within-blood-type Ginis (age/sex variation) — the non-ABO component"
+    )
     p24_range: tuple[float, float] = Field(description="(min, max) of p_transplant_24mo across profiles")
     median_wait_range: tuple[float, float] = Field(description="(min, max) median wait months across profiles")
     dimension_disparities: dict[str, list[dict]] = Field(
@@ -253,6 +265,16 @@ class EquityAnalysisResult(BaseModel):
     organ: str
     cities: list[CityEquity] = Field(description="Per-city equity metrics, sorted by gini ascending")
     overall_gini: float = Field(ge=0, le=1, description="Gini across all profiles x all cities")
+    overall_gini_weighted: Optional[float] = Field(
+        None, ge=0, le=1, description="Population-weighted Gini across all profiles x all centers"
+    )
+    overall_gini_between_blood_type: Optional[float] = Field(
+        None, ge=0, le=1, description="ABO-matching (biology) component of overall inequality"
+    )
+    overall_gini_within_blood_type: Optional[float] = Field(
+        None, ge=0, le=1,
+        description="Non-ABO component of overall inequality (geography + age/sex within blood type)"
+    )
     profiles_simulated: int = Field(description="Total demographic profiles in matrix")
     iterations_per_profile: int
     elapsed_seconds: float

@@ -64,15 +64,83 @@ EQUITY_DISCLAIMERS = [
     (
         "Transplant probabilities are computed in closed form (the competing-"
         "risks integral over the wait-time distribution), so all centers are "
-        "analyzed with no sampling. Mortality–delisting correlation (the optional "
+        "analyzed with no sampling and the reported metrics carry no Monte "
+        "Carlo uncertainty. Mortality–delisting correlation (the optional "
         "copula) is omitted; it shifts centers near-uniformly and does not "
         "materially affect the Gini disparity metric."
+    ),
+    (
+        "The unweighted Gini treats all 48 demographic cells equally, which "
+        "overstates rare groups (AB- is 0.6% of the population). Weighted "
+        "metrics use US blood-type prevalence and an approximate OPTN waitlist "
+        "age/sex mix; centers are equal-weighted because per-center waitlist "
+        "volume is not yet modeled."
+    ),
+    (
+        "Much of the blood-type disparity reflects ABO-matching biology, not "
+        "systemic bias. The between/within blood-type decomposition separates "
+        "the ABO component (gini_between_blood_type) from geographic and "
+        "age/sex variation (gini_within_blood_type)."
     ),
 ]
 
 
 # Issue #64: Use shared implementation from stats_utils
 from services.stats_utils import gini as _gini
+from services.stats_utils import gini_weighted as _gini_weighted
+
+# --- Population weights for equity cells (#254) ---
+# Equal-weighting the 48 cells overstates rare groups (AB- is 0.6% of the US
+# population but got 1/8 of the blood-type weight). Weighted metrics use:
+#
+# Blood type: US population prevalence (American Red Cross / Stanford Blood
+# Center distribution). Register: EQSP-24.
+BLOOD_TYPE_PREVALENCE = {
+    "O+": 0.374, "A+": 0.357, "B+": 0.085, "AB+": 0.034,
+    "O-": 0.066, "A-": 0.063, "B-": 0.015, "AB-": 0.006,
+}
+# Age brackets / sex: approximate adult OPTN waitlist composition (OPTN/SRTR
+# Annual Data Report; the waitlist skews older and male). These are rough,
+# documented approximations — not per-organ. Register: EQSP-25.
+AGE_BRACKET_WEIGHTS = {"18-34": 0.11, "35-54": 0.38, "55-70": 0.51}
+SEX_WEIGHTS = {"male": 0.60, "female": 0.40}
+
+
+def _profile_weight(blood_type: str, age_bracket: str, sex: str) -> float:
+    """Joint population weight for one demographic cell (independence assumed)."""
+    return (
+        BLOOD_TYPE_PREVALENCE.get(blood_type, 0.0)
+        * AGE_BRACKET_WEIGHTS.get(age_bracket, 0.0)
+        * SEX_WEIGHTS.get(sex, 0.0)
+    )
+
+
+def _abo_decomposition(results: list[dict]) -> tuple[float, float]:
+    """Split inequality into ABO-biology vs non-ABO components (#254).
+
+    between = weighted Gini of the blood-type weighted-mean p24s (what ABO
+    matching alone produces); within = prevalence-weighted mean of the
+    weighted Gini across cells inside each blood type (everything else).
+    """
+    by_bt: dict[str, tuple[list, list]] = defaultdict(lambda: ([], []))
+    for r in results:
+        vals, wts = by_bt[r["blood_type"]]
+        vals.append(r["p24"])
+        wts.append(r["weight"])
+
+    bt_means, bt_weights, within_ginis = [], [], []
+    for bt, (vals, wts) in by_bt.items():
+        vals, wts = np.array(vals), np.array(wts)
+        prevalence = BLOOD_TYPE_PREVALENCE.get(bt, 0.0)
+        if np.sum(wts) > 0:
+            bt_means.append(float(np.average(vals, weights=wts)))
+            bt_weights.append(prevalence)
+            within_ginis.append((_gini_weighted(vals, wts), prevalence))
+
+    between = _gini_weighted(np.array(bt_means), np.array(bt_weights)) if len(bt_means) > 1 else 0.0
+    total_prev = sum(p for _, p in within_ginis)
+    within = sum(g * p for g, p in within_ginis) / total_prev if total_prev > 0 else 0.0
+    return between, within
 
 
 def _simulate_profile_center(
@@ -129,15 +197,57 @@ def _grid_p24(dist, inv_total: float) -> float:
     return float(np.clip(_trapz(integrand, _P24_GRID), 0.0, 1.0))
 
 
+def compute_bias_audit(
+    patient: PatientProfile,
+    seed: int | None = None,
+    max_centers: int | None = None,
+):
+    """Run the equity analysis and feed its per-profile results to the bias
+    audit (effect sizes, disparity ratios) — wiring for #254; bias_audit.py
+    was previously unreachable from any endpoint."""
+    from services.bias_audit import run_bias_audit
+
+    result, per_center_profiles = _compute_equity_core(
+        patient, seed=seed, max_centers=max_centers,
+    )
+    payload = {
+        "cities": [
+            {
+                "city": ce.center_name or ce.city,
+                "gini": ce.gini_coefficient,
+                "profiles": per_center_profiles[ce.center_code or ce.city],
+            }
+            for ce in result.cities
+        ]
+    }
+    return run_bias_audit(payload)
+
+
 def compute_equity_analysis(
     patient: PatientProfile,
     n_iterations: int = 200,
     seed: int | None = None,
     max_centers: int | None = None,
 ) -> EquityAnalysisResult:
+    """Public entry point — see _compute_equity_core for the full docstring."""
+    result, _ = _compute_equity_core(
+        patient, n_iterations=n_iterations, seed=seed, max_centers=max_centers,
+    )
+    return result
+
+
+def _compute_equity_core(
+    patient: PatientProfile,
+    n_iterations: int = 200,
+    seed: int | None = None,
+    max_centers: int | None = None,
+) -> tuple[EquityAnalysisResult, dict[str, list[dict]]]:
     """
     Run equity analysis across 48 demographic profiles × centers
     for the patient's organ.
+
+    Returns (result, per_center_profiles) where per_center_profiles maps
+    center key → per-profile rows for the bias audit (#254).
 
     Varies blood_type (8), age (3 brackets), sex (2) while preserving
     the patient's organ, urgency, cpra/meld/las, and COD toggle.
@@ -187,8 +297,10 @@ def compute_equity_analysis(
     # --- Evaluate all profiles × all centers (closed form) ---
     center_results: dict[str, list] = defaultdict(list)
     all_p24_values = []
+    all_weights = []
+    all_results = []
 
-    from services.distributions import get_wait_time_distribution, _age_sex_multiplier
+    from services.distributions import get_wait_time_distribution
 
     for center in centers:
         code = center.get("code", "")
@@ -209,32 +321,33 @@ def compute_equity_analysis(
         delist_scale = rate_to_exponential_scale(annual_delist, "delisting", code or display)
         inv_total = 1.0 / mort_scale + 1.0 / delist_scale
 
-        # p24 and base median depend only on blood type (age/sex enter median via a
-        # scalar multiplier; the current model does not vary p24 by age/sex). So
-        # compute 8 distributions per center, not 48 — then map the 48 profiles.
-        bt_p24: dict[str, float] = {}
-        bt_median: dict[str, float] = {}
-        for bt in BLOOD_TYPES:
-            dist = get_wait_time_distribution(
-                organ=rep.organ, blood_type=bt, city=display, center_code=code,
-                cpra=rep.cpra, meld=rep.meld, las=rep.las,
-            )
-            bt_p24[bt] = _grid_p24(dist, inv_total)
-            bt_median[bt] = float(dist.median())
-
+        # p24 depends on blood type AND age/sex: the age/sex multiplier scales
+        # the whole wait distribution, which moves the competing-risks integral.
+        # Computing p24 per blood type only (and letting age/sex touch just the
+        # displayed median) was the #254 defect — the Gini never saw age/sex.
         for profile in profiles:
-            bt = profile["blood_type"]
-            p24 = bt_p24[bt]
-            median_wait = bt_median[bt] * _age_sex_multiplier(
-                rep.organ, profile["patient"].age, profile["sex"])
-            center_results[code or display].append({
+            pat = profile["patient"]
+            dist = get_wait_time_distribution(
+                organ=rep.organ, blood_type=pat.blood_type, city=display,
+                center_code=code, cpra=rep.cpra, meld=rep.meld, las=rep.las,
+                age=pat.age, sex=pat.sex,
+            )
+            p24 = _grid_p24(dist, inv_total)
+            median_wait = float(dist.median())
+            weight = _profile_weight(
+                profile["blood_type"], profile["age_bracket"], profile["sex"])
+            row = {
                 "p24": p24,
                 "median_wait": median_wait,
-                "blood_type": bt,
+                "blood_type": profile["blood_type"],
                 "age_bracket": profile["age_bracket"],
                 "sex": profile["sex"],
-            })
+                "weight": weight,
+            }
+            center_results[code or display].append(row)
+            all_results.append(row)
             all_p24_values.append(p24)
+            all_weights.append(weight)
 
     # --- Compute per-center equity metrics ---
     city_equities = []
@@ -247,8 +360,11 @@ def compute_equity_analysis(
 
         p24_vals = np.array([r["p24"] for r in results])
         wait_vals = np.array([r["median_wait"] for r in results])
+        weights = np.array([r["weight"] for r in results])
 
         gini = _gini(p24_vals)
+        gini_w = _gini_weighted(p24_vals, weights)
+        gini_between_bt, gini_within_bt = _abo_decomposition(results)
         p24_range = (float(np.min(p24_vals)), float(np.max(p24_vals)))
         wait_range = (float(np.min(wait_vals)), float(np.max(wait_vals)))
 
@@ -275,6 +391,9 @@ def compute_equity_analysis(
             center_code=code,
             center_name=display,
             gini_coefficient=round(gini, 4),
+            gini_weighted=round(gini_w, 4),
+            gini_between_blood_type=round(gini_between_bt, 4),
+            gini_within_blood_type=round(gini_within_bt, 4),
             p24_range=(round(p24_range[0], 4), round(p24_range[1], 4)),
             median_wait_range=(round(wait_range[0], 1), round(wait_range[1], 1)),
             dimension_disparities=dim_disparities,
@@ -282,6 +401,10 @@ def compute_equity_analysis(
 
     city_equities.sort(key=lambda c: c.gini_coefficient)
     overall_gini = _gini(np.array(all_p24_values))
+    # Centers are equal-weighted in the overall metrics (per-center waitlist
+    # volume is not yet available — #275); cells are population-weighted.
+    overall_gini_w = _gini_weighted(np.array(all_p24_values), np.array(all_weights))
+    overall_between_bt, overall_within_bt = _abo_decomposition(all_results)
 
     elapsed = time.perf_counter() - start
     logger.info(
@@ -289,13 +412,30 @@ def compute_equity_analysis(
         patient.organ, len(profiles), len(centers), overall_gini, elapsed,
     )
 
-    return EquityAnalysisResult(
+    result = EquityAnalysisResult(
         organ=patient.organ,
         cities=city_equities,
         overall_gini=round(overall_gini, 4),
+        overall_gini_weighted=round(overall_gini_w, 4),
+        overall_gini_between_blood_type=round(overall_between_bt, 4),
+        overall_gini_within_blood_type=round(overall_within_bt, 4),
         profiles_simulated=len(profiles),
         iterations_per_profile=0,  # 0 = analytic (closed-form, no Monte Carlo sampling)
         elapsed_seconds=round(elapsed, 3),
         disclaimers=EQUITY_DISCLAIMERS,
         seed_used=seed,
     )
+
+    per_center_profiles = {
+        key: [
+            {
+                "blood_type": r["blood_type"],
+                "age_bracket": r["age_bracket"],
+                "sex": r["sex"],
+                "p_transplant_24mo": r["p24"],
+            }
+            for r in rows
+        ]
+        for key, rows in center_results.items()
+    }
+    return result, per_center_profiles

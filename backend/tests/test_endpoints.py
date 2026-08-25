@@ -112,6 +112,30 @@ class TestEquity:
         assert "cities" in data
         assert "overall_gini" in data
 
+    def test_weighted_and_decomposed_gini_present(self):
+        """#254: population-weighted Gini + ABO decomposition."""
+        body = {"patient": KIDNEY_PATIENT, "iterations_per_profile": 100, "max_centers": 10}
+        data = client.post("/equity-analysis", json=body).json()
+        assert data["overall_gini_weighted"] is not None
+        assert data["overall_gini_between_blood_type"] is not None
+        assert data["overall_gini_within_blood_type"] is not None
+
+
+# ==================== POST /bias-audit ====================
+
+class TestBiasAudit:
+    def test_returns_200_with_metrics(self):
+        """#254: bias_audit.py was previously unreachable from any endpoint."""
+        body = {"patient": KIDNEY_PATIENT, "iterations_per_profile": 100, "max_centers": 10}
+        r = client.post("/bias-audit", json=body)
+        assert r.status_code == 200
+        data = r.json()
+        assert data["n_profiles"] == 48
+        assert data["n_cities"] >= 1
+        bt = data["national_blood_type_disparity"]
+        assert bt["disparity_ratio"] >= 1.0
+        assert "cohens_d" in bt
+
 
 # ==================== POST /what-if ====================
 
