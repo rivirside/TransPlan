@@ -120,7 +120,9 @@ def run_policy_scenario(request: PolicyScenarioRequest) -> PolicyScenarioResult:
     # Effective multipliers: per-center (BEA RPP-derived for travel scenarios,
     # #285). center_code is required — compute_what_if 400s without it.
     from services.policy_scenarios import get_center_multipliers
-    donor_mult, wait_mult = get_center_multipliers(scenario, request.center_code)
+    donor_mult, wait_mult = get_center_multipliers(
+        scenario, request.center_code, organ=request.patient.organ,
+    )
 
     # Clamp iterations to tier cap
     from tier_config import get_tier
@@ -207,7 +209,9 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
         city_results = []
         for center in center_list:
             code = center.get("code", "")
-            donor_mult, wait_mult = get_center_multipliers(scenario, code)
+            donor_mult, wait_mult = get_center_multipliers(
+                scenario, code, organ=request.patient.organ,
+            )
             try:
                 result = compute_what_if_closed_form(
                     patient=request.patient,

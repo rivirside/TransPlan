@@ -73,10 +73,18 @@ class PolicyScenario(BaseModel):
         default=1.0,
         description="Global wait time multiplier",
     )
-    # Per-city overrides (city name → adjustments)
-    city_adjustments: dict[str, CityAdjustment] = Field(
+    # Per-size-class overrides ("large"/"small"/"medium" → adjustments),
+    # applied via volume-quartile classification of ALL centers (#285 — the
+    # legacy 22-city city_adjustments tables encoded the same story by hand).
+    size_class_adjustments: dict[str, CityAdjustment] = Field(
         default_factory=dict,
-        description="Per-city parameter overrides",
+        description="Per center-size-class parameter overrides",
+    )
+    # Travel-subsidy scenarios carry their tier amount explicitly instead of
+    # encoding it only in the scenario id (2026-08 review).
+    subsidy_amount: Optional[int] = Field(
+        default=None,
+        description="Travel-subsidy tier amount in USD, if applicable",
     )
     references: list[str] = Field(
         default_factory=list,
@@ -88,111 +96,93 @@ class PolicyScenario(BaseModel):
     )
 
 
-# --- Center size classification ---
-# Kidney volume from SRTR data: large centers (>200/yr) benefit less from
-# geographic expansion; small centers (<100/yr) benefit most.
-# Medium centers (100-200/yr) get moderate benefit.
-# These are approximate — actual impact depends on DSA/OPO geography.
+# --- Center size classification (#285) ---
+# Volume-quartile classes over ALL centers for an organ, from the latest
+# SRTR trend volume series. The allocation-geometry literature (King et al.,
+# AJT 2023; OPTN one-year evaluation) describes effects by center size:
+# large urban programs lose exclusive local access, small programs gain.
+# The legacy 22-city tables hand-encoded the same three classes.
 
-_LARGE_KIDNEY_CENTERS = {
-    "New York", "Los Angeles", "Houston", "Chicago", "Philadelphia",
-    "San Francisco", "Miami", "Dallas", "Palo Alto",
-}
-_SMALL_KIDNEY_CENTERS = {
-    "Madison", "Omaha", "Rochester", "Durham",
-    "Indianapolis", "St. Louis",
-}
-# Palo Alto (Stanford Health Care) does ~200+/yr — large center, not small.
-# All others are "medium"
+_center_size_cache: dict[str, dict[str, str]] = {}
 
 
-def _kidney_250nm_city_adjustments() -> dict[str, CityAdjustment]:
+def _center_size_classes(organ: str) -> dict[str, str]:
+    """Map center_code -> "small"/"medium"/"large" by organ volume quartile.
+
+    Bottom quartile = small, top quartile = large, else medium. Centers with
+    no volume series are unclassified (callers fall back to the scenario's
+    global multipliers for them).
     """
-    Per-city adjustments for the 2021 kidney 250nm circle policy.
-
-    Large urban centers: slight donor pool reduction (-3-5%) because they
-    now share more organs outward. Wait times increase slightly.
-
-    Small/rural centers: significant donor pool increase (+15-25%) because
-    they now receive organs from farther away. Wait times decrease.
-
-    Medium centers: moderate improvement (+5-10%).
-
-    Based on: King et al., AJT 2023 — "Geographic Disparity in Kidney
-    Transplant Under the New Allocation System"; OPTN one-year evaluation.
-    """
-    adjustments = {}
-
-    for city in _LARGE_KIDNEY_CENTERS:
-        adjustments[city] = CityAdjustment(
-            donor_rate_multiplier=0.96,   # -4% donor access
-            wait_time_multiplier=1.03,    # +3% wait
-        )
-
-    for city in _SMALL_KIDNEY_CENTERS:
-        adjustments[city] = CityAdjustment(
-            donor_rate_multiplier=1.20,   # +20% donor access
-            wait_time_multiplier=0.85,    # -15% wait
-        )
-
-    # Medium centers get moderate benefit
-    all_cities = {
-        "Pittsburgh", "Baltimore", "Philadelphia", "New York", "Minneapolis",
-        "Madison", "Chicago", "Cleveland", "St. Louis", "Indianapolis",
-        "Omaha", "Rochester", "Nashville", "Durham", "Miami",
-        "Dallas", "Houston", "Portland", "Seattle", "San Francisco",
-        "Los Angeles", "Palo Alto",
+    if organ in _center_size_cache:
+        return _center_size_cache[organ]
+    try:
+        data = get_data()
+    except RuntimeError:
+        return {}
+    latest: dict[str, float] = {}
+    for code, organs in data.center_trends.get("centers", {}).items():
+        series = (organs.get(organ) or {}).get("volume") or []
+        vals = [v for v in series if isinstance(v, (int, float))]
+        if vals:
+            latest[code] = float(vals[-1])
+    if len(latest) < 8:
+        _center_size_cache[organ] = {}
+        return {}
+    vols = sorted(latest.values())
+    q1 = vols[len(vols) // 4]
+    q3 = vols[(3 * len(vols)) // 4]
+    classes = {
+        code: ("small" if v <= q1 else "large" if v >= q3 else "medium")
+        for code, v in latest.items()
     }
-    medium = all_cities - _LARGE_KIDNEY_CENTERS - _SMALL_KIDNEY_CENTERS
-    for city in medium:
-        adjustments[city] = CityAdjustment(
-            donor_rate_multiplier=1.08,   # +8% donor access
-            wait_time_multiplier=0.95,    # -5% wait
-        )
-
-    return adjustments
+    _center_size_cache[organ] = classes
+    return classes
 
 
-def _continuous_distribution_city_adjustments() -> dict[str, CityAdjustment]:
-    """
-    Per-city adjustments for continuous distribution.
+TRAVEL_SUBSIDY_TIERS = {
+    5000: {
+        "label": "$5,000",
+        "global_donor_mult": 1.02,     # +2% system matching efficiency
+        "global_wait_mult": 0.98,      # -2% average wait
+        "max_col_effect": 0.04,        # up to 4% wait reduction for highest-COL
+    },
+    10000: {
+        "label": "$10,000",
+        "global_donor_mult": 1.04,
+        "global_wait_mult": 0.96,
+        "max_col_effect": 0.07,
+    },
+    20000: {
+        "label": "$20,000",
+        "global_donor_mult": 1.07,
+        "global_wait_mult": 0.93,
+        "max_col_effect": 0.12,
+    },
+    50000: {
+        "label": "$50,000",
+        "global_donor_mult": 1.10,
+        "global_wait_mult": 0.90,
+        "max_col_effect": 0.16,
+    },
+}
 
-    Under continuous distribution, geography matters less. Large centers
-    in donor-rich areas lose their geographic advantage; rural centers
-    gain access. The net effect is a leveling across centers.
 
-    The adjustment is stronger than 250nm circles because continuous
-    distribution more aggressively de-emphasizes geography.
-    """
-    adjustments = {}
+# Size-class effects for the 2021 kidney 250nm circle policy.
+# Based on: King et al., AJT 2023 — "Geographic Disparity in Kidney
+# Transplant Under the New Allocation System"; OPTN one-year evaluation.
+_KIDNEY_250NM_SIZE_ADJUSTMENTS = {
+    "large": CityAdjustment(donor_rate_multiplier=0.96, wait_time_multiplier=1.03),
+    "small": CityAdjustment(donor_rate_multiplier=1.20, wait_time_multiplier=0.85),
+    "medium": CityAdjustment(donor_rate_multiplier=1.08, wait_time_multiplier=0.95),
+}
 
-    for city in _LARGE_KIDNEY_CENTERS:
-        adjustments[city] = CityAdjustment(
-            donor_rate_multiplier=0.92,   # -8% donor access
-            wait_time_multiplier=1.08,    # +8% wait
-        )
-
-    for city in _SMALL_KIDNEY_CENTERS:
-        adjustments[city] = CityAdjustment(
-            donor_rate_multiplier=1.30,   # +30% donor access
-            wait_time_multiplier=0.78,    # -22% wait
-        )
-
-    all_cities = {
-        "Pittsburgh", "Baltimore", "Philadelphia", "New York", "Minneapolis",
-        "Madison", "Chicago", "Cleveland", "St. Louis", "Indianapolis",
-        "Omaha", "Rochester", "Nashville", "Durham", "Miami",
-        "Dallas", "Houston", "Portland", "Seattle", "San Francisco",
-        "Los Angeles", "Palo Alto",
-    }
-    medium = all_cities - _LARGE_KIDNEY_CENTERS - _SMALL_KIDNEY_CENTERS
-    for city in medium:
-        adjustments[city] = CityAdjustment(
-            donor_rate_multiplier=1.12,   # +12% donor access
-            wait_time_multiplier=0.90,    # -10% wait
-        )
-
-    return adjustments
+# Continuous distribution de-emphasizes geography more aggressively than
+# 250nm circles — stronger redistribution from large to small programs.
+_CONTINUOUS_DIST_SIZE_ADJUSTMENTS = {
+    "large": CityAdjustment(donor_rate_multiplier=0.92, wait_time_multiplier=1.08),
+    "small": CityAdjustment(donor_rate_multiplier=1.30, wait_time_multiplier=0.78),
+    "medium": CityAdjustment(donor_rate_multiplier=1.12, wait_time_multiplier=0.90),
+}
 
 
 # --- Predefined scenarios ---
@@ -220,7 +210,7 @@ _register(PolicyScenario(
     organs=["kidney"],
     donor_rate_multiplier=1.05,  # net national +5% efficiency
     wait_time_multiplier=0.97,
-    city_adjustments=_kidney_250nm_city_adjustments(),
+    size_class_adjustments=_KIDNEY_250NM_SIZE_ADJUSTMENTS,
     references=[
         "King KL et al. Geographic Disparity in Kidney Transplant Under the "
         "New Allocation System. Am J Transplant. 2023;23(1):45-55.",
@@ -257,7 +247,7 @@ _register(PolicyScenario(
     organs=[],  # all organs
     donor_rate_multiplier=1.08,  # national +8% allocation efficiency
     wait_time_multiplier=0.93,
-    city_adjustments=_continuous_distribution_city_adjustments(),
+    size_class_adjustments=_CONTINUOUS_DIST_SIZE_ADJUSTMENTS,
     references=[
         "OPTN. Continuous Distribution of Organs Framework. "
         "optn.transplant.hrsa.gov, 2022-2025.",
@@ -296,7 +286,6 @@ _register(PolicyScenario(
     organs=["kidney", "liver", "lung", "heart"],
     donor_rate_multiplier=1.15,  # +15% organ supply
     wait_time_multiplier=0.92,   # waits decrease as supply increases
-    city_adjustments={},  # DCD expansion is roughly uniform geographically
     references=[
         "Croome KP et al. Outcomes of DCD Liver Transplantation with "
         "Machine Perfusion. Transplantation. 2020;104(10):2068-2076.",
@@ -336,7 +325,6 @@ _register(PolicyScenario(
     organs=["kidney", "liver"],
     donor_rate_multiplier=1.06,  # +6% donor pool
     wait_time_multiplier=0.96,   # modest wait decrease
-    city_adjustments={},  # HCV+ donor availability is roughly geographic-neutral
     references=[
         "Reese PP et al. Twelve-Month Outcomes After Transplant of HCV+ "
         "Kidneys into HCV- Recipients: The THINKER-2 Trial. NEJM. "
@@ -366,83 +354,6 @@ _register(PolicyScenario(
 # MSA, national = 100). Read from the committed snapshot so scenario math
 # stays in sync with the scoring data (#205); the static fallback matches
 # the 2024-vintage snapshot in case the file is missing.
-_CITY_COL_FALLBACK = {
-    "Baltimore": 105, "Chicago": 104, "Cleveland": 94, "Dallas": 103,
-    "Durham": 98, "Houston": 99, "Indianapolis": 96, "Los Angeles": 114,
-    "Madison": 97, "Miami": 114, "Minneapolis": 105, "Nashville": 96,
-    "New York": 113, "Omaha": 92, "Palo Alto": 110, "Philadelphia": 103,
-    "Pittsburgh": 95, "Portland": 105, "Rochester": 91, "San Francisco": 116,
-    "Seattle": 111, "St. Louis": 95,
-}
-
-
-def _get_city_col() -> dict[str, float]:
-    """City → RPP from the cost-of-living snapshot's legacy city block."""
-    try:
-        cities = get_data().cost_of_living.get("cities", {})
-    except RuntimeError:  # data not loaded yet (import-time access)
-        cities = {}
-    valid = {c: v for c, v in cities.items() if isinstance(v, (int, float))}
-    return valid if len(valid) >= 20 else dict(_CITY_COL_FALLBACK)
-
-# Travel subsidy price points and their modeled effects.
-#
-# Mechanism: a subsidy removes financial barriers that prevent patients from
-# listing at distant or expensive-area centers. This effectively:
-#   1. Increases the patient pool at high-quality centers → more competition
-#      but also better matching efficiency (net positive for system).
-#   2. Reduces geographic inequality — patients no longer constrained to nearby
-#      centers regardless of quality.
-#   3. The effect is COL-proportional: a $20K subsidy matters more for accessing
-#      a center in San Francisco (RPP=116) than one in Rochester, MN (RPP=91).
-#
-# We model this as wait_time_multiplier adjustments per city:
-#   - High-COL cities: wait times decrease more (subsidy enables access to centers
-#     patients couldn't afford before → better matching across the system)
-#   - Low-COL cities: minimal change (these were already affordable)
-#   - The global donor_rate_multiplier represents the system-wide matching
-#     efficiency gain from patients optimizing center choice.
-#
-# The scaling is calibrated so that:
-#   - $5K:  modest effect (~2-4% system improvement)
-#   - $10K: moderate effect (~4-7%)
-#   - $20K: substantial effect (~7-12%)
-#   - $50K: near-maximal effect (~12-18%, diminishing returns)
-#
-# These magnitudes are informed by:
-#   - Axelrod et al., AJT 2010: travel distance correlates with SES; removing
-#     financial barriers could increase listing radius by 40-80%
-#   - Transplant Tourism literature: patients who travel for transplant have
-#     15-25% better outcomes (selection bias, but directionally correct)
-#   - HRSA Travel and Subsistence Reimbursement: existing $5K program data
-
-TRAVEL_SUBSIDY_TIERS = {
-    5000: {
-        "label": "$5,000",
-        "global_donor_mult": 1.02,     # +2% system matching efficiency
-        "global_wait_mult": 0.98,      # -2% average wait
-        "max_col_effect": 0.04,        # up to 4% wait reduction for highest-COL
-    },
-    10000: {
-        "label": "$10,000",
-        "global_donor_mult": 1.04,
-        "global_wait_mult": 0.96,
-        "max_col_effect": 0.07,
-    },
-    20000: {
-        "label": "$20,000",
-        "global_donor_mult": 1.07,
-        "global_wait_mult": 0.93,
-        "max_col_effect": 0.12,
-    },
-    50000: {
-        "label": "$50,000",
-        "global_donor_mult": 1.10,
-        "global_wait_mult": 0.90,
-        "max_col_effect": 0.16,
-    },
-}
-
 _TRAVEL_REFERENCES = [
     "Axelrod DA et al. The Impact of Socioeconomic Factors on Kidney "
     "Transplant Access and Outcomes. Am J Transplant. 2010;10(10):2235-2243.",
@@ -472,54 +383,6 @@ _TRAVEL_CAVEATS = [
 ]
 
 
-def _travel_subsidy_city_adjustments(
-    subsidy_amount: int,
-) -> dict[str, CityAdjustment]:
-    """
-    Compute per-city adjustments for a travel subsidy scenario.
-
-    Logic: The subsidy reduces financial barriers proportional to each city's
-    cost of living. High-COL cities see the largest wait time reduction because
-    the subsidy makes them accessible to patients who couldn't afford to
-    relocate there before.
-
-    The COL effect is normalized so that:
-    - The highest-COL city gets the full max_col_effect reduction
-    - The lowest-COL city gets minimal reduction (already affordable)
-    - The scale is linear between min and max COL
-    """
-    tier = TRAVEL_SUBSIDY_TIERS[subsidy_amount]
-    max_effect = tier["max_col_effect"]
-
-    city_col = _get_city_col()
-    col_min = min(city_col.values())
-    col_max = max(city_col.values())
-    col_range = col_max - col_min if col_max > col_min else 1
-
-    adjustments = {}
-    for city, col in city_col.items():
-        # Normalize COL to [0, 1] where 1 = highest COL
-        col_normalized = (col - col_min) / col_range
-
-        # Wait time reduction: high-COL cities benefit most from the subsidy
-        # because they become newly accessible to more patients
-        wait_reduction = col_normalized * max_effect
-        wait_mult = 1.0 - wait_reduction
-
-        # Donor rate boost: high-COL cities see slightly more demand
-        # (new patients listing there), which improves matching efficiency
-        # but the boost is modest (patients add to pool, not organs)
-        donor_boost = col_normalized * (max_effect * 0.3)
-        donor_mult = 1.0 + donor_boost
-
-        adjustments[city] = CityAdjustment(
-            donor_rate_multiplier=round(donor_mult, 4),
-            wait_time_multiplier=round(wait_mult, 4),
-        )
-
-    return adjustments
-
-
 def _register_travel_subsidy_scenarios() -> None:
     """Register all travel subsidy price point scenarios."""
     for amount, tier in TRAVEL_SUBSIDY_TIERS.items():
@@ -543,30 +406,15 @@ def _register_travel_subsidy_scenarios() -> None:
             organs=[],  # applies to all organs
             donor_rate_multiplier=tier["global_donor_mult"],
             wait_time_multiplier=tier["global_wait_mult"],
-            city_adjustments=_travel_subsidy_city_adjustments(amount),
+            subsidy_amount=amount,
             references=_TRAVEL_REFERENCES,
             caveats=_TRAVEL_CAVEATS,
         ))
 
 
-# Register at import so SCENARIOS is always fully populated. At import time
-# the data snapshot isn't loaded yet (routers import before load_all()), so
-# city adjustments start from _CITY_COL_FALLBACK; the first post-load access
-# re-registers them from the live cost-of-living snapshot (#205).
+# Register at import so SCENARIOS is always fully populated (registration is
+# data-independent — per-center effects are derived at query time, #285).
 _register_travel_subsidy_scenarios()
-_travel_scenarios_refreshed = False
-
-
-def _ensure_travel_subsidy_scenarios() -> None:
-    global _travel_scenarios_refreshed
-    if _travel_scenarios_refreshed:
-        return
-    try:
-        get_data()
-    except RuntimeError:
-        return  # data still not loaded — keep fallback-based registration
-    _register_travel_subsidy_scenarios()  # same ids → clean overwrite
-    _travel_scenarios_refreshed = True
 
 
 # --- Public API ---
@@ -578,7 +426,6 @@ def list_scenarios(organ: Optional[str] = None) -> list[PolicyScenario]:
     If organ is specified, returns scenarios that apply to that organ
     (including scenarios that apply to all organs).
     """
-    _ensure_travel_subsidy_scenarios()
     results = []
     for scenario in SCENARIOS.values():
         if organ and scenario.organs and organ not in scenario.organs:
@@ -589,74 +436,76 @@ def list_scenarios(organ: Optional[str] = None) -> list[PolicyScenario]:
 
 def get_scenario(scenario_id: str) -> Optional[PolicyScenario]:
     """Get a specific scenario by ID."""
-    _ensure_travel_subsidy_scenarios()
     return SCENARIOS.get(scenario_id)
 
 
 # --- Per-center scenario multipliers (#285 step 2) ---
 
-_center_rpp_cache: dict[str, float] | None = None
+_center_rpp_cache: tuple[dict[str, float], float, float] | None = None
 
 
-def _center_rpp() -> dict[str, float]:
-    """BEA RPP per center code for the full SRTR center population (#205)."""
+def _center_rpp() -> tuple[dict[str, float], float, float]:
+    """BEA RPP per center code (+ cached min/max) for all SRTR centers (#205).
+
+    The (min, max) pair is computed once with the dict — get_center_multipliers
+    is called per center per tier, and rescanning 248 values each call is
+    pure waste (2026-08 review). load_all() runs once at startup, so the
+    cache never goes stale at runtime.
+    """
     global _center_rpp_cache
     if _center_rpp_cache is None:
         try:
             data = get_data()
         except RuntimeError:
-            return {}
+            return {}, 0.0, 0.0
         out = {}
         for code, rec in data.all_centers.get("centers", {}).items():
             col = data.cost_of_living_for_center(code, rec.get("state_abbr"))
             if isinstance(col, (int, float)):
                 out[code] = float(col)
-        _center_rpp_cache = out
+        vals = list(out.values())
+        _center_rpp_cache = (out, min(vals) if vals else 0.0,
+                             max(vals) if vals else 0.0)
     return _center_rpp_cache
 
 
 def get_center_multipliers(
     scenario: PolicyScenario,
     center_code: str,
+    organ: Optional[str] = None,
 ) -> tuple[float, float]:
     """Effective (donor, wait) multipliers for a specific center (#285).
 
     Travel-assistance scenarios derive the center's adjustment from its own
     BEA RPP, normalized over the full 248-center population — the same COL
     mechanism the legacy per-city table used, no longer limited to 22 cities.
-    Other scenarios fall back to their global multipliers until per-center
-    inputs exist (center volume, #275).
+    Allocation-geometry scenarios (250nm circles, continuous distribution)
+    apply volume-quartile size-class adjustments to every classified center.
+    Everything else falls back to the scenario's global multipliers.
     """
-    if center_code and scenario.id.startswith("travel_assistance_"):
-        try:
-            amount = int(scenario.id.rsplit("_", 1)[1].rstrip("k")) * 1000
-        except ValueError:
-            amount = None
-        tier = TRAVEL_SUBSIDY_TIERS.get(amount)
-        rpp = _center_rpp()
+    if center_code and scenario.subsidy_amount is not None:
+        tier = TRAVEL_SUBSIDY_TIERS.get(scenario.subsidy_amount)
+        rpp, col_min, col_max = _center_rpp()
         col = rpp.get(center_code)
         if tier and col is not None and len(rpp) > 1:
-            col_min, col_max = min(rpp.values()), max(rpp.values())
             col_range = col_max - col_min if col_max > col_min else 1.0
             norm = (col - col_min) / col_range
             wait_mult = 1.0 - norm * tier["max_col_effect"]
             donor_mult = 1.0 + norm * (tier["max_col_effect"] * 0.3)
             return round(donor_mult, 4), round(wait_mult, 4)
-    return scenario.donor_rate_multiplier, scenario.wait_time_multiplier
 
+    if center_code and scenario.size_class_adjustments:
+        size_organ = organ or (scenario.organs[0] if scenario.organs else None)
+        if size_organ:
+            cls = _center_size_classes(size_organ).get(center_code)
+            adj = scenario.size_class_adjustments.get(cls) if cls else None
+            if adj:
+                donor = (adj.donor_rate_multiplier
+                         if adj.donor_rate_multiplier is not None
+                         else scenario.donor_rate_multiplier)
+                wait = (adj.wait_time_multiplier
+                        if adj.wait_time_multiplier is not None
+                        else scenario.wait_time_multiplier)
+                return donor, wait
 
-def get_city_multipliers(
-    scenario: PolicyScenario,
-    city: str,
-) -> tuple[float, float]:
-    """
-    Get the effective (donor_rate_multiplier, wait_time_multiplier) for a city.
-
-    Uses per-city overrides if defined, otherwise falls back to global values.
-    """
-    city_adj = scenario.city_adjustments.get(city)
-    if city_adj:
-        donor = city_adj.donor_rate_multiplier if city_adj.donor_rate_multiplier is not None else scenario.donor_rate_multiplier
-        wait = city_adj.wait_time_multiplier if city_adj.wait_time_multiplier is not None else scenario.wait_time_multiplier
-        return donor, wait
     return scenario.donor_rate_multiplier, scenario.wait_time_multiplier
