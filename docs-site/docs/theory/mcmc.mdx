@@ -8,7 +8,7 @@ TransPlan's third inference engine uses Markov Chain Monte Carlo to fit a hierar
 
 ## Motivation
 
-Monte Carlo simulation uses fixed SRTR data values (median waits, mortality rates, delisting rates) as known constants. But these estimates carry statistical uncertainty. A 22-city estimate of kidney mortality is derived from finite sample sizes, with confidence intervals that overlap. The MCMC model learns the joint posterior distribution of all parameters, propagating this uncertainty through to outcome probabilities.
+Monte Carlo simulation uses fixed SRTR data values (median waits, mortality rates, delisting rates) as known constants. But these estimates carry statistical uncertainty. A per-center estimate of kidney mortality is derived from finite sample sizes, with confidence intervals that overlap. The MCMC model learns the joint posterior distribution of all parameters, propagating this uncertainty through to outcome probabilities.
 
 ## Model Specification
 
@@ -20,7 +20,7 @@ A three-level Bayesian hierarchical model:
 
 The model includes 92 free parameters per organ (6 organs, so ~550 parameters total):
 - Baseline mortality and delisting rates
-- 22 city random effects per outcome
+- one random effect per center (up to 248 in `full` granularity; ~50 in `state` mode) per outcome
 - Blood type offsets (8 types)
 - Urgency offsets (4 levels)
 - Age scaling

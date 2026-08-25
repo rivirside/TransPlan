@@ -8,7 +8,7 @@ sidebar_position: 1
 
 ### What is TransPlan?
 
-TransPlan is a patient-facing clinical decision support tool that helps transplant patients explore which US cities might offer better transplant outcomes for their specific clinical profile. It scores 22 cities across 8 categories and models transplant probability distributions using Monte Carlo simulation.
+TransPlan is a patient-facing clinical decision support tool that helps transplant patients explore which US cities might offer better transplant outcomes for their specific clinical profile. It scores all 248 SRTR transplant centers across 8 categories and models transplant probability distributions using Monte Carlo simulation.
 
 ### Is TransPlan medical advice?
 

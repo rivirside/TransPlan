@@ -60,7 +60,7 @@ After updating any data file, run:
 node scripts/validate-data.js
 ```
 
-This checks that all 22 cities have entries, numeric values are within expected ranges, and no null or missing required keys are present. Fix any validation warnings before committing.
+This checks coverage floors for the per-center data files (e.g. ≥240 centers in the climate/trauma layers, all six organ blocks in the SRTR files), that numeric values are within expected ranges, and that no null or missing required keys are present. The legacy 22-city coverage checks remain only for the data files not yet migrated. Fix any validation warnings before committing.
 
 ## Seed Data Philosophy
 

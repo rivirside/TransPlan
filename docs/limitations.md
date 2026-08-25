@@ -552,7 +552,7 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-071: Documentation still references "22 cities" in ~15 places
 - **Severity:** LOW
-- **Status:** OPEN
+- **Status:** FIXED (2026-08-25, #305 — docs-site/README swept; remaining mentions are explicitly historical. Backend comments/docstrings retire with the final #293 code deletion.)
 - **Category:** Documentation
 - **What:** After expanding all 3 inference engines to support 248 centers via granularity modes, ~15 documentation references in `docs/status.md`, `docs-site/docs/` (architecture, frontend, data-pipeline, FAQ, roadmap, testing, data-curation), and backend comments/docstrings still say "22 cities" as if it were a hard limit. The functional code and tests have been updated, but prose documentation has not.
 - **Why:** Misleading for new contributors and reviewers who read the docs and think the system is limited to 22 cities. Should reflect the current state: 22 cities is the "classic" default, with state (~50) and full (248) modes available.

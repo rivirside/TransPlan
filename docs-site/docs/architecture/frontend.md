@@ -26,7 +26,7 @@ The simulator is the core application. It contains a patient profile form groupe
 
 ### Scoring Engine (`algorithm.js`)
 
-This is the Phase 1 deterministic scoring engine. It consists of pure functions with no side effects. The main function, `calculateScores(profile, data)`, returns a score for all 22 cities. Eight scoring category functions each return values from 0 to 100. An optional COD multiplier is available through `_computeCodMultiplier()`. Category weights are configurable via form inputs. The module is exported as the browser global `window.TransPlanAlgorithm`.
+The Phase 1 client-side scoring engine (`algorithm.js`) was retired in the August 2026 cleanup (#293) — scoring runs exclusively through `POST /score`. The frontend keeps only `scoring-constants.js` (DEFAULT_WEIGHTS, CATEGORY_LABELS, CATEGORY_KEYS) for the weight-slider UI, parity-tested against the backend scoring engine.
 
 ### UI Orchestration (`script.js`)
 

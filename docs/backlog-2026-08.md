@@ -129,7 +129,7 @@ get sourced or refit. Register updated per item.
 
 | # | Item | Issue | Status |
 |---|------|-------|--------|
-| J1 | 22-city docs sweep (L-071) + status.md staleness + docs-site algorithm.js claim | #305 | |
+| J1 | 22-city docs sweep (L-071) + status.md staleness + docs-site algorithm.js claim | #305 | ✅ 2026-08-25 |
 | J2 | Inference-mode availability docs | #232 | |
 | J3 | Equity disclaimers hardcoded | #235 | |
 | J4 | BBN docstrings claim pgmpy | #258 | |

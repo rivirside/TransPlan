@@ -85,7 +85,7 @@ The `DEFAULTS` objects in `data-loader.js` contain the last known-good values, s
 
 ## Data Validation
 
-`scripts/validate-data.js` runs after each fetch cycle. It checks that all 22 cities have entries in each data file, that numeric values fall within expected ranges, and that no `null` or missing keys appear in required fields. Out-of-range values are logged as warnings rather than errors to avoid blocking the GitHub Action.
+`scripts/validate-data.js` runs after each fetch cycle. It enforces coverage floors on the per-center data files (climate, trauma, living-donor, trend series), requires every organ block in the SRTR-derived model files (never-shrink guards from the 2026-08-05 incident), and checks value ranges and required keys; legacy 22-city coverage checks remain only for not-yet-migrated files. Range issues are logged as warnings; coverage losses are hard errors.
 
 ## Adding a New Data Source
 
