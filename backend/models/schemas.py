@@ -93,6 +93,12 @@ class CityProbability(BaseModel):
         None,
         description="{ p_transplant, p_mortality, p_delisting, p_still_waiting } at 24 months"
     )
+    data_quality: Optional[list[str]] = Field(
+        None,
+        description="Degraded-input tags for this center (#300): e.g. "
+                    "'wait_time_national_default', 'competing_risks_national_default', "
+                    "'no_observed_outcomes'. None/empty = fully center-level inputs."
+    )
     outcomes: Optional[dict] = Field(
         None,
         description="Post-transplant: graft/patient survival, hazard ratio, compound success metric"
@@ -116,6 +122,12 @@ class SimulationResult(BaseModel):
     inference_mode: Literal["monte_carlo", "bayesian", "mcmc"] = Field(
         default="monte_carlo",
         description="Which inference engine produced this result"
+    )
+    data_quality: Optional[dict] = Field(
+        None,
+        description="Response-level data-provenance summary (#300): per input "
+                    "family, how many centers used center-level data vs fell "
+                    "back to national defaults."
     )
 
 

@@ -149,6 +149,37 @@
     }
   }
 
+  /**
+   * Surface the backend's data-provenance summary (#300) so degraded results
+   * are never silent: says how many centers fell back to national defaults.
+   */
+  function renderDataQualityNote(dq) {
+    var el = document.getElementById('sim-data-quality');
+    if (!el) {
+      var seedEl = document.getElementById('sim-seed-display');
+      if (!seedEl || !seedEl.parentNode) return;
+      el = document.createElement('div');
+      el.id = 'sim-data-quality';
+      el.style.cssText = 'font-size: 0.78rem; color: var(--text-muted, #888); margin-top: 0.25rem;';
+      seedEl.parentNode.insertBefore(el, seedEl.nextSibling);
+    }
+    if (!dq || !dq.centers_total) {
+      el.style.display = 'none';
+      return;
+    }
+    var degraded = dq.centers_total - (dq.fully_center_level || 0);
+    if (degraded === 0) {
+      el.textContent = 'Data: center-level SRTR inputs for all ' + dq.centers_total + ' centers.';
+    } else {
+      el.textContent = 'Data note: ' + degraded + ' of ' + dq.centers_total +
+        ' centers use partial national-default inputs (' +
+        (dq.wait_time_factors ? dq.wait_time_factors.national_default : 0) + ' wait, ' +
+        (dq.competing_risks ? dq.competing_risks.national_default : 0) + ' risk, ' +
+        (dq.observed_outcomes ? dq.observed_outcomes.missing : 0) + ' outcomes).';
+    }
+    el.style.display = '';
+  }
+
   // ── Map/table update helpers ────────────────────────────────────────────────
 
   function refreshTable(showSimColumns) {
@@ -283,6 +314,7 @@
       }
 
       updateSeedDisplay(window.SimResults.getLastSeed());
+      renderDataQualityNote(result.data_quality);
       refreshTable(true);
       refreshMap();
       renderContinueButtons(formData);

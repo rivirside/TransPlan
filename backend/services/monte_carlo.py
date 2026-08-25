@@ -280,6 +280,27 @@ def simulate(
         # Display label: use city name for fallback, center name for full mode
         display_city = center.get("city", name)
 
+        # --- Data-provenance tags (#300): make silent fallbacks visible.
+        # The getters default missing center data to national factors (1.0)
+        # without telling anyone; record which inputs actually had
+        # center-level data so the response can say so.
+        degraded: list[str] = []
+        if code:
+            try:
+                dq_data = get_data()
+                wt = (dq_data.center_wait_times.get("center_wait_time_factors", {})
+                      .get(code, {}))
+                if not isinstance(wt.get(patient.organ), (int, float)):
+                    degraded.append("wait_time_national_default")
+                cr = (dq_data.center_competing_risks.get("center_adjustments", {})
+                      .get(code, {}).get(patient.organ))
+                if not cr:
+                    degraded.append("competing_risks_national_default")
+                if dq_data.observed_outcome(patient.organ, code) is None:
+                    degraded.append("no_observed_outcomes")
+            except RuntimeError:
+                pass
+
         # --- Draw transplant times from log-normal ---
         dist = get_wait_time_distribution(
             organ=patient.organ,
@@ -446,9 +467,27 @@ def simulate(
             competing_risks=competing_risks_24,
             outcomes=outcomes_data,
             trends=trends_data,
+            data_quality=degraded or None,
         ))
 
     city_results.sort(key=lambda c: c.p_transplant_24mo, reverse=True)
+
+    # Response-level provenance summary (#300)
+    n_total = len(city_results)
+    dq_summary = None
+    if n_total:
+        def _count(tag: str) -> int:
+            return sum(1 for c in city_results if c.data_quality and tag in c.data_quality)
+        n_wait = _count("wait_time_national_default")
+        n_cr = _count("competing_risks_national_default")
+        n_obs = _count("no_observed_outcomes")
+        dq_summary = {
+            "centers_total": n_total,
+            "wait_time_factors": {"center_level": n_total - n_wait, "national_default": n_wait},
+            "competing_risks": {"center_level": n_total - n_cr, "national_default": n_cr},
+            "observed_outcomes": {"available": n_total - n_obs, "missing": n_obs},
+            "fully_center_level": sum(1 for c in city_results if not c.data_quality),
+        }
 
     elapsed = time.perf_counter() - start
     n_centers = len(city_results)
@@ -463,4 +502,5 @@ def simulate(
         iterations=n_iterations,
         elapsed_seconds=round(elapsed, 3),
         seed_used=seed,
+        data_quality=dq_summary,
     )

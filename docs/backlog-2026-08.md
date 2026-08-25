@@ -30,7 +30,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | B5 | what_if.py city validation; travel-subsidy iterates 22 | #285 | ✅ 2026-08-25 |
 | B6 | MCMC city-level hierarchy (classic trace default) | #207 | |
 | B7 | BBN "classic" 22-city mode selectable in web tier | #293 | |
-| B8 | Silent 1.0-multiplier fallbacks in distributions/competing_risks | see G1 | |
+| B8 | Silent 1.0-multiplier fallbacks in distributions/competing_risks | see G1 | visible via #300 on /simulate |
 | B9 | api-client.js sensitivity() 'Nashville' default | fix inline w/ A | ✅ 2026-08-24 |
 
 ## Phase E — Validation harness (before model work)
@@ -97,7 +97,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 
 | # | Item | Issue | Status |
 |---|------|-------|--------|
-| G1 | `data_quality` provenance field in API responses (visible fallbacks) | #300 (refs #212/#227/#228) | |
+| G1 | `data_quality` provenance field in API responses (visible fallbacks) | #300 (refs #212/#227/#228) | /simulate + UI ✅; other surfaces open |
 | G2 | Inconsistent fallback patterns / error handling | #219 / #220 | |
 | G3 | Synthetic-baseline guard (GEN-13/14/15) | #300 | |
 | G4 | OPO-level cause-of-death proportions | #301 | |
