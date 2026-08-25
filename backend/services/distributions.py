@@ -129,49 +129,62 @@ def get_wait_time_distribution(
     """
     _ensure_loaded()
 
-    organ_params = _DISTRIBUTIONS.get(organ)
-    if organ_params is None:
+    if _DISTRIBUTIONS.get(organ) is None:
         # Fallback: generic 24-month median
         logger.warning("No distribution params for organ '%s', using fallback", organ)
         return scipy.stats.lognorm(s=0.8, scale=24.0)
 
+    # (city is display-only — the location factor comes from center_code, #293)
+    sigma, adjusted_median = get_wait_time_params(
+        organ, blood_type, cpra=cpra, meld=meld, las=las,
+        age=age, sex=sex, center_code=center_code,
+    )
+    # scipy.stats.lognorm(s=sigma, scale=exp(mu)) has median = scale = exp(mu)
+    # So scale = adjusted_median gives the desired median directly
+    return scipy.stats.lognorm(s=sigma, scale=adjusted_median)
+
+
+def get_wait_time_params(
+    organ: str,
+    blood_type: str,
+    cpra: int | None = None,
+    meld: int | None = None,
+    las: float | None = None,
+    age: int | None = None,
+    sex: str | None = None,
+    center_code: str = "",
+) -> tuple[float, float]:
+    """(sigma, adjusted_median) of the wait-time lognormal.
+
+    Single source of the multiplier chain: national median × blood type ×
+    center factor × clinical score × age/sex. get_wait_time_distribution
+    freezes a scipy lognorm from these; hot vectorized paths (equity's
+    48-profiles × 248-centers sweep) evaluate lognorm.pdf directly instead —
+    freezing ~11k distributions per request was the dominant cost
+    (2026-08 review).
+    """
+    _ensure_loaded()
+    organ_params = _DISTRIBUTIONS.get(organ)
+    if organ_params is None:
+        return 0.8, 24.0
     median = organ_params["national_median_months"]
     sigma = organ_params["log_sigma"]
-
-    # Blood type modifier
     bt_mult = organ_params.get("blood_type_multipliers", {}).get(blood_type, 1.0)
-
-    # Location modifier — center-code lookup only (#293: the 22-city name
-    # fallback was retired; without a center_code the location factor is
-    # national-neutral 1.0, surfaced via the data_quality provenance tags)
     city_mult = 1.0
     if center_code:
         from services.data_loader import get_data
         center_factors = get_data().center_wait_times.get("center_wait_time_factors", {})
         city_mult = center_factors.get(center_code, {}).get(organ, 1.0)
-
-    # Organ-specific clinical modifiers
     clinical_mult = 1.0
     clinical_multipliers = organ_params.get("clinical_multipliers", {})
-
     if organ == "kidney" and cpra is not None and "cpra" in clinical_multipliers:
         clinical_mult = _get_range_multiplier(cpra, clinical_multipliers["cpra"])
-
     if organ == "liver" and meld is not None and "meld" in clinical_multipliers:
         clinical_mult = _get_range_multiplier(meld, clinical_multipliers["meld"])
-
     if organ == "lung" and las is not None and "las" in clinical_multipliers:
         clinical_mult = _get_range_multiplier(las, clinical_multipliers["las"])
-
-    # Age/sex demographic modifier (issue #48)
     demo_mult = _age_sex_multiplier(organ, age, sex)
-
-    # Adjusted median = national × blood_type × city × clinical × demographics
-    adjusted_median = median * bt_mult * city_mult * clinical_mult * demo_mult
-
-    # scipy.stats.lognorm(s=sigma, scale=exp(mu)) has median = scale = exp(mu)
-    # So scale = adjusted_median gives the desired median directly
-    return scipy.stats.lognorm(s=sigma, scale=adjusted_median)
+    return sigma, median * bt_mult * city_mult * clinical_mult * demo_mult
 
 
 def get_drift_adjusted_multiplier(

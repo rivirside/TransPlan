@@ -307,7 +307,9 @@ def _compute_equity_core(
     all_weights = []
     all_results = []
 
-    from services.distributions import get_wait_time_distribution
+    import scipy.stats
+
+    from services.distributions import get_wait_time_params
 
     for center in centers:
         code = center.get("code", "")
@@ -332,20 +334,36 @@ def _compute_equity_core(
         # the whole wait distribution, which moves the competing-risks integral.
         # Computing p24 per blood type only (and letting age/sex touch just the
         # displayed median) was the #254 defect — the Gini never saw age/sex.
-        for profile in profiles:
-            pat = profile["patient"]
-            dist = get_wait_time_distribution(
-                organ=rep.organ, blood_type=pat.blood_type, city=display,
-                center_code=code, cpra=rep.cpra, meld=rep.meld, las=rep.las,
-                age=pat.age, sex=pat.sex,
+        #
+        # Vectorized over the 48 profiles (2026-08 review): only the lognorm
+        # parameters vary per profile, so all 48 pdfs evaluate as one
+        # (48, 241) expression + one trapezoid pass instead of 48 frozen-dist
+        # integrations (~100x less CPU per request on the web tier).
+        params = np.array([
+            get_wait_time_params(
+                rep.organ, p["patient"].blood_type, center_code=code,
+                cpra=rep.cpra, meld=rep.meld, las=rep.las,
+                age=p["patient"].age, sex=p["patient"].sex,
             )
-            p24 = _grid_p24(dist, inv_total)
-            median_wait = float(dist.median())
+            for p in profiles
+        ])  # columns: (sigma, adjusted_median)
+        pdfs = scipy.stats.lognorm.pdf(
+            _P24_GRID[None, :], s=params[:, [0]], scale=params[:, [1]],
+        )
+        survival = np.exp(-inv_total * _P24_GRID)
+        _trapz = getattr(np, "trapezoid", None) or np.trapz
+        p24s = np.clip(_trapz(pdfs * survival[None, :], _P24_GRID, axis=1),
+                       0.0, 1.0)
+        # Lognorm median = scale (ppf(0.5) of the standard lognorm is exactly
+        # 1) — matches dist.median() without 48 frozen dists + ppf calls.
+        medians = params[:, 1]
+
+        for profile, p24, median_wait in zip(profiles, p24s, medians):
             weight = _profile_weight(
                 profile["blood_type"], profile["age_bracket"], profile["sex"])
             row = {
-                "p24": p24,
-                "median_wait": median_wait,
+                "p24": float(p24),
+                "median_wait": float(median_wait),
                 "blood_type": profile["blood_type"],
                 "age_bracket": profile["age_bracket"],
                 "sex": profile["sex"],
@@ -353,7 +371,7 @@ def _compute_equity_core(
             }
             center_results[code or display].append(row)
             all_results.append(row)
-            all_p24_values.append(p24)
+            all_p24_values.append(float(p24))
             all_weights.append(weight)
 
     # --- Compute per-center equity metrics ---
