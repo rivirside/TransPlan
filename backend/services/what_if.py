@@ -29,6 +29,8 @@ class WhatIfResult(BaseModel):
     city: str
     state: str
     center_code: str = Field("", description="SRTR center code when the run was center-based")
+    data_quality: list[str] | None = Field(
+        None, description="Degraded-input tags for this center (#300)")
     donor_rate_multiplier: float
     wait_time_multiplier: float
     baseline_p24: float = Field(ge=0, le=1)
@@ -325,10 +327,14 @@ def compute_what_if(
         adjusted["p24"] - baseline["p24"], elapsed,
     )
 
+    from services.provenance import center_data_quality
+    dq = center_data_quality(patient.organ, center_code) if center_code else None
+
     return WhatIfResult(
         city=city,
         state=state,
         center_code=center_code,
+        data_quality=dq or None,
         donor_rate_multiplier=donor_rate_multiplier,
         wait_time_multiplier=wait_time_multiplier,
         baseline_p24=baseline["p24"],

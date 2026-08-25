@@ -187,10 +187,14 @@ def compute_sensitivity(
         patient.organ, patient.blood_type, city, len(impacts), elapsed,
     )
 
+    from services.provenance import center_data_quality
+    dq = center_data_quality(patient.organ, center_code) if center_code else None
+
     return SensitivityResult(
         patient=patient,
         city=city,
         center_code=center_code,
+        data_quality=dq or None,
         impacts=impacts,
         iterations=n_iterations,
         elapsed_seconds=round(elapsed, 3),

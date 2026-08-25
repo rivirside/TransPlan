@@ -245,6 +245,8 @@ class SensitivityResult(BaseModel):
     iterations: int
     elapsed_seconds: float
     seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
+    data_quality: Optional[list[str]] = Field(
+        None, description="Degraded-input tags for the analyzed center (#300)")
 
 
 class DemographicGroup(BaseModel):
