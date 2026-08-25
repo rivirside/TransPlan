@@ -38,6 +38,8 @@ class TestRankStability:
     def test_deterministic_under_seed(self, kidney_patient):
         a = compute_rank_stability(kidney_patient, n_boot=100, seed=7)
         b = compute_rank_stability(kidney_patient, n_boot=100, seed=7)
+        # elapsed_seconds is wall-clock timing, not a model output
+        a.pop("elapsed_seconds"), b.pop("elapsed_seconds")
         assert a == b
 
     def test_intervals_widen_for_sparse_centers(self, kidney_patient):
