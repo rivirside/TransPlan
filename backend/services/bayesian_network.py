@@ -600,6 +600,8 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
     if city_results:
         from services.provenance import summarize
         dq_summary = summarize([c.data_quality or [] for c in city_results])
+    from services.data_loader import get_data as _get_data
+    vintage = _get_data().srtr_vintage()
 
     return SimulationResult(
         patient=patient,
@@ -608,4 +610,5 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
         elapsed_seconds=round(elapsed, 3),
         inference_mode="bayesian",
         data_quality=dq_summary,
+        data_vintage=vintage,
     )

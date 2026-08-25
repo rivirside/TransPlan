@@ -18,7 +18,7 @@ class PatientProfile(BaseModel):
     height_inches: Optional[float] = Field(None, gt=0, lt=120)
     # Organ-specific scores
     cpra: Optional[int] = Field(None, ge=0, le=100, description="Kidney only: % panel reactive antibodies")
-    meld: Optional[int] = Field(None, ge=6, le=40, description="Liver only: MELD score")
+    meld: Optional[int] = Field(None, ge=6, le=40, description="Liver only: MELD 3.0 score (the score in use since 2023; 6-40)")
     las: Optional[float] = Field(None, ge=0, le=100, description="Lung only: Lung Allocation Score")
     # Relocation comparison
     home_center: Optional[str] = Field(None, description="Patient's current transplant listing center (city name)")
@@ -138,6 +138,12 @@ class SimulationResult(BaseModel):
                     "family, how many centers used center-level data vs fell "
                     "back to national defaults."
     )
+    data_vintage: Optional[dict] = Field(
+        None,
+        description="Which SRTR release the inputs come from (#334) — "
+                    "estimates reflect that release's cohorts, not "
+                    "real-time allocation behavior",
+    )
 
 
 class CenterScore(BaseModel):
@@ -167,6 +173,12 @@ class ScoringResult(BaseModel):
         description="Data-provenance summary (#219): per-center wait-factor/"
                     "outcomes coverage and any spatial layers that fell back "
                     "to constants."
+    )
+    data_vintage: Optional[dict] = Field(
+        None,
+        description="Which SRTR release the inputs come from (#334) — "
+                    "estimates reflect that release's cohorts, not "
+                    "real-time allocation behavior",
     )
 
 

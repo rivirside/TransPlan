@@ -208,7 +208,7 @@
    * Surface the backend's data-provenance summary (#300) so degraded results
    * are never silent: says how many centers fell back to national defaults.
    */
-  function renderDataQualityNote(dq) {
+  function renderDataQualityNote(dq, vintage) {
     var el = document.getElementById('sim-data-quality');
     if (!el) {
       var seedEl = document.getElementById('sim-seed-display');
@@ -222,15 +222,22 @@
       el.style.display = 'none';
       return;
     }
+    // Data-vintage disclosure (#334): estimates reflect the SRTR release's
+    // cohorts, not real-time allocation behavior.
+    var vintageText = '';
+    if (vintage && vintage.srtr_source) {
+      vintageText = ' Source: ' + vintage.srtr_source +
+        ' (reflects that release\'s cohorts, not real-time allocation).';
+    }
     var degraded = dq.centers_total - (dq.fully_center_level || 0);
     if (degraded === 0) {
-      el.textContent = 'Data: center-level SRTR inputs for all ' + dq.centers_total + ' centers.';
+      el.textContent = 'Data: center-level SRTR inputs for all ' + dq.centers_total + ' centers.' + vintageText;
     } else {
       el.textContent = 'Data note: ' + degraded + ' of ' + dq.centers_total +
         ' centers use partial national-default inputs (' +
         (dq.wait_time_factors ? dq.wait_time_factors.national_default : 0) + ' wait, ' +
         (dq.competing_risks ? dq.competing_risks.national_default : 0) + ' risk, ' +
-        (dq.observed_outcomes ? dq.observed_outcomes.missing : 0) + ' outcomes).';
+        (dq.observed_outcomes ? dq.observed_outcomes.missing : 0) + ' outcomes).' + vintageText;
     }
     el.style.display = '';
   }
@@ -369,7 +376,7 @@
       }
 
       updateSeedDisplay(window.SimResults.getLastSeed());
-      renderDataQualityNote(result.data_quality);
+      renderDataQualityNote(result.data_quality, result.data_vintage);
       refreshTable(true);
       refreshMap();
       renderContinueButtons(formData);
