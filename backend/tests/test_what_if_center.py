@@ -72,11 +72,10 @@ class TestCenterCodePath:
         assert seen["dist_center"] == "ALCH"
         assert seen["delist_center"] == "ALCH"
 
-    def test_city_path_still_works(self, kidney_patient):
-        """Legacy 22-city path stays intact until #285 retires it."""
-        result = compute_what_if(kidney_patient, city="Nashville", n_iterations=200)
-        assert result.city == "Nashville"
-        assert result.center_code == ""
+    def test_city_only_rejected(self, kidney_patient):
+        """#293: the legacy 22-city mode is retired — center_code is required."""
+        with pytest.raises(ValueError, match="center_code is required"):
+            compute_what_if(kidney_patient, city="Nashville", n_iterations=200)
 
     def test_center_code_takes_precedence_over_city(self, kidney_patient):
         """When both are sent (the frontend sends a display label as city),

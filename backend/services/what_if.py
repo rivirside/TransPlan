@@ -19,7 +19,7 @@ from services.competing_risks import get_annual_delisting_rate, get_annual_morta
 from services.copula import draw_correlated_competing_risks
 from services.distributions import get_wait_time_distribution, get_lognorm_params
 from config import COPULA_THETA, ORGAN_COPULA_THETA, SUPPLY_WAIT_ELASTICITY
-from services.monte_carlo import CITIES, _get_cities, _get_cod_multiplier
+from services.monte_carlo import _get_cod_multiplier
 from services.stats_utils import rate_to_exponential_scale
 
 logger = logging.getLogger(__name__)
@@ -254,38 +254,31 @@ def compute_what_if(
 
     Parameters
     ----------
-    center_code : SRTR center code (preferred). When given, the run is
-        center-based over any of the 248 centers and *city* is ignored.
-        When empty, *city* is validated against the legacy focus-city list
-        (path retired with #285).
+    center_code : SRTR center code (required since #285/#293 — the run is
+        center-based over any of the 248 centers). *city* is accepted for
+        backward compatibility but ignored; the response echoes the center's
+        display name.
     seed : optional RNG seed for reproducibility. If None, a random seed is
         generated and returned in the result.
     """
     start = time.perf_counter()
 
-    if center_code:
-        from services.data_loader import get_data
-        center = get_data().center_by_code(center_code)
-        if center is None:
-            raise ValueError(f"Unknown center code: '{center_code}'")
-        if patient.organ not in center.get("organs", []):
-            raise ValueError(
-                f"Center {center_code} ({center.get('name', '')}) does not perform "
-                f"{patient.organ} transplants"
-            )
-        city = center.get("name", center_code)
-        state = center.get("state_abbr", "")
-    else:
-        # Validate city name against canonical list (#62)
-        state = None
-        cities = _get_cities()
-        for c in cities:
-            if c["city"] == city:
-                state = c["state"]
-                break
-        if state is None:
-            valid = sorted(c["city"] for c in cities)
-            raise ValueError(f"Unknown city: '{city}'. Valid cities: {valid}")
+    if not center_code:
+        raise ValueError(
+            "center_code is required — the legacy 22-city mode was retired "
+            "(#285). Pick a center code from GET /centers."
+        )
+    from services.data_loader import get_data
+    center = get_data().center_by_code(center_code)
+    if center is None:
+        raise ValueError(f"Unknown center code: '{center_code}'")
+    if patient.organ not in center.get("organs", []):
+        raise ValueError(
+            f"Center {center_code} ({center.get('name', '')}) does not perform "
+            f"{patient.organ} transplants"
+        )
+    city = center.get("name", center_code)
+    state = center.get("state_abbr", "")
 
     # Paired comparison: baseline and adjusted use IDENTICAL random streams
     # (fresh generators from the same seed), so with neutral multipliers the

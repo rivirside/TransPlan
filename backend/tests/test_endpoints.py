@@ -143,7 +143,7 @@ class TestWhatIf:
     def test_returns_200(self):
         body = {
             "patient": KIDNEY_PATIENT,
-            "city": "Nashville",
+            "center_code": "TNVU",
             "donor_rate_multiplier": 1.2,
             "wait_time_multiplier": 0.9,
             "iterations": 100,
@@ -154,7 +154,7 @@ class TestWhatIf:
     def test_response_shape(self):
         body = {
             "patient": KIDNEY_PATIENT,
-            "city": "Nashville",
+            "center_code": "TNVU",
             "iterations": 100,
         }
         data = client.post("/what-if", json=body).json()
@@ -164,7 +164,7 @@ class TestWhatIf:
     def test_multiplier_out_of_range_422(self):
         body = {
             "patient": KIDNEY_PATIENT,
-            "city": "Nashville",
+            "center_code": "TNVU",
             "donor_rate_multiplier": 5.0,
             "iterations": 100,
         }
@@ -193,6 +193,13 @@ class TestWhatIf:
         }
         r = client.post("/what-if", json=body)
         assert r.status_code == 400
+
+    def test_city_only_400(self):
+        """#293: the legacy 22-city mode is retired."""
+        body = {"patient": KIDNEY_PATIENT, "city": "Nashville", "iterations": 100}
+        r = client.post("/what-if", json=body)
+        assert r.status_code == 400
+        assert "center_code is required" in r.json()["detail"]
 
 
 # ==================== GET /policy-scenarios ====================
@@ -230,7 +237,7 @@ class TestPolicyScenario:
         body = {
             "patient": KIDNEY_PATIENT,
             "scenario_id": "kidney_250nm",
-            "city": "Nashville",
+            "center_code": "TNVU",
             "iterations": 100,
         }
         r = client.post("/policy-scenario", json=body)
@@ -240,7 +247,7 @@ class TestPolicyScenario:
         body = {
             "patient": LIVER_PATIENT,
             "scenario_id": "kidney_250nm",
-            "city": "Nashville",
+            "center_code": "TNVU",
             "iterations": 100,
         }
         r = client.post("/policy-scenario", json=body)
@@ -250,7 +257,7 @@ class TestPolicyScenario:
         body = {
             "patient": KIDNEY_PATIENT,
             "scenario_id": "fake_scenario",
-            "city": "Nashville",
+            "center_code": "TNVU",
             "iterations": 100,
         }
         r = client.post("/policy-scenario", json=body)

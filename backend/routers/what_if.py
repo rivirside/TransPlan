@@ -25,8 +25,7 @@ from models.schemas import (
 )
 from services.what_if import compute_what_if, WhatIfResult
 from services.policy_scenarios import (
-    PolicyScenario, list_scenarios, get_scenario, get_city_multipliers,
-    TRAVEL_SUBSIDY_TIERS,
+    PolicyScenario, list_scenarios, get_scenario, TRAVEL_SUBSIDY_TIERS,
 )
 
 router = APIRouter()
@@ -119,12 +118,9 @@ def run_policy_scenario(request: PolicyScenarioRequest) -> PolicyScenarioResult:
         )
 
     # Effective multipliers: per-center (BEA RPP-derived for travel scenarios,
-    # #285) when a center code is given; legacy per-city table otherwise.
-    if request.center_code:
-        from services.policy_scenarios import get_center_multipliers
-        donor_mult, wait_mult = get_center_multipliers(scenario, request.center_code)
-    else:
-        donor_mult, wait_mult = get_city_multipliers(scenario, request.city)
+    # #285). center_code is required — compute_what_if 400s without it.
+    from services.policy_scenarios import get_center_multipliers
+    donor_mult, wait_mult = get_center_multipliers(scenario, request.center_code)
 
     # Clamp iterations to tier cap
     from tier_config import get_tier
