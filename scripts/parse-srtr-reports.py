@@ -1034,9 +1034,12 @@ def parse_all_centers_post_transplant() -> dict:
             gs_hr_lo = gs_data.get("graft_hr_lo")
             gs_hr_hi = gs_data.get("graft_hr_hi")
 
-            if gs_1yr is not None:
+            # 0.0% survival is an empty/censored SRTR cell, not an observed
+            # rate — emitting it would show "0% survival" in the UI (found by
+            # the 2026-08 range-sanity test: OHCM lung 3yr).
+            if gs_1yr:
                 entry["graft_survival_1yr"] = round(gs_1yr, 1)
-            if gs_3yr is not None:
+            if gs_3yr:
                 entry["graft_survival_3yr"] = round(gs_3yr, 1)
             if gs_hr is not None:
                 entry["graft_hr_1yr"] = round(gs_hr, 3)
@@ -1052,9 +1055,9 @@ def parse_all_centers_post_transplant() -> dict:
                 ps_hr = ps_data.get("patient_hr_1yr")
                 ps_hr_lo = ps_data.get("patient_hr_lo")
                 ps_hr_hi = ps_data.get("patient_hr_hi")
-                if ps_1yr is not None:
+                if ps_1yr:
                     entry["patient_survival_1yr"] = round(ps_1yr, 1)
-                if ps_3yr is not None:
+                if ps_3yr:
                     entry["patient_survival_3yr"] = round(ps_3yr, 1)
                 if ps_hr is not None:
                     entry["patient_hr_1yr"] = round(ps_hr, 3)

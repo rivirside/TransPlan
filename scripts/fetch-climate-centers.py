@@ -96,7 +96,10 @@ def fetch_climatology(lat: float, lon: float, cache: dict) -> dict | None:
 
 def features(rec: dict) -> tuple[float, float, float] | None:
     t = [rec["T2M"].get(m) for m in MONTHS]
-    if any(v is None for v in t):
+    # NASA POWER uses -999 as its fill value on grid gaps (coastal cells are
+    # the classic case) — treat it as missing, or the linear map fabricates a
+    # plausible-looking worst score from a sentinel (2026-08 review).
+    if any(v is None or v <= -900 for v in t):
         return None
     t = np.array(t, dtype=float)
     mean_dev = float(np.mean(np.abs(t - COMFORT_C)))

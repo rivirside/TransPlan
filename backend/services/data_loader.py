@@ -172,6 +172,12 @@ def _load_json(path: Path, name: str, data: TransPlanData) -> dict:
 def load_all() -> TransPlanData:
     """Load all data files and return a TransPlanData singleton."""
     global _DATA
+    # Drop derived caches keyed on the previous snapshot (tests reload data)
+    try:
+        from services.trends import get_center_trend_projection
+        get_center_trend_projection.cache_clear()
+    except ImportError:
+        pass
     data = TransPlanData()
 
     data.air_quality        = _load_json(DATA_DIR / "air-quality.json",         "air_quality",        data)

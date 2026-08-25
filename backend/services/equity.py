@@ -94,14 +94,14 @@ from services.stats_utils import gini_weighted as _gini_weighted
 # population but got 1/8 of the blood-type weight). Weighted metrics use:
 #
 # Blood type: US population prevalence (American Red Cross / Stanford Blood
-# Center distribution). Register: EQSP-24.
+# Center distribution). Register: EQSP-32.
 BLOOD_TYPE_PREVALENCE = {
     "O+": 0.374, "A+": 0.357, "B+": 0.085, "AB+": 0.034,
     "O-": 0.066, "A-": 0.063, "B-": 0.015, "AB-": 0.006,
 }
 # Age brackets / sex: approximate adult OPTN waitlist composition (OPTN/SRTR
 # Annual Data Report; the waitlist skews older and male). These are rough,
-# documented approximations — not per-organ. Register: EQSP-25.
+# documented approximations — not per-organ. Register: EQSP-31.
 AGE_BRACKET_WEIGHTS = {"18-34": 0.11, "35-54": 0.38, "55-70": 0.51}
 SEX_WEIGHTS = {"male": 0.60, "female": 0.40}
 

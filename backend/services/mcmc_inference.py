@@ -32,9 +32,7 @@ from services.copula import draw_correlated_competing_risks
 from services.mcmc_survival import (
     BLOOD_TYPES,
     URGENCY_LEVELS,
-    load_trace,
     sample_params_from_trace,
-    trace_exists,
 )
 from services.monte_carlo import _get_centers, _get_cod_multiplier
 from services.stats_utils import rate_to_exponential_scale

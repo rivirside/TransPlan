@@ -164,6 +164,86 @@ def _run_single(
     }
 
 
+def closed_form_baseline(patient: PatientProfile, center_code: str) -> dict:
+    """Tier-invariant half of the closed-form what-if for one center:
+    validation, wait distribution, competing hazards, baseline p24/median.
+
+    Split out so multi-tier sweeps (travel subsidy: 4 tiers × 248 centers)
+    compute it once per center instead of once per tier×center — only the
+    adjusted distribution depends on the multipliers (2026-08 review).
+    """
+    from services.data_loader import get_data
+    from services.equity import _grid_p24
+
+    center = get_data().center_by_code(center_code)
+    if center is None:
+        raise ValueError(f"Unknown center code: '{center_code}'")
+    if patient.organ not in center.get("organs", []):
+        raise ValueError(
+            f"Center {center_code} ({center.get('name', '')}) does not perform "
+            f"{patient.organ} transplants"
+        )
+
+    dist = get_wait_time_distribution(
+        organ=patient.organ, blood_type=patient.blood_type,
+        center_code=center_code, cpra=patient.cpra, meld=patient.meld,
+        las=patient.las, age=patient.age, sex=patient.sex,
+    )
+    annual_mort = get_annual_mortality_rate(
+        organ=patient.organ, urgency=patient.urgency, meld=patient.meld,
+        center_code=center_code,
+    )
+    annual_delist = get_annual_delisting_rate(
+        organ=patient.organ, center_code=center_code,
+    )
+    mort_scale = rate_to_exponential_scale(annual_mort, "mortality", center_code)
+    delist_scale = rate_to_exponential_scale(annual_delist, "delisting", center_code)
+    inv_total = 1.0 / mort_scale + 1.0 / delist_scale
+
+    s, loc, scale = get_lognorm_params(dist)
+    return {
+        "city": center.get("name", center_code),
+        "state": center.get("state_abbr", ""),
+        "center_code": center_code,
+        "s": s,
+        "loc": loc,
+        "scale": scale,
+        "inv_total": inv_total,
+        "baseline_p24": _grid_p24(dist, inv_total),
+        "baseline_median_wait": float(dist.median()),
+    }
+
+
+def closed_form_adjusted(baseline: dict, donor_rate_multiplier: float = 1.0,
+                         wait_time_multiplier: float = 1.0) -> dict:
+    """Apply multipliers to a closed_form_baseline result.
+
+    Wait multiplier scales the median directly; donor multiplier divides
+    times with sublinear elasticity (L-056) — identical mechanics to
+    _run_single.
+    """
+    import scipy.stats
+    from services.equity import _grid_p24
+
+    eff_donor = (donor_rate_multiplier ** SUPPLY_WAIT_ELASTICITY
+                 if donor_rate_multiplier > 0 else 1.0)
+    adj_scale = baseline["scale"] * wait_time_multiplier / eff_donor
+    adj_dist = scipy.stats.lognorm(
+        s=baseline["s"], loc=baseline["loc"], scale=adj_scale)
+    adjusted_p24 = _grid_p24(adj_dist, baseline["inv_total"])
+
+    return {
+        "city": baseline["city"],
+        "state": baseline["state"],
+        "center_code": baseline["center_code"],
+        "baseline_p24": round(baseline["baseline_p24"], 4),
+        "adjusted_p24": round(adjusted_p24, 4),
+        "delta_p24": round(adjusted_p24 - baseline["baseline_p24"], 4),
+        "baseline_median_wait": round(baseline["baseline_median_wait"], 2),
+        "adjusted_median_wait": round(float(adj_dist.median()), 2),
+    }
+
+
 def compute_what_if_closed_form(
     patient: PatientProfile,
     center_code: str,
@@ -182,59 +262,10 @@ def compute_what_if_closed_form(
     Returns {city, state, center_code, baseline_p24, adjusted_p24, delta_p24,
     baseline_median_wait, adjusted_median_wait}.
     """
-    import scipy.stats
-    from services.data_loader import get_data
-    from services.equity import _grid_p24
-
-    center = get_data().center_by_code(center_code)
-    if center is None:
-        raise ValueError(f"Unknown center code: '{center_code}'")
-    if patient.organ not in center.get("organs", []):
-        raise ValueError(
-            f"Center {center_code} ({center.get('name', '')}) does not perform "
-            f"{patient.organ} transplants"
-        )
-    name = center.get("name", center_code)
-    state = center.get("state_abbr", "")
-
-    dist = get_wait_time_distribution(
-        organ=patient.organ, blood_type=patient.blood_type,
-        center_code=center_code, cpra=patient.cpra, meld=patient.meld,
-        las=patient.las, age=patient.age, sex=patient.sex,
+    return closed_form_adjusted(
+        closed_form_baseline(patient, center_code),
+        donor_rate_multiplier, wait_time_multiplier,
     )
-    annual_mort = get_annual_mortality_rate(
-        organ=patient.organ, urgency=patient.urgency, meld=patient.meld,
-        center_code=center_code,
-    )
-    annual_delist = get_annual_delisting_rate(
-        organ=patient.organ, center_code=center_code,
-    )
-    mort_scale = rate_to_exponential_scale(annual_mort, "mortality", center_code)
-    delist_scale = rate_to_exponential_scale(annual_delist, "delisting", center_code)
-    inv_total = 1.0 / mort_scale + 1.0 / delist_scale
-
-    # Adjusted distribution: wait multiplier scales the median directly;
-    # donor multiplier divides times with sublinear elasticity (L-056) —
-    # identical mechanics to _run_single.
-    s, loc, scale = get_lognorm_params(dist)
-    eff_donor = (donor_rate_multiplier ** SUPPLY_WAIT_ELASTICITY
-                 if donor_rate_multiplier > 0 else 1.0)
-    adj_scale = scale * wait_time_multiplier / eff_donor
-    adj_dist = scipy.stats.lognorm(s=s, loc=loc, scale=adj_scale)
-
-    baseline_p24 = _grid_p24(dist, inv_total)
-    adjusted_p24 = _grid_p24(adj_dist, inv_total)
-
-    return {
-        "city": name,
-        "state": state,
-        "center_code": center_code,
-        "baseline_p24": round(baseline_p24, 4),
-        "adjusted_p24": round(adjusted_p24, 4),
-        "delta_p24": round(adjusted_p24 - baseline_p24, 4),
-        "baseline_median_wait": round(float(dist.median()), 2),
-        "adjusted_median_wait": round(float(adj_dist.median()), 2),
-    }
 
 
 def compute_what_if(

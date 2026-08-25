@@ -75,6 +75,8 @@ class PolicyScenarioResult(BaseModel):
     iterations: int
     elapsed_seconds: float
     seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
+    data_quality: Optional[list[str]] = Field(
+        None, description="Degraded-input provenance tags for this center (#300)")
 
 
 @router.get("/policy-scenarios", response_model=list[PolicyScenario])
@@ -159,6 +161,8 @@ def run_policy_scenario(request: PolicyScenarioRequest) -> PolicyScenarioResult:
         adjusted_median_wait=result.adjusted_median_wait,
         iterations=result.iterations,
         elapsed_seconds=result.elapsed_seconds,
+        seed_used=result.seed_used,
+        data_quality=result.data_quality,
     )
 
 
@@ -178,7 +182,7 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
 
     from services.data_loader import get_data
     from services.policy_scenarios import get_center_multipliers
-    from services.what_if import compute_what_if_closed_form
+    from services.what_if import closed_form_adjusted, closed_form_baseline
 
     # Determine which centers to analyze (#285: all 248, not the 22 cities).
     # The per-center comparison is closed-form (deterministic competing-risks
@@ -199,6 +203,17 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
             detail="No valid centers found. Check center_codes.",
         )
 
+    # The baseline half (validation, wait dist, competing hazards, baseline
+    # p24) is tier-invariant — compute it once per center, not once per
+    # tier×center (2026-08 review).
+    baselines = {}
+    for center in center_list:
+        code = center.get("code", "")
+        try:
+            baselines[code] = closed_form_baseline(request.patient, code)
+        except Exception:
+            logger.warning("Travel subsidy baseline failed for %s", code)
+
     tiers = []
     for amount in sorted(TRAVEL_SUBSIDY_TIERS.keys()):
         scenario_id = f"travel_assistance_{amount // 1000}k"
@@ -207,18 +222,12 @@ def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyA
             continue
 
         city_results = []
-        for center in center_list:
-            code = center.get("code", "")
+        for code, baseline in baselines.items():
             donor_mult, wait_mult = get_center_multipliers(
                 scenario, code, organ=request.patient.organ,
             )
             try:
-                result = compute_what_if_closed_form(
-                    patient=request.patient,
-                    center_code=code,
-                    donor_rate_multiplier=donor_mult,
-                    wait_time_multiplier=wait_mult,
-                )
+                result = closed_form_adjusted(baseline, donor_mult, wait_mult)
                 city_results.append(TravelSubsidyCityResult(**result))
             except Exception:
                 logger.warning("Travel subsidy analysis failed for %s at %s", code, scenario_id)
