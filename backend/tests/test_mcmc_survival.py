@@ -27,16 +27,19 @@ class TestLoadOrganData:
         data = load_organ_data(organ)
         assert data["organ"] == organ
 
-    def test_kidney_data_shape_classic(self):
-        data = load_organ_data("kidney", granularity="classic")
-        assert data["n_cities"] == 22
-        assert data["national_median"] > 0
-        assert data["log_sigma"] > 0
-        assert data["city_wait_factors"].shape == (22,)
-        assert data["city_mort_factors"].shape == (22,)
-        assert data["city_delist_factors"].shape == (22,)
-        assert data["bt_mults"].shape == (8,)
-        assert data["urg_mults"].shape == (4,)
+    def test_classic_granularity_retired(self):
+        """#293: the legacy 22-city mode raises."""
+        with pytest.raises(ValueError, match="retired"):
+            load_organ_data("kidney", granularity="classic")
+
+    def test_kidney_data_shape_state(self, data):
+        d = load_organ_data("kidney", granularity="state")
+        assert d["n_cities"] >= 40
+        assert d["national_median"] > 0
+        assert d["log_sigma"] > 0
+        assert d["city_wait_factors"].shape == (d["n_cities"],)
+        assert d["bt_mults"].shape == (8,)
+        assert d["urg_mults"].shape == (4,)
 
     def test_national_rates_positive(self):
         for organ in ORGANS:
@@ -98,13 +101,13 @@ class TestLoadOrganData:
         assert (d["city_mort_factors"] > 0).all()
         assert (d["city_delist_factors"] > 0).all()
 
-    def test_granularity_default_is_classic(self):
-        """Default granularity should match explicit classic."""
+    def test_granularity_default_is_state(self, data):
+        """Default granularity is 'state' post-#293."""
         data_default = load_organ_data("kidney")
-        data_classic = load_organ_data("kidney", granularity="classic")
-        assert data_default["n_cities"] == data_classic["n_cities"]
-        assert data_default["cities"] == data_classic["cities"]
-        np.testing.assert_array_equal(data_default["city_wait_factors"], data_classic["city_wait_factors"])
+        data_state = load_organ_data("kidney", granularity="state")
+        assert data_default["n_cities"] == data_state["n_cities"]
+        assert data_default["cities"] == data_state["cities"]
+        np.testing.assert_array_equal(data_default["city_wait_factors"], data_state["city_wait_factors"])
 
 
 # ---------------------------------------------------------------------------
@@ -112,14 +115,14 @@ class TestLoadOrganData:
 # ---------------------------------------------------------------------------
 
 class TestTracePath:
-    def test_classic_path(self):
+    def test_default_path_is_state(self):
         p = trace_path("kidney")
-        assert p.name == "kidney.nc"
+        assert p.name == "kidney-state.nc"
         assert "mcmc-traces" in str(p)
 
-    def test_classic_explicit(self):
-        p = trace_path("kidney", "classic")
-        assert p.name == "kidney.nc"
+    def test_classic_explicit_retired(self):
+        with pytest.raises(ValueError, match="retired"):
+            trace_path("kidney", "classic")
 
     def test_state_path(self):
         p = trace_path("kidney", "state")
@@ -264,8 +267,10 @@ class TestSampleParamsFromTrace:
 
     def test_city_factors_shape(self, kidney_trace):
         params = sample_params_from_trace(kidney_trace, n_draws=1)
-        assert params["city_wait_factors"].shape == (22,)
-        assert params["city_mort_offsets"].shape == (22,)
+        n = len(params["cities"])
+        assert n >= 40  # state granularity post-#293
+        assert params["city_wait_factors"].shape == (n,)
+        assert params["city_mort_offsets"].shape == (n,)
 
     def test_bt_multipliers_shape(self, kidney_trace):
         params = sample_params_from_trace(kidney_trace, n_draws=1)
@@ -304,7 +309,7 @@ class TestSampleParamsFromTrace:
 
     def test_cities_list_preserved(self, kidney_trace):
         params = sample_params_from_trace(kidney_trace, n_draws=1)
-        assert len(params["cities"]) == 22
+        assert len(params["cities"]) >= 40
 
     def test_mort_delist_corr_present(self, kidney_trace):
         params = sample_params_from_trace(kidney_trace, n_draws=1)

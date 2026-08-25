@@ -3,7 +3,7 @@
 Offline MCMC model fitting script — Phase 5 M3.
 
 Fits a PyMC hierarchical survival model for one or all organs and saves
-the posterior trace to data/mcmc-traces/{organ}.nc.
+the posterior trace to data/mcmc-traces/{organ}-{granularity}.nc.
 
 Usage:
     # Fit a single organ (quick test)
@@ -140,8 +140,8 @@ def main():
     parser.add_argument("--strict", action="store_true", help="Block trace save if R-hat >= 1.01 or ESS < 400")
     parser.add_argument("--cores", type=int, default=None,
                         help="Sampler cores (1 = sequential chains; use when parallel workers die)")
-    parser.add_argument("--granularity", choices=["classic", "state", "full"], default="classic",
-                        help="Region granularity (classic=22 cities, state=~50, full=~248)")
+    parser.add_argument("--granularity", choices=["state", "full"], default="full",
+                        help="Region granularity (state=~50, full=~248 centers; classic retired #293)")
 
     args = parser.parse_args()
 

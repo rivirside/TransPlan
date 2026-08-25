@@ -14,16 +14,26 @@ from services.mcmc_survival import BLOOD_TYPES, build_organ_model, load_organ_da
 # ---------------------------------------------------------------------------
 
 @pytest.fixture(scope="module", autouse=True)
-def _fit_kidney_trace():
-    """Fit a quick kidney trace and save to disk for inference tests."""
+def _fit_kidney_trace(tmp_path_factory):
+    """Fit a quick kidney STATE trace into an ISOLATED trace dir.
+
+    Isolation matters: developers may have real full-granularity traces in
+    data/mcmc-traces (they are gitignored local artifacts), and availability/
+    fallback tests must not depend on them (#293)."""
     import pymc as pm
+    from _pytest.monkeypatch import MonkeyPatch
     from services.data_loader import load_all
-    from services.mcmc_survival import save_trace
+    from services import mcmc_survival, mcmc_inference
+
+    mp = MonkeyPatch()
+    tmp_traces = tmp_path_factory.mktemp("mcmc-traces")
+    mp.setattr(mcmc_survival, "TRACE_DIR", tmp_traces)
+    mcmc_inference._trace_cache.clear()
 
     # Ensure data_loader singleton is populated (needed by center mapping)
     load_all()
 
-    data = load_organ_data("kidney")
+    data = load_organ_data("kidney", granularity="state")
     model = build_organ_model(data)
     with model:
         trace = pm.sample(
@@ -34,13 +44,11 @@ def _fit_kidney_trace():
     trace.attrs["organ"] = "kidney"
     trace.attrs["cities"] = json.dumps(data["cities"])
     trace.attrs["blood_types"] = json.dumps(BLOOD_TYPES)
-    save_trace("kidney", trace)
+    from services.mcmc_survival import save_trace
+    save_trace("kidney", trace, granularity="state")
     yield
-    # Cleanup: remove trace file after tests
-    from services.mcmc_survival import TRACE_DIR
-    trace_path = TRACE_DIR / "kidney.nc"
-    if trace_path.exists():
-        trace_path.unlink()
+    mcmc_inference._trace_cache.clear()
+    mp.undo()
 
 
 # ---------------------------------------------------------------------------
@@ -54,19 +62,19 @@ class TestAvailability:
 
     def test_liver_not_available(self):
         from services.mcmc_inference import is_available
-        # Only kidney was fitted in the fixture
+        # Only kidney was fitted in the isolated fixture dir
         assert is_available("liver") is False
 
 
 # ---------------------------------------------------------------------------
-# Simulation result structure tests — classic granularity
+# Simulation result structure tests — state granularity (default)
 # ---------------------------------------------------------------------------
 
 @pytest.fixture
 def kidney_patient():
     return PatientProfile(
         organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
-        bbn_granularity="classic",
+        bbn_granularity="state",
     )
 
 
@@ -81,11 +89,11 @@ class TestSimulationResultStructure:
         result = simulate_mcmc(kidney_patient, n_iterations=200)
         assert result.inference_mode == "mcmc"
 
-    def test_22_cities_in_classic_mode(self, kidney_patient):
-        """Classic granularity should produce exactly 22 city results."""
+    def test_all_centers_in_state_mode(self, kidney_patient):
+        """State granularity iterates all kidney centers (#293)."""
         from services.mcmc_inference import simulate_mcmc
         result = simulate_mcmc(kidney_patient, n_iterations=200)
-        assert len(result.cities) == 22
+        assert len(result.cities) > 200
 
     def test_probabilities_valid(self, kidney_patient):
         from services.mcmc_inference import simulate_mcmc
@@ -195,18 +203,19 @@ class TestGranularityModes:
             assert 0 <= city.p_transplant_24mo <= 1
             assert city.median_wait_months > 0
 
-    def test_classic_granularity_no_center_codes(self):
-        """Classic mode should not have center codes (iterates over cities)."""
+    def test_classic_granularity_coerced_to_state(self):
+        """#293: 'classic' coerces to 'state' at the schema level and every
+        result row carries a center code."""
         from services.mcmc_inference import simulate_mcmc
         patient = PatientProfile(
             organ="kidney", blood_type="O+", age=45, sex="male", urgency=2,
             bbn_granularity="classic",
         )
+        assert patient.bbn_granularity == "state"
         result = simulate_mcmc(patient, n_iterations=200)
-        assert len(result.cities) == 22
-        # Classic mode has empty center codes
+        assert len(result.cities) > 200
         for city in result.cities:
-            assert city.center_code == ""
+            assert city.center_code  # every row carries a real center code
 
     def test_center_adjustments_create_variation(self):
         """Centers mapped to the same trace city should have different p24 values
@@ -229,10 +238,11 @@ class TestGranularityModes:
 # ---------------------------------------------------------------------------
 
 class TestTraceFallback:
-    def test_trace_path_classic(self):
+    def test_trace_path_classic_retired(self):
         from services.mcmc_inference import _trace_path
+        # #293: classic naming no longer special-cased
         p = _trace_path("kidney", "classic")
-        assert p.name == "kidney.nc"
+        assert p.name == "kidney-classic.nc"  # plain suffix, never written
 
     def test_trace_path_state(self):
         from services.mcmc_inference import _trace_path
@@ -244,17 +254,17 @@ class TestTraceFallback:
         p = _trace_path("kidney", "full")
         assert p.name == "kidney-full.nc"
 
-    def test_select_trace_falls_back_to_classic(self):
-        """When only classic trace exists, state/full should fall back to it."""
+    def test_select_trace_full_falls_back_to_state(self):
+        """Requesting full with only a state trace present falls back (#293)."""
         from services.mcmc_inference import _select_trace
-        path, actual_g = _select_trace("kidney", "state")
-        # The classic trace was saved by the fixture
+        path, actual_g = _select_trace("kidney", "full")
+        # The state trace was saved by the fixture
         assert path is not None
-        assert actual_g == "classic"
+        assert actual_g == "state"
 
     def test_select_trace_returns_none_for_missing_organ(self):
         from services.mcmc_inference import _select_trace
-        path, actual_g = _select_trace("intestine", "classic")
+        path, actual_g = _select_trace("intestine", "state")
         assert path is None
         assert actual_g is None
 
@@ -289,7 +299,7 @@ class TestClinicalParameters:
             use_copula=True, bbn_granularity="classic",
         )
         result = simulate_mcmc(patient, n_iterations=200)
-        assert len(result.cities) == 22
+        assert len(result.cities) > 200
         for city in result.cities:
             assert 0 <= city.p_transplant_24mo <= 1
 
@@ -328,7 +338,7 @@ class TestSharedFrailty:
         """MCMC with shared frailty should work without external copula."""
         from services.mcmc_inference import simulate_mcmc
         result = simulate_mcmc(kidney_patient, n_iterations=200)
-        assert len(result.cities) == 22
+        assert len(result.cities) > 200
         for city in result.cities:
             assert 0 <= city.p_transplant_24mo <= 1
 

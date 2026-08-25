@@ -14,7 +14,6 @@ Query-time flow:
   5. Assemble into SimulationResult (same schema as monte_carlo.simulate)
 
 Granularity modes (#207):
-  - "classic": Iterate over 22 trace cities only (original behavior)
   - "state" / "full": Iterate over all ~248 centers, applying center-level
     adjustment factors relative to the parent trace city's parameters.
 """
@@ -54,27 +53,30 @@ _trace_cache: dict = {}
 # Trace loading with auto-fallback (#207)
 # ---------------------------------------------------------------------------
 
-def _trace_path(organ: str, granularity: str = "classic") -> Path:
-    """Return the expected trace file path for a given organ and granularity."""
-    if granularity == "classic":
-        return Path(DATA_DIR) / "mcmc-traces" / f"{organ}.nc"
-    return Path(DATA_DIR) / "mcmc-traces" / f"{organ}-{granularity}.nc"
+def _trace_path(organ: str, granularity: str = "state") -> Path:
+    """Return the expected trace file path (delegates to mcmc_survival so the
+    trace directory has a single patchable source of truth)."""
+    from services import mcmc_survival
+    return mcmc_survival.TRACE_DIR / f"{organ}-{granularity}.nc"
 
 
 def _select_trace(organ: str, granularity: str) -> tuple[Path | None, str | None]:
     """Find best available trace, falling back to coarser granularity.
 
-    Tries the requested granularity first, then falls back through
-    state -> classic. Returns (path, actual_granularity) or (None, None).
+    Tries the requested granularity first, then the other supported one
+    (full <-> state). Returns (path, actual_granularity) or (None, None).
+    The legacy 22-city 'classic' traces are no longer loaded (#293).
     """
-    for g in [granularity, "state", "classic"]:
+    for g in dict.fromkeys([granularity, "full", "state"]):
+        if g == "classic":
+            continue
         p = _trace_path(organ, g)
         if p.exists():
             return p, g
     return None, None
 
 
-def _get_trace(organ: str, granularity: str = "classic"):
+def _get_trace(organ: str, granularity: str = "state"):
     """Load trace from cache or disk, with auto-fallback to coarser granularity.
 
     Returns (trace, actual_granularity) — the ACTUAL granularity matters (#207):
@@ -87,15 +89,7 @@ def _get_trace(organ: str, granularity: str = "classic"):
     # Try auto-fallback
     path, actual_g = _select_trace(organ, granularity)
     if path is None:
-        # Last resort: try the default classic path (backward compat)
-        classic_key = f"{organ}:classic"
-        if classic_key in _trace_cache:
-            return _trace_cache[classic_key]
-        trace = load_trace(organ)
-        result = (trace, "classic") if trace is not None else (None, None)
-        if trace is not None:
-            _trace_cache[classic_key] = result
-        return result
+        return (None, None)
 
     if actual_g != granularity:
         logger.info(
@@ -111,11 +105,11 @@ def _get_trace(organ: str, granularity: str = "classic"):
     return result
 
 
-def is_available(organ: str, granularity: str = "classic") -> bool:
+def is_available(organ: str, granularity: str = "state") -> bool:
     """Check if MCMC inference is available for the given organ.
 
     Granularity-aware (#207): a trace at the requested granularity OR any
-    coarser fallback (state → classic) counts as available — mirroring the
+    supported fallback (full ↔ state) counts as available — mirroring the
     fallback _get_trace actually performs.
     """
     return _select_trace(organ, granularity)[0] is not None
@@ -168,9 +162,6 @@ def _load_center_adjustments(organ: str) -> dict:
       - wait_factors: {center_code: organ_factor}
       - mort_factors: {center_code: mortality_factor}
       - delist_factors: {center_code: delisting_factor}
-      - city_wait_factors: {city: factor} (from city-level data, for ratio computation)
-      - city_mort_factors: {city: factor}
-      - city_delist_factors: {city: factor}
     """
     from services.data_loader import get_data
     data = get_data()
@@ -189,28 +180,10 @@ def _load_center_adjustments(organ: str) -> dict:
         for code, info in ccr.items()
     }
 
-    # City-level factors (for computing center/city ratio)
-    city_wait = data.wait_time_distributions.get("city_wait_time_factors", {})
-    city_wait = {k: v for k, v in city_wait.items() if not k.startswith("_")}
-
-    city_adj = data.competing_risks.get("city_adjustments", {})
-    city_mort = {}
-    city_delist = {}
-    for city_name, adj in city_adj.items():
-        if city_name.startswith("_"):
-            continue
-        mf = adj.get("mortality_factor", 1.0)
-        df = adj.get("delisting_factor", 1.0)
-        city_mort[city_name] = mf if not isinstance(mf, str) else 1.0
-        city_delist[city_name] = df if not isinstance(df, str) else 1.0
-
     return {
         "wait_factors": center_wait,
         "mort_factors": center_mort,
         "delist_factors": center_delist,
-        "city_wait_factors": city_wait,
-        "city_mort_factors": city_mort,
-        "city_delist_factors": city_delist,
     }
 
 
@@ -264,15 +237,14 @@ def simulate_mcmc(
     draws, producing wider credible intervals that honestly reflect
     parameter uncertainty.
 
-    Granularity modes (#207):
-      - "classic": Iterate over 22 trace cities (one result per city)
-      - "state"/"full": Iterate over all ~248 centers with center-level
-        adjustment factors applied post-inference
+    Granularity modes (#207/#293):
+      - "state"/"full": iterate over all ~248 centers with center-level
+        adjustment factors applied post-inference (classic retired)
     """
     if n_iterations is None:
         n_iterations = SIMULATION_ITERATIONS
 
-    granularity = getattr(patient, "bbn_granularity", "classic")
+    granularity = getattr(patient, "bbn_granularity", "state")
 
     trace, actual_g = _get_trace(patient.organ, granularity)
     if trace is None:
@@ -298,14 +270,13 @@ def simulate_mcmc(
 
     # Build region -> index mapping from trace metadata. Region keys depend on
     # the ACTUAL trace granularity (#207): full → center codes, state → state
-    # abbreviations, classic → the legacy 22 city names.
+    # abbreviations.
     trace_cities = json.loads(str(trace.attrs.get("cities", "[]")))
     if not trace_cities:
-        # Legacy classic traces without metadata: sorted city names
-        with open(DATA_DIR / "wait-time-distributions.json") as f:
-            wt = json.load(f)
-        cf = wt.get("city_wait_time_factors", {})
-        trace_cities = sorted(k for k in cf if not k.startswith("_"))
+        raise RuntimeError(
+            f"Trace for {patient.organ} carries no region metadata — refit with "
+            f"scripts/fit-mcmc-model.py (legacy classic traces are unsupported, #293)."
+        )
     city_to_idx = {c: i for i, c in enumerate(trace_cities)}
 
     # Center -> trace-region mapping at the trace's OWN granularity. The old
@@ -337,32 +308,13 @@ def simulate_mcmc(
 
     # Load center-level adjustment data (for state/full granularity) (#207)
     center_adj = None
-    if granularity in ("state", "full"):
-        try:
-            center_adj = _load_center_adjustments(patient.organ)
-        except Exception as e:
-            logger.warning("Could not load center adjustments: %s — proceeding without", e)
+    try:
+        center_adj = _load_center_adjustments(patient.organ)
+    except Exception as e:
+        logger.warning("Could not load center adjustments: %s — proceeding without", e)
 
-    # Determine iteration targets based on granularity (#207)
-    if granularity == "classic":
-        # Classic mode: iterate over trace cities only
-        iteration_targets = [
-            {
-                "code": "",
-                "city": city_name,
-                "state": "",
-                "lat": None,
-                "lon": None,
-                "name": city_name,
-                "cidx": idx,
-                "center_wait_adj": 1.0,
-                "center_mort_adj": 1.0,
-                "center_delist_adj": 1.0,
-            }
-            for city_name, idx in city_to_idx.items()
-        ]
-    else:
-        # State/full mode: iterate over all centers with center-level adjustments
+    # Iterate over all centers with center-level adjustments (#207/#293)
+    if True:
         iteration_targets = []
         for center in _get_centers(patient.organ):
             code = center.get("code", "")
@@ -386,19 +338,13 @@ def simulate_mcmc(
             #   full  → the trace region IS this center; ratio must be 1.0
             #           (anything else double-counts the center factor)
             #   state → center factor / region-average factor
-            #   classic → center factor / legacy city factor
             center_wait_adj = 1.0
             center_mort_adj = 1.0
             center_delist_adj = 1.0
-            if center_adj is not None and code and actual_g != "full":
-                if actual_g == "state":
-                    ref_wait = _region_average(center_adj["wait_factors"], center_city_map, region)
-                    ref_mort = _region_average(center_adj["mort_factors"], center_city_map, region)
-                    ref_delist = _region_average(center_adj["delist_factors"], center_city_map, region)
-                else:  # classic
-                    ref_wait = center_adj["city_wait_factors"].get(region, 1.0)
-                    ref_mort = center_adj["city_mort_factors"].get(region, 1.0)
-                    ref_delist = center_adj["city_delist_factors"].get(region, 1.0)
+            if center_adj is not None and code and actual_g == "state":
+                ref_wait = _region_average(center_adj["wait_factors"], center_city_map, region)
+                ref_mort = _region_average(center_adj["mort_factors"], center_city_map, region)
+                ref_delist = _region_average(center_adj["delist_factors"], center_city_map, region)
 
                 center_wait_adj = _compute_center_adjustment(
                     center_adj["wait_factors"].get(code, 1.0), ref_wait)
@@ -614,7 +560,7 @@ def simulate_mcmc(
     logger.info(
         "MCMC inference: %s %s, %d %s, %d iterations (%d param draws x %d each), %.2fs",
         patient.organ, patient.blood_type, n_targets,
-        "cities" if granularity == "classic" else "centers",
+        "centers",
         actual_iterations, N_PARAM_DRAWS, iters_per_draw, elapsed,
     )
 

@@ -42,10 +42,16 @@ BLOOD_TYPES = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"]
 URGENCY_LEVELS = [1, 2, 3, 4]
 
 
-def trace_path(organ: str, granularity: str = "classic") -> Path:
-    """Return the path for a trace file at the given granularity."""
+def trace_path(organ: str, granularity: str = "state") -> Path:
+    """Return the path for a trace file at the given granularity.
+
+    (#293: the legacy 22-city 'classic' granularity and its bare {organ}.nc
+    trace naming are retired.)
+    """
     if granularity == "classic":
-        return TRACE_DIR / f"{organ}.nc"
+        raise ValueError(
+            "The 22-city 'classic' granularity was retired (#293); use 'state' or 'full'."
+        )
     return TRACE_DIR / f"{organ}-{granularity}.nc"
 
 
@@ -53,7 +59,7 @@ def trace_path(organ: str, granularity: str = "classic") -> Path:
 # Data loading
 # ---------------------------------------------------------------------------
 
-def load_organ_data(organ: str, granularity: str = "classic") -> dict[str, Any]:
+def load_organ_data(organ: str, granularity: str = "state") -> dict[str, Any]:
     """Load and prepare all observed data for a single organ model.
 
     Parameters
@@ -62,9 +68,9 @@ def load_organ_data(organ: str, granularity: str = "classic") -> dict[str, Any]:
         One of ORGANS.
     granularity : str
         Region granularity for the model:
-        - "classic": 22 cities (original behavior)
-        - "state":   ~50 US states (centers grouped by state)
-        - "full":    ~248 individual SRTR center codes
+        - "state": ~50 US states (centers grouped by state)
+        - "full":  ~248 individual SRTR center codes
+        ("classic" — the legacy 22-city mode — was retired, #293.)
     """
     # National-level organ data (needed for all granularities)
     with open(DATA_DIR / "wait-time-distributions.json") as f:
@@ -93,19 +99,8 @@ def load_organ_data(organ: str, granularity: str = "classic") -> dict[str, Any]:
     }
 
     if granularity == "classic":
-        # Classic 22-city behavior
-        city_factors_raw = wt_data.get("city_wait_time_factors", {})
-        cities = sorted(k for k in city_factors_raw if not k.startswith("_"))
-        city_wait_factors = np.array([city_factors_raw[c] for c in cities], dtype=np.float64)
-
-        city_adj_raw = cr_data.get("city_adjustments", {})
-        city_mort_factors = np.array(
-            [city_adj_raw.get(c, {}).get("mortality_factor", 1.0) for c in cities],
-            dtype=np.float64,
-        )
-        city_delist_factors = np.array(
-            [city_adj_raw.get(c, {}).get("delisting_factor", 1.0) for c in cities],
-            dtype=np.float64,
+        raise ValueError(
+            "The 22-city 'classic' granularity was retired (#293); use 'state' or 'full'."
         )
     else:
         # state / full: Use center-level data with dynamic region grouping
@@ -394,7 +389,7 @@ def fit_organ_model(
     n_tune: int = 1000,
     random_seed: int = 42,
     target_accept: float = 0.90,
-    granularity: str = "classic",
+    granularity: str = "state",
     cores: int | None = None,
 ) -> az.InferenceData:
     """
@@ -438,7 +433,7 @@ def fit_organ_model(
     return trace
 
 
-def save_trace(organ: str, trace: az.InferenceData, granularity: str = "classic") -> Path:
+def save_trace(organ: str, trace: az.InferenceData, granularity: str = "state") -> Path:
     """Save an ArviZ trace to NetCDF file."""
     path = trace_path(organ, granularity)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -447,7 +442,7 @@ def save_trace(organ: str, trace: az.InferenceData, granularity: str = "classic"
     return path
 
 
-def load_trace(organ: str, granularity: str = "classic") -> az.InferenceData | None:
+def load_trace(organ: str, granularity: str = "state") -> az.InferenceData | None:
     """Load a cached ArviZ trace.  Returns None if not found."""
     path = trace_path(organ, granularity)
     if not path.exists():
@@ -457,7 +452,7 @@ def load_trace(organ: str, granularity: str = "classic") -> az.InferenceData | N
     return trace
 
 
-def trace_exists(organ: str, granularity: str = "classic") -> bool:
+def trace_exists(organ: str, granularity: str = "state") -> bool:
     """Check whether a cached trace file exists for the given organ."""
     return trace_path(organ, granularity).exists()
 
