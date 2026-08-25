@@ -22,21 +22,19 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { execFileSync } = require('child_process');
-const { mergeDataFile, updateMetadata, reportError, CITIES } = require('./utils');
+const { mergeDataFile, updateMetadata, reportError, CITIES, DATA_DIR } = require('./utils');
 
 // State FIPS → abbreviation mapping
 const FIPS_TO_ABBR = {};
 CITIES.forEach(c => { FIPS_TO_ABBR[c.stateFips] = c.stateAbbr; });
 const UNIQUE_STATES = [...new Set(CITIES.map(c => c.stateAbbr))];
 
-// State populations (2023 Census estimates) for per-capita normalization
-const STATE_POPULATIONS = {
-    PA: 12972008, MD: 6180253, NY: 19677151, MN: 5717184,
-    WI: 5910955, IL: 12582032, OH: 11756058, MO: 6196156,
-    IN: 6876047, NE: 1978379, TN: 7126489, NC: 10835491,
-    FL: 22610726, TX: 30503301, OR: 4233358, WA: 7812880,
-    CA: 38965193
-};
+// State populations for per-capita normalization — single shared source
+// (#339: this file previously carried a CONFLICTING 2022-vintage copy of the
+// table fetch-trauma-centers.py had at Vintage 2023).
+const STATE_POPULATIONS = JSON.parse(
+    fs.readFileSync(path.join(DATA_DIR, 'manual', 'state-populations.json'), 'utf-8')
+).populations;
 
 // State abbreviation → full name mapping
 const ABBR_TO_STATE = {};

@@ -153,6 +153,19 @@ if (competingRisks) {
     }
 }
 
+// 6a3. Shared state-population table (#339) — both per-capita pipelines
+// read it; losing states silently skews trauma/traffic normalization
+const statePops = validateJSON('manual/state-populations.json');
+if (statePops) {
+    const n = Object.keys(statePops.populations || {}).length;
+    if (n < 51) addError(`state-populations.json: only ${n} states (expected >= 51)`);
+    for (const [st, pop] of Object.entries(statePops.populations || {})) {
+        if (typeof pop !== 'number' || pop < 400000 || pop > 45000000) {
+            addError(`state-populations.json: ${st} = ${pop} implausible`);
+        }
+    }
+}
+
 // 6b. SRTR-derived model files — every organ block must be present (ERROR,
 // not warning: the 2026-08-05 workflow run wrote organ-less shells over
 // these because data/srtr-raw/ is absent in CI; see parse-srtr-reports.py
