@@ -178,6 +178,16 @@ if (ptOutcomes && Object.keys(ptOutcomes.city_outcomes || {}).length === 0) {
     addError('post-transplant-outcomes.json: city_outcomes is empty');
 }
 
+// 6c. Per-center trend series (#288) — never-shrink guard: generated from the
+// 15-release SRTR archive, must keep covering the center population.
+const centerTrends = validateJSON('srtr-trends-centers.json');
+if (centerTrends) {
+    const n = Object.keys(centerTrends.centers || {}).length;
+    if (n < 200) {
+        addError(`srtr-trends-centers.json: only ${n} centers (expected >= 200) — regenerate with scripts/generate-center-trends.py`);
+    }
+}
+
 // 7. Manual files
 for (const manualFile of ['manual/climate-scores.json', 'manual/policy-tiers.json', 'manual/socioeconomic.json']) {
     const data = validateJSON(manualFile);

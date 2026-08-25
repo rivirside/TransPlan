@@ -262,25 +262,11 @@ def simulate(
     rng = np.random.default_rng(seed)
     city_results: list[CityProbability] = []
 
-    # --- F2: Pre-compute trend projections for 22 cities ---
-    trend_projections: dict[str, dict[str, float]] = {}
-    center_to_trend_city: dict[str, str] = {}
+    # --- F2: Trend projections — per-center (#288), covering every center
+    # with archived SRTR history instead of the 52 reachable via the legacy
+    # 22-city mapping. The city path survives only for code-less fallback rows.
     if trend_years > 0:
-        from services.trends import get_trend_projection
-        data = get_data()
-        mapping = data.center_mapping.get("cities", {})
-        # Build reverse map: center_code → city_name
-        for city_name, info in mapping.items():
-            primary = info.get("primary", "")
-            if primary:
-                center_to_trend_city[primary] = city_name
-            for alt in info.get("alternates", []):
-                center_to_trend_city[alt] = city_name
-        # Pre-compute projections for each city
-        for city_name in mapping:
-            trend_projections[city_name] = get_trend_projection(
-                patient.organ, city_name, years_forward=trend_years,
-            )
+        from services.trends import get_center_trend_projection, get_trend_projection
 
     for center in _get_centers(patient.organ):
         # Center records have {code, name, state, state_abbr, lat, lon, ...}
@@ -368,12 +354,17 @@ def simulate(
 
         # --- F2: Apply trend projections to rates ---
         if trend_years > 0:
-            tc = center_to_trend_city.get(code)
-            if tc and tc in trend_projections:
-                tp = trend_projections[tc]
-                transplant_times = transplant_times * tp["wait_time_factor"]
-                annual_mort = annual_mort * tp["mortality_factor"]
-                annual_delist = annual_delist * tp["delisting_factor"]
+            if code:
+                tp = get_center_trend_projection(
+                    patient.organ, code, years_forward=trend_years,
+                )
+            else:
+                tp = get_trend_projection(
+                    patient.organ, display_city, years_forward=trend_years,
+                )
+            transplant_times = transplant_times * tp["wait_time_factor"]
+            annual_mort = annual_mort * tp["mortality_factor"]
+            annual_delist = annual_delist * tp["delisting_factor"]
 
         mort_scale = rate_to_exponential_scale(annual_mort, "mortality", code or display_city)
         delist_scale = rate_to_exponential_scale(annual_delist, "delisting", code or display_city)
@@ -428,10 +419,14 @@ def simulate(
         except (KeyError, FileNotFoundError, ValueError) as e:
             logger.warning("Outcomes data unavailable for %s/%s: %s", patient.organ, code or display_city, e)
 
-        # Historical trends (city-level — center-level trends not yet available)
+        # Historical trends — per-center when a code exists (#288), city fallback
         trends_data = None
         try:
-            trends_data = get_city_trends(patient.organ, display_city)
+            if code:
+                from services.trends import get_center_trends
+                trends_data = get_center_trends(patient.organ, code)
+            if trends_data is None:
+                trends_data = get_city_trends(patient.organ, display_city)
         except (KeyError, FileNotFoundError, ValueError):
             pass
 

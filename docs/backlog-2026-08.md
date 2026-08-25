@@ -23,7 +23,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 
 | # | Item | Issue | Status |
 |---|------|-------|--------|
-| B1 | Trends cover 52/248 centers; BBN legacy map defaults to Nashville | #288 | |
+| B1 | Trends cover 52/248 centers; BBN legacy map defaults to Nashville | #288 | ✅ 2026-08-25 (BBN map retires w/ #293) |
 | B2 | Climate layer interpolated from 22 points (35% of geo score) | #289 | |
 | B3 | Trauma layer + accident hotspots from 22 points | #290 | |
 | B4 | policy_scenarios.py 22-city end to end | #285 | |
@@ -80,7 +80,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | C5 | Retire city fallback blocks (health-demographics, air-quality) | #293 | |
 | C6 | Retire city-wait-time-factors + city_* SRTR blocks | #293 | |
 | C7 | Delete cost-of-living legacy cities block | #293 | |
-| C8 | Per-center trends from srtr-observed-rates-historical | = B1 | |
+| C8 | Per-center trends from srtr-observed-rates-historical | = B1 | ✅ 2026-08-25 |
 | C9 | Retire srtr-center-mapping.json | #293 | |
 
 ## Phase D — Dead code / scaffolding removal
