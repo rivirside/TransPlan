@@ -78,11 +78,30 @@
 
         <div class="faq-list">
 
-            <details class="faq-item">
+            <details class="faq-item" id="multiple-listing">
                 <summary>Can I list at multiple transplant centers?</summary>
                 <div class="faq-answer">
-                    <p>Yes. UNOS policy allows patients to be listed at more than one transplant center simultaneously, a practice called "multiple listing." Each center conducts its own evaluation, and you maintain separate positions on each waitlist.</p>
-                    <p>Multiple listing can improve your chances by accessing different donor pools, but it involves additional evaluations, travel, and potentially higher costs. Discuss this option with your transplant team. Use our <a href="compare.html">Compare Centers</a> tool to evaluate potential second listings.</p>
+                    <p>Yes. OPTN policy permits registering at more than one transplant hospital at the same time, which is called multiple listing. Each program evaluates you separately and you hold a separate registration at each.</p>
+                    <p>Two things worth knowing about your rights here. Programs are required to tell you at evaluation that multiple listing is an option, so if nobody has mentioned it, ask. At the same time, an individual program is allowed to decline to register you specifically because you are listed elsewhere, so it is not guaranteed that any center you approach will take you. New York State separately restricts kidney multiple listing for candidates listed in state.</p>
+                    <p>The practical barriers are real: a second full evaluation that insurance often will not cover twice, travel costs, and the requirement that you can reach the second hospital quickly when it calls. See <a href="#multi-listing-benefit">does a second listing actually help</a> for what it buys you.</p>
+                </div>
+            </details>
+
+            <details class="faq-item" id="multi-listing-benefit">
+                <summary>Does listing at a second center actually help for deceased-donor organs?</summary>
+                <div class="faq-answer">
+                    <p>It can, but the reason is commonly misunderstood, including in earlier versions of this page.</p>
+                    <p><strong>The misconception.</strong> It is natural to picture each center as fishing in its own local donor pool, so that a second listing buys you a ticket in a second lottery. That is not how allocation works. Every deceased-donor organ generates one national match run that already includes every compatible candidate in the country. You are never excluded from a distant donor because of where you are listed.</p>
+                    <p><strong>What actually happens.</strong> Distance is a scoring factor inside that one national list, not a gate. Being listed at a second hospital gives you a second, independently scored entry in every match run, with distance measured from that second hospital. For a donor near the second center, that entry can rank far higher than your first entry does. So a second listing improves your <em>rank</em> on certain match runs rather than granting access to runs you were shut out of.</p>
+                    <p>Two consequences follow from that:</p>
+                    <ul>
+                        <li><strong>Distance between the two centers is what matters.</strong> The benefit is concentrated in the area around the second center that your first center's circle does not already cover. Two programs in the same metro area have nearly identical proximity scoring, so a second listing there adds very little. OPTN's own patient guidance says as much.</li>
+                        <li><strong>The second program's behavior may matter as much as its location.</strong> A center that accepts organs your first center declines converts more of your rankings into an actual transplant. Center acceptance rates vary widely, and SRTR publishes a risk-adjusted offer acceptance rate ratio per program that you can look up.</li>
+                    </ul>
+                    <p><strong>Kidney is the strongest case</strong>, because kidney waiting time follows a clinical milestone rather than a listing date, so a second kidney listing starts with all your accrued time rather than from zero. For liver, heart, and lung, the new clock starts at listing, though urgency scoring matters more than accrued time for those organs anyway.</p>
+                    <p><strong>The evidence, and its caveat.</strong> Registry studies going back to 2004 consistently find multi-listed candidates are transplanted at higher rates. But multi-listed patients are also more likely to be white, college-educated, and privately insured, so a good part of the measured advantage reflects who can afford a second evaluation and the travel it requires rather than the listing itself. OPTN's own ethics committee has examined multiple listing on exactly these grounds: the option is formally open to everyone and practically available mainly to people with resources.</p>
+                    <p><strong>What our tools do and do not do.</strong> The simulator estimates your probability at each center independently. It does not combine two centers into a single joint probability, so treat two center estimates as two separate figures rather than adding them. Your combined odds are better than either alone, but by less than the sum, since the two registrations compete for many of the same organs.</p>
+                    <p>Sources: <a href="https://www.hrsa.gov/optn/patients/organ-transplants/multiple-listing" target="_blank" rel="noopener">OPTN patient guidance on multiple listing</a>, <a href="https://pubmed.ncbi.nlm.nih.gov/14678039/" target="_blank" rel="noopener">Merion et al. 2004</a>, <a href="https://www.frontiersin.org/journals/transplantation/articles/10.3389/frtra.2025.1677463/full" target="_blank" rel="noopener">Giorgakis et al. 2025</a>, <a href="https://www.hrsa.gov/optn/news-events/news/new-pre-transplant-performance-metric-now-effect-offer-acceptance-rate-ratio" target="_blank" rel="noopener">SRTR offer acceptance rate ratio</a>.</p>
                 </div>
             </details>
 
@@ -107,9 +126,9 @@
                     <p>"As expected" is a risk-adjusted performance rating from SRTR. It means the center's outcomes (like graft survival) are statistically consistent with what would be predicted given the complexity of patients they treat.</p>
                     <p>SRTR adjusts for factors like patient age, diagnosis, and comorbidities, so a center treating sicker patients isn't penalized. The three ratings are:</p>
                     <ul>
-                        <li><strong>Better than expected</strong> — outcomes significantly above the risk-adjusted prediction</li>
-                        <li><strong>As expected</strong> — outcomes within the normal statistical range</li>
-                        <li><strong>Worse than expected</strong> — outcomes significantly below the prediction</li>
+                        <li><strong>Better than expected</strong>: outcomes significantly above the risk-adjusted prediction</li>
+                        <li><strong>As expected</strong>: outcomes within the normal statistical range</li>
+                        <li><strong>Worse than expected</strong>: outcomes significantly below the prediction</li>
                     </ul>
                     <p>Most centers are rated "as expected." A rating of "worse than expected" triggers additional CMS oversight.</p>
                 </div>
@@ -193,8 +212,8 @@
                 <div class="faq-answer">
                     <p>These are two distinct measures of transplant success:</p>
                     <ul>
-                        <li><strong>Graft survival</strong> — the transplanted organ is still functioning. If the graft fails, the patient may return to the waitlist or go on dialysis (for kidneys).</li>
-                        <li><strong>Patient survival</strong> — the patient is alive, regardless of whether the transplanted organ is still working.</li>
+                        <li><strong>Graft survival</strong>: the transplanted organ is still functioning. If the graft fails, the patient may return to the waitlist or go on dialysis (for kidneys).</li>
+                        <li><strong>Patient survival</strong>: the patient is alive, regardless of whether the transplanted organ is still working.</li>
                     </ul>
                     <p>Patient survival is usually higher than graft survival because a patient can survive graft failure (e.g., return to dialysis). Both metrics are shown on our <a href="centers.html">Center Explorer</a> detail pages.</p>
                 </div>
@@ -205,9 +224,9 @@
                 <div class="faq-answer">
                     <p>transplant.today uses automated data pipelines that refresh from public sources:</p>
                     <ul>
-                        <li><strong>Weekly</strong> — EPA air quality, CDC health demographics, CMS hospital quality, BLS cost of living</li>
-                        <li><strong>Bimonthly</strong> — SRTR transplant center data (released semi-annually by SRTR)</li>
-                        <li><strong>Live</strong> — Center contact info is fetched from SRTR in real-time when you view a center detail page</li>
+                        <li><strong>Weekly</strong>: EPA air quality, CDC health demographics, CMS hospital quality, BLS cost of living</li>
+                        <li><strong>Bimonthly</strong>: SRTR transplant center data (released semi-annually by SRTR)</li>
+                        <li><strong>Live</strong>: Center contact info is fetched from SRTR in real-time when you view a center detail page</li>
                     </ul>
                     <p>Each data source shows its last-updated date on the freshness banner in the simulator.</p>
                 </div>
@@ -274,6 +293,27 @@
 
     <div id="footer-placeholder"></div>
 
+    <script>
+    // Open the targeted FAQ entry when arriving at (or clicking to) a #fragment.
+    // Anchors point at the <details> element itself, which browsers do not auto-expand.
+    (function() {
+        'use strict';
+        function openFromHash() {
+            var hash = window.location.hash;
+            if (!hash || hash.length < 2) return;
+            var el = document.getElementById(hash.slice(1));
+            if (!el || el.tagName.toLowerCase() !== 'details') return;
+            el.open = true;
+            el.scrollIntoView({ block: 'start' });
+        }
+        window.addEventListener('hashchange', openFromHash);
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', openFromHash);
+        } else {
+            openFromHash();
+        }
+    })();
+    </script>
     <script src="components/site-chrome.js?v=8"></script>
     <script src="donation-banner.js"></script>
     <script src="session.js"></script>

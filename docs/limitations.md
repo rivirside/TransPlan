@@ -550,6 +550,26 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **How:** (a) short-term: disclose in the UI/docs that BBN mode ignores cPRA/MELD/LAS; (b) with #236's continuous latent rebuild, add clinical severity as a continuous input to the timing latent, reusing the MC multiplier curves as priors.
 - **Files:** `backend/services/bayesian_network.py`, `backend/services/bbn_parameterizer.py`
 
+### L-074: No multi-listing model — per-center probabilities cannot be combined
+- **Severity:** MEDIUM
+- **Status:** OPEN (discovered 2026-08-25 while fact-checking the patient FAQ)
+- **Category:** Statistical Model
+- **What:** There is no multiple-listing logic anywhere in the codebase. `grep -ri "multi.?list"` over `backend/` returns nothing outside test files. `/simulate` returns independent per-center probabilities and nothing combines two registrations into a joint probability.
+- **Why it's a limitation:** multiple listing is one of the highest-leverage decisions a candidate actually makes, and the tool's whole premise is center comparison, so users naturally read two center estimates as combinable. They are not: the two registrations compete for **many of the same organs** (every deceased-donor match run is national and already contains every compatible candidate, so a second listing improves *rank* on donors near the second center rather than opening a disjoint donor pool). The correct combination is therefore neither the sum nor the max, and depends on the overlap between the two centers' proximity catchments.
+- **Interim mitigation (done):** `faq.html#multi-listing-benefit` states explicitly that the simulator does not combine centers and that combined odds beat either alone but by less than the sum.
+- **How to fix:** a joint-probability endpoint taking 2+ center IDs, modelling shared-donor overlap as a function of inter-center distance versus the 250 NM kidney circle (and the acuity circles for liver). Needs a correlation assumption that is currently unsupported by any data we hold, so this should not be shipped as a point estimate without an interval.
+- **Files:** `backend/routers/simulate.py`, `backend/services/monte_carlo.py`
+
+### L-075: Center discretion is captured only as a center-average, never per-subgroup
+- **Severity:** MEDIUM
+- **Status:** OPEN (documented 2026-08-25)
+- **Category:** Statistical Model / Data
+- **What:** Program-level discretion (whether to list a candidate, whether to accept an offer, whether to use A2/A2B, DCD, high-KDPI or HCV+ organs, whether to file urgency status exceptions, and recipient selection in the non-directed-living-donor and out-of-sequence pathways) reaches the model **only** through each center's observed aggregate SRTR numbers. The averaged downstream effect is therefore captured; the distributional effect is not.
+- **Why it's a limitation:** the literature shows this discretion is both large and unevenly applied. Adjusted first-offer acceptance ranges roughly 12%–62% across heart programs, and each 10% higher acceptance is associated with ~27% lower one-year waitlist mortality (JAMA Cardiol 2020). Acceptance also differs *by patient race* at equal priority (Black heart candidates ~24% less likely to have a first offer accepted; smaller gaps for liver and lung — PMC11275659). Out-of-sequence kidney placement grew from ~2.3% of placements in 2020 to ~16% in 2023 with a 0–43% spread across OPOs, and its recipients skew older, male, and privately insured. Our per-center factors cannot express any of this, so **equity analyses that use center factors will understate between-group disparity** at a given center.
+- **Note:** this is a data-availability limit as much as a modelling one. Public SRTR reporting does not break center outcomes down by demographic subgroup finely enough to fit subgroup-specific acceptance.
+- **Opportunity:** SRTR now publishes a risk-adjusted **Offer Acceptance Rate Ratio** per program (OPTN Board approved Dec 2022, effective July 2023, MPSC review below 0.30 adult / 0.35 pediatric). The 2024 program year spans ~0.1 to ~5.12 across 200+ kidney programs. Ingesting this would give a directly observed center-discretion covariate, replacing the current inference-from-outcomes approach. Worth its own issue.
+- **Files:** `backend/services/scoring.py`, `backend/services/outcomes.py`, `backend/routers/equity.py`
+
 ### L-071: Documentation still references "22 cities" in ~15 places
 - **Severity:** LOW
 - **Status:** FIXED (2026-08-25, #305 — docs-site/README swept; remaining mentions are explicitly historical. Backend comments/docstrings retire with the final #293 code deletion.)

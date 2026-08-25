@@ -308,17 +308,18 @@
                         <p>Organ allocation in the United States is managed by UNOS under contract with the federal government through the Organ Procurement and Transplantation Network (OPTN). Allocation policies aim to balance medical urgency, fairness, and efficient use of donated organs.</p>
                         <p>Several factors affect your position and likelihood of receiving an organ:</p>
                         <ul class="factor-list">
-                            <li><strong>Organ type</strong> &mdash; Each organ has its own allocation system with different prioritization criteria.</li>
-                            <li><strong>Blood type</strong> &mdash; ABO compatibility between donor and recipient is required. Blood type O patients often wait longest because O organs are compatible with all recipients.</li>
-                            <li><strong>Medical urgency</strong> &mdash; Sicker patients generally receive higher priority, though the specific scoring varies by organ.</li>
-                            <li><strong>Time on the waiting list</strong> &mdash; Accumulated wait time is a factor, especially for kidney allocation.</li>
-                            <li><strong>Geographic proximity</strong> &mdash; Organs are offered first to patients near the donor hospital, then in widening geographic circles. Recent policy changes have shifted toward broader sharing based on distance rather than fixed regions.</li>
+                            <li><strong>Organ type</strong>: Each organ has its own allocation system with different prioritization criteria.</li>
+                            <li><strong>Blood type</strong>: ABO compatibility between donor and recipient is required. Blood type O patients often wait longest because O organs are compatible with all recipients.</li>
+                            <li><strong>Medical urgency</strong>: Sicker patients generally receive higher priority, though the specific scoring varies by organ.</li>
+                            <li><strong>Time on the waiting list</strong>: Accumulated wait time is a factor, especially for kidney allocation.</li>
+                            <li><strong>Geographic proximity</strong>: Distance is measured in nautical miles from the donor hospital to the hospital where you are listed. Donation Service Areas and OPTN regions were removed from allocation between 2020 and 2021 and replaced with distance-based circles or, for lung, a weighted distance component.</li>
+                            <li><strong>Your program's own decisions</strong>: Whether a center lists you, and whether it accepts an organ offered on your behalf, are decided by the program rather than by OPTN policy. See our <a href="/faq.html#what-my-program-decides">FAQ on what your program decides</a>.</li>
                         </ul>
                         <p><strong>Organ-specific scoring systems:</strong></p>
                         <ul class="factor-list">
-                            <li><strong>MELD (Model for End-Stage Liver Disease)</strong> &mdash; Used for liver allocation. A score from 6 to 40 based on lab values (bilirubin, INR, creatinine, sodium). Higher scores indicate greater illness severity and higher priority.</li>
-                            <li><strong>LAS (Lung Allocation Score)</strong> &mdash; Used for lung allocation. Combines urgency (expected survival without transplant) and benefit (expected post-transplant survival). Scores range from 0 to 100.</li>
-                            <li><strong>cPRA (Calculated Panel Reactive Antibodies)</strong> &mdash; Used in kidney allocation. Measures how sensitized a patient is to donor antigens. Higher cPRA (0-100%) means fewer compatible donors but also earns additional priority points.</li>
+                            <li><strong>MELD (Model for End-Stage Liver Disease)</strong>: Used for liver allocation. A score from 6 to 40 based on lab values (bilirubin, INR, creatinine, sodium). Higher scores indicate greater illness severity and higher priority.</li>
+                            <li><strong>CAS (Composite Allocation Score)</strong>: Used for lung allocation since March 9, 2023, replacing the Lung Allocation Score. Adds up weighted points for medical urgency, expected post-transplant survival, biological disadvantage such as blood type and height, placement efficiency (distance from the donor hospital), pediatric priority, and prior living donor status.</li>
+                            <li><strong>cPRA (Calculated Panel Reactive Antibodies)</strong>: Used in kidney allocation. Measures how sensitized a patient is to donor antigens. Higher cPRA (0-100%) means fewer compatible donors but also earns additional priority points.</li>
                         </ul>
                         <p style="margin-top: var(--space-3);">For organ-specific allocation rules and scoring systems, see our <a href="/organ-guides.html">Organ Guides</a>.</p>
                     </div>
@@ -345,13 +346,19 @@
                             <dd>Organ Procurement Organization. Regional organizations responsible for coordinating organ donation in their designated service areas. There are 56 OPOs in the United States.</dd>
 
                             <dt>DSA</dt>
-                            <dd>Donation Service Area. The geographic region served by a single OPO. Historically, organs were first offered within the donor's DSA before expanding to wider regions. Recent policy changes have moved toward distance-based allocation circles.</dd>
+                            <dd>Donation Service Area. The geographic region served by a single OPO. Organs were once offered within the donor's DSA before expanding to wider regions, but DSAs and OPTN regions were removed from allocation between 2020 and 2021 in favor of distance measured from the donor hospital. You will still see the term in older documents and in some SRTR reporting.</dd>
 
                             <dt>MELD</dt>
                             <dd>Model for End-Stage Liver Disease. A numerical score (6-40) used to prioritize liver transplant candidates based on how urgently they need a transplant. Calculated from bilirubin, INR, creatinine, and sodium lab values.</dd>
 
-                            <dt>LAS</dt>
-                            <dd>Lung Allocation Score. A composite score (0-100) for lung transplant prioritization that balances expected benefit of transplant against urgency of the patient's condition.</dd>
+                            <dt>CAS</dt>
+                            <dd>Composite Allocation Score. The score used to prioritize lung transplant candidates since March 9, 2023. It sums weighted points across medical urgency, expected post-transplant survival, biological disadvantage, placement efficiency, pediatric priority, and prior living donor status. It replaced the Lung Allocation Score (LAS), which balanced urgency against expected benefit alone and which you will still see referenced in older material.</dd>
+
+                            <dt>AOOS</dt>
+                            <dd>Allocation Out of OPTN Sequence. Placing an organ outside the strict match-run order, typically when an organ is at risk of not being placed. The accepting center chooses the recipient from its own candidates. The rules governing this are being rewritten following a February 2025 HRSA directive.</dd>
+
+                            <dt>ILDA</dt>
+                            <dd>Independent Living Donor Advocate. A person every program performing living-donor transplants must provide to represent the donor's interests, required by 42 CFR 482.98(d) and OPTN policy. The advocate must not be routinely involved in the program's transplant activities.</dd>
 
                             <dt>cPRA</dt>
                             <dd>Calculated Panel Reactive Antibodies. A percentage (0-100%) indicating how sensitized a kidney transplant candidate is to potential donors. Highly sensitized patients (high cPRA) receive additional allocation priority to offset their smaller compatible donor pool.</dd>
@@ -457,11 +464,11 @@
                     <summary class="edu-accordion-btn">Common Immunosuppressants</summary>
                     <div class="edu-accordion-body">
                         <ul class="factor-list">
-                            <li><strong>Tacrolimus (Prograf)</strong> — The most widely used anti-rejection drug. Requires regular blood level monitoring. Side effects may include tremor, high blood pressure, and kidney strain.</li>
-                            <li><strong>Mycophenolate (CellCept/Myfortic)</strong> — Suppresses immune cell proliferation. Common side effects include GI issues (nausea, diarrhea). Take on schedule.</li>
-                            <li><strong>Prednisone</strong> — A corticosteroid used at higher doses initially, then tapered over months. Side effects include weight gain, mood changes, bone thinning, and elevated blood sugar.</li>
-                            <li><strong>Cyclosporine (Neoral)</strong> — Alternative to tacrolimus for some patients. Requires blood level monitoring. Can affect kidney function and blood pressure.</li>
-                            <li><strong>Sirolimus/Everolimus</strong> — mTOR inhibitors sometimes used as alternatives. May have different side effect profiles.</li>
+                            <li><strong>Tacrolimus (Prograf)</strong>: The most widely used anti-rejection drug. Requires regular blood level monitoring. Side effects may include tremor, high blood pressure, and kidney strain.</li>
+                            <li><strong>Mycophenolate (CellCept/Myfortic)</strong>: Suppresses immune cell proliferation. Common side effects include GI issues (nausea, diarrhea). Take on schedule.</li>
+                            <li><strong>Prednisone</strong>: A corticosteroid used at higher doses initially, then tapered over months. Side effects include weight gain, mood changes, bone thinning, and elevated blood sugar.</li>
+                            <li><strong>Cyclosporine (Neoral)</strong>: Alternative to tacrolimus for some patients. Requires blood level monitoring. Can affect kidney function and blood pressure.</li>
+                            <li><strong>Sirolimus/Everolimus</strong>: mTOR inhibitors sometimes used as alternatives. May have different side effect profiles.</li>
                         </ul>
                     </div>
                 </details>
@@ -475,7 +482,7 @@
                             <li>Use a pill organizer to track daily/weekly doses</li>
                             <li>Keep a backup supply when traveling</li>
                             <li>Never skip or adjust doses without your transplant team's guidance</li>
-                            <li>Report any side effects — your team can often adjust the regimen</li>
+                            <li>Report any side effects, and your team can often adjust the regimen</li>
                         </ul>
                     </div>
                 </details>
