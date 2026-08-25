@@ -200,12 +200,15 @@ class TestWhatIf:
         r = client.post("/what-if", json=body)
         assert r.status_code == 400
 
-    def test_city_only_400(self):
-        """#293: the legacy 22-city mode is retired."""
+    def test_city_only_rejected(self):
+        """#293/#285: the legacy 22-city mode is retired — center_code is now
+        REQUIRED at the schema level, so a city-only body fails validation
+        (422) instead of reaching the service (2026-08 review: the schema
+        used to advertise a Nashville default that always 400'd)."""
         body = {"patient": KIDNEY_PATIENT, "city": "Nashville", "iterations": 100}
         r = client.post("/what-if", json=body)
-        assert r.status_code == 400
-        assert "center_code is required" in r.json()["detail"]
+        assert r.status_code == 422
+        assert any("center_code" in str(e.get("loc", [])) for e in r.json()["detail"])
 
 
 # ==================== GET /policy-scenarios ====================

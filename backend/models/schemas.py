@@ -326,13 +326,15 @@ class HealthResponse(BaseModel):
 
 class WhatIfRequest(BaseModel):
     patient: PatientProfile
-    city: str = Field(
-        default="Nashville",
-        description="City name (legacy) or display label",
-    )
     center_code: str = Field(
+        min_length=1,
+        description="SRTR center code — REQUIRED (the legacy city-name mode "
+                    "was retired, #285; requests without it are rejected)",
+    )
+    city: str = Field(
         default="",
-        description="SRTR center code (preferred over city name)",
+        description="Optional display label only — ignored by the model "
+                    "(the location factor comes from center_code)",
     )
     donor_rate_multiplier: float = Field(
         default=1.0,
@@ -353,13 +355,15 @@ class WhatIfRequest(BaseModel):
 class PolicyScenarioRequest(BaseModel):
     patient: PatientProfile
     scenario_id: str = Field(description="ID of the predefined policy scenario")
-    city: str = Field(
-        default="Nashville",
-        description="City name (legacy) or display label",
-    )
     center_code: str = Field(
+        min_length=1,
+        description="SRTR center code — REQUIRED (the legacy city-name mode "
+                    "was retired, #285; requests without it are rejected)",
+    )
+    city: str = Field(
         default="",
-        description="SRTR center code (preferred over city name)",
+        description="Optional display label only — ignored by the model "
+                    "(the location factor comes from center_code)",
     )
     iterations: int = Field(default=500, ge=100, le=2000)
     seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")

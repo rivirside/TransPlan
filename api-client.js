@@ -261,12 +261,14 @@
         wait_time_multiplier: waitTimeMultiplier ?? 1.0,
         iterations: iterations ?? 500
       };
-      // center: {code, label} (preferred, any of the 248 centers) or a
-      // legacy city-name string (#286)
+      // center: {code, label} (preferred, any of the 248 centers) or a bare
+      // SRTR center-code string. The legacy city-name mode was retired
+      // (#285/#286): the backend rejects requests without center_code.
       if (center && typeof center === 'object') {
         body.center_code = center.code || '';
         body.city = center.label || center.code || '';
       } else if (center) {
+        body.center_code = center;
         body.city = center;
       }
       if (seed !== undefined && seed !== null) body.seed = seed;
@@ -338,11 +340,13 @@
         scenario_id: scenarioId,
         iterations: iterations || 500
       };
-      // center: {code, label} (preferred) or a legacy city-name string (#286)
+      // center: {code, label} (preferred) or a bare SRTR center-code string
+      // (the legacy city-name mode was retired, #285/#286)
       if (center && typeof center === 'object') {
         body.center_code = center.code || '';
         body.city = center.label || center.code || '';
       } else if (center) {
+        body.center_code = center;
         body.city = center;
       }
       if (seed !== undefined && seed !== null) body.seed = seed;
