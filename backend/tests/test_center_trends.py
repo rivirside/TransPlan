@@ -63,44 +63,30 @@ class TestCenterTrendProjection:
 
 
 class TestCoverageBeyondLegacyMapping:
-    def test_trend_adjustment_reaches_unmapped_centers(self, kidney_patient):
-        """The 52/248 gap: centers outside the legacy city mapping must also
-        get trend adjustments when their history supports one."""
-        mapping = get_data().center_mapping.get("cities", {})
-        mapped = set()
-        for info in mapping.values():
-            mapped.add(info.get("primary", ""))
-            mapped.update(info.get("alternates", []))
-
-        moved_unmapped = []
-        for code in get_data().center_trends["centers"]:
-            if code in mapped:
-                continue
-            p = get_center_trend_projection("kidney", code, years_forward=3.0)
-            if any(p[k] != 1.0 for k in p):
-                moved_unmapped.append(code)
-        assert moved_unmapped, (
-            "no unmapped center gets a trend adjustment — the 52/248 gap persists"
+    def test_trend_adjustment_reaches_many_centers(self, kidney_patient):
+        """The old city mapping reached only 52/248 centers; per-center trends
+        must fire for far more than that (#288/#293)."""
+        moved = [
+            code for code in get_data().center_trends["centers"]
+            if any(v != 1.0 for v in
+                   get_center_trend_projection("kidney", code, years_forward=3.0).values())
+        ]
+        assert len(moved) > 52, (
+            f"only {len(moved)} centers get trend adjustments — no better than "
+            "the legacy 52-center mapping"
         )
 
-    def test_simulate_trend_changes_unmapped_center(self, kidney_patient):
-        """End to end: simulate with trend_years must move results at an
-        unmapped center that has a firing trend."""
-        mapping = get_data().center_mapping.get("cities", {})
-        mapped = set()
-        for info in mapping.values():
-            mapped.add(info.get("primary", ""))
-            mapped.update(info.get("alternates", []))
+    def test_simulate_trend_changes_center(self, kidney_patient):
+        """End to end: simulate with trend_years must move results at a
+        center that has a firing trend."""
         target = None
         for code in get_data().center_trends["centers"]:
-            if code in mapped:
-                continue
             p = get_center_trend_projection("kidney", code, years_forward=3.0)
             if p["wait_time_factor"] != 1.0:
                 target = code
                 break
         if target is None:
-            pytest.skip("no unmapped kidney center with a firing wait trend")
+            pytest.skip("no kidney center with a firing wait trend")
 
         base = simulate(kidney_patient, n_iterations=400, seed=42)
         trended = simulate(kidney_patient, n_iterations=400, seed=42, trend_years=3.0)

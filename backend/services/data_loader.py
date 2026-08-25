@@ -43,8 +43,6 @@ class TransPlanData:
     air_quality_monitors: dict = field(default_factory=dict)
     # Phase 6A: All SRTR centers (~250) with coordinates and organ programs
     all_centers: dict = field(default_factory=dict)
-    # Phase 6A: Center-to-city mapping for 22 focus cities
-    center_mapping: dict = field(default_factory=dict)
     # Phase 6A: Center-level data (all ~250 centers)
     center_wait_times: dict = field(default_factory=dict)
     center_competing_risks: dict = field(default_factory=dict)
@@ -198,7 +196,6 @@ def load_all() -> TransPlanData:
     data.air_quality_monitors = _load_json(DATA_DIR / "air-quality-monitors.json", "air_quality_monitors", data)
     # Phase 6A: All centers + center mapping + center-level data
     data.all_centers = _load_json(DATA_DIR / "srtr-all-centers.json", "all_centers", data)
-    data.center_mapping = _load_json(DATA_DIR / "srtr-center-mapping.json", "center_mapping", data)
     data.center_wait_times = _load_json(DATA_DIR / "wait-time-distributions-centers.json", "center_wait_times", data)
     data.center_competing_risks = _load_json(DATA_DIR / "competing-risks-centers.json", "center_competing_risks", data)
     data.center_outcomes = _load_json(DATA_DIR / "post-transplant-outcomes-centers.json", "center_outcomes", data)

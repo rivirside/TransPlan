@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 /**
  * Post-fetch data validation.
- * Checks: JSON syntax, expected schema, value ranges, coverage of all 22 cities, staleness.
+ * Checks: JSON syntax, expected schema, value ranges, per-center coverage floors, staleness.
  */
 
 const fs = require('fs');
 const path = require('path');
-const { CITIES, DATA_DIR } = require('./utils');
+const { DATA_DIR } = require('./utils');  // (#293: CI no longer defends 22-city coverage)
 
-const CITY_NAMES = CITIES.map(c => c.city);
 const STALE_THRESHOLD_DAYS = 90;
 
 let errors = [];
@@ -37,14 +36,6 @@ function validateJSON(filename) {
     } catch (err) {
         addError(`Invalid JSON in ${filename}: ${err.message}`);
         return null;
-    }
-}
-
-function checkCityCoverage(data, filename, skipKeys = ['_meta']) {
-    const keys = Object.keys(data).filter(k => !skipKeys.includes(k));
-    const missing = CITY_NAMES.filter(city => !keys.includes(city));
-    if (missing.length > 0) {
-        addWarning(`${filename} missing cities: ${missing.join(', ')}`);
     }
 }
 
@@ -81,7 +72,6 @@ const airQuality = validateJSON('air-quality.json');
 if (airQuality) {
     checkStaleness(airQuality, 'air-quality.json');
     const { _meta, ...aqData } = airQuality;
-    checkCityCoverage(aqData, 'air-quality.json');
     checkValueRange(aqData, 'air-quality.json', 0, 100);
 }
 
@@ -90,7 +80,6 @@ const traffic = validateJSON('traffic-fatalities.json');
 if (traffic) {
     checkStaleness(traffic, 'traffic-fatalities.json');
     if (traffic.traumaScores) {
-        checkCityCoverage(traffic.traumaScores, 'traffic-fatalities.json (traumaScores)');
         checkValueRange(traffic.traumaScores, 'traffic-fatalities.json (traumaScores)', 0, 100);
     }
 }
@@ -100,7 +89,6 @@ const health = validateJSON('health-demographics.json');
 if (health) {
     checkStaleness(health, 'health-demographics.json');
     const { _meta, ...hdData } = health;
-    checkCityCoverage(hdData, 'health-demographics.json');
     for (const [city, metrics] of Object.entries(hdData)) {
         if (typeof metrics === 'object' && metrics !== null) {
             if (metrics.diabetesRate != null && (metrics.diabetesRate < 0 || metrics.diabetesRate > 30)) {
@@ -129,7 +117,6 @@ if (costOfLiving) {
     for (const [cbsa, m] of Object.entries(costOfLiving.msas || {})) rppValues[cbsa] = m.rpp;
     Object.assign(rppValues, costOfLiving.states || {});
     checkValueRange(rppValues, 'cost-of-living.json (RPPs)', 60, 160);
-    checkCityCoverage(costOfLiving.cities || {}, 'cost-of-living.json (legacy cities block)');
 }
 
 // 6. Donor Registration
@@ -137,7 +124,6 @@ const donor = validateJSON('donor-registration.json');
 if (donor) {
     checkStaleness(donor, 'donor-registration.json');
     if (donor.livingDonorProgramStrength) {
-        checkCityCoverage(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)');
         checkValueRange(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)', 0, 100);
     }
 }

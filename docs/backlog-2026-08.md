@@ -81,7 +81,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | C6 | Retire city_* SRTR blocks | #293 | ✅ 2026-08-25 |
 | C7 | Delete cost-of-living legacy cities block | #293 | |
 | C8 | Per-center trends from srtr-observed-rates-historical | = B1 | ✅ 2026-08-25 |
-| C9 | Retire srtr-center-mapping.json | #293 | |
+| C9 | srtr-center-mapping.json: API/loader consumers retired; file stays (feeds srtr-historical generation) | #293 | ✅ 2026-08-25 |
 
 ## Phase D — Dead code / scaffolding removal
 
@@ -90,7 +90,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | D1 | Retire algorithm.js, DEFAULTS, CITIES, checkCityCoverage, classic mode | #293 | algorithm.js+data-loader.js ✅ 2026-08-25; CITIES/classic remain |
 | D2 | Dead frontend: charts.js, url-sharing.js, donation-banner.js | #260 | charts/url-sharing already gone; banner blocked on #179 |
 | D3 | Old pages already deleted; 17 broken links to them FIXED 2026-08-25 | #293 | ✅ |
-| D4 | _FALLBACK_CITIES + unused CITIES imports | #293 | |
+| D4 | _FALLBACK_CITIES + unused CITIES imports | #293 | ✅ 2026-08-25 |
 | D5 | Close #206 (done — CLOSED 2026-08-24), prune stale golden tests as files retire | #206 ✅ | |
 
 ## Phase G — Data quality / robustness / security
