@@ -135,3 +135,40 @@ def result_to_ranks(result) -> list[str]:
     """Ordered center keys from a SimulationResult (#264: shared by the
     cross-engine comparisons in routers/validation.py and services)."""
     return [c.center_code or c.city for c in result.cities]
+
+
+def truncated_wait_times(dist, t0: float, size: int, rng) -> "np.ndarray":
+    """Draw remaining wait times (T - t0 | T > t0) from a frozen wait
+    distribution (#329).
+
+    Inverse-CDF sampling on the conditional: u ~ U(F(t0), 1), T = ppf(u),
+    remaining = T - t0. At t0 = 0 this is exactly unconditional sampling.
+    """
+    import numpy as np
+    if t0 <= 0:
+        return dist.rvs(size=size, random_state=rng)
+    f0 = float(dist.cdf(t0))
+    # Guard: essentially the whole mass already passed (numerically) —
+    # sample the far tail uniformly just below 1
+    f0 = min(f0, 1.0 - 1e-12)
+    u = rng.uniform(f0, 1.0, size=size)
+    return np.maximum(dist.ppf(u) - t0, 1e-9)
+
+
+def conditional_p_within(dist, t0: float, horizon: float,
+                         competing_hazard: float) -> float:
+    """P(transplant first AND within *horizon* months | already waited t0).
+
+    The left-truncated analog of the #216 closed form: integrate the
+    conditional wait density f(t0+x)/S(t0) against the competing-risk
+    survival exp(-hazard*x) over x in [0, horizon]. Competing-risk clocks
+    restart at t0 (they are memoryless exponentials in this model).
+    """
+    import numpy as np
+    sf0 = float(dist.sf(t0)) if t0 > 0 else 1.0
+    if sf0 <= 1e-12:
+        return 0.0
+    x = np.linspace(0.0, horizon, 241)
+    integrand = dist.pdf(t0 + x) / sf0 * np.exp(-competing_hazard * x)
+    _trapz = getattr(np, "trapezoid", None) or np.trapz
+    return float(np.clip(_trapz(integrand, x), 0.0, 1.0))

@@ -291,13 +291,35 @@ def simulate(
             age=patient.age,
             sex=patient.sex,
         )
-        transplant_times = dist.rvs(size=n_iterations, random_state=rng)
-
         # --- F1: Acceptance rate thinning ---
-        # If center accepts fraction a of offers, effective wait = T/a
+        # If center accepts fraction a of offers, effective wait = T/a.
+        # Resolved BEFORE drawing so accrued-time conditioning (#329) can
+        # truncate the EFFECTIVE distribution (time served counts against
+        # the thinned wait, not the raw one).
+        a_rate = 1.0
         if model_acceptance:
-            a_rate = _get_acceptance_rate(patient.organ, code)
-            if a_rate > 0 and a_rate < 1.0:
+            a = _get_acceptance_rate(patient.organ, code)
+            if a > 0 and a < 1.0:
+                a_rate = a
+
+        t0 = float(patient.months_waiting or 0.0)
+        if t0 > 0:
+            # Left-truncate at t0: T_remaining ~ (T_eff - t0 | T_eff > t0),
+            # sampling the effective (scale / a_rate) lognormal directly.
+            # Competing-risk clocks restart (memoryless exponentials).
+            # NOTE the inspection paradox is real and intended: with a
+            # heavy-tailed lognormal, long time served can RAISE the
+            # remaining-wait median (evidence of being in the long tail).
+            from services.distributions import get_lognorm_params
+            from services.stats_utils import truncated_wait_times
+            import scipy.stats as _ss
+            s_, loc_, scale_ = get_lognorm_params(dist)
+            eff_dist = _ss.lognorm(s=s_, loc=loc_, scale=scale_ / a_rate)
+            transplant_times = truncated_wait_times(
+                eff_dist, t0, size=n_iterations, rng=rng)
+        else:
+            transplant_times = dist.rvs(size=n_iterations, random_state=rng)
+            if a_rate < 1.0:
                 transplant_times = transplant_times / a_rate
 
         # --- F3: Dynamic score drift (MELD/LAS progression) ---
