@@ -51,7 +51,11 @@ class TestConvergenceFindsTrace:
         assert diag.n_draws == 100
         assert len(diag.parameters) > 0
 
-    def test_missing_organ_is_unavailable(self):
+    def test_missing_organ_is_unavailable(self, tmp_path, monkeypatch):
+        # Isolate from real local traces (developers may have all six organs
+        # fitted in data/mcmc-traces — those are gitignored artifacts)
+        from services import mcmc_survival
         from services.convergence import get_convergence_diagnostics
-        diag = get_convergence_diagnostics("intestine")  # no trace fitted
+        monkeypatch.setattr(mcmc_survival, "TRACE_DIR", tmp_path)
+        diag = get_convergence_diagnostics("intestine")
         assert diag.available is False

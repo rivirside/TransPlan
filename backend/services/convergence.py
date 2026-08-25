@@ -37,12 +37,15 @@ def get_convergence_diagnostics(organ: str) -> ConvergenceDiagnostics:
     Load MCMC trace for *organ* and compute convergence diagnostics.
     Returns available=False if no trace exists or arviz/pymc not installed.
     """
-    # Use the SAME trace location mcmc_survival writes to (MCMC-19): traces are
-    # saved at data/mcmc-traces/{organ}.nc, not data/mcmc_traces/{organ}_trace.nc.
-    from services.mcmc_survival import trace_path as _resolve_trace_path
-    trace_file = _resolve_trace_path(organ)
+    # Use the SAME trace location mcmc_survival writes to (MCMC-19), and the
+    # same state ↔ full granularity resolution inference uses — a bare "state"
+    # default reported available=False for organs /simulate serves from a
+    # full-granularity trace (2026-08 review finding).
+    from services.mcmc_survival import find_fitted_granularity, trace_path
+    granularity = find_fitted_granularity(organ)
+    trace_file = trace_path(organ, granularity or "state")
 
-    if not trace_file.exists():
+    if granularity is None:
         return ConvergenceDiagnostics(
             organ=organ,
             available=False,

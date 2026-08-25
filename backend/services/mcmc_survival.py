@@ -457,6 +457,20 @@ def trace_exists(organ: str, granularity: str = "state") -> bool:
     return trace_path(organ, granularity).exists()
 
 
+def find_fitted_granularity(organ: str) -> str | None:
+    """First granularity with a fitted trace on disk (state preferred).
+
+    Validation consumers (posterior_checks, convergence) must resolve the
+    trace the same way inference does — fit-mcmc-model.py defaults to
+    --granularity full, so a bare default of "state" would report "no trace"
+    for organs /simulate happily serves (2026-08 review finding).
+    """
+    for g in ("state", "full"):
+        if trace_exists(organ, g):
+            return g
+    return None
+
+
 # ---------------------------------------------------------------------------
 # Parameter extraction from trace
 # ---------------------------------------------------------------------------

@@ -90,16 +90,21 @@ def run_posterior_checks(organ: str) -> PosteriorCheckReport:
 
     Raises RuntimeError if no trace exists for the organ.
     """
-    if not trace_exists(organ):
+    # Resolve granularity the same way inference does (state ↔ full): the
+    # trace and the observed data must agree on region structure.
+    granularity = next(
+        (g for g in ("state", "full") if trace_exists(organ, g)), None
+    )
+    if granularity is None:
         raise RuntimeError(
             f"No MCMC trace for {organ}. Run scripts/fit-mcmc-model.py first."
         )
 
-    trace = load_trace(organ)
+    trace = load_trace(organ, granularity)
     if trace is None:
         raise RuntimeError(f"Failed to load MCMC trace for {organ}.")
 
-    observed = load_organ_data(organ)
+    observed = load_organ_data(organ, granularity)
     rng = np.random.default_rng(42)
     draws = sample_params_from_trace(trace, n_draws=N_DRAWS, rng=rng)
 
