@@ -61,14 +61,31 @@ reproduce with the commands above; seed 42).
 
 Reference patients as in `run-center-calibration.py`; cohorts n ≥ 10.
 
+**Post-fix numbers** (see "Inference-side bug" below — the first measurement
+ran before the region-mapping fix, when the per-center posterior effects were
+silently unused):
+
 | Organ | MCMC-full ρ | MC engine ρ (report) |
 |---|---|---|
-| kidney | 0.796 (n=218) | 0.890 |
-| liver | 0.727 (n=135) | 0.722 |
-| heart | 0.706 (n=130) | 0.755 |
-| lung | 0.635 (n=61) | 0.703 |
+| kidney | 0.872 (n=218) | 0.890 |
+| liver | 0.759 (n=135) | 0.722 |
+| heart | 0.760 (n=130) | 0.755 |
+| lung | 0.581 (n=61) | 0.703 |
 | pancreas | 0.754 (n=6) | 0.459 |
 | intestine | 0.679 (n=7) | 0.623 |
+
+## Inference-side bug found post-fit
+
+`simulate_mcmc` mapped every center through the **classic** city map
+regardless of the trace's granularity, so state/full traces (whose regions
+are state abbreviations / center codes) never matched and every center fell
+back to region index 0 — the refit posterior's per-center effects were unused
+and cross-center variation came only from the ratio adjustments. Fixed:
+`_get_trace` returns the actual granularity, centers map at that granularity
+(full → identity), full-mode ratio adjustments are pinned to 1.0 (anything
+else double-counts), state-mode ratios use the true region-average reference,
+and centers without a trace region are skipped rather than given a fabricated
+index-0 posterior. Kidney calibration moved 0.796 → 0.872 with the fix.
 
 MCMC ranks slightly below the MC engine for kidney/heart/lung — expected, since
 posterior parameter draws add honest uncertainty to the point ranking — and

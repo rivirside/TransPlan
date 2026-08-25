@@ -75,7 +75,11 @@ def _select_trace(organ: str, granularity: str) -> tuple[Path | None, str | None
 
 
 def _get_trace(organ: str, granularity: str = "classic"):
-    """Load trace from cache or disk, with auto-fallback to coarser granularity."""
+    """Load trace from cache or disk, with auto-fallback to coarser granularity.
+
+    Returns (trace, actual_granularity) — the ACTUAL granularity matters (#207):
+    it determines how centers map onto the trace's region effects.
+    """
     cache_key = f"{organ}:{granularity}"
     if cache_key in _trace_cache:
         return _trace_cache[cache_key]
@@ -88,9 +92,10 @@ def _get_trace(organ: str, granularity: str = "classic"):
         if classic_key in _trace_cache:
             return _trace_cache[classic_key]
         trace = load_trace(organ)
+        result = (trace, "classic") if trace is not None else (None, None)
         if trace is not None:
-            _trace_cache[classic_key] = trace
-        return trace
+            _trace_cache[classic_key] = result
+        return result
 
     if actual_g != granularity:
         logger.info(
@@ -101,8 +106,9 @@ def _get_trace(organ: str, granularity: str = "classic"):
     # Load the trace
     import arviz as az
     trace = az.from_netcdf(str(path))
-    _trace_cache[cache_key] = trace
-    return trace
+    result = (trace, actual_g)
+    _trace_cache[cache_key] = result
+    return result
 
 
 def is_available(organ: str, granularity: str = "classic") -> bool:
@@ -208,6 +214,27 @@ def _load_center_adjustments(organ: str) -> dict:
     }
 
 
+_region_avg_cache: dict[int, dict[str, float]] = {}
+
+
+def _region_average(center_factors: dict[str, float],
+                    center_region_map: dict[str, str], region: str) -> float:
+    """Mean center factor over all centers in *region* — the reference the
+    state-granularity trace effect was fit against (mirrors
+    mcmc_survival.load_organ_data's region aggregation)."""
+    cache_key = id(center_factors)
+    per_region = _region_avg_cache.get(cache_key)
+    if per_region is None:
+        sums: dict[str, list[float]] = {}
+        for code, factor in center_factors.items():
+            r = center_region_map.get(code)
+            if r is not None and isinstance(factor, (int, float)):
+                sums.setdefault(r, []).append(float(factor))
+        per_region = {r: sum(v) / len(v) for r, v in sums.items() if v}
+        _region_avg_cache[cache_key] = per_region
+    return per_region.get(region, 1.0)
+
+
 def _compute_center_adjustment(center_factor: float, city_factor: float) -> float:
     """Compute center-level adjustment ratio relative to parent city.
 
@@ -247,7 +274,7 @@ def simulate_mcmc(
 
     granularity = getattr(patient, "bbn_granularity", "classic")
 
-    trace = _get_trace(patient.organ, granularity)
+    trace, actual_g = _get_trace(patient.organ, granularity)
     if trace is None:
         raise RuntimeError(
             f"No MCMC trace available for {patient.organ}. "
@@ -269,22 +296,27 @@ def simulate_mcmc(
     # Pre-sample all parameter sets
     param_draws = sample_params_from_trace(trace, n_draws=N_PARAM_DRAWS, rng=rng)
 
-    # Build city name -> index mapping from trace metadata
+    # Build region -> index mapping from trace metadata. Region keys depend on
+    # the ACTUAL trace granularity (#207): full → center codes, state → state
+    # abbreviations, classic → the legacy 22 city names.
     trace_cities = json.loads(str(trace.attrs.get("cities", "[]")))
     if not trace_cities:
-        # Fall back to sorted city names from wait time data
+        # Legacy classic traces without metadata: sorted city names
         with open(DATA_DIR / "wait-time-distributions.json") as f:
             wt = json.load(f)
         cf = wt.get("city_wait_time_factors", {})
         trace_cities = sorted(k for k in cf if not k.startswith("_"))
     city_to_idx = {c: i for i, c in enumerate(trace_cities)}
 
-    # Build explicit center -> trace city mapping (#207)
+    # Center -> trace-region mapping at the trace's OWN granularity. The old
+    # code always used the classic city map, so state/full traces (whose
+    # regions are states/codes) never matched and every center silently fell
+    # back to region index 0 — the refit posterior's per-center effects were
+    # unused.
     try:
         from services.bbn_parameterizer import get_center_to_region_map
-        center_city_map = get_center_to_region_map("classic")
+        center_city_map = get_center_to_region_map(actual_g)
     except (RuntimeError, ImportError):
-        # Fallback: empty map (Nashville fallback will be used for all centers)
         center_city_map = {}
 
     # Map blood type and urgency to indices
@@ -339,31 +371,41 @@ def simulate_mcmc(
             lat = center.get("lat")
             lon = center.get("lon")
 
-            # Use explicit center->city mapping (#207)
-            region = center_city_map.get(code, "Nashville")
-            cidx = city_to_idx.get(region)
+            # Region lookup at the trace's own granularity (#207)
+            region = center_city_map.get(code)
+            cidx = city_to_idx.get(region) if region is not None else None
             if cidx is None:
-                cidx = city_to_idx.get("Nashville", 0)
+                # No posterior effect exists for this center's region. Skip
+                # honestly instead of the old behavior (silently reusing
+                # region index 0 — a fabricated posterior).
+                logger.debug("No trace region for center %s (region=%s) — skipped", code, region)
+                continue
 
-            # Compute center-level adjustment ratios (#207)
+            # Center-level adjustment ratios (#207), relative to what the
+            # trace's region effect already captures:
+            #   full  → the trace region IS this center; ratio must be 1.0
+            #           (anything else double-counts the center factor)
+            #   state → center factor / region-average factor
+            #   classic → center factor / legacy city factor
             center_wait_adj = 1.0
             center_mort_adj = 1.0
             center_delist_adj = 1.0
-            if center_adj is not None and code:
-                # Wait time: center_factor / city_factor for the parent city
-                c_wait = center_adj["wait_factors"].get(code, 1.0)
-                city_wait = center_adj["city_wait_factors"].get(region, 1.0)
-                center_wait_adj = _compute_center_adjustment(c_wait, city_wait)
+            if center_adj is not None and code and actual_g != "full":
+                if actual_g == "state":
+                    ref_wait = _region_average(center_adj["wait_factors"], center_city_map, region)
+                    ref_mort = _region_average(center_adj["mort_factors"], center_city_map, region)
+                    ref_delist = _region_average(center_adj["delist_factors"], center_city_map, region)
+                else:  # classic
+                    ref_wait = center_adj["city_wait_factors"].get(region, 1.0)
+                    ref_mort = center_adj["city_mort_factors"].get(region, 1.0)
+                    ref_delist = center_adj["city_delist_factors"].get(region, 1.0)
 
-                # Mortality: center_factor / city_factor
-                c_mort = center_adj["mort_factors"].get(code, 1.0)
-                city_mort = center_adj["city_mort_factors"].get(region, 1.0)
-                center_mort_adj = _compute_center_adjustment(c_mort, city_mort)
-
-                # Delisting: center_factor / city_factor
-                c_delist = center_adj["delist_factors"].get(code, 1.0)
-                city_delist = center_adj["city_delist_factors"].get(region, 1.0)
-                center_delist_adj = _compute_center_adjustment(c_delist, city_delist)
+                center_wait_adj = _compute_center_adjustment(
+                    center_adj["wait_factors"].get(code, 1.0), ref_wait)
+                center_mort_adj = _compute_center_adjustment(
+                    center_adj["mort_factors"].get(code, 1.0), ref_mort)
+                center_delist_adj = _compute_center_adjustment(
+                    center_adj["delist_factors"].get(code, 1.0), ref_delist)
 
             iteration_targets.append({
                 "code": code,
