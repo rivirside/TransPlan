@@ -133,7 +133,7 @@ get sourced or refit. Register updated per item.
 | J2 | Inference-mode availability docs | #232 | |
 | J3 | Equity disclaimers hardcoded | #235 | |
 | J4 | BBN docstrings claim pgmpy | #258 | |
-| J5 | Refactors: patient_dict dedup, slim routers | #262 ✅ / #264 | |
+| J5 | Refactors: patient_dict dedup, slim routers | #262 ✅ / #264 ✅ | |
 
 ## Parked (cannot do solo)
 

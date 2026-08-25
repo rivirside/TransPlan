@@ -14,7 +14,15 @@ from fastapi import APIRouter, HTTPException
 logger = logging.getLogger(__name__)
 from pydantic import BaseModel, Field
 
-from models.schemas import PatientProfile
+from models.schemas import (
+    PatientProfile,
+    WhatIfRequest,
+    PolicyScenarioRequest,
+    TravelSubsidyRequest,
+    TravelSubsidyCityResult,
+    TravelSubsidyTierResult,
+    TravelSubsidyAnalysisResult,
+)
 from services.what_if import compute_what_if, WhatIfResult
 from services.policy_scenarios import (
     PolicyScenario, list_scenarios, get_scenario, get_city_multipliers,
@@ -25,32 +33,6 @@ router = APIRouter()
 
 
 # --- Raw multiplier endpoint (unchanged) ---
-
-class WhatIfRequest(BaseModel):
-    patient: PatientProfile
-    city: str = Field(
-        default="Nashville",
-        description="City name (legacy) or display label",
-    )
-    center_code: str = Field(
-        default="",
-        description="SRTR center code (preferred over city name)",
-    )
-    donor_rate_multiplier: float = Field(
-        default=1.0,
-        ge=0.5,
-        le=2.0,
-        description="Multiplier for donor availability. >1 = more donors (shorter waits), <1 = fewer donors (longer waits)",
-    )
-    wait_time_multiplier: float = Field(
-        default=1.0,
-        ge=0.5,
-        le=2.0,
-        description="Multiplier for base wait time distribution. >1 = longer waits, <1 = shorter waits",
-    )
-    iterations: int = Field(default=500, ge=100, le=2000)
-    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
-
 
 @router.post("/what-if", response_model=WhatIfResult)
 def run_what_if(request: WhatIfRequest) -> WhatIfResult:
@@ -75,21 +57,6 @@ def run_what_if(request: WhatIfRequest) -> WhatIfResult:
 
 
 # --- Policy scenario endpoints (Phase 4 M4) ---
-
-class PolicyScenarioRequest(BaseModel):
-    patient: PatientProfile
-    scenario_id: str = Field(description="ID of the predefined policy scenario")
-    city: str = Field(
-        default="Nashville",
-        description="City name (legacy) or display label",
-    )
-    center_code: str = Field(
-        default="",
-        description="SRTR center code (preferred over city name)",
-    )
-    iterations: int = Field(default=500, ge=100, le=2000)
-    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
-
 
 class PolicyScenarioResult(BaseModel):
     """Result of a policy scenario analysis."""
@@ -198,57 +165,6 @@ def run_policy_scenario(request: PolicyScenarioRequest) -> PolicyScenarioResult:
 
 
 # --- Travel subsidy multi-price-point comparison (#141) ---
-
-class TravelSubsidyRequest(BaseModel):
-    patient: PatientProfile
-    cities: list[str] = Field(
-        default_factory=list,
-        description="DEPRECATED (legacy 22-city filter) — use center_codes.",
-    )
-    center_codes: list[str] = Field(
-        default_factory=list,
-        description="SRTR center codes to analyze. Empty = all centers for the organ.",
-    )
-    iterations: int = Field(default=500, ge=100, le=2000,
-                            description="Ignored since the sweep became closed-form (#285); kept for API compatibility.")
-    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
-
-
-class TravelSubsidyCityResult(BaseModel):
-    """Result for one center at one price point."""
-    city: str
-    state: str
-    center_code: str = ""
-    baseline_p24: float
-    adjusted_p24: float
-    delta_p24: float
-    baseline_median_wait: float
-    adjusted_median_wait: float
-
-
-class TravelSubsidyTierResult(BaseModel):
-    """Result for one price point across all cities."""
-    subsidy_amount: int
-    label: str
-    scenario_id: str
-    system_avg_baseline_p24: float = Field(description="Average P(transplant ≤ 24mo) across all cities, no subsidy")
-    system_avg_adjusted_p24: float = Field(description="Average P(transplant ≤ 24mo) across all cities, with subsidy")
-    system_delta_p24: float = Field(description="System-wide improvement in average P24")
-    system_avg_baseline_wait: float
-    system_avg_adjusted_wait: float
-    cities: list[TravelSubsidyCityResult]
-
-
-class TravelSubsidyAnalysisResult(BaseModel):
-    """Full multi-price-point travel subsidy comparison."""
-    organ: str
-    tiers: list[TravelSubsidyTierResult]
-    total_cities: int
-    iterations_per_city: int
-    elapsed_seconds: float
-    seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
-    disclaimers: list[str]
-
 
 @router.post("/travel-subsidy-analysis", response_model=TravelSubsidyAnalysisResult)
 def run_travel_subsidy_analysis(request: TravelSubsidyRequest) -> TravelSubsidyAnalysisResult:

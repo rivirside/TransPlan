@@ -129,3 +129,9 @@ def get_range_multiplier(value: int | float, ranges: dict[str, float]) -> float:
             if lo <= value <= hi:
                 return multiplier
     return 1.0
+
+
+def result_to_ranks(result) -> list[str]:
+    """Ordered center keys from a SimulationResult (#264: shared by the
+    cross-engine comparisons in routers/validation.py and services)."""
+    return [c.center_code or c.city for c in result.cities]

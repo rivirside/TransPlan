@@ -143,8 +143,7 @@ class ConvergenceResult(BaseModel):
 # Helper: ranking → Spearman ρ
 # ---------------------------------------------------------------------------
 
-def _result_to_ranks(result: SimulationResult) -> list[str]:
-    return [c.center_code or c.city for c in result.cities]
+from services.stats_utils import result_to_ranks as _result_to_ranks  # noqa: E402 (#264)
 
 
 # ---------------------------------------------------------------------------

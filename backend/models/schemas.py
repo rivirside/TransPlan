@@ -310,3 +310,99 @@ class HealthResponse(BaseModel):
         description="{ file_name: fetched_at_iso } for each loaded data file"
     )
     data_files_loaded: int
+
+
+# ── What-if / policy-scenario request-response models (#264: moved from
+# routers/what_if.py; PolicyScenarioResult stays in the router because it
+# embeds the service-defined PolicyScenario type) ─────────────────────────
+
+class WhatIfRequest(BaseModel):
+    patient: PatientProfile
+    city: str = Field(
+        default="Nashville",
+        description="City name (legacy) or display label",
+    )
+    center_code: str = Field(
+        default="",
+        description="SRTR center code (preferred over city name)",
+    )
+    donor_rate_multiplier: float = Field(
+        default=1.0,
+        ge=0.5,
+        le=2.0,
+        description="Multiplier for donor availability. >1 = more donors (shorter waits), <1 = fewer donors (longer waits)",
+    )
+    wait_time_multiplier: float = Field(
+        default=1.0,
+        ge=0.5,
+        le=2.0,
+        description="Multiplier for base wait time distribution. >1 = longer waits, <1 = shorter waits",
+    )
+    iterations: int = Field(default=500, ge=100, le=2000)
+    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
+
+
+class PolicyScenarioRequest(BaseModel):
+    patient: PatientProfile
+    scenario_id: str = Field(description="ID of the predefined policy scenario")
+    city: str = Field(
+        default="Nashville",
+        description="City name (legacy) or display label",
+    )
+    center_code: str = Field(
+        default="",
+        description="SRTR center code (preferred over city name)",
+    )
+    iterations: int = Field(default=500, ge=100, le=2000)
+    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
+
+
+class TravelSubsidyRequest(BaseModel):
+    patient: PatientProfile
+    cities: list[str] = Field(
+        default_factory=list,
+        description="DEPRECATED (legacy 22-city filter) — use center_codes.",
+    )
+    center_codes: list[str] = Field(
+        default_factory=list,
+        description="SRTR center codes to analyze. Empty = all centers for the organ.",
+    )
+    iterations: int = Field(default=500, ge=100, le=2000,
+                            description="Ignored since the sweep became closed-form (#285); kept for API compatibility.")
+    seed: Optional[int] = Field(None, ge=0, le=2147483647, description="RNG seed for reproducibility")
+
+
+class TravelSubsidyCityResult(BaseModel):
+    """Result for one center at one price point."""
+    city: str
+    state: str
+    center_code: str = ""
+    baseline_p24: float
+    adjusted_p24: float
+    delta_p24: float
+    baseline_median_wait: float
+    adjusted_median_wait: float
+
+
+class TravelSubsidyTierResult(BaseModel):
+    """Result for one price point across all cities."""
+    subsidy_amount: int
+    label: str
+    scenario_id: str
+    system_avg_baseline_p24: float = Field(description="Average P(transplant ≤ 24mo) across all cities, no subsidy")
+    system_avg_adjusted_p24: float = Field(description="Average P(transplant ≤ 24mo) across all cities, with subsidy")
+    system_delta_p24: float = Field(description="System-wide improvement in average P24")
+    system_avg_baseline_wait: float
+    system_avg_adjusted_wait: float
+    cities: list[TravelSubsidyCityResult]
+
+
+class TravelSubsidyAnalysisResult(BaseModel):
+    """Full multi-price-point travel subsidy comparison."""
+    organ: str
+    tiers: list[TravelSubsidyTierResult]
+    total_cities: int
+    iterations_per_city: int
+    elapsed_seconds: float
+    seed_used: int = Field(0, description="RNG seed used for this run (for reproducibility)")
+    disclaimers: list[str]
