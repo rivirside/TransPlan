@@ -271,6 +271,20 @@
     count.className = 'results-count';
     count.textContent = 'Showing top ' + results.length + ' of ' + totalCandidates + ' ' + findOrgan + ' programs';
     header.appendChild(count);
+
+    // #304 / L-067: hand this shortlist to the simulator (shareable URL)
+    var codes = results
+      .map(function (r) { return r.center && r.center.code; })
+      .filter(Boolean);
+    if (codes.length) {
+      var simLink = document.createElement('a');
+      simLink.className = 'btn-warm-accent-ghost';
+      simLink.style.cssText = 'margin-left:auto; font-size:0.85rem;';
+      simLink.href = 'simulator.html?organ=' + encodeURIComponent(findOrgan) +
+        '&centers=' + encodeURIComponent(codes.join(','));
+      simLink.textContent = 'Simulate these ' + codes.length + ' centers →';
+      header.appendChild(simLink);
+    }
     findResults.appendChild(header);
 
     results.forEach(function (r, i) {

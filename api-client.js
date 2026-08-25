@@ -66,6 +66,11 @@
       profile.custom_weights = formData.weights;
     }
 
+    // L-067 (#304): user-defined center shortlist
+    if (Array.isArray(formData.centerCodes) && formData.centerCodes.length) {
+      profile.center_codes = formData.centerCodes;
+    }
+
     return profile;
   }
 

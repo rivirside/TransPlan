@@ -10,6 +10,53 @@
 
   // ── Collect raw form values ─────────────────────────────────────────────────
 
+  // ── Center shortlist (#304 / L-067) ─────────────────────────────────────────
+  var _shortlist = null;  // array of SRTR codes from ?centers=..., or null
+
+  function parseShortlistParam(params) {
+    var raw = params.get('centers');
+    if (!raw) return null;
+    var codes = raw.split(',')
+      .map(function (c) { return c.trim().toUpperCase(); })
+      .filter(function (c) { return /^[A-Z0-9]{3,5}$/.test(c); })
+      .slice(0, 248);
+    return codes.length ? codes : null;
+  }
+
+  function renderShortlistNote() {
+    var el = document.getElementById('sim-shortlist-note');
+    if (!_shortlist || !_shortlist.length) {
+      if (el) el.style.display = 'none';
+      return;
+    }
+    if (!el) {
+      var anchor = document.getElementById('sim-results-container') ||
+                   document.getElementById('sim-run-btn');
+      if (!anchor || !anchor.parentNode) return;
+      el = document.createElement('div');
+      el.id = 'sim-shortlist-note';
+      el.style.cssText = 'margin:0.5rem 0; padding:0.5rem 0.75rem; border-left:3px solid var(--warm-accent,#c97c4a); background:var(--surface-2,#f8f5f1); font-size:0.85rem; border-radius:4px;';
+      anchor.parentNode.insertBefore(el, anchor);
+    }
+    while (el.firstChild) el.removeChild(el.firstChild);
+    el.appendChild(document.createTextNode(
+      'Shortlist active: only ' + _shortlist.length + ' selected center' +
+      (_shortlist.length === 1 ? '' : 's') + ' will be scored and simulated. '));
+    var clear = document.createElement('a');
+    clear.href = '#';
+    clear.textContent = 'Show all centers';
+    clear.addEventListener('click', function (e) {
+      e.preventDefault();
+      _shortlist = null;
+      var url = new URL(window.location);
+      url.searchParams.delete('centers');
+      history.replaceState(null, '', url);
+      renderShortlistNote();
+    });
+    el.appendChild(clear);
+    el.style.display = '';
+  }
+
   function collectFormData() {
     var data = {
       organ:     val('organ'),
@@ -43,6 +90,11 @@
       data.weights = window.TransPlanWeights.getWeights();
     }
 
+    // Center shortlist (#304)
+    if (_shortlist && _shortlist.length) {
+      data.centerCodes = _shortlist;
+    }
+
     return data;
   }
 
@@ -72,6 +124,9 @@
   function populateFromURL() {
     var params = new URLSearchParams(window.location.search);
     if (!params.toString()) return false;
+
+    _shortlist = parseShortlistParam(params);
+    renderShortlistNote();
 
     setVal('organ', params.get('organ'));
     setVal('bloodType', params.get('bt'));

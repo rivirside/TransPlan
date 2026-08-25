@@ -118,7 +118,7 @@ get sourced or refit. Register updated per item.
 
 | # | Item | Issue | Status |
 |---|------|-------|--------|
-| I1 | User-defined center sets (L-067) | #304 | backend ✅ 2026-08-25; UI follow-up open |
+| I1 | User-defined center sets (L-067) | #304 | ✅ CLOSED 2026-08-25 (backend + UI + share URLs) |
 | I2 | Rh factor input | #180 | |
 | I3 | Mobile responsiveness w/ large results | #224 | |
 | I4 | Print button scope / methodology linking | #197 / #198 | |
