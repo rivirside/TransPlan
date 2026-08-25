@@ -208,7 +208,7 @@ class TestWhatIf:
         body = {"patient": KIDNEY_PATIENT, "city": "Nashville", "iterations": 100}
         r = client.post("/what-if", json=body)
         assert r.status_code == 422
-        assert any("center_code" in str(e.get("loc", [])) for e in r.json()["detail"])
+        assert "center_code" in str(r.json()["detail"])
 
 
 # ==================== GET /policy-scenarios ====================
