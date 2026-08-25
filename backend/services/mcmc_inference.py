@@ -578,10 +578,8 @@ def simulate_mcmc(
         actual_iterations, N_PARAM_DRAWS, iters_per_draw, elapsed,
     )
 
-    dq_summary = None
-    if city_results:
-        from services.provenance import summarize
-        dq_summary = summarize([c.data_quality or [] for c in city_results])
+    from services.provenance import summarize_cities
+    dq_summary = summarize_cities(city_results)
     from services.data_loader import get_data as _get_data
     vintage = _get_data().srtr_vintage()
 
