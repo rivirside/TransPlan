@@ -38,7 +38,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | # | Item | Issue | Status |
 |---|------|-------|--------|
 | E1 | Per-release Table B10 parse → fit-on-N/predict-N+k forecast test | #237 | ✅ 2026-08-24 |
-| E2 | Assumption sensitivity sweep (T6): ±20% perturbation, rank stability | #294 | |
+| E2 | Assumption sensitivity sweep (T6): ±20% perturbation, rank stability | #294 | ✅ 2026-08-25 |
 | E3 | Decile calibration (T-calibration): predicted vs observed mortality | #295 | |
 | E4 | Cross-iteration model comparison | #137 | |
 | E5 | MCMC calibration via run-center-calibration after #207 | #207 | |
@@ -54,7 +54,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | F2 | Continuous BBN latents (replace terciles) | #236 | |
 | F3 | Patient-specific competing-risk split (L-072) | #238 | |
 | F4 | log_sigma clamp ceiling 1.2 (SURV-13/DATA-07) | #274 | |
-| F5 | Clamp-bound cluster: 538+ values on bounds (DATA-24/25) | #294 | |
+| F5 | Clamp-bound cluster: 538+ values on bounds (DATA-24/25) | #294 | measured: ρ 0.973 worst (passes) |
 | F6 | Hierarchical partial pooling (needs F7) | #268 | |
 | F7 | Per-center transplant volume data | #275 | |
 | F8 | Kriging/GP interpolation with prediction variance | #266 | |
