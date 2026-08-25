@@ -71,6 +71,8 @@ def _run_single(
         cpra=patient.cpra,
         meld=patient.meld,
         las=patient.las,
+        age=patient.age,
+        sex=patient.sex,
     )
 
     # Apply wait_time_multiplier by scaling the distribution's scale parameter.

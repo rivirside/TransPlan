@@ -57,6 +57,8 @@ def _analytical_p_transplant_12mo(
     meld: int | None = None,
     las: float | None = None,
     center_code: str = "",
+    age: int | None = None,
+    sex: str | None = None,
 ) -> float:
     """
     Compute P(transplant first AND within 12 months) analytically.
@@ -73,6 +75,7 @@ def _analytical_p_transplant_12mo(
     # stops matching the center-adjusted MC side (#287)
     dist = get_wait_time_distribution(
         organ, blood_type, city, cpra, meld, las, center_code=center_code,
+        age=age, sex=sex,
     )
 
     annual_mort = get_annual_mortality_rate(
@@ -128,6 +131,7 @@ def compute_brier_score(
         p_an = _analytical_p_transplant_12mo(
             organ, blood_type, city_prob.city, urgency, cpra, meld, las,
             center_code=city_prob.center_code,
+            age=patient.age, sex=patient.sex,
         )
         se = (p_mc - p_an) ** 2
         squared_errors.append(se)
