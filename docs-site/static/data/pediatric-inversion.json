@@ -1,0 +1,40 @@
+{
+ "organs": {
+  "kidney": {
+   "n_centers": 199,
+   "spearman": 0.888,
+   "median_abs_pct_error": 0.3635,
+   "passes_gate": true
+  },
+  "liver": {
+   "n_centers": 114,
+   "spearman": 0.7735,
+   "median_abs_pct_error": 0.3923,
+   "passes_gate": true
+  },
+  "heart": {
+   "n_centers": 88,
+   "spearman": 0.6697,
+   "median_abs_pct_error": 1.4277,
+   "passes_gate": false
+  },
+  "lung": {
+   "n_centers": 48,
+   "spearman": 0.7307,
+   "median_abs_pct_error": 0.9519,
+   "passes_gate": true
+  }
+ },
+ "_meta": {
+  "generated": "2026-08-26T14:58:54Z",
+  "script": "scripts/run-pediatric-inversion.py",
+  "method": "Bisection inversion of the closed-form 12-month competing-risks integral for the lognormal median that reproduces a center's observed transplant rate; validated on adults where the true median (Table B10) is known.",
+  "min_cohort_n": 25
+ },
+ "gate_passed": false,
+ "organs_passing": [
+  "kidney",
+  "liver",
+  "lung"
+ ]
+}
