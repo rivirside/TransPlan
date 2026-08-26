@@ -29,11 +29,10 @@ class TestLayerExtraction:
         assert coords.shape[1] == 2
         assert len(values) == len(coords)
 
-    def test_wait_time_factor_kidney_has_many_points(self):
-        result = _extract_layer_points("wait_time_factor_kidney")
-        assert result is not None
-        coords, values = result
-        assert len(coords) >= 100  # All centers with kidney data
+    def test_wait_time_factor_extraction_retired(self):
+        """#252: extracting points for a center-outcome layer raises."""
+        with pytest.raises(ValueError, match="retired"):
+            _extract_layer_points("wait_time_factor_kidney")
 
     def test_invalid_layer_returns_none(self):
         result = _extract_layer_points("nonexistent_layer")
@@ -95,10 +94,10 @@ class TestSpatialSurface:
         assert "mean" in stats
         assert "std" in stats
 
-    def test_center_level_surface(self):
-        """Center-level data should have many more points than city-level."""
-        surface = SpatialSurface("wait_time_factor_kidney", method="rbf")
-        assert surface._n_points >= 100
+    def test_retired_layer_surface_rejected(self):
+        """#252: constructing a surface from a center-outcome layer raises."""
+        with pytest.raises(ValueError, match="retired"):
+            SpatialSurface("wait_time_factor_kidney", method="rbf")
 
     def test_invalid_method(self):
         with pytest.raises(ValueError, match="Unknown method"):
@@ -135,14 +134,20 @@ class TestAvailableLayers:
         assert "health_diabetesRate" in layers
         assert "health_obesityRate" in layers
 
-    def test_has_center_level_layers(self):
+    def test_outcome_layers_retired(self):
+        """#252: center-bound outcomes are not continuous fields — the
+        layers must be gone from the listing AND rejected on request."""
         layers = available_layers()
-        assert "wait_time_factor_kidney" in layers
-        assert "mortality_factor_kidney" in layers
+        assert not any(l.startswith(("wait_time_factor_", "mortality_factor_",
+                                     "graft_survival_")) for l in layers)
+        with pytest.raises(ValueError, match="retired"):
+            interpolate_at(40.44, -79.99, "wait_time_factor_kidney")
 
     def test_total_layer_count(self):
         layers = available_layers()
-        assert len(layers) >= 20  # At least 20 layers
+        # environmental + health layers only after #252 (was >=20 with the
+        # invalid outcome layers included)
+        assert len(layers) >= 7
 
 
 class TestConvenienceFunction:

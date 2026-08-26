@@ -117,30 +117,19 @@ def _extract_layer_points(layer_name: str) -> tuple[np.ndarray, np.ndarray] | No
                         points.append(_CITY_COORDS[city])
                         values.append(float(val))
 
-    elif layer_name.startswith("wait_time_factor_"):
-        organ = layer_name[len("wait_time_factor_"):]
-        center_data = data.center_wait_times.get("center_wait_time_factors", {})
-        all_centers = data.all_centers.get("centers", {})
-        for code, factors in center_data.items():
-            factor = factors.get(organ)
-            center = all_centers.get(code, {})
-            lat, lon = center.get("lat"), center.get("lon")
-            if factor is not None and lat is not None and lon is not None:
-                points.append((lat, lon))
-                values.append(float(factor))
-
-    elif layer_name.startswith("mortality_factor_"):
-        organ = layer_name[len("mortality_factor_"):]
-        center_data = data.center_competing_risks.get("center_adjustments", {})
-        all_centers = data.all_centers.get("centers", {})
-        for code, adjustments in center_data.items():
-            adj = adjustments.get(organ, {})
-            factor = adj.get("mortality_factor")
-            center = all_centers.get(code, {})
-            lat, lon = center.get("lat"), center.get("lon")
-            if factor is not None and lat is not None and lon is not None:
-                points.append((lat, lon))
-                values.append(float(factor))
+    elif (layer_name.startswith("wait_time_factor_")
+          or layer_name.startswith("mortality_factor_")
+          or layer_name.startswith("graft_survival_")):
+        # #252 (fixed 2026-08-26): center-bound administrative outcomes are
+        # NOT continuous fields — an interpolated wait factor BETWEEN two
+        # hospitals has no real-world referent (values jump at listing-
+        # practice/OPO boundaries). Retired from spatial interpolation;
+        # per-center values live on the /centers and /simulate surfaces.
+        raise ValueError(
+            f"Layer '{layer_name}' was retired (#252): center-bound outcomes "
+            f"cannot be spatially interpolated — use per-center data from "
+            f"/centers or /simulate instead."
+        )
 
     elif layer_name == "climate":
         # Per-center NASA POWER-derived climate scores (#289); legacy 22-city
@@ -187,18 +176,6 @@ def _extract_layer_points(layer_name: str) -> tuple[np.ndarray, np.ndarray] | No
                     points.append((lat, lon))
                     values.append(float(intensity) * 100)
 
-    elif layer_name.startswith("graft_survival_"):
-        organ = layer_name[len("graft_survival_"):]
-        center_data = data.center_outcomes.get("center_outcomes", {})
-        all_centers = data.all_centers.get("centers", {})
-        for code, outcomes in center_data.items():
-            outcome = outcomes.get(organ, {})
-            val = outcome.get("graft_survival_1yr")
-            center = all_centers.get(code, {})
-            lat, lon = center.get("lat"), center.get("lon")
-            if val is not None and lat is not None and lon is not None:
-                points.append((lat, lon))
-                values.append(float(val))
 
     if len(points) < 3:
         return None
@@ -390,12 +367,7 @@ def available_layers() -> list[str]:
         if _extract_layer_points(name) is not None:
             layers.append(name)
 
-    # Center-level layers (per organ)
-    organs = ["kidney", "liver", "heart", "lung", "pancreas", "intestine"]
-    for organ in organs:
-        for prefix in ["wait_time_factor_", "mortality_factor_", "graft_survival_"]:
-            name = f"{prefix}{organ}"
-            if _extract_layer_points(name) is not None:
-                layers.append(name)
+    # (#252: the per-organ center-outcome layers were retired — center-bound
+    # administrative values are not continuous fields.)
 
     return layers
