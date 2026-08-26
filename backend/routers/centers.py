@@ -146,6 +146,19 @@ def get_center_detail(
         center_oc = oc_data.get("center_outcomes", {})
         outcomes = center_oc.get(code_key, {})
 
+    # Offer-acceptance ratios (#320) + SRTR official tier ratings, per organ
+    offer_acceptance = {
+        organ: block["centers"][code_key]
+        for organ, block in data.offer_acceptance.items()
+        if organ != "_meta" and isinstance(block, dict)
+        and code_key in block.get("centers", {})
+    }
+    srtr_tiers = {
+        organ: block[code_key]
+        for organ, block in data.srtr_tiers.items()
+        if organ != "_meta" and isinstance(block, dict) and code_key in block
+    }
+
     # Contact info + waitlist: try live SRTR API first, fall back to static file
     contact_live = True
     srtr_live = _fetch_live_srtr(code_key)
@@ -191,6 +204,8 @@ def get_center_detail(
         "wait_time_factors": wait_factors,
         "competing_risks": risk_factors,
         "outcomes": outcomes,
+        "offer_acceptance": offer_acceptance,
+        "srtr_tiers": srtr_tiers,
         "nearby_centers": nearby[:20],  # cap at 20 nearest
         "srtr_url": f"https://www.srtr.org/interactive-report?center={code_key}&type=TX1&organ=KI",
     }

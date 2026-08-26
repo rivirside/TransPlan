@@ -46,6 +46,12 @@ def _check_outcomes(data, organ: str, code: str) -> bool:
 
 
 def _check_acceptance(data, organ: str, code: str) -> bool:
+    # #320: the observed OARR (Table B11) is the preferred center-level
+    # source; the volume-proxy composite is the fallback
+    oar = (data.offer_acceptance.get(organ, {}).get("centers", {})
+           .get(code, {}).get("oar"))
+    if isinstance(oar, (int, float)):
+        return False
     ar = data.acceptance_rates
     if not ar.get("national_acceptance_rates"):
         return True  # file missing → thinning disabled entirely
