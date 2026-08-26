@@ -362,6 +362,25 @@
         );
         popupEl.appendChild(rangeText);
 
+        // #350: the endpoint returns `uncertainty` for every method, but it
+        // only MEANS something per-point under kriging, where it is the GP
+        // prediction std at this location. For RBF and IDW it is the layer's
+        // global standard deviation (spatial_interpolation.py:282) — the same
+        // number everywhere — so rendering it as a per-point error bar would
+        // imply local confidence that was never computed.
+        if (selectedMethod === 'kriging' && typeof data.uncertainty === 'number') {
+          popupEl.appendChild(document.createElement('br'));
+          popupEl.appendChild(document.createTextNode(
+            '\u00b1 ' + data.uncertainty.toFixed(3) + ' (GP std at this point)'
+          ));
+        }
+        if (data.extrapolation) {
+          popupEl.appendChild(document.createElement('br'));
+          var warn = document.createElement('em');
+          warn.textContent = 'Outside the data hull \u2014 extrapolated';
+          popupEl.appendChild(warn);
+        }
+
         L.popup()
           .setLatLng(e.latlng)
           .setContent(popupEl)
