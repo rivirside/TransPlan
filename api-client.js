@@ -51,6 +51,9 @@
     if (formData.organ === 'lung' && formData.las) {
       profile.las = parseFloat(formData.las);
     }
+    if (formData.organ === 'liver' && formData.peld) {
+      profile.peld = parseFloat(formData.peld);
+    }
     if (formData.organ === 'lung' && formData.cas) {
       profile.cas = parseFloat(formData.cas);
     }

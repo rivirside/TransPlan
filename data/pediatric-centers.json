@@ -2,15 +2,14 @@
  "_meta": {
   "source": "SRTR PSR pediatric tables (B4-B5 Peds, B6 sfl_p0_*, GSR_P0_/PSR_P0_ survival), release 2511",
   "script": "scripts/parse-srtr-pediatric.py",
-  "generated": "2026-08-26T15:07:58Z",
+  "generated": "2026-08-26T15:44:40Z",
   "method": "Per-center pediatric (age <18) transplant/death rates with SRTR's own expected values and O/E ratios, waitlist-mortality hazard ratios with credible bounds, and 1-year graft/patient survival. Presence of transplant_rate defines a pediatric program for that organ (#335).",
   "note": "transplant_rate / death_rate are SRTR RATES PER PERSON-YEAR at risk (transplants / person_years), NOT percentages and NOT probabilities. Use the adult-fitted exposure calibration in _calibration to convert to a 12-month probability.",
   "unjoinable_centers": {
    "heart": [
     "TXDL"
    ]
-  },
-  "intentional_shrink": "287 -> 254 records: the 1.0 person-year exposure floor removed centers whose pediatric rates were dominated by near-zero exposure (see extract_organ)."
+  }
  },
  "kidney": {
   "centers": {
@@ -1707,6 +1706,18 @@
    "person_years": 3833.243
   },
   "excluded_low_exposure": 7,
+  "national_age_mix": {
+   "counts": {
+    "0-1": 116,
+    "2-11": 840,
+    "12-17": 1543
+   },
+   "weights": {
+    "0-1": 0.0464,
+    "2-11": 0.3361,
+    "12-17": 0.6174
+   }
+  },
   "calibration": {
    "k": 1.7412,
    "n_adult_centers": 193,
@@ -2653,6 +2664,18 @@
    "person_years": 825.7358
   },
   "excluded_low_exposure": 5,
+  "national_age_mix": {
+   "counts": {
+    "0-1": 785,
+    "2-11": 623,
+    "12-17": 491
+   },
+   "weights": {
+    "0-1": 0.4134,
+    "2-11": 0.3281,
+    "12-17": 0.2586
+   }
+  },
   "calibration": {
    "k": 0.8739,
    "n_adult_centers": 112,
@@ -3637,6 +3660,18 @@
    "person_years": 1102.3053
   },
   "excluded_low_exposure": 5,
+  "national_age_mix": {
+   "counts": {
+    "0-1": 816,
+    "2-11": 640,
+    "12-17": 637
+   },
+   "weights": {
+    "0-1": 0.3899,
+    "2-11": 0.3058,
+    "12-17": 0.3043
+   }
+  },
   "calibration": {
    "k": 0.9118,
    "n_adult_centers": 88,
@@ -3813,6 +3848,18 @@
    "person_years": 40.2081
   },
   "excluded_low_exposure": 11,
+  "national_age_mix": {
+   "counts": {
+    "0-1": 33,
+    "2-11": 35,
+    "12-17": 80
+   },
+   "weights": {
+    "0-1": 0.223,
+    "2-11": 0.2365,
+    "12-17": 0.5405
+   }
+  },
   "calibration": {
    "k": 0.6009,
    "n_adult_centers": 49,
@@ -3872,7 +3919,19 @@
    "transplants": 4.0,
    "person_years": 9.0021
   },
-  "excluded_low_exposure": 4
+  "excluded_low_exposure": 4,
+  "national_age_mix": {
+   "counts": {
+    "0-1": 33,
+    "2-11": 47,
+    "12-17": 15
+   },
+   "weights": {
+    "0-1": 0.3474,
+    "2-11": 0.4947,
+    "12-17": 0.1579
+   }
+  }
  },
  "intestine": {
   "centers": {
@@ -4115,6 +4174,18 @@
    "transplants": 75.0,
    "person_years": 175.7153
   },
-  "excluded_low_exposure": 1
+  "excluded_low_exposure": 1,
+  "national_age_mix": {
+   "counts": {
+    "0-1": 39,
+    "2-11": 86,
+    "12-17": 24
+   },
+   "weights": {
+    "0-1": 0.2617,
+    "2-11": 0.5772,
+    "12-17": 0.1611
+   }
+  }
  }
 }

@@ -81,11 +81,20 @@ class TestCasEndToEnd:
 
 
 class TestPediatricGate:
-    """#335 phase 1: sub-18 inputs are rejected, not silently mis-modeled."""
+    """#335 phase 1 REJECTED sub-18 inputs rather than mis-model them. Phase 2
+    replaced that gate with real pediatric support, so the contract is now
+    that children are accepted and routed to the pediatric path — see
+    tests/test_pediatric_mode.py. What must still hold here is that the
+    boundary is exact and that impossible ages are refused."""
 
-    def test_pediatric_age_rejected(self):
+    def test_pediatric_age_accepted(self):
+        p = PatientProfile(organ="kidney", blood_type="O+", age=12, sex="male",
+                           urgency=2)
+        assert p.age == 12 and p.is_pediatric
+
+    def test_age_below_one_rejected(self):
         with pytest.raises(Exception) as exc:
-            PatientProfile(organ="kidney", blood_type="O+", age=12, sex="male",
+            PatientProfile(organ="kidney", blood_type="O+", age=0, sex="male",
                            urgency=2)
         assert "age" in str(exc.value)
 

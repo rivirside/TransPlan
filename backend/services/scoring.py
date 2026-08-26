@@ -97,6 +97,11 @@ def _medical_compatibility(patient: dict) -> float:
     # Age (25%)
     age = patient["age"]
     if age < 18:
+        # Pediatric allocation priority (#335). Direction verified against
+        # the pediatric data itself: pediatric median waits run ~4-5 months
+        # for kidney vs ~30 for adults. The frontend duplicate in
+        # simulator/form-helpers.js had this INVERTED as a 0.85 penalty
+        # until 2026-08-26 — keep the two in sync.
         age_score = 115
     elif age < 35:
         age_score = 105
@@ -461,6 +466,17 @@ def score_all_centers(patient: dict, custom_weights: dict | None = None) -> list
     """Score all 248 centers for a patient profile, return sorted by total desc."""
     data = get_data()
     centers = data.all_centers.get("centers", {})
+
+    # #335: a pediatric candidate must be scored against the SAME center set
+    # the simulation uses — pediatric programs only. Without this the results
+    # table shows adult-only centers with blank simulation columns (caught by
+    # browser verification, 2026-08-26).
+    organ = patient.get("organ")
+    if (patient.get("age") or 99) < 18 and organ:
+        programs = data.pediatric.get(organ, {}).get("centers", {})
+        if programs:
+            centers = {c: rec for c, rec in centers.items() if c in programs}
+
     # L-067 (#304): optional user-defined center set
     requested = patient.get("center_codes")
     if requested:

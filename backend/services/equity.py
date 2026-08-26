@@ -33,6 +33,16 @@ AGE_BRACKETS = [
     {"label": "55-70", "representative_age": 62},
 ]
 
+# #335: SRTR's own pediatric age bands (Tables B8-B9). A pediatric candidate
+# swept over the ADULT brackets above would be silently aged into a 26-, 45-
+# and 62-year-old and scored against the adult center set — the equity result
+# would describe a population the patient is not in.
+PEDIATRIC_AGE_BRACKETS = [
+    {"label": "0-1", "representative_age": 1},
+    {"label": "2-11", "representative_age": 6},
+    {"label": "12-17", "representative_age": 15},
+]
+
 BLOOD_TYPES = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"]
 
 SEXES = ["male", "female"]
@@ -105,12 +115,38 @@ BLOOD_TYPE_PREVALENCE = {
 AGE_BRACKET_WEIGHTS = {"18-34": 0.11, "35-54": 0.38, "55-70": 0.51}
 SEX_WEIGHTS = {"male": 0.60, "female": 0.40}
 
+# Fallback only. The real pediatric mix is per-organ and differs enormously
+# (liver is 41% under-2, kidney 4.6%), so it is read from the data below and
+# this uniform split is used only if that lookup fails. Register: EQSP-33.
+_PEDIATRIC_WEIGHTS_FALLBACK = {"0-1": 1 / 3, "2-11": 1 / 3, "12-17": 1 / 3}
 
-def _profile_weight(blood_type: str, age_bracket: str, sex: str) -> float:
+
+def pediatric_age_weights(organ: str) -> dict[str, float]:
+    """Observed national pediatric waitlist age mix for *organ* (#335).
+
+    Source: SRTR Tables B8-B9 national counts, parsed into
+    data/pediatric-centers.json by scripts/parse-srtr-pediatric.py.
+    """
+    from services.data_loader import get_data
+
+    try:
+        mix = get_data().pediatric.get(organ, {}).get("national_age_mix") or {}
+    except RuntimeError:
+        return dict(_PEDIATRIC_WEIGHTS_FALLBACK)
+    weights = mix.get("weights") or {}
+    total = sum(weights.values())
+    if not weights or not 0.98 <= total <= 1.02:
+        return dict(_PEDIATRIC_WEIGHTS_FALLBACK)
+    return dict(weights)
+
+
+def _profile_weight(blood_type: str, age_bracket: str, sex: str,
+                    age_weights: dict[str, float] | None = None) -> float:
     """Joint population weight for one demographic cell (independence assumed)."""
+    ages = AGE_BRACKET_WEIGHTS if age_weights is None else age_weights
     return (
         BLOOD_TYPE_PREVALENCE.get(blood_type, 0.0)
-        * AGE_BRACKET_WEIGHTS.get(age_bracket, 0.0)
+        * ages.get(age_bracket, 0.0)
         * SEX_WEIGHTS.get(sex, 0.0)
     )
 
@@ -266,8 +302,11 @@ def _compute_equity_core(
 
     # --- Generate profile variants ---
     profiles = []
+    pediatric = bool(getattr(patient, "is_pediatric", False))
+    brackets = PEDIATRIC_AGE_BRACKETS if pediatric else AGE_BRACKETS
+    age_weights = pediatric_age_weights(patient.organ) if pediatric else None
     for bt in BLOOD_TYPES:
-        for ab in AGE_BRACKETS:
+        for ab in brackets:
             for sex in SEXES:
                 variant = patient.model_copy(update={
                     "blood_type": bt,
@@ -360,7 +399,8 @@ def _compute_equity_core(
 
         for profile, p24, median_wait in zip(profiles, p24s, medians):
             weight = _profile_weight(
-                profile["blood_type"], profile["age_bracket"], profile["sex"])
+                profile["blood_type"], profile["age_bracket"], profile["sex"],
+                age_weights)
             row = {
                 "p24": float(p24),
                 "median_wait": float(median_wait),

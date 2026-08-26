@@ -535,6 +535,11 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
     # One result per SRTR center (state / full granularity).
     from services.monte_carlo import _get_centers
     centers = _get_centers(organ)
+    # #335: engine parity — a child gets the same pediatric-program-only
+    # center set here as in the MC engine, never an adult-only center.
+    if patient.is_pediatric:
+        from services.monte_carlo import restrict_to_pediatric
+        centers = restrict_to_pediatric(centers, organ)
 
     for center in centers:
         code = center.get("code", "")

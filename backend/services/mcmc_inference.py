@@ -312,7 +312,11 @@ def simulate_mcmc(
 
     # Iterate over all centers with center-level adjustments (#207/#293)
     iteration_targets = []
-    for center in _get_centers(patient.organ):
+    _centers_iter = _get_centers(patient.organ)
+    if patient.is_pediatric:
+        from services.monte_carlo import restrict_to_pediatric
+        _centers_iter = restrict_to_pediatric(_centers_iter, patient.organ)
+    for center in _centers_iter:
         code = center.get("code", "")
         city = center.get("name", center.get("city", ""))
         state = center.get("state", center.get("state_abbr", ""))

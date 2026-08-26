@@ -54,7 +54,11 @@
    * @returns {number} multiplier (0.8 to 1.0)
    */
   function getAgeMultiplier(age) {
-    if (age < 18) return 0.85;
+    // #335: pediatric candidates receive allocation PRIORITY (children's
+    // hospitals top the pediatric rankings and pediatric median waits are
+    // ~4-5mo vs ~30mo adult for kidney), so a penalty here was backwards and
+    // contradicted backend scoring.py, which applies a pediatric bonus.
+    if (age < 18) return 1.15;
     if (age > 65) return 0.9;
     if (age > 55) return 0.95;
     return 1.0;

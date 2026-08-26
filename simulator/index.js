@@ -82,6 +82,7 @@
     var las = val('las');   if (las)  data.las  = las;
     var cas = val('cas');   if (cas)  data.cas  = cas;
     var mw = val('monthsWaiting'); if (mw) data.monthsWaiting = mw;
+    var peld = val('peld'); if (peld) data.peld = peld;
 
     // Boolean flags
     data.adjustForCauseOfDeath = checked('adjustCauseOfDeath');
@@ -260,6 +261,42 @@
   }
 
   /**
+   * #335: pediatric candidates are scored against a different center set and
+   * a different allocation system, so say so where the results are read. The
+   * center count comes from the response, not the client, so it can never
+   * disagree with the table below it.
+   */
+  function renderPediatricNote(dq, age) {
+    var el = document.getElementById('sim-pediatric-note');
+    if (!el) {
+      var anchor = document.getElementById('sim-data-quality') ||
+                   document.getElementById('sim-seed-display');
+      if (!anchor || !anchor.parentNode) return;
+      el = document.createElement('div');
+      el.id = 'sim-pediatric-note';
+      el.style.cssText = 'font-size: 0.82rem; margin-top: 0.4rem; padding: 0.5rem 0.65rem; border-left: 3px solid var(--warning, #d98a1f); background: var(--bg-subtle, rgba(217,138,31,0.07));';
+      anchor.parentNode.insertBefore(el, anchor.nextSibling);
+    }
+    var peds = dq && dq.pediatric_cohort;
+    if (!(age !== '' && age !== null && Number(age) < 18) || !peds) {
+      el.style.display = 'none';
+      return;
+    }
+    var total = (peds.adequate || 0) + (peds.small || 0);
+    var txt = 'Pediatric mode: results cover only the ' + total +
+      ' centers with a pediatric program for this organ, using SRTR pediatric ' +
+      'cohort data. Children are allocated under different rules than adults, ' +
+      'and pediatric cohorts are far smaller, so intervals are wider.';
+    if (peds.small) {
+      txt += ' ' + peds.small + ' of these centers have under 10 pediatric ' +
+        'person-years of follow-up; their estimates are shrunk toward the ' +
+        'national pediatric baseline and should be read as directional.';
+    }
+    el.textContent = txt;
+    el.style.display = '';
+  }
+
+  /**
    * #321: when a 2-5 center shortlist is simulated, show the joint
    * probability of listing at ALL of them (with the honest coupling note).
    */
@@ -422,6 +459,7 @@
 
       updateSeedDisplay(window.SimResults.getLastSeed());
       renderDataQualityNote(result.data_quality, result.data_vintage);
+      renderPediatricNote(result.data_quality, formData.age);
       refreshTable(true);
 
       // #321: joint probability across an active 2-5 center shortlist

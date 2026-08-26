@@ -139,6 +139,17 @@
       html += _buildCheckbox(p + 'adjustCOD', 'Adjust for cause-of-death patterns');
     }
 
+    // #335: this form accepts ages down to 1, and a sub-18 age silently
+    // switches the whole analysis to the pediatric center set and pediatric
+    // SRTR cohorts. Saying so here covers equity, sensitivity and scenarios
+    // at once, since all three render this component.
+    html += '<div id="' + p + 'pediatricNote" class="pf-note" style="display:none">' +
+      'Pediatric mode: this analysis will use pediatric SRTR data and only ' +
+      'centers with a pediatric program for the selected organ. Children are ' +
+      'allocated under different rules than adults and pediatric cohorts are ' +
+      'much smaller, so intervals are wider.' +
+      '</div>';
+
     html += '</div>'; // pf-section
     html += '</div>'; // pf-form
 
@@ -161,6 +172,19 @@
     var cpraVal = document.getElementById(p + 'cpraVal');
     if (cpraSlider && cpraVal) {
       cpraSlider.addEventListener('input', function () { cpraVal.textContent = this.value + '%'; });
+    }
+
+    // Show the pediatric note whenever the entered age is sub-18.
+    var ageInput = document.getElementById(p + 'age');
+    var pedNote = document.getElementById(p + 'pediatricNote');
+    if (ageInput && pedNote) {
+      var syncPed = function () {
+        var v = parseInt(ageInput.value, 10);
+        pedNote.style.display = (!isNaN(v) && v >= 1 && v < 18) ? '' : 'none';
+      };
+      ageInput.addEventListener('input', syncPed);
+      ageInput.addEventListener('change', syncPed);
+      syncPed();
     }
 
     // Default copula to checked
@@ -234,7 +258,14 @@
     function setVal(id, val) {
       if (val == null) return;
       var el = document.getElementById(id);
-      if (el) { el.value = val; applied = true; }
+      if (!el) return;
+      el.value = val;
+      applied = true;
+      // Assigning .value does NOT fire input/change, so listeners wired in
+      // render() (organ-specific rows, the pediatric note) would stay out of
+      // sync when the profile arrives via URL params instead of typing.
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
     function setChecked(id, val) {

@@ -193,7 +193,37 @@ def extract_organ(path: Path) -> dict | None:
         kept[c] = r
     block["centers"] = kept
     block["excluded_low_exposure"] = dropped
+    block["national_age_mix"] = _national_age_mix(wb)
     return block
+
+
+# SRTR's own pediatric age bands (Tables B8-B9 counts, national columns).
+# These give the real pediatric case mix, so equity's pediatric brackets are
+# weighted by observed composition rather than a guessed split.
+AGE_MIX_COLS = {"0-1": "TPC_A2_NU", "2-11": "TPC_A10_NU", "12-17": "TPC_A17_NU"}
+
+
+def _national_age_mix(wb) -> dict:
+    """National pediatric waitlist age composition as fractions summing to 1."""
+    sheet, hdr = _find_ci(wb, "TPC_A2_NU",
+                          preferred=("Tables B8-B9 Counts Nation",))
+    if sheet is None:
+        return {}
+    counts = {}
+    for label, col in AGE_MIX_COLS.items():
+        i = _col_ci(hdr, col)
+        if i < 0:
+            continue
+        for r in range(1, sheet.nrows):
+            v = sx.safe_float(sheet.cell_value(r, i))
+            if v is not None and v != sx.CENSORED and v > 0:
+                counts[label] = v
+                break
+    total = sum(counts.values())
+    if not total:
+        return {}
+    return {"counts": {k: int(v) for k, v in counts.items()},
+            "weights": {k: round(v / total, 4) for k, v in counts.items()}}
 
 
 def fit_exposure_calibration(organ: str, code: str) -> dict | None:

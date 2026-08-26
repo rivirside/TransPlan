@@ -1,0 +1,2417 @@
+{
+ "organs": {
+  "kidney": {
+   "organ": "kidney",
+   "matched_centers": 106,
+   "thick_cohort_centers": 76,
+   "reference_patient": {
+    "organ": "kidney",
+    "blood_type": "O+",
+    "urgency": 2,
+    "age": 8,
+    "sex": "female",
+    "adjust_for_cause_of_death": false,
+    "cpra": 0
+   },
+   "n_iterations": 2000,
+   "seed": 42,
+   "stats": {
+    "spearman_p12_vs_srtr_tier": {
+     "rho": 0.873,
+     "p_value": 3.296997120020532e-34,
+     "independent": true,
+     "note": "Primary result. SRTR's risk-adjusted pediatric tier is not an input to the pediatric pipeline."
+    },
+    "spearman_p12_vs_srtr_tier_thick_cohorts": {
+     "rho": 0.8573,
+     "p_value": 4.982001236046064e-23,
+     "n": 76,
+     "independent": true
+    },
+    "shrinkage_ablation": {
+     "shrunk_rho": 0.8837,
+     "raw_rho": 0.865,
+     "delta": 0.0187,
+     "shrink_py": 10.0,
+     "n": 106,
+     "shrinkage_helps": true,
+     "note": "Shrunk vs raw pediatric RATE, both ranked against the SRTR tier. Only the shrinkage weight differs between the two series, so the delta is attributable to shrinkage alone."
+    },
+    "spearman_p12_vs_srtr_oe_ratio": {
+     "rho": 0.8875,
+     "n": 106,
+     "independent": true
+    },
+    "spearman_p12_vs_observed_rate_CIRCULAR": {
+     "rho": 0.9794,
+     "independent": false,
+     "note": "NOT EVIDENCE. p12 is anchored to this rate by construction; a high value here is arithmetic."
+    }
+   },
+   "centers": [
+    {
+     "center_code": "TXDC",
+     "center_name": "Driscoll Children's Hospital",
+     "predicted_p12": 0.798,
+     "predicted_median_wait": 4.09,
+     "srtr_pediatric_tier": 5,
+     "observed_ped_rate": 1.6085,
+     "observed_ped_ratio": 2.6672,
+     "person_years": 8.1
+    },
+    {
+     "center_code": "TXCF",
+     "center_name": "Cook Children's Medical Center",
+     "predicted_p12": 0.778,
+     "predicted_median_wait": 4.69,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 2.0191,
+     "observed_ped_ratio": 2.2449,
+     "person_years": 5.0
+    },
+    {
+     "center_code": "FLFH",
+     "center_name": "Florida Hospital Medical Center",
+     "predicted_p12": 0.8015,
+     "predicted_median_wait": 4.1,
+     "srtr_pediatric_tier": 5,
+     "observed_ped_rate": 1.8755,
+     "observed_ped_ratio": 4.7211,
+     "person_years": 6.4
+    },
+    {
+     "center_code": "TNLB",
+     "center_name": "Le Bonheur Children's Medical Center",
+     "predicted_p12": 0.7795,
+     "predicted_median_wait": 4.41,
+     "srtr_pediatric_tier": 5,
+     "observed_ped_rate": 1.5064,
+     "observed_ped_ratio": 2.6003,
+     "person_years": 8.6
+    },
+    {
+     "center_code": "MOCH",
+     "center_name": "St. Louis Children's Hospital",
+     "predicted_p12": 0.7405,
+     "predicted_median_wait": 5.41,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.0545,
+     "observed_ped_ratio": 1.5711,
+     "person_years": 15.2
+    },
+    {
+     "center_code": "GAMC",
+     "center_name": "AU Medical Center, Inc.",
+     "predicted_p12": 0.756,
+     "predicted_median_wait": 4.95,
+     "srtr_pediatric_tier": 5,
+     "observed_ped_rate": 2.2237,
+     "observed_ped_ratio": 3.7553,
+     "person_years": 3.6
+    },
+    {
+     "center_code": "MICH",
+     "center_name": "Children's Hospital of Michigan",
+     "predicted_p12": 0.738,
+     "predicted_median_wait": 5.2,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.2795,
+     "observed_ped_ratio": 1.9649,
+     "person_years": 8.6
+    },
+    {
+     "center_code": "MSUM",
+     "center_name": "University of Mississippi Medical Center",
+     "predicted_p12": 0.7365,
+     "predicted_median_wait": 5.43,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.5693,
+     "observed_ped_ratio": 2.7827,
+     "person_years": 5.1
+    },
+    {
+     "center_code": "INIM",
+     "center_name": "Indiana University Health",
+     "predicted_p12": 0.734,
+     "predicted_median_wait": 5.17,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.0481,
+     "observed_ped_ratio": 1.826,
+     "person_years": 15.3
+    },
+    {
+     "center_code": "LACH",
+     "center_name": "Children's Hospital",
+     "predicted_p12": 0.727,
+     "predicted_median_wait": 5.38,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.8707,
+     "observed_ped_ratio": 1.4276,
+     "person_years": 27.6
+    },
+    {
+     "center_code": "FLTG",
+     "center_name": "Tampa General Hospital",
+     "predicted_p12": 0.7025,
+     "predicted_median_wait": 6.14,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.8552,
+     "observed_ped_ratio": 1.7507,
+     "person_years": 30.4
+    },
+    {
+     "center_code": "MDJH",
+     "center_name": "Johns Hopkins Hospital",
+     "predicted_p12": 0.691,
+     "predicted_median_wait": 6.42,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.8076,
+     "observed_ped_ratio": 2.1211,
+     "person_years": 32.2
+    },
+    {
+     "center_code": "OHCM",
+     "center_name": "Children's Hospital Medical Center",
+     "predicted_p12": 0.708,
+     "predicted_median_wait": 5.75,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.7663,
+     "observed_ped_ratio": 1.5881,
+     "person_years": 43.1
+    },
+    {
+     "center_code": "MIUM",
+     "center_name": "University of Michigan Medical Center",
+     "predicted_p12": 0.715,
+     "predicted_median_wait": 5.6,
+     "srtr_pediatric_tier": 5,
+     "observed_ped_rate": 0.9766,
+     "observed_ped_ratio": 3.3143,
+     "person_years": 16.4
+    },
+    {
+     "center_code": "NJRW",
+     "center_name": "Robert Wood Johnson University Hospital",
+     "predicted_p12": 0.6955,
+     "predicted_median_wait": 5.58,
+     "srtr_pediatric_tier": 5,
+     "observed_ped_rate": 1.5609,
+     "observed_ped_ratio": 3.6779,
+     "person_years": 4.5
+    },
+    {
+     "center_code": "FLJM",
+     "center_name": "Jackson Memorial Hospital University of Miami School of Medicine",
+     "predicted_p12": 0.7145,
+     "predicted_median_wait": 5.28,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.9227,
+     "observed_ped_ratio": 2.0934,
+     "person_years": 24.9
+    },
+    {
+     "center_code": "TXUC",
+     "center_name": "University Children?s Health",
+     "predicted_p12": 0.6605,
+     "predicted_median_wait": 6.83,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.7351,
+     "observed_ped_ratio": 1.4352,
+     "person_years": 35.4
+    },
+    {
+     "center_code": "SCMU",
+     "center_name": "Medical University of South Carolina",
+     "predicted_p12": 0.66,
+     "predicted_median_wait": 6.98,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.9103,
+     "observed_ped_ratio": 2.0643,
+     "person_years": 9.9
+    },
+    {
+     "center_code": "ALCH",
+     "center_name": "Children's of Alabama",
+     "predicted_p12": 0.672,
+     "predicted_median_wait": 6.44,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.7227,
+     "observed_ped_ratio": 1.2857,
+     "person_years": 38.7
+    },
+    {
+     "center_code": "PACH",
+     "center_name": "UPMC Children's Hospital of Pittsburgh",
+     "predicted_p12": 0.6835,
+     "predicted_median_wait": 6.19,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.9941,
+     "observed_ped_ratio": 2.3066,
+     "person_years": 12.1
+    },
+    {
+     "center_code": "TXHD",
+     "center_name": "Medical City Dallas Hospital",
+     "predicted_p12": 0.6185,
+     "predicted_median_wait": 7.39,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.5744,
+     "observed_ped_ratio": 1.8397,
+     "person_years": 2.5
+    },
+    {
+     "center_code": "MNMC",
+     "center_name": "Rochester Methodist Hospital (Mayo Clinic)",
+     "predicted_p12": 0.621,
+     "predicted_median_wait": 7.23,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.7687,
+     "observed_ped_ratio": 1.6482,
+     "person_years": 10.4
+    },
+    {
+     "center_code": "TXTC",
+     "center_name": "Texas Children's Hospital",
+     "predicted_p12": 0.6055,
+     "predicted_median_wait": 8.37,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.5827,
+     "observed_ped_ratio": 1.1781,
+     "person_years": 101.3
+    },
+    {
+     "center_code": "MOCG",
+     "center_name": "Cardinal Glennon Children's Hospital",
+     "predicted_p12": 0.632,
+     "predicted_median_wait": 7.12,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.7686,
+     "observed_ped_ratio": 0.946,
+     "person_years": 11.7
+    },
+    {
+     "center_code": "NEUN",
+     "center_name": "The Nebraska Medical Center",
+     "predicted_p12": 0.604,
+     "predicted_median_wait": 8.0,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.7178,
+     "observed_ped_ratio": 1.7657,
+     "person_years": 9.8
+    },
+    {
+     "center_code": "FLUF",
+     "center_name": "UF Health Shands Hospital",
+     "predicted_p12": 0.616,
+     "predicted_median_wait": 7.45,
+     "srtr_pediatric_tier": 5,
+     "observed_ped_rate": 0.6534,
+     "observed_ped_ratio": 2.6375,
+     "person_years": 29.1
+    },
+    {
+     "center_code": "OHCH",
+     "center_name": "Nationwide Children's Hospital",
+     "predicted_p12": 0.6065,
+     "predicted_median_wait": 8.06,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.6345,
+     "observed_ped_ratio": 1.0814,
+     "person_years": 34.7
+    },
+    {
+     "center_code": "TXCM",
+     "center_name": "Children's Medical Center of Dallas",
+     "predicted_p12": 0.589,
+     "predicted_median_wait": 8.74,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.5744,
+     "observed_ped_ratio": 0.7652,
+     "person_years": 33.1
+    },
+    {
+     "center_code": "ILCM",
+     "center_name": "Ann & Robert H. Lurie Children's Hospital of Chicago",
+     "predicted_p12": 0.5785,
+     "predicted_median_wait": 8.29,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.5408,
+     "observed_ped_ratio": 1.3191,
+     "person_years": 101.7
+    },
+    {
+     "center_code": "SCCH",
+     "center_name": "MUSC Children's Hospital",
+     "predicted_p12": 0.5825,
+     "predicted_median_wait": 8.29,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.1331,
+     "observed_ped_ratio": 1.5771,
+     "person_years": 2.6
+    },
+    {
+     "center_code": "OKMD",
+     "center_name": "OU Medical Center",
+     "predicted_p12": 0.5525,
+     "predicted_median_wait": 9.53,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.5467,
+     "observed_ped_ratio": 1.4225,
+     "person_years": 29.3
+    },
+    {
+     "center_code": "TXHH",
+     "center_name": "Memorial Hermann Hospital, University of Texas at Houston",
+     "predicted_p12": 0.562,
+     "predicted_median_wait": 9.38,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.5643,
+     "observed_ped_ratio": 1.4475,
+     "person_years": 12.4
+    },
+    {
+     "center_code": "WICH",
+     "center_name": "Children's Hospital of Wisconsin",
+     "predicted_p12": 0.576,
+     "predicted_median_wait": 7.61,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.6162,
+     "observed_ped_ratio": 1.3529,
+     "person_years": 21.1
+    },
+    {
+     "center_code": "OHUH",
+     "center_name": "University Hospitals of Cleveland",
+     "predicted_p12": 0.553,
+     "predicted_median_wait": 9.61,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.5807,
+     "observed_ped_ratio": 1.97,
+     "person_years": 12.1
+    },
+    {
+     "center_code": "VACH",
+     "center_name": "Children's Hospital of the King's Daughters",
+     "predicted_p12": 0.5505,
+     "predicted_median_wait": 9.79,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.5818,
+     "observed_ped_ratio": 1.2269,
+     "person_years": 10.3
+    },
+    {
+     "center_code": "UTPC",
+     "center_name": "Primary Children's Hospital",
+     "predicted_p12": 0.5565,
+     "predicted_median_wait": 9.78,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.5741,
+     "observed_ped_ratio": 1.041,
+     "person_years": 19.2
+    },
+    {
+     "center_code": "MIDV",
+     "center_name": "Helen DeVos Children's Hospital",
+     "predicted_p12": 0.541,
+     "predicted_median_wait": 9.95,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.5549,
+     "observed_ped_ratio": 1.4424,
+     "person_years": 7.2
+    },
+    {
+     "center_code": "KYKC",
+     "center_name": "Norton Children's Hospital",
+     "predicted_p12": 0.551,
+     "predicted_median_wait": 9.73,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.6898,
+     "observed_ped_ratio": 0.9081,
+     "person_years": 5.8
+    },
+    {
+     "center_code": "WACH",
+     "center_name": "Seattle Children's Hospital",
+     "predicted_p12": 0.522,
+     "predicted_median_wait": 10.9,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.4534,
+     "observed_ped_ratio": 1.3598,
+     "person_years": 101.5
+    },
+    {
+     "center_code": "MAMG",
+     "center_name": "Massachusetts General Hospital",
+     "predicted_p12": 0.5355,
+     "predicted_median_wait": 9.96,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.6786,
+     "observed_ped_ratio": 1.2453,
+     "person_years": 5.9
+    },
+    {
+     "center_code": "MACH",
+     "center_name": "Boston Children's Hospital",
+     "predicted_p12": 0.5505,
+     "predicted_median_wait": 8.86,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.49,
+     "observed_ped_ratio": 1.4499,
+     "person_years": 73.5
+    },
+    {
+     "center_code": "PRSJ",
+     "center_name": "Auxilio Mutuo Hospital",
+     "predicted_p12": 0.5385,
+     "predicted_median_wait": 9.4,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.5941,
+     "observed_ped_ratio": 1.128,
+     "person_years": 6.7
+    },
+    {
+     "center_code": "ORUO",
+     "center_name": "Oregon Health & Science University",
+     "predicted_p12": 0.5335,
+     "predicted_median_wait": 10.12,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.4644,
+     "observed_ped_ratio": 0.853,
+     "person_years": 23.7
+    },
+    {
+     "center_code": "NCBG",
+     "center_name": "Wake Forest Baptist Medical Center",
+     "predicted_p12": 0.537,
+     "predicted_median_wait": 9.55,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.5264,
+     "observed_ped_ratio": 1.2481,
+     "person_years": 20.9
+    },
+    {
+     "center_code": "TNVU",
+     "center_name": "Vanderbilt University Medical Center",
+     "predicted_p12": 0.539,
+     "predicted_median_wait": 9.52,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.505,
+     "observed_ped_ratio": 0.9545,
+     "person_years": 35.6
+    },
+    {
+     "center_code": "PAHE",
+     "center_name": "Penn State Milton S Hershey Medical Center",
+     "predicted_p12": 0.565,
+     "predicted_median_wait": 7.77,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.0516,
+     "observed_ped_ratio": 4.467,
+     "person_years": 2.9
+    },
+    {
+     "center_code": "DCGU",
+     "center_name": "Georgetown University Medical Center",
+     "predicted_p12": 0.503,
+     "predicted_median_wait": 10.61,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.484,
+     "observed_ped_ratio": 0.8857,
+     "person_years": 6.2
+    },
+    {
+     "center_code": "DEAI",
+     "center_name": "Alfred I DuPont Hospital for Children",
+     "predicted_p12": 0.5195,
+     "predicted_median_wait": 8.66,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.5641,
+     "observed_ped_ratio": 1.3825,
+     "person_years": 16.0
+    },
+    {
+     "center_code": "CALL",
+     "center_name": "Loma Linda University Medical Center",
+     "predicted_p12": 0.4895,
+     "predicted_median_wait": 10.86,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.4162,
+     "observed_ped_ratio": 0.9612,
+     "person_years": 40.8
+    },
+    {
+     "center_code": "ARCH",
+     "center_name": "Arkansas Children's Hospital",
+     "predicted_p12": 0.4625,
+     "predicted_median_wait": 12.85,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.3948,
+     "observed_ped_ratio": 1.0817,
+     "person_years": 22.8
+    },
+    {
+     "center_code": "AZCH",
+     "center_name": "Phoenix Children's Hospital",
+     "predicted_p12": 0.5045,
+     "predicted_median_wait": 9.4,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.4444,
+     "observed_ped_ratio": 0.756,
+     "person_years": 38.3
+    },
+    {
+     "center_code": "COCH",
+     "center_name": "Children's Hospital Colorado",
+     "predicted_p12": 0.505,
+     "predicted_median_wait": 10.52,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.4177,
+     "observed_ped_ratio": 0.857,
+     "person_years": 47.9
+    },
+    {
+     "center_code": "NMAQ",
+     "center_name": "University Hospital, University of New Mexico Health Sciences Center",
+     "predicted_p12": 0.488,
+     "predicted_median_wait": 10.93,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.4062,
+     "observed_ped_ratio": 1.1282,
+     "person_years": 14.8
+    },
+    {
+     "center_code": "FLMR",
+     "center_name": "Memorial Regional Hospital",
+     "predicted_p12": 0.473,
+     "predicted_median_wait": 11.16,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.4115,
+     "observed_ped_ratio": 1.029,
+     "person_years": 19.4
+    },
+    {
+     "center_code": "NYUM",
+     "center_name": "State University of New York Upstate Medical University",
+     "predicted_p12": 0.497,
+     "predicted_median_wait": 10.63,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.4681,
+     "observed_ped_ratio": 0.9737,
+     "person_years": 8.5
+    },
+    {
+     "center_code": "NYEC",
+     "center_name": "Erie County Medical Center",
+     "predicted_p12": 0.4825,
+     "predicted_median_wait": 11.45,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.4725,
+     "observed_ped_ratio": 4.0974,
+     "person_years": 2.1
+    },
+    {
+     "center_code": "KYUK",
+     "center_name": "University of Kentucky Medical Center",
+     "predicted_p12": 0.472,
+     "predicted_median_wait": 11.11,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.4151,
+     "observed_ped_ratio": 1.4252,
+     "person_years": 12.0
+    },
+    {
+     "center_code": "PASC",
+     "center_name": "St. Christopher's Hospital for Children",
+     "predicted_p12": 0.459,
+     "predicted_median_wait": 13.16,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.3357,
+     "observed_ped_ratio": 1.0244,
+     "person_years": 6.0
+    },
+    {
+     "center_code": "NYUC",
+     "center_name": "New York University Medical Center",
+     "predicted_p12": 0.4555,
+     "predicted_median_wait": 12.5,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.3809,
+     "observed_ped_ratio": 1.423,
+     "person_years": 18.4
+    },
+    {
+     "center_code": "NCMH",
+     "center_name": "University of North Carolina Hospitals",
+     "predicted_p12": 0.453,
+     "predicted_median_wait": 12.46,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.3714,
+     "observed_ped_ratio": 1.0637,
+     "person_years": 43.1
+    },
+    {
+     "center_code": "INSV",
+     "center_name": "St Vincent Hospital and Health Care Center",
+     "predicted_p12": 0.462,
+     "predicted_median_wait": 11.76,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.5853,
+     "observed_ped_ratio": 0.894,
+     "person_years": 1.7
+    },
+    {
+     "center_code": "ILUC",
+     "center_name": "University of Chicago Medical Center",
+     "predicted_p12": 0.462,
+     "predicted_median_wait": 11.81,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.3431,
+     "observed_ped_ratio": 0.7597,
+     "person_years": 17.5
+    },
+    {
+     "center_code": "IAIV",
+     "center_name": "University of Iowa Hospitals and Clinics Transplant Programs",
+     "predicted_p12": 0.4735,
+     "predicted_median_wait": 10.43,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.4009,
+     "observed_ped_ratio": 1.1124,
+     "person_years": 17.5
+    },
+    {
+     "center_code": "NCEC",
+     "center_name": "Vidant Medical Center",
+     "predicted_p12": 0.4605,
+     "predicted_median_wait": 11.08,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.3762,
+     "observed_ped_ratio": 1.0514,
+     "person_years": 18.6
+    },
+    {
+     "center_code": "MOUM",
+     "center_name": "University of Missouri Hospital and Clinics",
+     "predicted_p12": 0.4375,
+     "predicted_median_wait": 13.01,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.3019,
+     "observed_ped_ratio": 0.7252,
+     "person_years": 3.3
+    },
+    {
+     "center_code": "MDUM",
+     "center_name": "University of Maryland Medical System",
+     "predicted_p12": 0.437,
+     "predicted_median_wait": 12.62,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.3282,
+     "observed_ped_ratio": 0.7431,
+     "person_years": 3.0
+    },
+    {
+     "center_code": "NCCM",
+     "center_name": "Carolinas Medical Center",
+     "predicted_p12": 0.4365,
+     "predicted_median_wait": 12.52,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.3252,
+     "observed_ped_ratio": 0.7204,
+     "person_years": 58.4
+    },
+    {
+     "center_code": "MEMC",
+     "center_name": "Maine Medical Center",
+     "predicted_p12": 0.4255,
+     "predicted_median_wait": 12.96,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.2503,
+     "observed_ped_ratio": 0.7853,
+     "person_years": 4.0
+    },
+    {
+     "center_code": "CAUC",
+     "center_name": "University of California at Los Angeles Medical Center",
+     "predicted_p12": 0.401,
+     "predicted_median_wait": 14.35,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.2982,
+     "observed_ped_ratio": 0.9262,
+     "person_years": 80.5
+    },
+    {
+     "center_code": "NJHK",
+     "center_name": "Hackensack University Medical Center",
+     "predicted_p12": 0.415,
+     "predicted_median_wait": 13.77,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.2964,
+     "observed_ped_ratio": 1.0276,
+     "person_years": 37.1
+    },
+    {
+     "center_code": "NYCC",
+     "center_name": "Long Island Jewish Medical Center-Cohen Children's Medical Center",
+     "predicted_p12": 0.411,
+     "predicted_median_wait": 12.63,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.2871,
+     "observed_ped_ratio": 1.0216,
+     "person_years": 55.7
+    },
+    {
+     "center_code": "CACL",
+     "center_name": "Childrens Hospital Los Angeles",
+     "predicted_p12": 0.387,
+     "predicted_median_wait": 16.06,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.2802,
+     "observed_ped_ratio": 0.7351,
+     "person_years": 103.5
+    },
+    {
+     "center_code": "GAEH",
+     "center_name": "Children's Healthcare of Atlanta at Egleston",
+     "predicted_p12": 0.3735,
+     "predicted_median_wait": 16.76,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.2693,
+     "observed_ped_ratio": 0.509,
+     "person_years": 89.1
+    },
+    {
+     "center_code": "MNUM",
+     "center_name": "University of Minnesota Medical Center, Fairview",
+     "predicted_p12": 0.37,
+     "predicted_median_wait": 15.73,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.2729,
+     "observed_ped_ratio": 1.0536,
+     "person_years": 98.9
+    },
+    {
+     "center_code": "WIUW",
+     "center_name": "University of Wisconsin Hospital and Clinics",
+     "predicted_p12": 0.3655,
+     "predicted_median_wait": 15.84,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.2311,
+     "observed_ped_ratio": 0.7618,
+     "person_years": 26.0
+    },
+    {
+     "center_code": "NYFL",
+     "center_name": "Strong Memorial Hospital, University of Rochester Medical Center",
+     "predicted_p12": 0.365,
+     "predicted_median_wait": 16.07,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.2364,
+     "observed_ped_ratio": 0.5095,
+     "person_years": 16.9
+    },
+    {
+     "center_code": "CACH",
+     "center_name": "Rady Children's Hospital and Health Center",
+     "predicted_p12": 0.3615,
+     "predicted_median_wait": 17.89,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.25,
+     "observed_ped_ratio": 0.8497,
+     "person_years": 52.0
+    },
+    {
+     "center_code": "VAUV",
+     "center_name": "University of Virginia Health Sciences Center",
+     "predicted_p12": 0.348,
+     "predicted_median_wait": 15.51,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.2378,
+     "observed_ped_ratio": 0.9808,
+     "person_years": 58.9
+    },
+    {
+     "center_code": "CAMB",
+     "center_name": "UCSF Medical Center at Mission Bay",
+     "predicted_p12": 0.3235,
+     "predicted_median_wait": 19.25,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.23,
+     "observed_ped_ratio": 0.8364,
+     "person_years": 113.1
+    },
+    {
+     "center_code": "NYWC",
+     "center_name": "Westchester Medical Center",
+     "predicted_p12": 0.3455,
+     "predicted_median_wait": 15.22,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.2347,
+     "observed_ped_ratio": 0.936,
+     "person_years": 42.6
+    },
+    {
+     "center_code": "CASM",
+     "center_name": "University of California Davis Medical Center",
+     "predicted_p12": 0.339,
+     "predicted_median_wait": 18.6,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.2318,
+     "observed_ped_ratio": 0.8313,
+     "person_years": 99.2
+    },
+    {
+     "center_code": "OHCC",
+     "center_name": "The Cleveland Clinic Foundation",
+     "predicted_p12": 0.328,
+     "predicted_median_wait": 17.44,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.1043,
+     "observed_ped_ratio": 0.1956,
+     "person_years": 9.6
+    },
+    {
+     "center_code": "RIRH",
+     "center_name": "Rhode Island Hospital",
+     "predicted_p12": 0.3175,
+     "predicted_median_wait": 18.14,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.1576,
+     "observed_ped_ratio": 0.9904,
+     "person_years": 19.0
+    },
+    {
+     "center_code": "NYCP",
+     "center_name": "NY Presbyterian Hospital/Columbia Univ. Medical Center",
+     "predicted_p12": 0.307,
+     "predicted_median_wait": 19.82,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.1608,
+     "observed_ped_ratio": 0.5665,
+     "person_years": 24.9
+    },
+    {
+     "center_code": "CTYN",
+     "center_name": "Yale New Haven Hospital",
+     "predicted_p12": 0.2985,
+     "predicted_median_wait": 19.88,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.1464,
+     "observed_ped_ratio": 0.4047,
+     "person_years": 20.5
+    },
+    {
+     "center_code": "NYMA",
+     "center_name": "Montefiore Medical Center",
+     "predicted_p12": 0.31,
+     "predicted_median_wait": 17.72,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.1867,
+     "observed_ped_ratio": 0.5806,
+     "person_years": 48.2
+    },
+    {
+     "center_code": "NCDU",
+     "center_name": "Duke University Hospital",
+     "predicted_p12": 0.3095,
+     "predicted_median_wait": 17.28,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.1763,
+     "observed_ped_ratio": 0.4284,
+     "person_years": 22.7
+    },
+    {
+     "center_code": "CAPC",
+     "center_name": "Lucile Salter Packard Children's Hospital at Stanford",
+     "predicted_p12": 0.274,
+     "predicted_median_wait": 21.4,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.1862,
+     "observed_ped_ratio": 0.7372,
+     "person_years": 311.4
+    },
+    {
+     "center_code": "PACP",
+     "center_name": "Children's Hospital of Philadelphia",
+     "predicted_p12": 0.256,
+     "predicted_median_wait": 23.44,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.1719,
+     "observed_ped_ratio": 0.5459,
+     "person_years": 139.6
+    },
+    {
+     "center_code": "CTHH",
+     "center_name": "Hartford Hospital",
+     "predicted_p12": 0.2545,
+     "predicted_median_wait": 21.79,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.0577,
+     "observed_ped_ratio": 0.1652,
+     "person_years": 17.3
+    },
+    {
+     "center_code": "NYAM",
+     "center_name": "Albany Medical Center Hospital",
+     "predicted_p12": 0.2475,
+     "predicted_median_wait": 22.45,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0908,
+     "observed_ped_ratio": 0.5259,
+     "person_years": 22.0
+    },
+    {
+     "center_code": "NYMS",
+     "center_name": "Mount Sinai Medical Center",
+     "predicted_p12": 0.245,
+     "predicted_median_wait": 21.96,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.1603,
+     "observed_ped_ratio": 0.7229,
+     "person_years": 112.3
+    },
+    {
+     "center_code": "ILSF",
+     "center_name": "OSF Saint Francis Medical Center",
+     "predicted_p12": 0.2345,
+     "predicted_median_wait": 25.2,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0773,
+     "observed_ped_ratio": 0.4061,
+     "person_years": 25.9
+    },
+    {
+     "center_code": "NHDH",
+     "center_name": "Mary Hitchcock Memorial Hospital",
+     "predicted_p12": 0.211,
+     "predicted_median_wait": 24.04,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.077,
+     "observed_ped_ratio": 0.2603,
+     "person_years": 26.0
+    },
+    {
+     "center_code": "DCCH",
+     "center_name": "Children's National Medical Center",
+     "predicted_p12": 0.237,
+     "predicted_median_wait": 21.2,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.1183,
+     "observed_ped_ratio": 0.3621,
+     "person_years": 50.7
+    },
+    {
+     "center_code": "VAMC",
+     "center_name": "Medical College of Virginia Hospitals",
+     "predicted_p12": 0.2225,
+     "predicted_median_wait": 22.65,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.1242,
+     "observed_ped_ratio": 0.6509,
+     "person_years": 72.5
+    },
+    {
+     "center_code": "NYNY",
+     "center_name": "New York-Presbyterian Hospital/Weill Cornell Medical Center",
+     "predicted_p12": 0.2165,
+     "predicted_median_wait": 26.35,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.0466,
+     "observed_ped_ratio": 0.1711,
+     "person_years": 21.4
+    },
+    {
+     "center_code": "MOCM",
+     "center_name": "Children's Mercy Hospital",
+     "predicted_p12": 0.1925,
+     "predicted_median_wait": 27.62,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.108,
+     "observed_ped_ratio": 0.3584,
+     "person_years": 120.4
+    },
+    {
+     "center_code": "CACS",
+     "center_name": "Cedars-Sinai Medical Center",
+     "predicted_p12": 0.1745,
+     "predicted_median_wait": 31.22,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.0945,
+     "observed_ped_ratio": 0.4126,
+     "person_years": 179.8
+    },
+    {
+     "center_code": "NYSB",
+     "center_name": "University Hospital of State University of New York at Stony Brook",
+     "predicted_p12": 0.16,
+     "predicted_median_wait": 33.18,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.0303,
+     "observed_ped_ratio": 0.1527,
+     "person_years": 33.0
+    },
+    {
+     "center_code": "CASF",
+     "center_name": "University of California San Francisco Medical Center",
+     "predicted_p12": 0.144,
+     "predicted_median_wait": 35.88,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.0236,
+     "observed_ped_ratio": 0.2105,
+     "person_years": 42.4
+    },
+    {
+     "center_code": "NJSB",
+     "center_name": "Saint Barnabas Medical Center",
+     "predicted_p12": 0.1225,
+     "predicted_median_wait": 33.9,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.0629,
+     "observed_ped_ratio": 0.3358,
+     "person_years": 127.3
+    },
+    {
+     "center_code": "NYDS",
+     "center_name": "State University of New York, Downstate Medical Center",
+     "predicted_p12": 0.1205,
+     "predicted_median_wait": 39.78,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 7.1
+    },
+    {
+     "center_code": "HIQM",
+     "center_name": "The Queen's Medical Center",
+     "predicted_p12": 0.0865,
+     "predicted_median_wait": 38.49,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 2.0
+    },
+    {
+     "center_code": "PAGM",
+     "center_name": "Geisinger Medical Center",
+     "predicted_p12": 0.0815,
+     "predicted_median_wait": 37.68,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 3.4
+    },
+    {
+     "center_code": "MAUM",
+     "center_name": "UMass Memorial Medical Center",
+     "predicted_p12": 0.0415,
+     "predicted_median_wait": 60.29,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 2.0
+    }
+   ]
+  },
+  "liver": {
+   "organ": "liver",
+   "matched_centers": 59,
+   "thick_cohort_centers": 27,
+   "reference_patient": {
+    "organ": "liver",
+    "blood_type": "O+",
+    "urgency": 2,
+    "age": 8,
+    "sex": "female",
+    "adjust_for_cause_of_death": false,
+    "peld": 15.0
+   },
+   "n_iterations": 2000,
+   "seed": 42,
+   "stats": {
+    "spearman_p12_vs_srtr_tier": {
+     "rho": 0.7875,
+     "p_value": 1.387656210189934e-13,
+     "independent": true,
+     "note": "Primary result. SRTR's risk-adjusted pediatric tier is not an input to the pediatric pipeline."
+    },
+    "spearman_p12_vs_srtr_tier_thick_cohorts": {
+     "rho": 0.8343,
+     "p_value": 6.367929552464454e-08,
+     "n": 27,
+     "independent": true
+    },
+    "shrinkage_ablation": {
+     "shrunk_rho": 0.8472,
+     "raw_rho": 0.8428,
+     "delta": 0.0044,
+     "shrink_py": 10.0,
+     "n": 59,
+     "shrinkage_helps": true,
+     "note": "Shrunk vs raw pediatric RATE, both ranked against the SRTR tier. Only the shrinkage weight differs between the two series, so the delta is attributable to shrinkage alone."
+    },
+    "spearman_p12_vs_srtr_oe_ratio": {
+     "rho": 0.7349,
+     "n": 59,
+     "independent": true
+    },
+    "spearman_p12_vs_observed_rate_CIRCULAR": {
+     "rho": 0.8412,
+     "independent": false,
+     "note": "NOT EVIDENCE. p12 is anchored to this rate by construction; a high value here is arithmetic."
+    }
+   },
+   "centers": [
+    {
+     "center_code": "TNVU",
+     "center_name": "Vanderbilt University Medical Center",
+     "predicted_p12": 0.876,
+     "predicted_median_wait": 2.32,
+     "srtr_pediatric_tier": 5,
+     "observed_ped_rate": 4.2622,
+     "observed_ped_ratio": 2.3921,
+     "person_years": 10.8
+    },
+    {
+     "center_code": "MOCM",
+     "center_name": "Children's Mercy Hospital",
+     "predicted_p12": 0.854,
+     "predicted_median_wait": 3.19,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 3.9019,
+     "observed_ped_ratio": 1.949,
+     "person_years": 7.2
+    },
+    {
+     "center_code": "TXTC",
+     "center_name": "Texas Children's Hospital",
+     "predicted_p12": 0.8105,
+     "predicted_median_wait": 3.66,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 2.3681,
+     "observed_ped_ratio": 1.9168,
+     "person_years": 34.2
+    },
+    {
+     "center_code": "MNUM",
+     "center_name": "University of Minnesota Medical Center, Fairview",
+     "predicted_p12": 0.813,
+     "predicted_median_wait": 3.72,
+     "srtr_pediatric_tier": 5,
+     "observed_ped_rate": 3.4296,
+     "observed_ped_ratio": 2.8557,
+     "person_years": 6.4
+    },
+    {
+     "center_code": "MIUM",
+     "center_name": "University of Michigan Medical Center",
+     "predicted_p12": 0.7925,
+     "predicted_median_wait": 4.12,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 3.7069,
+     "observed_ped_ratio": 1.9617,
+     "person_years": 4.0
+    },
+    {
+     "center_code": "COCH",
+     "center_name": "Children's Hospital Colorado",
+     "predicted_p12": 0.776,
+     "predicted_median_wait": 4.11,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 2.6875,
+     "observed_ped_ratio": 1.3876,
+     "person_years": 8.2
+    },
+    {
+     "center_code": "NYUC",
+     "center_name": "New York University Medical Center",
+     "predicted_p12": 0.778,
+     "predicted_median_wait": 4.25,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 2.602,
+     "observed_ped_ratio": 1.7098,
+     "person_years": 9.2
+    },
+    {
+     "center_code": "NCDU",
+     "center_name": "Duke University Hospital",
+     "predicted_p12": 0.79,
+     "predicted_median_wait": 4.14,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 3.2961,
+     "observed_ped_ratio": 2.3867,
+     "person_years": 4.9
+    },
+    {
+     "center_code": "NYWC",
+     "center_name": "Westchester Medical Center",
+     "predicted_p12": 0.807,
+     "predicted_median_wait": 2.96,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 2.8
+    },
+    {
+     "center_code": "INIM",
+     "center_name": "Indiana University Health",
+     "predicted_p12": 0.7425,
+     "predicted_median_wait": 4.87,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 2.1261,
+     "observed_ped_ratio": 1.1937,
+     "person_years": 8.9
+    },
+    {
+     "center_code": "MOCH",
+     "center_name": "St. Louis Children's Hospital",
+     "predicted_p12": 0.7425,
+     "predicted_median_wait": 4.77,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 2.0575,
+     "observed_ped_ratio": 1.2675,
+     "person_years": 11.2
+    },
+    {
+     "center_code": "NEUN",
+     "center_name": "The Nebraska Medical Center",
+     "predicted_p12": 0.7545,
+     "predicted_median_wait": 4.26,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 2.0556,
+     "observed_ped_ratio": 1.7639,
+     "person_years": 15.6
+    },
+    {
+     "center_code": "NCCM",
+     "center_name": "Carolinas Medical Center",
+     "predicted_p12": 0.7035,
+     "predicted_median_wait": 5.06,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 2.6467,
+     "observed_ped_ratio": 1.6234,
+     "person_years": 3.0
+    },
+    {
+     "center_code": "TNLB",
+     "center_name": "Le Bonheur Children's Medical Center",
+     "predicted_p12": 0.69,
+     "predicted_median_wait": 4.82,
+     "srtr_pediatric_tier": 5,
+     "observed_ped_rate": 2.815,
+     "observed_ped_ratio": 4.0429,
+     "person_years": 2.8
+    },
+    {
+     "center_code": "FLFH",
+     "center_name": "Florida Hospital Medical Center",
+     "predicted_p12": 0.6735,
+     "predicted_median_wait": 5.93,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.457,
+     "observed_ped_ratio": 1.0563,
+     "person_years": 17.2
+    },
+    {
+     "center_code": "NYCP",
+     "center_name": "NY Presbyterian Hospital/Columbia Univ. Medical Center",
+     "predicted_p12": 0.6295,
+     "predicted_median_wait": 7.23,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.2182,
+     "observed_ped_ratio": 1.0223,
+     "person_years": 23.0
+    },
+    {
+     "center_code": "SCMU",
+     "center_name": "Medical University of South Carolina",
+     "predicted_p12": 0.662,
+     "predicted_median_wait": 6.1,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 2.6277,
+     "observed_ped_ratio": 1.4251,
+     "person_years": 1.5
+    },
+    {
+     "center_code": "MOCG",
+     "center_name": "Cardinal Glennon Children's Hospital",
+     "predicted_p12": 0.639,
+     "predicted_median_wait": 7.53,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.135,
+     "observed_ped_ratio": 1.9335,
+     "person_years": 4.4
+    },
+    {
+     "center_code": "ILCM",
+     "center_name": "Ann & Robert H. Lurie Children's Hospital of Chicago",
+     "predicted_p12": 0.673,
+     "predicted_median_wait": 5.33,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.6547,
+     "observed_ped_ratio": 1.3185,
+     "person_years": 13.9
+    },
+    {
+     "center_code": "LACH",
+     "center_name": "Children's Hospital",
+     "predicted_p12": 0.6385,
+     "predicted_median_wait": 7.26,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 1.0785,
+     "observed_ped_ratio": 0.7939,
+     "person_years": 2.8
+    },
+    {
+     "center_code": "WICH",
+     "center_name": "Children's Hospital of Wisconsin",
+     "predicted_p12": 0.6075,
+     "predicted_median_wait": 7.94,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.0633,
+     "observed_ped_ratio": 1.3225,
+     "person_years": 5.6
+    },
+    {
+     "center_code": "MACH",
+     "center_name": "Boston Children's Hospital",
+     "predicted_p12": 0.6195,
+     "predicted_median_wait": 7.53,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.1316,
+     "observed_ped_ratio": 0.8554,
+     "person_years": 19.4
+    },
+    {
+     "center_code": "FLJM",
+     "center_name": "Jackson Memorial Hospital University of Miami School of Medicine",
+     "predicted_p12": 0.643,
+     "predicted_median_wait": 6.31,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.2997,
+     "observed_ped_ratio": 1.4781,
+     "person_years": 23.1
+    },
+    {
+     "center_code": "OHCM",
+     "center_name": "Children's Hospital Medical Center",
+     "predicted_p12": 0.617,
+     "predicted_median_wait": 7.18,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 1.0808,
+     "observed_ped_ratio": 0.7842,
+     "person_years": 37.0
+    },
+    {
+     "center_code": "PAUP",
+     "center_name": "Hospital of the University of Pennsylvania",
+     "predicted_p12": 0.637,
+     "predicted_median_wait": 6.09,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 2.0
+    },
+    {
+     "center_code": "OHCC",
+     "center_name": "The Cleveland Clinic Foundation",
+     "predicted_p12": 0.61,
+     "predicted_median_wait": 6.99,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.1849,
+     "observed_ped_ratio": 0.9563,
+     "person_years": 3.4
+    },
+    {
+     "center_code": "MNMC",
+     "center_name": "Rochester Methodist Hospital (Mayo Clinic)",
+     "predicted_p12": 0.6095,
+     "predicted_median_wait": 6.73,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.1295,
+     "observed_ped_ratio": 1.0775,
+     "person_years": 7.1
+    },
+    {
+     "center_code": "WIUW",
+     "center_name": "University of Wisconsin Hospital and Clinics",
+     "predicted_p12": 0.617,
+     "predicted_median_wait": 6.54,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.3835,
+     "observed_ped_ratio": 1.5969,
+     "person_years": 2.9
+    },
+    {
+     "center_code": "NYMS",
+     "center_name": "Mount Sinai Medical Center",
+     "predicted_p12": 0.6225,
+     "predicted_median_wait": 6.17,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 1.4021,
+     "observed_ped_ratio": 0.644,
+     "person_years": 11.4
+    },
+    {
+     "center_code": "AZCH",
+     "center_name": "Phoenix Children's Hospital",
+     "predicted_p12": 0.6025,
+     "predicted_median_wait": 6.88,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.1515,
+     "observed_ped_ratio": 0.8419,
+     "person_years": 8.7
+    },
+    {
+     "center_code": "NYMA",
+     "center_name": "Montefiore Medical Center",
+     "predicted_p12": 0.6205,
+     "predicted_median_wait": 6.14,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.6162,
+     "observed_ped_ratio": 1.2592,
+     "person_years": 1.9
+    },
+    {
+     "center_code": "CACH",
+     "center_name": "Rady Children's Hospital and Health Center",
+     "predicted_p12": 0.5595,
+     "predicted_median_wait": 9.25,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.702,
+     "observed_ped_ratio": 0.5582,
+     "person_years": 4.3
+    },
+    {
+     "center_code": "PACH",
+     "center_name": "UPMC Children's Hospital of Pittsburgh",
+     "predicted_p12": 0.5705,
+     "predicted_median_wait": 8.21,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 1.0392,
+     "observed_ped_ratio": 0.6455,
+     "person_years": 33.7
+    },
+    {
+     "center_code": "TXUC",
+     "center_name": "University Children?s Health",
+     "predicted_p12": 0.577,
+     "predicted_median_wait": 7.44,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 1.055,
+     "observed_ped_ratio": 0.6355,
+     "person_years": 9.5
+    },
+    {
+     "center_code": "NYNS",
+     "center_name": "North Shore University Hospital/Northwell Health",
+     "predicted_p12": 0.576,
+     "predicted_median_wait": 7.32,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.5958,
+     "observed_ped_ratio": 4.3924,
+     "person_years": 1.7
+    },
+    {
+     "center_code": "MICH",
+     "center_name": "Children's Hospital of Michigan",
+     "predicted_p12": 0.631,
+     "predicted_median_wait": 5.05,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 2.195,
+     "observed_ped_ratio": 1.7814,
+     "person_years": 2.3
+    },
+    {
+     "center_code": "LAOF",
+     "center_name": "Ochsner Foundation Hospital",
+     "predicted_p12": 0.5785,
+     "predicted_median_wait": 7.06,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.981,
+     "observed_ped_ratio": 0.7206,
+     "person_years": 3.1
+    },
+    {
+     "center_code": "PACP",
+     "center_name": "Children's Hospital of Philadelphia",
+     "predicted_p12": 0.594,
+     "predicted_median_wait": 6.89,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 1.1475,
+     "observed_ped_ratio": 0.5847,
+     "person_years": 22.7
+    },
+    {
+     "center_code": "WACH",
+     "center_name": "Seattle Children's Hospital",
+     "predicted_p12": 0.5475,
+     "predicted_median_wait": 8.08,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.9827,
+     "observed_ped_ratio": 0.6508,
+     "person_years": 19.3
+    },
+    {
+     "center_code": "DCGU",
+     "center_name": "Georgetown University Medical Center",
+     "predicted_p12": 0.531,
+     "predicted_median_wait": 8.84,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.8497,
+     "observed_ped_ratio": 0.9872,
+     "person_years": 43.5
+    },
+    {
+     "center_code": "ILUC",
+     "center_name": "University of Chicago Medical Center",
+     "predicted_p12": 0.5535,
+     "predicted_median_wait": 7.48,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.849,
+     "observed_ped_ratio": 0.7921,
+     "person_years": 11.8
+    },
+    {
+     "center_code": "TNMH",
+     "center_name": "Methodist University Hospital",
+     "predicted_p12": 0.5765,
+     "predicted_median_wait": 6.84,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.9792,
+     "observed_ped_ratio": 0.2312,
+     "person_years": 2.0
+    },
+    {
+     "center_code": "DEAI",
+     "center_name": "Alfred I DuPont Hospital for Children",
+     "predicted_p12": 0.53,
+     "predicted_median_wait": 8.02,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.8272,
+     "observed_ped_ratio": 0.5319,
+     "person_years": 8.5
+    },
+    {
+     "center_code": "CAMB",
+     "center_name": "UCSF Medical Center at Mission Bay",
+     "predicted_p12": 0.5485,
+     "predicted_median_wait": 6.84,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.0605,
+     "observed_ped_ratio": 1.0652,
+     "person_years": 13.2
+    },
+    {
+     "center_code": "OHCH",
+     "center_name": "Nationwide Children's Hospital",
+     "predicted_p12": 0.4975,
+     "predicted_median_wait": 10.78,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.6164,
+     "observed_ped_ratio": 0.5149,
+     "person_years": 14.6
+    },
+    {
+     "center_code": "KYJH",
+     "center_name": "Jewish Hospital",
+     "predicted_p12": 0.4765,
+     "predicted_median_wait": 11.17,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 2.0
+    },
+    {
+     "center_code": "CACL",
+     "center_name": "Childrens Hospital Los Angeles",
+     "predicted_p12": 0.5385,
+     "predicted_median_wait": 7.18,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.9895,
+     "observed_ped_ratio": 0.9082,
+     "person_years": 47.5
+    },
+    {
+     "center_code": "ALCH",
+     "center_name": "Children's of Alabama",
+     "predicted_p12": 0.4975,
+     "predicted_median_wait": 8.71,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.5968,
+     "observed_ped_ratio": 0.5239,
+     "person_years": 10.1
+    },
+    {
+     "center_code": "VAUV",
+     "center_name": "University of Virginia Health Sciences Center",
+     "predicted_p12": 0.4855,
+     "predicted_median_wait": 9.53,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.3731,
+     "observed_ped_ratio": 0.1749,
+     "person_years": 8.0
+    },
+    {
+     "center_code": "TXCM",
+     "center_name": "Children's Medical Center of Dallas",
+     "predicted_p12": 0.444,
+     "predicted_median_wait": 10.9,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.6184,
+     "observed_ped_ratio": 0.7392,
+     "person_years": 42.0
+    },
+    {
+     "center_code": "CAPC",
+     "center_name": "Lucile Salter Packard Children's Hospital at Stanford",
+     "predicted_p12": 0.48,
+     "predicted_median_wait": 7.97,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.8011,
+     "observed_ped_ratio": 0.716,
+     "person_years": 59.9
+    },
+    {
+     "center_code": "CTYN",
+     "center_name": "Yale New Haven Hospital",
+     "predicted_p12": 0.462,
+     "predicted_median_wait": 9.16,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.1918,
+     "observed_ped_ratio": 0.3736,
+     "person_years": 5.2
+    },
+    {
+     "center_code": "GAEH",
+     "center_name": "Children's Healthcare of Atlanta at Egleston",
+     "predicted_p12": 0.421,
+     "predicted_median_wait": 11.8,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.4512,
+     "observed_ped_ratio": 0.507,
+     "person_years": 19.9
+    },
+    {
+     "center_code": "UTPC",
+     "center_name": "Primary Children's Hospital",
+     "predicted_p12": 0.4095,
+     "predicted_median_wait": 10.83,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.5236,
+     "observed_ped_ratio": 0.6447,
+     "person_years": 24.8
+    },
+    {
+     "center_code": "CASF",
+     "center_name": "University of California San Francisco Medical Center",
+     "predicted_p12": 0.384,
+     "predicted_median_wait": 13.18,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 3.2
+    },
+    {
+     "center_code": "TXHH",
+     "center_name": "Memorial Hermann Hospital, University of Texas at Houston",
+     "predicted_p12": 0.382,
+     "predicted_median_wait": 10.81,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 3.6
+    },
+    {
+     "center_code": "MAMG",
+     "center_name": "Massachusetts General Hospital",
+     "predicted_p12": 0.3615,
+     "predicted_median_wait": 13.33,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 11.8
+    },
+    {
+     "center_code": "MDJH",
+     "center_name": "Johns Hopkins Hospital",
+     "predicted_p12": 0.3205,
+     "predicted_median_wait": 14.95,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.1253,
+     "observed_ped_ratio": 0.1729,
+     "person_years": 16.0
+    },
+    {
+     "center_code": "CAUC",
+     "center_name": "University of California at Los Angeles Medical Center",
+     "predicted_p12": 0.255,
+     "predicted_median_wait": 16.4,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.2578,
+     "observed_ped_ratio": 0.4074,
+     "person_years": 66.0
+    }
+   ]
+  },
+  "heart": {
+   "organ": "heart",
+   "matched_centers": 60,
+   "thick_cohort_centers": 36,
+   "reference_patient": {
+    "organ": "heart",
+    "blood_type": "O+",
+    "urgency": 2,
+    "age": 8,
+    "sex": "female",
+    "adjust_for_cause_of_death": false
+   },
+   "n_iterations": 2000,
+   "seed": 42,
+   "stats": {
+    "spearman_p12_vs_srtr_tier": {
+     "rho": 0.4859,
+     "p_value": 8.289529869696145e-05,
+     "independent": true,
+     "note": "Primary result. SRTR's risk-adjusted pediatric tier is not an input to the pediatric pipeline."
+    },
+    "spearman_p12_vs_srtr_tier_thick_cohorts": {
+     "rho": 0.697,
+     "p_value": 2.3255355458617363e-06,
+     "n": 36,
+     "independent": true
+    },
+    "shrinkage_ablation": {
+     "shrunk_rho": 0.7167,
+     "raw_rho": 0.7302,
+     "delta": -0.0135,
+     "shrink_py": 10.0,
+     "n": 60,
+     "shrinkage_helps": false,
+     "note": "Shrunk vs raw pediatric RATE, both ranked against the SRTR tier. Only the shrinkage weight differs between the two series, so the delta is attributable to shrinkage alone."
+    },
+    "spearman_p12_vs_srtr_oe_ratio": {
+     "rho": 0.4765,
+     "n": 60,
+     "independent": true
+    },
+    "spearman_p12_vs_observed_rate_CIRCULAR": {
+     "rho": 0.6331,
+     "independent": false,
+     "note": "NOT EVIDENCE. p12 is anchored to this rate by construction; a high value here is arithmetic."
+    }
+   },
+   "centers": [
+    {
+     "center_code": "NYMA",
+     "center_name": "Montefiore Medical Center",
+     "predicted_p12": 0.9035,
+     "predicted_median_wait": 2.15,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 4.0
+    },
+    {
+     "center_code": "MIUM",
+     "center_name": "University of Michigan Medical Center",
+     "predicted_p12": 0.822,
+     "predicted_median_wait": 3.35,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 3.6274,
+     "observed_ped_ratio": 1.6168,
+     "person_years": 7.2
+    },
+    {
+     "center_code": "NCCM",
+     "center_name": "Carolinas Medical Center",
+     "predicted_p12": 0.7655,
+     "predicted_median_wait": 4.27,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 2.5677,
+     "observed_ped_ratio": 2.1829,
+     "person_years": 7.8
+    },
+    {
+     "center_code": "TNLB",
+     "center_name": "Le Bonheur Children's Medical Center",
+     "predicted_p12": 0.7455,
+     "predicted_median_wait": 4.61,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 2.4913,
+     "observed_ped_ratio": 2.2231,
+     "person_years": 7.2
+    },
+    {
+     "center_code": "NYCP",
+     "center_name": "NY Presbyterian Hospital/Columbia Univ. Medical Center",
+     "predicted_p12": 0.74,
+     "predicted_median_wait": 4.92,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.8631,
+     "observed_ped_ratio": 1.7512,
+     "person_years": 22.0
+    },
+    {
+     "center_code": "DEAI",
+     "center_name": "Alfred I DuPont Hospital for Children",
+     "predicted_p12": 0.7205,
+     "predicted_median_wait": 5.65,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 2.7
+    },
+    {
+     "center_code": "CAPC",
+     "center_name": "Lucile Salter Packard Children's Hospital at Stanford",
+     "predicted_p12": 0.7395,
+     "predicted_median_wait": 4.71,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.8378,
+     "observed_ped_ratio": 1.5654,
+     "person_years": 19.0
+    },
+    {
+     "center_code": "NYUC",
+     "center_name": "New York University Medical Center",
+     "predicted_p12": 0.699,
+     "predicted_median_wait": 5.61,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 2.5413,
+     "observed_ped_ratio": 1.6862,
+     "person_years": 4.3
+    },
+    {
+     "center_code": "AZCH",
+     "center_name": "Phoenix Children's Hospital",
+     "predicted_p12": 0.6675,
+     "predicted_median_wait": 6.85,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.375,
+     "observed_ped_ratio": 1.3456,
+     "person_years": 18.2
+    },
+    {
+     "center_code": "NCDU",
+     "center_name": "Duke University Hospital",
+     "predicted_p12": 0.672,
+     "predicted_median_wait": 6.35,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.4425,
+     "observed_ped_ratio": 1.2741,
+     "person_years": 17.3
+    },
+    {
+     "center_code": "VAUV",
+     "center_name": "University of Virginia Health Sciences Center",
+     "predicted_p12": 0.668,
+     "predicted_median_wait": 6.25,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.3888,
+     "observed_ped_ratio": 2.0649,
+     "person_years": 18.7
+    },
+    {
+     "center_code": "WIUW",
+     "center_name": "University of Wisconsin Hospital and Clinics",
+     "predicted_p12": 0.6465,
+     "predicted_median_wait": 6.55,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.7253,
+     "observed_ped_ratio": 0.8697,
+     "person_years": 5.8
+    },
+    {
+     "center_code": "MICH",
+     "center_name": "Children's Hospital of Michigan",
+     "predicted_p12": 0.627,
+     "predicted_median_wait": 7.58,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.5569,
+     "observed_ped_ratio": 1.3181,
+     "person_years": 3.2
+    },
+    {
+     "center_code": "ILLU",
+     "center_name": "Loyola University Medical Center",
+     "predicted_p12": 0.6345,
+     "predicted_median_wait": 7.13,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 2.0
+    },
+    {
+     "center_code": "CTYN",
+     "center_name": "Yale New Haven Hospital",
+     "predicted_p12": 0.5865,
+     "predicted_median_wait": 8.53,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.6949,
+     "observed_ped_ratio": 1.2392,
+     "person_years": 1.2
+    },
+    {
+     "center_code": "TNVU",
+     "center_name": "Vanderbilt University Medical Center",
+     "predicted_p12": 0.62,
+     "predicted_median_wait": 6.83,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.2918,
+     "observed_ped_ratio": 1.4482,
+     "person_years": 18.6
+    },
+    {
+     "center_code": "TXCM",
+     "center_name": "Children's Medical Center of Dallas",
+     "predicted_p12": 0.6365,
+     "predicted_median_wait": 6.25,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 1.2429,
+     "observed_ped_ratio": 1.5014,
+     "person_years": 50.7
+    },
+    {
+     "center_code": "NCMH",
+     "center_name": "University of North Carolina Hospitals",
+     "predicted_p12": 0.6685,
+     "predicted_median_wait": 4.71,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.0,
+     "observed_ped_ratio": 0.0,
+     "person_years": 5.7
+    },
+    {
+     "center_code": "ILCH",
+     "center_name": "Advocate Christ Medical Center",
+     "predicted_p12": 0.621,
+     "predicted_median_wait": 6.48,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 2.4391,
+     "observed_ped_ratio": 1.7346,
+     "person_years": 1.6
+    },
+    {
+     "center_code": "GAEH",
+     "center_name": "Children's Healthcare of Atlanta at Egleston",
+     "predicted_p12": 0.585,
+     "predicted_median_wait": 8.46,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.0288,
+     "observed_ped_ratio": 1.1276,
+     "person_years": 25.3
+    },
+    {
+     "center_code": "FLAC",
+     "center_name": "Johns Hopkins All Children's Hospital",
+     "predicted_p12": 0.6245,
+     "predicted_median_wait": 6.38,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.821,
+     "observed_ped_ratio": 1.0681,
+     "person_years": 3.8
+    },
+    {
+     "center_code": "ARCH",
+     "center_name": "Arkansas Children's Hospital",
+     "predicted_p12": 0.64,
+     "predicted_median_wait": 5.23,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 2.006,
+     "observed_ped_ratio": 1.156,
+     "person_years": 6.5
+    },
+    {
+     "center_code": "OHCC",
+     "center_name": "The Cleveland Clinic Foundation",
+     "predicted_p12": 0.5685,
+     "predicted_median_wait": 7.49,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.0629,
+     "observed_ped_ratio": 0.9098,
+     "person_years": 7.5
+    },
+    {
+     "center_code": "MOCH",
+     "center_name": "St. Louis Children's Hospital",
+     "predicted_p12": 0.5345,
+     "predicted_median_wait": 9.59,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.833,
+     "observed_ped_ratio": 0.7109,
+     "person_years": 24.0
+    },
+    {
+     "center_code": "MNUM",
+     "center_name": "University of Minnesota Medical Center, Fairview",
+     "predicted_p12": 0.518,
+     "predicted_median_wait": 10.89,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.7323,
+     "observed_ped_ratio": 0.6938,
+     "person_years": 12.3
+    },
+    {
+     "center_code": "SCCH",
+     "center_name": "MUSC Children's Hospital",
+     "predicted_p12": 0.5685,
+     "predicted_median_wait": 7.21,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 1.0383,
+     "observed_ped_ratio": 0.7899,
+     "person_years": 29.9
+    },
+    {
+     "center_code": "NYMS",
+     "center_name": "Mount Sinai Medical Center",
+     "predicted_p12": 0.5295,
+     "predicted_median_wait": 9.78,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.7827,
+     "observed_ped_ratio": 0.7177,
+     "person_years": 7.7
+    },
+    {
+     "center_code": "INIM",
+     "center_name": "Indiana University Health",
+     "predicted_p12": 0.562,
+     "predicted_median_wait": 7.33,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 1.0242,
+     "observed_ped_ratio": 1.0113,
+     "person_years": 12.7
+    },
+    {
+     "center_code": "PACH",
+     "center_name": "UPMC Children's Hospital of Pittsburgh",
+     "predicted_p12": 0.5365,
+     "predicted_median_wait": 8.04,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.9862,
+     "observed_ped_ratio": 1.071,
+     "person_years": 29.4
+    },
+    {
+     "center_code": "IAIV",
+     "center_name": "University of Iowa Hospitals and Clinics Transplant Programs",
+     "predicted_p12": 0.5635,
+     "predicted_median_wait": 6.48,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 1.6793,
+     "observed_ped_ratio": 0.7828,
+     "person_years": 2.4
+    },
+    {
+     "center_code": "LAOF",
+     "center_name": "Ochsner Foundation Hospital",
+     "predicted_p12": 0.5585,
+     "predicted_median_wait": 6.41,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 1.2617,
+     "observed_ped_ratio": 0.6318,
+     "person_years": 6.3
+    },
+    {
+     "center_code": "MOCM",
+     "center_name": "Children's Mercy Hospital",
+     "predicted_p12": 0.4775,
+     "predicted_median_wait": 12.0,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.6731,
+     "observed_ped_ratio": 0.713,
+     "person_years": 22.3
+    },
+    {
+     "center_code": "NECH",
+     "center_name": "Children's Hospital & Medical Center",
+     "predicted_p12": 0.504,
+     "predicted_median_wait": 9.83,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.439,
+     "observed_ped_ratio": 0.5408,
+     "person_years": 2.3
+    },
+    {
+     "center_code": "MNMC",
+     "center_name": "Rochester Methodist Hospital (Mayo Clinic)",
+     "predicted_p12": 0.517,
+     "predicted_median_wait": 8.08,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.8266,
+     "observed_ped_ratio": 1.0472,
+     "person_years": 32.7
+    },
+    {
+     "center_code": "TXHH",
+     "center_name": "Memorial Hermann Hospital, University of Texas at Houston",
+     "predicted_p12": 0.498,
+     "predicted_median_wait": 10.31,
+     "srtr_pediatric_tier": 1,
+     "observed_ped_rate": 0.4563,
+     "observed_ped_ratio": 0.2598,
+     "person_years": 4.4
+    },
+    {
+     "center_code": "OHCM",
+     "center_name": "Children's Hospital Medical Center",
+     "predicted_p12": 0.505,
+     "predicted_median_wait": 8.97,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.7479,
+     "observed_ped_ratio": 0.9472,
+     "person_years": 30.8
+    },
+    {
+     "center_code": "ILCM",
+     "center_name": "Ann & Robert H. Lurie Children's Hospital of Chicago",
+     "predicted_p12": 0.485,
+     "predicted_median_wait": 10.52,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.7431,
+     "observed_ped_ratio": 0.67,
+     "person_years": 63.2
+    },
+    {
+     "center_code": "DCCH",
+     "center_name": "Children's National Medical Center",
+     "predicted_p12": 0.4855,
+     "predicted_median_wait": 10.25,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.671,
+     "observed_ped_ratio": 0.8484,
+     "person_years": 20.9
+    },
+    {
+     "center_code": "CALL",
+     "center_name": "Loma Linda University Medical Center",
+     "predicted_p12": 0.5325,
+     "predicted_median_wait": 7.43,
+     "srtr_pediatric_tier": 4,
+     "observed_ped_rate": 0.9416,
+     "observed_ped_ratio": 1.3989,
+     "person_years": 11.7
+    },
+    {
+     "center_code": "COCH",
+     "center_name": "Children's Hospital Colorado",
+     "predicted_p12": 0.54,
+     "predicted_median_wait": 6.82,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.9937,
+     "observed_ped_ratio": 0.8199,
+     "person_years": 31.2
+    },
+    {
+     "center_code": "MOCG",
+     "center_name": "Cardinal Glennon Children's Hospital",
+     "predicted_p12": 0.5095,
+     "predicted_median_wait": 8.46,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.7029,
+     "observed_ped_ratio": 0.8715,
+     "person_years": 7.1
+    },
+    {
+     "center_code": "OKCM",
+     "center_name": "Children's Hospital of Oklahoma",
+     "predicted_p12": 0.4705,
+     "predicted_median_wait": 10.44,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.3474,
+     "observed_ped_ratio": 0.3324,
+     "person_years": 5.8
+    },
+    {
+     "center_code": "WICH",
+     "center_name": "Children's Hospital of Wisconsin",
+     "predicted_p12": 0.4685,
+     "predicted_median_wait": 10.43,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.6395,
+     "observed_ped_ratio": 0.7716,
+     "person_years": 18.8
+    },
+    {
+     "center_code": "FLJM",
+     "center_name": "Jackson Memorial Hospital University of Miami School of Medicine",
+     "predicted_p12": 0.476,
+     "predicted_median_wait": 9.45,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.4245,
+     "observed_ped_ratio": 0.8531,
+     "person_years": 4.7
+    },
+    {
+     "center_code": "TXTC",
+     "center_name": "Texas Children's Hospital",
+     "predicted_p12": 0.4605,
+     "predicted_median_wait": 11.33,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.7249,
+     "observed_ped_ratio": 0.9227,
+     "person_years": 80.0
+    },
+    {
+     "center_code": "CACL",
+     "center_name": "Childrens Hospital Los Angeles",
+     "predicted_p12": 0.453,
+     "predicted_median_wait": 10.72,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.6428,
+     "observed_ped_ratio": 0.9323,
+     "person_years": 31.1
+    },
+    {
+     "center_code": "CAUC",
+     "center_name": "University of California at Los Angeles Medical Center",
+     "predicted_p12": 0.4335,
+     "predicted_median_wait": 12.06,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.5783,
+     "observed_ped_ratio": 1.1091,
+     "person_years": 31.1
+    },
+    {
+     "center_code": "MDJH",
+     "center_name": "Johns Hopkins Hospital",
+     "predicted_p12": 0.477,
+     "predicted_median_wait": 8.11,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.7782,
+     "observed_ped_ratio": 1.248,
+     "person_years": 3.9
+    },
+    {
+     "center_code": "CAMB",
+     "center_name": "UCSF Medical Center at Mission Bay",
+     "predicted_p12": 0.4435,
+     "predicted_median_wait": 11.22,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.5202,
+     "observed_ped_ratio": 0.4958,
+     "person_years": 11.5
+    },
+    {
+     "center_code": "UTPC",
+     "center_name": "Primary Children's Hospital",
+     "predicted_p12": 0.493,
+     "predicted_median_wait": 7.28,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.938,
+     "observed_ped_ratio": 1.0526,
+     "person_years": 27.7
+    },
+    {
+     "center_code": "OHCH",
+     "center_name": "Nationwide Children's Hospital",
+     "predicted_p12": 0.4395,
+     "predicted_median_wait": 10.69,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.5704,
+     "observed_ped_ratio": 0.7333,
+     "person_years": 19.3
+    },
+    {
+     "center_code": "ALCH",
+     "center_name": "Children's of Alabama",
+     "predicted_p12": 0.463,
+     "predicted_median_wait": 8.33,
+     "srtr_pediatric_tier": 3,
+     "observed_ped_rate": 0.7272,
+     "observed_ped_ratio": 0.9049,
+     "person_years": 19.3
+    },
+    {
+     "center_code": "FLJD",
+     "center_name": "Memorial Regional Hospital/Joe DiMaggio Children's Hospital",
+     "predicted_p12": 0.4515,
+     "predicted_median_wait": 9.02,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.6592,
+     "observed_ped_ratio": 0.684,
+     "person_years": 13.7
+    },
+    {
+     "center_code": "PACP",
+     "center_name": "Children's Hospital of Philadelphia",
+     "predicted_p12": 0.3995,
+     "predicted_median_wait": 12.48,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.5289,
+     "observed_ped_ratio": 0.5238,
+     "person_years": 45.4
+    },
+    {
+     "center_code": "FLUF",
+     "center_name": "UF Health Shands Hospital",
+     "predicted_p12": 0.4335,
+     "predicted_median_wait": 9.81,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.6381,
+     "observed_ped_ratio": 0.8376,
+     "person_years": 43.9
+    },
+    {
+     "center_code": "WACH",
+     "center_name": "Seattle Children's Hospital",
+     "predicted_p12": 0.4215,
+     "predicted_median_wait": 9.47,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.6646,
+     "observed_ped_ratio": 0.5659,
+     "person_years": 33.1
+    },
+    {
+     "center_code": "KYKC",
+     "center_name": "Norton Children's Hospital",
+     "predicted_p12": 0.445,
+     "predicted_median_wait": 8.4,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.6675,
+     "observed_ped_ratio": 0.6159,
+     "person_years": 15.0
+    },
+    {
+     "center_code": "MNCM",
+     "center_name": "Children's Minnesota",
+     "predicted_p12": 0.3775,
+     "predicted_median_wait": 13.35,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.2713,
+     "observed_ped_ratio": 0.4779,
+     "person_years": 14.7
+    },
+    {
+     "center_code": "MACH",
+     "center_name": "Boston Children's Hospital",
+     "predicted_p12": 0.4265,
+     "predicted_median_wait": 9.5,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.5862,
+     "observed_ped_ratio": 0.7943,
+     "person_years": 39.2
+    },
+    {
+     "center_code": "CACH",
+     "center_name": "Rady Children's Hospital and Health Center",
+     "predicted_p12": 0.352,
+     "predicted_median_wait": 10.8,
+     "srtr_pediatric_tier": 2,
+     "observed_ped_rate": 0.3904,
+     "observed_ped_ratio": 0.6861,
+     "person_years": 20.5
+    }
+   ]
+  },
+  "lung": {
+   "organ": "lung",
+   "matched_centers": 10,
+   "insufficient": true
+  }
+ },
+ "_meta": {
+  "generated": "2026-08-26T15:43:21Z",
+  "script": "scripts/run-pediatric-calibration.py",
+  "ground_truth": "data/srtr-tiers-centers.json :: pediatric_transplant_faster",
+  "method": "Spearman rank correlation between the pediatric engine's predicted 12-month transplant probability and SRTR's risk-adjusted pediatric transplant-rate tier."
+ }
+}

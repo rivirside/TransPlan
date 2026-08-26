@@ -26,12 +26,17 @@ from models.schemas import CityProbability, PatientProfile, SimulationResult
 from services.competing_risks import get_annual_mortality_rate, get_annual_delisting_rate
 from services.copula import draw_correlated_competing_risks
 from services.data_loader import get_data
-from services.distributions import get_wait_time_distribution
+from services.distributions import get_lognorm_params, get_wait_time_distribution
 from services.outcomes import build_outcomes_dict
 from services.stats_utils import rate_to_exponential_scale
 from services.trends import get_city_trends
 
 logger = logging.getLogger(__name__)
+
+# Pediatric shrinkage strength, in person-years: a center with this
+# much pediatric exposure gets 50% weight on its own rate, the rest
+# on the national pediatric baseline (#335).
+_PEDS_SHRINK_PY = 10.0
 
 # (#293: the 22-city _FALLBACK_CITIES list was retired — the data files
 # must be loaded via load_all() before simulation.)
@@ -223,6 +228,75 @@ def _get_acceptance_rate(organ: str, center_code: str) -> float:
     return min(national * factor, 1.0)
 
 
+def pediatric_programs(organ: str) -> dict:
+    """Centers with a pediatric program for *organ* (#335).
+
+    Shared by all three engines so a child never gets a different center set
+    depending on inference_mode — the engine-parity lesson from the 2026-08
+    review. Empty dict means no pediatric data for the organ.
+    """
+    return get_data().pediatric.get(organ, {}).get("centers", {})
+
+
+def restrict_to_pediatric(centers: list, organ: str) -> list:
+    """Filter a center list to pediatric programs, raising with an explicit
+    reason rather than silently returning adult centers."""
+    programs = pediatric_programs(organ)
+    if not programs:
+        raise ValueError(
+            f"No pediatric {organ} program data is available, so pediatric "
+            f"results cannot be produced for this organ."
+        )
+    out = [c for c in centers if c.get("code") in programs]
+    if not out:
+        raise ValueError(
+            f"No center with a pediatric {organ} program could be matched to "
+            f"the center registry."
+        )
+    return out
+
+
+def _pediatric_dist(patient, code: str, peds_block: dict, adult_dist):
+    """Rescale the wait distribution so its 12-month transplant probability
+    matches the center's observed PEDIATRIC rate (#335).
+
+    Uses the adult-fitted exposure calibration k (see
+    scripts/parse-srtr-pediatric.py): P12 = 1 - exp(-k * rate). Centers with
+    thin exposure are shrunk toward the national pediatric rate in proportion
+    to their person-years, so a 2-person-year program does not masquerade as
+    a precise estimate. Falls back to the adult distribution untouched if the
+    center has no usable pediatric record.
+    """
+    import math
+
+    import scipy.stats
+
+    rec = peds_block.get("centers", {}).get(code)
+    cal = peds_block.get("calibration") or {}
+    k = cal.get("k")
+    if not rec or not k:
+        return adult_dist
+    rate = rec.get("transplant_rate")
+    if not rate or rate <= 0:
+        return adult_dist
+
+    # Empirical-Bayes shrinkage on exposure: weight = py / (py + PRIOR_PY)
+    nat_rate = (peds_block.get("national") or {}).get("transplant_rate", rate)
+    py = float(rec.get("person_years") or 0.0)
+    w = py / (py + _PEDS_SHRINK_PY)
+    eff_rate = w * rate + (1.0 - w) * nat_rate
+
+    p12 = 1.0 - math.exp(-k * eff_rate)
+    p12 = min(max(p12, 1e-4), 0.999)
+
+    # Solve for the lognormal median reproducing p12 at 12 months, holding
+    # the organ's sigma. P(T<=12) = Phi((ln12 - ln median)/sigma) = p12
+    s, loc, _ = get_lognorm_params(adult_dist)
+    z = scipy.stats.norm.ppf(p12)
+    median = math.exp(math.log(12.0) - z * s)
+    return scipy.stats.lognorm(s=s, loc=loc, scale=median)
+
+
 def simulate(
     patient: PatientProfile,
     n_iterations: int | None = None,
@@ -267,8 +341,18 @@ def simulate(
     if trend_years > 0:
         from services.trends import get_center_trend_projection, get_trend_projection
 
-    # L-067 (#304): optional user-defined center set
+    # #335: pediatric candidates are restricted to centers that actually run
+    # a pediatric program for this organ. Scoring a child against an adult-only
+    # program is the silent wrongness pediatric mode exists to end, so the
+    # exclusion is explicit and the reason is reportable.
     centers_to_run = _get_centers(patient.organ)
+    pediatric = patient.is_pediatric
+    peds_block = {}
+    if pediatric:
+        peds_block = get_data().pediatric.get(patient.organ, {})
+        centers_to_run = restrict_to_pediatric(centers_to_run, patient.organ)
+
+    # L-067 (#304): optional user-defined center set
     if patient.center_codes:
         wanted = set(patient.center_codes)
         centers_to_run = [c for c in centers_to_run if c.get("code") in wanted]
@@ -299,7 +383,7 @@ def simulate(
 
         # --- Data-provenance tags (#300): make silent fallbacks visible.
         from services.provenance import center_data_quality
-        degraded = center_data_quality(patient.organ, code)
+        degraded = center_data_quality(patient.organ, code, pediatric=pediatric)
 
         # --- Draw transplant times from log-normal ---
         dist = get_wait_time_distribution(
@@ -323,6 +407,16 @@ def simulate(
             a = _get_acceptance_rate(patient.organ, code)
             if a > 0 and a < 1.0:
                 a_rate = a
+
+        # #335: for pediatric runs the center's OBSERVED pediatric transplant
+        # rate is the anchor (the inversion gate showed the derived median
+        # recovers order far better than magnitude, so the rate drives the
+        # probability directly). Convert rate/person-year -> 12-month
+        # probability with the adult-fitted calibration, shrink small cohorts
+        # toward the national pediatric baseline, then scale the wait
+        # distribution's median to reproduce that probability.
+        if pediatric:
+            dist = _pediatric_dist(patient, code, peds_block, dist)
 
         t0 = float(patient.months_waiting or 0.0)
         if t0 > 0:
