@@ -157,7 +157,7 @@
                     <div class="step-number">The Methods</div>
                     <h2><a href="docs-site/build/architecture/overview" target="_blank" rel="noopener">Monte Carlo simulation</a> with competing risks.</h2>
                     <p>For each of the 248 centers, we run 1,000 simulation iterations modeling the probability of receiving a transplant at 6, 12, 24, and 36 months. Each iteration draws on <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener"><strong>OPTN</strong></a> historical offer and acceptance rates and organ-specific donor flow by region. Critically, each iteration accounts for <em>competing risks</em>: the chance of transplant, the chance of dying while waiting, and the chance of removal for other medical reasons.</p>
-                    <p>A 48-profile demographic matrix runs each center across blood types, age brackets, and sex to evaluate equity. We then compute a <a href="docs-site/build/architecture/scoring" target="_blank" rel="noopener">Gini coefficient</a> per center, a standard measure of distributional inequity, to identify programs where certain patient profiles are systematically disadvantaged relative to others at the same institution.</p>
+                    <p>A 48-profile demographic matrix runs each center across blood types, age brackets, and sex to evaluate equity. We then compute a <a href="docs-site/build/theory/scoring-methodology" target="_blank" rel="noopener">Gini coefficient</a> per center, a standard measure of distributional inequity, to identify programs where certain patient profiles are systematically disadvantaged relative to others at the same institution.</p>
                     <div class="highlight"><a href="scenarios.html">What-if scenarios</a> let researchers adjust donor rates, OPO performance, and wait-time multipliers to model how <a href="https://unos.org" target="_blank" rel="noopener">UNOS</a> policy changes would shift transplant probabilities in real time.</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" onclick="goStep(4)">Back</button>
@@ -268,7 +268,7 @@
                         </button>
                         <div class="acc-body" hidden>
                             <p>8 scoring categories and 50+ variables per center, adjusted for your organ type, blood type, and patient profile. Categories include wait time, transplant rate, survival outcomes, volume, and equity — each weighted by evidence of patient impact.</p>
-                            <a href="docs-site/build/architecture/scoring" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
+                            <a href="docs-site/build/theory/scoring-methodology" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
                         </div>
                     </div>
                     <div class="acc-item">
@@ -287,8 +287,8 @@
                             <span class="acc-icon" aria-hidden="true"></span>
                         </button>
                         <div class="acc-body" hidden>
-                            <p>A 48-profile demographic matrix runs each center across blood types, age brackets, and sex to evaluate distributional fairness. We compute a <a href="docs-site/build/architecture/scoring" target="_blank" rel="noopener">Gini coefficient</a> per center to identify programs where certain patient profiles are systematically disadvantaged relative to others at the same institution.</p>
-                            <a href="docs-site/build/architecture/equity" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
+                            <p>A 48-profile demographic matrix runs each center across blood types, age brackets, and sex to evaluate distributional fairness. We compute a <a href="docs-site/build/theory/scoring-methodology" target="_blank" rel="noopener">Gini coefficient</a> per center to identify programs where certain patient profiles are systematically disadvantaged relative to others at the same institution.</p>
+                            <a href="docs-site/build/architecture/backend-api" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
                         </div>
                     </div>
                 </div>
