@@ -114,28 +114,17 @@ def _col_index(sheet, col_name: str) -> int:
     return -1
 
 
-CENSORED = -999.0  # sentinel for ">72" censored values
+# Shared xls helpers (#339): single source in scripts/srtr_xls_utils.py
+import importlib.util as _ilu
+from pathlib import Path as _Path
+_sx_spec = _ilu.spec_from_file_location(
+    "srtr_xls_utils", _Path(__file__).parent / "srtr_xls_utils.py")
+sx = _ilu.module_from_spec(_sx_spec)
+_sx_spec.loader.exec_module(sx)
 
-
-def _safe_float(val) -> float | None:
-    """Parse a cell value as float, handling '>72' style strings and blanks."""
-    if isinstance(val, (int, float)):
-        return float(val) if val != "" else None
-    s = str(val).strip()
-    if not s:
-        return None
-    # SRTR uses ">72" for censored values (didn't reach percentile within 72 months)
-    if s.startswith(">"):
-        return CENSORED
-    try:
-        return float(s)
-    except ValueError:
-        return None
-
-
-def _is_valid(val: float | None) -> bool:
-    """Check if a percentile value is valid (not None, not censored, positive)."""
-    return val is not None and val != CENSORED and val > 0
+CENSORED = sx.CENSORED  # sentinel for ">72" censored values
+_safe_float = sx.safe_float
+_is_valid = sx.is_valid
 
 
 def _get_row_by_code(sheet, center_code: str, col_indices: dict) -> dict | None:
@@ -202,23 +191,9 @@ def fit_lognormal(
 
     mu = math.log(p50)
 
-    # Strategy 1: P10-P25 spread (most reliable for SRTR data)
-    # z_25 = -0.6745, z_10 = -1.2816, difference = 0.6071
-    # But we use P10/P25 to infer the local spread in the lower tail
-    if _is_valid(p10) and _is_valid(p25) and p25 > p10:
-        sigma = (math.log(p25) - math.log(p10)) / (1.2816 - 0.6745)  # 0.6071
-    # Strategy 2: IQR (when P75 is not censored)
-    elif _is_valid(p25) and _is_valid(p75) and p75 > p25:
-        sigma = (math.log(p75) - math.log(p25)) / (2 * 0.6745)
-    # Strategy 3: P10-P50 (wider range)
-    elif _is_valid(p10) and p50 > p10:
-        sigma = (math.log(p50) - math.log(p10)) / 1.2816
-    # Strategy 4: fallback
-    else:
-        sigma = 0.8
-
-    # Clamp sigma to reasonable range for transplant wait times
-    sigma = max(0.3, min(sigma, 1.2))
+    # Strategy chain + clamps live in srtr_xls_utils.sigma_from_percentiles
+    # (#339): the temporal forecast uses the SAME function by construction.
+    sigma = sx.sigma_from_percentiles(p10, p25, p50, p75)
     return (mu, sigma)
 
 
@@ -229,25 +204,15 @@ def _compute_city_factor(ctr_data: dict, nat_median: float, nat_data: dict) -> f
     Uses P50 center/national ratio when both are valid. Falls back to P25 ratio
     when center P50 is censored. Returns None if no valid comparison is possible.
     """
-    ctr_p50 = ctr_data.get("p50")
-    ctr_p25 = ctr_data.get("p25")
-    nat_p25 = nat_data.get("p25") if nat_data else None
-
-    # Best case: both medians valid
-    if _is_valid(ctr_p50) and _is_valid(nat_median):
-        factor = ctr_p50 / nat_median
-        return round(max(0.3, min(factor, 3.0)), 2)
-
-    # Center P50 is censored but P25 is valid — use P25 ratio
-    if _is_valid(ctr_p25) and _is_valid(nat_p25) and nat_p25 > 0:
-        factor = ctr_p25 / nat_p25
-        return round(max(0.3, min(factor, 3.0)), 2)
-
-    # Both censored — this center has extremely long waits
-    if ctr_p50 == CENSORED and _is_valid(nat_median):
-        return 2.5  # conservative high factor
-
-    return None
+    # Ratio/fallback/clamp logic shared with the forecast (#339); the
+    # 2-decimal rounding is a parser output convention kept here.
+    factor = sx.wait_factor_from_percentiles(
+        {"p50": ctr_data.get("p50"), "p25": ctr_data.get("p25")},
+        {"p50": nat_median, "p25": nat_data.get("p25") if nat_data else None},
+    )
+    if factor is None:
+        return None
+    return factor if factor == sx.CENSORED_FACTOR else round(factor, 2)
 
 
 # ---------- main parse functions ----------

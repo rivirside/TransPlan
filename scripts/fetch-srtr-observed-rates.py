@@ -109,31 +109,21 @@ def _num(sheet, row: int, col: int):
         return None
 
 
+# Shared xls helpers (#339)
+import importlib.util as _ilu
+_sx_spec = _ilu.spec_from_file_location(
+    "srtr_xls_utils", Path(__file__).parent / "srtr_xls_utils.py")
+sx = _ilu.module_from_spec(_sx_spec)
+_sx_spec.loader.exec_module(sx)
+
+
 def _find_outcomes_sheet(wb):
-    """Return (sheet, header_codes) for the sheet that carries SAL_TOTTX_C12.
-
-    Era-proof: scans every sheet's first row for the column rather than
-    assuming a sheet name (Table B7 in newer releases, Table B6 in older).
-    Returns (None, None) if no sheet has it (pre-SAL_* vintages like 2006).
-    """
-    # Prefer the canonical sheets if present, else scan all.
-    ordered = ["Table B7", "Table B6"] + [s for s in wb.sheet_names()
-                                          if s not in ("Table B7", "Table B6")]
-    for name in ordered:
-        if name not in wb.sheet_names():
-            continue
-        sh = wb.sheet_by_name(name)
-        if sh.nrows < 3:
-            continue
-        hdr = [str(sh.cell_value(0, c)) for c in range(sh.ncols)]
-        if TX_C in hdr:
-            return sh, hdr
-    return None, None
+    """(sheet, headers) for the sheet carrying SAL_TOTTX_C12 (#339: shared
+    era-proof scan; Table B7 newer / Table B6 older preferred first)."""
+    return sx.find_sheet_with(wb, TX_C, preferred=("Table B7", "Table B6"))
 
 
-def _is_center_code(v) -> bool:
-    s = str(v).strip()
-    return bool(re.fullmatch(r"[A-Z0-9]{3,5}", s)) and s != "CTR_CD"
+_is_center_code = sx.is_center_code
 
 
 def extract_rates(xls_bytes: bytes) -> dict | None:

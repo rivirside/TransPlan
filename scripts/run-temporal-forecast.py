@@ -55,7 +55,6 @@ ORGANS = {"kidney": "KI", "liver": "LI", "heart": "HR",
           "lung": "LU", "pancreas": "PA", "intestine": "IN"}
 MIN_N = 10        # cohort floor for ground-truth rates (matches run-temporal-validation)
 MIN_PAIRS = 8     # minimum common centers for a meaningful correlation
-CENSORED = -999.0
 
 # Column names are stable across eras; only SHEET names changed (B9->B10,
 # B6->B7 at release 2111), so we scan sheets for the columns.
@@ -75,64 +74,24 @@ BASE_DELIST = {"kidney": 0.04, "liver": 0.06, "heart": 0.05, "lung": 0.06,
                "pancreas": 0.04, "intestine": 0.06}
 
 
-# ---------- Excel helpers (mirroring parse-srtr-reports.py, era-proof) ----------
+# ---------- Excel helpers (#339: shared with parse-srtr-reports.py) ----------
 
-def _safe_float(val):
-    if isinstance(val, (int, float)):
-        return float(val) if val != "" else None
-    s = str(val).strip()
-    if not s:
-        return None
-    if s.startswith(">"):
-        return CENSORED
-    try:
-        return float(s)
-    except ValueError:
-        return None
+# Shared xls helpers (#339): single source in scripts/srtr_xls_utils.py —
+# the parser uses the SAME functions, so "exactly the parser's derivation"
+# holds by construction instead of by comment.
+import importlib.util as _ilu
+_sx_spec = _ilu.spec_from_file_location(
+    "srtr_xls_utils", Path(__file__).parent / "srtr_xls_utils.py")
+sx = _ilu.module_from_spec(_sx_spec)
+_sx_spec.loader.exec_module(sx)
 
-
-def _is_valid(v):
-    return v is not None and v != CENSORED and v > 0
-
-
-def _find_sheet_with(wb, required_col: str):
-    """Return (sheet, header list) for the first sheet whose row 0 has required_col."""
-    for name in wb.sheet_names():
-        sh = wb.sheet_by_name(name)
-        if sh.nrows < 3 or sh.ncols < 2:
-            continue
-        hdr = [str(sh.cell_value(0, c)).strip() for c in range(sh.ncols)]
-        if required_col in hdr:
-            return sh, hdr
-    return None, None
-
-
-def _col(hdr, name):
-    try:
-        return hdr.index(name)
-    except ValueError:
-        return -1
-
-
-def _is_center_code(v) -> bool:
-    s = str(v).strip()
-    return bool(re.fullmatch(r"[A-Z0-9]{3,5}", s)) and s != "CTR_CD"
-
-
-def _all_rows(sheet, hdr, cols: dict) -> dict:
-    """{center_code: {key: value}} for every center row."""
-    ctr = _col(hdr, "CTR_CD")
-    if ctr < 0:
-        return {}
-    idx = {k: _col(hdr, c) for k, c in cols.items()}
-    out = {}
-    for r in range(1, sheet.nrows):
-        code = str(sheet.cell_value(r, ctr)).strip()
-        if not _is_center_code(code):
-            continue
-        out[code] = {k: (_safe_float(sheet.cell_value(r, i)) if i >= 0 else None)
-                     for k, i in idx.items()}
-    return out
+_safe_float = sx.safe_float
+_is_valid = sx.is_valid
+_find_sheet_with = sx.find_sheet_with
+_col = sx.col_index
+_is_center_code = sx.is_center_code
+_all_rows = sx.all_center_rows
+CENSORED = sx.CENSORED
 
 
 def _national_row(sheet, hdr, cols: dict) -> dict:
@@ -145,31 +104,9 @@ def _national_row(sheet, hdr, cols: dict) -> dict:
     return {}
 
 
-def fit_sigma(p10, p25, p50, p75) -> float:
-    """National sigma from percentiles — same strategy + clamps as
-    parse-srtr-reports.py fit_lognormal."""
-    if _is_valid(p10) and _is_valid(p25) and p25 > p10:
-        sigma = (math.log(p25) - math.log(p10)) / (1.2816 - 0.6745)
-    elif _is_valid(p25) and _is_valid(p75) and p75 > p25:
-        sigma = (math.log(p75) - math.log(p25)) / (2 * 0.6745)
-    elif _is_valid(p10) and _is_valid(p50) and p50 > p10:
-        sigma = (math.log(p50) - math.log(p10)) / 1.2816
-    else:
-        sigma = 0.8
-    return max(0.3, min(sigma, 1.2))
-
-
-def wait_factor(ctr: dict, nat: dict):
-    """Center wait factor — same derivation + clamps as parse-srtr-reports.py."""
-    p50_c, p25_c = ctr.get("p50"), ctr.get("p25")
-    p50_n, p25_n = nat.get("p50"), nat.get("p25")
-    if _is_valid(p50_c) and _is_valid(p50_n):
-        return max(0.3, min(p50_c / p50_n, 3.0))
-    if _is_valid(p25_c) and _is_valid(p25_n):
-        return max(0.3, min(p25_c / p25_n, 3.0))
-    if p50_c == CENSORED and _is_valid(p50_n):
-        return 2.5
-    return None
+# #339: the parser's own derivation functions, not copies of them
+fit_sigma = lambda p10, p25, p50, p75: sx.sigma_from_percentiles(p10, p25, p50, p75)
+wait_factor = sx.wait_factor_from_percentiles
 
 
 # ---------- The model core, fit on one release ----------
