@@ -1,0 +1,6851 @@
+{
+ "_meta": {
+  "source": "SRTR PSR Table B11 (offer acceptance), release 2511",
+  "method": "OARR = risk-adjusted acceptances/expected (SRTR Bayesian model) with 95% credible bounds; OVERALL plus LOWRISK/HARDTOPLACE subsets where published. #320: the observed center-discretion covariate L-075 called for.",
+  "fetchedAt": "2026-08-26T02:19:13Z"
+ },
+ "kidney": {
+  "centers": {
+   "CASM": {
+    "oar": 1.11,
+    "ci95": [
+     0.96,
+     1.27
+    ],
+    "offers": 34433.0,
+    "accepts": 198.0,
+    "expected": 178.53,
+    "lowrisk_oar": 1.37
+   },
+   "CASF": {
+    "oar": 1.25,
+    "ci95": [
+     1.09,
+     1.43
+    ],
+    "offers": 62645.0,
+    "accepts": 209.0,
+    "expected": 166.38,
+    "lowrisk_oar": 1.17
+   },
+   "GAPH": {
+    "oar": 0.98,
+    "ci95": [
+     0.86,
+     1.1
+    ],
+    "offers": 18557.0,
+    "accepts": 256.0,
+    "expected": 261.71,
+    "lowrisk_oar": 1.47
+   },
+   "TNVU": {
+    "oar": 1.7,
+    "ci95": [
+     1.51,
+     1.9
+    ],
+    "offers": 11976.0,
+    "accepts": 296.0,
+    "expected": 173.23,
+    "lowrisk_oar": 1.25
+   },
+   "CALL": {
+    "oar": 0.89,
+    "ci95": [
+     0.76,
+     1.03
+    ],
+    "offers": 70665.0,
+    "accepts": 168.0,
+    "expected": 188.49,
+    "lowrisk_oar": 1.09
+   },
+   "CACS": {
+    "oar": 1.13,
+    "ci95": [
+     0.99,
+     1.29
+    ],
+    "offers": 55198.0,
+    "accepts": 208.0,
+    "expected": 183.17,
+    "lowrisk_oar": 0.81
+   },
+   "CACH": {
+    "oar": 1.34,
+    "ci95": [
+     0.61,
+     2.35
+    ],
+    "offers": 99.0,
+    "accepts": 7.0,
+    "expected": 4.72,
+    "lowrisk_oar": 1.57
+   },
+   "NVUM": {
+    "oar": 1.21,
+    "ci95": [
+     1.04,
+     1.39
+    ],
+    "offers": 13605.0,
+    "accepts": 186.0,
+    "expected": 153.69,
+    "lowrisk_oar": 0.96
+   },
+   "CALA": {
+    "oar": 0.38,
+    "ci95": [
+     0.28,
+     0.49
+    ],
+    "offers": 9841.0,
+    "accepts": 47.0,
+    "expected": 127.91,
+    "lowrisk_oar": 0.37
+   },
+   "CAUH": {
+    "oar": 0.96,
+    "ci95": [
+     0.8,
+     1.13
+    ],
+    "offers": 45002.0,
+    "accepts": 131.0,
+    "expected": 137.04,
+    "lowrisk_oar": 0.84
+   },
+   "MAPB": {
+    "oar": 0.38,
+    "ci95": [
+     0.25,
+     0.53
+    ],
+    "offers": 3919.0,
+    "accepts": 26.0,
+    "expected": 72.49,
+    "lowrisk_oar": 0.58
+   },
+   "CAIM": {
+    "oar": 1.42,
+    "ci95": [
+     1.21,
+     1.64
+    ],
+    "offers": 41445.0,
+    "accepts": 171.0,
+    "expected": 120.11,
+    "lowrisk_oar": 1.09
+   },
+   "LAOF": {
+    "oar": 0.89,
+    "ci95": [
+     0.75,
+     1.05
+    ],
+    "offers": 26710.0,
+    "accepts": 133.0,
+    "expected": 149.33,
+    "lowrisk_oar": 0.8
+   },
+   "LAWK": {
+    "oar": 0.62,
+    "ci95": [
+     0.49,
+     0.77
+    ],
+    "offers": 5333.0,
+    "accepts": 75.0,
+    "expected": 122.04,
+    "lowrisk_oar": 0.73
+   },
+   "LATU": {
+    "oar": 0.94,
+    "ci95": [
+     0.77,
+     1.13
+    ],
+    "offers": 9684.0,
+    "accepts": 101.0,
+    "expected": 107.58,
+    "lowrisk_oar": 1.15
+   },
+   "ALUA": {
+    "oar": 0.95,
+    "ci95": [
+     0.82,
+     1.09
+    ],
+    "offers": 14245.0,
+    "accepts": 193.0,
+    "expected": 203.09,
+    "lowrisk_oar": 1.24
+   },
+   "MSUM": {
+    "oar": 0.94,
+    "ci95": [
+     0.77,
+     1.12
+    ],
+    "offers": 5628.0,
+    "accepts": 108.0,
+    "expected": 115.2,
+    "lowrisk_oar": 1.03
+   },
+   "ALVA": {
+    "oar": 0.28,
+    "ci95": [
+     0.08,
+     0.62
+    ],
+    "offers": 162.0,
+    "accepts": 2.0,
+    "expected": 12.21,
+    "lowrisk_oar": 0.44
+   },
+   "MISJ": {
+    "oar": 0.78,
+    "ci95": [
+     0.53,
+     1.08
+    ],
+    "offers": 1204.0,
+    "accepts": 29.0,
+    "expected": 37.6,
+    "lowrisk_oar": 0.77
+   },
+   "NYAM": {
+    "oar": 0.49,
+    "ci95": [
+     0.34,
+     0.67
+    ],
+    "offers": 5689.0,
+    "accepts": 33.0,
+    "expected": 69.31,
+    "lowrisk_oar": 0.75
+   },
+   "ILLU": {
+    "oar": 1.15,
+    "ci95": [
+     0.99,
+     1.33
+    ],
+    "offers": 10721.0,
+    "accepts": 178.0,
+    "expected": 154.07,
+    "lowrisk_oar": 1.34
+   },
+   "NYNY": {
+    "oar": 1.79,
+    "ci95": [
+     1.55,
+     2.05
+    ],
+    "offers": 9717.0,
+    "accepts": 193.0,
+    "expected": 107.01,
+    "lowrisk_oar": 1.77
+   },
+   "MDJH": {
+    "oar": 0.67,
+    "ci95": [
+     0.57,
+     0.79
+    ],
+    "offers": 47563.0,
+    "accepts": 147.0,
+    "expected": 218.82,
+    "lowrisk_oar": 0.78
+   },
+   "VAMC": {
+    "oar": 1.19,
+    "ci95": [
+     1.05,
+     1.34
+    ],
+    "offers": 37792.0,
+    "accepts": 252.0,
+    "expected": 212.03,
+    "lowrisk_oar": 1.53
+   },
+   "FLCC": {
+    "oar": 1.08,
+    "ci95": [
+     0.9,
+     1.27
+    ],
+    "offers": 19283.0,
+    "accepts": 123.0,
+    "expected": 114.25,
+    "lowrisk_oar": 1.13
+   },
+   "TXHD": {
+    "oar": 0.82,
+    "ci95": [
+     0.69,
+     0.97
+    ],
+    "offers": 10379.0,
+    "accepts": 124.0,
+    "expected": 150.82,
+    "lowrisk_oar": 1.02
+   },
+   "CAGH": {
+    "oar": 0.28,
+    "ci95": [
+     0.17,
+     0.42
+    ],
+    "offers": 3377.0,
+    "accepts": 18.0,
+    "expected": 68.59,
+    "lowrisk_oar": 0.34
+   },
+   "DCGU": {
+    "oar": 1.47,
+    "ci95": [
+     1.31,
+     1.64
+    ],
+    "offers": 20936.0,
+    "accepts": 314.0,
+    "expected": 212.96,
+    "lowrisk_oar": 1.07
+   },
+   "VAFH": {
+    "oar": 1.06,
+    "ci95": [
+     0.9,
+     1.24
+    ],
+    "offers": 19072.0,
+    "accepts": 151.0,
+    "expected": 141.99,
+    "lowrisk_oar": 0.7
+   },
+   "OHOU": {
+    "oar": 1.02,
+    "ci95": [
+     0.89,
+     1.16
+    ],
+    "offers": 25989.0,
+    "accepts": 212.0,
+    "expected": 208.15,
+    "lowrisk_oar": 1.19
+   },
+   "NCBG": {
+    "oar": 0.85,
+    "ci95": [
+     0.72,
+     0.99
+    ],
+    "offers": 26856.0,
+    "accepts": 149.0,
+    "expected": 175.56,
+    "lowrisk_oar": 0.87
+   },
+   "TXMC": {
+    "oar": 1.39,
+    "ci95": [
+     1.17,
+     1.64
+    ],
+    "offers": 8416.0,
+    "accepts": 128.0,
+    "expected": 91.19,
+    "lowrisk_oar": 1.36
+   },
+   "CAPM": {
+    "oar": 1.89,
+    "ci95": [
+     1.62,
+     2.19
+    ],
+    "offers": 3412.0,
+    "accepts": 170.0,
+    "expected": 88.89,
+    "lowrisk_oar": 1.44
+   },
+   "MIUM": {
+    "oar": 1.18,
+    "ci95": [
+     1.02,
+     1.35
+    ],
+    "offers": 14770.0,
+    "accepts": 193.0,
+    "expected": 162.89,
+    "lowrisk_oar": 1.39
+   },
+   "FLFH": {
+    "oar": 0.62,
+    "ci95": [
+     0.48,
+     0.77
+    ],
+    "offers": 7318.0,
+    "accepts": 71.0,
+    "expected": 116.01,
+    "lowrisk_oar": 0.95
+   },
+   "NYMS": {
+    "oar": 0.76,
+    "ci95": [
+     0.65,
+     0.88
+    ],
+    "offers": 34946.0,
+    "accepts": 178.0,
+    "expected": 234.47,
+    "lowrisk_oar": 0.87
+   },
+   "MDUM": {
+    "oar": 0.66,
+    "ci95": [
+     0.53,
+     0.8
+    ],
+    "offers": 24925.0,
+    "accepts": 90.0,
+    "expected": 137.96,
+    "lowrisk_oar": 1.05
+   },
+   "TXVA": {
+    "oar": 0.39,
+    "ci95": [
+     0.25,
+     0.55
+    ],
+    "offers": 4264.0,
+    "accepts": 23.0,
+    "expected": 62.35,
+    "lowrisk_oar": 0.89
+   },
+   "VAUV": {
+    "oar": 1.97,
+    "ci95": [
+     1.7,
+     2.27
+    ],
+    "offers": 8595.0,
+    "accepts": 182.0,
+    "expected": 91.37,
+    "lowrisk_oar": 1.39
+   },
+   "TXDR": {
+    "oar": 2.98,
+    "ci95": [
+     2.22,
+     3.84
+    ],
+    "offers": 1550.0,
+    "accepts": 50.0,
+    "expected": 15.47,
+    "lowrisk_oar": 1.33
+   },
+   "PALV": {
+    "oar": 0.94,
+    "ci95": [
+     0.78,
+     1.13
+    ],
+    "offers": 10580.0,
+    "accepts": 109.0,
+    "expected": 115.7,
+    "lowrisk_oar": 1.04
+   },
+   "MIHF": {
+    "oar": 1.05,
+    "ci95": [
+     0.85,
+     1.27
+    ],
+    "offers": 5458.0,
+    "accepts": 95.0,
+    "expected": 90.58,
+    "lowrisk_oar": 0.98
+   },
+   "NYCP": {
+    "oar": 1.2,
+    "ci95": [
+     0.99,
+     1.42
+    ],
+    "offers": 4452.0,
+    "accepts": 113.0,
+    "expected": 94.14,
+    "lowrisk_oar": 0.94
+   },
+   "NYNS": {
+    "oar": 1.31,
+    "ci95": [
+     1.1,
+     1.53
+    ],
+    "offers": 23453.0,
+    "accepts": 140.0,
+    "expected": 106.42,
+    "lowrisk_oar": 1.23
+   },
+   "IAIV": {
+    "oar": 0.32,
+    "ci95": [
+     0.22,
+     0.43
+    ],
+    "offers": 8661.0,
+    "accepts": 35.0,
+    "expected": 114.59,
+    "lowrisk_oar": 0.66
+   },
+   "SCLA": {
+    "oar": 2.14,
+    "ci95": [
+     1.78,
+     2.53
+    ],
+    "offers": 2406.0,
+    "accepts": 121.0,
+    "expected": 55.49,
+    "lowrisk_oar": 1.43
+   },
+   "MOBH": {
+    "oar": 1.3,
+    "ci95": [
+     1.15,
+     1.46
+    ],
+    "offers": 16034.0,
+    "accepts": 267.0,
+    "expected": 205.32,
+    "lowrisk_oar": 1.12
+   },
+   "OKSJ": {
+    "oar": 0.53,
+    "ci95": [
+     0.37,
+     0.72
+    ],
+    "offers": 3212.0,
+    "accepts": 34.0,
+    "expected": 65.69,
+    "lowrisk_oar": 0.73
+   },
+   "TNST": {
+    "oar": 2.12,
+    "ci95": [
+     1.79,
+     2.47
+    ],
+    "offers": 8086.0,
+    "accepts": 149.0,
+    "expected": 69.27,
+    "lowrisk_oar": 0.7
+   },
+   "TXPL": {
+    "oar": 0.99,
+    "ci95": [
+     0.79,
+     1.21
+    ],
+    "offers": 7690.0,
+    "accepts": 84.0,
+    "expected": 84.62,
+    "lowrisk_oar": 1.0
+   },
+   "FLUF": {
+    "oar": 0.99,
+    "ci95": [
+     0.82,
+     1.17
+    ],
+    "offers": 11593.0,
+    "accepts": 120.0,
+    "expected": 121.28,
+    "lowrisk_oar": 1.51
+   },
+   "WIUW": {
+    "oar": 1.14,
+    "ci95": [
+     0.98,
+     1.32
+    ],
+    "offers": 12722.0,
+    "accepts": 168.0,
+    "expected": 147.05,
+    "lowrisk_oar": 1.15
+   },
+   "CTHH": {
+    "oar": 1.43,
+    "ci95": [
+     1.1,
+     1.81
+    ],
+    "offers": 4417.0,
+    "accepts": 60.0,
+    "expected": 41.29,
+    "lowrisk_oar": 2.09
+   },
+   "PAPT": {
+    "oar": 0.9,
+    "ci95": [
+     0.72,
+     1.09
+    ],
+    "offers": 9157.0,
+    "accepts": 91.0,
+    "expected": 101.62,
+    "lowrisk_oar": 1.05
+   },
+   "ILNM": {
+    "oar": 1.55,
+    "ci95": [
+     1.36,
+     1.76
+    ],
+    "offers": 8417.0,
+    "accepts": 229.0,
+    "expected": 146.85,
+    "lowrisk_oar": 1.26
+   },
+   "NYDS": {
+    "oar": 1.09,
+    "ci95": [
+     0.78,
+     1.44
+    ],
+    "offers": 2527.0,
+    "accepts": 40.0,
+    "expected": 36.67,
+    "lowrisk_oar": 0.95
+   },
+   "OHUH": {
+    "oar": 2.23,
+    "ci95": [
+     1.89,
+     2.6
+    ],
+    "offers": 3207.0,
+    "accepts": 149.0,
+    "expected": 65.82,
+    "lowrisk_oar": 1.7
+   },
+   "AZMC": {
+    "oar": 1.4,
+    "ci95": [
+     1.25,
+     1.55
+    ],
+    "offers": 33662.0,
+    "accepts": 334.0,
+    "expected": 238.25,
+    "lowrisk_oar": 1.24
+   },
+   "MABI": {
+    "oar": 0.94,
+    "ci95": [
+     0.68,
+     1.23
+    ],
+    "offers": 2680.0,
+    "accepts": 42.0,
+    "expected": 45.03,
+    "lowrisk_oar": 1.44
+   },
+   "NYSB": {
+    "oar": 0.96,
+    "ci95": [
+     0.71,
+     1.25
+    ],
+    "offers": 9814.0,
+    "accepts": 47.0,
+    "expected": 49.04,
+    "lowrisk_oar": 0.7
+   },
+   "ORUO": {
+    "oar": 0.86,
+    "ci95": [
+     0.71,
+     1.02
+    ],
+    "offers": 3853.0,
+    "accepts": 114.0,
+    "expected": 133.37,
+    "lowrisk_oar": 1.15
+   },
+   "SCPG": {
+    "oar": 0.68,
+    "ci95": [
+     0.56,
+     0.81
+    ],
+    "offers": 12080.0,
+    "accepts": 114.0,
+    "expected": 169.39,
+    "lowrisk_oar": 1.0
+   },
+   "MNMC": {
+    "oar": 0.94,
+    "ci95": [
+     0.78,
+     1.11
+    ],
+    "offers": 11465.0,
+    "accepts": 122.0,
+    "expected": 130.42,
+    "lowrisk_oar": 0.85
+   },
+   "NJSB": {
+    "oar": 2.39,
+    "ci95": [
+     2.13,
+     2.67
+    ],
+    "offers": 20454.0,
+    "accepts": 300.0,
+    "expected": 124.41,
+    "lowrisk_oar": 1.85
+   },
+   "PAAE": {
+    "oar": 0.86,
+    "ci95": [
+     0.66,
+     1.08
+    ],
+    "offers": 2806.0,
+    "accepts": 61.0,
+    "expected": 71.67,
+    "lowrisk_oar": 0.67
+   },
+   "NCMH": {
+    "oar": 0.89,
+    "ci95": [
+     0.75,
+     1.03
+    ],
+    "offers": 21384.0,
+    "accepts": 158.0,
+    "expected": 178.75,
+    "lowrisk_oar": 0.79
+   },
+   "PAVA": {
+    "oar": 0.39,
+    "ci95": [
+     0.28,
+     0.52
+    ],
+    "offers": 2052.0,
+    "accepts": 42.0,
+    "expected": 110.45,
+    "lowrisk_oar": 0.61
+   },
+   "DCGW": {
+    "oar": 0.34,
+    "ci95": [
+     0.24,
+     0.46
+    ],
+    "offers": 5783.0,
+    "accepts": 33.0,
+    "expected": 100.45,
+    "lowrisk_oar": 0.9
+   },
+   "NJRW": {
+    "oar": 0.48,
+    "ci95": [
+     0.36,
+     0.61
+    ],
+    "offers": 11680.0,
+    "accepts": 52.0,
+    "expected": 111.17,
+    "lowrisk_oar": 0.82
+   },
+   "PATJ": {
+    "oar": 0.53,
+    "ci95": [
+     0.42,
+     0.66
+    ],
+    "offers": 4144.0,
+    "accepts": 75.0,
+    "expected": 142.14,
+    "lowrisk_oar": 1.13
+   },
+   "NJHK": {
+    "oar": 2.04,
+    "ci95": [
+     1.8,
+     2.29
+    ],
+    "offers": 10206.0,
+    "accepts": 263.0,
+    "expected": 127.88,
+    "lowrisk_oar": 0.97
+   },
+   "CASH": {
+    "oar": 0.77,
+    "ci95": [
+     0.61,
+     0.96
+    ],
+    "offers": 11007.0,
+    "accepts": 71.0,
+    "expected": 92.36,
+    "lowrisk_oar": 0.79
+   },
+   "CASJ": {
+    "oar": 1.26,
+    "ci95": [
+     1.01,
+     1.55
+    ],
+    "offers": 3330.0,
+    "accepts": 83.0,
+    "expected": 65.31,
+    "lowrisk_oar": 0.94
+   },
+   "CASD": {
+    "oar": 1.16,
+    "ci95": [
+     0.96,
+     1.38
+    ],
+    "offers": 15837.0,
+    "accepts": 117.0,
+    "expected": 100.43,
+    "lowrisk_oar": 0.91
+   },
+   "CAUC": {
+    "oar": 1.37,
+    "ci95": [
+     1.21,
+     1.54
+    ],
+    "offers": 74008.0,
+    "accepts": 255.0,
+    "expected": 185.83,
+    "lowrisk_oar": 1.52
+   },
+   "OHCO": {
+    "oar": 5.1,
+    "ci95": [
+     4.4,
+     5.85
+    ],
+    "offers": 714.0,
+    "accepts": 188.0,
+    "expected": 35.29,
+    "lowrisk_oar": 2.71
+   },
+   "WISE": {
+    "oar": 0.81,
+    "ci95": [
+     0.66,
+     0.98
+    ],
+    "offers": 6289.0,
+    "accepts": 96.0,
+    "expected": 118.48,
+    "lowrisk_oar": 1.27
+   },
+   "MNUM": {
+    "oar": 1.17,
+    "ci95": [
+     0.98,
+     1.38
+    ],
+    "offers": 4563.0,
+    "accepts": 129.0,
+    "expected": 109.94,
+    "lowrisk_oar": 1.2
+   },
+   "OHCC": {
+    "oar": 1.62,
+    "ci95": [
+     1.43,
+     1.82
+    ],
+    "offers": 13394.0,
+    "accepts": 263.0,
+    "expected": 161.94,
+    "lowrisk_oar": 1.25
+   },
+   "NYUC": {
+    "oar": 1.34,
+    "ci95": [
+     1.17,
+     1.52
+    ],
+    "offers": 10243.0,
+    "accepts": 222.0,
+    "expected": 164.8,
+    "lowrisk_oar": 1.14
+   },
+   "CTYN": {
+    "oar": 0.63,
+    "ci95": [
+     0.49,
+     0.8
+    ],
+    "offers": 10583.0,
+    "accepts": 61.0,
+    "expected": 97.3,
+    "lowrisk_oar": 0.57
+   },
+   "MAMG": {
+    "oar": 0.98,
+    "ci95": [
+     0.83,
+     1.15
+    ],
+    "offers": 19419.0,
+    "accepts": 139.0,
+    "expected": 141.66,
+    "lowrisk_oar": 1.54
+   },
+   "PAGM": {
+    "oar": 0.37,
+    "ci95": [
+     0.27,
+     0.49
+    ],
+    "offers": 5474.0,
+    "accepts": 44.0,
+    "expected": 121.25,
+    "lowrisk_oar": 0.71
+   },
+   "MANM": {
+    "oar": 0.86,
+    "ci95": [
+     0.59,
+     1.18
+    ],
+    "offers": 2522.0,
+    "accepts": 30.0,
+    "expected": 35.13,
+    "lowrisk_oar": 0.35
+   },
+   "MAUM": {
+    "oar": 0.88,
+    "ci95": [
+     0.69,
+     1.1
+    ],
+    "offers": 4143.0,
+    "accepts": 69.0,
+    "expected": 78.38,
+    "lowrisk_oar": 0.96
+   },
+   "MEMC": {
+    "oar": 0.99,
+    "ci95": [
+     0.56,
+     1.56
+    ],
+    "offers": 301.0,
+    "accepts": 13.0,
+    "expected": 13.1,
+    "lowrisk_oar": 0.92
+   },
+   "NYWC": {
+    "oar": 1.17,
+    "ci95": [
+     0.87,
+     1.51
+    ],
+    "offers": 2983.0,
+    "accepts": 48.0,
+    "expected": 40.79,
+    "lowrisk_oar": 1.12
+   },
+   "MALC": {
+    "oar": 0.67,
+    "ci95": [
+     0.47,
+     0.9
+    ],
+    "offers": 4748.0,
+    "accepts": 34.0,
+    "expected": 52.02,
+    "lowrisk_oar": 1.05
+   },
+   "NYVA": {
+    "oar": 0.61,
+    "ci95": [
+     0.38,
+     0.89
+    ],
+    "offers": 1403.0,
+    "accepts": 20.0,
+    "expected": 34.21,
+    "lowrisk_oar": 0.62
+   },
+   "PATU": {
+    "oar": 0.21,
+    "ci95": [
+     0.15,
+     0.29
+    ],
+    "offers": 6981.0,
+    "accepts": 35.0,
+    "expected": 172.26,
+    "lowrisk_oar": 0.5
+   },
+   "DECC": {
+    "oar": 1.2,
+    "ci95": [
+     0.9,
+     1.56
+    ],
+    "offers": 3153.0,
+    "accepts": 49.0,
+    "expected": 40.36,
+    "lowrisk_oar": 1.26
+   },
+   "MABU": {
+    "oar": 0.69,
+    "ci95": [
+     0.46,
+     0.96
+    ],
+    "offers": 1444.0,
+    "accepts": 26.0,
+    "expected": 38.73,
+    "lowrisk_oar": 0.92
+   },
+   "NYUM": {
+    "oar": 0.82,
+    "ci95": [
+     0.63,
+     1.03
+    ],
+    "offers": 7184.0,
+    "accepts": 62.0,
+    "expected": 76.23,
+    "lowrisk_oar": 1.39
+   },
+   "PAUP": {
+    "oar": 1.38,
+    "ci95": [
+     1.19,
+     1.58
+    ],
+    "offers": 9518.0,
+    "accepts": 190.0,
+    "expected": 137.49,
+    "lowrisk_oar": 1.08
+   },
+   "NYMA": {
+    "oar": 1.89,
+    "ci95": [
+     1.62,
+     2.18
+    ],
+    "offers": 10194.0,
+    "accepts": 174.0,
+    "expected": 90.97,
+    "lowrisk_oar": 1.82
+   },
+   "RIRH": {
+    "oar": 1.13,
+    "ci95": [
+     0.76,
+     1.55
+    ],
+    "offers": 1444.0,
+    "accepts": 29.0,
+    "expected": 25.55,
+    "lowrisk_oar": 1.01
+   },
+   "MABS": {
+    "oar": 2.16,
+    "ci95": [
+     1.63,
+     2.77
+    ],
+    "offers": 970.0,
+    "accepts": 53.0,
+    "expected": 23.48,
+    "lowrisk_oar": 1.82
+   },
+   "NJLL": {
+    "oar": 1.76,
+    "ci95": [
+     1.44,
+     2.12
+    ],
+    "offers": 4709.0,
+    "accepts": 99.0,
+    "expected": 55.31,
+    "lowrisk_oar": 0.92
+   },
+   "DEAI": {
+    "oar": 0.7,
+    "ci95": [
+     0.26,
+     1.36
+    ],
+    "offers": 43.0,
+    "accepts": 4.0,
+    "expected": 6.58,
+    "lowrisk_oar": 0.73
+   },
+   "PACP": {
+    "oar": 0.65,
+    "ci95": [
+     0.37,
+     1.01
+    ],
+    "offers": 276.0,
+    "accepts": 14.0,
+    "expected": 22.61,
+    "lowrisk_oar": 0.72
+   },
+   "VANG": {
+    "oar": 0.78,
+    "ci95": [
+     0.62,
+     0.97
+    ],
+    "offers": 6961.0,
+    "accepts": 74.0,
+    "expected": 94.9,
+    "lowrisk_oar": 0.71
+   },
+   "PAHH": {
+    "oar": 0.67,
+    "ci95": [
+     0.5,
+     0.87
+    ],
+    "offers": 4574.0,
+    "accepts": 47.0,
+    "expected": 71.0,
+    "lowrisk_oar": 0.92
+   },
+   "SDMK": {
+    "oar": 0.26,
+    "ci95": [
+     0.16,
+     0.37
+    ],
+    "offers": 3263.0,
+    "accepts": 22.0,
+    "expected": 91.42,
+    "lowrisk_oar": 0.48
+   },
+   "NEUN": {
+    "oar": 1.17,
+    "ci95": [
+     0.98,
+     1.38
+    ],
+    "offers": 7098.0,
+    "accepts": 131.0,
+    "expected": 111.36,
+    "lowrisk_oar": 1.28
+   },
+   "MOLH": {
+    "oar": 0.68,
+    "ci95": [
+     0.52,
+     0.88
+    ],
+    "offers": 3107.0,
+    "accepts": 53.0,
+    "expected": 78.42,
+    "lowrisk_oar": 0.78
+   },
+   "GAMC": {
+    "oar": 0.96,
+    "ci95": [
+     0.76,
+     1.17
+    ],
+    "offers": 5672.0,
+    "accepts": 82.0,
+    "expected": 85.86,
+    "lowrisk_oar": 0.88
+   },
+   "SCMU": {
+    "oar": 1.42,
+    "ci95": [
+     1.26,
+     1.59
+    ],
+    "offers": 18581.0,
+    "accepts": 275.0,
+    "expected": 193.44,
+    "lowrisk_oar": 1.36
+   },
+   "CACL": {
+    "oar": 0.76,
+    "ci95": [
+     0.42,
+     1.21
+    ],
+    "offers": 402.0,
+    "accepts": 12.0,
+    "expected": 16.35,
+    "lowrisk_oar": 0.77
+   },
+   "CAMB": {
+    "oar": 1.4,
+    "ci95": [
+     0.77,
+     2.23
+    ],
+    "offers": 101.0,
+    "accepts": 12.0,
+    "expected": 7.98,
+    "lowrisk_oar": 1.38
+   },
+   "CAPC": {
+    "oar": 1.87,
+    "ci95": [
+     1.23,
+     2.64
+    ],
+    "offers": 176.0,
+    "accepts": 25.0,
+    "expected": 12.45,
+    "lowrisk_oar": 1.84
+   },
+   "NYFL": {
+    "oar": 0.83,
+    "ci95": [
+     0.66,
+     1.03
+    ],
+    "offers": 7181.0,
+    "accepts": 74.0,
+    "expected": 89.2,
+    "lowrisk_oar": 0.97
+   },
+   "FLTG": {
+    "oar": 1.75,
+    "ci95": [
+     1.58,
+     1.93
+    ],
+    "offers": 22735.0,
+    "accepts": 388.0,
+    "expected": 221.04,
+    "lowrisk_oar": 1.51
+   },
+   "FLJM": {
+    "oar": 2.02,
+    "ci95": [
+     1.77,
+     2.29
+    ],
+    "offers": 12545.0,
+    "accepts": 237.0,
+    "expected": 116.26,
+    "lowrisk_oar": 1.32
+   },
+   "FLSL": {
+    "oar": 0.88,
+    "ci95": [
+     0.74,
+     1.04
+    ],
+    "offers": 10365.0,
+    "accepts": 137.0,
+    "expected": 155.22,
+    "lowrisk_oar": 0.89
+   },
+   "TXBC": {
+    "oar": 1.41,
+    "ci95": [
+     1.17,
+     1.68
+    ],
+    "offers": 10709.0,
+    "accepts": 114.0,
+    "expected": 80.03,
+    "lowrisk_oar": 1.19
+   },
+   "ILUC": {
+    "oar": 0.73,
+    "ci95": [
+     0.62,
+     0.86
+    ],
+    "offers": 9873.0,
+    "accepts": 141.0,
+    "expected": 192.77,
+    "lowrisk_oar": 0.58
+   },
+   "INSV": {
+    "oar": 0.59,
+    "ci95": [
+     0.46,
+     0.75
+    ],
+    "offers": 2953.0,
+    "accepts": 61.0,
+    "expected": 104.0,
+    "lowrisk_oar": 0.9
+   },
+   "ILCH": {
+    "oar": 0.39,
+    "ci95": [
+     0.27,
+     0.55
+    ],
+    "offers": 1895.0,
+    "accepts": 29.0,
+    "expected": 76.57,
+    "lowrisk_oar": 0.95
+   },
+   "INIM": {
+    "oar": 0.56,
+    "ci95": [
+     0.47,
+     0.66
+    ],
+    "offers": 16796.0,
+    "accepts": 136.0,
+    "expected": 244.94,
+    "lowrisk_oar": 0.71
+   },
+   "MIBH": {
+    "oar": 0.51,
+    "ci95": [
+     0.39,
+     0.65
+    ],
+    "offers": 10663.0,
+    "accepts": 58.0,
+    "expected": 114.51,
+    "lowrisk_oar": 1.06
+   },
+   "ILVA": {
+    "oar": 0.56,
+    "ci95": [
+     0.45,
+     0.69
+    ],
+    "offers": 8618.0,
+    "accepts": 86.0,
+    "expected": 154.26,
+    "lowrisk_oar": 1.13
+   },
+   "TXSW": {
+    "oar": 1.0,
+    "ci95": [
+     0.73,
+     1.32
+    ],
+    "offers": 7608.0,
+    "accepts": 43.0,
+    "expected": 42.86,
+    "lowrisk_oar": 0.98
+   },
+   "TNMH": {
+    "oar": 1.27,
+    "ci95": [
+     1.09,
+     1.45
+    ],
+    "offers": 12853.0,
+    "accepts": 191.0,
+    "expected": 150.34,
+    "lowrisk_oar": 1.18
+   },
+   "NCCM": {
+    "oar": 0.69,
+    "ci95": [
+     0.57,
+     0.82
+    ],
+    "offers": 14078.0,
+    "accepts": 119.0,
+    "expected": 173.36,
+    "lowrisk_oar": 1.12
+   },
+   "NCDU": {
+    "oar": 1.35,
+    "ci95": [
+     1.15,
+     1.57
+    ],
+    "offers": 15993.0,
+    "accepts": 157.0,
+    "expected": 115.76,
+    "lowrisk_oar": 1.31
+   },
+   "NCEC": {
+    "oar": 1.24,
+    "ci95": [
+     1.02,
+     1.49
+    ],
+    "offers": 4439.0,
+    "accepts": 102.0,
+    "expected": 81.65,
+    "lowrisk_oar": 0.94
+   },
+   "VAHD": {
+    "oar": 1.01,
+    "ci95": [
+     0.73,
+     1.34
+    ],
+    "offers": 1999.0,
+    "accepts": 40.0,
+    "expected": 39.6,
+    "lowrisk_oar": 1.22
+   },
+   "TXTC": {
+    "oar": 1.21,
+    "ci95": [
+     0.85,
+     1.63
+    ],
+    "offers": 402.0,
+    "accepts": 35.0,
+    "expected": 28.49,
+    "lowrisk_oar": 1.26
+   },
+   "TXMH": {
+    "oar": 0.69,
+    "ci95": [
+     0.57,
+     0.82
+    ],
+    "offers": 13607.0,
+    "accepts": 112.0,
+    "expected": 163.32,
+    "lowrisk_oar": 0.72
+   },
+   "TXJS": {
+    "oar": 0.98,
+    "ci95": [
+     0.74,
+     1.25
+    ],
+    "offers": 6207.0,
+    "accepts": 55.0,
+    "expected": 56.4,
+    "lowrisk_oar": 0.69
+   },
+   "TXPM": {
+    "oar": 1.1,
+    "ci95": [
+     0.78,
+     1.48
+    ],
+    "offers": 1250.0,
+    "accepts": 36.0,
+    "expected": 32.49,
+    "lowrisk_oar": 1.13
+   },
+   "TXTX": {
+    "oar": 1.27,
+    "ci95": [
+     1.07,
+     1.48
+    ],
+    "offers": 11979.0,
+    "accepts": 147.0,
+    "expected": 115.65,
+    "lowrisk_oar": 1.04
+   },
+   "TXAS": {
+    "oar": 0.97,
+    "ci95": [
+     0.72,
+     1.25
+    ],
+    "offers": 3841.0,
+    "accepts": 49.0,
+    "expected": 50.79,
+    "lowrisk_oar": 0.67
+   },
+   "OKBC": {
+    "oar": 0.67,
+    "ci95": [
+     0.52,
+     0.84
+    ],
+    "offers": 5856.0,
+    "accepts": 64.0,
+    "expected": 96.55,
+    "lowrisk_oar": 0.61
+   },
+   "OKMD": {
+    "oar": 0.51,
+    "ci95": [
+     0.36,
+     0.69
+    ],
+    "offers": 1787.0,
+    "accepts": 33.0,
+    "expected": 66.59,
+    "lowrisk_oar": 0.72
+   },
+   "TXFW": {
+    "oar": 1.07,
+    "ci95": [
+     0.81,
+     1.37
+    ],
+    "offers": 2302.0,
+    "accepts": 53.0,
+    "expected": 49.25,
+    "lowrisk_oar": 0.92
+   },
+   "FLLM": {
+    "oar": 0.65,
+    "ci95": [
+     0.48,
+     0.84
+    ],
+    "offers": 9502.0,
+    "accepts": 47.0,
+    "expected": 73.83,
+    "lowrisk_oar": 1.09
+   },
+   "GAEM": {
+    "oar": 1.44,
+    "ci95": [
+     1.29,
+     1.6
+    ],
+    "offers": 39605.0,
+    "accepts": 337.0,
+    "expected": 233.54,
+    "lowrisk_oar": 1.31
+   },
+   "TXHS": {
+    "oar": 1.09,
+    "ci95": [
+     0.93,
+     1.26
+    ],
+    "offers": 48350.0,
+    "accepts": 166.0,
+    "expected": 151.71,
+    "lowrisk_oar": 1.16
+   },
+   "TXSP": {
+    "oar": 2.12,
+    "ci95": [
+     1.79,
+     2.48
+    ],
+    "offers": 4276.0,
+    "accepts": 142.0,
+    "expected": 65.89,
+    "lowrisk_oar": 0.79
+   },
+   "UTLD": {
+    "oar": 2.16,
+    "ci95": [
+     1.83,
+     2.52
+    ],
+    "offers": 2630.0,
+    "accepts": 150.0,
+    "expected": 68.36,
+    "lowrisk_oar": 1.68
+   },
+   "ARUA": {
+    "oar": 1.25,
+    "ci95": [
+     1.06,
+     1.46
+    ],
+    "offers": 6563.0,
+    "accepts": 147.0,
+    "expected": 117.43,
+    "lowrisk_oar": 1.09
+   },
+   "IAIM": {
+    "oar": 0.99,
+    "ci95": [
+     0.76,
+     1.25
+    ],
+    "offers": 3144.0,
+    "accepts": 59.0,
+    "expected": 59.7,
+    "lowrisk_oar": 1.28
+   },
+   "WVCA": {
+    "oar": 1.96,
+    "ci95": [
+     1.55,
+     2.43
+    ],
+    "offers": 2352.0,
+    "accepts": 74.0,
+    "expected": 36.71,
+    "lowrisk_oar": 1.24
+   },
+   "PAAG": {
+    "oar": 1.09,
+    "ci95": [
+     0.87,
+     1.35
+    ],
+    "offers": 5137.0,
+    "accepts": 77.0,
+    "expected": 70.26,
+    "lowrisk_oar": 1.22
+   },
+   "FLMR": {
+    "oar": 1.8,
+    "ci95": [
+     1.53,
+     2.09
+    ],
+    "offers": 4949.0,
+    "accepts": 156.0,
+    "expected": 85.65,
+    "lowrisk_oar": 0.98
+   },
+   "COUC": {
+    "oar": 1.07,
+    "ci95": [
+     0.91,
+     1.24
+    ],
+    "offers": 12402.0,
+    "accepts": 163.0,
+    "expected": 152.31,
+    "lowrisk_oar": 1.13
+   },
+   "ORVA": {
+    "oar": 0.56,
+    "ci95": [
+     0.42,
+     0.71
+    ],
+    "offers": 2444.0,
+    "accepts": 57.0,
+    "expected": 103.83,
+    "lowrisk_oar": 0.63
+   },
+   "FLHM": {
+    "oar": 0.18,
+    "ci95": [
+     0.07,
+     0.35
+    ],
+    "offers": 1462.0,
+    "accepts": 4.0,
+    "expected": 31.08,
+    "lowrisk_oar": 0.58
+   },
+   "MORH": {
+    "oar": 0.59,
+    "ci95": [
+     0.45,
+     0.75
+    ],
+    "offers": 5215.0,
+    "accepts": 57.0,
+    "expected": 97.83,
+    "lowrisk_oar": 1.13
+   },
+   "COSL": {
+    "oar": 0.61,
+    "ci95": [
+     0.46,
+     0.78
+    ],
+    "offers": 3417.0,
+    "accepts": 53.0,
+    "expected": 88.09,
+    "lowrisk_oar": 0.76
+   },
+   "AZUA": {
+    "oar": 0.65,
+    "ci95": [
+     0.48,
+     0.85
+    ],
+    "offers": 5143.0,
+    "accepts": 45.0,
+    "expected": 70.23,
+    "lowrisk_oar": 0.41
+   },
+   "AZSJ": {
+    "oar": 0.67,
+    "ci95": [
+     0.49,
+     0.88
+    ],
+    "offers": 1698.0,
+    "accepts": 43.0,
+    "expected": 64.82,
+    "lowrisk_oar": 0.62
+   },
+   "WASM": {
+    "oar": 0.5,
+    "ci95": [
+     0.41,
+     0.6
+    ],
+    "offers": 12081.0,
+    "accepts": 102.0,
+    "expected": 205.71,
+    "lowrisk_oar": 0.78
+   },
+   "WVWU": {
+    "oar": 0.6,
+    "ci95": [
+     0.3,
+     1.01
+    ],
+    "offers": 606.0,
+    "accepts": 9.0,
+    "expected": 16.25,
+    "lowrisk_oar": 0.93
+   },
+   "KSUK": {
+    "oar": 1.72,
+    "ci95": [
+     1.44,
+     2.03
+    ],
+    "offers": 3721.0,
+    "accepts": 132.0,
+    "expected": 75.73,
+    "lowrisk_oar": 1.52
+   },
+   "DCWR": {
+    "oar": 0.66,
+    "ci95": [
+     0.41,
+     0.97
+    ],
+    "offers": 746.0,
+    "accepts": 19.0,
+    "expected": 29.71,
+    "lowrisk_oar": 1.48
+   },
+   "COPM": {
+    "oar": 0.58,
+    "ci95": [
+     0.45,
+     0.73
+    ],
+    "offers": 3682.0,
+    "accepts": 64.0,
+    "expected": 111.92,
+    "lowrisk_oar": 0.79
+   },
+   "TNUK": {
+    "oar": 0.68,
+    "ci95": [
+     0.51,
+     0.87
+    ],
+    "offers": 5165.0,
+    "accepts": 52.0,
+    "expected": 77.59,
+    "lowrisk_oar": 0.91
+   },
+   "OHUC": {
+    "oar": 1.41,
+    "ci95": [
+     1.18,
+     1.65
+    ],
+    "offers": 4963.0,
+    "accepts": 132.0,
+    "expected": 93.28,
+    "lowrisk_oar": 1.0
+   },
+   "ILUI": {
+    "oar": 1.07,
+    "ci95": [
+     0.92,
+     1.23
+    ],
+    "offers": 15298.0,
+    "accepts": 190.0,
+    "expected": 177.32,
+    "lowrisk_oar": 0.83
+   },
+   "OHTC": {
+    "oar": 0.35,
+    "ci95": [
+     0.22,
+     0.5
+    ],
+    "offers": 2971.0,
+    "accepts": 22.0,
+    "expected": 67.52,
+    "lowrisk_oar": 0.77
+   },
+   "ILPL": {
+    "oar": 0.53,
+    "ci95": [
+     0.42,
+     0.64
+    ],
+    "offers": 9663.0,
+    "accepts": 90.0,
+    "expected": 172.87,
+    "lowrisk_oar": 0.79
+   },
+   "MISM": {
+    "oar": 1.23,
+    "ci95": [
+     0.95,
+     1.53
+    ],
+    "offers": 3052.0,
+    "accepts": 67.0,
+    "expected": 54.23,
+    "lowrisk_oar": 0.99
+   },
+   "NYCC": {
+    "oar": 1.02,
+    "ci95": [
+     0.49,
+     1.74
+    ],
+    "offers": 167.0,
+    "accepts": 8.0,
+    "expected": 7.81,
+    "lowrisk_oar": 1.28
+   },
+   "UTMC": {
+    "oar": 0.96,
+    "ci95": [
+     0.78,
+     1.15
+    ],
+    "offers": 6560.0,
+    "accepts": 106.0,
+    "expected": 110.92,
+    "lowrisk_oar": 0.98
+   },
+   "NMAQ": {
+    "oar": 0.69,
+    "ci95": [
+     0.49,
+     0.92
+    ],
+    "offers": 1878.0,
+    "accepts": 38.0,
+    "expected": 55.97,
+    "lowrisk_oar": 0.89
+   },
+   "ALCH": {
+    "oar": 0.89,
+    "ci95": [
+     0.43,
+     1.51
+    ],
+    "offers": 110.0,
+    "accepts": 8.0,
+    "expected": 9.28,
+    "lowrisk_oar": 0.94
+   },
+   "TNLB": {
+    "oar": 1.19,
+    "ci95": [
+     0.54,
+     2.08
+    ],
+    "offers": 69.0,
+    "accepts": 7.0,
+    "expected": 5.56,
+    "lowrisk_oar": 1.08
+   },
+   "PASC": {
+    "oar": 0.29,
+    "ci95": [
+     0.06,
+     0.71
+    ],
+    "offers": 105.0,
+    "accepts": 1.0,
+    "expected": 8.17,
+    "lowrisk_oar": 0.31
+   },
+   "DCCH": {
+    "oar": 0.49,
+    "ci95": [
+     0.1,
+     1.17
+    ],
+    "offers": 55.0,
+    "accepts": 1.0,
+    "expected": 4.17,
+    "lowrisk_oar": 0.55
+   },
+   "MACH": {
+    "oar": 1.2,
+    "ci95": [
+     0.71,
+     1.81
+    ],
+    "offers": 223.0,
+    "accepts": 16.0,
+    "expected": 13.0,
+    "lowrisk_oar": 1.28
+   },
+   "PACH": {
+    "oar": 1.36,
+    "ci95": [
+     0.59,
+     2.44
+    ],
+    "offers": 57.0,
+    "accepts": 6.0,
+    "expected": 3.9,
+    "lowrisk_oar": 1.3
+   },
+   "NMPH": {
+    "oar": 0.33,
+    "ci95": [
+     0.21,
+     0.48
+    ],
+    "offers": 2516.0,
+    "accepts": 22.0,
+    "expected": 70.07,
+    "lowrisk_oar": 0.45
+   },
+   "TXLP": {
+    "oar": 0.74,
+    "ci95": [
+     0.53,
+     0.97
+    ],
+    "offers": 2973.0,
+    "accepts": 42.0,
+    "expected": 57.86,
+    "lowrisk_oar": 0.69
+   },
+   "UTPC": {
+    "oar": 1.48,
+    "ci95": [
+     0.71,
+     2.52
+    ],
+    "offers": 70.0,
+    "accepts": 8.0,
+    "expected": 4.77,
+    "lowrisk_oar": 1.36
+   },
+   "COCH": {
+    "oar": 1.58,
+    "ci95": [
+     0.64,
+     2.95
+    ],
+    "offers": 17.0,
+    "accepts": 5.0,
+    "expected": 2.42,
+    "lowrisk_oar": 1.53
+   },
+   "NYEC": {
+    "oar": 2.57,
+    "ci95": [
+     2.13,
+     3.06
+    ],
+    "offers": 1316.0,
+    "accepts": 115.0,
+    "expected": 43.51,
+    "lowrisk_oar": 1.29
+   },
+   "SDSV": {
+    "oar": 0.59,
+    "ci95": [
+     0.36,
+     0.87
+    ],
+    "offers": 830.0,
+    "accepts": 18.0,
+    "expected": 31.99,
+    "lowrisk_oar": 0.55
+   },
+   "TXCM": {
+    "oar": 1.03,
+    "ci95": [
+     0.52,
+     1.73
+    ],
+    "offers": 86.0,
+    "accepts": 9.0,
+    "expected": 8.64,
+    "lowrisk_oar": 1.11
+   },
+   "TXDC": {
+    "oar": 0.93,
+    "ci95": [
+     0.34,
+     1.82
+    ],
+    "offers": 47.0,
+    "accepts": 4.0,
+    "expected": 4.43,
+    "lowrisk_oar": 0.99
+   },
+   "TXDS": {
+    "oar": 0.25,
+    "ci95": [
+     0.13,
+     0.41
+    ],
+    "offers": 1642.0,
+    "accepts": 11.0,
+    "expected": 49.65,
+    "lowrisk_oar": 0.34
+   },
+   "TXHI": {
+    "oar": 0.47,
+    "ci95": [
+     0.38,
+     0.58
+    ],
+    "offers": 19536.0,
+    "accepts": 87.0,
+    "expected": 185.44,
+    "lowrisk_oar": 0.65
+   },
+   "TXUC": {
+    "oar": 2.62,
+    "ci95": [
+     1.43,
+     4.16
+    ],
+    "offers": 39.0,
+    "accepts": 12.0,
+    "expected": 3.35,
+    "lowrisk_oar": 2.55
+   },
+   "KYUK": {
+    "oar": 0.44,
+    "ci95": [
+     0.34,
+     0.56
+    ],
+    "offers": 5944.0,
+    "accepts": 58.0,
+    "expected": 134.32,
+    "lowrisk_oar": 0.67
+   },
+   "TNEM": {
+    "oar": 0.38,
+    "ci95": [
+     0.25,
+     0.53
+    ],
+    "offers": 2438.0,
+    "accepts": 24.0,
+    "expected": 67.02,
+    "lowrisk_oar": 0.51
+   },
+   "ILCM": {
+    "oar": 1.98,
+    "ci95": [
+     1.33,
+     2.77
+    ],
+    "offers": 99.0,
+    "accepts": 27.0,
+    "expected": 12.62,
+    "lowrisk_oar": 1.99
+   },
+   "KYJH": {
+    "oar": 0.73,
+    "ci95": [
+     0.55,
+     0.94
+    ],
+    "offers": 4151.0,
+    "accepts": 51.0,
+    "expected": 70.51,
+    "lowrisk_oar": 1.26
+   },
+   "WAVM": {
+    "oar": 0.66,
+    "ci95": [
+     0.52,
+     0.81
+    ],
+    "offers": 3386.0,
+    "accepts": 74.0,
+    "expected": 113.96,
+    "lowrisk_oar": 0.69
+   },
+   "WAUW": {
+    "oar": 1.11,
+    "ci95": [
+     0.96,
+     1.28
+    ],
+    "offers": 6287.0,
+    "accepts": 191.0,
+    "expected": 171.11,
+    "lowrisk_oar": 1.01
+   },
+   "ORGS": {
+    "oar": 0.63,
+    "ci95": [
+     0.49,
+     0.79
+    ],
+    "offers": 3693.0,
+    "accepts": 68.0,
+    "expected": 108.39,
+    "lowrisk_oar": 0.85
+   },
+   "CASU": {
+    "oar": 1.17,
+    "ci95": [
+     0.95,
+     1.41
+    ],
+    "offers": 2211.0,
+    "accepts": 99.0,
+    "expected": 84.37,
+    "lowrisk_oar": 1.21
+   },
+   "HIQM": {
+    "oar": 1.23,
+    "ci95": [
+     0.97,
+     1.52
+    ],
+    "offers": 382.0,
+    "accepts": 74.0,
+    "expected": 59.91,
+    "lowrisk_oar": 1.1
+   },
+   "ILMM": {
+    "oar": 0.43,
+    "ci95": [
+     0.26,
+     0.64
+    ],
+    "offers": 1273.0,
+    "accepts": 17.0,
+    "expected": 42.53,
+    "lowrisk_oar": 0.53
+   },
+   "AZCH": {
+    "oar": 0.66,
+    "ci95": [
+     0.3,
+     1.16
+    ],
+    "offers": 91.0,
+    "accepts": 7.0,
+    "expected": 11.63,
+    "lowrisk_oar": 0.68
+   },
+   "AZGS": {
+    "oar": 0.66,
+    "ci95": [
+     0.51,
+     0.82
+    ],
+    "offers": 5520.0,
+    "accepts": 68.0,
+    "expected": 104.79,
+    "lowrisk_oar": 0.72
+   },
+   "LACH": {
+    "oar": 0.86,
+    "ci95": [
+     0.47,
+     1.37
+    ],
+    "offers": 225.0,
+    "accepts": 12.0,
+    "expected": 14.26,
+    "lowrisk_oar": 0.99
+   },
+   "IAVA": {
+    "oar": 0.23,
+    "ci95": [
+     0.11,
+     0.38
+    ],
+    "offers": 637.0,
+    "accepts": 9.0,
+    "expected": 46.66,
+    "lowrisk_oar": 0.43
+   },
+   "ILSF": {
+    "oar": 0.62,
+    "ci95": [
+     0.45,
+     0.82
+    ],
+    "offers": 2994.0,
+    "accepts": 39.0,
+    "expected": 64.05,
+    "lowrisk_oar": 1.28
+   },
+   "OHCH": {
+    "oar": 0.51,
+    "ci95": [
+     0.27,
+     0.84
+    ],
+    "offers": 198.0,
+    "accepts": 10.0,
+    "expected": 21.4,
+    "lowrisk_oar": 0.52
+   },
+   "GAEH": {
+    "oar": 1.33,
+    "ci95": [
+     0.66,
+     2.22
+    ],
+    "offers": 46.0,
+    "accepts": 9.0,
+    "expected": 6.3,
+    "lowrisk_oar": 1.38
+   },
+   "MNHC": {
+    "oar": 0.65,
+    "ci95": [
+     0.47,
+     0.86
+    ],
+    "offers": 1804.0,
+    "accepts": 41.0,
+    "expected": 64.06,
+    "lowrisk_oar": 0.74
+   },
+   "WACH": {
+    "oar": 2.28,
+    "ci95": [
+     1.46,
+     3.28
+    ],
+    "offers": 90.0,
+    "accepts": 22.0,
+    "expected": 8.52,
+    "lowrisk_oar": 2.16
+   },
+   "MIDV": {
+    "oar": 1.45,
+    "ci95": [
+     0.39,
+     3.17
+    ],
+    "offers": 11.0,
+    "accepts": 2.0,
+    "expected": 0.77,
+    "lowrisk_oar": 1.55
+   },
+   "MOUM": {
+    "oar": 0.25,
+    "ci95": [
+     0.12,
+     0.43
+    ],
+    "offers": 492.0,
+    "accepts": 8.0,
+    "expected": 37.65,
+    "lowrisk_oar": 0.38
+   },
+   "MOSL": {
+    "oar": 0.55,
+    "ci95": [
+     0.42,
+     0.71
+    ],
+    "offers": 3457.0,
+    "accepts": 54.0,
+    "expected": 98.98,
+    "lowrisk_oar": 0.88
+   },
+   "MOCM": {
+    "oar": 0.53,
+    "ci95": [
+     0.2,
+     1.03
+    ],
+    "offers": 99.0,
+    "accepts": 4.0,
+    "expected": 9.28,
+    "lowrisk_oar": 0.59
+   },
+   "PRSJ": {
+    "oar": 1.44,
+    "ci95": [
+     1.1,
+     1.82
+    ],
+    "offers": 1016.0,
+    "accepts": 59.0,
+    "expected": 40.37,
+    "lowrisk_oar": 0.96
+   },
+   "WASH": {
+    "oar": 0.8,
+    "ci95": [
+     0.63,
+     0.98
+    ],
+    "offers": 1499.0,
+    "accepts": 80.0,
+    "expected": 100.83,
+    "lowrisk_oar": 1.05
+   },
+   "NHDH": {
+    "oar": 0.73,
+    "ci95": [
+     0.39,
+     1.18
+    ],
+    "offers": 813.0,
+    "accepts": 11.0,
+    "expected": 15.78,
+    "lowrisk_oar": 0.9
+   },
+   "MNAN": {
+    "oar": 0.51,
+    "ci95": [
+     0.33,
+     0.73
+    ],
+    "offers": 1189.0,
+    "accepts": 23.0,
+    "expected": 47.23,
+    "lowrisk_oar": 0.84
+   },
+   "FLSH": {
+    "oar": 0.31,
+    "ci95": [
+     0.2,
+     0.45
+    ],
+    "offers": 6950.0,
+    "accepts": 22.0,
+    "expected": 75.06,
+    "lowrisk_oar": 0.61
+   },
+   "WICH": {
+    "oar": 0.96,
+    "ci95": [
+     0.48,
+     1.6
+    ],
+    "offers": 129.0,
+    "accepts": 9.0,
+    "expected": 9.51,
+    "lowrisk_oar": 1.08
+   },
+   "TXDM": {
+    "oar": 0.46,
+    "ci95": [
+     0.3,
+     0.67
+    ],
+    "offers": 2804.0,
+    "accepts": 22.0,
+    "expected": 49.89,
+    "lowrisk_oar": 0.43
+   },
+   "NDSL": {
+    "oar": 1.31,
+    "ci95": [
+     0.92,
+     1.76
+    ],
+    "offers": 434.0,
+    "accepts": 35.0,
+    "expected": 26.31,
+    "lowrisk_oar": 1.26
+   },
+   "KYKC": {
+    "oar": 0.56,
+    "ci95": [
+     0.18,
+     1.14
+    ],
+    "offers": 79.0,
+    "accepts": 3.0,
+    "expected": 6.97,
+    "lowrisk_oar": 0.56
+   },
+   "MICH": {
+    "oar": 0.61,
+    "ci95": [
+     0.26,
+     1.1
+    ],
+    "offers": 147.0,
+    "accepts": 6.0,
+    "expected": 11.15,
+    "lowrisk_oar": 0.65
+   },
+   "OHCM": {
+    "oar": 1.59,
+    "ci95": [
+     0.96,
+     2.38
+    ],
+    "offers": 201.0,
+    "accepts": 17.0,
+    "expected": 9.97,
+    "lowrisk_oar": 1.74
+   },
+   "VTMC": {
+    "oar": 0.55,
+    "ci95": [
+     0.15,
+     1.21
+    ],
+    "offers": 270.0,
+    "accepts": 2.0,
+    "expected": 5.27,
+    "lowrisk_oar": 0.94
+   },
+   "MOCH": {
+    "oar": 0.34,
+    "ci95": [
+     0.12,
+     0.66
+    ],
+    "offers": 296.0,
+    "accepts": 4.0,
+    "expected": 15.72,
+    "lowrisk_oar": 0.37
+   },
+   "WISL": {
+    "oar": 0.8,
+    "ci95": [
+     0.58,
+     1.04
+    ],
+    "offers": 1312.0,
+    "accepts": 44.0,
+    "expected": 55.64,
+    "lowrisk_oar": 0.83
+   },
+   "ARCH": {
+    "oar": 1.0,
+    "ci95": [
+     0.46,
+     1.76
+    ],
+    "offers": 84.0,
+    "accepts": 7.0,
+    "expected": 6.96,
+    "lowrisk_oar": 0.96
+   },
+   "MOCG": {
+    "oar": 0.71,
+    "ci95": [
+     0.23,
+     1.44
+    ],
+    "offers": 66.0,
+    "accepts": 3.0,
+    "expected": 5.09,
+    "lowrisk_oar": 0.72
+   },
+   "PAPH": {
+    "oar": 0.48,
+    "ci95": [
+     0.21,
+     0.87
+    ],
+    "offers": 320.0,
+    "accepts": 6.0,
+    "expected": 14.5,
+    "lowrisk_oar": 0.91
+   },
+   "TXCF": {
+    "oar": 1.04,
+    "ci95": [
+     0.45,
+     1.88
+    ],
+    "offers": 61.0,
+    "accepts": 6.0,
+    "expected": 5.68,
+    "lowrisk_oar": 0.98
+   },
+   "NDMC": {
+    "oar": 0.8,
+    "ci95": [
+     0.41,
+     1.31
+    ],
+    "offers": 147.0,
+    "accepts": 10.0,
+    "expected": 13.05,
+    "lowrisk_oar": 0.5
+   },
+   "VACH": {
+    "oar": 1.41,
+    "ci95": [
+     0.46,
+     2.9
+    ],
+    "offers": 14.0,
+    "accepts": 3.0,
+    "expected": 1.54,
+    "lowrisk_oar": 1.21
+   },
+   "TXLM": {
+    "oar": 0.95,
+    "ci95": [
+     0.31,
+     1.94
+    ],
+    "offers": 41.0,
+    "accepts": 3.0,
+    "expected": 3.28,
+    "lowrisk_oar": 1.17
+   },
+   "SCCH": {
+    "oar": 1.71,
+    "ci95": [
+     0.47,
+     3.75
+    ],
+    "offers": 3.0,
+    "accepts": 2.0,
+    "expected": 0.34,
+    "lowrisk_oar": 1.71
+   }
+  },
+  "national_oar": 1.0
+ },
+ "liver": {
+  "centers": {
+   "CASU": {
+    "oar": 1.78,
+    "ci95": [
+     1.5,
+     2.08
+    ],
+    "offers": 822.0,
+    "accepts": 141.0,
+    "expected": 78.38
+   },
+   "MOLH": {
+    "oar": 0.63,
+    "ci95": [
+     0.4,
+     0.89
+    ],
+    "offers": 319.0,
+    "accepts": 23.0,
+    "expected": 37.95
+   },
+   "MOCH": {
+    "oar": 0.71,
+    "ci95": [
+     0.37,
+     1.16
+    ],
+    "offers": 707.0,
+    "accepts": 10.0,
+    "expected": 14.93
+   },
+   "ILLU": {
+    "oar": 0.78,
+    "ci95": [
+     0.61,
+     0.97
+    ],
+    "offers": 1554.0,
+    "accepts": 69.0,
+    "expected": 89.49
+   },
+   "IAIV": {
+    "oar": 0.24,
+    "ci95": [
+     0.12,
+     0.39
+    ],
+    "offers": 463.0,
+    "accepts": 10.0,
+    "expected": 48.48
+   },
+   "MIHF": {
+    "oar": 1.13,
+    "ci95": [
+     0.95,
+     1.32
+    ],
+    "offers": 4442.0,
+    "accepts": 136.0,
+    "expected": 120.32
+   },
+   "MSUM": {
+    "oar": 0.54,
+    "ci95": [
+     0.4,
+     0.71
+    ],
+    "offers": 1174.0,
+    "accepts": 46.0,
+    "expected": 86.55
+   },
+   "LAOF": {
+    "oar": 0.9,
+    "ci95": [
+     0.74,
+     1.07
+    ],
+    "offers": 2340.0,
+    "accepts": 113.0,
+    "expected": 125.49
+   },
+   "WASM": {
+    "oar": 0.65,
+    "ci95": [
+     0.51,
+     0.8
+    ],
+    "offers": 1293.0,
+    "accepts": 77.0,
+    "expected": 119.9
+   },
+   "WAUW": {
+    "oar": 0.67,
+    "ci95": [
+     0.55,
+     0.81
+    ],
+    "offers": 3503.0,
+    "accepts": 98.0,
+    "expected": 146.83
+   },
+   "TNVU": {
+    "oar": 1.19,
+    "ci95": [
+     1.02,
+     1.38
+    ],
+    "offers": 1684.0,
+    "accepts": 173.0,
+    "expected": 144.65
+   },
+   "VAMC": {
+    "oar": 0.88,
+    "ci95": [
+     0.75,
+     1.02
+    ],
+    "offers": 10701.0,
+    "accepts": 164.0,
+    "expected": 186.78
+   },
+   "VAUV": {
+    "oar": 0.67,
+    "ci95": [
+     0.53,
+     0.84
+    ],
+    "offers": 1791.0,
+    "accepts": 69.0,
+    "expected": 103.24
+   },
+   "NCMH": {
+    "oar": 0.7,
+    "ci95": [
+     0.49,
+     0.96
+    ],
+    "offers": 626.0,
+    "accepts": 32.0,
+    "expected": 46.34
+   },
+   "GAPH": {
+    "oar": 1.01,
+    "ci95": [
+     0.87,
+     1.17
+    ],
+    "offers": 4748.0,
+    "accepts": 177.0,
+    "expected": 174.87
+   },
+   "LATU": {
+    "oar": 0.68,
+    "ci95": [
+     0.47,
+     0.92
+    ],
+    "offers": 386.0,
+    "accepts": 33.0,
+    "expected": 49.5
+   },
+   "FLTG": {
+    "oar": 1.74,
+    "ci95": [
+     1.54,
+     1.96
+    ],
+    "offers": 4088.0,
+    "accepts": 263.0,
+    "expected": 150.33
+   },
+   "NCDU": {
+    "oar": 1.6,
+    "ci95": [
+     1.36,
+     1.86
+    ],
+    "offers": 2392.0,
+    "accepts": 153.0,
+    "expected": 95.07
+   },
+   "ALUA": {
+    "oar": 1.19,
+    "ci95": [
+     1.01,
+     1.39
+    ],
+    "offers": 2559.0,
+    "accepts": 145.0,
+    "expected": 121.56
+   },
+   "TXBC": {
+    "oar": 1.09,
+    "ci95": [
+     0.88,
+     1.32
+    ],
+    "offers": 2631.0,
+    "accepts": 90.0,
+    "expected": 82.46
+   },
+   "TXMH": {
+    "oar": 1.34,
+    "ci95": [
+     1.18,
+     1.51
+    ],
+    "offers": 11868.0,
+    "accepts": 261.0,
+    "expected": 194.46
+   },
+   "TXAS": {
+    "oar": 1.0,
+    "ci95": [
+     0.74,
+     1.29
+    ],
+    "offers": 778.0,
+    "accepts": 49.0,
+    "expected": 49.05
+   },
+   "TXMC": {
+    "oar": 0.79,
+    "ci95": [
+     0.62,
+     0.98
+    ],
+    "offers": 2432.0,
+    "accepts": 73.0,
+    "expected": 92.64
+   },
+   "TXSP": {
+    "oar": 1.3,
+    "ci95": [
+     1.07,
+     1.55
+    ],
+    "offers": 2328.0,
+    "accepts": 108.0,
+    "expected": 82.56
+   },
+   "TXHS": {
+    "oar": 0.87,
+    "ci95": [
+     0.66,
+     1.1
+    ],
+    "offers": 1112.0,
+    "accepts": 55.0,
+    "expected": 63.85
+   },
+   "OKBC": {
+    "oar": 0.98,
+    "ci95": [
+     0.79,
+     1.19
+    ],
+    "offers": 2227.0,
+    "accepts": 94.0,
+    "expected": 95.94
+   },
+   "TXHD": {
+    "oar": 1.12,
+    "ci95": [
+     0.76,
+     1.55
+    ],
+    "offers": 191.0,
+    "accepts": 29.0,
+    "expected": 25.63
+   },
+   "TXTX": {
+    "oar": 1.51,
+    "ci95": [
+     1.24,
+     1.81
+    ],
+    "offers": 651.0,
+    "accepts": 105.0,
+    "expected": 68.66
+   },
+   "TXHI": {
+    "oar": 0.87,
+    "ci95": [
+     0.71,
+     1.05
+    ],
+    "offers": 2641.0,
+    "accepts": 103.0,
+    "expected": 118.26
+   },
+   "KSUK": {
+    "oar": 0.47,
+    "ci95": [
+     0.34,
+     0.63
+    ],
+    "offers": 1444.0,
+    "accepts": 39.0,
+    "expected": 84.55
+   },
+   "NEUN": {
+    "oar": 1.12,
+    "ci95": [
+     0.94,
+     1.32
+    ],
+    "offers": 2690.0,
+    "accepts": 133.0,
+    "expected": 118.47
+   },
+   "PAAG": {
+    "oar": 0.83,
+    "ci95": [
+     0.62,
+     1.06
+    ],
+    "offers": 750.0,
+    "accepts": 53.0,
+    "expected": 64.32
+   },
+   "PAVA": {
+    "oar": 0.27,
+    "ci95": [
+     0.16,
+     0.42
+    ],
+    "offers": 868.0,
+    "accepts": 14.0,
+    "expected": 56.51
+   },
+   "MNMC": {
+    "oar": 1.5,
+    "ci95": [
+     1.24,
+     1.77
+    ],
+    "offers": 2231.0,
+    "accepts": 123.0,
+    "expected": 81.59
+   },
+   "ILUC": {
+    "oar": 0.78,
+    "ci95": [
+     0.62,
+     0.96
+    ],
+    "offers": 2698.0,
+    "accepts": 81.0,
+    "expected": 103.85
+   },
+   "NYWC": {
+    "oar": 0.6,
+    "ci95": [
+     0.48,
+     0.74
+    ],
+    "offers": 3288.0,
+    "accepts": 81.0,
+    "expected": 136.06
+   },
+   "NJUH": {
+    "oar": 0.46,
+    "ci95": [
+     0.33,
+     0.6
+    ],
+    "offers": 3618.0,
+    "accepts": 42.0,
+    "expected": 93.82
+   },
+   "MAMG": {
+    "oar": 1.59,
+    "ci95": [
+     1.34,
+     1.86
+    ],
+    "offers": 3507.0,
+    "accepts": 139.0,
+    "expected": 86.81
+   },
+   "NYMS": {
+    "oar": 1.56,
+    "ci95": [
+     1.32,
+     1.83
+    ],
+    "offers": 1849.0,
+    "accepts": 138.0,
+    "expected": 87.54
+   },
+   "MAUM": {
+    "oar": 0.69,
+    "ci95": [
+     0.5,
+     0.92
+    ],
+    "offers": 3040.0,
+    "accepts": 40.0,
+    "expected": 58.66
+   },
+   "PAAE": {
+    "oar": 0.58,
+    "ci95": [
+     0.46,
+     0.71
+    ],
+    "offers": 1999.0,
+    "accepts": 76.0,
+    "expected": 133.41
+   },
+   "PAUP": {
+    "oar": 1.17,
+    "ci95": [
+     0.99,
+     1.37
+    ],
+    "offers": 6766.0,
+    "accepts": 143.0,
+    "expected": 121.49
+   },
+   "MDUM": {
+    "oar": 0.65,
+    "ci95": [
+     0.52,
+     0.8
+    ],
+    "offers": 4890.0,
+    "accepts": 77.0,
+    "expected": 119.44
+   },
+   "CACS": {
+    "oar": 0.94,
+    "ci95": [
+     0.78,
+     1.12
+    ],
+    "offers": 1996.0,
+    "accepts": 113.0,
+    "expected": 120.42
+   },
+   "FLFH": {
+    "oar": 1.31,
+    "ci95": [
+     1.05,
+     1.61
+    ],
+    "offers": 908.0,
+    "accepts": 83.0,
+    "expected": 62.69
+   },
+   "NYUC": {
+    "oar": 1.08,
+    "ci95": [
+     0.89,
+     1.29
+    ],
+    "offers": 2845.0,
+    "accepts": 110.0,
+    "expected": 101.55
+   },
+   "DCGU": {
+    "oar": 1.01,
+    "ci95": [
+     0.83,
+     1.21
+    ],
+    "offers": 5277.0,
+    "accepts": 103.0,
+    "expected": 101.83
+   },
+   "OKMD": {
+    "oar": 0.62,
+    "ci95": [
+     0.4,
+     0.89
+    ],
+    "offers": 295.0,
+    "accepts": 23.0,
+    "expected": 38.23
+   },
+   "CAUH": {
+    "oar": 0.82,
+    "ci95": [
+     0.68,
+     0.98
+    ],
+    "offers": 3893.0,
+    "accepts": 111.0,
+    "expected": 135.3
+   },
+   "CAUC": {
+    "oar": 0.67,
+    "ci95": [
+     0.56,
+     0.79
+    ],
+    "offers": 11111.0,
+    "accepts": 130.0,
+    "expected": 194.98
+   },
+   "CALL": {
+    "oar": 1.12,
+    "ci95": [
+     0.89,
+     1.38
+    ],
+    "offers": 1077.0,
+    "accepts": 81.0,
+    "expected": 71.98
+   },
+   "PATU": {
+    "oar": 0.35,
+    "ci95": [
+     0.11,
+     0.72
+    ],
+    "offers": 185.0,
+    "accepts": 3.0,
+    "expected": 12.29
+   },
+   "MDJH": {
+    "oar": 0.68,
+    "ci95": [
+     0.55,
+     0.82
+    ],
+    "offers": 6511.0,
+    "accepts": 94.0,
+    "expected": 139.57
+   },
+   "PACP": {
+    "oar": 0.87,
+    "ci95": [
+     0.5,
+     1.34
+    ],
+    "offers": 476.0,
+    "accepts": 14.0,
+    "expected": 16.45
+   },
+   "PACH": {
+    "oar": 0.51,
+    "ci95": [
+     0.28,
+     0.81
+    ],
+    "offers": 1239.0,
+    "accepts": 12.0,
+    "expected": 25.49
+   },
+   "MACH": {
+    "oar": 1.29,
+    "ci95": [
+     0.71,
+     2.05
+    ],
+    "offers": 218.0,
+    "accepts": 12.0,
+    "expected": 8.85
+   },
+   "INIM": {
+    "oar": 1.2,
+    "ci95": [
+     1.04,
+     1.37
+    ],
+    "offers": 3832.0,
+    "accepts": 191.0,
+    "expected": 159.05
+   },
+   "CAMB": {
+    "oar": 0.78,
+    "ci95": [
+     0.31,
+     1.45
+    ],
+    "offers": 128.0,
+    "accepts": 5.0,
+    "expected": 6.98
+   },
+   "CACL": {
+    "oar": 1.68,
+    "ci95": [
+     1.12,
+     2.34
+    ],
+    "offers": 414.0,
+    "accepts": 27.0,
+    "expected": 15.3
+   },
+   "NJLL": {
+    "oar": 1.03,
+    "ci95": [
+     0.73,
+     1.37
+    ],
+    "offers": 359.0,
+    "accepts": 38.0,
+    "expected": 36.98
+   },
+   "CASF": {
+    "oar": 1.13,
+    "ci95": [
+     0.94,
+     1.33
+    ],
+    "offers": 3155.0,
+    "accepts": 128.0,
+    "expected": 113.54
+   },
+   "CAPC": {
+    "oar": 1.53,
+    "ci95": [
+     0.95,
+     2.25
+    ],
+    "offers": 211.0,
+    "accepts": 19.0,
+    "expected": 11.72
+   },
+   "FLJM": {
+    "oar": 1.81,
+    "ci95": [
+     1.49,
+     2.17
+    ],
+    "offers": 2991.0,
+    "accepts": 106.0,
+    "expected": 57.61
+   },
+   "OHOU": {
+    "oar": 1.14,
+    "ci95": [
+     0.98,
+     1.32
+    ],
+    "offers": 3442.0,
+    "accepts": 168.0,
+    "expected": 146.82
+   },
+   "NYNS": {
+    "oar": 1.13,
+    "ci95": [
+     0.94,
+     1.34
+    ],
+    "offers": 3770.0,
+    "accepts": 118.0,
+    "expected": 104.07
+   },
+   "PATJ": {
+    "oar": 0.7,
+    "ci95": [
+     0.55,
+     0.85
+    ],
+    "offers": 3758.0,
+    "accepts": 82.0,
+    "expected": 118.74
+   },
+   "NYFL": {
+    "oar": 0.83,
+    "ci95": [
+     0.65,
+     1.04
+    ],
+    "offers": 2144.0,
+    "accepts": 70.0,
+    "expected": 84.48
+   },
+   "CTYN": {
+    "oar": 0.22,
+    "ci95": [
+     0.12,
+     0.35
+    ],
+    "offers": 2584.0,
+    "accepts": 12.0,
+    "expected": 61.13
+   },
+   "NYNY": {
+    "oar": 0.83,
+    "ci95": [
+     0.65,
+     1.04
+    ],
+    "offers": 2582.0,
+    "accepts": 69.0,
+    "expected": 83.03
+   },
+   "ILPL": {
+    "oar": 0.68,
+    "ci95": [
+     0.52,
+     0.86
+    ],
+    "offers": 1719.0,
+    "accepts": 56.0,
+    "expected": 83.51
+   },
+   "ILUI": {
+    "oar": 0.59,
+    "ci95": [
+     0.43,
+     0.77
+    ],
+    "offers": 1075.0,
+    "accepts": 43.0,
+    "expected": 74.53
+   },
+   "NYCP": {
+    "oar": 0.76,
+    "ci95": [
+     0.6,
+     0.94
+    ],
+    "offers": 2875.0,
+    "accepts": 75.0,
+    "expected": 99.03
+   },
+   "MOSL": {
+    "oar": 0.44,
+    "ci95": [
+     0.31,
+     0.6
+    ],
+    "offers": 1522.0,
+    "accepts": 34.0,
+    "expected": 79.41
+   },
+   "MOBH": {
+    "oar": 1.02,
+    "ci95": [
+     0.85,
+     1.21
+    ],
+    "offers": 3110.0,
+    "accepts": 125.0,
+    "expected": 121.91
+   },
+   "ILNM": {
+    "oar": 1.04,
+    "ci95": [
+     0.87,
+     1.23
+    ],
+    "offers": 3430.0,
+    "accepts": 122.0,
+    "expected": 117.23
+   },
+   "WIUW": {
+    "oar": 1.18,
+    "ci95": [
+     0.98,
+     1.4
+    ],
+    "offers": 2851.0,
+    "accepts": 117.0,
+    "expected": 99.08
+   },
+   "MIUM": {
+    "oar": 1.25,
+    "ci95": [
+     1.02,
+     1.5
+    ],
+    "offers": 1589.0,
+    "accepts": 102.0,
+    "expected": 81.23
+   },
+   "WISE": {
+    "oar": 0.77,
+    "ci95": [
+     0.59,
+     0.97
+    ],
+    "offers": 1378.0,
+    "accepts": 61.0,
+    "expected": 79.97
+   },
+   "MIBH": {
+    "oar": 0.58,
+    "ci95": [
+     0.39,
+     0.81
+    ],
+    "offers": 874.0,
+    "accepts": 28.0,
+    "expected": 49.67
+   },
+   "AZMC": {
+    "oar": 1.9,
+    "ci95": [
+     1.68,
+     2.14
+    ],
+    "offers": 4685.0,
+    "accepts": 258.0,
+    "expected": 134.83
+   },
+   "OHCM": {
+    "oar": 0.58,
+    "ci95": [
+     0.34,
+     0.88
+    ],
+    "offers": 738.0,
+    "accepts": 16.0,
+    "expected": 28.93
+   },
+   "MNUM": {
+    "oar": 1.6,
+    "ci95": [
+     1.32,
+     1.89
+    ],
+    "offers": 1261.0,
+    "accepts": 120.0,
+    "expected": 74.47
+   },
+   "OHCH": {
+    "oar": 0.31,
+    "ci95": [
+     0.14,
+     0.55
+    ],
+    "offers": 1205.0,
+    "accepts": 7.0,
+    "expected": 26.75
+   },
+   "NYMA": {
+    "oar": 0.86,
+    "ci95": [
+     0.59,
+     1.19
+    ],
+    "offers": 582.0,
+    "accepts": 30.0,
+    "expected": 35.07
+   },
+   "UTMC": {
+    "oar": 0.48,
+    "ci95": [
+     0.35,
+     0.63
+    ],
+    "offers": 950.0,
+    "accepts": 41.0,
+    "expected": 88.12
+   },
+   "COUC": {
+    "oar": 1.24,
+    "ci95": [
+     1.02,
+     1.48
+    ],
+    "offers": 2034.0,
+    "accepts": 111.0,
+    "expected": 89.2
+   },
+   "TXTC": {
+    "oar": 1.2,
+    "ci95": [
+     0.86,
+     1.59
+    ],
+    "offers": 497.0,
+    "accepts": 40.0,
+    "expected": 33.07
+   },
+   "TXCM": {
+    "oar": 1.12,
+    "ci95": [
+     0.69,
+     1.64
+    ],
+    "offers": 310.0,
+    "accepts": 19.0,
+    "expected": 16.78
+   },
+   "SCMU": {
+    "oar": 1.85,
+    "ci95": [
+     1.59,
+     2.13
+    ],
+    "offers": 1709.0,
+    "accepts": 173.0,
+    "expected": 92.57
+   },
+   "OHUC": {
+    "oar": 1.37,
+    "ci95": [
+     1.15,
+     1.61
+    ],
+    "offers": 672.0,
+    "accepts": 136.0,
+    "expected": 98.5
+   },
+   "WISL": {
+    "oar": 0.25,
+    "ci95": [
+     0.08,
+     0.52
+    ],
+    "offers": 243.0,
+    "accepts": 3.0,
+    "expected": 17.84
+   },
+   "UTLD": {
+    "oar": 1.77,
+    "ci95": [
+     1.52,
+     2.05
+    ],
+    "offers": 586.0,
+    "accepts": 165.0,
+    "expected": 92.14
+   },
+   "TNMH": {
+    "oar": 0.8,
+    "ci95": [
+     0.6,
+     1.03
+    ],
+    "offers": 1299.0,
+    "accepts": 52.0,
+    "expected": 65.47
+   },
+   "FLUF": {
+    "oar": 1.39,
+    "ci95": [
+     1.17,
+     1.63
+    ],
+    "offers": 2289.0,
+    "accepts": 137.0,
+    "expected": 97.74
+   },
+   "MABI": {
+    "oar": 2.51,
+    "ci95": [
+     2.08,
+     2.98
+    ],
+    "offers": 640.0,
+    "accepts": 115.0,
+    "expected": 44.63
+   },
+   "MALC": {
+    "oar": 1.99,
+    "ci95": [
+     1.62,
+     2.39
+    ],
+    "offers": 1291.0,
+    "accepts": 99.0,
+    "expected": 48.85
+   },
+   "GAEM": {
+    "oar": 1.17,
+    "ci95": [
+     0.99,
+     1.36
+    ],
+    "offers": 1933.0,
+    "accepts": 148.0,
+    "expected": 126.5
+   },
+   "FLCC": {
+    "oar": 1.22,
+    "ci95": [
+     0.95,
+     1.51
+    ],
+    "offers": 1949.0,
+    "accepts": 71.0,
+    "expected": 58.02
+   },
+   "FLSL": {
+    "oar": 2.17,
+    "ci95": [
+     1.84,
+     2.53
+    ],
+    "offers": 2516.0,
+    "accepts": 152.0,
+    "expected": 68.98
+   },
+   "TXUC": {
+    "oar": 0.6,
+    "ci95": [
+     0.22,
+     1.16
+    ],
+    "offers": 118.0,
+    "accepts": 4.0,
+    "expected": 8.04
+   },
+   "MICH": {
+    "oar": 1.02,
+    "ci95": [
+     0.38,
+     1.99
+    ],
+    "offers": 38.0,
+    "accepts": 4.0,
+    "expected": 3.86
+   },
+   "ALCH": {
+    "oar": 0.81,
+    "ci95": [
+     0.3,
+     1.58
+    ],
+    "offers": 56.0,
+    "accepts": 4.0,
+    "expected": 5.41
+   },
+   "NCCM": {
+    "oar": 0.98,
+    "ci95": [
+     0.81,
+     1.16
+    ],
+    "offers": 2202.0,
+    "accepts": 116.0,
+    "expected": 118.51
+   },
+   "OHCC": {
+    "oar": 1.55,
+    "ci95": [
+     1.36,
+     1.76
+    ],
+    "offers": 2907.0,
+    "accepts": 234.0,
+    "expected": 149.93
+   },
+   "ARUA": {
+    "oar": 0.67,
+    "ci95": [
+     0.48,
+     0.89
+    ],
+    "offers": 1124.0,
+    "accepts": 38.0,
+    "expected": 57.76
+   },
+   "FLLM": {
+    "oar": 0.76,
+    "ci95": [
+     0.54,
+     1.03
+    ],
+    "offers": 625.0,
+    "accepts": 35.0,
+    "expected": 46.44
+   },
+   "CAPM": {
+    "oar": 1.16,
+    "ci95": [
+     0.94,
+     1.42
+    ],
+    "offers": 910.0,
+    "accepts": 88.0,
+    "expected": 75.33
+   },
+   "CASD": {
+    "oar": 1.5,
+    "ci95": [
+     1.27,
+     1.75
+    ],
+    "offers": 2363.0,
+    "accepts": 147.0,
+    "expected": 97.17
+   },
+   "CAGH": {
+    "oar": 0.22,
+    "ci95": [
+     0.11,
+     0.37
+    ],
+    "offers": 584.0,
+    "accepts": 9.0,
+    "expected": 47.8
+   },
+   "AZSJ": {
+    "oar": 0.46,
+    "ci95": [
+     0.29,
+     0.68
+    ],
+    "offers": 331.0,
+    "accepts": 19.0,
+    "expected": 43.36
+   },
+   "PAGM": {
+    "oar": 0.43,
+    "ci95": [
+     0.27,
+     0.62
+    ],
+    "offers": 876.0,
+    "accepts": 22.0,
+    "expected": 54.07
+   },
+   "COSL": {
+    "oar": 0.85,
+    "ci95": [
+     0.58,
+     1.17
+    ],
+    "offers": 446.0,
+    "accepts": 29.0,
+    "expected": 34.58
+   },
+   "ORUO": {
+    "oar": 0.76,
+    "ci95": [
+     0.61,
+     0.92
+    ],
+    "offers": 1949.0,
+    "accepts": 91.0,
+    "expected": 120.43
+   },
+   "ORVA": {
+    "oar": 0.38,
+    "ci95": [
+     0.24,
+     0.56
+    ],
+    "offers": 274.0,
+    "accepts": 19.0,
+    "expected": 52.81
+   },
+   "OHUH": {
+    "oar": 0.97,
+    "ci95": [
+     0.74,
+     1.23
+    ],
+    "offers": 967.0,
+    "accepts": 59.0,
+    "expected": 60.92
+   },
+   "DCGW": {
+    "oar": 0.45,
+    "ci95": [
+     0.27,
+     0.68
+    ],
+    "offers": 424.0,
+    "accepts": 17.0,
+    "expected": 40.09
+   },
+   "CASM": {
+    "oar": 0.79,
+    "ci95": [
+     0.59,
+     1.03
+    ],
+    "offers": 705.0,
+    "accepts": 47.0,
+    "expected": 59.67
+   },
+   "MANM": {
+    "oar": 1.61,
+    "ci95": [
+     1.06,
+     2.28
+    ],
+    "offers": 213.0,
+    "accepts": 25.0,
+    "expected": 14.73
+   },
+   "COPM": {
+    "oar": 0.53,
+    "ci95": [
+     0.28,
+     0.87
+    ],
+    "offers": 111.0,
+    "accepts": 10.0,
+    "expected": 20.54
+   },
+   "ILCM": {
+    "oar": 1.55,
+    "ci95": [
+     0.8,
+     2.55
+    ],
+    "offers": 110.0,
+    "accepts": 10.0,
+    "expected": 5.72
+   },
+   "COCH": {
+    "oar": 0.91,
+    "ci95": [
+     0.39,
+     1.64
+    ],
+    "offers": 91.0,
+    "accepts": 6.0,
+    "expected": 6.82
+   },
+   "UTPC": {
+    "oar": 1.58,
+    "ci95": [
+     0.68,
+     2.84
+    ],
+    "offers": 46.0,
+    "accepts": 6.0,
+    "expected": 3.08
+   },
+   "AZGS": {
+    "oar": 1.22,
+    "ci95": [
+     0.92,
+     1.56
+    ],
+    "offers": 281.0,
+    "accepts": 54.0,
+    "expected": 43.76
+   },
+   "KYUK": {
+    "oar": 0.64,
+    "ci95": [
+     0.5,
+     0.8
+    ],
+    "offers": 3939.0,
+    "accepts": 66.0,
+    "expected": 104.4
+   },
+   "PAPT": {
+    "oar": 0.72,
+    "ci95": [
+     0.56,
+     0.9
+    ],
+    "offers": 2754.0,
+    "accepts": 68.0,
+    "expected": 95.0
+   },
+   "PRSJ": {
+    "oar": 0.59,
+    "ci95": [
+     0.42,
+     0.8
+    ],
+    "offers": 156.0,
+    "accepts": 35.0,
+    "expected": 60.21
+   },
+   "AZUA": {
+    "oar": 0.24,
+    "ci95": [
+     0.07,
+     0.52
+    ],
+    "offers": 115.0,
+    "accepts": 2.0,
+    "expected": 14.76
+   },
+   "KYJH": {
+    "oar": 0.45,
+    "ci95": [
+     0.25,
+     0.72
+    ],
+    "offers": 241.0,
+    "accepts": 12.0,
+    "expected": 28.94
+   },
+   "LAWK": {
+    "oar": 0.19,
+    "ci95": [
+     0.1,
+     0.32
+    ],
+    "offers": 816.0,
+    "accepts": 9.0,
+    "expected": 55.44
+   },
+   "MOCM": {
+    "oar": 1.15,
+    "ci95": [
+     0.5,
+     2.08
+    ],
+    "offers": 59.0,
+    "accepts": 6.0,
+    "expected": 4.93
+   },
+   "DEAI": {
+    "oar": 0.36,
+    "ci95": [
+     0.07,
+     0.87
+    ],
+    "offers": 175.0,
+    "accepts": 1.0,
+    "expected": 6.29
+   },
+   "CACH": {
+    "oar": 1.26,
+    "ci95": [
+     0.41,
+     2.58
+    ],
+    "offers": 27.0,
+    "accepts": 3.0,
+    "expected": 1.97
+   },
+   "CTHH": {
+    "oar": 1.17,
+    "ci95": [
+     0.81,
+     1.59
+    ],
+    "offers": 333.0,
+    "accepts": 32.0,
+    "expected": 27.13
+   },
+   "HIQM": {
+    "oar": 1.11,
+    "ci95": [
+     0.74,
+     1.54
+    ],
+    "offers": 47.0,
+    "accepts": 27.0,
+    "expected": 24.21
+   },
+   "AZCH": {
+    "oar": 0.64,
+    "ci95": [
+     0.21,
+     1.3
+    ],
+    "offers": 68.0,
+    "accepts": 3.0,
+    "expected": 5.86
+   },
+   "WICH": {
+    "oar": 1.05,
+    "ci95": [
+     0.29,
+     2.3
+    ],
+    "offers": 26.0,
+    "accepts": 2.0,
+    "expected": 1.81
+   },
+   "TXVA": {
+    "oar": 0.71,
+    "ci95": [
+     0.36,
+     1.16
+    ],
+    "offers": 75.0,
+    "accepts": 10.0,
+    "expected": 14.99
+   },
+   "WACH": {
+    "oar": 0.72,
+    "ci95": [
+     0.29,
+     1.35
+    ],
+    "offers": 98.0,
+    "accepts": 5.0,
+    "expected": 7.7
+   },
+   "MOCG": {
+    "oar": 1.38,
+    "ci95": [
+     0.28,
+     3.33
+    ],
+    "offers": 2.0,
+    "accepts": 1.0,
+    "expected": 0.17
+   },
+   "LACH": {
+    "oar": 1.09,
+    "ci95": [
+     0.22,
+     2.63
+    ],
+    "offers": 6.0,
+    "accepts": 1.0,
+    "expected": 0.75
+   },
+   "TNLB": {
+    "oar": 1.88,
+    "ci95": [
+     0.61,
+     3.85
+    ],
+    "offers": 14.0,
+    "accepts": 3.0,
+    "expected": 0.66
+   },
+   "GAEH": {
+    "oar": 1.53,
+    "ci95": [
+     0.81,
+     2.46
+    ],
+    "offers": 62.0,
+    "accepts": 11.0,
+    "expected": 6.51
+   },
+   "PALV": {
+    "oar": 1.22,
+    "ci95": [
+     0.53,
+     2.2
+    ],
+    "offers": 63.0,
+    "accepts": 6.0,
+    "expected": 4.56
+   }
+  },
+  "national_oar": 1.0
+ },
+ "heart": {
+  "centers": {
+   "CAUC": {
+    "oar": 0.71,
+    "ci95": [
+     0.55,
+     0.88
+    ],
+    "offers": 1001.0,
+    "accepts": 67.0,
+    "expected": 95.46
+   },
+   "CASG": {
+    "oar": 1.11,
+    "ci95": [
+     0.64,
+     1.72
+    ],
+    "offers": 93.0,
+    "accepts": 14.0,
+    "expected": 12.37
+   },
+   "CACS": {
+    "oar": 1.61,
+    "ci95": [
+     1.32,
+     1.93
+    ],
+    "offers": 1248.0,
+    "accepts": 103.0,
+    "expected": 63.14
+   },
+   "CAUH": {
+    "oar": 0.43,
+    "ci95": [
+     0.25,
+     0.66
+    ],
+    "offers": 365.0,
+    "accepts": 15.0,
+    "expected": 37.4
+   },
+   "CALL": {
+    "oar": 0.48,
+    "ci95": [
+     0.31,
+     0.69
+    ],
+    "offers": 396.0,
+    "accepts": 22.0,
+    "expected": 48.14
+   },
+   "CASH": {
+    "oar": 0.65,
+    "ci95": [
+     0.32,
+     1.08
+    ],
+    "offers": 81.0,
+    "accepts": 9.0,
+    "expected": 15.02
+   },
+   "ORUO": {
+    "oar": 0.69,
+    "ci95": [
+     0.4,
+     1.05
+    ],
+    "offers": 158.0,
+    "accepts": 15.0,
+    "expected": 22.68
+   },
+   "NCDU": {
+    "oar": 1.51,
+    "ci95": [
+     1.25,
+     1.78
+    ],
+    "offers": 2545.0,
+    "accepts": 122.0,
+    "expected": 80.39
+   },
+   "ARCH": {
+    "oar": 0.92,
+    "ci95": [
+     0.34,
+     1.8
+    ],
+    "offers": 17.0,
+    "accepts": 4.0,
+    "expected": 4.5
+   },
+   "ILCH": {
+    "oar": 0.65,
+    "ci95": [
+     0.41,
+     0.94
+    ],
+    "offers": 339.0,
+    "accepts": 21.0,
+    "expected": 33.45
+   },
+   "ILUC": {
+    "oar": 0.81,
+    "ci95": [
+     0.59,
+     1.06
+    ],
+    "offers": 1083.0,
+    "accepts": 43.0,
+    "expected": 53.78
+   },
+   "MIHF": {
+    "oar": 0.57,
+    "ci95": [
+     0.34,
+     0.86
+    ],
+    "offers": 634.0,
+    "accepts": 16.0,
+    "expected": 29.68
+   },
+   "MOLH": {
+    "oar": 1.93,
+    "ci95": [
+     1.3,
+     2.67
+    ],
+    "offers": 136.0,
+    "accepts": 28.0,
+    "expected": 13.58
+   },
+   "TNBM": {
+    "oar": 0.49,
+    "ci95": [
+     0.23,
+     0.87
+    ],
+    "offers": 98.0,
+    "accepts": 7.0,
+    "expected": 16.19
+   },
+   "ILLU": {
+    "oar": 0.45,
+    "ci95": [
+     0.16,
+     0.87
+    ],
+    "offers": 400.0,
+    "accepts": 4.0,
+    "expected": 11.48
+   },
+   "INIM": {
+    "oar": 0.51,
+    "ci95": [
+     0.34,
+     0.71
+    ],
+    "offers": 644.0,
+    "accepts": 27.0,
+    "expected": 54.73
+   },
+   "MOCH": {
+    "oar": 0.61,
+    "ci95": [
+     0.34,
+     0.95
+    ],
+    "offers": 194.0,
+    "accepts": 13.0,
+    "expected": 22.66
+   },
+   "MNMC": {
+    "oar": 1.58,
+    "ci95": [
+     1.21,
+     1.99
+    ],
+    "offers": 547.0,
+    "accepts": 61.0,
+    "expected": 37.89
+   },
+   "VAFH": {
+    "oar": 0.98,
+    "ci95": [
+     0.67,
+     1.36
+    ],
+    "offers": 629.0,
+    "accepts": 29.0,
+    "expected": 29.51
+   },
+   "CTYN": {
+    "oar": 0.7,
+    "ci95": [
+     0.48,
+     0.97
+    ],
+    "offers": 770.0,
+    "accepts": 29.0,
+    "expected": 42.29
+   },
+   "TXCM": {
+    "oar": 1.23,
+    "ci95": [
+     0.81,
+     1.72
+    ],
+    "offers": 101.0,
+    "accepts": 26.0,
+    "expected": 20.84
+   },
+   "TXDL": {
+    "oar": 0.87,
+    "ci95": [
+     0.48,
+     1.38
+    ],
+    "offers": 71.0,
+    "accepts": 12.0,
+    "expected": 14.11
+   },
+   "UTLD": {
+    "oar": 0.44,
+    "ci95": [
+     0.3,
+     0.61
+    ],
+    "offers": 587.0,
+    "accepts": 30.0,
+    "expected": 70.45
+   },
+   "MANM": {
+    "oar": 1.8,
+    "ci95": [
+     1.4,
+     2.24
+    ],
+    "offers": 875.0,
+    "accepts": 69.0,
+    "expected": 37.5
+   },
+   "SCMU": {
+    "oar": 0.83,
+    "ci95": [
+     0.64,
+     1.04
+    ],
+    "offers": 1008.0,
+    "accepts": 61.0,
+    "expected": 74.22
+   },
+   "FLMR": {
+    "oar": 0.68,
+    "ci95": [
+     0.47,
+     0.93
+    ],
+    "offers": 438.0,
+    "accepts": 32.0,
+    "expected": 47.93
+   },
+   "DCWH": {
+    "oar": 0.81,
+    "ci95": [
+     0.58,
+     1.08
+    ],
+    "offers": 1441.0,
+    "accepts": 38.0,
+    "expected": 47.4
+   },
+   "TXSP": {
+    "oar": 1.18,
+    "ci95": [
+     0.87,
+     1.53
+    ],
+    "offers": 768.0,
+    "accepts": 47.0,
+    "expected": 39.47
+   },
+   "NCCM": {
+    "oar": 1.32,
+    "ci95": [
+     1.06,
+     1.62
+    ],
+    "offers": 701.0,
+    "accepts": 84.0,
+    "expected": 63.07
+   },
+   "FLSL": {
+    "oar": 1.06,
+    "ci95": [
+     0.83,
+     1.32
+    ],
+    "offers": 954.0,
+    "accepts": 71.0,
+    "expected": 66.77
+   },
+   "FLFH": {
+    "oar": 0.73,
+    "ci95": [
+     0.52,
+     0.97
+    ],
+    "offers": 1029.0,
+    "accepts": 38.0,
+    "expected": 53.11
+   },
+   "MNUM": {
+    "oar": 0.55,
+    "ci95": [
+     0.36,
+     0.77
+    ],
+    "offers": 816.0,
+    "accepts": 25.0,
+    "expected": 47.54
+   },
+   "TXHS": {
+    "oar": 0.62,
+    "ci95": [
+     0.47,
+     0.79
+    ],
+    "offers": 979.0,
+    "accepts": 54.0,
+    "expected": 88.81
+   },
+   "TXHI": {
+    "oar": 0.72,
+    "ci95": [
+     0.48,
+     0.99
+    ],
+    "offers": 518.0,
+    "accepts": 28.0,
+    "expected": 39.87
+   },
+   "TXTX": {
+    "oar": 2.41,
+    "ci95": [
+     1.91,
+     2.97
+    ],
+    "offers": 646.0,
+    "accepts": 77.0,
+    "expected": 30.74
+   },
+   "TXHD": {
+    "oar": 0.93,
+    "ci95": [
+     0.55,
+     1.4
+    ],
+    "offers": 191.0,
+    "accepts": 16.0,
+    "expected": 17.41
+   },
+   "OHOU": {
+    "oar": 1.48,
+    "ci95": [
+     0.98,
+     2.09
+    ],
+    "offers": 330.0,
+    "accepts": 25.0,
+    "expected": 16.2
+   },
+   "MDJH": {
+    "oar": 1.82,
+    "ci95": [
+     1.36,
+     2.34
+    ],
+    "offers": 379.0,
+    "accepts": 51.0,
+    "expected": 27.2
+   },
+   "NYUC": {
+    "oar": 0.68,
+    "ci95": [
+     0.52,
+     0.87
+    ],
+    "offers": 1854.0,
+    "accepts": 55.0,
+    "expected": 81.82
+   },
+   "PAUP": {
+    "oar": 0.73,
+    "ci95": [
+     0.53,
+     0.96
+    ],
+    "offers": 834.0,
+    "accepts": 42.0,
+    "expected": 58.14
+   },
+   "FLTG": {
+    "oar": 0.85,
+    "ci95": [
+     0.61,
+     1.14
+    ],
+    "offers": 931.0,
+    "accepts": 37.0,
+    "expected": 43.68
+   },
+   "VAUV": {
+    "oar": 0.71,
+    "ci95": [
+     0.48,
+     0.99
+    ],
+    "offers": 659.0,
+    "accepts": 28.0,
+    "expected": 39.98
+   },
+   "NCBG": {
+    "oar": 1.01,
+    "ci95": [
+     0.67,
+     1.42
+    ],
+    "offers": 347.0,
+    "accepts": 26.0,
+    "expected": 25.61
+   },
+   "MDUM": {
+    "oar": 0.2,
+    "ci95": [
+     0.1,
+     0.34
+    ],
+    "offers": 555.0,
+    "accepts": 8.0,
+    "expected": 47.96
+   },
+   "NYCP": {
+    "oar": 0.88,
+    "ci95": [
+     0.69,
+     1.09
+    ],
+    "offers": 2404.0,
+    "accepts": 74.0,
+    "expected": 84.18
+   },
+   "PAPT": {
+    "oar": 1.37,
+    "ci95": [
+     0.88,
+     1.97
+    ],
+    "offers": 306.0,
+    "accepts": 22.0,
+    "expected": 15.53
+   },
+   "GAPH": {
+    "oar": 1.73,
+    "ci95": [
+     1.38,
+     2.11
+    ],
+    "offers": 624.0,
+    "accepts": 85.0,
+    "expected": 48.41
+   },
+   "TNST": {
+    "oar": 1.11,
+    "ci95": [
+     0.73,
+     1.57
+    ],
+    "offers": 484.0,
+    "accepts": 25.0,
+    "expected": 22.26
+   },
+   "OHUC": {
+    "oar": 0.44,
+    "ci95": [
+     0.19,
+     0.79
+    ],
+    "offers": 245.0,
+    "accepts": 6.0,
+    "expected": 16.31
+   },
+   "MIUM": {
+    "oar": 0.58,
+    "ci95": [
+     0.42,
+     0.78
+    ],
+    "offers": 1369.0,
+    "accepts": 37.0,
+    "expected": 64.72
+   },
+   "PAAG": {
+    "oar": 1.23,
+    "ci95": [
+     0.75,
+     1.82
+    ],
+    "offers": 419.0,
+    "accepts": 18.0,
+    "expected": 14.26
+   },
+   "TNVU": {
+    "oar": 3.37,
+    "ci95": [
+     2.88,
+     3.9
+    ],
+    "offers": 1079.0,
+    "accepts": 166.0,
+    "expected": 47.83
+   },
+   "MAPB": {
+    "oar": 1.13,
+    "ci95": [
+     0.77,
+     1.55
+    ],
+    "offers": 645.0,
+    "accepts": 30.0,
+    "expected": 26.31
+   },
+   "VAMC": {
+    "oar": 0.89,
+    "ci95": [
+     0.59,
+     1.24
+    ],
+    "offers": 322.0,
+    "accepts": 27.0,
+    "expected": 30.76
+   },
+   "CASF": {
+    "oar": 1.09,
+    "ci95": [
+     0.82,
+     1.41
+    ],
+    "offers": 1078.0,
+    "accepts": 50.0,
+    "expected": 45.56
+   },
+   "UTMC": {
+    "oar": 0.59,
+    "ci95": [
+     0.4,
+     0.82
+    ],
+    "offers": 567.0,
+    "accepts": 28.0,
+    "expected": 48.81
+   },
+   "COUC": {
+    "oar": 1.49,
+    "ci95": [
+     1.16,
+     1.86
+    ],
+    "offers": 639.0,
+    "accepts": 68.0,
+    "expected": 45.07
+   },
+   "AZGS": {
+    "oar": 1.69,
+    "ci95": [
+     1.22,
+     2.24
+    ],
+    "offers": 202.0,
+    "accepts": 40.0,
+    "expected": 22.84
+   },
+   "KYJH": {
+    "oar": 1.08,
+    "ci95": [
+     0.67,
+     1.59
+    ],
+    "offers": 149.0,
+    "accepts": 19.0,
+    "expected": 17.44
+   },
+   "OHUH": {
+    "oar": 0.5,
+    "ci95": [
+     0.28,
+     0.77
+    ],
+    "offers": 374.0,
+    "accepts": 14.0,
+    "expected": 30.21
+   },
+   "FLCC": {
+    "oar": 2.23,
+    "ci95": [
+     1.57,
+     3.01
+    ],
+    "offers": 375.0,
+    "accepts": 35.0,
+    "expected": 14.58
+   },
+   "CTHH": {
+    "oar": 1.4,
+    "ci95": [
+     0.91,
+     1.98
+    ],
+    "offers": 284.0,
+    "accepts": 24.0,
+    "expected": 16.63
+   },
+   "NYNY": {
+    "oar": 0.44,
+    "ci95": [
+     0.26,
+     0.67
+    ],
+    "offers": 672.0,
+    "accepts": 15.0,
+    "expected": 36.54
+   },
+   "GAEM": {
+    "oar": 0.98,
+    "ci95": [
+     0.72,
+     1.28
+    ],
+    "offers": 645.0,
+    "accepts": 45.0,
+    "expected": 45.94
+   },
+   "CASU": {
+    "oar": 2.34,
+    "ci95": [
+     1.82,
+     2.93
+    ],
+    "offers": 393.0,
+    "accepts": 66.0,
+    "expected": 27.05
+   },
+   "NJRW": {
+    "oar": 0.79,
+    "ci95": [
+     0.43,
+     1.25
+    ],
+    "offers": 196.0,
+    "accepts": 12.0,
+    "expected": 15.75
+   },
+   "ALUA": {
+    "oar": 0.65,
+    "ci95": [
+     0.42,
+     0.93
+    ],
+    "offers": 460.0,
+    "accepts": 22.0,
+    "expected": 34.92
+   },
+   "PAHE": {
+    "oar": 0.94,
+    "ci95": [
+     0.52,
+     1.5
+    ],
+    "offers": 262.0,
+    "accepts": 12.0,
+    "expected": 12.85
+   },
+   "OHCC": {
+    "oar": 1.04,
+    "ci95": [
+     0.8,
+     1.31
+    ],
+    "offers": 1426.0,
+    "accepts": 60.0,
+    "expected": 57.76
+   },
+   "KYUK": {
+    "oar": 0.71,
+    "ci95": [
+     0.43,
+     1.05
+    ],
+    "offers": 607.0,
+    "accepts": 18.0,
+    "expected": 26.29
+   },
+   "TXMH": {
+    "oar": 1.02,
+    "ci95": [
+     0.76,
+     1.33
+    ],
+    "offers": 772.0,
+    "accepts": 47.0,
+    "expected": 46.01
+   },
+   "TXSW": {
+    "oar": 1.52,
+    "ci95": [
+     0.81,
+     2.45
+    ],
+    "offers": 121.0,
+    "accepts": 11.0,
+    "expected": 6.55
+   },
+   "OHTC": {
+    "oar": 1.0,
+    "ci95": [
+     0.61,
+     1.48
+    ],
+    "offers": 235.0,
+    "accepts": 18.0,
+    "expected": 18.02
+   },
+   "WISL": {
+    "oar": 0.69,
+    "ci95": [
+     0.42,
+     1.02
+    ],
+    "offers": 415.0,
+    "accepts": 18.0,
+    "expected": 27.01
+   },
+   "NYFL": {
+    "oar": 0.68,
+    "ci95": [
+     0.35,
+     1.12
+    ],
+    "offers": 195.0,
+    "accepts": 10.0,
+    "expected": 15.56
+   },
+   "NYMS": {
+    "oar": 3.07,
+    "ci95": [
+     2.32,
+     3.94
+    ],
+    "offers": 280.0,
+    "accepts": 53.0,
+    "expected": 15.89
+   },
+   "NYMA": {
+    "oar": 0.61,
+    "ci95": [
+     0.4,
+     0.88
+    ],
+    "offers": 656.0,
+    "accepts": 23.0,
+    "expected": 38.69
+   },
+   "ILSF": {
+    "oar": 0.69,
+    "ci95": [
+     0.37,
+     1.11
+    ],
+    "offers": 182.0,
+    "accepts": 11.0,
+    "expected": 16.89
+   },
+   "MOBH": {
+    "oar": 0.61,
+    "ci95": [
+     0.44,
+     0.8
+    ],
+    "offers": 1163.0,
+    "accepts": 42.0,
+    "expected": 70.03
+   },
+   "INSV": {
+    "oar": 0.73,
+    "ci95": [
+     0.47,
+     1.05
+    ],
+    "offers": 332.0,
+    "accepts": 23.0,
+    "expected": 32.14
+   },
+   "TNLB": {
+    "oar": 1.65,
+    "ci95": [
+     0.79,
+     2.81
+    ],
+    "offers": 16.0,
+    "accepts": 8.0,
+    "expected": 4.07
+   },
+   "FLUF": {
+    "oar": 0.71,
+    "ci95": [
+     0.48,
+     0.98
+    ],
+    "offers": 457.0,
+    "accepts": 29.0,
+    "expected": 41.5
+   },
+   "NCMH": {
+    "oar": 0.87,
+    "ci95": [
+     0.5,
+     1.35
+    ],
+    "offers": 230.0,
+    "accepts": 14.0,
+    "expected": 16.3
+   },
+   "TXCT": {
+    "oar": 0.38,
+    "ci95": [
+     0.18,
+     0.64
+    ],
+    "offers": 310.0,
+    "accepts": 8.0,
+    "expected": 24.65
+   },
+   "ILCM": {
+    "oar": 1.12,
+    "ci95": [
+     0.71,
+     1.62
+    ],
+    "offers": 102.0,
+    "accepts": 21.0,
+    "expected": 18.62
+   },
+   "TXHH": {
+    "oar": 0.98,
+    "ci95": [
+     0.63,
+     1.42
+    ],
+    "offers": 243.0,
+    "accepts": 22.0,
+    "expected": 22.37
+   },
+   "NYNS": {
+    "oar": 1.42,
+    "ci95": [
+     0.96,
+     1.96
+    ],
+    "offers": 364.0,
+    "accepts": 29.0,
+    "expected": 19.86
+   },
+   "KSUK": {
+    "oar": 1.38,
+    "ci95": [
+     0.99,
+     1.85
+    ],
+    "offers": 355.0,
+    "accepts": 38.0,
+    "expected": 26.89
+   },
+   "CASD": {
+    "oar": 1.66,
+    "ci95": [
+     1.32,
+     2.05
+    ],
+    "offers": 747.0,
+    "accepts": 76.0,
+    "expected": 44.87
+   },
+   "AZMC": {
+    "oar": 0.99,
+    "ci95": [
+     0.67,
+     1.38
+    ],
+    "offers": 343.0,
+    "accepts": 28.0,
+    "expected": 28.26
+   },
+   "TXJS": {
+    "oar": 0.74,
+    "ci95": [
+     0.27,
+     1.45
+    ],
+    "offers": 40.0,
+    "accepts": 4.0,
+    "expected": 6.06
+   },
+   "PATJ": {
+    "oar": 0.45,
+    "ci95": [
+     0.25,
+     0.7
+    ],
+    "offers": 292.0,
+    "accepts": 13.0,
+    "expected": 31.68
+   },
+   "PACP": {
+    "oar": 0.66,
+    "ci95": [
+     0.36,
+     1.05
+    ],
+    "offers": 99.0,
+    "accepts": 12.0,
+    "expected": 19.1
+   },
+   "MACH": {
+    "oar": 0.99,
+    "ci95": [
+     0.56,
+     1.56
+    ],
+    "offers": 106.0,
+    "accepts": 13.0,
+    "expected": 13.08
+   },
+   "CACL": {
+    "oar": 1.0,
+    "ci95": [
+     0.52,
+     1.64
+    ],
+    "offers": 46.0,
+    "accepts": 10.0,
+    "expected": 10.0
+   },
+   "ORSV": {
+    "oar": 0.89,
+    "ci95": [
+     0.55,
+     1.31
+    ],
+    "offers": 195.0,
+    "accepts": 19.0,
+    "expected": 21.51
+   },
+   "WASH": {
+    "oar": 0.64,
+    "ci95": [
+     0.33,
+     1.04
+    ],
+    "offers": 84.0,
+    "accepts": 10.0,
+    "expected": 16.88
+   },
+   "CAPC": {
+    "oar": 1.67,
+    "ci95": [
+     0.99,
+     2.53
+    ],
+    "offers": 60.0,
+    "accepts": 16.0,
+    "expected": 8.76
+   },
+   "NEUN": {
+    "oar": 1.81,
+    "ci95": [
+     1.33,
+     2.36
+    ],
+    "offers": 447.0,
+    "accepts": 45.0,
+    "expected": 24.03
+   },
+   "NJBI": {
+    "oar": 0.68,
+    "ci95": [
+     0.45,
+     0.95
+    ],
+    "offers": 616.0,
+    "accepts": 26.0,
+    "expected": 39.26
+   },
+   "VANG": {
+    "oar": 1.4,
+    "ci95": [
+     0.82,
+     2.14
+    ],
+    "offers": 188.0,
+    "accepts": 15.0,
+    "expected": 10.13
+   },
+   "WVWU": {
+    "oar": 1.11,
+    "ci95": [
+     0.48,
+     2.0
+    ],
+    "offers": 63.0,
+    "accepts": 6.0,
+    "expected": 5.2
+   },
+   "WISE": {
+    "oar": 1.17,
+    "ci95": [
+     0.74,
+     1.69
+    ],
+    "offers": 295.0,
+    "accepts": 21.0,
+    "expected": 17.71
+   },
+   "MNCM": {
+    "oar": 0.91,
+    "ci95": [
+     0.19,
+     2.19
+    ],
+    "offers": 5.0,
+    "accepts": 1.0,
+    "expected": 1.3
+   },
+   "WIUW": {
+    "oar": 0.84,
+    "ci95": [
+     0.53,
+     1.22
+    ],
+    "offers": 399.0,
+    "accepts": 21.0,
+    "expected": 25.36
+   },
+   "NYWC": {
+    "oar": 1.09,
+    "ci95": [
+     0.69,
+     1.58
+    ],
+    "offers": 316.0,
+    "accepts": 21.0,
+    "expected": 19.13
+   },
+   "IAIV": {
+    "oar": 1.12,
+    "ci95": [
+     0.64,
+     1.74
+    ],
+    "offers": 89.0,
+    "accepts": 14.0,
+    "expected": 12.23
+   },
+   "MABI": {
+    "oar": 4.75,
+    "ci95": [
+     3.46,
+     6.23
+    ],
+    "offers": 112.0,
+    "accepts": 43.0,
+    "expected": 7.48
+   },
+   "TXTC": {
+    "oar": 0.96,
+    "ci95": [
+     0.66,
+     1.31
+    ],
+    "offers": 159.0,
+    "accepts": 32.0,
+    "expected": 33.5
+   },
+   "OHCM": {
+    "oar": 1.38,
+    "ci95": [
+     0.71,
+     2.26
+    ],
+    "offers": 33.0,
+    "accepts": 10.0,
+    "expected": 6.71
+   },
+   "MISH": {
+    "oar": 1.92,
+    "ci95": [
+     1.41,
+     2.5
+    ],
+    "offers": 296.0,
+    "accepts": 46.0,
+    "expected": 23.04
+   },
+   "LAOF": {
+    "oar": 0.98,
+    "ci95": [
+     0.68,
+     1.34
+    ],
+    "offers": 200.0,
+    "accepts": 32.0,
+    "expected": 32.54
+   },
+   "CAPM": {
+    "oar": 0.56,
+    "ci95": [
+     0.33,
+     0.84
+    ],
+    "offers": 250.0,
+    "accepts": 16.0,
+    "expected": 30.33
+   },
+   "WAUW": {
+    "oar": 1.38,
+    "ci95": [
+     1.07,
+     1.72
+    ],
+    "offers": 541.0,
+    "accepts": 67.0,
+    "expected": 48.1
+   },
+   "PACH": {
+    "oar": 0.9,
+    "ci95": [
+     0.49,
+     1.43
+    ],
+    "offers": 73.0,
+    "accepts": 12.0,
+    "expected": 13.52
+   },
+   "ILNM": {
+    "oar": 0.69,
+    "ci95": [
+     0.48,
+     0.94
+    ],
+    "offers": 922.0,
+    "accepts": 33.0,
+    "expected": 48.68
+   },
+   "ARBH": {
+    "oar": 0.77,
+    "ci95": [
+     0.44,
+     1.19
+    ],
+    "offers": 108.0,
+    "accepts": 14.0,
+    "expected": 18.87
+   },
+   "DCCH": {
+    "oar": 0.74,
+    "ci95": [
+     0.32,
+     1.34
+    ],
+    "offers": 39.0,
+    "accepts": 6.0,
+    "expected": 8.74
+   },
+   "MNAN": {
+    "oar": 1.32,
+    "ci95": [
+     0.72,
+     2.09
+    ],
+    "offers": 82.0,
+    "accepts": 12.0,
+    "expected": 8.64
+   },
+   "WICH": {
+    "oar": 1.13,
+    "ci95": [
+     0.52,
+     1.98
+    ],
+    "offers": 29.0,
+    "accepts": 7.0,
+    "expected": 5.98
+   },
+   "MAMG": {
+    "oar": 3.09,
+    "ci95": [
+     2.26,
+     4.05
+    ],
+    "offers": 208.0,
+    "accepts": 44.0,
+    "expected": 12.88
+   },
+   "SCCH": {
+    "oar": 0.74,
+    "ci95": [
+     0.43,
+     1.13
+    ],
+    "offers": 100.0,
+    "accepts": 15.0,
+    "expected": 20.92
+   },
+   "AZCH": {
+    "oar": 1.12,
+    "ci95": [
+     0.6,
+     1.81
+    ],
+    "offers": 44.0,
+    "accepts": 11.0,
+    "expected": 9.58
+   },
+   "OKBC": {
+    "oar": 0.82,
+    "ci95": [
+     0.45,
+     1.3
+    ],
+    "offers": 117.0,
+    "accepts": 12.0,
+    "expected": 15.05
+   },
+   "FLJM": {
+    "oar": 0.67,
+    "ci95": [
+     0.29,
+     1.21
+    ],
+    "offers": 189.0,
+    "accepts": 6.0,
+    "expected": 9.89
+   },
+   "OHCH": {
+    "oar": 0.91,
+    "ci95": [
+     0.37,
+     1.7
+    ],
+    "offers": 56.0,
+    "accepts": 5.0,
+    "expected": 5.67
+   },
+   "FLAC": {
+    "oar": 0.85,
+    "ci95": [
+     0.28,
+     1.74
+    ],
+    "offers": 16.0,
+    "accepts": 3.0,
+    "expected": 3.88
+   },
+   "COCH": {
+    "oar": 1.2,
+    "ci95": [
+     0.65,
+     1.9
+    ],
+    "offers": 75.0,
+    "accepts": 12.0,
+    "expected": 9.69
+   },
+   "MSUM": {
+    "oar": 0.53,
+    "ci95": [
+     0.19,
+     1.02
+    ],
+    "offers": 131.0,
+    "accepts": 4.0,
+    "expected": 9.43
+   },
+   "TXVA": {
+    "oar": 1.26,
+    "ci95": [
+     0.41,
+     2.58
+    ],
+    "offers": 23.0,
+    "accepts": 3.0,
+    "expected": 1.96
+   },
+   "OKCM": {
+    "oar": 0.35,
+    "ci95": [
+     0.1,
+     0.77
+    ],
+    "offers": 33.0,
+    "accepts": 2.0,
+    "expected": 9.43
+   },
+   "FLLM": {
+    "oar": 2.16,
+    "ci95": [
+     1.36,
+     3.16
+    ],
+    "offers": 88.0,
+    "accepts": 20.0,
+    "expected": 8.17
+   },
+   "CACH": {
+    "oar": 1.14,
+    "ci95": [
+     0.42,
+     2.23
+    ],
+    "offers": 13.0,
+    "accepts": 4.0,
+    "expected": 3.24
+   },
+   "UTPC": {
+    "oar": 1.54,
+    "ci95": [
+     0.96,
+     2.27
+    ],
+    "offers": 57.0,
+    "accepts": 19.0,
+    "expected": 11.61
+   },
+   "MOCM": {
+    "oar": 1.04,
+    "ci95": [
+     0.38,
+     2.02
+    ],
+    "offers": 14.0,
+    "accepts": 4.0,
+    "expected": 3.78
+   },
+   "PATU": {
+    "oar": 1.59,
+    "ci95": [
+     0.85,
+     2.56
+    ],
+    "offers": 105.0,
+    "accepts": 11.0,
+    "expected": 6.18
+   },
+   "KYKC": {
+    "oar": 0.56,
+    "ci95": [
+     0.25,
+     0.98
+    ],
+    "offers": 67.0,
+    "accepts": 7.0,
+    "expected": 14.16
+   },
+   "ALCH": {
+    "oar": 1.22,
+    "ci95": [
+     0.59,
+     2.09
+    ],
+    "offers": 26.0,
+    "accepts": 8.0,
+    "expected": 6.19
+   },
+   "GAEH": {
+    "oar": 1.39,
+    "ci95": [
+     0.67,
+     2.38
+    ],
+    "offers": 32.0,
+    "accepts": 8.0,
+    "expected": 5.18
+   },
+   "WACH": {
+    "oar": 0.56,
+    "ci95": [
+     0.22,
+     1.04
+    ],
+    "offers": 62.0,
+    "accepts": 5.0,
+    "expected": 10.58
+   },
+   "CAMB": {
+    "oar": 0.6,
+    "ci95": [
+     0.16,
+     1.32
+    ],
+    "offers": 16.0,
+    "accepts": 2.0,
+    "expected": 4.66
+   },
+   "FLJD": {
+    "oar": 1.67,
+    "ci95": [
+     0.54,
+     3.41
+    ],
+    "offers": 4.0,
+    "accepts": 3.0,
+    "expected": 1.0
+   },
+   "MOCG": {
+    "oar": 0.71,
+    "ci95": [
+     0.15,
+     1.72
+    ],
+    "offers": 14.0,
+    "accepts": 1.0,
+    "expected": 2.2
+   },
+   "MICH": {
+    "oar": 1.25,
+    "ci95": [
+     0.26,
+     3.01
+    ],
+    "offers": 2.0,
+    "accepts": 1.0,
+    "expected": 0.4
+   },
+   "PRCC": {
+    "oar": 0.53,
+    "ci95": [
+     0.06,
+     1.46
+    ],
+    "offers": 2.0,
+    "accepts": 0.0,
+    "expected": 1.81
+   },
+   "DEAI": {
+    "oar": 0.76,
+    "ci95": [
+     0.09,
+     2.13
+    ],
+    "offers": 2.0,
+    "accepts": 0.0,
+    "expected": 0.62
+   },
+   "NECH": {
+    "oar": 0.88,
+    "ci95": [
+     0.18,
+     2.12
+    ],
+    "offers": 11.0,
+    "accepts": 1.0,
+    "expected": 1.41
+   },
+   "NYCC": {
+    "oar": 1.05,
+    "ci95": [
+     0.22,
+     2.53
+    ],
+    "offers": 5.0,
+    "accepts": 1.0,
+    "expected": 0.86
+   },
+   "LATU": {
+    "oar": 1.24,
+    "ci95": [
+     0.34,
+     2.72
+    ],
+    "offers": 8.0,
+    "accepts": 2.0,
+    "expected": 1.22
+   }
+  },
+  "national_oar": 1.0
+ },
+ "lung": {
+  "centers": {
+   "NCDU": {
+    "oar": 1.52,
+    "ci95": [
+     1.22,
+     1.84
+    ],
+    "offers": 1222.0,
+    "accepts": 88.0,
+    "expected": 57.36
+   },
+   "PATU": {
+    "oar": 1.21,
+    "ci95": [
+     1.04,
+     1.39
+    ],
+    "offers": 4206.0,
+    "accepts": 183.0,
+    "expected": 150.7
+   },
+   "VAFH": {
+    "oar": 0.83,
+    "ci95": [
+     0.62,
+     1.08
+    ],
+    "offers": 1176.0,
+    "accepts": 48.0,
+    "expected": 58.22
+   },
+   "ILNM": {
+    "oar": 1.82,
+    "ci95": [
+     1.5,
+     2.17
+    ],
+    "offers": 1289.0,
+    "accepts": 112.0,
+    "expected": 60.68
+   },
+   "MAPB": {
+    "oar": 0.66,
+    "ci95": [
+     0.51,
+     0.84
+    ],
+    "offers": 2149.0,
+    "accepts": 62.0,
+    "expected": 94.49
+   },
+   "TXHI": {
+    "oar": 1.18,
+    "ci95": [
+     0.96,
+     1.41
+    ],
+    "offers": 2196.0,
+    "accepts": 103.0,
+    "expected": 87.28
+   },
+   "FLSL": {
+    "oar": 1.79,
+    "ci95": [
+     1.4,
+     2.22
+    ],
+    "offers": 659.0,
+    "accepts": 71.0,
+    "expected": 38.86
+   },
+   "MNUM": {
+    "oar": 1.74,
+    "ci95": [
+     1.35,
+     2.18
+    ],
+    "offers": 629.0,
+    "accepts": 66.0,
+    "expected": 37.07
+   },
+   "TNVU": {
+    "oar": 1.53,
+    "ci95": [
+     1.27,
+     1.81
+    ],
+    "offers": 1352.0,
+    "accepts": 124.0,
+    "expected": 80.4
+   },
+   "NCMH": {
+    "oar": 0.29,
+    "ci95": [
+     0.14,
+     0.5
+    ],
+    "offers": 652.0,
+    "accepts": 8.0,
+    "expected": 32.17
+   },
+   "TXHS": {
+    "oar": 0.22,
+    "ci95": [
+     0.09,
+     0.4
+    ],
+    "offers": 616.0,
+    "accepts": 6.0,
+    "expected": 34.38
+   },
+   "ILLU": {
+    "oar": 0.71,
+    "ci95": [
+     0.5,
+     0.96
+    ],
+    "offers": 917.0,
+    "accepts": 34.0,
+    "expected": 48.92
+   },
+   "FLTG": {
+    "oar": 0.35,
+    "ci95": [
+     0.25,
+     0.47
+    ],
+    "offers": 1892.0,
+    "accepts": 35.0,
+    "expected": 103.05
+   },
+   "FLFH": {
+    "oar": 0.56,
+    "ci95": [
+     0.37,
+     0.78
+    ],
+    "offers": 797.0,
+    "accepts": 26.0,
+    "expected": 48.1
+   },
+   "VAUV": {
+    "oar": 0.61,
+    "ci95": [
+     0.44,
+     0.81
+    ],
+    "offers": 1370.0,
+    "accepts": 39.0,
+    "expected": 65.47
+   },
+   "GAEM": {
+    "oar": 0.66,
+    "ci95": [
+     0.45,
+     0.9
+    ],
+    "offers": 982.0,
+    "accepts": 31.0,
+    "expected": 48.25
+   },
+   "LAOF": {
+    "oar": 1.16,
+    "ci95": [
+     0.68,
+     1.78
+    ],
+    "offers": 131.0,
+    "accepts": 15.0,
+    "expected": 12.62
+   },
+   "PAPT": {
+    "oar": 1.5,
+    "ci95": [
+     1.15,
+     1.9
+    ],
+    "offers": 545.0,
+    "accepts": 59.0,
+    "expected": 38.54
+   },
+   "MIUM": {
+    "oar": 0.88,
+    "ci95": [
+     0.6,
+     1.22
+    ],
+    "offers": 552.0,
+    "accepts": 29.0,
+    "expected": 33.03
+   },
+   "MIHF": {
+    "oar": 0.22,
+    "ci95": [
+     0.14,
+     0.31
+    ],
+    "offers": 2806.0,
+    "accepts": 24.0,
+    "expected": 115.68
+   },
+   "PAUP": {
+    "oar": 0.61,
+    "ci95": [
+     0.47,
+     0.76
+    ],
+    "offers": 2336.0,
+    "accepts": 67.0,
+    "expected": 111.06
+   },
+   "NYCP": {
+    "oar": 0.96,
+    "ci95": [
+     0.79,
+     1.15
+    ],
+    "offers": 3102.0,
+    "accepts": 107.0,
+    "expected": 111.26
+   },
+   "MISH": {
+    "oar": 0.82,
+    "ci95": [
+     0.62,
+     1.04
+    ],
+    "offers": 1322.0,
+    "accepts": 55.0,
+    "expected": 67.66
+   },
+   "NJBI": {
+    "oar": 1.6,
+    "ci95": [
+     0.89,
+     2.5
+    ],
+    "offers": 95.0,
+    "accepts": 13.0,
+    "expected": 7.39
+   },
+   "INIM": {
+    "oar": 1.77,
+    "ci95": [
+     1.27,
+     2.35
+    ],
+    "offers": 231.0,
+    "accepts": 39.0,
+    "expected": 21.22
+   },
+   "AZSJ": {
+    "oar": 2.7,
+    "ci95": [
+     2.19,
+     3.26
+    ],
+    "offers": 430.0,
+    "accepts": 97.0,
+    "expected": 34.67
+   },
+   "UTMC": {
+    "oar": 1.13,
+    "ci95": [
+     0.81,
+     1.49
+    ],
+    "offers": 473.0,
+    "accepts": 40.0,
+    "expected": 35.32
+   },
+   "TXSP": {
+    "oar": 1.19,
+    "ci95": [
+     0.94,
+     1.46
+    ],
+    "offers": 1467.0,
+    "accepts": 80.0,
+    "expected": 67.13
+   },
+   "OKBC": {
+    "oar": 0.67,
+    "ci95": [
+     0.42,
+     0.98
+    ],
+    "offers": 319.0,
+    "accepts": 20.0,
+    "expected": 30.77
+   },
+   "TXHH": {
+    "oar": 0.73,
+    "ci95": [
+     0.42,
+     1.11
+    ],
+    "offers": 331.0,
+    "accepts": 15.0,
+    "expected": 21.36
+   },
+   "WAUW": {
+    "oar": 0.67,
+    "ci95": [
+     0.51,
+     0.86
+    ],
+    "offers": 2446.0,
+    "accepts": 58.0,
+    "expected": 86.96
+   },
+   "CASF": {
+    "oar": 0.76,
+    "ci95": [
+     0.6,
+     0.92
+    ],
+    "offers": 2813.0,
+    "accepts": 83.0,
+    "expected": 110.57
+   },
+   "CASU": {
+    "oar": 1.0,
+    "ci95": [
+     0.77,
+     1.25
+    ],
+    "offers": 1266.0,
+    "accepts": 64.0,
+    "expected": 64.31
+   },
+   "MOBH": {
+    "oar": 0.86,
+    "ci95": [
+     0.67,
+     1.07
+    ],
+    "offers": 1102.0,
+    "accepts": 68.0,
+    "expected": 79.81
+   },
+   "ALUA": {
+    "oar": 0.62,
+    "ci95": [
+     0.41,
+     0.87
+    ],
+    "offers": 730.0,
+    "accepts": 25.0,
+    "expected": 41.86
+   },
+   "WIUW": {
+    "oar": 0.89,
+    "ci95": [
+     0.68,
+     1.12
+    ],
+    "offers": 1577.0,
+    "accepts": 60.0,
+    "expected": 67.75
+   },
+   "MDUM": {
+    "oar": 0.74,
+    "ci95": [
+     0.46,
+     1.08
+    ],
+    "offers": 455.0,
+    "accepts": 20.0,
+    "expected": 27.69
+   },
+   "KYJH": {
+    "oar": 0.89,
+    "ci95": [
+     0.58,
+     1.26
+    ],
+    "offers": 436.0,
+    "accepts": 24.0,
+    "expected": 27.2
+   },
+   "OHOU": {
+    "oar": 1.28,
+    "ci95": [
+     1.01,
+     1.59
+    ],
+    "offers": 1003.0,
+    "accepts": 72.0,
+    "expected": 55.76
+   },
+   "CAUH": {
+    "oar": 1.08,
+    "ci95": [
+     0.68,
+     1.56
+    ],
+    "offers": 312.0,
+    "accepts": 21.0,
+    "expected": 19.29
+   },
+   "CACS": {
+    "oar": 1.64,
+    "ci95": [
+     1.33,
+     1.99
+    ],
+    "offers": 758.0,
+    "accepts": 92.0,
+    "expected": 55.3
+   },
+   "COUC": {
+    "oar": 0.99,
+    "ci95": [
+     0.73,
+     1.29
+    ],
+    "offers": 839.0,
+    "accepts": 45.0,
+    "expected": 45.63
+   },
+   "NYNS": {
+    "oar": 0.55,
+    "ci95": [
+     0.36,
+     0.79
+    ],
+    "offers": 630.0,
+    "accepts": 23.0,
+    "expected": 43.19
+   },
+   "MAMG": {
+    "oar": 1.4,
+    "ci95": [
+     1.11,
+     1.73
+    ],
+    "offers": 1034.0,
+    "accepts": 76.0,
+    "expected": 53.61
+   },
+   "CAUC": {
+    "oar": 1.51,
+    "ci95": [
+     1.22,
+     1.82
+    ],
+    "offers": 887.0,
+    "accepts": 94.0,
+    "expected": 61.74
+   },
+   "CASD": {
+    "oar": 0.8,
+    "ci95": [
+     0.59,
+     1.05
+    ],
+    "offers": 976.0,
+    "accepts": 45.0,
+    "expected": 56.68
+   },
+   "SCMU": {
+    "oar": 1.16,
+    "ci95": [
+     0.74,
+     1.67
+    ],
+    "offers": 311.0,
+    "accepts": 22.0,
+    "expected": 18.69
+   },
+   "TXMH": {
+    "oar": 1.6,
+    "ci95": [
+     1.29,
+     1.94
+    ],
+    "offers": 1144.0,
+    "accepts": 91.0,
+    "expected": 56.06
+   },
+   "TXTX": {
+    "oar": 0.44,
+    "ci95": [
+     0.31,
+     0.6
+    ],
+    "offers": 1012.0,
+    "accepts": 33.0,
+    "expected": 76.67
+   },
+   "OHCM": {
+    "oar": 0.56,
+    "ci95": [
+     0.15,
+     1.23
+    ],
+    "offers": 86.0,
+    "accepts": 2.0,
+    "expected": 5.14
+   },
+   "MOCH": {
+    "oar": 1.03,
+    "ci95": [
+     0.28,
+     2.27
+    ],
+    "offers": 86.0,
+    "accepts": 2.0,
+    "expected": 1.87
+   },
+   "FLUF": {
+    "oar": 1.16,
+    "ci95": [
+     0.9,
+     1.45
+    ],
+    "offers": 691.0,
+    "accepts": 65.0,
+    "expected": 55.93
+   },
+   "NYUC": {
+    "oar": 1.05,
+    "ci95": [
+     0.84,
+     1.28
+    ],
+    "offers": 2358.0,
+    "accepts": 84.0,
+    "expected": 80.08
+   },
+   "AZUA": {
+    "oar": 1.85,
+    "ci95": [
+     0.99,
+     2.99
+    ],
+    "offers": 52.0,
+    "accepts": 11.0,
+    "expected": 5.01
+   },
+   "MDJH": {
+    "oar": 1.37,
+    "ci95": [
+     0.97,
+     1.83
+    ],
+    "offers": 465.0,
+    "accepts": 37.0,
+    "expected": 26.45
+   },
+   "MNMC": {
+    "oar": 1.14,
+    "ci95": [
+     0.88,
+     1.43
+    ],
+    "offers": 895.0,
+    "accepts": 65.0,
+    "expected": 56.68
+   },
+   "FLJM": {
+    "oar": 1.56,
+    "ci95": [
+     1.21,
+     1.96
+    ],
+    "offers": 778.0,
+    "accepts": 63.0,
+    "expected": 39.63
+   },
+   "NYMS": {
+    "oar": 1.51,
+    "ci95": [
+     0.98,
+     2.16
+    ],
+    "offers": 301.0,
+    "accepts": 23.0,
+    "expected": 14.55
+   },
+   "OHCC": {
+    "oar": 1.82,
+    "ci95": [
+     1.53,
+     2.13
+    ],
+    "offers": 1265.0,
+    "accepts": 140.0,
+    "expected": 76.17
+   },
+   "KYUK": {
+    "oar": 0.44,
+    "ci95": [
+     0.26,
+     0.66
+    ],
+    "offers": 530.0,
+    "accepts": 16.0,
+    "expected": 39.06
+   },
+   "OHUH": {
+    "oar": 0.69,
+    "ci95": [
+     0.42,
+     1.04
+    ],
+    "offers": 315.0,
+    "accepts": 17.0,
+    "expected": 25.38
+   },
+   "NEUN": {
+    "oar": 1.07,
+    "ci95": [
+     0.6,
+     1.68
+    ],
+    "offers": 154.0,
+    "accepts": 13.0,
+    "expected": 12.0
+   },
+   "IAIV": {
+    "oar": 0.54,
+    "ci95": [
+     0.31,
+     0.82
+    ],
+    "offers": 552.0,
+    "accepts": 15.0,
+    "expected": 29.54
+   },
+   "NYMA": {
+    "oar": 0.57,
+    "ci95": [
+     0.36,
+     0.83
+    ],
+    "offers": 599.0,
+    "accepts": 21.0,
+    "expected": 38.1
+   },
+   "CAPC": {
+    "oar": 1.5,
+    "ci95": [
+     0.49,
+     3.07
+    ],
+    "offers": 28.0,
+    "accepts": 3.0,
+    "expected": 1.34
+   },
+   "ILUC": {
+    "oar": 0.97,
+    "ci95": [
+     0.58,
+     1.47
+    ],
+    "offers": 249.0,
+    "accepts": 16.0,
+    "expected": 16.53
+   },
+   "TXBC": {
+    "oar": 1.66,
+    "ci95": [
+     1.16,
+     2.25
+    ],
+    "offers": 309.0,
+    "accepts": 33.0,
+    "expected": 19.08
+   },
+   "TXTC": {
+    "oar": 1.34,
+    "ci95": [
+     0.61,
+     2.35
+    ],
+    "offers": 60.0,
+    "accepts": 7.0,
+    "expected": 4.7
+   },
+   "OHCH": {
+    "oar": 1.5,
+    "ci95": [
+     0.55,
+     2.92
+    ],
+    "offers": 23.0,
+    "accepts": 4.0,
+    "expected": 2.0
+   },
+   "MACH": {
+    "oar": 1.21,
+    "ci95": [
+     0.33,
+     2.65
+    ],
+    "offers": 8.0,
+    "accepts": 2.0,
+    "expected": 1.31
+   },
+   "PACP": {
+    "oar": 0.53,
+    "ci95": [
+     0.14,
+     1.16
+    ],
+    "offers": 102.0,
+    "accepts": 2.0,
+    "expected": 5.56
+   },
+   "PACH": {
+    "oar": 1.24,
+    "ci95": [
+     0.26,
+     2.99
+    ],
+    "offers": 2.0,
+    "accepts": 1.0,
+    "expected": 0.41
+   },
+   "PATJ": {
+    "oar": 0.99,
+    "ci95": [
+     0.43,
+     1.79
+    ],
+    "offers": 91.0,
+    "accepts": 6.0,
+    "expected": 6.04
+   },
+   "WISE": {
+    "oar": 1.84,
+    "ci95": [
+     1.11,
+     2.76
+    ],
+    "offers": 114.0,
+    "accepts": 17.0,
+    "expected": 8.32
+   },
+   "VAMC": {
+    "oar": 0.79,
+    "ci95": [
+     0.22,
+     1.73
+    ],
+    "offers": 62.0,
+    "accepts": 2.0,
+    "expected": 3.07
+   },
+   "AZMC": {
+    "oar": 0.43,
+    "ci95": [
+     0.09,
+     1.02
+    ],
+    "offers": 59.0,
+    "accepts": 1.0,
+    "expected": 5.05
+   }
+  },
+  "national_oar": 1.0
+ },
+ "pancreas": {
+  "centers": {
+   "CASF": {
+    "oar": 0.85,
+    "ci95": [
+     0.23,
+     1.87
+    ],
+    "offers": 27.0,
+    "accepts": 2.0,
+    "expected": 2.68
+   },
+   "IAIV": {
+    "oar": 0.98,
+    "ci95": [
+     0.2,
+     2.37
+    ],
+    "offers": 35.0,
+    "accepts": 1.0,
+    "expected": 1.05
+   },
+   "MABI": {
+    "oar": 1.15,
+    "ci95": [
+     0.31,
+     2.51
+    ],
+    "offers": 22.0,
+    "accepts": 2.0,
+    "expected": 1.49
+   },
+   "CAGH": {
+    "oar": 0.51,
+    "ci95": [
+     0.06,
+     1.41
+    ],
+    "offers": 16.0,
+    "accepts": 0.0,
+    "expected": 1.95
+   },
+   "WIUW": {
+    "oar": 2.32,
+    "ci95": [
+     1.2,
+     3.81
+    ],
+    "offers": 51.0,
+    "accepts": 10.0,
+    "expected": 3.17
+   },
+   "ILUI": {
+    "oar": 1.69,
+    "ci95": [
+     0.46,
+     3.7
+    ],
+    "offers": 5.0,
+    "accepts": 2.0,
+    "expected": 0.37
+   },
+   "MDJH": {
+    "oar": 0.28,
+    "ci95": [
+     0.03,
+     0.78
+    ],
+    "offers": 69.0,
+    "accepts": 0.0,
+    "expected": 5.11
+   },
+   "PAAE": {
+    "oar": 1.02,
+    "ci95": [
+     0.21,
+     2.46
+    ],
+    "offers": 9.0,
+    "accepts": 1.0,
+    "expected": 0.94
+   },
+   "MOBH": {
+    "oar": 0.78,
+    "ci95": [
+     0.09,
+     2.19
+    ],
+    "offers": 13.0,
+    "accepts": 0.0,
+    "expected": 0.55
+   },
+   "ILNM": {
+    "oar": 1.52,
+    "ci95": [
+     0.61,
+     2.83
+    ],
+    "offers": 26.0,
+    "accepts": 5.0,
+    "expected": 2.61
+   },
+   "TNVU": {
+    "oar": 0.44,
+    "ci95": [
+     0.05,
+     1.22
+    ],
+    "offers": 25.0,
+    "accepts": 0.0,
+    "expected": 2.58
+   },
+   "ILPL": {
+    "oar": 0.84,
+    "ci95": [
+     0.1,
+     2.35
+    ],
+    "offers": 6.0,
+    "accepts": 0.0,
+    "expected": 0.37
+   },
+   "INIM": {
+    "oar": 1.31,
+    "ci95": [
+     0.43,
+     2.69
+    ],
+    "offers": 41.0,
+    "accepts": 3.0,
+    "expected": 1.81
+   },
+   "MNUM": {
+    "oar": 1.71,
+    "ci95": [
+     0.56,
+     3.51
+    ],
+    "offers": 10.0,
+    "accepts": 3.0,
+    "expected": 0.92
+   },
+   "NYMS": {
+    "oar": 1.13,
+    "ci95": [
+     0.37,
+     2.31
+    ],
+    "offers": 39.0,
+    "accepts": 3.0,
+    "expected": 2.43
+   },
+   "FLSL": {
+    "oar": 0.68,
+    "ci95": [
+     0.08,
+     1.9
+    ],
+    "offers": 18.0,
+    "accepts": 0.0,
+    "expected": 0.93
+   },
+   "ALUA": {
+    "oar": 0.99,
+    "ci95": [
+     0.12,
+     2.77
+    ],
+    "offers": 1.0,
+    "accepts": 0.0,
+    "expected": 0.01
+   },
+   "LATU": {
+    "oar": 0.91,
+    "ci95": [
+     0.11,
+     2.53
+    ],
+    "offers": 8.0,
+    "accepts": 0.0,
+    "expected": 0.2
+   },
+   "LAOF": {
+    "oar": 1.41,
+    "ci95": [
+     0.29,
+     3.4
+    ],
+    "offers": 5.0,
+    "accepts": 1.0,
+    "expected": 0.12
+   },
+   "SCMU": {
+    "oar": 1.39,
+    "ci95": [
+     0.45,
+     2.84
+    ],
+    "offers": 18.0,
+    "accepts": 3.0,
+    "expected": 1.61
+   },
+   "VAUV": {
+    "oar": 0.85,
+    "ci95": [
+     0.23,
+     1.86
+    ],
+    "offers": 31.0,
+    "accepts": 2.0,
+    "expected": 2.72
+   },
+   "FLUF": {
+    "oar": 0.85,
+    "ci95": [
+     0.1,
+     2.38
+    ],
+    "offers": 6.0,
+    "accepts": 0.0,
+    "expected": 0.34
+   },
+   "FLJM": {
+    "oar": 0.93,
+    "ci95": [
+     0.11,
+     2.59
+    ],
+    "offers": 6.0,
+    "accepts": 0.0,
+    "expected": 0.15
+   },
+   "DCGU": {
+    "oar": 1.78,
+    "ci95": [
+     0.65,
+     3.45
+    ],
+    "offers": 13.0,
+    "accepts": 4.0,
+    "expected": 1.38
+   },
+   "VAFH": {
+    "oar": 1.79,
+    "ci95": [
+     0.49,
+     3.93
+    ],
+    "offers": 6.0,
+    "accepts": 2.0,
+    "expected": 0.23
+   },
+   "PAPT": {
+    "oar": 0.58,
+    "ci95": [
+     0.07,
+     1.62
+    ],
+    "offers": 25.0,
+    "accepts": 0.0,
+    "expected": 1.44
+   },
+   "MIUM": {
+    "oar": 0.87,
+    "ci95": [
+     0.18,
+     2.11
+    ],
+    "offers": 15.0,
+    "accepts": 1.0,
+    "expected": 1.43
+   },
+   "TXMH": {
+    "oar": 1.16,
+    "ci95": [
+     0.24,
+     2.78
+    ],
+    "offers": 11.0,
+    "accepts": 1.0,
+    "expected": 0.6
+   },
+   "TNMH": {
+    "oar": 0.65,
+    "ci95": [
+     0.08,
+     1.8
+    ],
+    "offers": 20.0,
+    "accepts": 0.0,
+    "expected": 1.1
+   },
+   "CACS": {
+    "oar": 0.82,
+    "ci95": [
+     0.1,
+     2.29
+    ],
+    "offers": 7.0,
+    "accepts": 0.0,
+    "expected": 0.44
+   },
+   "NYNY": {
+    "oar": 0.98,
+    "ci95": [
+     0.12,
+     2.73
+    ],
+    "offers": 1.0,
+    "accepts": 0.0,
+    "expected": 0.04
+   },
+   "AZMC": {
+    "oar": 1.46,
+    "ci95": [
+     0.4,
+     3.21
+    ],
+    "offers": 9.0,
+    "accepts": 2.0,
+    "expected": 0.73
+   },
+   "NJHK": {
+    "oar": 1.34,
+    "ci95": [
+     0.37,
+     2.94
+    ],
+    "offers": 9.0,
+    "accepts": 2.0,
+    "expected": 0.98
+   },
+   "CAUH": {
+    "oar": 1.0,
+    "ci95": [
+     0.21,
+     2.41
+    ],
+    "offers": 12.0,
+    "accepts": 1.0,
+    "expected": 1.0
+   },
+   "MNMC": {
+    "oar": 1.26,
+    "ci95": [
+     0.26,
+     3.04
+    ],
+    "offers": 14.0,
+    "accepts": 1.0,
+    "expected": 0.38
+   },
+   "ILLU": {
+    "oar": 0.59,
+    "ci95": [
+     0.07,
+     1.65
+    ],
+    "offers": 19.0,
+    "accepts": 0.0,
+    "expected": 1.37
+   },
+   "CALL": {
+    "oar": 0.88,
+    "ci95": [
+     0.11,
+     2.44
+    ],
+    "offers": 27.0,
+    "accepts": 0.0,
+    "expected": 0.28
+   },
+   "OHUC": {
+    "oar": 1.03,
+    "ci95": [
+     0.21,
+     2.48
+    ],
+    "offers": 8.0,
+    "accepts": 1.0,
+    "expected": 0.91
+   },
+   "NCBG": {
+    "oar": 1.07,
+    "ci95": [
+     0.22,
+     2.57
+    ],
+    "offers": 14.0,
+    "accepts": 1.0,
+    "expected": 0.81
+   },
+   "NCDU": {
+    "oar": 0.99,
+    "ci95": [
+     0.12,
+     2.77
+    ],
+    "offers": 2.0,
+    "accepts": 0.0,
+    "expected": 0.01
+   },
+   "NYUC": {
+    "oar": 0.7,
+    "ci95": [
+     0.08,
+     1.94
+    ],
+    "offers": 16.0,
+    "accepts": 0.0,
+    "expected": 0.87
+   },
+   "OHCC": {
+    "oar": 0.94,
+    "ci95": [
+     0.11,
+     2.63
+    ],
+    "offers": 5.0,
+    "accepts": 0.0,
+    "expected": 0.12
+   },
+   "GAPH": {
+    "oar": 0.98,
+    "ci95": [
+     0.12,
+     2.74
+    ],
+    "offers": 1.0,
+    "accepts": 0.0,
+    "expected": 0.03
+   },
+   "TXHS": {
+    "oar": 0.82,
+    "ci95": [
+     0.22,
+     1.8
+    ],
+    "offers": 25.0,
+    "accepts": 2.0,
+    "expected": 2.87
+   },
+   "CASH": {
+    "oar": 0.78,
+    "ci95": [
+     0.09,
+     2.18
+    ],
+    "offers": 9.0,
+    "accepts": 0.0,
+    "expected": 0.55
+   },
+   "NJLL": {
+    "oar": 0.91,
+    "ci95": [
+     0.11,
+     2.53
+    ],
+    "offers": 4.0,
+    "accepts": 0.0,
+    "expected": 0.2
+   },
+   "MAPB": {
+    "oar": 0.53,
+    "ci95": [
+     0.06,
+     1.49
+    ],
+    "offers": 20.0,
+    "accepts": 0.0,
+    "expected": 1.75
+   },
+   "MDUM": {
+    "oar": 0.83,
+    "ci95": [
+     0.1,
+     2.31
+    ],
+    "offers": 8.0,
+    "accepts": 0.0,
+    "expected": 0.41
+   },
+   "NVUM": {
+    "oar": 1.28,
+    "ci95": [
+     0.26,
+     3.08
+    ],
+    "offers": 1.0,
+    "accepts": 1.0,
+    "expected": 0.35
+   },
+   "NYCP": {
+    "oar": 0.67,
+    "ci95": [
+     0.08,
+     1.86
+    ],
+    "offers": 20.0,
+    "accepts": 0.0,
+    "expected": 0.99
+   },
+   "COUC": {
+    "oar": 0.88,
+    "ci95": [
+     0.11,
+     2.45
+    ],
+    "offers": 9.0,
+    "accepts": 0.0,
+    "expected": 0.28
+   },
+   "ILUC": {
+    "oar": 1.09,
+    "ci95": [
+     0.22,
+     2.62
+    ],
+    "offers": 7.0,
+    "accepts": 1.0,
+    "expected": 0.76
+   },
+   "VAMC": {
+    "oar": 0.78,
+    "ci95": [
+     0.09,
+     2.18
+    ],
+    "offers": 11.0,
+    "accepts": 0.0,
+    "expected": 0.56
+   },
+   "MIHF": {
+    "oar": 0.89,
+    "ci95": [
+     0.11,
+     2.48
+    ],
+    "offers": 4.0,
+    "accepts": 0.0,
+    "expected": 0.25
+   },
+   "TXTX": {
+    "oar": 0.95,
+    "ci95": [
+     0.11,
+     2.64
+    ],
+    "offers": 1.0,
+    "accepts": 0.0,
+    "expected": 0.11
+   },
+   "KYJH": {
+    "oar": 1.29,
+    "ci95": [
+     0.27,
+     3.12
+    ],
+    "offers": 1.0,
+    "accepts": 1.0,
+    "expected": 0.32
+   },
+   "ORUO": {
+    "oar": 0.75,
+    "ci95": [
+     0.09,
+     2.08
+    ],
+    "offers": 9.0,
+    "accepts": 0.0,
+    "expected": 0.68
+   },
+   "NEUN": {
+    "oar": 0.92,
+    "ci95": [
+     0.11,
+     2.56
+    ],
+    "offers": 3.0,
+    "accepts": 0.0,
+    "expected": 0.18
+   },
+   "PALV": {
+    "oar": 0.99,
+    "ci95": [
+     0.12,
+     2.76
+    ],
+    "offers": 1.0,
+    "accepts": 0.0,
+    "expected": 0.02
+   },
+   "WISE": {
+    "oar": 0.85,
+    "ci95": [
+     0.1,
+     2.37
+    ],
+    "offers": 4.0,
+    "accepts": 0.0,
+    "expected": 0.35
+   },
+   "PAUP": {
+    "oar": 1.34,
+    "ci95": [
+     0.28,
+     3.23
+    ],
+    "offers": 1.0,
+    "accepts": 1.0,
+    "expected": 0.24
+   },
+   "LAWK": {
+    "oar": 0.97,
+    "ci95": [
+     0.12,
+     2.7
+    ],
+    "offers": 1.0,
+    "accepts": 0.0,
+    "expected": 0.06
+   }
+  },
+  "national_oar": 1.01
+ }
+}

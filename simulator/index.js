@@ -444,7 +444,11 @@
             rs.centers.forEach(function (c) {
               byCode[c.center_code] = { rank_lo: c.rank_lo, rank_hi: c.rank_hi };
             });
-            window.SimResultsTable.setRankIntervals(byCode);
+            // With a shortlist active the table ranks are shortlist-
+            // relative while the intervals are national — label them.
+            var shortlisted = Array.isArray(formData.centerCodes) &&
+                              formData.centerCodes.length > 0;
+            window.SimResultsTable.setRankIntervals(byCode, { national: shortlisted });
             refreshTable(true);
           });
       }

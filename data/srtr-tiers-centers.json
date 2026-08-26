@@ -1,0 +1,4237 @@
+{
+ "_meta": {
+  "source": "SRTR PSR 'Tiers' sheet, release 2511",
+  "method": "SRTR's official 5-tier ratings (1-5, 5 best): 1-year graft survival, deceased-donor transplant rate ('faster'), and waitlist survival \u2014 adult and pediatric. External published ratings, not TransPlan-derived. Pediatric tiers are the first per-center pediatric source (#335 phase 2).",
+  "scale_note": "1 = worse than expected ... 5 = better than expected, per SRTR's Bayesian tier assignment",
+  "fetchedAt": "2026-08-26T02:19:41Z"
+ },
+ "kidney": {
+  "ALCH": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "ALUA": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "ALVA": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "ARCH": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "ARUA": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4
+  },
+  "AZCH": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "AZGS": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 3
+  },
+  "AZMC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "AZSJ": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "AZUA": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "CACH": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "CACL": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "CACS": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 4
+  },
+  "CAGH": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5
+  },
+  "CAIM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "CALA": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3
+  },
+  "CALL": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "CAMB": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "CAPC": {
+   "pediatric_graft_survival": 5,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "CAPM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "CARC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "CASD": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "CASF": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 2
+  },
+  "CASH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "CASJ": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "CASM": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "CASU": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 2
+  },
+  "CAUC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "CAUH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "COCH": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "COPM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "COSL": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "COUC": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "CTHH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 4
+  },
+  "CTYN": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "DCCH": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 3
+  },
+  "DCGU": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "DCGW": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "DCWH": {
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 2
+  },
+  "DCWR": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "DEAI": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "DECC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "FLBC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "FLCC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "FLFH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 5,
+   "pediatric_waitlist_survival": 3
+  },
+  "FLHM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5
+  },
+  "FLJM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "FLLM": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "FLMR": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "FLSH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "FLSL": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "FLTG": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "FLUF": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 5,
+   "pediatric_waitlist_survival": 4
+  },
+  "GAEH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 1
+  },
+  "GAEM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "GAMC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 5,
+   "pediatric_waitlist_survival": 3
+  },
+  "GAPH": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "HIQM": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "IAIM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 2
+  },
+  "IAIV": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "IAVA": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "ILCH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "ILCM": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "ILLU": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 3
+  },
+  "ILMM": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 1
+  },
+  "ILNM": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "ILPL": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "ILSF": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "ILUC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "ILUI": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "ILVA": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "INIM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "INSV": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "KSUK": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 5
+  },
+  "KYJH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "KYKC": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "KYUK": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "LACH": {
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "LAOF": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "LATU": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "LAWK": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1
+  },
+  "MABI": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "MABS": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 1
+  },
+  "MABU": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "MACH": {
+   "pediatric_graft_survival": 5,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "MALC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "MAMG": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "MANM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "MAPB": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 1
+  },
+  "MAUM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "MDJH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "MDUM": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "MEMC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "MIBH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "MICH": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "MIDV": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 2
+  },
+  "MIHF": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "MISJ": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "MISM": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 5
+  },
+  "MIUM": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 5,
+   "pediatric_waitlist_survival": 4
+  },
+  "MNAN": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "MNHC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "MNMC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 2
+  },
+  "MNUM": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "MOBH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "MOCG": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "MOCH": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "MOCM": {
+   "adult_graft_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 4
+  },
+  "MOLH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "MORH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "MOSL": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "MOUM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "MSUM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "NCBG": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "NCCM": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "NCDU": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "NCEC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "NCMH": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "NDMC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "NDSL": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 2
+  },
+  "NEUN": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "NHDH": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 4
+  },
+  "NJBI": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "NJHK": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "NJLL": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 1
+  },
+  "NJRW": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 5,
+   "pediatric_waitlist_survival": 3
+  },
+  "NJSB": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 4
+  },
+  "NMAQ": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "NMPH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "NVUM": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "NYAM": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "NYCC": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "NYCP": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "NYDS": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "NYEC": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "NYFL": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "NYMA": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "NYMS": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "NYNS": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "NYNY": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 4
+  },
+  "NYSB": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 4
+  },
+  "NYUC": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "NYUM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "NYVA": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "NYWC": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "OHCC": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 2
+  },
+  "OHCH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "OHCM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "OHCO": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4
+  },
+  "OHOU": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "OHTC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "OHUC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 2
+  },
+  "OHUH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "OKBC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "OKMD": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "OKSJ": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "ORGS": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 3
+  },
+  "ORUO": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "ORVA": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "PAAE": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "PAAG": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "PACH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 2
+  },
+  "PACP": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "PAGM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "PAHE": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "PAHH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "PALH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5
+  },
+  "PALV": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "PAPH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5
+  },
+  "PAPT": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1
+  },
+  "PASC": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "PATJ": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "PATU": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 1
+  },
+  "PAUP": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "PAVA": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "PRSJ": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "RIRH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "SCCH": {
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 2
+  },
+  "SCLA": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 3
+  },
+  "SCMU": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "SCPG": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "SDMK": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "SDSV": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "TNEM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "TNLB": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 5,
+   "pediatric_waitlist_survival": 3
+  },
+  "TNMH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "TNST": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 1
+  },
+  "TNUK": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "TNVU": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "TXAS": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "TXBC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "TXCF": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "TXCM": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "TXDC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 5,
+   "pediatric_waitlist_survival": 2
+  },
+  "TXDL": {
+   "pediatric_graft_survival": 2
+  },
+  "TXDM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "TXDR": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "TXDS": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "TXFW": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "TXHD": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "TXHH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 2
+  },
+  "TXHI": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "TXHS": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "TXJS": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "TXLM": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "TXLP": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "TXMC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 1
+  },
+  "TXMH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "TXPL": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4
+  },
+  "TXPM": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 5
+  },
+  "TXSP": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "TXSW": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "TXTC": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "TXTX": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "TXUC": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "TXVA": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "UTLD": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4
+  },
+  "UTMC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "UTPC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "VACH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "VAFH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "VAHD": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "VAMC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "VANG": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "VAUV": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "VTMC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "WACH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 2
+  },
+  "WASH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "WASM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "WAUW": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 3
+  },
+  "WAVM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "WICH": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "WISE": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 5
+  },
+  "WISL": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 5
+  },
+  "WIUW": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "WVCA": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 1
+  },
+  "WVWU": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  }
+ },
+ "liver": {
+  "ALCH": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "ALUA": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "ARUA": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "AZCH": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 2
+  },
+  "AZGS": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "AZMC": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 5
+  },
+  "AZSJ": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "AZUA": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "CACH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "CACL": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 5,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "CACS": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "CAGH": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "CALL": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "CAMB": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "CAPC": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "CAPM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "CARC": {
+   "adult_graft_survival": 2
+  },
+  "CASD": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "CASF": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "CASM": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "CASU": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 5
+  },
+  "CAUC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 5
+  },
+  "CAUH": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "COCH": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "COPM": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "COSL": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "COUC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3
+  },
+  "CTHH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "CTYN": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "DCGU": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 2
+  },
+  "DCGW": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "DEAI": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "FLBC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "FLCC": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "FLFH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 2
+  },
+  "FLJM": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 1
+  },
+  "FLLM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "FLSL": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "FLTG": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "FLUF": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 5
+  },
+  "GAEH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 1,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "GAEM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 1
+  },
+  "GAPH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "HIQM": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 1
+  },
+  "IAIV": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 1,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 2
+  },
+  "ILCM": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 2
+  },
+  "ILLU": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "ILNM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "ILPL": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "ILUC": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 1,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "ILUI": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "INIM": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "KSUK": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "KYJH": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "KYUK": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1
+  },
+  "LACH": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "LAOF": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "LATU": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "LAWK": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "MABI": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 5
+  },
+  "MACH": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 2
+  },
+  "MALC": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "MAMG": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 4
+  },
+  "MANM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "MAUM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1
+  },
+  "MDJH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 3
+  },
+  "MDUM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "MIBH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "MICH": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "MIHF": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "MIUM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "MNMC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "MNUM": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 5,
+   "pediatric_waitlist_survival": 3
+  },
+  "MOBH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "MOCG": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "MOCH": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "MOCM": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "MOLH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "MOSL": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "MSUM": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "NCCM": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "NCDU": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 5,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "NCMH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "NEUN": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 2
+  },
+  "NJLL": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1
+  },
+  "NJUH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5
+  },
+  "NYCP": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "NYFL": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1
+  },
+  "NYMA": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "NYMS": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "NYNS": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "NYNY": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "NYUC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "NYWC": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "OHCC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "OHCH": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "OHCM": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "OHOU": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 3
+  },
+  "OHUC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 1
+  },
+  "OHUH": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "OKBC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "OKMD": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "ORUO": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 5
+  },
+  "ORVA": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "PAAE": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1
+  },
+  "PAAG": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "PACH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 2
+  },
+  "PACP": {
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "PAGM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5
+  },
+  "PAHE": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5
+  },
+  "PALV": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "PAPT": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "PATJ": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1
+  },
+  "PATU": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "PAUP": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "PAVA": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "PRSJ": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "SCMU": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "SDMK": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "TNLB": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 5,
+   "pediatric_waitlist_survival": 3
+  },
+  "TNMH": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 3
+  },
+  "TNVU": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 5,
+   "pediatric_waitlist_survival": 4
+  },
+  "TXAS": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "TXBC": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "TXCM": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 2
+  },
+  "TXHD": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "TXHH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "TXHI": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "TXHS": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "TXJS": {
+   "adult_graft_survival": 2
+  },
+  "TXMC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "TXMH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "TXSP": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "TXTC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 5
+  },
+  "TXTX": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "TXUC": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "TXVA": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5
+  },
+  "UTLD": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 2
+  },
+  "UTMC": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "UTPC": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "VAMC": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "VAUV": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 3
+  },
+  "WACH": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "WASM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "WAUW": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "WICH": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "WISE": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "WISL": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "WIUW": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  }
+ },
+ "heart": {
+  "ALCH": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 2
+  },
+  "ALUA": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "ARBH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "ARCH": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "AZCH": {
+   "adult_graft_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "AZGS": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "AZMC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "AZUA": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "CACH": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "CACL": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "CACS": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "CALL": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 2
+  },
+  "CAMB": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 2
+  },
+  "CAPC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "CAPM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "CASD": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "CASF": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "CASG": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "CASH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "CASU": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 1,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "CAUC": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "CAUH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "COCH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 5,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 5
+  },
+  "COUC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 1
+  },
+  "CTHH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "CTYN": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "DCCH": {
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "DCWH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "DEAI": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 4
+  },
+  "FLAC": {
+   "adult_graft_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 2
+  },
+  "FLCC": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "FLFH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "FLJD": {
+   "adult_graft_survival": 2,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 2
+  },
+  "FLJM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 2
+  },
+  "FLLM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "FLMR": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "FLSL": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "FLTG": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "FLUF": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "GAEH": {
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "GAEM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "GAPH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "IAIV": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "ILCH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "ILCM": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "ILLU": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "ILNM": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "ILSF": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "ILUC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "INIM": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "INLH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "INSV": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "KSUK": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "KYJH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "KYKC": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 5
+  },
+  "KYUK": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "LAOF": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "LATU": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "MABI": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4
+  },
+  "MACH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 2
+  },
+  "MAMG": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 3
+  },
+  "MANM": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "MAPB": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "MDJH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "MDUM": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "MICH": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "MIHF": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "MISH": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "MIUM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "MNAN": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "MNCM": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 1
+  },
+  "MNMC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "MNUM": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "MOBH": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "MOCG": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "MOCH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "MOCM": {
+   "adult_graft_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 5
+  },
+  "MOLH": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "MSUM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "NCBG": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "NCCM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "NCDU": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 2
+  },
+  "NCMH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 2
+  },
+  "NECH": {
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "NEUN": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "NJBI": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "NJRW": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "NYCC": {
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "NYCP": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 2
+  },
+  "NYFL": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5
+  },
+  "NYMA": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "NYMS": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "NYNS": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 5
+  },
+  "NYNY": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "NYUC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 2
+  },
+  "NYWC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "OHCC": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "OHCH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "OHCM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "OHOU": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "OHTC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "OHUC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "OHUH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "OKBC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "OKCM": {
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 2
+  },
+  "ORSV": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "ORUO": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "PAAG": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "PACH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "PACP": {
+   "adult_graft_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 5
+  },
+  "PAHE": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5
+  },
+  "PAPT": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 2
+  },
+  "PATJ": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "PATU": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "PAUP": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "PRCC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "SCCH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "SCMU": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "TNBM": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "TNLB": {
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "TNST": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 5
+  },
+  "TNVU": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "TXCM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 5
+  },
+  "TXCT": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "TXDL": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 2
+  },
+  "TXHD": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "TXHH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 4
+  },
+  "TXHI": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 1
+  },
+  "TXHS": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "TXJS": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "TXMH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1
+  },
+  "TXSP": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "TXSW": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "TXTC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 5,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "TXTX": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "TXVA": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "UTLD": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "UTMC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "UTPC": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "VAFH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "VAMC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "VAMV": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "VANG": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "VAUV": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 5
+  },
+  "WACH": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "WASH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "WAUW": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4
+  },
+  "WICH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 5
+  },
+  "WISE": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "WISL": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1
+  },
+  "WIUW": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "WVWU": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  }
+ },
+ "lung": {
+  "ALUA": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1
+  },
+  "AZMC": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "AZSJ": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4
+  },
+  "AZUA": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "CACS": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "CAPC": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "CASD": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "CASF": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 5,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "CASU": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "CAUC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 5
+  },
+  "CAUH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "COUC": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4
+  },
+  "FLFH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "FLJM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "FLSL": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "FLTG": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "FLUF": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "GAEM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "IAIV": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "ILLU": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "ILNM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "ILUC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "INIM": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4
+  },
+  "KYJH": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "KYUK": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "LAOF": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "MACH": {
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 2
+  },
+  "MAMG": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "MAPB": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 1
+  },
+  "MDJH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "MDUM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "MIHF": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "MISH": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "MIUM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "MNMC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "MNUM": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "MOBH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "MOCH": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "NCDU": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4
+  },
+  "NCMH": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 2
+  },
+  "NEUN": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "NJBI": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "NYCP": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "NYMA": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "NYMS": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "NYNS": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "NYUC": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "OHCC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "OHCH": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "OHCM": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 4
+  },
+  "OHOU": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "OHUH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "OKBC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "PACH": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "PACP": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "PAPT": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "PATJ": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "PATU": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 1
+  },
+  "PAUP": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "SCMU": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4
+  },
+  "TNVU": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 2
+  },
+  "TXBC": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "TXHH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "TXHI": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "TXHS": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "TXMH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "TXSP": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 1
+  },
+  "TXTC": {
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 5,
+   "pediatric_waitlist_survival": 4
+  },
+  "TXTX": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "UTMC": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "VAFH": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "VAMC": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "VAUV": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "WAUW": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "WISE": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "WIUW": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  }
+ },
+ "pancreas": {
+  "ALUA": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "ARUA": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "AZGS": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "AZMC": {
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4
+  },
+  "AZUA": {
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4
+  },
+  "CACS": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "CAGH": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "CAIM": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "CALL": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "CAPC": {
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "CAPM": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "CASF": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "CASH": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "CASM": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "CASU": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "CAUC": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "CAUH": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "COUC": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "CTYN": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "DCGU": {
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "FLFH": {
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 3
+  },
+  "FLJM": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "FLSL": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "FLTG": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "FLUF": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "GAEM": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "GAMC": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "GAPH": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "IAIV": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "ILLU": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "ILNM": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5
+  },
+  "ILPL": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "ILSF": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "ILUC": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 5,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "ILUI": {
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 5
+  },
+  "INIM": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "KSUK": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "KYJH": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "LAOF": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "LATU": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "LAWK": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "MABI": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "MAMG": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "MAPB": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "MDJH": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "MDUM": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "MIHF": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "MIUM": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "MNMC": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "MNUM": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "MOBH": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "MORH": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "NCBG": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "NCDU": {
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 1
+  },
+  "NCEC": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "NCMH": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "NEUN": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "NJHK": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "NJLL": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "NJRW": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 1
+  },
+  "NJSB": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "NMPH": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "NVUM": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "NYAM": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "NYCP": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 5
+  },
+  "NYEC": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "NYFL": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "NYMA": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2
+  },
+  "NYMS": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "NYNY": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "NYUC": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 3
+  },
+  "NYUM": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "OHCC": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 1
+  },
+  "OHCO": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "OHOU": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "OHUC": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "OHUH": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "OKBC": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "OKMD": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "ORUO": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "PAAE": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "PAAG": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "PACH": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "PALV": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2
+  },
+  "PAPT": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "PATJ": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "PAUP": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "PRSJ": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "SCMU": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 1
+  },
+  "SDMK": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "TNMH": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "TNVU": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "TXAS": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "TXHD": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3
+  },
+  "TXHS": {
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 2
+  },
+  "TXJS": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4
+  },
+  "TXMC": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "TXMH": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2
+  },
+  "TXSW": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "TXTX": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "UTLD": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "UTMC": {
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 5
+  },
+  "VAFH": {
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "VAMC": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3
+  },
+  "VANG": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 2
+  },
+  "VAUV": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 3
+  },
+  "WASM": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "WAUW": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "WAVM": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "WISE": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "WISL": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  },
+  "WIUW": {
+   "adult_transplant_faster": 5,
+   "adult_waitlist_survival": 5
+  }
+ },
+ "intestine": {
+  "CAPC": {
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "CASU": {
+   "adult_graft_survival": 4
+  },
+  "CAUC": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "DCGU": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 5,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 4
+  },
+  "FLJM": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "ILCM": {
+   "pediatric_transplant_faster": 1,
+   "pediatric_waitlist_survival": 4
+  },
+  "ILUI": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 4
+  },
+  "INIM": {
+   "adult_graft_survival": 3,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "MACH": {
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "MIHF": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4
+  },
+  "NCDU": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "NEUN": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 1
+  },
+  "NYCP": {
+   "adult_graft_survival": 1,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 4
+  },
+  "NYMS": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 4,
+   "adult_waitlist_survival": 3,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 4,
+   "pediatric_waitlist_survival": 3
+  },
+  "OHCC": {
+   "adult_graft_survival": 5,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 3,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "OHCM": {
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "PACH": {
+   "adult_graft_survival": 4,
+   "adult_transplant_faster": 3,
+   "adult_waitlist_survival": 4,
+   "pediatric_graft_survival": 4,
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 3
+  },
+  "PAPT": {
+   "adult_graft_survival": 2,
+   "adult_transplant_faster": 1,
+   "adult_waitlist_survival": 2,
+   "pediatric_graft_survival": 2,
+   "pediatric_transplant_faster": 3,
+   "pediatric_waitlist_survival": 3
+  },
+  "WACH": {
+   "pediatric_transplant_faster": 2,
+   "pediatric_waitlist_survival": 4
+  },
+  "WAUW": {
+   "adult_transplant_faster": 2,
+   "adult_waitlist_survival": 4
+  }
+ }
+}

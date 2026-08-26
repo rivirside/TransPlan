@@ -61,6 +61,9 @@ class TransPlanData:
     # exact metro-area cost index instead of a 22-city interpolation.
     center_cbsa_map: dict = field(default_factory=dict)
     cbsa_centroids: dict = field(default_factory=dict)
+    # Offer acceptance ratios (SRTR Table B11, #320) + official tier ratings
+    offer_acceptance: dict = field(default_factory=dict)
+    srtr_tiers: dict = field(default_factory=dict)
     # freshness metadata keyed by logical name
     freshness: dict = field(default_factory=dict)
     # {name: {source, fetched}} from each file's _meta (#334 vintage disclosure)
@@ -232,6 +235,8 @@ def load_all() -> TransPlanData:
     data.cost_of_living     = _load_json(DATA_DIR / "cost-of-living.json",      "cost_of_living",     data)
     data.donor_registration = _load_json(DATA_DIR / "donor-registration.json",  "donor_registration", data)
     data.health_demographics= _load_json(DATA_DIR / "health-demographics.json", "health_demographics",data)
+    data.offer_acceptance   = _load_json(DATA_DIR / "offer-acceptance-centers.json", "offer_acceptance", data)
+    data.srtr_tiers         = _load_json(DATA_DIR / "srtr-tiers-centers.json",  "srtr_tiers",         data)
     data.traffic_fatalities = _load_json(DATA_DIR / "traffic-fatalities.json",  "traffic_fatalities", data)
     data.climate_scores     = _load_json(DATA_DIR / "manual/climate-scores.json",  "climate_scores",  data)
     data.center_climate     = _load_json(DATA_DIR / "climate-scores-centers.json", "center_climate", data)

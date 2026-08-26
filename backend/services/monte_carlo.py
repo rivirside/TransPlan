@@ -197,7 +197,16 @@ def _get_acceptance_rate(organ: str, center_code: str) -> float:
         logger.warning("acceptance-rates data missing — acceptance thinning disabled")
         return 1.0
     national = ar.get("national_acceptance_rates", {}).get(organ, 0.25)
-    factor = ar.get("center_acceptance_factors", {}).get(center_code, {}).get(organ, 1.0)
+    # #320: prefer the OBSERVED risk-adjusted Offer Acceptance Rate Ratio
+    # (SRTR Table B11) over the volume-proxy composite — the direct
+    # measurement of the discretion SURV-28 inferred. Clamped to the same
+    # [0.3, 3.0] band as the composite factors.
+    oar = (data.offer_acceptance.get(organ, {}).get("centers", {})
+           .get(center_code, {}).get("oar"))
+    if isinstance(oar, (int, float)) and oar > 0:
+        factor = max(0.3, min(float(oar), 3.0))
+    else:
+        factor = ar.get("center_acceptance_factors", {}).get(center_code, {}).get(organ, 1.0)
     return min(national * factor, 1.0)
 
 

@@ -26,8 +26,10 @@ def rank_stability(request: RankStabilityRequest) -> dict:
     is presented as such instead of with false precision.
     """
     try:
+        from tier_config import get_tier
+        n_boot = min(request.n_boot, get_tier().max_rank_stability_boot)
         from services.rank_stability import compute_rank_stability
-        return compute_rank_stability(request.patient, n_boot=request.n_boot,
+        return compute_rank_stability(request.patient, n_boot=n_boot,
                                       seed=request.seed)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e

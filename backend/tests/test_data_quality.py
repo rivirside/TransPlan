@@ -131,13 +131,17 @@ class TestExtensibleProvenance:
     def test_acceptance_tag_fires_for_missing_center_factor(self):
         from services.provenance import center_data_quality, TAG_ACCEPTANCE
         from services.data_loader import get_data
-        ar = get_data().acceptance_rates.get("center_acceptance_factors", {})
-        # find a kidney center without an acceptance factor
-        centers = get_data().centers_for_organ("kidney")
+        data = get_data()
+        ar = data.acceptance_rates.get("center_acceptance_factors", {})
+        oarr = data.offer_acceptance.get("kidney", {}).get("centers", {})
+        # #320: the tag fires only when BOTH sources are absent — the
+        # observed OARR is now the preferred center-level source
+        centers = data.centers_for_organ("kidney")
         missing = next((c["code"] for c in centers
-                        if "kidney" not in ar.get(c["code"], {})), None)
+                        if "kidney" not in ar.get(c["code"], {})
+                        and c["code"] not in oarr), None)
         if missing is None:
-            pytest.skip("every kidney center has an acceptance factor")
+            pytest.skip("every kidney center has an acceptance source")
         assert TAG_ACCEPTANCE in center_data_quality("kidney", missing)
 
     def test_scoring_summary_shape(self):

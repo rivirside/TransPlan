@@ -166,6 +166,18 @@ if (statePops) {
     }
 }
 
+// 6a4. Offer-acceptance ratios + SRTR tiers (#320) — never-shrink floors
+const oarr = validateJSON('offer-acceptance-centers.json');
+if (oarr) {
+    const nk = Object.keys(oarr.kidney?.centers || {}).length;
+    if (nk < 180) addError(`offer-acceptance-centers.json: only ${nk} kidney centers (expected >= 180)`);
+}
+const tiers = validateJSON('srtr-tiers-centers.json');
+if (tiers) {
+    const nk = Object.keys(tiers.kidney || {}).length;
+    if (nk < 190) addError(`srtr-tiers-centers.json: only ${nk} kidney centers (expected >= 190)`);
+}
+
 // 6b. SRTR-derived model files — every organ block must be present (ERROR,
 // not warning: the 2026-08-05 workflow run wrote organ-less shells over
 // these because data/srtr-raw/ is absent in CI; see parse-srtr-reports.py

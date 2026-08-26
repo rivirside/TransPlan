@@ -46,8 +46,12 @@
   var _options = {};           // { homeLocation }
   var _sortKey = 'rank';
   // #313/#322: center_code -> {rank_lo, rank_hi} from POST /rank-stability.
-  // When present, the rank cell shows the interval instead of a bare number.
+  // When present, the rank cell shows the interval under the rank number.
+  // The intervals are ALWAYS national-population ranks; when a shortlist is
+  // active the table rank is shortlist-relative, so the interval is labeled
+  // "US" to avoid reading "rank 1" against "108-149" as a contradiction.
   var _rankIntervals = null;
+  var _rankIntervalsNational = false;
   var _sortAsc = true;
   var _expandedCode = null;    // currently expanded row center code
   var _selectedCodes = [];     // compare selection (max 3)
@@ -410,9 +414,10 @@
           var iv = _rankIntervals && _rankIntervals[row.code];
           if (iv && iv.rank_hi > iv.rank_lo) {
             var ivSpan = _createElement('span', 'rank-interval');
-            ivSpan.style.cssText = 'display:block;font-size:0.68rem;color:var(--text-muted,#888);font-weight:normal;';
-            ivSpan.textContent = iv.rank_lo + '\u2013' + iv.rank_hi;
-            ivSpan.title = '90% rank interval given each center\'s observed SRTR cohort size \u2014 centers with overlapping intervals are statistically tied';
+            ivSpan.style.cssText = 'display:block;font-size:0.68rem;color:var(--text-muted,#888);font-weight:normal;white-space:nowrap;';
+            ivSpan.textContent = (_rankIntervalsNational ? 'US ' : '') +
+              iv.rank_lo + '\u2013' + iv.rank_hi;
+            ivSpan.title = '90% NATIONAL rank interval given this center\'s observed SRTR cohort size \u2014 centers with overlapping intervals are statistically tied';
             td.appendChild(ivSpan);
           }
           break;
@@ -891,7 +896,10 @@
     render: render,
     sort: sort,
     getSelectedCenters: getSelectedCenters,
-    setRankIntervals: function (byCode) { _rankIntervals = byCode || null; }
+    setRankIntervals: function (byCode, opts) {
+      _rankIntervals = byCode || null;
+      _rankIntervalsNational = !!(opts && opts.national);
+    }
   };
 
 })();
