@@ -259,6 +259,34 @@
     el.style.display = '';
   }
 
+  /**
+   * #321: when a 2-5 center shortlist is simulated, show the joint
+   * probability of listing at ALL of them (with the honest coupling note).
+   */
+  function renderMultiListingNote(ml) {
+    var el = document.getElementById('sim-multi-listing');
+    if (!el) {
+      var seedEl = document.getElementById('sim-data-quality') ||
+                   document.getElementById('sim-seed-display');
+      if (!seedEl || !seedEl.parentNode) return;
+      el = document.createElement('div');
+      el.id = 'sim-multi-listing';
+      el.style.cssText = 'font-size: 0.82rem; margin-top: 0.4rem; padding: 0.5rem 0.65rem; border-left: 3px solid var(--accent, #4a90d9); background: var(--bg-subtle, rgba(74,144,217,0.06));';
+      seedEl.parentNode.insertBefore(el, seedEl.nextSibling);
+    }
+    if (!ml) { el.style.display = 'none'; return; }
+    var best = 0;
+    ml.listings.forEach(function (l) { if (l.p24 > best) best = l.p24; });
+    var names = ml.listings.map(function (l) { return l.center_code; }).join(' + ');
+    el.textContent = 'Listed at all ' + ml.listings.length + ' (' + names + '): ' +
+      'P(transplant \u2264 24mo) \u2248 ' + Math.round(ml.joint_p24 * 100) + '% ' +
+      'vs ' + Math.round(best * 100) + '% at the best single center ' +
+      '(gain +' + Math.round(ml.gain_over_best_single * 100) + ' points, an upper-bound estimate; ' +
+      'nearby centers share a donor pool and add little).';
+    el.title = ml.note || '';
+    el.style.display = '';
+  }
+
   // ── Map/table update helpers ────────────────────────────────────────────────
 
   function refreshTable(showSimColumns) {
@@ -395,6 +423,16 @@
       updateSeedDisplay(window.SimResults.getLastSeed());
       renderDataQualityNote(result.data_quality, result.data_vintage);
       refreshTable(true);
+
+      // #321: joint probability across an active 2-5 center shortlist
+      if (Array.isArray(formData.centerCodes) && formData.centerCodes.length >= 2 &&
+          formData.centerCodes.length <= 5 && window.TransPlanAPI.multiListing) {
+        window.TransPlanAPI.multiListing(formData, formData.centerCodes,
+                                         window.SimResults.getLastSeed())
+          .then(renderMultiListingNote);
+      } else {
+        renderMultiListingNote(null);
+      }
 
       // #313/#322: annotate ranks with bootstrap intervals (background —
       // the table renders immediately and gains intervals when they arrive)

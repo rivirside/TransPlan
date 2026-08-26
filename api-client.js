@@ -673,12 +673,39 @@
   }
 
 
+  /**
+   * POST /multi-listing — joint P(transplant) across 2-5 listings (#321).
+   */
+  async function multiListing(formData, centerCodes, seed) {
+    var base = getBaseUrl();
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
+    try {
+      var body = { patient: normalizeFormData(formData), center_codes: centerCodes };
+      if (seed !== undefined && seed !== null) body.seed = seed;
+      var response = await fetch(base + '/multi-listing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (!response.ok) return null;
+      return await response.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      return null;
+    }
+  }
+
+
   window.TransPlanAPI = {
     simulate: simulate,
     scoreAll: scoreAll,
     scoreExplain: scoreExplain,
     sensitivity: sensitivity,
     rankStability: rankStability,
+    multiListing: multiListing,
     equityAnalysis: equityAnalysis,
     whatIf: whatIf,
     policyScenarios: policyScenarios,
