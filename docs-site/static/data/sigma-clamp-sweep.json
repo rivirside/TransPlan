@@ -1,0 +1,289 @@
+{
+ "organs": {
+  "kidney": {
+   "not_assessable_reason": null,
+   "max_observed_cohort_n": 833,
+   "stored_sigma": 1.2,
+   "raw_sigma": 2.529,
+   "method": "P10-P25",
+   "median_censored": false,
+   "clamp_binds_at_1_2": true,
+   "stored_ignores_chain": false,
+   "by_ceiling": {
+    "1.2": {
+     "sigma_used": 1.2,
+     "n_centers_scored": 199,
+     "spearman": 0.8882,
+     "binds": true
+    },
+    "1.5": {
+     "sigma_used": 1.5,
+     "n_centers_scored": 199,
+     "spearman": 0.885,
+     "binds": true
+    },
+    "1.8": {
+     "sigma_used": 1.8,
+     "n_centers_scored": 199,
+     "spearman": 0.8865,
+     "binds": true
+    },
+    "2.1": {
+     "sigma_used": 2.1,
+     "n_centers_scored": 199,
+     "spearman": 0.8845,
+     "binds": true
+    },
+    "2.6": {
+     "sigma_used": 2.529,
+     "n_centers_scored": 199,
+     "spearman": 0.8843,
+     "binds": false
+    }
+   },
+   "best_ceiling": "1.2",
+   "best_spearman": 0.8882,
+   "spearman_at_1_2": 0.8882
+  },
+  "liver": {
+   "not_assessable_reason": null,
+   "max_observed_cohort_n": 377,
+   "stored_sigma": 1.2,
+   "raw_sigma": 1.5093,
+   "method": "P10-P25",
+   "median_censored": false,
+   "clamp_binds_at_1_2": true,
+   "stored_ignores_chain": false,
+   "by_ceiling": {
+    "1.2": {
+     "sigma_used": 1.2,
+     "n_centers_scored": 114,
+     "spearman": 0.7931,
+     "binds": true
+    },
+    "1.5": {
+     "sigma_used": 1.5,
+     "n_centers_scored": 114,
+     "spearman": 0.7912,
+     "binds": true
+    },
+    "1.8": {
+     "sigma_used": 1.5093,
+     "n_centers_scored": 114,
+     "spearman": 0.7916,
+     "binds": false
+    },
+    "2.1": {
+     "sigma_used": 1.5093,
+     "n_centers_scored": 114,
+     "spearman": 0.7916,
+     "binds": false
+    },
+    "2.6": {
+     "sigma_used": 1.5093,
+     "n_centers_scored": 114,
+     "spearman": 0.7916,
+     "binds": false
+    }
+   },
+   "best_ceiling": "1.2",
+   "best_spearman": 0.7931,
+   "spearman_at_1_2": 0.7931
+  },
+  "heart": {
+   "not_assessable_reason": null,
+   "max_observed_cohort_n": 173,
+   "stored_sigma": 1.2,
+   "raw_sigma": 1.5093,
+   "method": "P10-P25",
+   "median_censored": false,
+   "clamp_binds_at_1_2": true,
+   "stored_ignores_chain": false,
+   "by_ceiling": {
+    "1.2": {
+     "sigma_used": 1.2,
+     "n_centers_scored": 88,
+     "spearman": 0.6883,
+     "binds": true
+    },
+    "1.5": {
+     "sigma_used": 1.5,
+     "n_centers_scored": 88,
+     "spearman": 0.6776,
+     "binds": true
+    },
+    "1.8": {
+     "sigma_used": 1.5093,
+     "n_centers_scored": 88,
+     "spearman": 0.6767,
+     "binds": false
+    },
+    "2.1": {
+     "sigma_used": 1.5093,
+     "n_centers_scored": 88,
+     "spearman": 0.6767,
+     "binds": false
+    },
+    "2.6": {
+     "sigma_used": 1.5093,
+     "n_centers_scored": 88,
+     "spearman": 0.6767,
+     "binds": false
+    }
+   },
+   "best_ceiling": "1.2",
+   "best_spearman": 0.6883,
+   "spearman_at_1_2": 0.6883
+  },
+  "lung": {
+   "not_assessable_reason": null,
+   "max_observed_cohort_n": 170,
+   "stored_sigma": 1.14,
+   "raw_sigma": 1.1417,
+   "method": "P10-P25",
+   "median_censored": false,
+   "clamp_binds_at_1_2": false,
+   "stored_ignores_chain": false,
+   "by_ceiling": {
+    "1.2": {
+     "sigma_used": 1.1417,
+     "n_centers_scored": 48,
+     "spearman": 0.7755,
+     "binds": false
+    },
+    "1.5": {
+     "sigma_used": 1.1417,
+     "n_centers_scored": 48,
+     "spearman": 0.7755,
+     "binds": false
+    },
+    "1.8": {
+     "sigma_used": 1.1417,
+     "n_centers_scored": 48,
+     "spearman": 0.7755,
+     "binds": false
+    },
+    "2.1": {
+     "sigma_used": 1.1417,
+     "n_centers_scored": 48,
+     "spearman": 0.7755,
+     "binds": false
+    },
+    "2.6": {
+     "sigma_used": 1.1417,
+     "n_centers_scored": 48,
+     "spearman": 0.7755,
+     "binds": false
+    }
+   },
+   "best_ceiling": "1.2",
+   "best_spearman": 0.7755,
+   "spearman_at_1_2": 0.7755
+  },
+  "pancreas": {
+   "not_assessable_reason": "no center has an observed cohort of 25+ (largest is 16), so the calibration metric cannot be computed at any ceiling",
+   "max_observed_cohort_n": 16,
+   "stored_sigma": 0.8,
+   "raw_sigma": 2.2467,
+   "method": "P10-P25",
+   "median_censored": true,
+   "clamp_binds_at_1_2": true,
+   "stored_ignores_chain": true,
+   "by_ceiling": {
+    "1.2": {
+     "sigma_used": 1.2,
+     "n_centers_scored": 0,
+     "spearman": null,
+     "binds": true
+    },
+    "1.5": {
+     "sigma_used": 1.5,
+     "n_centers_scored": 0,
+     "spearman": null,
+     "binds": true
+    },
+    "1.8": {
+     "sigma_used": 1.8,
+     "n_centers_scored": 0,
+     "spearman": null,
+     "binds": true
+    },
+    "2.1": {
+     "sigma_used": 2.1,
+     "n_centers_scored": 0,
+     "spearman": null,
+     "binds": true
+    },
+    "2.6": {
+     "sigma_used": 2.2467,
+     "n_centers_scored": 0,
+     "spearman": null,
+     "binds": false
+    }
+   },
+   "best_ceiling": null,
+   "best_spearman": null,
+   "spearman_at_1_2": null
+  },
+  "intestine": {
+   "not_assessable_reason": "no center has an observed cohort of 25+ (largest is 20), so the calibration metric cannot be computed at any ceiling",
+   "max_observed_cohort_n": 20,
+   "stored_sigma": 1.2,
+   "raw_sigma": 2.1213,
+   "method": "P10-P25",
+   "median_censored": false,
+   "clamp_binds_at_1_2": true,
+   "stored_ignores_chain": false,
+   "by_ceiling": {
+    "1.2": {
+     "sigma_used": 1.2,
+     "n_centers_scored": 0,
+     "spearman": null,
+     "binds": true
+    },
+    "1.5": {
+     "sigma_used": 1.5,
+     "n_centers_scored": 0,
+     "spearman": null,
+     "binds": true
+    },
+    "1.8": {
+     "sigma_used": 1.8,
+     "n_centers_scored": 0,
+     "spearman": null,
+     "binds": true
+    },
+    "2.1": {
+     "sigma_used": 2.1,
+     "n_centers_scored": 0,
+     "spearman": null,
+     "binds": true
+    },
+    "2.6": {
+     "sigma_used": 2.1213,
+     "n_centers_scored": 0,
+     "spearman": null,
+     "binds": false
+    }
+   },
+   "best_ceiling": null,
+   "best_spearman": null,
+   "spearman_at_1_2": null
+  }
+ },
+ "_meta": {
+  "generated": "2026-08-26T19:52:14Z",
+  "script": "scripts/run-sigma-clamp-sweep.py",
+  "metric": "Spearman rank correlation between predicted p_transplant_12mo and the observed SRTR 12-month transplant rate \u2014 the same headline metric run-center-calibration.py reports.",
+  "ceilings": [
+   1.2,
+   1.5,
+   1.8,
+   2.1,
+   2.6
+  ],
+  "n_iterations": 1500,
+  "seed": 20260826,
+  "question": "#274/DATA-07: the sigma clamp ceiling of 1.2 binds on 5 of 6 organs. Does raising it improve calibration?"
+ }
+}
