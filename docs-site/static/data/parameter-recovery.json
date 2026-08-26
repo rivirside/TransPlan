@@ -1,0 +1,169 @@
+{
+ "summary": {
+  "worlds": 20,
+  "centers_per_world": 220,
+  "rho_factor_median": 0.9164394831598699,
+  "rho_p12_median": 0.9164394831598699,
+  "rho_p12_range": [
+   0.8688966150690567,
+   0.9436389557259822
+  ],
+  "clamped_share_median": 0.004545454545454545,
+  "sigma_hat_median": 1.003206577242354,
+  "true_sigma": 1.0,
+  "rho_p12_by_cohort_size": {
+   "n<60": 0.7638329112635394,
+   "60-160": 0.9314477817032119,
+   "160-300": 0.9690054531334926,
+   "300+": 0.9783585014834438
+  },
+  "panel_frac_recovered": 0.9318137362590053,
+  "panel_frac_true": 0.9345189975747777
+ },
+ "per_world": [
+  {
+   "rho_factor": 0.8987800273859903,
+   "rho_p12": 0.8987800273859903,
+   "clamped_share": 0.0,
+   "sigma_hat": 1.0081080805524305,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9363912477530527,
+   "rho_p12": 0.9363912477530527,
+   "clamped_share": 0.004545454545454545,
+   "sigma_hat": 0.9948398383598391,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9188360390616636,
+   "rho_p12": 0.9188360390616636,
+   "clamped_share": 0.0,
+   "sigma_hat": 0.9961695975026458,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9207947572169973,
+   "rho_p12": 0.9207947572169973,
+   "clamped_share": 0.004545454545454545,
+   "sigma_hat": 1.0076533603327988,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9369874283653493,
+   "rho_p12": 0.9369874283653493,
+   "clamped_share": 0.004545454545454545,
+   "sigma_hat": 1.004527642545224,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.8818762220857306,
+   "rho_p12": 0.8818762220857306,
+   "clamped_share": 0.0,
+   "sigma_hat": 1.0093123215774342,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9340831609969402,
+   "rho_p12": 0.9340831609969402,
+   "clamped_share": 0.004545454545454545,
+   "sigma_hat": 0.9902066085358451,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9436389557259822,
+   "rho_p12": 0.9436389557259822,
+   "clamped_share": 0.0,
+   "sigma_hat": 1.0107953264698364,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9140429272580762,
+   "rho_p12": 0.9140429272580762,
+   "clamped_share": 0.0,
+   "sigma_hat": 1.006984215183327,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9111431678716126,
+   "rho_p12": 0.9111431678716126,
+   "clamped_share": 0.004545454545454545,
+   "sigma_hat": 1.003473657349108,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9105514952412616,
+   "rho_p12": 0.9105514952412616,
+   "clamped_share": 0.004545454545454545,
+   "sigma_hat": 1.0037246212282283,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.930749508348219,
+   "rho_p12": 0.930749508348219,
+   "clamped_share": 0.00909090909090909,
+   "sigma_hat": 1.0047574958526717,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.8977510805069224,
+   "rho_p12": 0.8977510805069224,
+   "clamped_share": 0.004545454545454545,
+   "sigma_hat": 0.9955795051543005,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9025528990699544,
+   "rho_p12": 0.9025528990699544,
+   "clamped_share": 0.00909090909090909,
+   "sigma_hat": 1.0018608671559865,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.8688966150690567,
+   "rho_p12": 0.8688966150690567,
+   "clamped_share": 0.0,
+   "sigma_hat": 0.9935984315122134,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9299617385032373,
+   "rho_p12": 0.9299617385032373,
+   "clamped_share": 0.0,
+   "sigma_hat": 0.9880221922552602,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.8972709804297234,
+   "rho_p12": 0.8972709804297234,
+   "clamped_share": 0.0,
+   "sigma_hat": 1.0029394971356,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9218484979967655,
+   "rho_p12": 0.9218484979967655,
+   "clamped_share": 0.00909090909090909,
+   "sigma_hat": 1.0097960696719936,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9132900942731724,
+   "rho_p12": 0.9132900942731724,
+   "clamped_share": 0.0,
+   "sigma_hat": 1.0015754143426734,
+   "n_recovered": 220
+  },
+  {
+   "rho_factor": 0.9229225246952886,
+   "rho_p12": 0.9229225246952886,
+   "clamped_share": 0.00909090909090909,
+   "sigma_hat": 1.002606287596858,
+   "n_recovered": 220
+  }
+ ],
+ "_meta": {
+  "seed": 20260825,
+  "method": "Parameter-recovery study (#309): synthetic ground truth through the"
+ }
+}
