@@ -571,6 +571,24 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **Opportunity:** SRTR now publishes a risk-adjusted **Offer Acceptance Rate Ratio** per program (OPTN Board approved Dec 2022, effective July 2023, MPSC review below 0.30 adult / 0.35 pediatric). The 2024 program year spans ~0.1 to ~5.12 across 200+ kidney programs. Ingesting this would give a directly observed center-discretion covariate, replacing the current inference-from-outcomes approach. Worth its own issue.
 - **Files:** `backend/services/scoring.py`, `backend/services/outcomes.py`, `backend/routers/equity.py`
 
+### L-076: Pediatric median wait times are derived, not observed
+- **Severity:** MEDIUM
+- **Status:** OPEN (documented 2026-08-26, #335)
+- **Category:** Statistical Model / Data
+- **What:** SRTR Table B10 (wait-time percentiles) has **no age stratification**, so no published pediatric median wait exists at any center. Pediatric wait medians shown in the app are derived by inverting the model's own 12-month competing-risks integral for the lognormal median that reproduces the center's published pediatric transplant rate.
+- **Why it's a limitation:** the inversion was validated on adults, where both quantities are published, and recovers **order** far better than **magnitude** — Spearman 0.888 (kidney), 0.773 (liver), 0.731 (lung), but median absolute level error of 36–143%. Heart failed the pre-registered 0.70 threshold outright (0.670) because heart waits are short and similar across centers, so rate noise swamps the between-center signal.
+- **Mitigation:** the headline 12-month probability does **not** use the inversion — the observed pediatric transplant rate sets it directly, so that number carries zero inversion error. The inversion is used only to extrapolate to other horizons and to display a median, and only for organs that pass the gate (`organs_passing` in `docs-site/static/data/pediatric-inversion.json`); failing organs fall back to the national pediatric baseline. Displayed pediatric medians are directional, not quotable.
+- **Files:** `scripts/run-pediatric-inversion.py`, `backend/services/monte_carlo.py`, `docs/pediatric-inversion-report.md`
+
+### L-077: Pediatric cohorts are small, and for lung and pancreas they are prior-dominated
+- **Severity:** MEDIUM
+- **Status:** OPEN (documented 2026-08-26, #335)
+- **Category:** Statistical Model / Data
+- **What:** Pediatric per-center estimates rest on far thinner exposure than adult ones. 30 of 106 pediatric kidney programs have under 10 person-years of follow-up, and pediatric **lung** has only 39 person-years nationally across all centers.
+- **Why it's a limitation:** at that exposure a center's observed rate is mostly noise. Empirical-Bayes shrinkage toward the national pediatric baseline (weight py/(py+10) per center; py/(py+200) for the organ-level mortality multipliers) keeps the estimates stable, but it also means a thin center's number is largely the national prior wearing that center's name. Pediatric lung and pancreas mortality multipliers in particular are prior-dominated rather than measured.
+- **Mitigation:** affected centers are tagged `pediatric_small_cohort` in `data_quality`, counted in the response's provenance summary, and named in the pediatric banner the simulator shows above the results table.
+- **Files:** `backend/services/monte_carlo.py`, `backend/services/provenance.py`, `scripts/derive-pediatric-mortality.py`, `docs/pediatric-mortality-derivation.md`
+
 ### L-071: Documentation still references "22 cities" in ~15 places
 - **Severity:** LOW
 - **Status:** FIXED (2026-08-25, #305 — docs-site/README swept; remaining mentions are explicitly historical. Backend comments/docstrings retire with the final #293 code deletion.)
