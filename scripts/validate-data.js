@@ -285,6 +285,41 @@ if (fs.existsSync(metadataPath)) {
     }
 }
 
+// === County population (#336) — denominator for per-capita work ===
+// Nothing in the repo had population at any geography before this; three
+// separate issues (#336 county trauma, #113 coverage, #267 2SFCA) depend on
+// it, so a silently-truncated fetch would corrupt all three at once.
+const countyPop = validateJSON('county-population.json');
+if (countyPop) {
+    const counties = countyPop.counties || {};
+    const n = Object.keys(counties).length;
+    if (n < 3000) {
+        addError(`county-population.json: only ${n} counties (never-shrink floor: 3000)`);
+    }
+    let total = 0;
+    let bad = 0;
+    for (const [fips, rec] of Object.entries(counties)) {
+        if (!/^\d{5}$/.test(fips)) {
+            addError(`county-population.json: '${fips}' is not a 5-digit FIPS code`);
+            break;
+        }
+        const pop = rec && rec.population;
+        if (typeof pop !== 'number' || pop < 1 || pop > 15000000) {
+            if (bad++ === 0) {
+                addError(`county-population.json: ${fips} population = ${pop} implausible`);
+            }
+        } else {
+            total += pop;
+        }
+    }
+    // The US population is ~335-345M. A total far outside that means the wrong
+    // column was read or state rows leaked in as counties.
+    if (total < 300000000 || total > 380000000) {
+        addError(`county-population.json: national total ${total} outside 300-380M — ` +
+                 `wrong column, or state rows counted as counties?`);
+    }
+}
+
 // === Published validation artifacts must be dated (#328) ===
 // Everything under docs-site/static/data/ is served publicly and read by the
 // model card. Only 4 of 21 files carried a timestamp, so a reader could not
