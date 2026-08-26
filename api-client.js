@@ -212,18 +212,63 @@
    * @param {number} [maxCenters] - Max centers to include (default 30)
    * @returns {Promise<Object|null>} EquityAnalysisResult or null on failure
    */
+  /**
+   * POST /bias-audit — publication-grade disparity metrics (disparity ratios,
+   * absolute gaps, Cohen's d) per center and dimension.
+   *
+   * The endpoint has existed since #254 with NO frontend caller, so its
+   * output was unreachable from the app.
+   */
+  async function biasAudit(formData, maxCenters, seed) {
+    var base = getBaseUrl();
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, 30000);
+
+    try {
+      var body = { patient: normalizeFormData(formData) };
+      if (maxCenters !== undefined && maxCenters !== null && maxCenters !== '') {
+        body.max_centers = maxCenters;
+      }
+      if (seed !== undefined && seed !== null) body.seed = seed;
+
+      var response = await fetch(base + '/bias-audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (!response.ok) {
+        console.warn('TransPlan bias-audit error:', response.status, response.statusText);
+        return null;
+      }
+      return await response.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') console.warn('TransPlan bias-audit timeout');
+      return null;
+    }
+  }
+
   async function equityAnalysis(formData, iterationsPerProfile, maxCenters, seed) {
     var base = getBaseUrl();
     var controller = new AbortController();
-    // Equity analysis is expensive (48 profiles × 22 cities) — 30s timeout
+    // Equity analysis sweeps 48 demographic profiles across every center the
+    // tier allows — 30s timeout.
     var timeoutId = setTimeout(function () { controller.abort(); }, 30000);
 
     try {
       var body = {
         patient: normalizeFormData(formData),
-        iterations_per_profile: iterationsPerProfile || 300,
-        max_centers: maxCenters || 30
+        iterations_per_profile: iterationsPerProfile || 300
       };
+      // #350: this defaulted max_centers to 30 while the web tier's cap is
+      // 248, so any caller that omitted it silently analyzed an eighth of
+      // the centers. Omitting the field lets the server apply the tier cap,
+      // which is the single source of truth.
+      if (maxCenters !== undefined && maxCenters !== null && maxCenters !== '') {
+        body.max_centers = maxCenters;
+      }
       if (seed !== undefined && seed !== null) body.seed = seed;
       var response = await fetch(base + '/equity-analysis', {
         method: 'POST',
@@ -710,6 +755,7 @@
     rankStability: rankStability,
     multiListing: multiListing,
     equityAnalysis: equityAnalysis,
+    biasAudit: biasAudit,
     whatIf: whatIf,
     policyScenarios: policyScenarios,
     policyScenario: policyScenario,

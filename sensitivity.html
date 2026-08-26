@@ -742,22 +742,23 @@
             fetch(apiBase + '/tier')
                 .then(function (r) { return r.ok ? r.json() : null; })
                 .then(function (data) {
-                    tierConfig = data || defaultWebTier();
+                    if (!data) throw new Error('/tier returned no config');
+                    tierConfig = data;
                     applyTierCaps();
                 })
                 .catch(function () {
-                    tierConfig = defaultWebTier();
-                    applyTierCaps();
+                    // #350: a local copy of the tier caps drifts from
+                    // backend/tier_config.py with nothing to catch it (the
+                    // equity page's copy had gone stale by 8x). Caps are
+                    // enforced server-side, so when /tier is unreachable the
+                    // honest thing is to leave the authored control ranges
+                    // alone rather than invent a limit.
+                    tierConfig = null;
+                    sensTierBadge.textContent = 'Tier unknown';
+                    sensTierBadge.className = 'tier-badge';
+                    sensTierBadge.title = 'Could not reach /tier — limits ' +
+                        'still apply server-side.';
                 });
-        }
-
-        function defaultWebTier() {
-            return {
-                name: 'web',
-                caps: {
-                    max_sensitivity_iterations: 500
-                }
-            };
         }
 
         function applyTierCaps() {

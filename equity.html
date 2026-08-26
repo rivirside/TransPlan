@@ -393,6 +393,35 @@
                     </div>
                 </div>
 
+                <!-- Bias audit (#254 / #350: endpoint existed with no caller) -->
+                <div class="eq-card" id="eqBiasCard" style="margin-top:1.5rem">
+                    <h3 style="margin-top:0">Bias audit</h3>
+                    <p class="eq-note" style="margin-top:0.25rem">
+                        The Gini above summarizes inequality in one number. This
+                        breaks it down per dimension: which group fares best and
+                        worst at each center, the ratio and absolute gap between
+                        them, and Cohen's d as a standardized effect size.
+                    </p>
+                    <button class="btn-secondary" id="eqBiasBtn" type="button">Run bias audit</button>
+                    <span id="eqBiasStatus" class="eq-note" style="margin-left:0.6rem"></span>
+                    <div id="eqBiasWrap" style="display:none; overflow-x:auto; margin-top:0.9rem">
+                        <table class="eq-table">
+                            <thead>
+                                <tr>
+                                    <th>Center</th>
+                                    <th>Dimension</th>
+                                    <th>Best group</th>
+                                    <th>Worst group</th>
+                                    <th>Disparity ratio</th>
+                                    <th>Absolute gap</th>
+                                    <th>Cohen's d</th>
+                                </tr>
+                            </thead>
+                            <tbody id="eqBiasBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Disclaimers -->
                 <div class="eq-disclaimers" id="eqDisclaimers"></div>
 
@@ -442,23 +471,28 @@
             return fetch(apiBase + '/tier')
                 .then(function (r) { return r.ok ? r.json() : null; })
                 .then(function (data) {
-                    _tierConfig = data || _defaultWebTier();
+                    if (!data) throw new Error('/tier returned no config');
+                    _tierConfig = data;
                     _applyTierCaps();
                 })
                 .catch(function () {
-                    _tierConfig = _defaultWebTier();
-                    _applyTierCaps();
+                    // #350: this used to fall back to a hardcoded
+                    // max_equity_centers of 30 while the web tier's real cap
+                    // is 248, so a slow or failed /tier silently capped the
+                    // analysis at an eighth of the centers and presented the
+                    // truncated result as complete. Caps are enforced
+                    // server-side regardless, so the honest client behaviour
+                    // when the tier is unknown is to leave the authored
+                    // control ranges alone and say the tier is unknown.
+                    _tierConfig = null;
+                    var badge = document.getElementById('eqTierBadge');
+                    if (badge) {
+                        badge.textContent = 'Tier unknown';
+                        badge.className = 'tier-badge';
+                        badge.title = 'Could not reach /tier — limits still ' +
+                            'apply server-side.';
+                    }
                 });
-        }
-
-        function _defaultWebTier() {
-            return {
-                name: 'web',
-                caps: {
-                    max_equity_centers: 30,
-                    max_equity_iterations: 200
-                }
-            };
         }
 
         function _applyTierCaps() {
@@ -503,6 +537,87 @@
         runBtn.addEventListener('click', function () {
             runAnalysis();
         });
+
+        // ── Bias audit (#254 endpoint, previously unreachable from the UI) ──
+        var eqBiasBtn = document.getElementById('eqBiasBtn');
+        if (eqBiasBtn) eqBiasBtn.addEventListener('click', runBiasAudit);
+
+        function _num(v, digits) {
+            return (typeof v === 'number' && isFinite(v)) ? v.toFixed(digits) : '—';
+        }
+
+        async function runBiasAudit() {
+            var statusEl = document.getElementById('eqBiasStatus');
+            var wrap = document.getElementById('eqBiasWrap');
+            var body = document.getElementById('eqBiasBody');
+            var formData = TransPlanPatientForm.collectFormData();
+
+            if (!formData.organ || !formData.bloodType || !formData.age) {
+                statusEl.textContent = 'Fill in the patient profile first.';
+                return;
+            }
+
+            eqBiasBtn.disabled = true;
+            statusEl.textContent = 'Running…';
+            wrap.style.display = 'none';
+
+            var result = null;
+            try {
+                result = await TransPlanAPI.biasAudit(
+                    formData, parseInt(maxCentersSlider.value, 10));
+            } catch (err) {
+                // Without this the button stayed disabled and the status stuck
+                // on "Running…" forever, which reads as a hang rather than a
+                // failure.
+                console.error('bias audit threw:', err);
+            }
+
+            eqBiasBtn.disabled = false;
+            if (!result || !result.city_profiles) {
+                statusEl.textContent = 'Bias audit failed — the backend may be unavailable.';
+                return;
+            }
+
+            // Most-disparate centers first: that is what the panel is for.
+            var profiles = result.city_profiles.slice().sort(function (a, b) {
+                return (b.overall_disparity_ratio || 0) - (a.overall_disparity_ratio || 0);
+            });
+
+            while (body.firstChild) body.removeChild(body.firstChild);
+            var dims = [
+                ['Blood type', 'blood_type_disparity'],
+                ['Age', 'age_disparity'],
+                ['Sex', 'sex_disparity']
+            ];
+            profiles.forEach(function (p) {
+                dims.forEach(function (pair, i) {
+                    var d = p[pair[1]];
+                    if (!d) return;
+                    var tr = document.createElement('tr');
+                    // Only label the center on its first row so the grouping reads.
+                    var cells = [
+                        i === 0 ? (p.city || p.center_name || p.center_code || '') : '',
+                        pair[0],
+                        (d.max_group || '') + ' (' + _num(d.max_p24, 3) + ')',
+                        (d.min_group || '') + ' (' + _num(d.min_p24, 3) + ')',
+                        _num(d.disparity_ratio, 3),
+                        _num(d.absolute_gap, 3),
+                        _num(d.cohens_d, 2)
+                    ];
+                    cells.forEach(function (text) {
+                        var td = document.createElement('td');
+                        td.textContent = text;
+                        tr.appendChild(td);
+                    });
+                    body.appendChild(tr);
+                });
+            });
+
+            statusEl.textContent = result.n_cities + ' centers × ' +
+                result.n_profiles + ' demographic profiles. Ordered by overall ' +
+                'disparity ratio, widest first.';
+            wrap.style.display = '';
+        }
 
         async function runAnalysis() {
             var formData = TransPlanPatientForm.collectFormData();
