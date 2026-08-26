@@ -1,0 +1,87 @@
+{
+ "organs": {
+  "kidney": {
+   "n_centers_panel": 134,
+   "n_eval": 124,
+   "held_out_release": "2511",
+   "rho_shrunk": 0.6971,
+   "rho_raw_persistence": 0.8366,
+   "frac_signal_posterior": {
+    "mean": 0.884,
+    "ci95": [
+     0.858,
+     0.91
+    ]
+   },
+   "sigma_release_mean": 0.0908,
+   "release_effect_range": [
+    -0.061,
+    0.141
+   ],
+   "max_rhat": 1.02
+  },
+  "liver": {
+   "n_centers_panel": 99,
+   "n_eval": 94,
+   "held_out_release": "2511",
+   "rho_shrunk": 0.4413,
+   "rho_raw_persistence": 0.6343,
+   "frac_signal_posterior": {
+    "mean": 0.816,
+    "ci95": [
+     0.771,
+     0.859
+    ]
+   },
+   "sigma_release_mean": 0.0931,
+   "release_effect_range": [
+    -0.095,
+    0.116
+   ],
+   "max_rhat": 1.01
+  },
+  "heart": {
+   "n_centers_panel": 125,
+   "n_eval": 115,
+   "held_out_release": "2511",
+   "rho_shrunk": 0.4314,
+   "rho_raw_persistence": 0.7046,
+   "frac_signal_posterior": {
+    "mean": 0.729,
+    "ci95": [
+     0.671,
+     0.782
+    ]
+   },
+   "sigma_release_mean": 0.0367,
+   "release_effect_range": [
+    -0.033,
+    0.021
+   ],
+   "max_rhat": 1.01
+  },
+  "lung": {
+   "n_centers_panel": 65,
+   "n_eval": 57,
+   "held_out_release": "2511",
+   "rho_shrunk": 0.3744,
+   "rho_raw_persistence": 0.5615,
+   "frac_signal_posterior": {
+    "mean": 0.809,
+    "ci95": [
+     0.741,
+     0.864
+    ]
+   },
+   "sigma_release_mean": 0.0408,
+   "release_effect_range": [
+    -0.035,
+    0.028
+   ],
+   "max_rhat": 1.01
+  }
+ },
+ "_meta": {
+  "method": "Panel-likelihood fit + out-of-sample validation (#358, phase 1)."
+ }
+}
