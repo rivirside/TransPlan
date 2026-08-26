@@ -524,7 +524,9 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
 ### L-070: Circular import fragility between bbn_parameterizer and bayesian_network
 - **Severity:** LOW
-- **Status:** OPEN (tech debt)
+- **Status:** FIXED (2026-08-26, #298) — the cycle is gone. `_get_center_region_map` was removed along with the classic granularity in #293, and `get_center_to_region_map` no longer references `bayesian_network` at all; its only deferred import is `data_loader`, which is not circular. Verified by importing each module first in a fresh interpreter (a real cycle fails exactly one order) and by a test that fails if a module-level `bayesian_network` import is reintroduced into `bbn_parameterizer`. See `backend/tests/test_bbn_hardening.py::TestNoCircularImport`.
+- **Original report below.**
+- **Severity (original):** LOW
 - **Category:** Architecture
 - **What:** `bbn_parameterizer.get_center_to_region_map("classic")` imports `bayesian_network._get_center_region_map` via a deferred import (inside the function, not at module level) to avoid a circular dependency. `bayesian_network` imports from `bbn_parameterizer` at module level.
 - **Why:** If anyone moves the deferred import to module level, or adds a new module-level import in the opposite direction, Python will raise `ImportError` at startup. The deferred import has a comment explaining this, but it's still fragile.

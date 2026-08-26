@@ -619,24 +619,45 @@ def _observed_vector_12mo(organ: str, region: str, center_map: dict) -> tuple[np
 
 
 def _national_vector_12mo(organ: str) -> np.ndarray:
-    """National 12-month outcome proportion vector (shrinkage prior)."""
+    """National 12-month outcome proportion vector (shrinkage prior).
+
+    BBN-17 (#298): this used to fall back to synthetic 50/5/5 proportions with
+    only a log warning. CompetingOutcome is the ONE fully data-grounded node
+    in the network — #206 rebuilt it specifically to remove magic numbers — so
+    a silent synthetic fallback ungrounds the thing that makes the BBN
+    defensible, and does it in a way that still returns plausible-looking
+    probabilities.
+
+    That is the 2026-08-05 failure mode exactly: a missing data file producing
+    a working-looking model instead of an error. All six organs carry complete
+    national baselines today, so raising costs nothing in normal operation and
+    catches the data-load failure it exists for.
+    """
     from services.data_loader import get_data
     natl = get_data().observed_national(organ)
-    if not natl:
-        # No observed national baseline — srtr-observed-rates.json missing or
-        # not loaded. The synthetic 50/5/5 fallback keeps the model running but
-        # ungrounds CompetingOutcome; warn so a data-load failure isn't silent.
-        logger.warning(
-            "No observed national outcome baseline for organ '%s' — CompetingOutcome "
-            "falling back to synthetic 50/5/5 priors. Is srtr-observed-rates.json loaded?",
-            organ,
+    required = ("transplant_rate", "waitlist_death_rate", "delisting_rate")
+    missing = [k for k in required if natl.get(k) is None]
+    if not natl or missing:
+        raise ValueError(
+            f"No observed national outcome baseline for organ '{organ}' "
+            f"(missing: {missing or 'the whole block'}). CompetingOutcome is "
+            f"the BBN's only fully data-grounded node; substituting synthetic "
+            f"proportions would return plausible-looking probabilities with no "
+            f"basis. Check that data/srtr-observed-rates.json is present and "
+            f"loaded."
         )
-    tx = (natl.get("transplant_rate") or 50.0) / 100.0
-    death = (natl.get("waitlist_death_rate") or 5.0) / 100.0
-    removed = (natl.get("delisting_rate") or 5.0) / 100.0
+    tx = natl["transplant_rate"] / 100.0
+    death = natl["waitlist_death_rate"] / 100.0
+    removed = natl["delisting_rate"] / 100.0
     waiting = max(0.0, 1.0 - tx - death - removed)
     vec = np.array([tx, death, removed, waiting])
-    return vec / vec.sum()
+    total = vec.sum()
+    if total <= 0:
+        raise ValueError(
+            f"National outcome baseline for organ '{organ}' sums to {total} — "
+            f"rates are {natl}. Cannot form a proportion vector."
+        )
+    return vec / total
 
 
 def _estimate_concentration(organ: str, regions: list, center_map: dict,
