@@ -93,6 +93,37 @@ def extract_organ(path: Path) -> dict | None:
     return {"centers": centers, "national_oar": national}
 
 
+def extract_panel() -> dict:
+    """OARR time panel over every archived release (#320 remainder / #358).
+
+    {organ: {code: {release: oar}}} — the per-release risk-adjusted ratios,
+    giving the discretion covariate a time dimension (drift, stability, and
+    the release-effects modeling #358 needs).
+    """
+    import re
+    import zipfile
+    archive = REPO / "data" / "srtr-archive"
+    panel: dict = {o: {} for o in ORGAN_CODES}
+    for z in sorted(archive.glob("csrs_final_tables_*all.zip")):
+        rel = re.search(r"_(\d{4})all", z.name).group(1)
+        zf = zipfile.ZipFile(z)
+        for organ, oc in ORGAN_CODES.items():
+            names = [n for n in zf.namelist() if n.endswith(f"_{oc}.xls")]
+            if not names:
+                continue
+            import tempfile
+            with tempfile.NamedTemporaryFile(suffix=".xls") as tmp:
+                tmp.write(zf.read(names[0]))
+                tmp.flush()
+                block = extract_organ(Path(tmp.name))
+            if not block:
+                continue
+            for code, rec in block["centers"].items():
+                panel[organ].setdefault(code, {})[rel] = rec["oar"]
+        print(f"  panel: release {rel} done")
+    return panel
+
+
 def main():
     result = {"_meta": {
         "source": "SRTR PSR Table B11 (offer acceptance), release 2511",
@@ -125,6 +156,24 @@ def main():
             return 1
     OUT.write_text(json.dumps(result, indent=1))
     print(f"Wrote {OUT} ({total} center-organ OARRs)")
+
+    if "--panel" in sys.argv:
+        panel = extract_panel()
+        panel_out = REPO / "data" / "offer-acceptance-panel.json"
+        n_series = sum(len(v) for v in panel.values())
+        if panel_out.exists():
+            old_n = sum(len(v) for v in json.loads(panel_out.read_text())
+                        .get("panel", {}).values())
+            if n_series < 0.9 * old_n:
+                print(f"REFUSING to shrink panel: {n_series} < 90% of {old_n}")
+                return 1
+        panel_out.write_text(json.dumps({
+            "_meta": {"source": "SRTR PSR Table B11 across all archived "
+                                "releases", "fetchedAt": datetime.now(
+                                    timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")},
+            "panel": panel,
+        }, indent=1))
+        print(f"Wrote {panel_out} ({n_series} center-organ series)")
     return 0
 
 
