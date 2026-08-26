@@ -66,5 +66,52 @@ citation and a sensitivity are different claims. A cited constant
 can still dominate a model; an uncited one can be irrelevant. Only
 the second property makes it safe to stop worrying about.
 
+
+## The donor-supply wait multiplier (#214)
+
+`_DONOR_SUPPLY_WAIT_MULT = [1.2, 1.0, 0.8]` is the other
+module-level heuristic in this file. A T6 test already asserted it
+does not drive rankings, but only for kidney at one granularity
+with one perturbation, and as a hidden pass/fail rather than a
+published number. Swept here on the same footing — including the
+variant that removes the effect ENTIRELY, which is the informative
+one: if rankings survive `[1, 1, 1]`, the node is not carrying the
+model.
+
+| granularity | organ | variant | Spearman vs shipped | max abs delta p24 |
+|---|---|---|---|---|
+| state | kidney | 1.5/1.0/0.5 (stronger) | 0.99987 | 0.0430 |
+| state | kidney | 1.05/1.0/0.95 (near-null) | 1.00000 | 0.0270 |
+| state | kidney | 1.0/1.0/1.0 (removed entirely) | 0.99997 | 0.0371 |
+| state | liver | 1.5/1.0/0.5 (stronger) | 0.99811 | 0.0392 |
+| state | liver | 1.05/1.0/0.95 (near-null) | 0.99942 | 0.0240 |
+| state | liver | 1.0/1.0/1.0 (removed entirely) | 0.99881 | 0.0327 |
+| state | heart | 1.5/1.0/0.5 (stronger) | 0.99661 | 0.0348 |
+| state | heart | 1.05/1.0/0.95 (near-null) | 0.99764 | 0.0188 |
+| state | heart | 1.0/1.0/1.0 (removed entirely) | 0.99683 | 0.0253 |
+| state | lung | 1.5/1.0/0.5 (stronger) | 0.99747 | 0.0106 |
+| state | lung | 1.05/1.0/0.95 (near-null) | 0.99926 | 0.0047 |
+| state | lung | 1.0/1.0/1.0 (removed entirely) | 0.99880 | 0.0062 |
+| full | kidney | 1.5/1.0/0.5 (stronger) | 0.99999 | 0.0446 |
+| full | kidney | 1.05/1.0/0.95 (near-null) | 0.99997 | 0.0279 |
+| full | kidney | 1.0/1.0/1.0 (removed entirely) | 0.99996 | 0.0382 |
+| full | liver | 1.5/1.0/0.5 (stronger) | 0.99861 | 0.0417 |
+| full | liver | 1.05/1.0/0.95 (near-null) | 0.99939 | 0.0252 |
+| full | liver | 1.0/1.0/1.0 (removed entirely) | 0.99903 | 0.0343 |
+| full | heart | 1.5/1.0/0.5 (stronger) | 0.99843 | 0.0360 |
+| full | heart | 1.05/1.0/0.95 (near-null) | 0.99939 | 0.0194 |
+| full | heart | 1.0/1.0/1.0 (removed entirely) | 0.99893 | 0.0261 |
+| full | lung | 1.5/1.0/0.5 (stronger) | 0.99494 | 0.0243 |
+| full | lung | 1.05/1.0/0.95 (near-null) | 0.99787 | 0.0118 |
+| full | lung | 1.0/1.0/1.0 (removed entirely) | 0.99568 | 0.0156 |
+
+**Removing the donor-supply effect entirely** leaves the worst rank correlation at 0.99568 and moves p24 by at most 0.0382. The multiplier is a documented directional assumption that changes almost nothing — the rankings are carried by the data-grounded factors (observed per-center rates and wait factors), which is what #211 and #206 were for.
+
+This settles the "no sensitivity analysis" half of #214.
+The other halves — the DonorSupply composite being an ad-hoc
+formula, and MortalityRisk having no interaction terms — are
+modelling questions this does not touch, and #214 stays open
+for them.
+
 Note: top-10 MEMBERSHIP changed in 1 of 32 comparisons. Where the top-10 order differs but membership does not, that is near-ties reshuffling — which the rank-interval and tie-group feature exists to communicate.
 

@@ -87,3 +87,42 @@ def test_probabilities_stayed_valid_under_every_variant(doc):
         assert 0 <= c["max_abs_delta_p24"] <= 1
         assert -1 <= c["spearman_vs_shipped"] <= 1
         assert c["n_centers"] >= 10
+
+
+class TestDonorSupplyMultiplier:
+    """#214: `_DONOR_SUPPLY_WAIT_MULT` is the other module-level heuristic in
+    bbn_parameterizer. A T6 test already asserted it does not drive rankings,
+    but only for kidney at one granularity with one perturbation, and as a
+    hidden pass/fail. These pin a published measurement across 4 organs and
+    both granularities — including the variant that removes the effect
+    entirely, which is the informative one.
+    """
+
+    def test_shipped_value_unchanged(self):
+        from services.bbn_parameterizer import _DONOR_SUPPLY_WAIT_MULT
+        assert _DONOR_SUPPLY_WAIT_MULT == [1.2, 1.0, 0.8]
+
+    def test_removing_the_effect_entirely_barely_moves_rankings(self, doc):
+        """The strongest form of the claim: if rankings survive [1,1,1], the
+        DonorSupply -> WaitCategory edge is not carrying the model."""
+        removed = [c for c in doc["donor_supply_comparisons"]
+                   if "removed entirely" in c["variant"]]
+        assert removed, "the sweep no longer includes the effect-removed variant"
+        worst_rho = min(c["spearman_vs_shipped"] for c in removed)
+        worst_delta = max(c["max_abs_delta_p24"] for c in removed)
+        assert worst_rho > RHO_FLOOR, (
+            f"removing the donor-supply effect now reorders centers "
+            f"(rho {worst_rho}) — it has become load-bearing, re-open #214")
+        assert worst_delta < DELTA_CEILING, (
+            f"removing the donor-supply effect now moves p24 by {worst_delta}")
+
+    def test_the_sweep_spans_stronger_and_weaker(self, doc):
+        """A one-sided perturbation could miss an asymmetric effect."""
+        variants = {c["variant"] for c in doc["donor_supply_comparisons"]}
+        assert any("stronger" in v for v in variants)
+        assert any("near-null" in v for v in variants)
+        assert doc["donor_supply_summary"]["includes_effect_removed_entirely"]
+
+    def test_both_granularities_covered(self, doc):
+        grans = {c["granularity"] for c in doc["donor_supply_comparisons"]}
+        assert grans == {"state", "full"}

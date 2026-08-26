@@ -353,6 +353,206 @@
    "top10_membership_identical": false
   }
  ],
+ "donor_supply_comparisons": [
+  {
+   "organ": "kidney",
+   "granularity": "state",
+   "variant": "1.5/1.0/0.5 (stronger)",
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.999867,
+   "max_abs_delta_p24": 0.043
+  },
+  {
+   "organ": "kidney",
+   "granularity": "state",
+   "variant": "1.05/1.0/0.95 (near-null)",
+   "n_centers": 233,
+   "spearman_vs_shipped": 1.0,
+   "max_abs_delta_p24": 0.027
+  },
+  {
+   "organ": "kidney",
+   "granularity": "state",
+   "variant": "1.0/1.0/1.0 (removed entirely)",
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.999971,
+   "max_abs_delta_p24": 0.0371
+  },
+  {
+   "organ": "liver",
+   "granularity": "state",
+   "variant": "1.5/1.0/0.5 (stronger)",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.998107,
+   "max_abs_delta_p24": 0.0392
+  },
+  {
+   "organ": "liver",
+   "granularity": "state",
+   "variant": "1.05/1.0/0.95 (near-null)",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.999422,
+   "max_abs_delta_p24": 0.024
+  },
+  {
+   "organ": "liver",
+   "granularity": "state",
+   "variant": "1.0/1.0/1.0 (removed entirely)",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.998809,
+   "max_abs_delta_p24": 0.0327
+  },
+  {
+   "organ": "heart",
+   "granularity": "state",
+   "variant": "1.5/1.0/0.5 (stronger)",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.996607,
+   "max_abs_delta_p24": 0.0348
+  },
+  {
+   "organ": "heart",
+   "granularity": "state",
+   "variant": "1.05/1.0/0.95 (near-null)",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.99764,
+   "max_abs_delta_p24": 0.0188
+  },
+  {
+   "organ": "heart",
+   "granularity": "state",
+   "variant": "1.0/1.0/1.0 (removed entirely)",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.996826,
+   "max_abs_delta_p24": 0.0253
+  },
+  {
+   "organ": "lung",
+   "granularity": "state",
+   "variant": "1.5/1.0/0.5 (stronger)",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.997465,
+   "max_abs_delta_p24": 0.0106
+  },
+  {
+   "organ": "lung",
+   "granularity": "state",
+   "variant": "1.05/1.0/0.95 (near-null)",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.999257,
+   "max_abs_delta_p24": 0.0047
+  },
+  {
+   "organ": "lung",
+   "granularity": "state",
+   "variant": "1.0/1.0/1.0 (removed entirely)",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.998796,
+   "max_abs_delta_p24": 0.0062
+  },
+  {
+   "organ": "kidney",
+   "granularity": "full",
+   "variant": "1.5/1.0/0.5 (stronger)",
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.999988,
+   "max_abs_delta_p24": 0.0446
+  },
+  {
+   "organ": "kidney",
+   "granularity": "full",
+   "variant": "1.05/1.0/0.95 (near-null)",
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.999972,
+   "max_abs_delta_p24": 0.0279
+  },
+  {
+   "organ": "kidney",
+   "granularity": "full",
+   "variant": "1.0/1.0/1.0 (removed entirely)",
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.999962,
+   "max_abs_delta_p24": 0.0382
+  },
+  {
+   "organ": "liver",
+   "granularity": "full",
+   "variant": "1.5/1.0/0.5 (stronger)",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.998613,
+   "max_abs_delta_p24": 0.0417
+  },
+  {
+   "organ": "liver",
+   "granularity": "full",
+   "variant": "1.05/1.0/0.95 (near-null)",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.999386,
+   "max_abs_delta_p24": 0.0252
+  },
+  {
+   "organ": "liver",
+   "granularity": "full",
+   "variant": "1.0/1.0/1.0 (removed entirely)",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.999033,
+   "max_abs_delta_p24": 0.0343
+  },
+  {
+   "organ": "heart",
+   "granularity": "full",
+   "variant": "1.5/1.0/0.5 (stronger)",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.998429,
+   "max_abs_delta_p24": 0.036
+  },
+  {
+   "organ": "heart",
+   "granularity": "full",
+   "variant": "1.05/1.0/0.95 (near-null)",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.999386,
+   "max_abs_delta_p24": 0.0194
+  },
+  {
+   "organ": "heart",
+   "granularity": "full",
+   "variant": "1.0/1.0/1.0 (removed entirely)",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.998931,
+   "max_abs_delta_p24": 0.0261
+  },
+  {
+   "organ": "lung",
+   "granularity": "full",
+   "variant": "1.5/1.0/0.5 (stronger)",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.994935,
+   "max_abs_delta_p24": 0.0243
+  },
+  {
+   "organ": "lung",
+   "granularity": "full",
+   "variant": "1.05/1.0/0.95 (near-null)",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.997875,
+   "max_abs_delta_p24": 0.0118
+  },
+  {
+   "organ": "lung",
+   "granularity": "full",
+   "variant": "1.0/1.0/1.0 (removed entirely)",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.995683,
+   "max_abs_delta_p24": 0.0156
+  }
+ ],
+ "donor_supply_summary": {
+  "worst_spearman_vs_shipped": 0.994935,
+  "worst_max_abs_delta_p24": 0.0446,
+  "comparisons_run": 24,
+  "includes_effect_removed_entirely": true
+ },
  "summary": {
   "worst_spearman_vs_shipped": 0.998689,
   "worst_max_abs_delta_p24": 0.019,
@@ -360,7 +560,7 @@
   "top10_membership_changes": 1
  },
  "_meta": {
-  "generated": "2026-08-26T21:51:54Z",
+  "generated": "2026-08-26T22:18:03Z",
   "script": "scripts/run-cpt-discretization-sweep.py",
   "question": "#213: are _CPT_STRONG/_MEDIUM/_WEAK load-bearing, or a weakly-informative prior whose exact value does not drive results?",
   "method": "Re-run the BBN with the tercile-to-state mapping swept from near-deterministic (90/9/1) to barely informative (50/35/15), far past any defensible disagreement, and compare per-center p24 against the shipped 70/25/5.",
