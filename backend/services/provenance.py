@@ -23,6 +23,12 @@ TAG_PEDIATRIC_SPARSE = "pediatric_small_cohort"
 # median to fit one). The center SET is pediatric but the wait numbers fall
 # back to adult, which must be visible rather than reported as adequate.
 TAG_PEDIATRIC_UNCALIBRATED = "pediatric_wait_uncalibrated"
+# #376/L-080: SRTR censors this organ's national median (">72 months") and
+# publishes no value, so the median every displayed wait derives from is
+# RECONSTRUCTED from P25 rather than observed. Affects pancreas only. Without
+# this the reconstructed figure is indistinguishable from the five organs
+# whose medians SRTR does publish and which are stored verbatim.
+TAG_MEDIAN_RECONSTRUCTED = "wait_median_reconstructed"
 
 # tag -> (summary family key, center-level count label, degraded count label)
 FAMILIES = {
@@ -36,6 +42,7 @@ FAMILIES = {
     # it counts as good — and "pediatric: 233" would have been a nonsense
     # line on an adult response.
     TAG_PEDIATRIC_UNCALIBRATED: ("pediatric_wait_model", "modeled", "adult_fallback"),
+    TAG_MEDIAN_RECONSTRUCTED: ("wait_median", "published", "reconstructed"),
 }
 
 ALL_TAGS = list(FAMILIES)
@@ -93,6 +100,20 @@ def _check_pediatric_sparse(data, organ: str, code: str) -> bool:
     return (rec.get("person_years") or 0.0) < 10.0
 
 
+def _check_median_reconstructed(data, organ: str, center_code: str) -> bool:
+    """True when this organ's national median is reconstructed, not published.
+
+    Organ-level rather than center-level: every center of a censored organ
+    inherits the reconstruction, because each displayed median is the national
+    median times that center's factor.
+    """
+    try:
+        params = (data.wait_time_distributions or {}).get(organ) or {}
+    except AttributeError:
+        return False
+    return bool(params.get("median_censored"))
+
+
 def _check_pediatric_uncalibrated(data, organ: str, center_code: str) -> bool:
     """True when this organ has no fitted rate->probability conversion, so the
     center's pediatric wait numbers are the adult distribution unchanged."""
@@ -118,6 +139,8 @@ def center_data_quality(organ: str, center_code: str,
         return list(ALL_TAGS)
     tags = [tag for tag, check in _DETECTORS.items()
             if check(data, organ, center_code)]
+    if _check_median_reconstructed(data, organ, center_code):
+        tags.append(TAG_MEDIAN_RECONSTRUCTED)
     # The pediatric family only applies to pediatric runs; adult responses
     # must not sprout a pediatric column.
     if pediatric:
