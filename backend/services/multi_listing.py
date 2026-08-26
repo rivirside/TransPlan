@@ -63,18 +63,19 @@ def circle_overlap_fraction(distance_nm: float, radius_nm: float = CIRCLE_NM) ->
 
 
 def _effective_dist(patient: PatientProfile, code: str):
-    """The center's effective wait lognormal (with acceptance thinning),
-    matching the MC engine's semantics."""
-    from services.monte_carlo import _get_acceptance_rate
+    """The center's wait lognormal, matching the MC engine's DEFAULT
+    semantics: acceptance thinning (F1) is an opt-in engine feature
+    (model_acceptance=False by default), so it is NOT applied here — the
+    2026-08-26 browser verification caught the mismatch as a visible
+    contradiction between the results table (default path) and the
+    multi-listing panel (thinned path) for the same patient."""
     dist = get_wait_time_distribution(
         organ=patient.organ, blood_type=patient.blood_type, center_code=code,
         cpra=patient.cpra, meld=patient.meld, las=patient.las,
         age=patient.age, sex=patient.sex,
     )
     s, loc, scale = get_lognorm_params(dist)
-    a = _get_acceptance_rate(patient.organ, code)
-    a = a if 0 < a < 1.0 else 1.0
-    return scipy.stats.lognorm(s=s, loc=loc, scale=scale / a)
+    return scipy.stats.lognorm(s=s, loc=loc, scale=scale)
 
 
 def compute_multi_listing(patient: PatientProfile, center_codes: list[str],
