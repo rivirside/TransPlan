@@ -1,0 +1,135 @@
+{
+ "organs": {
+  "kidney": {
+   "assessable": true,
+   "cumulative_removed": {
+    "6": 0.01799,
+    "12": 0.04161,
+    "18": 0.06735
+   },
+   "monthly_hazard": {
+    "0-6": 0.003026,
+    "6-12": 0.004057,
+    "12-18": 0.004538
+   },
+   "hazard_ratio_vs_first_6mo": {
+    "0-6": 1.0,
+    "6-12": 1.3408,
+    "12-18": 1.4997
+   }
+  },
+  "liver": {
+   "assessable": true,
+   "cumulative_removed": {
+    "6": 0.06207,
+    "12": 0.10012,
+    "18": 0.1257
+   },
+   "monthly_hazard": {
+    "0-6": 0.010679,
+    "6-12": 0.006904,
+    "12-18": 0.004806
+   },
+   "hazard_ratio_vs_first_6mo": {
+    "0-6": 1.0,
+    "6-12": 0.6465,
+    "12-18": 0.45
+   }
+  },
+  "heart": {
+   "assessable": true,
+   "cumulative_removed": {
+    "6": 0.06008,
+    "12": 0.07946,
+    "18": 0.09308
+   },
+   "monthly_hazard": {
+    "0-6": 0.010326,
+    "6-12": 0.003473,
+    "12-18": 0.002485
+   },
+   "hazard_ratio_vs_first_6mo": {
+    "0-6": 1.0,
+    "6-12": 0.3364,
+    "12-18": 0.2406
+   }
+  },
+  "lung": {
+   "assessable": true,
+   "cumulative_removed": {
+    "6": 0.04474,
+    "12": 0.05428,
+    "18": 0.05935
+   },
+   "monthly_hazard": {
+    "0-6": 0.007628,
+    "6-12": 0.001673,
+    "12-18": 0.000896
+   },
+   "hazard_ratio_vs_first_6mo": {
+    "0-6": 1.0,
+    "6-12": 0.2194,
+    "12-18": 0.1175
+   }
+  },
+  "pancreas": {
+   "assessable": true,
+   "cumulative_removed": {
+    "6": 0.0805,
+    "12": 0.1548,
+    "18": 0.23839
+   },
+   "monthly_hazard": {
+    "0-6": 0.013987,
+    "6-12": 0.014043,
+    "12-18": 0.017357
+   },
+   "hazard_ratio_vs_first_6mo": {
+    "0-6": 1.0,
+    "6-12": 1.0041,
+    "12-18": 1.2409
+   }
+  },
+  "intestine": {
+   "assessable": true,
+   "cumulative_removed": {
+    "6": 0.02963,
+    "12": 0.06667,
+    "18": 0.08148
+   },
+   "monthly_hazard": {
+    "0-6": 0.005013,
+    "6-12": 0.006486,
+    "12-18": 0.002667
+   },
+   "hazard_ratio_vs_first_6mo": {
+    "0-6": 1.0,
+    "6-12": 1.2938,
+    "12-18": 0.532
+   }
+  }
+ },
+ "pooled_hazard_ratio_vs_first_6mo": {
+  "6-12": 0.8068,
+  "12-18": 0.6801
+ },
+ "current_multipliers": [
+  0.5,
+  0.8,
+  1.2,
+  1.8
+ ],
+ "current_ratios_vs_first_band": [
+  1.0,
+  1.6,
+  2.4,
+  3.6
+ ],
+ "_meta": {
+  "generated": "2026-08-26T21:17:44Z",
+  "script": "scripts/run-delisting-hazard-fit.py",
+  "source": "SRTR PSR Table B7 national cumulative removals without transplant at 6, 12 and 18 months (SAL_REMDET/REMOTH/REMREC_U6/U12/U18)",
+  "method": "Interval hazard h = -ln(S(t2)/S(t1))/(t2-t1) within one national cohort, so the escalation is measured WITHIN patients rather than contrasted BETWEEN centers.",
+  "coverage": "Bands 1 and 2 (<=6mo, 6-12mo) are measured directly; band 3 (12-24mo) is measured over its first half only; band 4 (>24mo) lies beyond every published horizon and cannot be measured from this source at all."
+ }
+}

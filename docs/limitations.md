@@ -619,6 +619,29 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **Why it was not simply fixed:** moving sigma to 1.2 changes the figure to 29.9, which is still wrong by more than a factor of two, and pancreas cannot be validated — no pancreas center has an observed cohort of 25 or more (largest is 16), so the calibration metric that settled the clamp question elsewhere cannot be computed for it. Swapping one unvalidatable wrong number for another is not progress. The real fix is to represent a censored median honestly (as a lower bound, flagged) rather than silently reconstructing a point estimate from an arbitrary constant.
 - **Files:** `scripts/parse-srtr-reports.py` (`fit_lognormal`, censored-median branch), `data/wait-time-distributions.json`
 
+### L-081: Delisting multipliers assume risk rises with waiting time; for most organs it falls
+- **Severity:** MEDIUM
+- **Status:** OPEN (documented 2026-08-26, #297)
+- **Category:** Statistical Model
+- **What:** The BBN's `DelistingRisk` node scales the delisting rate by `WaitCategory` with `[0.5, 0.8, 1.2, 1.8]` — one monotonic rise applied to every organ, implying risk 3.6x higher after 24 months than in the first six.
+- **What the data says:** SRTR publishes national waitlist removals at 6, 12 **and** 18 months, which gives the interval hazard directly within a single cohort. Ratios to each organ's own first-six-month hazard:
+
+| organ | 6-12mo | 12-18mo |
+|---|---|---|
+| kidney | 1.34 | 1.50 |
+| pancreas | 1.00 | 1.24 |
+| intestine | 1.29 | 0.53 |
+| liver | 0.65 | 0.45 |
+| heart | 0.34 | 0.24 |
+| lung | 0.22 | **0.12** |
+
+The shipped values have the **wrong sign** for liver, heart, lung and intestine. Lung's hazard in months 12-18 is roughly an eighth of its first-six-month hazard, where the model applies a 2.4x multiplier.
+
+- **Why the data is credible:** the pattern is clinically coherent — candidates most likely to be removed as "too sick", or to die, are removed early, so the cohort still waiting at 12 months is systematically healthier than the one that started (depletion of susceptibles). It is strongest exactly where early mortality is highest (lung, heart) and reverses for kidney, whose candidates are comparatively stable on dialysis and accumulate comorbidity while waiting.
+- **Why it is not yet fixed:** the CPT is a discretized tercile summary rather than a hazard model, so the multipliers do not substitute one-for-one, and any replacement must clear the calibration gate. Band 4 (>24 months) also lies beyond every published horizon and would remain an extrapolation regardless.
+- **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
+- **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
+
 ### L-078: PELD is mapped onto MELD's priority thresholds without a published equivalence
 - **Severity:** MEDIUM
 - **Status:** OPEN (documented 2026-08-26, #335)

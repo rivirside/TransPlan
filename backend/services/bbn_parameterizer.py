@@ -524,12 +524,40 @@ def build_delisting_risk_cpt(regions=None, n_regions=None, center_map=None,
     n_r = n_regions
     n_w = 4  # WaitCategory states
 
-    # Wait-category multipliers on delisting (#213/#214): longer time on the
-    # waitlist ⇒ higher delisting risk (too sick / improved / refused). Documented
-    # directional assumptions, not fitted — regressing observed delisting on the
-    # wait category is circular (the category derives from the same wait factors).
-    # Since #211 (CompetingOutcome) now drives outcomes directly from observed
-    # rates, DelistingRisk is a secondary queryable summary; T6 sweeps these.
+    # Wait-category multipliers on delisting (#213/#214), encoding: longer time
+    # on the waitlist => higher delisting risk (too sick / improved / refused).
+    #
+    # #297 MEASURED THIS, AND IT IS WRONG FOR MOST ORGANS. The old comment here
+    # said the multipliers could not be fitted because "regressing observed
+    # delisting on the wait category is circular". That is true of the obvious
+    # approach — regressing each CENTER's delisting rate on its wait factor is
+    # confounded, and estimates a BETWEEN-CENTER contrast where this encodes a
+    # WITHIN-PATIENT one — but it is not true that no measurement exists.
+    #
+    # SRTR publishes national removals at 6, 12 AND 18 months, which gives the
+    # interval hazard within a single cohort. Ratios to each organ's own first
+    # six months:
+    #
+    #     kidney 1.34 / 1.50      liver  0.65 / 0.45
+    #     pancreas 1.00 / 1.24    heart  0.34 / 0.24
+    #     intestine 1.29 / 0.53   lung   0.22 / 0.12
+    #
+    # The hazard FALLS with time on the list for liver, heart, lung and
+    # intestine — the wrong SIGN for four of six organs, not merely the wrong
+    # magnitude. It is clinically coherent: the sickest candidates are removed
+    # early, so the cohort still waiting is progressively healthier (depletion
+    # of susceptibles), strongest where early mortality is highest.
+    #
+    # Left in place deliberately, not through neglect: this CPT is a
+    # discretized tercile summary rather than a hazard model, so the
+    # multipliers do not substitute one-for-one and any replacement must clear
+    # the calibration gate. Band 4 (>24mo) is beyond every published horizon
+    # and would stay an extrapolation regardless. Tracked as L-081 / BBN-04;
+    # see docs/delisting-hazard-report.md.
+    #
+    # Blast radius is limited: since #211 CompetingOutcome drives outcomes
+    # directly from observed rates, so DelistingRisk is a secondary queryable
+    # summary rather than the primary path to reported probabilities.
     wait_delist_mults = [0.5, 0.8, 1.2, 1.8]
 
     rates = np.zeros((n_o, n_r, n_w))
