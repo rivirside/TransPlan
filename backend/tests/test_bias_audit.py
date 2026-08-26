@@ -87,7 +87,7 @@ class TestBiasAudit:
         """Create a minimal mock equity analysis result."""
         profiles = []
         for bt in ["O+", "A+", "AB+"]:
-            for age in ["18-34", "35-54"]:
+            for age in ["18-34", "35-64"]:
                 for sex in ["male", "female"]:
                     # AB+ gets higher probability, O+ lower
                     base = 0.5

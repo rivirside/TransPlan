@@ -1,0 +1,209 @@
+{
+ "_meta": {
+  "source": "SRTR PSR National Center-Level Summary Data (January 2025 release), Tables B8-B9 national candidate counts",
+  "script": "scripts/parse-waitlist-composition.py",
+  "method": "National waitlist composition per organ. Age brackets are exact unions of SRTR's published bands (18-34; 35-49 + 50-64; 65-69 + 70+), so no apportionment is involved.",
+  "rh_assumption": "SRTR reports ABO group without Rh, so each group is split 84%/16% positive/negative using the US Rh share. Applied uniformly, so it cannot shift between-group comparisons.",
+  "references": [
+   "https://www.srtr.org/reports/program-specific-reports/"
+  ]
+ },
+ "kidney": {
+  "n_listed": 106519,
+  "age_brackets": {
+   "18-34": 0.0977,
+   "35-64": 0.6779,
+   "65+": 0.2244
+  },
+  "sex": {
+   "female": 0.38,
+   "male": 0.62
+  },
+  "abo_group": {
+   "O": 0.4997,
+   "A": 0.3123,
+   "B": 0.1507,
+   "AB": 0.0373
+  },
+  "blood_type": {
+   "O+": 0.4197,
+   "O-": 0.08,
+   "A+": 0.2623,
+   "A-": 0.05,
+   "B+": 0.1266,
+   "B-": 0.0241,
+   "AB+": 0.0313,
+   "AB-": 0.006
+  },
+  "age_band_counts": {
+   "18-34": 10163,
+   "35-64": 70517,
+   "65+": 23340
+  }
+ },
+ "liver": {
+  "n_listed": 39496,
+  "age_brackets": {
+   "18-34": 0.0679,
+   "35-64": 0.7022,
+   "65+": 0.2299
+  },
+  "sex": {
+   "female": 0.3819,
+   "male": 0.6181
+  },
+  "abo_group": {
+   "O": 0.4702,
+   "A": 0.3687,
+   "B": 0.1218,
+   "AB": 0.0393
+  },
+  "blood_type": {
+   "O+": 0.395,
+   "O-": 0.0752,
+   "A+": 0.3097,
+   "A-": 0.059,
+   "B+": 0.1023,
+   "B-": 0.0195,
+   "AB+": 0.033,
+   "AB-": 0.0063
+  },
+  "age_band_counts": {
+   "18-34": 2551,
+   "35-64": 26402,
+   "65+": 8644
+  }
+ },
+ "heart": {
+  "n_listed": 14481,
+  "age_brackets": {
+   "18-34": 0.1137,
+   "35-64": 0.6891,
+   "65+": 0.1972
+  },
+  "sex": {
+   "female": 0.2894,
+   "male": 0.7106
+  },
+  "abo_group": {
+   "O": 0.4443,
+   "A": 0.3669,
+   "B": 0.1451,
+   "AB": 0.0437
+  },
+  "blood_type": {
+   "O+": 0.3732,
+   "O-": 0.0711,
+   "A+": 0.3082,
+   "A-": 0.0587,
+   "B+": 0.1219,
+   "B-": 0.0232,
+   "AB+": 0.0367,
+   "AB-": 0.007
+  },
+  "age_band_counts": {
+   "18-34": 1409,
+   "35-64": 8536,
+   "65+": 2443
+  }
+ },
+ "lung": {
+  "n_listed": 9035,
+  "age_brackets": {
+   "18-34": 0.0631,
+   "35-64": 0.5762,
+   "65+": 0.3606
+  },
+  "sex": {
+   "female": 0.4069,
+   "male": 0.5931
+  },
+  "abo_group": {
+   "O": 0.4752,
+   "A": 0.3724,
+   "B": 0.1165,
+   "AB": 0.0359
+  },
+  "blood_type": {
+   "O+": 0.3992,
+   "O-": 0.076,
+   "A+": 0.3128,
+   "A-": 0.0596,
+   "B+": 0.0979,
+   "B-": 0.0186,
+   "AB+": 0.0302,
+   "AB-": 0.0057
+  },
+  "age_band_counts": {
+   "18-34": 561,
+   "35-64": 5121,
+   "65+": 3205
+  }
+ },
+ "pancreas": {
+  "n_listed": 966,
+  "age_brackets": {
+   "18-34": 0.2606,
+   "35-64": 0.7233,
+   "65+": 0.0161
+  },
+  "sex": {
+   "female": 0.4855,
+   "male": 0.5145
+  },
+  "abo_group": {
+   "O": 0.4244,
+   "A": 0.4079,
+   "B": 0.1294,
+   "AB": 0.0383
+  },
+  "blood_type": {
+   "O+": 0.3565,
+   "O-": 0.0679,
+   "A+": 0.3426,
+   "A-": 0.0653,
+   "B+": 0.1087,
+   "B-": 0.0207,
+   "AB+": 0.0322,
+   "AB-": 0.0061
+  },
+  "age_band_counts": {
+   "18-34": 227,
+   "35-64": 630,
+   "65+": 14
+  }
+ },
+ "intestine": {
+  "n_listed": 433,
+  "age_brackets": {
+   "18-34": 0.3486,
+   "35-64": 0.6197,
+   "65+": 0.0317
+  },
+  "sex": {
+   "female": 0.4619,
+   "male": 0.5381
+  },
+  "abo_group": {
+   "O": 0.4573,
+   "A": 0.3834,
+   "B": 0.1316,
+   "AB": 0.0277
+  },
+  "blood_type": {
+   "O+": 0.3841,
+   "O-": 0.0732,
+   "A+": 0.3221,
+   "A-": 0.0613,
+   "B+": 0.1105,
+   "B-": 0.0211,
+   "AB+": 0.0233,
+   "AB-": 0.0044
+  },
+  "age_band_counts": {
+   "18-34": 99,
+   "35-64": 176,
+   "65+": 9
+  }
+ }
+}

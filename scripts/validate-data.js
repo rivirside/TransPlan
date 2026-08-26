@@ -285,6 +285,37 @@ if (fs.existsSync(metadataPath)) {
     }
 }
 
+// === Waitlist composition (#337) — equity cell weights ===
+// If this file is lost or truncated, equity silently falls back to
+// general-population weights, which understate type B on the kidney waitlist
+// — the group facing the longest waits. A quiet fallback would look like a
+// working analysis, so fail loudly instead.
+const waitlistComp = validateJSON('waitlist-composition.json');
+if (waitlistComp) {
+    const organs = Object.keys(waitlistComp).filter(k => k !== '_meta');
+    if (organs.length < 4) {
+        addError(`waitlist-composition.json: only ${organs.length} organs (floor: 4)`);
+    }
+    for (const organ of organs) {
+        const rec = waitlistComp[organ] || {};
+        for (const dim of ['age_brackets', 'sex', 'abo_group', 'blood_type']) {
+            const dist = rec[dim];
+            if (!dist || !Object.keys(dist).length) {
+                addError(`waitlist-composition.json: ${organ}.${dim} missing`);
+                continue;
+            }
+            const total = Object.values(dist).reduce((a, b) => a + b, 0);
+            if (Math.abs(total - 1) > 0.02) {
+                addError(`waitlist-composition.json: ${organ}.${dim} sums to ` +
+                         `${total.toFixed(4)}, not 1.0`);
+            }
+        }
+        if (!(rec.n_listed > 0)) {
+            addError(`waitlist-composition.json: ${organ}.n_listed = ${rec.n_listed}`);
+        }
+    }
+}
+
 // === County population (#336) — denominator for per-capita work ===
 // Nothing in the repo had population at any geography before this; three
 // separate issues (#336 county trauma, #113 coverage, #267 2SFCA) depend on

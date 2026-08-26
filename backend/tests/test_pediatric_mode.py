@@ -222,7 +222,7 @@ class TestPediatricEquity:
                            getattr(c, "age_breakdown", None) or {}):
                 if isinstance(holder, dict):
                     found |= {k for k in holder if isinstance(k, str)}
-        adult_labels = {"18-34", "35-54", "55-70"}
+        adult_labels = {b["label"] for b in __import__("services.equity", fromlist=["x"]).AGE_BRACKETS}
         assert not (found & adult_labels), (
             f"pediatric equity emitted ADULT brackets: {found & adult_labels}")
 
@@ -243,9 +243,14 @@ class TestPediatricEquity:
 
     def test_adult_weights_untouched(self):
         from services.equity import AGE_BRACKET_WEIGHTS, _profile_weight
-        assert AGE_BRACKET_WEIGHTS == {"18-34": 0.11, "35-54": 0.38, "55-70": 0.51}
-        assert _profile_weight("O+", "35-54", "male") == pytest.approx(
-            0.374 * 0.38 * 0.60)
+        # These are the documented FALLBACK weights (#337 replaced the live
+        # ones with observed per-organ waitlist composition); they must still
+        # form a distribution and still be what _profile_weight uses when no
+        # observed weights are supplied.
+        assert abs(sum(AGE_BRACKET_WEIGHTS.values()) - 1.0) < 0.02
+        bracket = next(iter(AGE_BRACKET_WEIGHTS))
+        assert _profile_weight("O+", bracket, "male") == pytest.approx(
+            0.374 * AGE_BRACKET_WEIGHTS[bracket] * 0.60)
 
     def test_unknown_organ_falls_back_to_uniform(self):
         from services.equity import pediatric_age_weights

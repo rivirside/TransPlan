@@ -275,11 +275,20 @@ class TestAgeSexInP24:
         assert found_difference, "sexes show identical p24 at every center"
 
     def test_older_age_lower_p24(self, kidney_equity):
-        """55-70 has a 1.10 wait multiplier vs 0.95 for 18-34, so its p24
-        must be lower at any given center."""
+        """The oldest bracket carries a higher wait multiplier than the
+        youngest, so its p24 must be lower at any given center.
+
+        Resolved from AGE_BRACKETS rather than hardcoded labels: #337
+        redefined the brackets as unions of SRTR's published bands, and a
+        literal here would have silently stopped testing anything."""
+        from services.equity import AGE_BRACKETS
+        youngest = AGE_BRACKETS[0]["label"]
+        oldest = AGE_BRACKETS[-1]["label"]
         city = kidney_equity.cities[0]
         by_label = {a["value"]: a["p24"] for a in city.dimension_disparities["age_bracket"]}
-        assert by_label["55-70"] < by_label["18-34"]
+        assert by_label[oldest] < by_label[youngest], (
+            f"{oldest} p24 {by_label[oldest]} should be below "
+            f"{youngest} p24 {by_label[youngest]}")
 
 
 class TestWeightedGini:
