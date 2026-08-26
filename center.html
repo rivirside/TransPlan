@@ -409,6 +409,8 @@
     <script src="donation-banner.js"></script>
     <script src="session.js"></script>
     <script src="components/site-chrome.js?v=8"></script>
+    <script src="api-client.js"></script>
+    <script src="shared/geo-utils.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
     (function() {
@@ -1022,7 +1024,170 @@
             var waitlistCard = buildWaitlistCard(data);
             if (waitlistCard) detailContainer.appendChild(waitlistCard);
             detailContainer.appendChild(buildContactAndMap(data, center));
+            detailContainer.appendChild(buildLocationDelta(center));
             detailContainer.appendChild(buildNearbyCenters(data.nearby_centers));
+        }
+
+
+        /**
+         * #350: GET /location-delta had no caller anywhere in the app, so the
+         * "how does this area compare to where I live?" question it answers
+         * was unreachable. Relocating for a transplant is a real decision, and
+         * these are the environmental factors a patient would actually weigh.
+         */
+        function buildLocationDelta(center) {
+            var card = document.createElement('div');
+            card.className = 'section-card';
+
+            var h = document.createElement('h2');
+            h.textContent = 'Compared to where you live';
+            card.appendChild(h);
+
+            if (!center.lat || !center.lon) {
+                var na = document.createElement('p');
+                na.className = 'no-data';
+                na.textContent = 'This center has no mapped coordinates, so a ' +
+                    'location comparison is not available.';
+                card.appendChild(na);
+                makeCollapsible(card, true, 'Air quality, cost of living, and population health');
+                return card;
+            }
+
+            var intro = document.createElement('p');
+            intro.className = 'muted';
+            intro.textContent = 'Enter a ZIP code or city to compare the area ' +
+                'around this center with your own on air quality, cost of ' +
+                'living, and population health. These are interpolated ' +
+                'surfaces, so treat them as regional context rather than ' +
+                'precise local measurements.';
+            card.appendChild(intro);
+
+            var row = document.createElement('div');
+            row.style.cssText = 'display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin:0.6rem 0';
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.id = 'ld-home';
+            input.placeholder = 'ZIP or city, e.g. 64108 or Kansas City, MO';
+            input.style.cssText = 'flex:1; min-width:220px; padding:0.4rem 0.55rem';
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn-secondary';
+            btn.textContent = 'Compare';
+            var status = document.createElement('span');
+            status.id = 'ld-status';
+            status.className = 'muted';
+            status.style.fontSize = '0.85rem';
+            row.appendChild(input);
+            row.appendChild(btn);
+            row.appendChild(status);
+            card.appendChild(row);
+
+            var wrap = document.createElement('div');
+            wrap.id = 'ld-results';
+            wrap.style.display = 'none';
+            card.appendChild(wrap);
+
+            function labelFor(layer) {
+                var map = {
+                    air_quality: 'Air quality',
+                    cost_of_living: 'Cost of living',
+                    health_diabetesRate: 'Diabetes rate',
+                    health_obesityRate: 'Obesity rate',
+                    health_ckdRate: 'Chronic kidney disease rate',
+                    health_hypertensionRate: 'Hypertension rate',
+                    health_smokingRate: 'Smoking rate'
+                };
+                return map[layer] || layer.replace(/_/g, ' ');
+            }
+
+            function run() {
+                var query = (input.value || '').trim();
+                if (!query) { status.textContent = 'Enter a ZIP code or city first.'; return; }
+                btn.disabled = true;
+                status.textContent = 'Locating…';
+                wrap.style.display = 'none';
+
+                var geo = window.TransPlanGeo && window.TransPlanGeo.geocodeLocation
+                    ? window.TransPlanGeo.geocodeLocation(query)
+                    : Promise.reject(new Error('Geocoding is unavailable.'));
+
+                geo.then(function (loc) {
+                    // geocodeLocation resolves to null rather than rejecting
+                    // when nothing matches, so a null check is the real guard.
+                    if (!loc || typeof loc.lat !== 'number') {
+                        throw new Error('Could not find that location.');
+                    }
+                    // The interpolation surfaces cover CONUS only; outside it
+                    // the endpoint 422s, which would surface as a bare HTTP
+                    // error rather than an explanation.
+                    if (loc.lat < 24 || loc.lat > 50 || loc.lon < -125 || loc.lon > -66) {
+                        throw new Error('Comparison covers the continental US only.');
+                    }
+                    status.textContent = 'Comparing…';
+                    var base = window.TransPlanAPI ? TransPlanAPI.getBaseUrl() : '';
+                    var url = base + '/location-delta?home_lat=' + loc.lat.toFixed(4) +
+                        '&home_lon=' + loc.lon.toFixed(4) +
+                        '&center_lat=' + center.lat +
+                        '&center_lon=' + center.lon;
+                    return fetch(url).then(function (r) {
+                        if (!r.ok) throw new Error('HTTP ' + r.status);
+                        return r.json();
+                    });
+                }).then(function (result) {
+                    while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+                    var table = document.createElement('table');
+                    table.className = 'detail-table';
+                    var thead = document.createElement('thead');
+                    var htr = document.createElement('tr');
+                    ['Factor', 'Your area', 'Center area', 'Difference'].forEach(function (t) {
+                        var th = document.createElement('th');
+                        th.textContent = t;
+                        htr.appendChild(th);
+                    });
+                    thead.appendChild(htr);
+                    table.appendChild(thead);
+
+                    var tbody = document.createElement('tbody');
+                    Object.keys(result.deltas || {}).forEach(function (layer) {
+                        var d = result.deltas[layer];
+                        if (!d) return;
+                        var tr = document.createElement('tr');
+                        [labelFor(layer), d.home.toFixed(1), d.center.toFixed(1),
+                         (d.delta > 0 ? '+' : '') + d.delta.toFixed(1)
+                        ].forEach(function (text) {
+                            var td = document.createElement('td');
+                            td.textContent = text;
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                    table.appendChild(tbody);
+                    wrap.appendChild(table);
+
+                    var note = document.createElement('p');
+                    note.className = 'no-data';
+                    note.style.fontSize = '0.8rem';
+                    note.textContent = 'Higher is better for air quality; for the ' +
+                        'health rates and cost of living, lower is better. ' +
+                        'Values are interpolated between measured points, so ' +
+                        'nearby locations will read similarly.';
+                    wrap.appendChild(note);
+
+                    status.textContent = '';
+                    wrap.style.display = '';
+                }).catch(function (err) {
+                    status.textContent = err.message || 'Comparison failed.';
+                }).then(function () {
+                    btn.disabled = false;
+                });
+            }
+
+            btn.addEventListener('click', run);
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') run();
+            });
+            makeCollapsible(card, true, 'Air quality, cost of living, and population health');
+            return card;
         }
 
         // --- Init ---
