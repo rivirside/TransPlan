@@ -68,8 +68,13 @@ def compute_rank_stability(patient: PatientProfile, n_boot: int = 500,
         r["rank"] = i + 1
 
     p24 = np.array([r["p24"] for r in rows])
+    # #311: the pure-binomial width under-covers next-release reality
+    # (lag-1 coverage ~89% vs nominal 95%); dividing effective n by the
+    # measured inflation^2 widens the Beta noise by the same factor.
+    from services.bayesian_network import _CI_INFLATION_LAG1
+    infl = _CI_INFLATION_LAG1.get(patient.organ, 1.25)
     n_eff = np.array([r["n_obs"] if r["n_obs"] > 0 else _FALLBACK_N
-                      for r in rows], dtype=float)
+                      for r in rows], dtype=float) / (infl ** 2)
 
     # Beta noise around p24 at effective cohort size: Beta(p*n, (1-p)*n) has
     # mean p and sd ~ sqrt(p(1-p)/n) — the binomial SE of an observed

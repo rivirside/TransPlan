@@ -154,3 +154,13 @@ class TestExtensibleProvenance:
         assert dq["centers_total"] == 3
         assert dq["spatial_layers_unavailable"] == ["air_quality"]
         assert "wait_time_factors" in dq
+
+    def test_ci_inflation_applied(self):
+        """#311: the BBN interval carries the measured lag-1 inflation, not
+        the bare binomial width."""
+        import math
+        from services.bayesian_network import (_CI_INFLATION_LAG1,
+                                               _data_uncertainty_ci)
+        bare = 1.96 * math.sqrt(0.5 * 0.5 / 100)  # the implementation uses z=1.96
+        got = _data_uncertainty_ci(0.5, 100, organ="kidney")
+        assert got == pytest.approx(_CI_INFLATION_LAG1["kidney"] * bare, rel=1e-6)

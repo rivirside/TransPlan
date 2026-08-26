@@ -453,7 +453,17 @@ def _region_observed_n(organ: str, region: str, center_map: dict) -> int:
     return total
 
 
-def _data_uncertainty_ci(p24: float, n: int) -> float:
+# Empirical interval inflation (#311, docs/coverage-audit-report.md): the
+# binomial data-sampling half-width under-covers the next release's observed
+# rates (lag-1 coverage 88-91% vs nominal 95%) because real between-release
+# drift exists beyond sampling noise. Multiplying by these measured factors
+# restores nominal lag-1 coverage. Longer-horizon inflation (2x at 1yr,
+# ~3.4x at 2yr) is documented in the report; modeling it properly is #358.
+_CI_INFLATION_LAG1 = {"kidney": 1.25, "liver": 1.18, "heart": 1.16,
+                      "lung": 1.28, "pancreas": 1.34, "intestine": 1.34}
+
+
+def _data_uncertainty_ci(p24: float, n: int, organ: str = "") -> float:
     """Half-width of the data-sampling interval on p24 (#226).
 
     Replaces the old heuristic `max(0.03, 0.10*p24)`, which ignored cohort size
@@ -470,7 +480,7 @@ def _data_uncertainty_ci(p24: float, n: int) -> float:
     import math
     if n >= 1:
         se = math.sqrt(max(p24 * (1.0 - p24), 1e-6) / n)
-        return min(0.30, max(0.01, 1.96 * se))
+        return _CI_INFLATION_LAG1.get(organ, 1.25) * (min(0.30, max(0.01, 1.96 * se)))
     return 0.20
 
 
@@ -557,7 +567,7 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
         median_wait = _estimate_median_wait(query_result["wait_category"])
 
         n_obs = _region_observed_n(organ, region, center_region_map)
-        ci_half = _data_uncertainty_ci(p_24, n_obs)
+        ci_half = _data_uncertainty_ci(p_24, n_obs, organ=organ)
         ci_lo = max(0.0, p_24 - ci_half)
         ci_hi = min(1.0, p_24 + ci_half)
 
