@@ -475,7 +475,13 @@
       // #313/#322: annotate ranks with bootstrap intervals (background —
       // the table renders immediately and gains intervals when they arrive)
       if (window.TransPlanAPI.rankStability && window.SimResultsTable.setRankIntervals) {
-        window.TransPlanAPI.rankStability(formData, 300, window.SimResults.getLastSeed())
+        // #350: was a hardcoded 300 while tier_config caps this at 500 — and
+        // that cap was not even serialized by GET /tier until this change, so
+        // there was no way to honour it. Wider intervals come from more
+        // bootstrap resamples, so taking what the tier allows makes the
+        // reported rank ranges as precise as the tier permits.
+        var nBoot = (window.SimTierPanel && SimTierPanel.getMax('rank_stability_boot')) || 300;
+        window.TransPlanAPI.rankStability(formData, nBoot, window.SimResults.getLastSeed())
           .then(function (rs) {
             if (!rs || !rs.centers) return;
             var byCode = {};
