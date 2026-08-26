@@ -599,6 +599,24 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **How to close:** give the BBN a pediatric `WaitCategory` conditioned on the observed pediatric rate, and give MCMC a pediatric likelihood term. Until then the alternative engines should either carry an explicit "adult wait model" flag in their response or refuse pediatric requests.
 - **Files:** `backend/services/bayesian_network.py`, `backend/services/mcmc_inference.py`, `backend/services/monte_carlo.py` (`_pediatric_dist`)
 
+### L-080: The published pancreas median wait contradicts its own source
+- **Severity:** HIGH
+- **Status:** OPEN (documented 2026-08-26, #274 sweep)
+- **Category:** Data
+- **What:** `data/wait-time-distributions.json` publishes a national pancreas median wait of **22.8 months**. SRTR's Table B10 does not report a pancreas national median at all — it is **censored at ">72 months"**. Pancreas is the only organ affected; every other organ's published median is exactly the value SRTR reports.
+- **Why it happens:** when the median is censored, `fit_lognormal` reconstructs it from P25 as `exp(ln(P25) + 0.6745·sigma)` with a hardcoded `sigma = 0.8`. With P25 = 13.3 that yields 22.8. The reconstruction is only as good as the sigma, and 0.8 is an arbitrary constant — it is not the value the module's own strategy chain would produce from the same percentiles (2.247), and it is not large enough to be consistent with the censoring it is compensating for.
+- **How wrong:** for a lognormal with P25 = 13.3 to have a median above 72, sigma must exceed **2.50**. The published figure understates the registry's own lower bound by roughly a factor of three:
+
+| sigma | implied median |
+|---|---|
+| 0.8 (published) | 22.8 months |
+| 1.2 (the clamp ceiling) | 29.9 months |
+| 2.247 (the strategy chain, unclamped) | 60.5 months |
+| >2.50 (consistent with ">72") | >72 months |
+
+- **Why it was not simply fixed:** moving sigma to 1.2 changes the figure to 29.9, which is still wrong by more than a factor of two, and pancreas cannot be validated — no pancreas center has an observed cohort of 25 or more (largest is 16), so the calibration metric that settled the clamp question elsewhere cannot be computed for it. Swapping one unvalidatable wrong number for another is not progress. The real fix is to represent a censored median honestly (as a lower bound, flagged) rather than silently reconstructing a point estimate from an arbitrary constant.
+- **Files:** `scripts/parse-srtr-reports.py` (`fit_lognormal`, censored-median branch), `data/wait-time-distributions.json`
+
 ### L-078: PELD is mapped onto MELD's priority thresholds without a published equivalence
 - **Severity:** MEDIUM
 - **Status:** OPEN (documented 2026-08-26, #335)
