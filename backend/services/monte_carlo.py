@@ -183,6 +183,14 @@ def _bootstrap_ci(outcomes: np.ndarray, event: int, threshold_months: np.ndarray
     return (lo, hi)
 
 
+# Panel-measured persistence of OARR deviations (raw random-effects ANOVA
+# over the 15-release panel, data/offer-acceptance-panel.json): the share of
+# a center's OARR deviation from 1.0 that is persistent behavior rather than
+# release noise. Used to shrink the single-release OARR before F1 thinning.
+_OARR_SIGNAL_FRACTION = {"kidney": 0.62, "liver": 0.60, "heart": 0.58,
+                         "lung": 0.51, "pancreas": 0.55, "intestine": 0.55}
+
+
 def _get_acceptance_rate(organ: str, center_code: str) -> float:
     """Return center-level effective acceptance rate (0 < rate <= 1.0).
 
@@ -199,12 +207,17 @@ def _get_acceptance_rate(organ: str, center_code: str) -> float:
     national = ar.get("national_acceptance_rates", {}).get(organ, 0.25)
     # #320: prefer the OBSERVED risk-adjusted Offer Acceptance Rate Ratio
     # (SRTR Table B11) over the volume-proxy composite — the direct
-    # measurement of the discretion SURV-28 inferred. Clamped to the same
-    # [0.3, 3.0] band as the composite factors.
+    # measurement of the discretion SURV-28 inferred. The single-release
+    # OARR is SHRUNK toward neutral by the panel-measured signal fraction
+    # (offer-acceptance-panel.json ANOVA: ~50-62% of OARR deviation is
+    # persistent center behavior, the rest release noise) — the same
+    # empirical-Bayes logic as the #317 priors. Clamped to [0.3, 3.0].
     oar = (data.offer_acceptance.get(organ, {}).get("centers", {})
            .get(center_code, {}).get("oar"))
     if isinstance(oar, (int, float)) and oar > 0:
-        factor = max(0.3, min(float(oar), 3.0))
+        frac = _OARR_SIGNAL_FRACTION.get(organ, 0.55)
+        shrunk = 1.0 + frac * (float(oar) - 1.0)
+        factor = max(0.3, min(shrunk, 3.0))
     else:
         factor = ar.get("center_acceptance_factors", {}).get(center_code, {}).get(organ, 1.0)
     return min(national * factor, 1.0)

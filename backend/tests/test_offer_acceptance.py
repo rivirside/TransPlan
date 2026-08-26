@@ -28,8 +28,12 @@ class TestOarrData:
         centers = data.offer_acceptance["kidney"]["centers"]
         code = next(c for c, r in centers.items() if abs(r["oar"] - 1.0) > 0.3)
         national = data.acceptance_rates["national_acceptance_rates"]["kidney"]
-        expected = min(national * max(0.3, min(centers[code]["oar"], 3.0)), 1.0)
+        from services.monte_carlo import _OARR_SIGNAL_FRACTION
+        shrunk = 1.0 + _OARR_SIGNAL_FRACTION["kidney"] * (centers[code]["oar"] - 1.0)
+        expected = min(national * max(0.3, min(shrunk, 3.0)), 1.0)
         assert _get_acceptance_rate("kidney", code) == pytest.approx(expected)
+        # shrinkage pulls toward neutral: factor strictly between raw OARR and 1
+        assert min(centers[code]["oar"], 1.0) <= shrunk <= max(centers[code]["oar"], 1.0)
 
     def test_center_detail_carries_oar_and_tiers(self):
         from fastapi.testclient import TestClient
