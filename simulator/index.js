@@ -263,6 +263,39 @@
   }
 
   /**
+   * #376/L-080: when SRTR censors an organ's national median, every displayed
+   * "median wait" for that organ derives from a RECONSTRUCTED figure rather
+   * than a published one. Pancreas is the only organ affected today. Say so
+   * where the medians are read — the column otherwise looks exactly like the
+   * five organs whose medians the registry does publish.
+   */
+  function renderMedianProvenanceNote(dq) {
+    var el = document.getElementById('sim-median-provenance');
+    if (!el) {
+      var anchor = document.getElementById('sim-data-quality') ||
+                   document.getElementById('sim-seed-display');
+      if (!anchor || !anchor.parentNode) return;
+      el = document.createElement('div');
+      el.id = 'sim-median-provenance';
+      el.style.cssText = 'font-size: 0.82rem; margin-top: 0.4rem; padding: 0.5rem 0.65rem; border-left: 3px solid var(--warning, #d98a1f); background: var(--bg-subtle, rgba(217,138,31,0.07));';
+      anchor.parentNode.insertBefore(el, anchor.nextSibling);
+    }
+    var fam = dq && dq.wait_median;
+    if (!fam || !fam.reconstructed) {
+      el.style.display = 'none';
+      return;
+    }
+    el.textContent =
+      'Median wait note: SRTR does not publish a national median for this ' +
+      'organ — it reports only that the median exceeds 72 months. The median ' +
+      'waits shown below are reconstructed by the model from the 25th ' +
+      'percentile, so treat them as indicative rather than as registry ' +
+      'figures. The transplant probabilities are calibrated against observed ' +
+      'transplant rates and are not affected in the same way.';
+    el.style.display = '';
+  }
+
+  /**
    * #335: pediatric candidates are scored against a different center set and
    * a different allocation system, so say so where the results are read. The
    * center count comes from the response, not the client, so it can never
@@ -472,6 +505,7 @@
       updateSeedDisplay(window.SimResults.getLastSeed());
       renderDataQualityNote(result.data_quality, result.data_vintage);
       renderPediatricNote(result.data_quality, formData.age);
+      renderMedianProvenanceNote(result.data_quality);
       refreshTable(true);
 
       // #321: joint probability across an active 2-5 center shortlist

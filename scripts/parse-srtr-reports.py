@@ -272,11 +272,36 @@ def parse_wait_times(mapping: dict) -> dict:
         effective_median = round(math.exp(nat_mu), 1)
         print(f"  {organ}: national median={effective_median}mo, sigma={nat_sigma:.2f}")
 
-        # Build organ entry
+        # Build organ entry.
+        #
+        # #376/L-080: when SRTR censors the national median (">72 months"),
+        # `effective_median` is RECONSTRUCTED from P25 rather than published.
+        # Pancreas is the only organ this currently affects. Without a flag the
+        # reconstructed figure is indistinguishable from the five organs whose
+        # medians SRTR does publish and which are stored verbatim — so a
+        # pancreas center's displayed "median wait" reads as a registry figure
+        # when it is a model artifact.
+        #
+        # The value itself is deliberately unchanged: raising it toward the
+        # censored bound measurably DEGRADES calibration (p12 vs observed
+        # across 78 centers: 1.11x shipped, 1.40x at a median of 72), because
+        # sigma must rise with the median and fattens the left tail too. The
+        # fix is disclosure, not substitution — see docs/limitations.md L-080.
+        median_censored = not _is_valid(nat_median)
         organ_entry = {
             "national_median_months": effective_median,
             "log_sigma": round(nat_sigma, 2),
+            "median_censored": median_censored,
         }
+        if median_censored:
+            organ_entry["median_provenance"] = (
+                "RECONSTRUCTED. SRTR Table B10 censors this organ's national "
+                "median at '>72 months' and publishes no value. This figure is "
+                "derived from P25 under the fitted lognormal and is a model "
+                "artifact, not a registry statistic. Treat displayed medians "
+                "for this organ as indicative only; the registry's own "
+                "statement is that the median exceeds 72 months. See L-080."
+            )
 
         # Carry forward blood type / clinical multipliers from existing data
         if existing and organ in existing:

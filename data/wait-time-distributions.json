@@ -29,7 +29,8 @@
         "81-97": 2.5,
         "98-100": 5.0
       }
-    }
+    },
+    "median_censored": false
   },
   "liver": {
     "national_median_months": 4.6,
@@ -51,7 +52,8 @@
         "26-35": 0.5,
         "36-40": 0.2
       }
-    }
+    },
+    "median_censored": false
   },
   "heart": {
     "national_median_months": 2.2,
@@ -66,7 +68,8 @@
       "AB+": 0.75,
       "AB-": 0.8
     },
-    "clinical_multipliers": {}
+    "clinical_multipliers": {},
+    "median_censored": false
   },
   "lung": {
     "national_median_months": 1.4,
@@ -88,7 +91,8 @@
         "50-69": 0.5,
         "70-100": 0.2
       }
-    }
+    },
+    "median_censored": false
   },
   "pancreas": {
     "national_median_months": 22.8,
@@ -103,7 +107,9 @@
       "AB+": 0.6,
       "AB-": 0.7
     },
-    "clinical_multipliers": {}
+    "clinical_multipliers": {},
+    "median_censored": true,
+    "median_provenance": "RECONSTRUCTED. SRTR Table B10 censors this organ's national median at '>72 months' and publishes no value. This figure is derived from P25 under the fitted lognormal and is a model artifact, not a registry statistic. Treat displayed medians for this organ as indicative only; the registry's own statement is that the median exceeds 72 months. See L-080."
   },
   "intestine": {
     "national_median_months": 11.6,
@@ -118,6 +124,7 @@
       "AB+": 0.8,
       "AB-": 0.85
     },
-    "clinical_multipliers": {}
+    "clinical_multipliers": {},
+    "median_censored": false
   }
 }
