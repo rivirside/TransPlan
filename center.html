@@ -1123,6 +1123,14 @@
                     if (loc.lat < 24 || loc.lat > 50 || loc.lon < -125 || loc.lon > -66) {
                         throw new Error('Comparison covers the continental US only.');
                     }
+                    // The CENTER must be in range too. A Hawaii or Puerto Rico
+                    // center made the endpoint 422 and surfaced as a bare
+                    // "HTTP 422" instead of the explanation written above.
+                    if (center.lat < 24 || center.lat > 50 ||
+                        center.lon < -125 || center.lon > -66) {
+                        throw new Error('This center is outside the continental ' +
+                            'US, which the comparison layers do not cover.');
+                    }
                     status.textContent = 'Comparing…';
                     var base = window.TransPlanAPI ? TransPlanAPI.getBaseUrl() : '';
                     var url = base + '/location-delta?home_lat=' + loc.lat.toFixed(4) +
@@ -1184,7 +1192,10 @@
 
             btn.addEventListener('click', run);
             input.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter') run();
+                // Guard on btn.disabled: repeated Enter otherwise fired
+                // concurrent /location-delta requests that could resolve out
+                // of order and render a stale comparison.
+                if (e.key === 'Enter' && !btn.disabled) run();
             });
             makeCollapsible(card, true, 'Air quality, cost of living, and population health');
             return card;

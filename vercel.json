@@ -130,6 +130,14 @@
     {
       "source": "/api/v1/:path*",
       "destination": "/api/index"
+    },
+    {
+      "source": "/tier",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/bias-audit",
+      "destination": "/api/index"
     }
   ],
   "installCommand": "echo 'skip root npm install (dev-only deps; #343)'"

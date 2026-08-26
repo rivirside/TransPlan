@@ -19,11 +19,17 @@
       allowed_bbn_granularity: ['state', 'full'],
       copula_theta_locked: true,
       elasticity_locked: true,
-      max_equity_centers: 30,
+      max_equity_centers: 248,
       max_equity_iterations: 200,
       max_sensitivity_iterations: 500,
       max_whatif_iterations: 500,
-      max_spatial_resolution: 30
+      max_rank_stability_boot: 500,
+      max_spatial_resolution: 30,
+      max_validation_iterations: 300,
+      max_validation_sweep_steps: 6,
+      max_validation_train_years: 3,
+      max_score_explain_limit: 50,
+      max_trend_years: 2.0
     }
   };
 
@@ -268,7 +274,11 @@
     // Direct cap field lookup (e.g. 'iterations' -> max_iterations)
     if (paramName in caps) return caps[paramName];
 
-    return Infinity;
+    // Return 0, not Infinity. Callers use `getMax(x) || fallback`, and
+    // Infinity is TRUTHY — so an unknown cap silently defeated every
+    // fallback and reached JSON.stringify, which serializes Infinity as
+    // null and 422s the request. 0 is falsy, so the caller's fallback wins.
+    return 0;
   }
 
   // ── Export ────────────────────────────────────────────────────────

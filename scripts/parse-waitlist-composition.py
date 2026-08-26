@@ -70,33 +70,47 @@ MIN_LISTED = 100          # an organ with fewer listed candidates is not usable
 TOLERANCE = 0.02          # shares must sum to 1 within this
 
 
-def read_national_row(sheet, header: list[str], columns: list[str]) -> float | None:
+class MissingColumn(Exception):
+    """A configured SRTR column is absent — a layout change, not a zero."""
+
+
+def read_national_row(sheet, header: list[str], columns: list[str]) -> float:
     """Sum the national counts for *columns*.
 
-    The national columns repeat the same value on every row, so the first
-    positive value in each column is the national figure.
+    Raises MissingColumn if any requested column is absent. It previously
+    returned None, which `shares()` then dropped — so a renamed SRTR column
+    produced a distribution NORMALIZED OVER WHATEVER SURVIVED. A dropped
+    `TPC_GF_NU` would have shipped "the kidney waitlist is 100% male" and
+    passed every downstream check, because a vector normalized over its own
+    survivors always sums to 1. The guard could not fire.
+
+    A column that is present but genuinely zero returns 0.0 — a real
+    observation, kept.
     """
     idx = {h: i for i, h in enumerate(header)}
     total = 0.0
-    found = False
     for col in columns:
         i = idx.get(col)
         if i is None:
-            return None
+            raise MissingColumn(col)
         for r in range(1, sheet.nrows):
             v = sheet.cell_value(r, i)
             if isinstance(v, (int, float)) and v > 0:
                 total += float(v)
-                found = True
                 break
-    return total if found else None
+    return total
 
 
 def shares(counts: dict) -> dict:
-    total = sum(v for v in counts.values() if v)
+    """Normalize, KEEPING every configured key.
+
+    Dropping zero-valued keys meant a genuinely empty band vanished from the
+    output, so downstream saw a missing key rather than a zero.
+    """
+    total = sum(counts.values())
     if not total:
         return {}
-    return {k: round(v / total, 4) for k, v in counts.items() if v}
+    return {k: round(v / total, 4) for k, v in counts.items()}
 
 
 def extract(organ: str, code: str) -> dict | None:
@@ -107,12 +121,18 @@ def extract(organ: str, code: str) -> dict | None:
     sheet = xlrd.open_workbook(str(path)).sheet_by_name(SHEET)
     header = [str(sheet.cell_value(0, c)).strip() for c in range(sheet.ncols)]
 
-    ages = {band: read_national_row(sheet, header, cols)
-            for band, cols in AGE_BANDS.items()}
-    sexes = {name: read_national_row(sheet, header, [col])
-             for name, col in SEX_COLS.items()}
-    abo = {name: read_national_row(sheet, header, [col])
-           for name, col in ABO_COLS.items()}
+    try:
+        ages = {band: read_national_row(sheet, header, cols)
+                for band, cols in AGE_BANDS.items()}
+        sexes = {name: read_national_row(sheet, header, [col])
+                 for name, col in SEX_COLS.items()}
+        abo = {name: read_national_row(sheet, header, [col])
+               for name, col in ABO_COLS.items()}
+    except MissingColumn as e:
+        raise SystemExit(
+            f"{organ}: SRTR column {e} is missing — the workbook layout has "
+            f"changed. Refusing to write a distribution normalized over the "
+            f"columns that happen to remain.")
 
     listed = sum(v for v in abo.values() if v)
     if listed < MIN_LISTED:

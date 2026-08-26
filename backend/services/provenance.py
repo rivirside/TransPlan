@@ -18,6 +18,11 @@ TAG_OUTCOMES = "no_observed_outcomes"
 TAG_ACCEPTANCE = "acceptance_rate_national_default"
 TAG_TRENDS = "no_trend_series"
 TAG_PEDIATRIC_SPARSE = "pediatric_small_cohort"
+# #335: an organ with no adult-fitted rate->probability conversion (pancreas
+# and intestine have too few adult centers with both a rate and a published
+# median to fit one). The center SET is pediatric but the wait numbers fall
+# back to adult, which must be visible rather than reported as adequate.
+TAG_PEDIATRIC_UNCALIBRATED = "pediatric_wait_uncalibrated"
 
 # tag -> (summary family key, center-level count label, degraded count label)
 FAMILIES = {
@@ -27,6 +32,10 @@ FAMILIES = {
     TAG_ACCEPTANCE: ("acceptance_rates", "center_level", "national_default"),
     TAG_TRENDS: ("trend_series", "available", "missing"),
     TAG_PEDIATRIC_SPARSE: ("pediatric_cohort", "adequate", "small"),
+    # Label the "good" side neutrally: an ADULT run has no pediatric tag, so
+    # it counts as good — and "pediatric: 233" would have been a nonsense
+    # line on an adult response.
+    TAG_PEDIATRIC_UNCALIBRATED: ("pediatric_wait_model", "modeled", "adult_fallback"),
 }
 
 ALL_TAGS = list(FAMILIES)
@@ -84,6 +93,16 @@ def _check_pediatric_sparse(data, organ: str, code: str) -> bool:
     return (rec.get("person_years") or 0.0) < 10.0
 
 
+def _check_pediatric_uncalibrated(data, organ: str, center_code: str) -> bool:
+    """True when this organ has no fitted rate->probability conversion, so the
+    center's pediatric wait numbers are the adult distribution unchanged."""
+    try:
+        block = (data.pediatric or {}).get(organ) or {}
+    except AttributeError:
+        return True
+    return not ((block.get("calibration") or {}).get("k"))
+
+
 def center_data_quality(organ: str, center_code: str,
                         pediatric: bool = False) -> list[str]:
     """Degraded-input tags for one center. Empty list = fully center-level.
@@ -101,8 +120,11 @@ def center_data_quality(organ: str, center_code: str,
             if check(data, organ, center_code)]
     # The pediatric family only applies to pediatric runs; adult responses
     # must not sprout a pediatric column.
-    if pediatric and _check_pediatric_sparse(data, organ, center_code):
-        tags.append(TAG_PEDIATRIC_SPARSE)
+    if pediatric:
+        if _check_pediatric_sparse(data, organ, center_code):
+            tags.append(TAG_PEDIATRIC_SPARSE)
+        if _check_pediatric_uncalibrated(data, organ, center_code):
+            tags.append(TAG_PEDIATRIC_UNCALIBRATED)
     return tags
 
 

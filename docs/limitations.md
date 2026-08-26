@@ -589,6 +589,26 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **Mitigation:** affected centers are tagged `pediatric_small_cohort` in `data_quality`, counted in the response's provenance summary, and named in the pediatric banner the simulator shows above the results table.
 - **Files:** `backend/services/monte_carlo.py`, `backend/services/provenance.py`, `scripts/derive-pediatric-mortality.py`, `docs/pediatric-mortality-derivation.md`
 
+### L-079: BBN and MCMC restrict pediatric candidates to pediatric centers but model them with adult rates
+- **Severity:** HIGH
+- **Status:** OPEN (documented 2026-08-26, #335)
+- **Category:** Statistical Model
+- **What:** All three engines narrow a pediatric candidate to centers with a pediatric program for the organ, so they agree on WHICH centers appear. Only the Monte Carlo engine also re-anchors the wait distribution to the center's observed pediatric transplant rate. The BBN and MCMC engines produce **adult numbers on a pediatric center list**.
+- **Why it's a limitation:** a user who switches `inference_mode` to `bayesian` or `mcmc` gets a materially different answer for the same child with no indication that the pediatric model was not applied. Measured for kidney/O+/urgency 2 at center MOCH, the BBN **24-month** figure (0.706) falls below the Monte Carlo **12-month** figure (0.742), and BBN age 10 vs age 40 differ by only 0.002 — the entire difference coming from the new pediatric mortality multiplier rather than from any pediatric wait model.
+- **Mitigation for now:** the pediatric center restriction still applies on all three engines, so no engine scores a child at a center with no pediatric program, and the pediatric mortality multipliers (#335) do reach the BBN. Monte Carlo is the default engine.
+- **How to close:** give the BBN a pediatric `WaitCategory` conditioned on the observed pediatric rate, and give MCMC a pediatric likelihood term. Until then the alternative engines should either carry an explicit "adult wait model" flag in their response or refuse pediatric requests.
+- **Files:** `backend/services/bayesian_network.py`, `backend/services/mcmc_inference.py`, `backend/services/monte_carlo.py` (`_pediatric_dist`)
+
+### L-078: PELD is mapped onto MELD's priority thresholds without a published equivalence
+- **Severity:** MEDIUM
+- **Status:** OPEN (documented 2026-08-26, #335)
+- **Category:** Clinical Assumption
+- **What:** A pediatric liver candidate's PELD score drives the same allocation-priority multiplier that MELD drives, using identical thresholds (>=35, >=25, >=15).
+- **Why it's a limitation:** the two scores order candidates within the same allocation system, but they are computed from different inputs — PELD uses albumin, INR, bilirubin, growth failure and age at listing, where MELD uses creatinine, INR, bilirubin and sodium — and PELD's distribution sits lower. Applying MELD's cut-points to PELD therefore probably **under-prioritizes** pediatric candidates, in the direction that matters least for a tool meant to help them.
+- **Why it is nonetheless wired:** the alternative shipped worse. `peld` was accepted by the schema, range-validated, and rendered in the simulator and shared patient form while being read by no backend code at all — a candidate with PELD 40 and one with PELD -5 produced byte-identical results with no warning. A field that silently does nothing is a stronger failure than one with a documented assumption behind it.
+- **How to close:** map PELD to allocation priority from OPTN pediatric liver policy or an SRTR pediatric liver cohort, rather than by analogy to MELD. This is on the list for the faculty face-validity review (#107).
+- **Files:** `backend/services/scoring.py`, register row SCORE-31
+
 ### L-071: Documentation still references "22 cities" in ~15 places
 - **Severity:** LOW
 - **Status:** FIXED (2026-08-25, #305 — docs-site/README swept; remaining mentions are explicitly historical. Backend comments/docstrings retire with the final #293 code deletion.)

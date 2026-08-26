@@ -51,7 +51,12 @@
     if (formData.organ === 'lung' && formData.las) {
       profile.las = parseFloat(formData.las);
     }
-    if (formData.organ === 'liver' && formData.peld) {
+    // PELD can legitimately be 0 or negative, so a truthiness test drops
+    // real scores. components/patient-form.js already collects 0 correctly;
+    // this threw it away one layer down, so a typed 0 never reached the API.
+    if (formData.organ === 'liver' && formData.peld !== undefined &&
+        formData.peld !== null && formData.peld !== '' &&
+        !isNaN(parseFloat(formData.peld))) {
       profile.peld = parseFloat(formData.peld);
     }
     if (formData.organ === 'lung' && formData.cas) {

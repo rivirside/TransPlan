@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Limitations
 
-TransPlan tracks 77 known limitations (L-001 through L-077) in `docs/limitations.md`. This page summarizes the most important ones.
+TransPlan tracks 79 known limitations (L-001 through L-079) in `docs/limitations.md`. This page summarizes the most important ones.
 
 ## Model Limitations
 

@@ -55,6 +55,11 @@ class BiasAuditResult:
     warnings: list[str] = field(default_factory=list)
 
 
+# Stand-in for an infinite ratio (a zero-probability profile). Finite so the
+# response stays valid JSON; large enough to sort to the top of any ranking.
+_UNBOUNDED_RATIO = 9999.0
+
+
 def _cohens_d(group_a: list[float], group_b: list[float]) -> float:
     """Compute Cohen's d effect size between two groups."""
     a = np.array(group_a)
@@ -90,7 +95,7 @@ def _compute_dimension_disparity(
     max_p = group_means[max_group]
     min_p = group_means[min_group]
 
-    ratio = max_p / min_p if min_p > 0 else float("inf")
+    ratio = max_p / min_p if min_p > 0 else _UNBOUNDED_RATIO
     gap = max_p - min_p
 
     # Cohen's d between highest and lowest groups
@@ -169,7 +174,15 @@ def run_bias_audit(equity_result: dict) -> BiasAuditResult:
 
         # Overall disparity ratio (across all 48 profiles)
         if all_p24:
-            overall_ratio = max(all_p24) / min(all_p24) if min(all_p24) > 0 else float("inf")
+            # A p24 of exactly 0 (a highly sensitized profile at a slow
+            # center) made this float("inf"), which FastAPI serializes as bare
+            # `Infinity` — invalid JSON. The browser's response.json() then
+            # rejects and the WHOLE audit reports as a backend failure, so one
+            # unreachable cell took out the entire panel. Report the sentinel
+            # as a large finite value instead; the pairing is already visible
+            # in max_p24/min_p24.
+            overall_ratio = (max(all_p24) / min(all_p24)
+                             if min(all_p24) > 0 else _UNBOUNDED_RATIO)
         else:
             overall_ratio = 1.0
 

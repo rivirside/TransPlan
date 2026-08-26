@@ -256,3 +256,152 @@ class TestPediatricEquity:
         from services.equity import pediatric_age_weights
         w = pediatric_age_weights("not-an-organ")
         assert abs(sum(w.values()) - 1.0) < 1e-9
+
+
+class TestFailureModeParity:
+    """#335 review: /score and /simulate must fail the SAME way. /score used
+    `if programs:` and so silently returned all 233 ADULT centers — with the
+    pediatric scoring bonus applied — whenever pediatric data was missing,
+    while /simulate raised."""
+
+    def test_missing_pediatric_data_refuses_on_both_surfaces(self):
+        from services.data_loader import get_data
+        from services.monte_carlo import simulate
+        from services.scoring import score_all_centers
+        d = get_data()
+        saved = d.pediatric
+        try:
+            d.pediatric = {}
+            with pytest.raises(ValueError):
+                score_all_centers({"organ": "kidney", "blood_type": "O+",
+                                   "age": 10, "sex": "female", "urgency": 2}, None)
+            with pytest.raises(ValueError):
+                simulate(_child(), n_iterations=50, seed=1)
+        finally:
+            d.pediatric = saved
+
+    def test_unmatchable_shortlist_refuses_on_both_surfaces(self):
+        from services.monte_carlo import simulate
+        from services.scoring import score_all_centers
+        adult_only = ["ZZZZ"]
+        with pytest.raises(ValueError):
+            score_all_centers({"organ": "kidney", "blood_type": "O+", "age": 10,
+                               "sex": "female", "urgency": 2,
+                               "center_codes": adult_only}, None)
+        with pytest.raises(ValueError):
+            simulate(_child(center_codes=adult_only), n_iterations=50, seed=1)
+
+
+class TestAcceptanceThinning:
+    """#335 review: the pediatric anchor is the OBSERVED pediatric transplant
+    rate, which already reflects the center's acceptance behaviour. Thinning
+    it again deflated p12 by 3-5x (FLFH 0.806 -> 0.235)."""
+
+    def test_pediatric_p12_is_unchanged_by_acceptance_modelling(self):
+        from services.monte_carlo import simulate
+        off = {c.center_code: c.p_transplant_12mo
+               for c in simulate(_child(), n_iterations=1500, seed=7).cities}
+        on = {c.center_code: c.p_transplant_12mo
+              for c in simulate(_child(), n_iterations=1500, seed=7,
+                                model_acceptance=True).cities}
+        assert off and set(off) == set(on)
+        for code, p in off.items():
+            assert abs(on[code] - p) < 1e-9, (
+                f"{code}: acceptance modelling moved an anchored pediatric "
+                f"probability {p:.3f} -> {on[code]:.3f}")
+
+    def test_adults_still_thin(self):
+        """The fix must not disable acceptance modelling for adults."""
+        from services.monte_carlo import simulate
+        adult = PatientProfile(organ="kidney", blood_type="O+", age=45,
+                               sex="male", urgency=2)
+        off = {c.center_code: c.p_transplant_12mo
+               for c in simulate(adult, n_iterations=1500, seed=7).cities}
+        on = {c.center_code: c.p_transplant_12mo
+              for c in simulate(adult, n_iterations=1500, seed=7,
+                                model_acceptance=True).cities}
+        moved = sum(1 for c, p in off.items() if abs(on[c] - p) > 1e-6)
+        assert moved > 10, "acceptance modelling stopped affecting adults"
+
+
+class TestZeroRateAndCalibration:
+    def test_observed_zero_rate_is_shrunk_not_discarded(self):
+        """A center that genuinely performed no pediatric transplants is an
+        observation, not missing data. Treating it as missing handed it the
+        unshrunk ADULT curve (same defect class as the closed #229)."""
+        from services.data_loader import get_data
+        from services.distributions import get_wait_time_distribution
+        from services.monte_carlo import _pediatric_dist
+        d = get_data()
+        block = d.pediatric["kidney"]
+        zeros = [c for c, r in block["centers"].items()
+                 if r.get("transplant_rate") == 0]
+        if not zeros:
+            pytest.skip("no observed-zero pediatric centers in this vintage")
+        adult = get_wait_time_distribution("kidney", "O+")
+        out = _pediatric_dist(_child(), zeros[0], block, adult)
+        assert out is not adult, (
+            f"{zeros[0]} has an observed rate of 0 and was handed the adult "
+            f"distribution instead of being shrunk toward the national "
+            f"pediatric baseline")
+
+    def test_uncalibrated_organs_are_tagged(self):
+        """Pancreas and intestine have no fitted rate->probability conversion,
+        so their pediatric wait numbers ARE adult. That must be visible."""
+        from services.data_loader import get_data
+        from services.provenance import (TAG_PEDIATRIC_UNCALIBRATED,
+                                         center_data_quality)
+        d = get_data()
+        for organ in ("pancreas", "intestine"):
+            block = d.pediatric.get(organ) or {}
+            if (block.get("calibration") or {}).get("k"):
+                continue
+            codes = list(block.get("centers", {}))
+            if not codes:
+                continue
+            tags = center_data_quality(organ, codes[0], pediatric=True)
+            assert TAG_PEDIATRIC_UNCALIBRATED in tags, (
+                f"{organ} has no calibration but reports as calibrated")
+
+    def test_calibrated_organs_not_tagged(self):
+        from services.provenance import (TAG_PEDIATRIC_UNCALIBRATED,
+                                         center_data_quality)
+        from services.data_loader import get_data
+        code = next(iter(get_data().pediatric["kidney"]["centers"]))
+        assert TAG_PEDIATRIC_UNCALIBRATED not in center_data_quality(
+            "kidney", code, pediatric=True)
+
+
+class TestEngineWaitModelDisclosure:
+    """L-079: BBN and MCMC restrict a pediatric candidate to pediatric centers
+    but have no pediatric WAIT model — only Monte Carlo re-anchors to the
+    observed pediatric rate. Switching inference_mode silently produced adult
+    numbers on a pediatric center list; the response must say so."""
+
+    def test_monte_carlo_reports_a_pediatric_wait_model(self):
+        from services.monte_carlo import simulate
+        fam = simulate(_child(), n_iterations=200,
+                       seed=1).data_quality.get("pediatric_wait_model")
+        assert fam, "pediatric_wait_model family missing from the response"
+        assert fam["adult_fallback"] == 0, (
+            "Monte Carlo anchors pediatric probabilities and must not report "
+            "an adult wait model")
+
+    def test_bbn_discloses_the_adult_wait_model(self):
+        from services.bayesian_network import simulate_bbn
+        fam = simulate_bbn(_child()).data_quality.get("pediatric_wait_model")
+        assert fam, "pediatric_wait_model family missing from the BBN response"
+        assert fam["modeled"] == 0 and fam["adult_fallback"] > 0, (
+            "the BBN has no pediatric wait model, so every pediatric center "
+            "must be reported as adult_fallback")
+
+    def test_adult_runs_report_a_modeled_wait(self):
+        """The family must read sensibly on adult responses too — labelling
+        the good side 'pediatric' produced the line 'pediatric: 233' for a
+        45-year-old."""
+        from services.monte_carlo import simulate
+        adult = PatientProfile(organ="kidney", blood_type="O+", age=45,
+                               sex="male", urgency=2)
+        fam = simulate(adult, n_iterations=200,
+                       seed=1).data_quality.get("pediatric_wait_model")
+        assert fam["adult_fallback"] == 0 and fam["modeled"] > 0

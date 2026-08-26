@@ -201,6 +201,11 @@
 
     window.TransPlanAPI.fetchCenters(organ ? { organ: organ } : {})
       .then(function (result) {
+        // fetchCenters resolves with NULL on any error or timeout and never
+        // rejects, so without this a down backend fell through to the empty
+        // case and told the user "No centers for this organ" — a data claim,
+        // not a connectivity one.
+        if (!result) throw new Error('centers unavailable');
         var centers = (result && result.centers) || [];
         centers.sort(function (a, b) {
           var sa = (a.state_abbr || a.state || '').localeCompare(b.state_abbr || b.state || '');

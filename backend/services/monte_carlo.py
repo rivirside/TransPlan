@@ -275,10 +275,24 @@ def _pediatric_dist(patient, code: str, peds_block: dict, adult_dist):
     cal = peds_block.get("calibration") or {}
     k = cal.get("k")
     if not rec or not k:
+        # No adult-fitted conversion for this organ (pancreas and intestine
+        # have too few adult centers carrying both a rate and a published
+        # median to fit one). The center set is still pediatric, but the wait
+        # numbers fall back to adult — surfaced via TAG_PEDIATRIC_UNCALIBRATED
+        # rather than presented as a pediatric estimate.
         return adult_dist
     rate = rec.get("transplant_rate")
-    if not rate or rate <= 0:
+    if rate is None:
         return adult_dist
+    if rate < 0:
+        return adult_dist
+    # NOTE: rate == 0.0 deliberately continues. A center that genuinely
+    # performed no pediatric transplants is an OBSERVATION, not missing data,
+    # and treating it as missing handed it the unshrunk adult curve — the
+    # opposite of the shrinkage rule this function documents, and the same
+    # defect class as the closed #229. With shrinkage, a 2-person-year center
+    # observing zero lands near the national pediatric baseline instead of
+    # inheriting an adult probability it has no evidence for.
 
     # Empirical-Bayes shrinkage on exposure: weight = py / (py + PRIOR_PY)
     nat_rate = (peds_block.get("national") or {}).get("transplant_rate", rate)
@@ -403,10 +417,19 @@ def simulate(
         # truncate the EFFECTIVE distribution (time served counts against
         # the thinned wait, not the raw one).
         a_rate = 1.0
-        if model_acceptance:
+        if model_acceptance and not pediatric:
             a = _get_acceptance_rate(patient.organ, code)
             if a > 0 and a < 1.0:
                 a_rate = a
+        # #335: acceptance thinning is DELIBERATELY skipped on the pediatric
+        # path. The pediatric anchor below is the center's OBSERVED pediatric
+        # transplant rate, which already reflects how readily that program
+        # accepts offers — thinning it again applies the same effect twice.
+        # Measured before this guard, with model_acceptance=True:
+        #     FLFH p12 0.806 -> 0.235   MOCH 0.739 -> 0.136
+        # i.e. a 3-5x deflation of an anchored probability that should not
+        # have moved at all. The adult path is unaffected: its distribution
+        # comes from wait-time percentiles, which do NOT embed acceptance.
 
         # #335: for pediatric runs the center's OBSERVED pediatric transplant
         # rate is the anchor (the inversion gate showed the derived median

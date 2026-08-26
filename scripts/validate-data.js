@@ -322,6 +322,21 @@ if (countyTrauma) {
             break;
         }
     }
+    // Every center must be accounted for — scored, on the state fallback, or
+    // explicitly listed as unscorable. The first version silently dropped the
+    // two Puerto Rico programs and reported 246 with nothing saying why.
+    const meta = countyTrauma._meta || {};
+    const accounted = (meta.centers_county_resolution || 0) +
+                      (meta.centers_state_fallback || 0) +
+                      (meta.centers_unscorable || []).length;
+    const allCenters = validateJSON('srtr-all-centers.json');
+    if (allCenters) {
+        const total = Object.keys(allCenters.centers || {}).length;
+        if (accounted !== total) {
+            addError(`trauma-scores-counties.json: ${accounted} of ${total} ` +
+                     `centers accounted for — some were dropped silently`);
+        }
+    }
 }
 
 // === Waitlist composition (#337) — equity cell weights ===

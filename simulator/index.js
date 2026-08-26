@@ -82,7 +82,9 @@
     var las = val('las');   if (las)  data.las  = las;
     var cas = val('cas');   if (cas)  data.cas  = cas;
     var mw = val('monthsWaiting'); if (mw) data.monthsWaiting = mw;
-    var peld = val('peld'); if (peld) data.peld = peld;
+    // PELD can be 0 or negative — a truthiness test discards real scores.
+    var peld = val('peld');
+    if (peld !== '' && peld !== null && !isNaN(parseFloat(peld))) data.peld = peld;
 
     // Boolean flags
     data.adjustForCauseOfDeath = checked('adjustCauseOfDeath');
@@ -291,6 +293,16 @@
       txt += ' ' + peds.small + ' of these centers have under 10 pediatric ' +
         'person-years of follow-up; their estimates are shrunk toward the ' +
         'national pediatric baseline and should be read as directional.';
+    }
+    // L-079: the alternative engines restrict to pediatric centers but have no
+    // pediatric WAIT model, so switching inference mode silently returns adult
+    // numbers. Say which model actually produced these figures.
+    var waitModel = dq && dq.pediatric_wait_model;
+    if (waitModel && waitModel.adult_fallback > 0) {
+      txt += ' Note: this engine applies the pediatric CENTER restriction but ' +
+        'not a pediatric wait model, so the wait and probability figures for ' +
+        waitModel.adult_fallback + ' of these centers are adult estimates. ' +
+        'Use the Monte Carlo engine for pediatric-anchored probabilities.';
     }
     el.textContent = txt;
     el.style.display = '';

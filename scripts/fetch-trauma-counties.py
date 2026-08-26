@@ -56,8 +56,12 @@ FARS_URL = ("https://static.nhtsa.gov/nhtsa/downloads/FARS/{year}/National/"
             "FARS{year}NationalCSV.zip")
 
 # Shrinkage constant: a county reaches half its own weight at this population.
-# 100k is roughly the US county median, so typical counties are a genuine
-# blend while the long tail of tiny counties stays close to their state.
+# NOTE the median US county is ~26,000 people, NOT 100,000 — so at this
+# constant roughly 80% of counties sit below half weight and read mostly as
+# their state. That is deliberate for a fatality COUNT denominator (a county
+# needs real exposure before its rate is anything but noise), but it does mean
+# the county signal is concentrated in populous counties — which is where the
+# transplant centers are, and where the resolution was wanted.
 SHRINK_POP = 100_000
 # Beyond this, "nearest centroid" stops being a plausible county assignment.
 MAX_MATCH_MILES = 60.0
@@ -101,6 +105,20 @@ def fetch_county_fatalities(year: int) -> dict[str, int]:
                 continue
             counts[f"{state:02d}{county:03d}"] += fatals
     return dict(counts)
+
+
+def _state_score_on_county_scale(state_rate: float, max_county_rate: float) -> float:
+    """Put a state fallback score on the COUNTY scale.
+
+    The state file normalizes so the worst STATE = 100 (max rate 24.93/100k);
+    county scores normalize so the worst COUNTY = 100 (max 36.39/100k). Mixing
+    the two in one dict put a center in the worst state at 100 on the fallback
+    path but 68.5 on the county path for identical underlying risk — a
+    31.5-point discontinuity decided purely by whether a centroid happened to
+    match. Rescaling the state rate against the county maximum makes every
+    score in this file mean the same thing.
+    """
+    return round(100.0 * state_rate / max_county_rate, 1)
 
 
 def main() -> int:
@@ -150,16 +168,17 @@ def main() -> int:
         print("ERROR: no county rates computed", file=sys.stderr)
         return 1
 
-    # Score on the same scale as the state file: highest rate = 100.
-    max_rate = max(r["shrunk_rate_per_100k"] for r in county_rate.values())
+    # Normalize so the worst COUNTY = 100.
+    max_county_rate = max(r["shrunk_rate_per_100k"] for r in county_rate.values())
     for rec in county_rate.values():
-        rec["score"] = round(100.0 * rec["shrunk_rate_per_100k"] / max_rate, 1)
+        rec["score"] = round(100.0 * rec["shrunk_rate_per_100k"] / max_county_rate, 1)
 
     # ── assign each center its nearest county centroid ──────────────────────
     centroid_list = [(f, c["lat"], c["lon"]) for f, c in centroids.items()
                      if c.get("lat") is not None and c.get("lon") is not None]
     center_scores = {}
     fallbacks = 0
+    unscorable = []
     match_distances = []
     for code, c in centers.items():
         lat, lon = c.get("lat"), c.get("lon")
@@ -170,6 +189,13 @@ def main() -> int:
                                        "resolution": "state",
                                        "reason": "center has no coordinates"}
                 fallbacks += 1
+            else:
+                # Neither coordinates nor a state rate. Record it: silently
+                # continuing meant the output held 246 of 248 centers with
+                # nothing anywhere saying two were discarded (Puerto Rico has
+                # no FARS state rate and no county centroids).
+                unscorable.append({"code": code, "state_abbr": abbr,
+                                   "reason": "no coordinates and no state rate"})
             continue
         best_fips, best_d = None, float("inf")
         for fips, clat, clon in centroid_list:
@@ -180,10 +206,17 @@ def main() -> int:
         if rec is None or best_d > MAX_MATCH_MILES:
             if abbr in state_scores:
                 center_scores[code] = {
-                    "score": state_scores[abbr], "resolution": "state",
+                    "score": _state_score_on_county_scale(
+                        state_rates[abbr], max_county_rate),
+                    "resolution": "state",
                     "reason": (f"nearest county centroid {best_d:.0f} mi away"
                                if best_fips else "no county centroid nearby")}
                 fallbacks += 1
+            else:
+                unscorable.append({
+                    "code": code, "state_abbr": abbr,
+                    "reason": (f"nearest county centroid {best_d:.0f} mi away "
+                               f"and no state rate for {abbr}")})
             continue
         match_distances.append(best_d)
         center_scores[code] = {
@@ -238,6 +271,7 @@ def main() -> int:
             "counties_scored": len(county_rate),
             "centers_county_resolution": county_res,
             "centers_state_fallback": fallbacks,
+            "centers_unscorable": unscorable,
             "median_match_distance_miles": (round(median_match, 1)
                                             if median_match is not None else None),
         },

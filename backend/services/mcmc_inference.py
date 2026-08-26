@@ -549,8 +549,14 @@ def simulate_mcmc(
         except Exception:
             pass
 
+        from services.provenance import TAG_PEDIATRIC_UNCALIBRATED
         from services.provenance import center_data_quality as _cdq
-        _degraded = _cdq(patient.organ, code)
+        _degraded = _cdq(patient.organ, code, pediatric=patient.is_pediatric)
+        # L-079: same gap as the BBN — the pediatric center restriction
+        # applies, but there is no pediatric likelihood term, so the wait
+        # model is adult. Say so rather than letting it pass as pediatric.
+        if patient.is_pediatric and TAG_PEDIATRIC_UNCALIBRATED not in _degraded:
+            _degraded = _degraded + [TAG_PEDIATRIC_UNCALIBRATED]
         city_results.append(CityProbability(
             city=city,
             state=state,

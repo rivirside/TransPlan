@@ -2,12 +2,24 @@
  "_meta": {
   "source": "NHTSA FARS 2023 national accident CSV (county-level) + US Census county population",
   "script": "scripts/fetch-trauma-counties.py",
-  "fetchedAt": "2026-08-26T17:22:49Z",
+  "fetchedAt": "2026-08-26T17:51:20Z",
   "method": "County traffic-fatality rate per 100k, shrunk toward the state rate with weight pop/(pop+100,000) so small counties are not dominated by noise, then normalized so the highest county = 100 (same semantics as the state file). Centers are matched to the nearest county centroid; a center further than 60 mi from any centroid keeps its state score.",
   "limitations": "Nearest-centroid matching has no county boundaries behind it, so a center near a county line may be attributed to its neighbour. match_distance_miles is recorded per center so that error is visible.",
   "counties_scored": 3144,
   "centers_county_resolution": 246,
   "centers_state_fallback": 0,
+  "centers_unscorable": [
+   {
+    "code": "PRCC",
+    "state_abbr": "PR",
+    "reason": "nearest county centroid 1053 mi away and no state rate for PR"
+   },
+   {
+    "code": "PRSJ",
+    "state_abbr": "PR",
+    "reason": "nearest county centroid 1053 mi away and no state rate for PR"
+   }
+  ],
   "median_match_distance_miles": 6.2
  },
  "county_scores": {
