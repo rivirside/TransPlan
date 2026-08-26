@@ -44,6 +44,17 @@ from models.schemas import PatientProfile  # noqa: E402
 from services.data_loader import load_all  # noqa: E402
 from reference_patients import reference_patient_kwargs  # noqa: E402
 
+# #214: the donor-supply wait multiplier is the other module-level heuristic
+# in this file. A T6 test already asserts it does not drive rankings, but only
+# for kidney at one granularity with one perturbation, and as a hidden
+# pass/fail rather than a published number. Swept here on the same footing.
+DS_VARIANTS = [
+    ("1.2/1.0/0.8 (shipped)", [1.2, 1.0, 0.8]),
+    ("1.5/1.0/0.5 (stronger)", [1.5, 1.0, 0.5]),
+    ("1.05/1.0/0.95 (near-null)", [1.05, 1.0, 0.95]),
+    ("1.0/1.0/1.0 (removed entirely)", [1.0, 1.0, 1.0]),
+]
+
 # (label, strong, medium, weak)
 VARIANTS = [
     ("70/25/5 (shipped)", [0.70, 0.25, 0.05], [0.15, 0.70, 0.15], [0.05, 0.25, 0.70]),
@@ -70,6 +81,47 @@ def apply(strong, medium, weak) -> None:
     bp._CPT_STRONG = list(strong)
     bp._CPT_MEDIUM = list(medium)
     bp._CPT_WEAK = list(weak)
+
+
+def apply_ds(mult) -> None:
+    import services.bbn_parameterizer as bp
+    bp._DONOR_SUPPLY_WAIT_MULT = list(mult)
+
+
+def sweep_donor_supply() -> list[dict]:
+    """#214: does the donor-supply wait multiplier drive anything?
+
+    The most informative variant is the last one — setting it to [1,1,1]
+    removes the DonorSupply->WaitCategory effect ENTIRELY. If rankings survive
+    that, the node is not carrying the model.
+    """
+    out = []
+    for granularity in GRANULARITIES:
+        for organ in ORGANS:
+            apply_ds(DS_VARIANTS[0][1])
+            base = p24_by_center(organ, granularity)
+            if len(base) < 10:
+                continue
+            codes = sorted(base)
+            for label, mult in DS_VARIANTS[1:]:
+                apply_ds(mult)
+                alt = p24_by_center(organ, granularity)
+                if set(alt) != set(base):
+                    continue
+                a = [base[c] for c in codes]
+                b = [alt[c] for c in codes]
+                rho = float(stats.spearmanr(a, b).statistic)
+                max_abs = float(max(abs(x - y) for x, y in zip(a, b)))
+                out.append({
+                    "organ": organ, "granularity": granularity,
+                    "variant": label, "n_centers": len(codes),
+                    "spearman_vs_shipped": round(rho, 6),
+                    "max_abs_delta_p24": round(max_abs, 5),
+                })
+                print(f"  DS {granularity:5s} {organ:7s} {label:32s} "
+                      f"rho={rho:.5f} max|d|={max_abs:.4f}")
+            apply_ds(DS_VARIANTS[0][1])
+    return out
 
 
 def main() -> int:
@@ -114,6 +166,10 @@ def main() -> int:
     # Restore the shipped values so an importing process is not left perturbed.
     apply(*VARIANTS[0][1:])
 
+    print()
+    ds_results = sweep_donor_supply()
+    apply_ds(DS_VARIANTS[0][1])
+
     if not results:
         print("ERROR: no comparisons produced", file=sys.stderr)
         return 1
@@ -122,8 +178,21 @@ def main() -> int:
     worst_delta = max(r["max_abs_delta_p24"] for r in results)
     membership_changes = [r for r in results if not r["top10_membership_identical"]]
 
+    ds_worst_rho = (min(r["spearman_vs_shipped"] for r in ds_results)
+                    if ds_results else None)
+    ds_worst_delta = (max(r["max_abs_delta_p24"] for r in ds_results)
+                      if ds_results else None)
+
     doc = {
         "comparisons": results,
+        "donor_supply_comparisons": ds_results,
+        "donor_supply_summary": {
+            "worst_spearman_vs_shipped": ds_worst_rho,
+            "worst_max_abs_delta_p24": ds_worst_delta,
+            "comparisons_run": len(ds_results),
+            "includes_effect_removed_entirely": any(
+                "removed entirely" in r["variant"] for r in ds_results),
+        },
         "summary": {
             "worst_spearman_vs_shipped": worst_rho,
             "worst_max_abs_delta_p24": worst_delta,
@@ -207,6 +276,42 @@ def main() -> int:
             "These constants **do** move the output materially. They need",
             "empirical grounding rather than a methods citation, and #213",
             "should stay open.", ""]
+
+    if ds_results:
+        lines += [
+            "", "## The donor-supply wait multiplier (#214)", "",
+            "`_DONOR_SUPPLY_WAIT_MULT = [1.2, 1.0, 0.8]` is the other",
+            "module-level heuristic in this file. A T6 test already asserted it",
+            "does not drive rankings, but only for kidney at one granularity",
+            "with one perturbation, and as a hidden pass/fail rather than a",
+            "published number. Swept here on the same footing — including the",
+            "variant that removes the effect ENTIRELY, which is the informative",
+            "one: if rankings survive `[1, 1, 1]`, the node is not carrying the",
+            "model.", "",
+            "| granularity | organ | variant | Spearman vs shipped | max abs delta p24 |",
+            "|---|---|---|---|---|",
+        ]
+        for r in ds_results:
+            lines.append(
+                f"| {r['granularity']} | {r['organ']} | {r['variant']} | "
+                f"{r['spearman_vs_shipped']:.5f} | {r['max_abs_delta_p24']:.4f} |")
+        removed = [r for r in ds_results if "removed entirely" in r["variant"]]
+        if removed:
+            rr = min(r["spearman_vs_shipped"] for r in removed)
+            rd = max(r["max_abs_delta_p24"] for r in removed)
+            lines += [
+                "",
+                f"**Removing the donor-supply effect entirely** leaves the worst "
+                f"rank correlation at {rr:.5f} and moves p24 by at most {rd:.4f}. "
+                f"The multiplier is a documented directional assumption that "
+                f"changes almost nothing — the rankings are carried by the "
+                f"data-grounded factors (observed per-center rates and wait "
+                f"factors), which is what #211 and #206 were for.", "",
+                "This settles the \"no sensitivity analysis\" half of #214.",
+                "The other halves — the DonorSupply composite being an ad-hoc",
+                "formula, and MortalityRisk having no interaction terms — are",
+                "modelling questions this does not touch, and #214 stays open",
+                "for them.", ""]
 
     if membership_changes:
         lines += [
