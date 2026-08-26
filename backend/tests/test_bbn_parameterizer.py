@@ -62,7 +62,7 @@ def _ensure_data_loaded():
 def test_enumerations_correct_sizes():
     assert len(ORGANS) == 6
     assert len(BLOOD_TYPES) == 8
-    assert len(AGE_GROUPS) == 4
+    assert len(AGE_GROUPS) == 5  # #335 added the '0-17' pediatric group
     assert len(URGENCY_LEVELS) == 4
     assert len(REGIONS) >= 22  # Classic set has 22; may grow
 
@@ -97,7 +97,9 @@ def test_wait_category_cpt_shape():
 def test_mortality_risk_cpt_shape():
     n = len(get_regions("state"))
     cpt = build_mortality_risk_cpt()
-    assert cpt.shape == (3, 6, 4, 4, n)
+    # Derive the age axis from AGE_GROUPS rather than hardcoding it: #335
+    # added a pediatric group and a literal here just becomes a chore.
+    assert cpt.shape == (3, 6, len(AGE_GROUPS), 4, n)
 
 
 def test_delisting_risk_cpt_shape():
@@ -293,16 +295,38 @@ def test_mortality_risk_urgency_effect():
 
 
 def test_mortality_risk_age_effect():
-    """Older age groups should have higher mortality risk."""
+    """Older ADULT groups should have higher mortality risk.
+
+    Indices are looked up by NAME. They were hardcoded as 3 and 0, and when
+    #335 inserted "0-17" at the front, index 0 silently became the pediatric
+    group — the assertion then compared 50-64 against children and failed for
+    a reason that had nothing to do with the property under test.
+
+    Pediatric is deliberately excluded from this monotonicity claim: it is not
+    monotone with adult age and is not supposed to be. Pediatric heart
+    waitlist mortality exceeds every adult group's, which is a measured fact
+    (see scripts/derive-pediatric-mortality.py), not a violation.
+    """
     cpt = build_mortality_risk_cpt()
-    # 65+ is index 3, 18-34 is index 0
-    high_old = cpt[2, :, 3, :, :].mean()
-    high_young = cpt[2, :, 0, :, :].mean()
+    old = AGE_GROUPS.index("65+")
+    young = AGE_GROUPS.index("18-34")
+    high_old = cpt[2, :, old, :, :].mean()
+    high_young = cpt[2, :, young, :, :].mean()
 
     assert high_old >= high_young, (
         f"65+ should have higher or equal mortality risk than 18-34: "
         f"old={high_old:.3f} vs young={high_young:.3f}"
     )
+
+
+def test_pediatric_age_group_is_distinct():
+    """#335: children must not share the 18-34 column."""
+    cpt = build_mortality_risk_cpt()
+    peds = cpt[2, :, AGE_GROUPS.index("0-17"), :, :]
+    young = cpt[2, :, AGE_GROUPS.index("18-34"), :, :]
+    assert not np.allclose(peds, young), (
+        "pediatric mortality risk is identical to 18-34 — the age_to_group "
+        "clamp has regressed")
 
 
 def test_competing_outcome_simplex():
@@ -408,7 +432,8 @@ def test_normalize_zeros():
 
 
 def test_age_to_group_boundaries():
-    assert age_to_group(17) == "18-34"
+    assert age_to_group(1) == "0-17"
+    assert age_to_group(17) == "0-17"   # #335: was clamped to "18-34"
     assert age_to_group(18) == "18-34"
     assert age_to_group(34) == "18-34"
     assert age_to_group(35) == "35-49"

@@ -151,6 +151,29 @@ if (competingRisks) {
             addError(`competing-risks.json: manual block '${key}' missing or gutted`);
         }
     }
+    // #335: every BBN age group must resolve to a multiplier. Losing '0-17'
+    // would not crash — age_to_group would return a group the table lacks and
+    // the CPT builder's `.get(..., 1.0)` default would silently apply 1.0 to
+    // every child, wiping out the 3.0x pediatric heart hazard.
+    const AGE_GROUPS = ['0-17', '18-34', '35-49', '50-64', '65+'];
+    const globalAges = competingRisks.age_mortality_multipliers || {};
+    for (const g of AGE_GROUPS) {
+        const v = globalAges[g];
+        if (typeof v !== 'number' || !(v > 0 && v < 20)) {
+            addError(`competing-risks.json: age_mortality_multipliers['${g}'] = ${v} (expected a positive number < 20)`);
+        }
+    }
+    for (const [organ, block] of Object.entries(competingRisks.age_organ_overrides || {})) {
+        if (organ.startsWith('_')) continue;
+        for (const [g, v] of Object.entries(block)) {
+            if (g.startsWith('_')) continue;
+            if (!AGE_GROUPS.includes(g)) {
+                addError(`competing-risks.json: age_organ_overrides.${organ} has unknown age group '${g}'`);
+            } else if (typeof v !== 'number' || !(v > 0 && v < 20)) {
+                addError(`competing-risks.json: age_organ_overrides.${organ}['${g}'] = ${v} implausible`);
+            }
+        }
+    }
 }
 
 // 6a3. Shared state-population table (#339) — both per-capita pipelines

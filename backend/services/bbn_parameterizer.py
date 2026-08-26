@@ -64,7 +64,10 @@ _DONOR_SUPPLY_WAIT_MULT = [1.2, 1.0, 0.8]
 
 ORGANS = ["kidney", "liver", "heart", "lung", "pancreas", "intestine"]
 BLOOD_TYPES = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"]
-AGE_GROUPS = ["18-34", "35-49", "50-64", "65+"]
+# "0-17" leads the list so the groups read in age order. Adding it changes the
+# AgeGroup CPT SHAPE, so the golden BBN snapshot (all-adult reference patients)
+# is the invariance check: adult p24 values must not move. (#335 / BBN-22)
+AGE_GROUPS = ["0-17", "18-34", "35-49", "50-64", "65+"]
 URGENCY_LEVELS = [1, 2, 3, 4]
 # Regions = 22 cities, indexed by position in this list
 REGIONS = [
@@ -961,7 +964,11 @@ def build_all_cpts(granularity: str = "state") -> dict[str, np.ndarray]:
 def age_to_group(age: int) -> str:
     """Map patient age (int) to BBN age group string."""
     if age < 18:
-        return "18-34"  # Clamp pediatric to youngest adult group
+        # #335: was clamped to "18-34", which assigned pediatric heart
+        # candidates a 0.3x mortality multiplier where the measured pediatric
+        # heart waitlist hazard is 3.3x adult — wrong by ~10x. The pediatric
+        # multipliers are derived in scripts/derive-pediatric-mortality.py.
+        return "0-17"
     elif age < 35:
         return "18-34"
     elif age < 50:
