@@ -1,0 +1,369 @@
+{
+ "comparisons": [
+  {
+   "organ": "kidney",
+   "granularity": "state",
+   "variant": "90/9/1 (near-deterministic)",
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.999892,
+   "max_abs_delta_p24": 0.0145,
+   "mean_abs_delta_p24": 0.01168,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "kidney",
+   "granularity": "state",
+   "variant": "80/17/3",
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.999975,
+   "max_abs_delta_p24": 0.0073,
+   "mean_abs_delta_p24": 0.00584,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "kidney",
+   "granularity": "state",
+   "variant": "60/30/10",
+   "n_centers": 233,
+   "spearman_vs_shipped": 1.0,
+   "max_abs_delta_p24": 0.0093,
+   "mean_abs_delta_p24": 0.00766,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "kidney",
+   "granularity": "state",
+   "variant": "50/35/15 (barely informative)",
+   "n_centers": 233,
+   "spearman_vs_shipped": 1.0,
+   "max_abs_delta_p24": 0.0186,
+   "mean_abs_delta_p24": 0.01531,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "liver",
+   "granularity": "state",
+   "variant": "90/9/1 (near-deterministic)",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.999886,
+   "max_abs_delta_p24": 0.0126,
+   "mean_abs_delta_p24": 0.00772,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "liver",
+   "granularity": "state",
+   "variant": "80/17/3",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.999997,
+   "max_abs_delta_p24": 0.0063,
+   "mean_abs_delta_p24": 0.00385,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "liver",
+   "granularity": "state",
+   "variant": "60/30/10",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.999819,
+   "max_abs_delta_p24": 0.0081,
+   "mean_abs_delta_p24": 0.00484,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "liver",
+   "granularity": "state",
+   "variant": "50/35/15 (barely informative)",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.99963,
+   "max_abs_delta_p24": 0.0161,
+   "mean_abs_delta_p24": 0.00968,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "heart",
+   "granularity": "state",
+   "variant": "90/9/1 (near-deterministic)",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.99948,
+   "max_abs_delta_p24": 0.0094,
+   "mean_abs_delta_p24": 0.00441,
+   "top10_identical": false,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "heart",
+   "granularity": "state",
+   "variant": "80/17/3",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.999916,
+   "max_abs_delta_p24": 0.0047,
+   "mean_abs_delta_p24": 0.0022,
+   "top10_identical": false,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "heart",
+   "granularity": "state",
+   "variant": "60/30/10",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.999331,
+   "max_abs_delta_p24": 0.006,
+   "mean_abs_delta_p24": 0.00273,
+   "top10_identical": false,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "heart",
+   "granularity": "state",
+   "variant": "50/35/15 (barely informative)",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.999265,
+   "max_abs_delta_p24": 0.0119,
+   "mean_abs_delta_p24": 0.00545,
+   "top10_identical": false,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "lung",
+   "granularity": "state",
+   "variant": "90/9/1 (near-deterministic)",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.999792,
+   "max_abs_delta_p24": 0.0022,
+   "mean_abs_delta_p24": 0.00133,
+   "top10_identical": false,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "lung",
+   "granularity": "state",
+   "variant": "80/17/3",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.999814,
+   "max_abs_delta_p24": 0.0011,
+   "mean_abs_delta_p24": 0.00066,
+   "top10_identical": false,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "lung",
+   "granularity": "state",
+   "variant": "60/30/10",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.999844,
+   "max_abs_delta_p24": 0.0014,
+   "mean_abs_delta_p24": 0.00079,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "lung",
+   "granularity": "state",
+   "variant": "50/35/15 (barely informative)",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.999703,
+   "max_abs_delta_p24": 0.0027,
+   "mean_abs_delta_p24": 0.00159,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "kidney",
+   "granularity": "full",
+   "variant": "90/9/1 (near-deterministic)",
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.999994,
+   "max_abs_delta_p24": 0.0148,
+   "mean_abs_delta_p24": 0.0111,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "kidney",
+   "granularity": "full",
+   "variant": "80/17/3",
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.999997,
+   "max_abs_delta_p24": 0.0074,
+   "mean_abs_delta_p24": 0.00555,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "kidney",
+   "granularity": "full",
+   "variant": "60/30/10",
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.999988,
+   "max_abs_delta_p24": 0.0095,
+   "mean_abs_delta_p24": 0.00722,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "kidney",
+   "granularity": "full",
+   "variant": "50/35/15 (barely informative)",
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.999977,
+   "max_abs_delta_p24": 0.019,
+   "mean_abs_delta_p24": 0.01444,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "liver",
+   "granularity": "full",
+   "variant": "90/9/1 (near-deterministic)",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.9998,
+   "max_abs_delta_p24": 0.0132,
+   "mean_abs_delta_p24": 0.00669,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "liver",
+   "granularity": "full",
+   "variant": "80/17/3",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.999919,
+   "max_abs_delta_p24": 0.0066,
+   "mean_abs_delta_p24": 0.00335,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "liver",
+   "granularity": "full",
+   "variant": "60/30/10",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.999865,
+   "max_abs_delta_p24": 0.0084,
+   "mean_abs_delta_p24": 0.00422,
+   "top10_identical": false,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "liver",
+   "granularity": "full",
+   "variant": "50/35/15 (barely informative)",
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.999726,
+   "max_abs_delta_p24": 0.0168,
+   "mean_abs_delta_p24": 0.00844,
+   "top10_identical": false,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "heart",
+   "granularity": "full",
+   "variant": "90/9/1 (near-deterministic)",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.999827,
+   "max_abs_delta_p24": 0.0097,
+   "mean_abs_delta_p24": 0.0047,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "heart",
+   "granularity": "full",
+   "variant": "80/17/3",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.999925,
+   "max_abs_delta_p24": 0.0049,
+   "mean_abs_delta_p24": 0.00235,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "heart",
+   "granularity": "full",
+   "variant": "60/30/10",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.999849,
+   "max_abs_delta_p24": 0.0062,
+   "mean_abs_delta_p24": 0.00294,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "heart",
+   "granularity": "full",
+   "variant": "50/35/15 (barely informative)",
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.999679,
+   "max_abs_delta_p24": 0.0123,
+   "mean_abs_delta_p24": 0.00589,
+   "top10_identical": false,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "lung",
+   "granularity": "full",
+   "variant": "90/9/1 (near-deterministic)",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.999237,
+   "max_abs_delta_p24": 0.0057,
+   "mean_abs_delta_p24": 0.00219,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "lung",
+   "granularity": "full",
+   "variant": "80/17/3",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.999807,
+   "max_abs_delta_p24": 0.0029,
+   "mean_abs_delta_p24": 0.00109,
+   "top10_identical": true,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "lung",
+   "granularity": "full",
+   "variant": "60/30/10",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.999415,
+   "max_abs_delta_p24": 0.0035,
+   "mean_abs_delta_p24": 0.00134,
+   "top10_identical": false,
+   "top10_membership_identical": true
+  },
+  {
+   "organ": "lung",
+   "granularity": "full",
+   "variant": "50/35/15 (barely informative)",
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.998689,
+   "max_abs_delta_p24": 0.0071,
+   "mean_abs_delta_p24": 0.00268,
+   "top10_identical": false,
+   "top10_membership_identical": false
+  }
+ ],
+ "summary": {
+  "worst_spearman_vs_shipped": 0.998689,
+  "worst_max_abs_delta_p24": 0.019,
+  "comparisons_run": 32,
+  "top10_membership_changes": 1
+ },
+ "_meta": {
+  "generated": "2026-08-26T21:51:54Z",
+  "script": "scripts/run-cpt-discretization-sweep.py",
+  "question": "#213: are _CPT_STRONG/_MEDIUM/_WEAK load-bearing, or a weakly-informative prior whose exact value does not drive results?",
+  "method": "Re-run the BBN with the tercile-to-state mapping swept from near-deterministic (90/9/1) to barely informative (50/35/15), far past any defensible disagreement, and compare per-center p24 against the shipped 70/25/5.",
+  "citation": "Druzdzel & van der Gaag, 'Building Probabilistic Networks: Where Do the Numbers Come From?', IEEE TKDE 12(4), 2000, pp. 481-486."
+ }
+}
