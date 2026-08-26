@@ -9,6 +9,12 @@ later validation number is polluted by it, then build the fixed external benchma
 so all model work (F) is judged against it, then data replacement (C), cleanup (D),
 robustness (G), assumption triage (H), features (I), docs (J).
 
+> **Reconciled 2026-08-26.** This sweep's branch (`backlog-2026-08`) was merged
+> and closed long ago; the doc had gone stale relative to what has since landed
+> on main. Rows completed by PR #370 are marked below. The genuinely open
+> remainder is the F (model research), G (robustness), I (features) and J (docs)
+> rows without a status.
+
 ## Phase A — Broken bugs (do first)
 
 | # | Item | Issue | Status |
@@ -57,14 +63,14 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | F5 | Clamp-bound cluster: 538+ values on bounds (DATA-24/25) | #294 | measured: ρ 0.973 worst (passes) |
 | F6 | Hierarchical partial pooling (needs F7) | #268 | |
 | F7 | Per-center transplant volume data | #275 | |
-| F8 | Kriging/GP interpolation with prediction variance | #266 | |
-| F9 | 2SFCA + travel-time isochrones | #267 | |
+| F8 | Kriging/GP interpolation with prediction variance | #266 | ✅ 2026-08-26 (#370 exposed kriging in Explorer w/ per-point GP variance + extrapolation flag; projection clause measured-and-rejected, EQSP-34) |
+| F9 | 2SFCA + travel-time isochrones | #267 | demand side unblocked 2026-08-26 (county population, #336); drive-time half blocked on a self-hosted OSRM build |
 | F10 | Exponential hazard / probability-as-rate (SURV-01/25) | #259 | |
 | F11 | CPT-parameter MC credible intervals | #296 | |
 | F12 | BBN Step 6: regress ds/wait-delist multipliers from data | #297 | |
 | F13 | Donor-supply discretization probabilities | #213 | |
 | F14 | CPT empirical grounding + citations | #214 / #233 | |
-| F15 | BBN guards: BBN-17 fallback, BBN-22 pediatric clamp, atol gate | #298 | |
+| F15 | BBN guards: BBN-17 fallback, BBN-22 pediatric clamp, atol gate | #298 | partial — BBN-22 pediatric clamp retired 2026-08-26 (#370, measured per-organ multipliers); BBN-17 fallback + atol gate still open |
 | F16 | REMREC → "removed without transplant, other causes" relabel | (inline) | |
 | F17 | L-064 allocation-circle competition proxy | #299 | |
 | F18 | Long-term: #135 spatial econometrics, #142 equilibrium, L-066 surface | parked | |
@@ -102,7 +108,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | G3 | Synthetic-baseline guard (GEN-13/14/15) | #300 | covered by _write_guarded + validate-data organ-block errors |
 | G4 | OPO-level cause-of-death proportions | #301 | |
 | G5 | Data vintage refresh (CDC 2017, donor reg 2018) | #302 | |
-| G6 | LAS → CAS migration (lung allocation, 2023) | #303 | |
+| G6 | LAS → CAS migration (lung allocation, 2023) | #303 | ✅ 2026-08-26 — `cas` field ships and is exposed in the simulator and the shared patient form (#370); LAS retained as documented legacy |
 | G7 | Tier caps on /score, /score/explain | #249 | ✅ 2026-08-25 |
 | G8 | Security headers + exact pins | #250 | |
 | G9 | Circular import bbn_parameterizer ↔ bayesian_network (L-070) | #298 | |

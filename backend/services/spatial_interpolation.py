@@ -248,6 +248,26 @@ class SpatialSurface:
         the learned per-axis scales rather than biasing distances. Large layers
         are subsampled (GP fitting is O(n^3)); a smooth field needs far fewer
         than thousands of points.
+
+        On fitting in DEGREES rather than a projection (#266)
+        -----------------------------------------------------
+        The argument above is only half the story, so it was measured. A
+        per-axis length-scale absorbs a CONSTANT anisotropy, but the
+        degree-to-distance ratio varies with latitude (1 degree of longitude
+        is 60.0 miles at 30N and 46.3 miles at 48N), which one pair of scales
+        cannot follow. #266 therefore asked for an Albers Equal-Area
+        projection.
+
+        scripts/run-projection-ablation.py fits this same kernel on raw
+        degrees and on Albers kilometres across 5 holdout splits per layer,
+        with length-scale bounds scaled per coordinate system so neither is
+        handicapped. Result: holdout RMSE differs by under 1% on every layer,
+        mean +0.2%. At these densities the anisotropic kernel does absorb it,
+        so degrees stay — a projection would add a coordinate transform and no
+        accuracy. See docs/projection-ablation-report.md; the finding is
+        pinned by backend/tests/test_projection_ablation.py so a kernel or
+        density change re-opens the question instead of silently inheriting
+        this answer.
         """
         try:
             from sklearn.gaussian_process import GaussianProcessRegressor
