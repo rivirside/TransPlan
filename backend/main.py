@@ -168,7 +168,16 @@ class SafeStaticFiles(StaticFiles):
         # Block Python/YAML/config files anywhere in tree
         if path.endswith((".py", ".pyc", ".yml", ".yaml", ".toml", ".cfg")):
             return PlainTextResponse("Not Found", status_code=404)
-        return await super().get_response(path, scope)
+
+        response = await super().get_response(path, scope)
+        # #363: this dev server sent no cache directives, so browsers cached
+        # JS and CSS aggressively and kept running the previous version after
+        # an edit. That silently invalidates local verification — a fix looks
+        # like it did not work, or worse, a broken change looks fine.
+        # Production sets the same no-cache header via vercel.json.
+        if path.endswith((".js", ".css", ".html")) or path.endswith("/"):
+            response.headers["Cache-Control"] = "no-cache, must-revalidate"
+        return response
 
 
 # Serve frontend files from repo root with sensitive-path blocking.

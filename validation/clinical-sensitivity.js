@@ -141,14 +141,33 @@
     var organ = document.getElementById('cs-organ').value;
     var bt = document.getElementById('cs-bt').value;
     var age = parseInt(document.getElementById('cs-age').value, 10) || 45;
-    var city = document.getElementById('cs-city').value || 'Nashville';
+    var centerCode = document.getElementById('cs-center').value;
     var iters = parseInt(document.getElementById('cs-iter').value, 10) || 300;
+    var sexEl = document.getElementById('cs-sex');
+    var urgEl = document.getElementById('cs-urgency');
 
+    if (!centerCode) {
+      setLoading(false);
+      if (btn) btn.disabled = false;
+      setError('Pick a center first.');
+      return;
+    }
+
+    // #285/#350: this sent a free-text `city` defaulting to "Nashville".
+    // Only ~22 of 248 centers resolve by city name, so it 400'd or silently
+    // analyzed the wrong program for everyone else. The endpoint has always
+    // accepted center_code; the UI just never sent it.
     var params = new URLSearchParams({
-      city: city,
+      center_code: centerCode,
       iterations: iters,
     });
-    var patient = { organ: organ, blood_type: bt, age: age, sex: 'male', urgency: 2 };
+    var patient = {
+      organ: organ,
+      blood_type: bt,
+      age: age,
+      sex: (sexEl && sexEl.value) || 'male',
+      urgency: (urgEl && parseInt(urgEl.value, 10)) || 2
+    };
 
     fetch(getBaseUrl() + '/validation/clinical-sensitivity?' + params.toString(), {
       method: 'POST',
@@ -169,9 +188,65 @@
       .finally(function () { if (btn) btn.disabled = false; });
   }
 
+  /**
+   * Fill the center picker from /centers, filtered to the selected organ so
+   * a user cannot pick a center that does not run it.
+   */
+  function loadCenters() {
+    var select = document.getElementById('cs-center');
+    var organEl = document.getElementById('cs-organ');
+    if (!select || !window.TransPlanAPI || !window.TransPlanAPI.fetchCenters) return;
+    var organ = organEl ? organEl.value : '';
+    var previous = select.value;
+
+    window.TransPlanAPI.fetchCenters(organ ? { organ: organ } : {})
+      .then(function (result) {
+        // fetchCenters resolves with NULL on any error or timeout and never
+        // rejects, so without this a down backend fell through to the empty
+        // case and told the user "No centers for this organ" — a data claim,
+        // not a connectivity one.
+        if (!result) throw new Error('centers unavailable');
+        var centers = (result && result.centers) || [];
+        centers.sort(function (a, b) {
+          var sa = (a.state_abbr || a.state || '').localeCompare(b.state_abbr || b.state || '');
+          return sa !== 0 ? sa : (a.name || '').localeCompare(b.name || '');
+        });
+        while (select.options.length) select.remove(0);
+        if (!centers.length) {
+          var none = document.createElement('option');
+          none.value = '';
+          none.textContent = 'No centers for this organ';
+          select.appendChild(none);
+          return;
+        }
+        centers.forEach(function (c) {
+          var o = document.createElement('option');
+          o.value = c.code;
+          o.textContent = (c.name || c.city) + ' (' + (c.state_abbr || c.state) + ')';
+          select.appendChild(o);
+        });
+        // Keep the user's pick across an organ change when it is still valid.
+        if (previous && Array.prototype.some.call(select.options,
+              function (o) { return o.value === previous; })) {
+          select.value = previous;
+        }
+      })
+      .catch(function (e) {
+        while (select.options.length) select.remove(0);
+        var o = document.createElement('option');
+        o.value = '';
+        o.textContent = 'Could not load centers';
+        select.appendChild(o);
+        console.warn('clinical-sensitivity: center load failed:', e.message);
+      });
+  }
+
   function init() {
     var btn = document.getElementById('cs-run-btn');
     if (btn) btn.addEventListener('click', run);
+    var organEl = document.getElementById('cs-organ');
+    if (organEl) organEl.addEventListener('change', loadCenters);
+    loadCenters();
   }
 
   if (document.readyState === 'loading') {

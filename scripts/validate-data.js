@@ -151,6 +151,29 @@ if (competingRisks) {
             addError(`competing-risks.json: manual block '${key}' missing or gutted`);
         }
     }
+    // #335: every BBN age group must resolve to a multiplier. Losing '0-17'
+    // would not crash — age_to_group would return a group the table lacks and
+    // the CPT builder's `.get(..., 1.0)` default would silently apply 1.0 to
+    // every child, wiping out the 3.0x pediatric heart hazard.
+    const AGE_GROUPS = ['0-17', '18-34', '35-49', '50-64', '65+'];
+    const globalAges = competingRisks.age_mortality_multipliers || {};
+    for (const g of AGE_GROUPS) {
+        const v = globalAges[g];
+        if (typeof v !== 'number' || !(v > 0 && v < 20)) {
+            addError(`competing-risks.json: age_mortality_multipliers['${g}'] = ${v} (expected a positive number < 20)`);
+        }
+    }
+    for (const [organ, block] of Object.entries(competingRisks.age_organ_overrides || {})) {
+        if (organ.startsWith('_')) continue;
+        for (const [g, v] of Object.entries(block)) {
+            if (g.startsWith('_')) continue;
+            if (!AGE_GROUPS.includes(g)) {
+                addError(`competing-risks.json: age_organ_overrides.${organ} has unknown age group '${g}'`);
+            } else if (typeof v !== 'number' || !(v > 0 && v < 20)) {
+                addError(`competing-risks.json: age_organ_overrides.${organ}['${g}'] = ${v} implausible`);
+            }
+        }
+    }
 }
 
 // 6a3. Shared state-population table (#339) — both per-capita pipelines
@@ -176,6 +199,27 @@ const tiers = validateJSON('srtr-tiers-centers.json');
 if (tiers) {
     const nk = Object.keys(tiers.kidney || {}).length;
     if (nk < 190) addError(`srtr-tiers-centers.json: only ${nk} kidney centers (expected >= 190)`);
+}
+
+// 6a5. Pediatric per-center data (#335) — never-shrink floors + the unit
+// trap guard (rates are per person-year, not percentages)
+const peds = validateJSON('pediatric-centers.json');
+if (peds) {
+    const nk = Object.keys(peds.kidney?.centers || {}).length;
+    if (nk < 95) addError(`pediatric-centers.json: only ${nk} kidney programs (expected >= 95)`);
+    for (const organ of ['kidney', 'liver', 'heart', 'lung']) {
+        const block = peds[organ];
+        if (!block) continue;
+        for (const [code, rec] of Object.entries(block.centers || {})) {
+            if (rec.transplant_rate >= 10) {
+                addError(`pediatric-centers.json: ${organ}/${code} rate ${rec.transplant_rate} — rates are per PERSON-YEAR, a value >=10 means a units error or missing exposure floor`);
+            }
+        }
+        const cal = block.calibration;
+        if (cal && !(cal.k > 0.2 && cal.k < 5 && cal.median_abs_error < 0.15)) {
+            addError(`pediatric-centers.json: ${organ} calibration implausible: ${JSON.stringify(cal)}`);
+        }
+    }
 }
 
 // 6b. SRTR-derived model files — every organ block must be present (ERROR,
@@ -238,6 +282,155 @@ if (fs.existsSync(metadataPath)) {
     const metadata = validateJSON('metadata.json');
     if (metadata && !metadata.sources) {
         addWarning('metadata.json has no sources object');
+    }
+}
+
+// === County trauma scores (#336) ===
+// These feed the scoring trauma surface in preference to the state scores.
+// A truncated file would silently fall back to state resolution, which looks
+// like a working analysis, so check shape and scale explicitly.
+const countyTrauma = validateJSON('trauma-scores-counties.json');
+if (countyTrauma) {
+    const centerScores = countyTrauma.center_scores || {};
+    const countyScores = countyTrauma.county_scores || {};
+    const atCounty = Object.values(centerScores)
+        .filter(r => r && r.resolution === 'county').length;
+    if (atCounty < 200) {
+        addError(`trauma-scores-counties.json: only ${atCounty} centers at county ` +
+                 `resolution (floor: 200) — centroid matching may be failing`);
+    }
+    if (Object.keys(countyScores).length < 3000) {
+        addError(`trauma-scores-counties.json: only ` +
+                 `${Object.keys(countyScores).length} counties (floor: 3000)`);
+    }
+    const vals = Object.values(countyScores).map(r => r && r.score)
+        .filter(v => typeof v === 'number');
+    if (vals.length) {
+        const top = Math.max(...vals);
+        if (Math.abs(top - 100) > 0.51) {
+            addError(`trauma-scores-counties.json: top score ${top} — scores must ` +
+                     `be normalized so the highest county is 100`);
+        }
+        if (Math.min(...vals) < 0) {
+            addError('trauma-scores-counties.json: negative score present');
+        }
+    }
+    for (const [code, rec] of Object.entries(centerScores)) {
+        if (rec && rec.resolution === 'county' && rec.match_distance_miles > 60) {
+            addError(`trauma-scores-counties.json: ${code} matched a county ` +
+                     `centroid ${rec.match_distance_miles} mi away`);
+            break;
+        }
+    }
+    // Every center must be accounted for — scored, on the state fallback, or
+    // explicitly listed as unscorable. The first version silently dropped the
+    // two Puerto Rico programs and reported 246 with nothing saying why.
+    const meta = countyTrauma._meta || {};
+    const accounted = (meta.centers_county_resolution || 0) +
+                      (meta.centers_state_fallback || 0) +
+                      (meta.centers_unscorable || []).length;
+    const allCenters = validateJSON('srtr-all-centers.json');
+    if (allCenters) {
+        const total = Object.keys(allCenters.centers || {}).length;
+        if (accounted !== total) {
+            addError(`trauma-scores-counties.json: ${accounted} of ${total} ` +
+                     `centers accounted for — some were dropped silently`);
+        }
+    }
+}
+
+// === Waitlist composition (#337) — equity cell weights ===
+// If this file is lost or truncated, equity silently falls back to
+// general-population weights, which understate type B on the kidney waitlist
+// — the group facing the longest waits. A quiet fallback would look like a
+// working analysis, so fail loudly instead.
+const waitlistComp = validateJSON('waitlist-composition.json');
+if (waitlistComp) {
+    const organs = Object.keys(waitlistComp).filter(k => k !== '_meta');
+    if (organs.length < 4) {
+        addError(`waitlist-composition.json: only ${organs.length} organs (floor: 4)`);
+    }
+    for (const organ of organs) {
+        const rec = waitlistComp[organ] || {};
+        for (const dim of ['age_brackets', 'sex', 'abo_group', 'blood_type']) {
+            const dist = rec[dim];
+            if (!dist || !Object.keys(dist).length) {
+                addError(`waitlist-composition.json: ${organ}.${dim} missing`);
+                continue;
+            }
+            const total = Object.values(dist).reduce((a, b) => a + b, 0);
+            if (Math.abs(total - 1) > 0.02) {
+                addError(`waitlist-composition.json: ${organ}.${dim} sums to ` +
+                         `${total.toFixed(4)}, not 1.0`);
+            }
+        }
+        if (!(rec.n_listed > 0)) {
+            addError(`waitlist-composition.json: ${organ}.n_listed = ${rec.n_listed}`);
+        }
+    }
+}
+
+// === County population (#336) — denominator for per-capita work ===
+// Nothing in the repo had population at any geography before this; three
+// separate issues (#336 county trauma, #113 coverage, #267 2SFCA) depend on
+// it, so a silently-truncated fetch would corrupt all three at once.
+const countyPop = validateJSON('county-population.json');
+if (countyPop) {
+    const counties = countyPop.counties || {};
+    const n = Object.keys(counties).length;
+    if (n < 3000) {
+        addError(`county-population.json: only ${n} counties (never-shrink floor: 3000)`);
+    }
+    let total = 0;
+    let bad = 0;
+    for (const [fips, rec] of Object.entries(counties)) {
+        if (!/^\d{5}$/.test(fips)) {
+            addError(`county-population.json: '${fips}' is not a 5-digit FIPS code`);
+            break;
+        }
+        const pop = rec && rec.population;
+        if (typeof pop !== 'number' || pop < 1 || pop > 15000000) {
+            if (bad++ === 0) {
+                addError(`county-population.json: ${fips} population = ${pop} implausible`);
+            }
+        } else {
+            total += pop;
+        }
+    }
+    // The US population is ~335-345M. A total far outside that means the wrong
+    // column was read or state rows leaked in as counties.
+    if (total < 300000000 || total > 380000000) {
+        addError(`county-population.json: national total ${total} outside 300-380M — ` +
+                 `wrong column, or state rows counted as counties?`);
+    }
+}
+
+// === Published validation artifacts must be dated (#328) ===
+// Everything under docs-site/static/data/ is served publicly and read by the
+// model card. Only 4 of 21 files carried a timestamp, so a reader could not
+// tell whether a reported correlation reflected current data. They were
+// backfilled; this keeps a regenerated file from silently dropping its stamp
+// again. Generators should build `_meta` via scripts/artifact_meta.py.
+const artifactDir = path.join(__dirname, '..', 'docs-site', 'static', 'data');
+if (fs.existsSync(artifactDir)) {
+    for (const name of fs.readdirSync(artifactDir)) {
+        if (!name.endsWith('.json')) continue;
+        let doc;
+        try {
+            doc = JSON.parse(fs.readFileSync(path.join(artifactDir, name), 'utf8'));
+        } catch (e) {
+            addError(`docs-site/static/data/${name}: invalid JSON (${e.message})`);
+            continue;
+        }
+        const stamp = doc && doc._meta && doc._meta.generated;
+        if (!stamp) {
+            addError(`docs-site/static/data/${name}: no _meta.generated — ` +
+                     `stamp it via scripts/artifact_meta.py, or run ` +
+                     `scripts/backfill-artifact-meta.py`);
+        } else if (isNaN(Date.parse(stamp))) {
+            addError(`docs-site/static/data/${name}: _meta.generated ` +
+                     `"${stamp}" is not a parseable date`);
+        }
     }
 }
 

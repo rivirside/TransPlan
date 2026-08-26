@@ -22,6 +22,10 @@ backend/.pytest_cache/
 # SRTR raw Excel files (large binaries, re-downloadable via fetch-srtr-excel.py)
 data/srtr-raw/
 
+# Census raw CSV cache (re-downloadable via fetch-county-population.js; the
+# derived data/county-population.json IS committed)
+data/census-raw/
+
 # MCMC posterior traces (large, machine-specific, regenerate via scripts/fit-mcmc-model.py)
 data/mcmc-traces/
 

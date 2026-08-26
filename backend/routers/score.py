@@ -1,7 +1,7 @@
 """POST /score — Comprehensive center-level suitability scoring."""
 import time
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 
 from models.schemas import (
     CenterScore,
@@ -29,6 +29,7 @@ def _patient_to_dict(patient: PatientProfile) -> dict:
         "height_inches": patient.height_inches,
         "cpra": patient.cpra,
         "meld": patient.meld,
+        "peld": patient.peld,
         "las": patient.las,
         "adjust_for_cause_of_death": patient.adjust_for_cause_of_death,
         "center_codes": patient.center_codes,
@@ -46,7 +47,13 @@ async def score_centers(patient: PatientProfile):
 
     patient_dict = _patient_to_dict(patient)
 
-    results = score_all_centers(patient_dict, patient.custom_weights)
+    try:
+        results = score_all_centers(patient_dict, patient.custom_weights)
+    except ValueError as e:
+        # Caller-input problems (an empty center shortlist, or a pediatric
+        # request for an organ with no pediatric program data) are 400s, and
+        # must match how /simulate answers the same request (#335).
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
     centers = [
         CenterScore(
@@ -110,7 +117,10 @@ async def score_centers_with_provenance(
     patient_dict = _patient_to_dict(patient)  # single source of truth (#262)
 
     # Run the production scoring path (preserves ranking + tests)
-    results = score_all_centers(patient_dict, patient.custom_weights)
+    try:
+        results = score_all_centers(patient_dict, patient.custom_weights)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     centers = [
         CenterScore(
             code=r.code,

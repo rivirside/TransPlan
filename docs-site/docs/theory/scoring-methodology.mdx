@@ -6,7 +6,7 @@ import HeatmapTable from '@site/src/components/HeatmapTable';
 
 # Scoring Methodology
 
-TransPlan's Phase 1 engine computes a weighted composite score (0 to 100) for each of 22 US cities based on a patient's profile.
+TransPlan's scoring engine computes a weighted composite score (0 to 100) for each of the 248 SRTR transplant centers, based on a patient's profile. (Earlier versions scored 22 cities; that limit was retired in #293 and centers are now identified by SRTR center code.)
 
 ## Overview
 
@@ -53,7 +53,7 @@ The donor registration rate (state-level, from health demographics data) is the 
 
 Ranks centers by volume and quality indicators.
 
-Annual transplant volume per organ type comes from SRTR biannual reports. Centers are also assessed by their UNOS/OPTN performance tier, specialization (pediatric programs, multi-organ capability), and CMS outcome ratings where available.
+Annual transplant volume per organ type comes from SRTR biannual reports. Volume alone is a weak quality proxy, so it is supplemented by two directly observed SRTR measures: the official **5-tier program ratings** (transplant rate, waitlist survival and graft survival, each risk-adjusted by SRTR's own model) and the risk-adjusted **Offer Acceptance Rate Ratio**, which captures how readily a program accepts offers for its candidates. Centers are also assessed by specialization (pediatric programs, multi-organ capability) and CMS outcome ratings where available.
 
 ### 5. Geographic & Logistical (10%)
 

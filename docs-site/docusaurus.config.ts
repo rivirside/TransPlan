@@ -16,7 +16,13 @@ const config: Config = {
 
   organizationName: 'transplantmatch',
   projectName: 'TransPlan',
-  trailingSlash: false,
+  // Vercel serves `dir/index.html` at `/dir/` and 308s `/dir` to it, but it
+  // does NOT serve `page.html` at `/page`. With trailingSlash:false
+  // Docusaurus emitted `architecture/overview.html` while emitting links
+  // to `/architecture/overview`, so EVERY in-docs link 404'd on
+  // production — the whole docs site was unnavigable, not just the
+  // handful of links from the landing page. (#328)
+  trailingSlash: true,
 
   onBrokenLinks: 'warn',
   markdown: {

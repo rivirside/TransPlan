@@ -112,11 +112,23 @@ class TestExtensibleProvenance:
     """#340: the tag registry is data-driven — new families must not require
     touching every consumer, and /score must not mutate a shared dict."""
 
-    def test_five_tag_families(self):
+    def test_registry_is_self_consistent(self):
+        """Asserting an exact tag COUNT would defeat the point of the registry
+        (#335 added a sixth family and this test failed for no defect). What
+        must hold is that every tag is fully registered and no two tags share
+        a family name, which is what the generic frontend renderer relies on."""
         from services import provenance
-        assert len(provenance.ALL_TAGS) == 5
         assert provenance.TAG_ACCEPTANCE in provenance.ALL_TAGS
         assert provenance.TAG_TRENDS in provenance.ALL_TAGS
+        assert provenance.TAG_PEDIATRIC_SPARSE in provenance.ALL_TAGS
+        families = []
+        for tag in provenance.ALL_TAGS:
+            row = provenance.FAMILIES.get(tag)
+            assert row is not None, f"tag {tag} has no FAMILIES row"
+            assert len(row) == 3, f"tag {tag} row must be (family, good, bad)"
+            families.append(row[0])
+        assert len(families) == len(set(families)), (
+            f"two tags share a family name: {families}")
 
     def test_summary_covers_every_family(self, kidney_patient):
         from services import provenance

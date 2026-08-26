@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Card — transplant.today</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="dark-mode.js"></script>
+    <style>
+        .mc-layout { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+        .mc-header h1 { font-size: 1.6rem; font-weight: 700; margin: 0 0 0.35rem; }
+        .mc-header p { margin: 0 0 0.5rem; color: var(--text-muted, #6b7280); font-size: 0.92rem; }
+        .mc-banner {
+            border-left: 3px solid var(--accent, #4a90d9);
+            background: var(--well-bg, #f9fafb);
+            padding: 0.75rem 1rem;
+            margin: 1rem 0 1.75rem;
+            font-size: 0.87rem;
+            line-height: 1.5;
+        }
+        .mc-section { margin: 2rem 0; }
+        .mc-section > h2 {
+            font-size: 1.12rem;
+            font-weight: 700;
+            margin: 0 0 0.3rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid var(--border, #e5e7eb);
+        }
+        .mc-q { font-size: 0.86rem; color: var(--text-muted, #6b7280); margin: 0 0 0.75rem; }
+        .mc-takeaway {
+            font-size: 0.88rem;
+            line-height: 1.55;
+            margin: 0.75rem 0 0;
+            padding: 0.6rem 0.8rem;
+            background: var(--well-bg, #f9fafb);
+            border-radius: 0.375rem;
+        }
+        .mc-stat-row { display: flex; flex-wrap: wrap; gap: 0.9rem; margin: 0.75rem 0; }
+        .mc-stat {
+            background: var(--well-bg, #f9fafb);
+            border: 1px solid var(--border, #e5e7eb);
+            border-radius: 0.375rem;
+            padding: 0.7rem 0.95rem;
+            min-width: 118px;
+        }
+        .mc-stat-label { font-size: 0.72rem; color: var(--text-muted, #6b7280); margin-bottom: 0.2rem; }
+        .mc-stat-value { font-size: 1.35rem; font-weight: 700; line-height: 1.2; }
+        .mc-stat-sub { font-size: 0.68rem; color: var(--text-muted, #6b7280); margin-top: 0.15rem; }
+        .mc-table-wrap { overflow-x: auto; }
+        .mc-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.5rem; }
+        .mc-table th, .mc-table td {
+            text-align: left; padding: 0.42rem 0.7rem;
+            border-bottom: 1px solid var(--border, #e5e7eb);
+        }
+        .mc-table th { font-weight: 600; font-size: 0.76rem; color: var(--text-muted, #6b7280); }
+        .mc-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+        .mc-pass { color: #15803d; font-weight: 600; }
+        .mc-fail { color: #b91c1c; font-weight: 600; }
+        .mc-warn { color: #b45309; font-weight: 600; }
+        .mc-meta { font-size: 0.72rem; color: var(--text-muted, #6b7280); margin-top: 0.45rem; }
+        .mc-error { color: #b91c1c; font-size: 0.85rem; }
+        [data-dark="true"] .mc-pass { color: #4ade80; }
+        [data-dark="true"] .mc-fail { color: #f87171; }
+        [data-dark="true"] .mc-warn { color: #fbbf24; }
+    </style>
+</head>
+<body>
+    <div id="nav-placeholder"></div>
+
+    <div class="mc-layout">
+        <div class="mc-header">
+            <h1>Model card</h1>
+            <p>What has been tested, what the tests found, and where the model is
+               known to be weak — assembled from the published validation artifacts.</p>
+        </div>
+
+        <div class="mc-banner">
+            <strong>Read this first.</strong> Most panels below are
+            <em>internal-consistency</em> diagnostics: they check that the model's
+            machinery is honest about its own uncertainty and that it extracts the
+            signal its inputs contain. They are not evidence that the model
+            predicts real patient outcomes. The genuinely external checks are
+            labelled as such. Every number is read live from the JSON the
+            generating script wrote, so this page cannot drift from the analyses
+            it describes.
+        </div>
+
+        <div class="mc-section" id="mc-ceiling">
+            <h2>How good could any model be here?</h2>
+            <p class="mc-q">Parameter recovery: simulate centers whose truth is known,
+               run the pipeline, and see how well it recovers the ordering.</p>
+            <div class="mc-stat-row" id="mc-ceiling-stats"></div>
+            <div class="mc-table-wrap"><table class="mc-table" id="mc-ceiling-table"></table></div>
+            <p class="mc-takeaway" id="mc-ceiling-takeaway"></p>
+            <div class="mc-meta" id="mc-ceiling-meta"></div>
+        </div>
+
+        <div class="mc-section" id="mc-coverage">
+            <h2>Are the intervals honest?</h2>
+            <p class="mc-q">A 95% interval should contain the truth 95% of the time.
+               Measured against held-out later SRTR releases.</p>
+            <div class="mc-table-wrap"><table class="mc-table" id="mc-coverage-table"></table></div>
+            <p class="mc-takeaway" id="mc-coverage-takeaway"></p>
+            <div class="mc-meta" id="mc-coverage-meta"></div>
+        </div>
+
+        <div class="mc-section" id="mc-sbc">
+            <h2>Is the Bayesian machinery calibrated?</h2>
+            <p class="mc-q">Simulation-based calibration: draw parameters from the
+               prior, simulate data, refit, and check the rank statistics are uniform.
+               A failure here would mean priors, likelihood and sampler disagree.</p>
+            <div class="mc-table-wrap"><table class="mc-table" id="mc-sbc-table"></table></div>
+            <p class="mc-takeaway" id="mc-sbc-takeaway"></p>
+            <div class="mc-meta" id="mc-sbc-meta"></div>
+        </div>
+
+        <div class="mc-section" id="mc-calibration">
+            <h2>Does the ranking match the registry?</h2>
+            <p class="mc-q">Per-center Spearman correlation between predicted access
+               and observed SRTR transplant rates.</p>
+            <div class="mc-table-wrap"><table class="mc-table" id="mc-calibration-table"></table></div>
+            <p class="mc-takeaway" id="mc-calibration-takeaway"></p>
+            <div class="mc-meta" id="mc-calibration-meta"></div>
+        </div>
+
+        <div class="mc-section" id="mc-pediatric">
+            <h2>Pediatric</h2>
+            <p class="mc-q">Children are modeled from pediatric SRTR cohorts and
+               validated against SRTR's own risk-adjusted pediatric tier — the one
+               pediatric ground truth that is not an input to the pipeline.</p>
+            <div class="mc-table-wrap"><table class="mc-table" id="mc-pediatric-table"></table></div>
+            <p class="mc-takeaway" id="mc-pediatric-takeaway"></p>
+            <div class="mc-meta" id="mc-pediatric-meta"></div>
+        </div>
+
+        <div class="mc-section" id="mc-panel">
+            <h2>Would pooling across releases help?</h2>
+            <p class="mc-q">A design question tested rather than assumed: does
+               shrinking estimates across SRTR releases beat using the latest one?</p>
+            <div class="mc-table-wrap"><table class="mc-table" id="mc-panel-table"></table></div>
+            <p class="mc-takeaway" id="mc-panel-takeaway"></p>
+            <div class="mc-meta" id="mc-panel-meta"></div>
+        </div>
+
+        <div class="mc-section" id="mc-freshness">
+            <h2>When was each analysis last run?</h2>
+            <p class="mc-q">Every published artifact, newest first. A stale date is
+               itself a finding.</p>
+            <div class="mc-table-wrap"><table class="mc-table" id="mc-freshness-table"></table></div>
+        </div>
+
+        <div class="mc-section" id="mc-limits">
+            <h2>Known limitations</h2>
+            <p class="mc-q">The full register lives in the repository; these are the
+               ones that most change how the output should be read.</p>
+            <ul id="mc-limits-list" style="font-size:0.88rem; line-height:1.6"></ul>
+        </div>
+    </div>
+
+    <div id="footer-placeholder" data-footer-variant="simulator"></div>
+
+    <script src="components/site-chrome.js"></script>
+    <script src="model-card.js"></script>
+</body>
+</html>

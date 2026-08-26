@@ -11,11 +11,11 @@ class PatientProfile(BaseModel):
         examples=["O+", "A-", "AB+"],
     )
     age: int = Field(
-        ..., ge=18, le=99,
-        description="Adult (18+) candidates only: every multiplier is "
-                    "adult-derived and pediatric allocation is a different "
-                    "system — a sub-18 input would silently get wrong "
-                    "numbers. Pediatric mode is tracked in #335.")
+        ..., ge=1, le=99,
+        description="Candidate age. Under 18 activates PEDIATRIC mode (#335): "
+                    "pediatric SRTR data, restricted to centers running a "
+                    "pediatric program for the organ. Adult results are "
+                    "unchanged.")
     sex: Literal["male", "female"]
     urgency: int = Field(..., ge=1, le=4)
     insurance: Optional[Literal["medicare", "medicaid", "private", "uninsured"]] = None
@@ -24,6 +24,11 @@ class PatientProfile(BaseModel):
     # Organ-specific scores
     cpra: Optional[int] = Field(None, ge=0, le=100, description="Kidney only: % panel reactive antibodies")
     meld: Optional[int] = Field(None, ge=6, le=40, description="Liver only: MELD 3.0 score (the score in use since 2023; 6-40)")
+    peld: Optional[float] = Field(
+        None, ge=-20, le=99,
+        description="Liver, pediatric (<12): PELD score. A DIFFERENT scale "
+                    "from MELD — PELD can be negative, so the MELD 6-40 "
+                    "bound must not be reused here (#335).")
     las: Optional[float] = Field(
         None, ge=0, le=100,
         description="Lung only: legacy Lung Allocation Score (superseded by "
@@ -74,6 +79,11 @@ class PatientProfile(BaseModel):
         description="Restrict scoring/simulation to these SRTR center codes "
                     "(a user's shortlist). None/empty = all centers for the organ."
     )
+
+    @property
+    def is_pediatric(self) -> bool:
+        """Under 18 — pediatric allocation is a different system (#335)."""
+        return self.age < 18
 
     @model_validator(mode="after")
     def derive_las_from_cas(self):

@@ -312,7 +312,11 @@ def simulate_mcmc(
 
     # Iterate over all centers with center-level adjustments (#207/#293)
     iteration_targets = []
-    for center in _get_centers(patient.organ):
+    _centers_iter = _get_centers(patient.organ)
+    if patient.is_pediatric:
+        from services.monte_carlo import restrict_to_pediatric
+        _centers_iter = restrict_to_pediatric(_centers_iter, patient.organ)
+    for center in _centers_iter:
         code = center.get("code", "")
         city = center.get("name", center.get("city", ""))
         state = center.get("state", center.get("state_abbr", ""))
@@ -545,8 +549,14 @@ def simulate_mcmc(
         except Exception:
             pass
 
+        from services.provenance import TAG_PEDIATRIC_UNCALIBRATED
         from services.provenance import center_data_quality as _cdq
-        _degraded = _cdq(patient.organ, code)
+        _degraded = _cdq(patient.organ, code, pediatric=patient.is_pediatric)
+        # L-079: same gap as the BBN — the pediatric center restriction
+        # applies, but there is no pediatric likelihood term, so the wait
+        # model is adult. Say so rather than letting it pass as pediatric.
+        if patient.is_pediatric and TAG_PEDIATRIC_UNCALIBRATED not in _degraded:
+            _degraded = _degraded + [TAG_PEDIATRIC_UNCALIBRATED]
         city_results.append(CityProbability(
             city=city,
             state=state,

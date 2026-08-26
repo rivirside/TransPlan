@@ -44,6 +44,7 @@
               '<a href="sensitivity.html" class="nav-dropdown-item" role="menuitem">Sensitivity</a>' +
               '<a href="explorer.html" class="nav-dropdown-item" role="menuitem">Explorer</a>' +
               '<a href="validation.html" class="nav-dropdown-item" role="menuitem">Model Diagnostics</a>' +
+              '<a href="model-card.html" class="nav-dropdown-item" role="menuitem">Model Card</a>' +
               '<a href="docs-site/build/" class="nav-dropdown-item" role="menuitem" target="_blank" rel="noopener">Documentation</a>' +
               '<a href="docs-site/build/api-reference/simulate" class="nav-dropdown-item" role="menuitem" target="_blank" rel="noopener">API Reference</a>' +
             '</div>' +
@@ -112,6 +113,7 @@
               '<a href="equity.html">Equity Audit</a>' +
               '<a href="explorer.html">Explorer</a>' +
               '<a href="validation.html">Model Diagnostics</a>' +
+              '<a href="model-card.html">Model Card</a>' +
               '<a href="docs-site/build/" target="_blank" rel="noopener">Documentation</a>' +
               '<a href="https://github.com/rivirside/TransPlan" target="_blank" rel="noopener">GitHub</a>' +
             '</div>' +

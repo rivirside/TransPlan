@@ -426,6 +426,8 @@
   }
  },
  "_meta": {
-  "method": "Unbalanced one-way random-effects ANOVA on log wait factors (center x release panel from srtr-trends-centers.json); raw = lower bound on signal (within includes real drift); detrended = per-center linear drift removed."
+  "method": "Unbalanced one-way random-effects ANOVA on log wait factors (center x release panel from srtr-trends-centers.json); raw = lower bound on signal (within includes real drift); detrended = per-center linear drift removed.",
+  "generated": "2026-08-25T20:44:19Z",
+  "generated_source": "git-commit-date \u2014 backfilled by scripts/backfill-artifact-meta.py (#328); this generator did not stamp its own output, so this is when the file last changed, not a recorded run time"
  }
 }

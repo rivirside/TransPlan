@@ -15,8 +15,8 @@ Monte Carlo simulation uses fixed SRTR data values (median waits, mortality rate
 A three-level Bayesian hierarchical model:
 
 1. **National hyperpriors**: population-level priors on organ-specific baseline mortality, delisting, and graft survival
-2. **City random effects**: deviations from national rates per center, pooled via exchangeability
-3. **Patient-level covariates**: blood type, urgency, age as multipliers on the city effects
+2. **Center random effects**: deviations from national rates per center, pooled via exchangeability
+3. **Patient-level covariates**: blood type, urgency, age as multipliers on the center effects
 
 The model includes 92 free parameters per organ (6 organs, so ~550 parameters total):
 - Baseline mortality and delisting rates
@@ -30,7 +30,7 @@ The model includes 92 free parameters per organ (6 organs, so ~550 parameters to
 
 Fitting occurs offline using PyMC's NUTS (No-U-Turn Sampler), a variant of Hamiltonian Monte Carlo. For each organ:
 
-1. SRTR historical data (14 biannual releases from 2019 to 2025) is loaded
+1. SRTR historical data (15 biannual releases from 2018 to 2025) is loaded
 2. The model is specified in PyMC with informed priors
 3. NUTS samples 4 chains of 2000 iterations each (discarding 1000 warmup)
 4. Convergence is assessed: R-hat < 1.01, ESS > 400 per parameter
@@ -75,6 +75,12 @@ Use the `/simulate` endpoint with `?inference_mode=mcmc` to run MCMC inference. 
 
 The hierarchical model assumes center effects are exchangeable (pooled via a normal prior). In reality, centers differ substantially in unobserved ways (case complexity, referral networks, center specialization). The model partially handles this via the LKJ frailty, but unmeasured confounding remains.
 
-MCMC is sensitive to prior specification. The current priors are informed by SRTR historical ranges but may be overconfident if the data generation process changes. Sensitivity analysis is recommended for policy-relevant conclusions.
+MCMC is sensitive to prior specification. The priors are now **empirical per organ and metric** (#317), measured from the release panel rather than the flat `Beta(2,2)` guess they replaced — that guess was simultaneously over-trusting some panels and under-trusting others.
 
-Fitting requires substantial computational resources (hours per organ). Refitting to incorporate new SRTR data is planned to occur quarterly.
+The prior-sensitivity caveat this section used to carry has since been answered directly: a **simulation-based calibration** study draws parameters from the prior, simulates data, refits, and checks that the resulting rank statistics are uniform. All four monitored parameters pass (KS p = 0.41-0.57), which is evidence the priors, likelihood and sampler are *jointly* calibrated — not merely that the sampler converges. See `docs/sbc-report.md`.
+
+Sensitivity analysis is still worthwhile for policy-relevant conclusions, but the specific worry that the priors are silently overconfident has been tested rather than left open.
+
+Fitting requires substantial computational resources (hours per organ), and the model is refit when a new SRTR release is ingested rather than on a fixed calendar.
+
+It is worth being explicit about why the fit uses the most recent release rather than pooling all 15. A panel-likelihood study (#358) tested exactly that: pooling across releases with cross-release shrinkage **loses** to the current single-release design, because centers genuinely drift over time, so older releases describe a center that no longer exists. The single-release choice is therefore an evidence-backed decision, not a simplification awaiting improvement. See `docs/panel-fit-report.md`.

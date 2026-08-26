@@ -164,6 +164,8 @@
  ],
  "_meta": {
   "seed": 20260825,
-  "method": "Parameter-recovery study (#309): synthetic ground truth through the"
+  "method": "Parameter-recovery study (#309): synthetic ground truth through the",
+  "generated": "2026-08-26T01:40:38Z",
+  "generated_source": "git-commit-date \u2014 backfilled by scripts/backfill-artifact-meta.py (#328); this generator did not stamp its own output, so this is when the file last changed, not a recorded run time"
  }
 }

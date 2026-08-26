@@ -502,6 +502,8 @@
  },
  "_meta": {
   "method": "Cross-center dispersion of SRTR Table B7 12-month transplant rates (centers with n>=10) per release; permutation level-shift test at lag-adjusted policy boundaries; placebo boundary ranking.",
-  "min_n": 10
+  "min_n": 10,
+  "generated": "2026-08-25T18:52:09Z",
+  "generated_source": "git-commit-date \u2014 backfilled by scripts/backfill-artifact-meta.py (#328); this generator did not stamp its own output, so this is when the file last changed, not a recorded run time"
  }
 }

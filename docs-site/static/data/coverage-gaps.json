@@ -1,0 +1,540 @@
+{
+ "organs": {
+  "kidney": {
+   "organ": "kidney",
+   "n_centers": 233,
+   "n_counties": 3144,
+   "total_population": 340110988,
+   "share_within": {
+    "50": 0.7334,
+    "100": 0.9252,
+    "150": 0.9727,
+    "250": 0.9924,
+    "288": 0.9945,
+    "500": 0.9978
+   },
+   "population_beyond_250mi": 2575498,
+   "population_weighted_median_miles": 24.9,
+   "farthest_counties": [
+    {
+     "fips": "02180",
+     "county": "Nome Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1938.5,
+     "population": 9836
+    },
+    {
+     "fips": "02188",
+     "county": "Northwest Arctic Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1881.4,
+     "population": 7134
+    },
+    {
+     "fips": "02158",
+     "county": "Kusilvak Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1868.7,
+     "population": 7946
+    },
+    {
+     "fips": "02185",
+     "county": "North Slope Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1830.1,
+     "population": 10663
+    },
+    {
+     "fips": "02013",
+     "county": "Aleutians East Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1759.6,
+     "population": 3632
+    },
+    {
+     "fips": "02050",
+     "county": "Bethel Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1734.1,
+     "population": 18237
+    },
+    {
+     "fips": "02070",
+     "county": "Dillingham Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1662.3,
+     "population": 4642
+    },
+    {
+     "fips": "02290",
+     "county": "Yukon-Koyukuk Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1628.1,
+     "population": 5099
+    },
+    {
+     "fips": "02060",
+     "county": "Bristol Bay Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1592.2,
+     "population": 884
+    },
+    {
+     "fips": "02164",
+     "county": "Lake and Peninsula Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1573.0,
+     "population": 1315
+    }
+   ]
+  },
+  "liver": {
+   "organ": "liver",
+   "n_centers": 148,
+   "n_counties": 3144,
+   "total_population": 340110988,
+   "share_within": {
+    "50": 0.636,
+    "100": 0.8478,
+    "150": 0.9313,
+    "250": 0.9761,
+    "288": 0.9844,
+    "500": 0.9977
+   },
+   "population_beyond_250mi": 8116536,
+   "population_weighted_median_miles": 30.2,
+   "farthest_counties": [
+    {
+     "fips": "02180",
+     "county": "Nome Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1938.5,
+     "population": 9836
+    },
+    {
+     "fips": "02188",
+     "county": "Northwest Arctic Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1881.4,
+     "population": 7134
+    },
+    {
+     "fips": "02158",
+     "county": "Kusilvak Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1868.7,
+     "population": 7946
+    },
+    {
+     "fips": "02185",
+     "county": "North Slope Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1830.1,
+     "population": 10663
+    },
+    {
+     "fips": "02013",
+     "county": "Aleutians East Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1759.6,
+     "population": 3632
+    },
+    {
+     "fips": "02050",
+     "county": "Bethel Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1734.1,
+     "population": 18237
+    },
+    {
+     "fips": "02070",
+     "county": "Dillingham Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1662.3,
+     "population": 4642
+    },
+    {
+     "fips": "02290",
+     "county": "Yukon-Koyukuk Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1628.1,
+     "population": 5099
+    },
+    {
+     "fips": "02060",
+     "county": "Bristol Bay Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1592.2,
+     "population": 884
+    },
+    {
+     "fips": "02164",
+     "county": "Lake and Peninsula Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1573.0,
+     "population": 1315
+    }
+   ]
+  },
+  "heart": {
+   "organ": "heart",
+   "n_centers": 149,
+   "n_counties": 3144,
+   "total_population": 340110988,
+   "share_within": {
+    "50": 0.6591,
+    "100": 0.8522,
+    "150": 0.9303,
+    "250": 0.9748,
+    "288": 0.9831,
+    "500": 0.9935
+   },
+   "population_beyond_250mi": 8578607,
+   "population_weighted_median_miles": 29.2,
+   "farthest_counties": [
+    {
+     "fips": "15007",
+     "county": "Kauai County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2454.0,
+     "population": 73840
+    },
+    {
+     "fips": "15003",
+     "county": "Honolulu County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2392.4,
+     "population": 998747
+    },
+    {
+     "fips": "15005",
+     "county": "Kalawao County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2351.0,
+     "population": 81
+    },
+    {
+     "fips": "15001",
+     "county": "Hawaii County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2345.4,
+     "population": 209790
+    },
+    {
+     "fips": "15009",
+     "county": "Maui County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2344.4,
+     "population": 163688
+    },
+    {
+     "fips": "02180",
+     "county": "Nome Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1938.5,
+     "population": 9836
+    },
+    {
+     "fips": "02188",
+     "county": "Northwest Arctic Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1881.4,
+     "population": 7134
+    },
+    {
+     "fips": "02158",
+     "county": "Kusilvak Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1868.7,
+     "population": 7946
+    },
+    {
+     "fips": "02185",
+     "county": "North Slope Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1830.1,
+     "population": 10663
+    },
+    {
+     "fips": "02013",
+     "county": "Aleutians East Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1759.6,
+     "population": 3632
+    }
+   ]
+  },
+  "lung": {
+   "organ": "lung",
+   "n_centers": 74,
+   "n_counties": 3144,
+   "total_population": 340110988,
+   "share_within": {
+    "50": 0.549,
+    "100": 0.7412,
+    "150": 0.8655,
+    "250": 0.9619,
+    "288": 0.9759,
+    "500": 0.9932
+   },
+   "population_beyond_250mi": 12953919,
+   "population_weighted_median_miles": 42.8,
+   "farthest_counties": [
+    {
+     "fips": "15007",
+     "county": "Kauai County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2454.0,
+     "population": 73840
+    },
+    {
+     "fips": "15003",
+     "county": "Honolulu County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2392.4,
+     "population": 998747
+    },
+    {
+     "fips": "15005",
+     "county": "Kalawao County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2351.0,
+     "population": 81
+    },
+    {
+     "fips": "15001",
+     "county": "Hawaii County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2345.4,
+     "population": 209790
+    },
+    {
+     "fips": "15009",
+     "county": "Maui County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2344.4,
+     "population": 163688
+    },
+    {
+     "fips": "02180",
+     "county": "Nome Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1938.5,
+     "population": 9836
+    },
+    {
+     "fips": "02188",
+     "county": "Northwest Arctic Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1881.6,
+     "population": 7134
+    },
+    {
+     "fips": "02158",
+     "county": "Kusilvak Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1868.7,
+     "population": 7946
+    },
+    {
+     "fips": "02185",
+     "county": "North Slope Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1830.4,
+     "population": 10663
+    },
+    {
+     "fips": "02013",
+     "county": "Aleutians East Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1759.6,
+     "population": 3632
+    }
+   ]
+  },
+  "pancreas": {
+   "organ": "pancreas",
+   "n_centers": 99,
+   "n_counties": 3144,
+   "total_population": 340110988,
+   "share_within": {
+    "50": 0.5735,
+    "100": 0.7807,
+    "150": 0.8695,
+    "250": 0.93,
+    "288": 0.9418,
+    "500": 0.9625
+   },
+   "population_beyond_250mi": 23791311,
+   "population_weighted_median_miles": 36.4,
+   "farthest_counties": [
+    {
+     "fips": "02180",
+     "county": "Nome Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 2510.9,
+     "population": 9836
+    },
+    {
+     "fips": "02188",
+     "county": "Northwest Arctic Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 2484.9,
+     "population": 7134
+    },
+    {
+     "fips": "02185",
+     "county": "North Slope Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 2464.4,
+     "population": 10663
+    },
+    {
+     "fips": "15007",
+     "county": "Kauai County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2454.0,
+     "population": 73840
+    },
+    {
+     "fips": "02158",
+     "county": "Kusilvak Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 2408.5,
+     "population": 7946
+    },
+    {
+     "fips": "15003",
+     "county": "Honolulu County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2392.4,
+     "population": 998747
+    },
+    {
+     "fips": "15005",
+     "county": "Kalawao County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2351.0,
+     "population": 81
+    },
+    {
+     "fips": "15001",
+     "county": "Hawaii County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2345.4,
+     "population": 209790
+    },
+    {
+     "fips": "15009",
+     "county": "Maui County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2344.4,
+     "population": 163688
+    },
+    {
+     "fips": "02050",
+     "county": "Bethel Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 2265.2,
+     "population": 18237
+    }
+   ]
+  },
+  "intestine": {
+   "organ": "intestine",
+   "n_centers": 21,
+   "n_counties": 3144,
+   "total_population": 340110988,
+   "share_within": {
+    "50": 0.2833,
+    "100": 0.4278,
+    "150": 0.5467,
+    "250": 0.6774,
+    "288": 0.7066,
+    "500": 0.8499
+   },
+   "population_beyond_250mi": 109734634,
+   "population_weighted_median_miles": 131.3,
+   "farthest_counties": [
+    {
+     "fips": "15007",
+     "county": "Kauai County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2462.9,
+     "population": 73840
+    },
+    {
+     "fips": "15003",
+     "county": "Honolulu County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2400.3,
+     "population": 998747
+    },
+    {
+     "fips": "15005",
+     "county": "Kalawao County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2358.2,
+     "population": 81
+    },
+    {
+     "fips": "15009",
+     "county": "Maui County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2351.3,
+     "population": 163688
+    },
+    {
+     "fips": "15001",
+     "county": "Hawaii County",
+     "state": "Hawaii",
+     "miles_to_nearest": 2350.9,
+     "population": 209790
+    },
+    {
+     "fips": "02180",
+     "county": "Nome Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1938.5,
+     "population": 9836
+    },
+    {
+     "fips": "02188",
+     "county": "Northwest Arctic Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1881.4,
+     "population": 7134
+    },
+    {
+     "fips": "02158",
+     "county": "Kusilvak Census Area",
+     "state": "Alaska",
+     "miles_to_nearest": 1868.7,
+     "population": 7946
+    },
+    {
+     "fips": "02185",
+     "county": "North Slope Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1830.1,
+     "population": 10663
+    },
+    {
+     "fips": "02013",
+     "county": "Aleutians East Borough",
+     "state": "Alaska",
+     "miles_to_nearest": 1759.6,
+     "population": 3632
+    }
+   ]
+  }
+ },
+ "_meta": {
+  "generated": "2026-08-26T17:00:12Z",
+  "script": "scripts/run-coverage-gaps.py",
+  "distance_metric": "great-circle (haversine) miles, county centroid to nearest transplant center",
+  "caveat": "Straight-line distance UNDERSTATES real travel burden, and does so unevenly by terrain and road network. Every share below is an optimistic bound. Drive-time replacement is tracked as #323.",
+  "population_source": "data/county-population.json (US Census, vintage 2024)",
+  "centroid_source": "data/health-demographics-counties.json"
+ }
+}

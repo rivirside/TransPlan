@@ -1,0 +1,135 @@
+---
+sidebar_position: 0
+---
+
+import ArtifactTable from '@site/src/components/ArtifactTable';
+import ArtifactStat from '@site/src/components/ArtifactStat';
+
+# Model Card
+
+What has been tested, what the tests found, and where the model is known to be
+weak. Every table below is read from the JSON its generating script wrote, so
+this page cannot drift from the analyses it describes — the failure mode that
+left the rest of these docs claiming the model had no multi-listing and no
+acceptance modelling long after both shipped.
+
+:::note Read this first
+
+Most of what follows is an **internal-consistency** diagnostic: it checks that
+the model is honest about its own uncertainty and extracts the signal its
+inputs contain. That is not the same as evidence that it predicts real patient
+outcomes. The genuinely external checks are labelled.
+
+The interactive version of this page lives at
+[transplant.today/model-card.html](https://transplant.today/model-card.html)
+and reads the same files.
+
+:::
+
+## How good could any model be here?
+
+Before asking how well the model ranks centers, it is worth asking how well
+*anything* could. This study simulates centers whose truth is known, runs the
+full pipeline over them, and measures how much of the true ordering comes back.
+
+The recoverable ceiling sits at ρ ≈ <ArtifactStat artifact="parameter-recovery"
+path="summary.rho_p12_median" digits={2} /> at realistic cohort sizes, and falls
+to <ArtifactStat artifact="parameter-recovery"
+path="summary.rho_p12_by_cohort_size.n<60" digits={2} /> for centers with fewer
+than 60 observed candidates.
+Every correlation reported elsewhere on this page should be read against that
+bound rather than against 1.0. It is also why small-cohort estimates are shrunk
+toward a national baseline and flagged, rather than reported at face value.
+
+## Are the intervals honest?
+
+A 95% interval should contain the truth 95% of the time. Measured against
+held-out later SRTR releases:
+
+<ArtifactTable
+  artifact="coverage-audit"
+  columns={[
+    {header: 'Coverage, 1 release ahead', path: 'coverage_by_lag.1', format: 'percent', digits: 1},
+    {header: '2 releases', path: 'coverage_by_lag.2', format: 'percent', digits: 1},
+    {header: '4 releases', path: 'coverage_by_lag.4', format: 'percent', digits: 1},
+    {header: 'Inflation applied', path: 'inflation_to_95_by_lag.1', digits: 2},
+    {header: 'Pairs', path: 'n_pairs_lag1', digits: 0},
+  ]}
+/>
+
+Raw intervals were **under-covered**, so the shipped intervals are widened by
+the inflation factors shown. Coverage decaying with horizon is a real property
+of the data rather than a fixable bug: an estimate describes the release it came
+from, and centers drift away from it.
+
+## Is the Bayesian machinery calibrated?
+
+Simulation-based calibration draws parameters from the prior, simulates data,
+refits, and checks that the rank statistics come out uniform. A failure would
+mean the priors, the likelihood and the sampler disagree with each other.
+
+All four monitored parameters pass (KS p between 0.41 and 0.57). This is a
+stronger statement than "the sampler converged": it says the posterior
+intervals mean what they claim. It says nothing about whether the model is
+right about reality.
+
+## Does the ranking match the registry?
+
+Per-center Spearman correlation between predicted access and observed SRTR
+transplant rates runs **0.70–0.89** depending on organ, against a recoverable
+ceiling of 0.92. Note this is a cross-field consistency check: wait factors come
+from SRTR Table B10 and observed rates from Table B7 — the same registry, so it
+verifies the competing-risks model, not the registry.
+
+## Pediatric
+
+<ArtifactTable
+  artifact="pediatric-calibration"
+  columns={[
+    {header: 'Centers', path: 'matched_centers', digits: 0},
+    {header: 'ρ vs SRTR pediatric tier', path: 'stats.spearman_p12_vs_srtr_tier.rho'},
+    {header: 'ρ (cohorts ≥10 py)', path: 'stats.spearman_p12_vs_srtr_tier_thick_cohorts.rho'},
+    {header: 'Shrinkage effect', path: 'stats.shrinkage_ablation.delta'},
+  ]}
+  caption="Validated against SRTR's own risk-adjusted pediatric tier — the one pediatric ground truth that is not an input to the pipeline."
+/>
+
+SRTR publishes **no pediatric wait percentiles at all**, so pediatric median
+waits are derived from published pediatric transplant rates. That derivation was
+validated on adults, where both quantities are published, and recovers *order*
+far better than *magnitude*. Heart fails the gate outright. Treat displayed
+pediatric medians as directional.
+
+## Would pooling across releases help?
+
+<ArtifactTable
+  artifact="panel-fit"
+  columns={[
+    {header: 'ρ pooled/shrunk', path: 'rho_shrunk'},
+    {header: 'ρ latest release', path: 'rho_raw_persistence'},
+    {header: 'Signal fraction', path: 'frac_signal_posterior.mean'},
+  ]}
+/>
+
+No. Pooling **loses** to simply using the most recent release, for every organ
+tested, because centers drift and older releases describe programs that no
+longer exist. The single-release design is therefore an evidence-backed choice
+rather than a simplification awaiting improvement. A negative result kept
+visible is as much a part of the record as a positive one.
+
+## Known limitations
+
+- Estimates describe the SRTR release they were built from, not real-time
+  allocation.
+- Center discretion enters only as a center-level average, so equity analyses
+  understate between-group disparity at a given center (L-075).
+- Pediatric median waits are derived, not observed (L-076), and pediatric
+  cohorts are small enough that some figures are the national prior wearing a
+  center's name (L-077).
+- No patient-level clinical trajectory is modeled.
+- This is a research and education tool. It is not a clinical decision aid and
+  has not been reviewed by transplant faculty for face validity (#107).
+
+The complete register is maintained in `docs/limitations.md` (77 entries) and
+`docs/clinical-assumptions-register.md` (221 assumptions, 129 still needing
+external justification).

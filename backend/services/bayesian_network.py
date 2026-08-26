@@ -535,6 +535,11 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
     # One result per SRTR center (state / full granularity).
     from services.monte_carlo import _get_centers
     centers = _get_centers(organ)
+    # #335: engine parity — a child gets the same pediatric-program-only
+    # center set here as in the MC engine, never an adult-only center.
+    if patient.is_pediatric:
+        from services.monte_carlo import restrict_to_pediatric
+        centers = restrict_to_pediatric(centers, organ)
 
     for center in centers:
         code = center.get("code", "")
@@ -595,8 +600,17 @@ def simulate_bbn(patient: PatientProfile) -> SimulationResult:
 
         # Data-provenance tags (#300/#219 — previously null for BBN runs,
         # which read as "no degraded inputs" instead of "not measured")
-        from services.provenance import center_data_quality
-        degraded = center_data_quality(patient.organ, code)
+        from services.provenance import (TAG_PEDIATRIC_UNCALIBRATED,
+                                          center_data_quality)
+        degraded = center_data_quality(patient.organ, code,
+                                       pediatric=patient.is_pediatric)
+        # L-079: the BBN restricts a pediatric candidate to pediatric centers
+        # but has NO pediatric wait model — only Monte Carlo re-anchors to the
+        # observed pediatric rate. Tag every pediatric BBN center so the
+        # response says "adult wait model" rather than presenting adult
+        # numbers on a pediatric center list with no indication.
+        if patient.is_pediatric and TAG_PEDIATRIC_UNCALIBRATED not in degraded:
+            degraded = degraded + [TAG_PEDIATRIC_UNCALIBRATED]
 
         city_results.append(CityProbability(
             city=name,

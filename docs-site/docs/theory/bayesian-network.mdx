@@ -32,7 +32,9 @@ Each CPT is derived from:
 3. Regional cause-of-death distributions
 4. Hospital volume and center-specific survival outcomes
 
-All CPTs are deterministic functions of existing public data. No model tuning or fitting occurs.
+All CPTs are deterministic functions of existing public data — no free parameters are fitted to outcomes. That is a deliberate design property (the network is auditable end to end), not a claim that the numbers are arbitrary: the `CompetingOutcome` CPT is grounded in observed SRTR Table B7 rates rather than hand-set constants (#206), and the pediatric age group's mortality multipliers are measured per organ from SRTR pediatric waitlist data (#335).
+
+Being deterministic also means the network is not *learned*: it cannot discover structure the CPT construction does not encode.
 
 ## Query-Time Inference
 
@@ -59,7 +61,7 @@ A complete query across all 248 centers takes approximately 200-400ms on a typic
 
 ## Cross-Validation Results
 
-BBN and Monte Carlo were evaluated on 100 representative patient profiles across all organs. Spearman rank correlation between city rankings: 0.52 to 0.71 depending on organ. Mean absolute difference in 24-month transplant probability: 3 to 7 percentage points. Directional consistency on blood type, organ, and urgency effects: 100% agreement.
+BBN and Monte Carlo were evaluated on 100 representative patient profiles across all organs. Spearman rank correlation between center rankings: 0.52 to 0.71 depending on organ. Mean absolute difference in 24-month transplant probability: 3 to 7 percentage points. Directional consistency on blood type, organ, and urgency effects: 100% agreement.
 
 ## Access
 
@@ -67,6 +69,10 @@ Use the `/simulate` endpoint with `?inference_mode=bayesian` to run BBN inferenc
 
 ## Limitations
 
-The BBN assumes conditional independence between organ outcomes and causes-of-death given the intermediate nodes. In reality, some regional correlations exist. The model also fixes CPT values derived from historical national data and does not learn from regional variation. These are conservative assumptions that lean toward underestimating interactions.
+The BBN assumes conditional independence between organ outcomes and causes-of-death given the intermediate nodes. In reality, some regional correlations exist. These are conservative assumptions that lean toward underestimating interactions.
 
-The competing risks probabilities from BBN do not have frequentist confidence intervals (the network is deterministic). Instead, the frontend displays an "uncertainty band" that reflects the resolution of the underlying CPT discretization.
+The claim that the model "does not learn from regional variation" is no longer accurate. Evidence reaches the network at center granularity (248 regions in `full` mode), the competing-outcome split is grounded in each center's observed Table B7 rates, and patient factors now modulate that split rather than every patient at a center receiving the same average (#238). What remains true is the residual in L-072: the competing-risk split is still a center-level quantity modulated by patient factors, not a genuinely patient-specific estimate.
+
+The competing-risk probabilities from the BBN do not have frequentist confidence intervals in the sampling sense — the network is deterministic, so repeated runs give identical answers. The interval shown instead reflects **data** uncertainty: a binomial standard error on the center's observed cohort, so a center with 20 observed candidates gets a visibly wider band than one with 400 (#226).
+
+Those intervals were found to be **under-covered** against held-out releases and are now inflated by a measured factor rather than reported raw (#311). An interval that says 95% should contain the truth 95% of the time; before that correction it did not.

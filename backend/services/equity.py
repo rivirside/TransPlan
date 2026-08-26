@@ -27,10 +27,24 @@ logger = logging.getLogger(__name__)
 
 # --- Stratification dimensions ---
 
+# #337: these brackets are exact UNIONS of SRTR's published adult age bands
+# (18-34; 35-49 + 50-64; 65-69 + 70+), so the population weights below need no
+# apportionment assumption. They previously read 18-34 / 35-54 / 55-70, which
+# straddled the published bands and could only be weighted by guessing.
 AGE_BRACKETS = [
     {"label": "18-34", "representative_age": 26},
-    {"label": "35-54", "representative_age": 45},
-    {"label": "55-70", "representative_age": 62},
+    {"label": "35-64", "representative_age": 50},
+    {"label": "65+", "representative_age": 70},
+]
+
+# #335: SRTR's own pediatric age bands (Tables B8-B9). A pediatric candidate
+# swept over the ADULT brackets above would be silently aged into a 26-, 45-
+# and 62-year-old and scored against the adult center set — the equity result
+# would describe a population the patient is not in.
+PEDIATRIC_AGE_BRACKETS = [
+    {"label": "0-1", "representative_age": 1},
+    {"label": "2-11", "representative_age": 6},
+    {"label": "12-17", "representative_age": 15},
 ]
 
 BLOOD_TYPES = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"]
@@ -72,9 +86,13 @@ EQUITY_DISCLAIMERS = [
     (
         "The unweighted Gini treats all 48 demographic cells equally, which "
         "overstates rare groups (AB- is 0.6% of the population). Weighted "
-        "metrics use US blood-type prevalence and an approximate OPTN waitlist "
-        "age/sex mix; centers are equal-weighted because per-center waitlist "
-        "volume is not yet modeled."
+        "metrics use the OBSERVED per-organ waitlist composition from SRTR "
+        "Tables B8-B9, not general-population prevalence — the latter "
+        "understates type B, which is over-represented on the kidney waitlist. "
+        "SRTR reports ABO without Rh, so each group is split by the US Rh "
+        "share; that split is uniform across groups and so cannot shift "
+        "between-group comparisons. Centers are equal-weighted because "
+        "per-center waitlist volume is not yet modeled."
     ),
     (
         "Much of the blood-type disparity reflects ABO-matching biology, not "
@@ -93,25 +111,93 @@ from services.stats_utils import gini_weighted as _gini_weighted
 # Equal-weighting the 48 cells overstates rare groups (AB- is 0.6% of the US
 # population but got 1/8 of the blood-type weight). Weighted metrics use:
 #
-# Blood type: US population prevalence (American Red Cross / Stanford Blood
-# Center distribution). Register: EQSP-32.
+# Fallbacks ONLY. #337 replaced these with the observed per-organ waitlist
+# composition (data/waitlist-composition.json, parsed from SRTR Tables B8-B9);
+# these values are kept solely so the analysis still runs if that file is
+# missing, and the response says which was used.
+#
+# They are retained rather than deleted because they document what the
+# analysis used to assume, and why it was wrong to: general-population blood
+# type understates type B, which is over-represented on the kidney waitlist
+# and faces among the longest waits — so the old weighting understated the
+# very disparity this analysis exists to measure. Register: EQSP-31, EQSP-32.
 BLOOD_TYPE_PREVALENCE = {
     "O+": 0.374, "A+": 0.357, "B+": 0.085, "AB+": 0.034,
     "O-": 0.066, "A-": 0.063, "B-": 0.015, "AB-": 0.006,
 }
-# Age brackets / sex: approximate adult OPTN waitlist composition (OPTN/SRTR
-# Annual Data Report; the waitlist skews older and male). These are rough,
-# documented approximations — not per-organ. Register: EQSP-31.
-AGE_BRACKET_WEIGHTS = {"18-34": 0.11, "35-54": 0.38, "55-70": 0.51}
+AGE_BRACKET_WEIGHTS = {"18-34": 0.11, "35-64": 0.68, "65+": 0.21}
 SEX_WEIGHTS = {"male": 0.60, "female": 0.40}
 
 
-def _profile_weight(blood_type: str, age_bracket: str, sex: str) -> float:
+def waitlist_weights(organ: str) -> dict:
+    """Observed per-organ waitlist composition, or the documented fallback.
+
+    Returns {"blood_type": {...}, "age": {...}, "sex": {...}, "source": str}.
+    """
+    from services.data_loader import get_data
+
+    fallback = {
+        "blood_type": dict(BLOOD_TYPE_PREVALENCE),
+        "age": dict(AGE_BRACKET_WEIGHTS),
+        "sex": dict(SEX_WEIGHTS),
+        "source": "fallback_general_population",
+    }
+    try:
+        block = (get_data().waitlist_composition or {}).get(organ)
+    except RuntimeError:
+        return fallback
+    if not block:
+        return fallback
+
+    bt = block.get("blood_type") or {}
+    age = block.get("age_brackets") or {}
+    sex = block.get("sex") or {}
+    # A partial block is worse than the fallback: it would silently zero-weight
+    # whole demographic cells, which reads as "nobody like this is listed".
+    if (len(bt) != len(BLOOD_TYPES) or len(age) != len(AGE_BRACKETS)
+            or len(sex) != len(SEXES)):
+        return fallback
+    return {"blood_type": bt, "age": age, "sex": sex,
+            "source": "srtr_waitlist_composition"}
+
+# Fallback only. The real pediatric mix is per-organ and differs enormously
+# (liver is 41% under-2, kidney 4.6%), so it is read from the data below and
+# this uniform split is used only if that lookup fails. Register: EQSP-33.
+_PEDIATRIC_WEIGHTS_FALLBACK = {"0-1": 1 / 3, "2-11": 1 / 3, "12-17": 1 / 3}
+
+
+def pediatric_age_weights(organ: str) -> dict[str, float]:
+    """Observed national pediatric waitlist age mix for *organ* (#335).
+
+    Source: SRTR Tables B8-B9 national counts, parsed into
+    data/pediatric-centers.json by scripts/parse-srtr-pediatric.py.
+    """
+    from services.data_loader import get_data
+
+    try:
+        mix = get_data().pediatric.get(organ, {}).get("national_age_mix") or {}
+    except RuntimeError:
+        return dict(_PEDIATRIC_WEIGHTS_FALLBACK)
+    weights = mix.get("weights") or {}
+    total = sum(weights.values())
+    if not weights or not 0.98 <= total <= 1.02:
+        return dict(_PEDIATRIC_WEIGHTS_FALLBACK)
+    return dict(weights)
+
+
+def _profile_weight(blood_type: str, age_bracket: str, sex: str,
+                    age_weights: dict[str, float] | None = None,
+                    weights: dict | None = None) -> float:
     """Joint population weight for one demographic cell (independence assumed)."""
+    w = weights or {}
+    bt_w = w.get("blood_type") or BLOOD_TYPE_PREVALENCE
+    sex_w = w.get("sex") or SEX_WEIGHTS
+    ages = age_weights if age_weights is not None else (
+        w.get("age") or AGE_BRACKET_WEIGHTS)
     return (
-        BLOOD_TYPE_PREVALENCE.get(blood_type, 0.0)
-        * AGE_BRACKET_WEIGHTS.get(age_bracket, 0.0)
-        * SEX_WEIGHTS.get(sex, 0.0)
+        bt_w.get(blood_type, 0.0)
+        * ages.get(age_bracket, 0.0)
+        * sex_w.get(sex, 0.0)
     )
 
 
@@ -266,8 +352,15 @@ def _compute_equity_core(
 
     # --- Generate profile variants ---
     profiles = []
+    pediatric = bool(getattr(patient, "is_pediatric", False))
+    brackets = PEDIATRIC_AGE_BRACKETS if pediatric else AGE_BRACKETS
+    # #337: adults are weighted by the observed per-organ waitlist composition.
+    # Pediatric keeps its own age mix (#335) but still takes blood type and sex
+    # from the organ's waitlist, which is closer than general population.
+    weights = waitlist_weights(patient.organ)
+    age_weights = pediatric_age_weights(patient.organ) if pediatric else None
     for bt in BLOOD_TYPES:
-        for ab in AGE_BRACKETS:
+        for ab in brackets:
             for sex in SEXES:
                 variant = patient.model_copy(update={
                     "blood_type": bt,
@@ -360,7 +453,8 @@ def _compute_equity_core(
 
         for profile, p24, median_wait in zip(profiles, p24s, medians):
             weight = _profile_weight(
-                profile["blood_type"], profile["age_bracket"], profile["sex"])
+                profile["blood_type"], profile["age_bracket"], profile["sex"],
+                age_weights, weights)
             row = {
                 "p24": float(p24),
                 "median_wait": float(median_wait),

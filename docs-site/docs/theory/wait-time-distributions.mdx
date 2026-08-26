@@ -63,18 +63,36 @@ The `city_factor` scales wait times up or down relative to the national median. 
 
 ## Sampling in Simulation
 
-During each Monte Carlo iteration, the engine samples a raw wait time from the log-normal distribution, applies the city-specific factor, and then applies any relevant clinical multiplier:
+During each Monte Carlo iteration, the engine samples a raw wait time from the log-normal distribution, applies the center-specific factor, and then applies any relevant clinical multiplier:
 
 ```python
 # Sample raw wait time
 t_raw = lognormal(mu, sigma)
 
-# Apply city-specific factor
-t_city = t_raw * city_factor
+# Apply center-specific factor
+t_center = t_raw * center_factor
 
 # Apply clinical multiplier
-t_final = t_city * clinical_multiplier(cpra, meld, las)
+t_final = t_center * clinical_multiplier(cpra, meld, las)
 ```
+
+### Time already served
+
+A candidate who has already waited is not in the same position as one
+listing today, so when `months_waiting` is supplied the sample is **left
+truncated**: the engine draws the remaining wait from the distribution
+*conditional* on the total wait exceeding the time already served, rather
+than restarting the clock.
+
+```python
+# Remaining wait, given t0 months already served
+t_remaining = sample(T_total - t0, given T_total > t0)
+```
+
+This uses the same log-normal, so no separate parameters are involved. Note
+the competing-risk clocks (mortality, delisting) are exponential and
+therefore memoryless, so they legitimately do restart — only the wait clock
+carries history.
 
 ### Clinical Multipliers
 

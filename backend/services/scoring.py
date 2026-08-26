@@ -97,6 +97,11 @@ def _medical_compatibility(patient: dict) -> float:
     # Age (25%)
     age = patient["age"]
     if age < 18:
+        # Pediatric allocation priority (#335). Direction verified against
+        # the pediatric data itself: pediatric median waits run ~4-5 months
+        # for kidney vs ~30 for adults. The frontend duplicate in
+        # simulator/form-helpers.js had this INVERTED as a 0.85 penalty
+        # until 2026-08-26 — keep the two in sync.
         age_score = 115
     elif age < 35:
         age_score = 105
@@ -148,6 +153,28 @@ def _wait_time_multiplier(organ: str, patient: dict) -> float:
         if cpra <= 97:
             return 2.5 + (cpra - 80) / 17 * 0.5
         return 3.0 + (cpra - 97) / 3 * 2.0
+
+    # #335: PELD is the under-12 liver score. It was accepted by the schema,
+    # validated, and rendered in the UI — but read by NOTHING, so a candidate
+    # with PELD 40 and one with PELD -5 produced byte-identical results with
+    # no warning. A field that silently does nothing is worse than an absent
+    # one, so it now drives the same priority structure MELD does.
+    #
+    # The thresholds mirror MELD's because both order candidates within the
+    # SAME liver allocation system, but that correspondence is an ASSUMPTION,
+    # not a published equivalence — PELD is computed from different inputs
+    # (albumin, INR, bilirubin, growth failure, age at listing) and its
+    # distribution is shifted low relative to MELD. Registered as SCORE-31,
+    # `assumed`/high, pending clinical review; see docs/limitations.md L-078.
+    peld = patient.get("peld")
+    if organ == "liver" and peld is not None:
+        if peld >= 35:
+            return 0.15
+        if peld >= 25:
+            return 0.4
+        if peld >= 15:
+            return 1.0
+        return 2.0
 
     meld = patient.get("meld")
     if organ == "liver" and meld:
@@ -461,11 +488,38 @@ def score_all_centers(patient: dict, custom_weights: dict | None = None) -> list
     """Score all 248 centers for a patient profile, return sorted by total desc."""
     data = get_data()
     centers = data.all_centers.get("centers", {})
+
+    # #335: a pediatric candidate must be scored against the SAME center set
+    # the simulation uses — pediatric programs only. Without this the results
+    # table shows adult-only centers with blank simulation columns (caught by
+    # browser verification, 2026-08-26).
+    organ = patient.get("organ")
+    if (patient.get("age") or 99) < 18 and organ:
+        programs = data.pediatric.get(organ, {}).get("centers", {})
+        # `if programs:` was wrong: with pediatric data missing (the
+        # empty-data-file case the 2026-08-05 incident warns about) scoring
+        # silently returned all 233 ADULT centers with the pediatric bonus
+        # applied, while /simulate raised. Two surfaces answering the same
+        # question must fail the same way, and the safe direction is to
+        # refuse — matching monte_carlo.restrict_to_pediatric.
+        if not programs:
+            raise ValueError(
+                f"No pediatric {organ} program data is available, so "
+                f"pediatric results cannot be produced for this organ."
+            )
+        centers = {c: rec for c, rec in centers.items() if c in programs}
+
     # L-067 (#304): optional user-defined center set
     requested = patient.get("center_codes")
     if requested:
         wanted = set(requested)
         centers = {code: c for code, c in centers.items() if code in wanted}
+        if not centers:
+            raise ValueError(
+                "None of the requested centers are available for this "
+                "patient (a pediatric candidate can only be scored at "
+                "centers with a pediatric program for the organ)."
+            )
 
     # Resolve weights
     weights = dict(DEFAULT_WEIGHTS)

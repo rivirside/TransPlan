@@ -120,9 +120,20 @@
     html += '<div id="' + p + 'meldRow" style="display:none">';
     html += _buildNumber(p + 'meld', 'MELD Score', 6, 40, '6-40', false);
     html += '</div>';
-    html += '<div id="' + p + 'lasRow" style="display:none">';
-    html += _buildNumber(p + 'las', 'LAS', 0, 100, '0-100', false);
+    html += '<div id="' + p + 'peldRow" style="display:none">';
+    html += _buildNumber(p + 'peld', 'PELD Score (under 12)', -20, 99, 'Can be negative', false);
     html += '</div>';
+    html += '<div id="' + p + 'casRow" style="display:none">';
+    html += _buildNumber(p + 'cas', 'CAS (Composite Allocation Score)', 0, 100, '0-100', false);
+    html += '</div>';
+    html += '<div id="' + p + 'lasRow" style="display:none">';
+    html += _buildNumber(p + 'las', 'LAS (pre-2023, legacy)', 0, 100, '0-100', false);
+    html += '</div>';
+    html += '</div>';
+
+    // #350: applies to every organ, so it sits outside the organ-specific block.
+    html += '<div class="pf-grid">';
+    html += _buildNumber(p + 'monthsWaiting', 'Months already waiting', 0, 600, 'Optional', false);
     html += '</div>';
 
     // Optional demographics
@@ -139,6 +150,17 @@
       html += _buildCheckbox(p + 'adjustCOD', 'Adjust for cause-of-death patterns');
     }
 
+    // #335: this form accepts ages down to 1, and a sub-18 age silently
+    // switches the whole analysis to the pediatric center set and pediatric
+    // SRTR cohorts. Saying so here covers equity, sensitivity and scenarios
+    // at once, since all three render this component.
+    html += '<div id="' + p + 'pediatricNote" class="pf-note" style="display:none">' +
+      'Pediatric mode: this analysis will use pediatric SRTR data and only ' +
+      'centers with a pediatric program for the selected organ. Children are ' +
+      'allocated under different rules than adults and pediatric cohorts are ' +
+      'much smaller, so intervals are wider.' +
+      '</div>';
+
     html += '</div>'; // pf-section
     html += '</div>'; // pf-form
 
@@ -148,12 +170,23 @@
     // Wire organ-specific field visibility
     var organSelect = document.getElementById(p + 'organ');
     if (organSelect) {
-      organSelect.addEventListener('change', function () {
-        var v = this.value;
-        _toggle(p + 'cpraRow', v === 'kidney');
-        _toggle(p + 'meldRow', v === 'liver');
-        _toggle(p + 'lasRow', v === 'lung');
-      });
+      organSelect.addEventListener('change', _syncClinicalRows);
+    }
+
+    // MELD vs PELD is an AGE split, not just an organ one: PELD is the
+    // under-12 score, and the two are different scales (PELD can be
+    // negative). So the rows depend on organ AND age.
+    function _syncClinicalRows() {
+      var organEl = document.getElementById(p + 'organ');
+      var ageEl = document.getElementById(p + 'age');
+      var v = organEl ? organEl.value : '';
+      var age = ageEl ? parseInt(ageEl.value, 10) : NaN;
+      var young = !isNaN(age) && age < 12;
+      _toggle(p + 'cpraRow', v === 'kidney');
+      _toggle(p + 'meldRow', v === 'liver' && !young);
+      _toggle(p + 'peldRow', v === 'liver' && young);
+      _toggle(p + 'casRow', v === 'lung');
+      _toggle(p + 'lasRow', v === 'lung');
     }
 
     // Wire cPRA slider value display
@@ -162,6 +195,25 @@
     if (cpraSlider && cpraVal) {
       cpraSlider.addEventListener('input', function () { cpraVal.textContent = this.value + '%'; });
     }
+
+    // Show the pediatric note whenever the entered age is sub-18.
+    var ageInput = document.getElementById(p + 'age');
+    var pedNote = document.getElementById(p + 'pediatricNote');
+    if (ageInput && pedNote) {
+      var syncPed = function () {
+        var v = parseInt(ageInput.value, 10);
+        pedNote.style.display = (!isNaN(v) && v >= 1 && v < 18) ? '' : 'none';
+      };
+      ageInput.addEventListener('input', syncPed);
+      ageInput.addEventListener('change', syncPed);
+      syncPed();
+    }
+    // Age also decides MELD vs PELD, so re-sync the clinical rows with it.
+    if (ageInput) {
+      ageInput.addEventListener('input', _syncClinicalRows);
+      ageInput.addEventListener('change', _syncClinicalRows);
+    }
+    _syncClinicalRows();
 
     // Default copula to checked
     var copulaBox = document.getElementById(p + 'useCopula');
@@ -193,8 +245,26 @@
 
     // Organ-specific
     if (data.organ === 'kidney') data.cpra = _intVal(p + 'cpra');
-    if (data.organ === 'liver') data.meld = _intVal(p + 'meld') || undefined;
-    if (data.organ === 'lung') data.las = _floatVal(p + 'las') || undefined;
+    if (data.organ === 'liver') {
+      data.meld = _intVal(p + 'meld') || undefined;
+      // PELD can legitimately be 0 or negative, so `|| undefined` would
+      // discard real scores — check for a non-empty field instead.
+      var peldRaw = _val(p + 'peld');
+      if (peldRaw !== '' && peldRaw !== null && !isNaN(parseFloat(peldRaw))) {
+        data.peld = parseFloat(peldRaw);
+      }
+    }
+    if (data.organ === 'lung') {
+      data.las = _floatVal(p + 'las') || undefined;
+      data.cas = _floatVal(p + 'cas') || undefined;
+    }
+
+    // #350: dropped for all three pages built on this form, so equity,
+    // sensitivity and scenarios all ignored accrued waiting time.
+    var mw = _val(p + 'monthsWaiting');
+    if (mw !== '' && mw !== null && !isNaN(parseFloat(mw))) {
+      data.monthsWaiting = parseFloat(mw);
+    }
 
     // Flags
     var copula = document.getElementById(p + 'useCopula');
@@ -234,7 +304,14 @@
     function setVal(id, val) {
       if (val == null) return;
       var el = document.getElementById(id);
-      if (el) { el.value = val; applied = true; }
+      if (!el) return;
+      el.value = val;
+      applied = true;
+      // Assigning .value does NOT fire input/change, so listeners wired in
+      // render() (organ-specific rows, the pediatric note) would stay out of
+      // sync when the profile arrives via URL params instead of typing.
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
     function setChecked(id, val) {

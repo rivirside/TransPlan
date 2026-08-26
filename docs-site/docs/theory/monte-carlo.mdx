@@ -107,10 +107,37 @@ Wide CIs indicate high variance, often due to rare blood types or extreme clinic
 
 ## Ranking
 
-Cities are ranked by `p_transplant_24mo` descending. For ties, `median_wait_months` ascending is used as a tiebreaker.
+Centers are ranked by `p_transplant_24mo` descending. For ties, `median_wait_months` ascending is used as a tiebreaker.
+
+A point ordering alone would overstate how much the data can distinguish
+centers, so the ranking is also reported as **rank intervals** with tie
+groups: a bootstrap over each center's estimate yields a plausible rank
+range, and centers whose ranges overlap are shown as tied rather than
+ordered. A center listed 8th with an interval of 3-19 is not meaningfully
+ahead of one listed 12th.
 
 ## Limitations
 
-The model is calibrated on historical SRTR data, so future policy changes (for example, kidney allocation score updates) may not be reflected. Blood type and organ combinations with low SRTR sample counts have higher uncertainty. The model does not account for center-specific acceptance practices or multi-listing, that is, being listed at multiple centers simultaneously.
+The model is calibrated on historical SRTR data, so future policy changes (for example, kidney allocation score updates) may not be reflected. Blood type and organ combinations with low SRTR sample counts have higher uncertainty.
+
+Center-specific acceptance practices and multi-listing **are** now modeled,
+though both with important caveats:
+
+- **Acceptance practices.** SRTR publishes a risk-adjusted Offer Acceptance
+  Rate Ratio per program, which is ingested as a directly observed measure
+  of center discretion and used to thin the offer stream. It is a
+  center-level average, so it cannot express that acceptance differs *by
+  patient subgroup* at the same center — see L-075.
+- **Multi-listing.** `POST /multi-listing` returns the joint probability of
+  transplant across a 2-5 center shortlist. The centers are not treated as
+  independent, since a candidate listed at several programs competes for a
+  partly shared donor pool.
+
+What the model still does not represent is patient-level clinical
+trajectory: it has no notion of a candidate getting sicker or better while
+waiting, beyond the competing-risk hazards.
+
+The complete list of known limitations is maintained in
+[`docs/limitations.md`](https://github.com/rivirside/TransPlan/blob/main/docs/limitations.md).
 
 See [Competing Risks](/theory/competing-risks) for the mortality and delisting models.

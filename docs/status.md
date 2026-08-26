@@ -358,16 +358,19 @@ TransPlan/
   faq.html                <- Frequently asked questions (10 collapsible Q&A)
   checklist.html          <- Transplant journey checklist (34 items, 5 phases, localStorage)
   advocacy.html           <- Advocacy & Give Back (6 articles: donor, marrow, blood, living, volunteer, fundraise)
-  algorithm.js            <- Frontend scoring engine (8 categories, 22 cities — fallback when backend unavailable)
-  script.js               <- LEGACY monolith (4889 lines) — TO BE DELETED in Phase 7
+  (algorithm.js deleted)  <- Frontend scoring fallback removed in #293; the duplicate pediatric/clinical multipliers now live in simulator/form-helpers.js
+  (script.js deleted)     <- LEGACY monolith (4889 lines) removed in Phase 7
   styles.css              <- All CSS + Phase 2 additions (sim-action-row, btn-secondary, sim-error, continue-buttons, dark mode overrides)
   (themes.css deleted)    <- 6 themes removed in Phase 7 UI overhaul
   (theme-switcher.js deleted) <- Theme picker removed in Phase 7
   package.json            <- Node deps (xml2js, jest)
   README.md               <- User-facing docs
   tests/                  <- Unit tests (Jest)
-    algorithm.test.js     <- 89 tests: all 8 scoring categories + comprehensive + COD multiplier + configurable weights
-    utils.test.js         <- 23 tests: deepMerge, writeDataFile, mergeDataFile, CITIES
+    utils.test.js                     <- deepMerge, writeDataFile, mergeDataFile
+    equity-gini-cap.test.js           <- weighted-Gini cap behaviour
+    fetch-cost-of-living.test.js      <- dead-data guards on the COL fetcher
+    results-table-pagination.test.js  <- simulator results table paging
+    (algorithm.test.js deleted alongside algorithm.js in #293)
   data/                   <- JSON data files (seed + auto-updated)
     air-quality.json
     cost-of-living.json
@@ -375,9 +378,10 @@ TransPlan/
     health-demographics.json
     hospital-quality.json
     traffic-fatalities.json
-    wait-time-distributions.json  <- Log-normal params from SRTR Table B10 (22 cities)
-    competing-risks.json          <- Mortality/delisting from SRTR Table B7 (22 cities)
-    post-transplant-outcomes.json <- Graft/patient survival from SRTR Tables C5-C20 (22 cities, Phase 4 M2)
+    wait-time-distributions.json  <- National log-normal params from SRTR Table B10 (per organ)
+    competing-risks.json          <- National mortality/delisting from SRTR Table B7, plus the manual age-multiplier blocks
+    post-transplant-outcomes.json <- National graft/patient survival from SRTR Tables C5-C20
+    pediatric-centers.json        <- Per-center pediatric rates, survival and case mix (#335)
     srtr-all-centers.json         <- All ~248 SRTR centers with lat/lon, organs, state (Phase 6A)
     wait-time-distributions-centers.json <- Center-level wait times (248 centers, Phase 6A)
     competing-risks-centers.json  <- Center-level competing risks (248 centers, Phase 6A)

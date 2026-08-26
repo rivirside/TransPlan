@@ -55,7 +55,13 @@ Content-Type: application/json
 | `height_inches` | float | no | 0-120 | Height in inches |
 | `cpra` | integer | no | 0-100 | cPRA % (kidney only) |
 | `meld` | integer | no | 6-40 | MELD score (liver only) |
-| `las` | float | no | 0-100 | Lung Allocation Score (lung only) |
+| `cas` | float | no | 0-100 | **Composite Allocation Score** (lung only) — the score actually in use since March 2023 |
+| `las` | float | no | 0-100 | Lung Allocation Score (lung only) — the pre-2023 score, retained for back-compatibility and mapped onto an effective CAS internally |
+| `peld` | float | no | -20 to 99 | PELD score (liver, pediatric under 12). A different scale from MELD, and it **can be negative** |
+| `months_waiting` | float | no | >= 0 | Qualified waiting time already accrued. Left-truncates the wait draw rather than restarting the clock |
+| `center_codes` | string[] | no | — | Restrict scoring/simulation to a user-defined center shortlist |
+| `bbn_granularity` | string | no | `state`, `full` | BBN region-node granularity |
+| `seed` | integer | no | — | Seed for the stochastic engines; echoed back as `seed_used` for reproducibility |
 | `home_center` | string | no | Valid city name | Patient's current transplant listing center |
 | `adjust_for_cause_of_death` | boolean | no | default `false` | Apply organ-specific COD donor recovery multiplier |
 
@@ -104,6 +110,10 @@ Content-Type: application/json
 | `iterations` | integer | Number of Monte Carlo iterations per center |
 | `elapsed_seconds` | float | Server-side simulation time |
 | `inference_mode` | string | Engine used: `monte_carlo`, `bayesian`, or `mcmc` |
+| `seed_used` | integer | The seed actually used, whether supplied or auto-generated. Re-sending it reproduces the run exactly |
+| `data_vintage` | object | Which SRTR release the numbers reflect. Estimates describe that release's cohorts, not real-time allocation |
+| `data_quality` | object | Per-family counts of centers falling back to national defaults (wait factors, competing risks, observed outcomes, acceptance rates, trend series, pediatric cohort size), so a result never presents partial inputs as complete ones |
+| `deterministic_scores` | object | The non-stochastic scoring component, when requested |
 
 ### CityProbability Schema
 

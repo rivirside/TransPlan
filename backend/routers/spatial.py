@@ -199,17 +199,24 @@ def query_location_delta(
     """
     _validate_organ(organ)
     unavailable = []
-    layers = [
+    # #252 retired the center-outcome surfaces (wait_time_factor_*,
+    # mortality_factor_*, graft_survival_*) — interpolating a center-level
+    # outcome across space was not defensible. This endpoint still asked for
+    # them, so every single call reported three permanently "unavailable"
+    # layers, which made that field useless for spotting a REAL gap. Ask only
+    # for surfaces that exist, and let available_layers() be the source of
+    # truth so a future layer change cannot desynchronize this list again.
+    candidate_layers = [
         "air_quality",
         "cost_of_living",
         "health_diabetesRate",
         "health_obesityRate",
         "health_hypertensionRate",
         "health_smokingRate",
-        f"wait_time_factor_{organ}",
-        f"mortality_factor_{organ}",
-        f"graft_survival_{organ}",
     ]
+    existing = set(available_layers())
+    layers = [layer for layer in candidate_layers if layer in existing]
+    unavailable.extend(layer for layer in candidate_layers if layer not in existing)
 
     deltas = {}
     for layer in layers:
