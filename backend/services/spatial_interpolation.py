@@ -150,9 +150,22 @@ def _extract_layer_points(layer_name: str) -> tuple[np.ndarray, np.ndarray] | No
                     values.append(float(val))
 
     elif layer_name == "trauma":
-        # Per-center FARS state-rate trauma scores (#290); legacy 22-city
-        # scores + hotspots only as fallback
-        center_scores = data.center_trauma.get("centers", {})
+        # #336: prefer COUNTY-resolution FARS scores. The state-rate scores
+        # (#290) gave every center in a state an identical value, which hid
+        # real variation — Tennessee's seven centers span 39.3-75.5 at county
+        # resolution where all seven previously read 74.4, and the median
+        # within-state spread across 30 states is 10.3 points.
+        #
+        # Falls back to the state scores, then to the legacy 22-city hotspots.
+        county = getattr(data, "county_trauma", {}) or {}
+        county_centers = county.get("center_scores", {})
+        center_scores = {
+            code: rec.get("score")
+            for code, rec in county_centers.items()
+            if isinstance(rec, dict) and isinstance(rec.get("score"), (int, float))
+        }
+        if not center_scores:
+            center_scores = data.center_trauma.get("centers", {})
         if center_scores:
             all_centers = data.all_centers.get("centers", {})
             for code, val in center_scores.items():

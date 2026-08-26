@@ -285,6 +285,45 @@ if (fs.existsSync(metadataPath)) {
     }
 }
 
+// === County trauma scores (#336) ===
+// These feed the scoring trauma surface in preference to the state scores.
+// A truncated file would silently fall back to state resolution, which looks
+// like a working analysis, so check shape and scale explicitly.
+const countyTrauma = validateJSON('trauma-scores-counties.json');
+if (countyTrauma) {
+    const centerScores = countyTrauma.center_scores || {};
+    const countyScores = countyTrauma.county_scores || {};
+    const atCounty = Object.values(centerScores)
+        .filter(r => r && r.resolution === 'county').length;
+    if (atCounty < 200) {
+        addError(`trauma-scores-counties.json: only ${atCounty} centers at county ` +
+                 `resolution (floor: 200) — centroid matching may be failing`);
+    }
+    if (Object.keys(countyScores).length < 3000) {
+        addError(`trauma-scores-counties.json: only ` +
+                 `${Object.keys(countyScores).length} counties (floor: 3000)`);
+    }
+    const vals = Object.values(countyScores).map(r => r && r.score)
+        .filter(v => typeof v === 'number');
+    if (vals.length) {
+        const top = Math.max(...vals);
+        if (Math.abs(top - 100) > 0.51) {
+            addError(`trauma-scores-counties.json: top score ${top} — scores must ` +
+                     `be normalized so the highest county is 100`);
+        }
+        if (Math.min(...vals) < 0) {
+            addError('trauma-scores-counties.json: negative score present');
+        }
+    }
+    for (const [code, rec] of Object.entries(centerScores)) {
+        if (rec && rec.resolution === 'county' && rec.match_distance_miles > 60) {
+            addError(`trauma-scores-counties.json: ${code} matched a county ` +
+                     `centroid ${rec.match_distance_miles} mi away`);
+            break;
+        }
+    }
+}
+
 // === Waitlist composition (#337) — equity cell weights ===
 // If this file is lost or truncated, equity silently falls back to
 // general-population weights, which understate type B on the kidney waitlist
