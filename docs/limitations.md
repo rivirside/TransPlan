@@ -601,9 +601,9 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **How to close:** give the BBN a pediatric `WaitCategory` conditioned on the observed pediatric rate, and give MCMC a pediatric likelihood term. Until then the alternative engines should either carry an explicit "adult wait model" flag in their response or refuse pediatric requests.
 - **Files:** `backend/services/bayesian_network.py`, `backend/services/mcmc_inference.py`, `backend/services/monte_carlo.py` (`_pediatric_dist`)
 
-### L-080: The published pancreas median wait contradicts its own source
-- **Severity:** HIGH
-- **Status:** OPEN (documented 2026-08-26, #274 sweep)
+### L-080: The published pancreas median is reconstructed, not observed, and is presented as if observed
+- **Severity:** MEDIUM (downgraded from HIGH 2026-08-26 after measurement — see below; the displayed median is a misleading CLAIM, but the probabilities it feeds calibrate better than any alternative tested)
+- **Status:** OPEN (documented 2026-08-26, #274 sweep; measured and re-scoped the same day)
 - **Category:** Data
 - **What:** `data/wait-time-distributions.json` publishes a national pancreas median wait of **22.8 months**. SRTR's Table B10 does not report a pancreas national median at all — it is **censored at ">72 months"**. Pancreas is the only organ affected; every other organ's published median is exactly the value SRTR reports.
 - **Why it happens:** when the median is censored, `fit_lognormal` reconstructs it from P25 as `exp(ln(P25) + 0.6745·sigma)` with a hardcoded `sigma = 0.8`. With P25 = 13.3 that yields 22.8. The reconstruction is only as good as the sigma, and 0.8 is an arbitrary constant — it is not the value the module's own strategy chain would produce from the same percentiles (2.247), and it is not large enough to be consistent with the censoring it is compensating for.
@@ -616,7 +616,19 @@ Each limitation has a severity, status, and category. When we fix one, change st
 | 2.247 (the strategy chain, unclamped) | 60.5 months |
 | >2.50 (consistent with ">72") | >72 months |
 
-- **Why it was not simply fixed:** moving sigma to 1.2 changes the figure to 29.9, which is still wrong by more than a factor of two, and pancreas cannot be validated — no pancreas center has an observed cohort of 25 or more (largest is 16), so the calibration metric that settled the clamp question elsewhere cannot be computed for it. Swapping one unvalidatable wrong number for another is not progress. The real fix is to represent a censored median honestly (as a lower bound, flagged) rather than silently reconstructing a point estimate from an arbitrary constant.
+- **Why it was not simply fixed — measured, 2026-08-26:** the obvious remedy (raise the median toward the censored bound) makes the model **worse**. Predicted p12 against observed SRTR transplant rates across 78 pancreas centers:
+
+| median / sigma | model p12 | observed | ratio |
+|---|---|---|---|
+| 22.8 / 0.8 (shipped) | 0.141 | 0.127 | **1.11x** |
+| 29.9 / 1.2 (chain + clamp) | 0.147 | 0.127 | 1.16x |
+| 60.5 / 2.247 (chain, unclamped) | 0.173 | 0.127 | 1.36x |
+| 72.0 / 2.5 (consistent with ">72") | 0.178 | 0.127 | 1.40x |
+
+  The shipped value calibrates best — and better than kidney's 0.53x, where the median is not reconstructed at all. The mechanism is a non-monotonicity: sigma must rise with the median to stay consistent with P25, and a larger sigma fattens the **left** tail too, putting more mass below 12 months even as the median moves right. (Same effect as in the #274 clamp sweep.)
+
+- **The real tension:** with a single-median lognormal you can have an honest displayed **median** or a well-calibrated **p12**, not both. That is evidence the parameterisation is inadequate for a censored organ rather than that one value is correct. Note also that pancreas is the organ least able to settle the question — no center has an observed cohort of 25 or more (largest is 16), so the calibration figures above use every center with any observed rate rather than the usual floor.
+- **What the fix should be:** disclosure, not substitution. Keep the fitted distribution (it calibrates), mark the median as reconstructed-from-P25 in provenance and the UI, and stop presenting it as SRTR's published median — the same treatment L-076 gives derived pediatric medians. Showing ">72 months (SRTR censored)" alongside is the fuller version. What is clearly wrong is a naive swap to 72, which the first version of this entry invited. See #376.
 - **Files:** `scripts/parse-srtr-reports.py` (`fit_lognormal`, censored-median branch), `data/wait-time-distributions.json`
 
 ### L-081: Delisting multipliers assume risk rises with waiting time; for most organs it falls
