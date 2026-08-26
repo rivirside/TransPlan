@@ -46,18 +46,15 @@ MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN",
           "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 
 # The 22 legacy city coordinates (scripts/utils.js CITIES) — calibration anchors.
+# Calibration anchors (#339): the 22 legacy city coordinates, exported from
+# scripts/utils.js CITIES to data/manual/calibration-city-coords.json —
+# ONE source instead of a hand-copied Python dict that could silently drift
+# from the JS original.
 CITY_COORDS = {
-    "Pittsburgh": (40.4406, -79.9959), "Baltimore": (39.2904, -76.6122),
-    "Philadelphia": (39.9526, -75.1652), "New York": (40.7128, -74.0060),
-    "Minneapolis": (44.9778, -93.2650), "Madison": (43.0731, -89.4012),
-    "Chicago": (41.8781, -87.6298), "Cleveland": (41.4993, -81.6944),
-    "St. Louis": (38.6270, -90.1994), "Indianapolis": (39.7684, -86.1581),
-    "Omaha": (41.2565, -95.9345), "Rochester": (44.0121, -92.4802),
-    "Nashville": (36.1627, -86.7816), "Durham": (35.9940, -78.8986),
-    "Miami": (25.7617, -80.1918), "Dallas": (32.7767, -96.7970),
-    "Houston": (29.7604, -95.3698), "Portland": (45.5152, -122.6784),
-    "Seattle": (47.6062, -122.3321), "San Francisco": (37.7749, -122.4194),
-    "Los Angeles": (33.9425, -118.4081), "Palo Alto": (37.4419, -122.1430),
+    city: (rec["lat"], rec["lon"])
+    for city, rec in json.loads(
+        (REPO_ROOT / "data" / "manual" / "calibration-city-coords.json").read_text()
+    )["coords"].items()
 }
 
 

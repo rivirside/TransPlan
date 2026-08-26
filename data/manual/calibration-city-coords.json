@@ -1,0 +1,96 @@
+{
+  "_meta": {
+    "source": "scripts/utils.js CITIES — the 22 legacy calibration anchors (kept ONLY as calibration inputs for per-center fits, #285/#339)",
+    "generated": "from utils.js, single source"
+  },
+  "coords": {
+    "Pittsburgh": {
+      "lat": 40.4406,
+      "lon": -79.9959
+    },
+    "Baltimore": {
+      "lat": 39.2904,
+      "lon": -76.6122
+    },
+    "Philadelphia": {
+      "lat": 39.9526,
+      "lon": -75.1652
+    },
+    "New York": {
+      "lat": 40.7128,
+      "lon": -74.006
+    },
+    "Minneapolis": {
+      "lat": 44.9778,
+      "lon": -93.265
+    },
+    "Madison": {
+      "lat": 43.0731,
+      "lon": -89.4012
+    },
+    "Chicago": {
+      "lat": 41.8781,
+      "lon": -87.6298
+    },
+    "Cleveland": {
+      "lat": 41.4993,
+      "lon": -81.6944
+    },
+    "St. Louis": {
+      "lat": 38.627,
+      "lon": -90.1994
+    },
+    "Indianapolis": {
+      "lat": 39.7684,
+      "lon": -86.1581
+    },
+    "Omaha": {
+      "lat": 41.2565,
+      "lon": -95.9345
+    },
+    "Rochester": {
+      "lat": 44.0121,
+      "lon": -92.4802
+    },
+    "Nashville": {
+      "lat": 36.1627,
+      "lon": -86.7816
+    },
+    "Durham": {
+      "lat": 35.994,
+      "lon": -78.8986
+    },
+    "Miami": {
+      "lat": 25.7617,
+      "lon": -80.1918
+    },
+    "Dallas": {
+      "lat": 32.7767,
+      "lon": -96.797
+    },
+    "Houston": {
+      "lat": 29.7604,
+      "lon": -95.3698
+    },
+    "Portland": {
+      "lat": 45.5152,
+      "lon": -122.6784
+    },
+    "Seattle": {
+      "lat": 47.6062,
+      "lon": -122.3321
+    },
+    "San Francisco": {
+      "lat": 37.7749,
+      "lon": -122.4194
+    },
+    "Los Angeles": {
+      "lat": 33.9425,
+      "lon": -118.4081
+    },
+    "Palo Alto": {
+      "lat": 37.4419,
+      "lon": -122.143
+    }
+  }
+}
