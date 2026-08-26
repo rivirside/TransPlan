@@ -1,0 +1,144 @@
+{
+ "layers": [
+  {
+   "layer": "air_quality",
+   "n_points": 2768,
+   "degrees_rmse": 3.7737,
+   "albers_rmse": 3.774,
+   "relative_improvement": -0.0001,
+   "degrees_rmse_by_split": [
+    3.8411,
+    3.8714,
+    4.0933,
+    3.398,
+    3.6646
+   ],
+   "albers_rmse_by_split": [
+    3.8416,
+    3.8727,
+    4.093,
+    3.402,
+    3.6607
+   ]
+  },
+  {
+   "layer": "cost_of_living",
+   "n_points": 387,
+   "degrees_rmse": 4.1625,
+   "albers_rmse": 4.1565,
+   "relative_improvement": 0.0014,
+   "degrees_rmse_by_split": [
+    3.3381,
+    4.6649,
+    4.6084,
+    4.5512,
+    3.6499
+   ],
+   "albers_rmse_by_split": [
+    3.3461,
+    4.6802,
+    4.593,
+    4.5175,
+    3.6454
+   ]
+  },
+  {
+   "layer": "health_diabetesRate",
+   "n_points": 3144,
+   "degrees_rmse": 1.542,
+   "albers_rmse": 1.5375,
+   "relative_improvement": 0.0029,
+   "degrees_rmse_by_split": [
+    1.5167,
+    1.4444,
+    1.6186,
+    1.5276,
+    1.6025
+   ],
+   "albers_rmse_by_split": [
+    1.5211,
+    1.4342,
+    1.5931,
+    1.5301,
+    1.609
+   ]
+  },
+  {
+   "layer": "health_obesityRate",
+   "n_points": 3144,
+   "degrees_rmse": 3.4123,
+   "albers_rmse": 3.4113,
+   "relative_improvement": 0.0003,
+   "degrees_rmse_by_split": [
+    3.4595,
+    3.337,
+    3.4419,
+    3.3449,
+    3.4779
+   ],
+   "albers_rmse_by_split": [
+    3.4506,
+    3.3259,
+    3.4463,
+    3.3527,
+    3.4813
+   ]
+  },
+  {
+   "layer": "health_hypertensionRate",
+   "n_points": 3144,
+   "degrees_rmse": 2.4505,
+   "albers_rmse": 2.4308,
+   "relative_improvement": 0.0081,
+   "degrees_rmse_by_split": [
+    2.4405,
+    2.4813,
+    2.4776,
+    2.3378,
+    2.5153
+   ],
+   "albers_rmse_by_split": [
+    2.4449,
+    2.3721,
+    2.4681,
+    2.3447,
+    2.5241
+   ]
+  },
+  {
+   "layer": "health_smokingRate",
+   "n_points": 3144,
+   "degrees_rmse": 2.7009,
+   "albers_rmse": 2.6963,
+   "relative_improvement": 0.0017,
+   "degrees_rmse_by_split": [
+    2.7507,
+    2.5101,
+    2.878,
+    2.7402,
+    2.6254
+   ],
+   "albers_rmse_by_split": [
+    2.7545,
+    2.4891,
+    2.8714,
+    2.7504,
+    2.6159
+   ]
+  }
+ ],
+ "summary": {
+  "mean_relative_improvement": 0.0024,
+  "layers_projection_better": 0,
+  "layers_degrees_better": 0,
+  "layers_no_difference": 6,
+  "n_splits": 5,
+  "holdout_fraction": 0.2
+ },
+ "_meta": {
+  "generated": "2026-08-26T18:56:52Z",
+  "script": "scripts/run-projection-ablation.py",
+  "method": "5 random 20% holdout splits per layer; the same GP kernel is fit on raw (lat, lon) degrees and on Albers Equal-Area kilometres, with length-scale bounds scaled to each coordinate system's units so neither is handicapped.",
+  "question": "#266 asked for an Albers projection so GP distances are not degree-distorted. This measures whether it changes predictive accuracy."
+ }
+}
