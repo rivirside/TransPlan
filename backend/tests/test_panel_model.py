@@ -42,8 +42,12 @@ def _synthetic_panel(k=60, t=10, sigma_c=0.3, sigma_r=0.08, sigma_e=0.12,
 def fitted():
     panel = _synthetic_panel()
     with build_panel_model(panel):
-        idata = pymc.sample(draws=300, tune=300, chains=2, random_seed=1,
-                            progressbar=False, target_accept=0.9)
+        # 300/300 was borderline for sigma_center (R-hat ~1.12 on slower CI
+        # hardware; it passed locally by luck). Longer tuning + higher
+        # target_accept fixes the sampling geometry rather than relaxing the
+        # convergence bar, which is the assertion that carries the value.
+        idata = pymc.sample(draws=600, tune=1000, chains=2, random_seed=1,
+                            progressbar=False, target_accept=0.95)
     return panel, idata
 
 

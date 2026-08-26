@@ -33,7 +33,7 @@ from services.data_loader import load_all  # noqa: E402
 from services.mcmc_survival import build_panel_model, load_panel_data  # noqa: E402
 
 ORGANS = ["kidney", "liver", "heart", "lung"]
-DRAWS, TUNE, CHAINS = 800, 800, 2
+DRAWS, TUNE, CHAINS = 800, 1500, 2
 
 
 def _observed_rates(release_code: str, organ: str) -> dict:
@@ -62,7 +62,7 @@ def fit_and_validate(organ: str) -> dict | None:
 
     with build_panel_model(train):
         idata = pm.sample(draws=DRAWS, tune=TUNE, chains=CHAINS,
-                          random_seed=42, progressbar=False, target_accept=0.9)
+                          random_seed=42, progressbar=False, target_accept=0.98)
     post = idata.posterior
     shrunk = post["center_effect"].values.mean(axis=(0, 1))  # posterior means
     frac = (post["frac_signal_panel"].values.flatten())

@@ -249,12 +249,16 @@ def build_panel_model(panel: dict[str, Any]) -> pm.Model:
         sigma_release = pm.HalfNormal("sigma_release", sigma=0.2)
         sigma_obs = pm.HalfNormal("sigma_obs", sigma=0.3)
 
-        center_z = pm.Normal("center_z", 0.0, 1.0, shape=panel["n_centers"])
-        release_z = pm.Normal("release_z", 0.0, 1.0, shape=panel["n_releases"])
-        center_effect = pm.Deterministic("center_effect",
-                                         center_z * sigma_center)
-        release_effect = pm.Deterministic("release_effect",
-                                          release_z * sigma_release)
+        # SUM-TO-ZERO effects: in a crossed design, mu trades off against
+        # the mean of each random effect (only mu + center_c + release_t is
+        # identified), which shows up as a non-converging mu (R-hat 1.18 in
+        # the unconstrained form). ZeroSumNormal removes that ridge, making
+        # mu the grand mean and each effect a deviation from it.
+        center_effect = pm.ZeroSumNormal("center_effect", sigma=sigma_center,
+                                         shape=panel["n_centers"])
+        release_effect = pm.ZeroSumNormal("release_effect",
+                                          sigma=sigma_release,
+                                          shape=panel["n_releases"])
 
         pm.Normal(
             "obs_panel",
