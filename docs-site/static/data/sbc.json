@@ -108,7 +108,9 @@
   ]
  },
  "_meta": {
-  "design": "kidney/state, quick-fit (150d/100t/1c), seed base 20260826"
+  "design": "kidney/state, quick-fit (150d/100t/1c), seed base 20260826",
+  "generated": "2026-08-26T05:22:56Z",
+  "generated_source": "git-commit-date \u2014 backfilled by scripts/backfill-artifact-meta.py (#328); this generator did not stamp its own output, so this is when the file last changed, not a recorded run time"
  },
  "summary": {
   "log_median_national": {

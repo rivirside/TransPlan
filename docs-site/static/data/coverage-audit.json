@@ -88,6 +88,8 @@
   }
  },
  "_meta": {
-  "method": "95% binomial interval on train-release rate at cohort n; coverage = fraction of test-release observed rates inside. Centers with n>=10; lag-1 = adjacent releases."
+  "method": "95% binomial interval on train-release rate at cohort n; coverage = fraction of test-release observed rates inside. Centers with n>=10; lag-1 = adjacent releases.",
+  "generated": "2026-08-26T04:46:47Z",
+  "generated_source": "git-commit-date \u2014 backfilled by scripts/backfill-artifact-meta.py (#328); this generator did not stamp its own output, so this is when the file last changed, not a recorded run time"
  }
 }

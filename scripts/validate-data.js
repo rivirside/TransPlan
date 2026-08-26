@@ -285,6 +285,35 @@ if (fs.existsSync(metadataPath)) {
     }
 }
 
+// === Published validation artifacts must be dated (#328) ===
+// Everything under docs-site/static/data/ is served publicly and read by the
+// model card. Only 4 of 21 files carried a timestamp, so a reader could not
+// tell whether a reported correlation reflected current data. They were
+// backfilled; this keeps a regenerated file from silently dropping its stamp
+// again. Generators should build `_meta` via scripts/artifact_meta.py.
+const artifactDir = path.join(__dirname, '..', 'docs-site', 'static', 'data');
+if (fs.existsSync(artifactDir)) {
+    for (const name of fs.readdirSync(artifactDir)) {
+        if (!name.endsWith('.json')) continue;
+        let doc;
+        try {
+            doc = JSON.parse(fs.readFileSync(path.join(artifactDir, name), 'utf8'));
+        } catch (e) {
+            addError(`docs-site/static/data/${name}: invalid JSON (${e.message})`);
+            continue;
+        }
+        const stamp = doc && doc._meta && doc._meta.generated;
+        if (!stamp) {
+            addError(`docs-site/static/data/${name}: no _meta.generated — ` +
+                     `stamp it via scripts/artifact_meta.py, or run ` +
+                     `scripts/backfill-artifact-meta.py`);
+        } else if (isNaN(Date.parse(stamp))) {
+            addError(`docs-site/static/data/${name}: _meta.generated ` +
+                     `"${stamp}" is not a parseable date`);
+        }
+    }
+}
+
 // === Report Results ===
 
 console.log('\n=== Validation Summary ===');

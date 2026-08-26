@@ -82,6 +82,8 @@
   }
  },
  "_meta": {
-  "method": "Panel-likelihood fit + out-of-sample validation (#358, phase 1)."
+  "method": "Panel-likelihood fit + out-of-sample validation (#358, phase 1).",
+  "generated": "2026-08-26T14:19:35Z",
+  "generated_source": "git-commit-date \u2014 backfilled by scripts/backfill-artifact-meta.py (#328); this generator did not stamp its own output, so this is when the file last changed, not a recorded run time"
  }
 }
