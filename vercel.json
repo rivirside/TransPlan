@@ -43,6 +43,10 @@
       "destination": "/api/index"
     },
     {
+      "source": "/multi-listing",
+      "destination": "/api/index"
+    },
+    {
       "source": "/score",
       "destination": "/api/index"
     },

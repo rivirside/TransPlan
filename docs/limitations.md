@@ -552,8 +552,8 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **Files:** `backend/services/bayesian_network.py`, `backend/services/bbn_parameterizer.py`
 
 ### L-074: No multi-listing model — per-center probabilities cannot be combined
-- **Severity:** MEDIUM
-- **Status:** OPEN (discovered 2026-08-25 while fact-checking the patient FAQ)
+- **Severity:** LOW (was MEDIUM)
+- **Status:** LARGELY FIXED 2026-08-25 (#321: POST /multi-listing joins 2-5 listings via a Gaussian copula with allocation-circle-overlap correlation — see SURV-41 for the retained assumptions; per-center probabilities from /simulate still must not be naively summed)
 - **Category:** Statistical Model
 - **What:** There is no multiple-listing logic anywhere in the codebase. `grep -ri "multi.?list"` over `backend/` returns nothing outside test files. `/simulate` returns independent per-center probabilities and nothing combines two registrations into a joint probability.
 - **Why it's a limitation:** multiple listing is one of the highest-leverage decisions a candidate actually makes, and the tool's whole premise is center comparison, so users naturally read two center estimates as combinable. They are not: the two registrations compete for **many of the same organs** (every deceased-donor match run is national and already contains every compatible candidate, so a second listing improves *rank* on donors near the second center rather than opening a disjoint donor pool). The correct combination is therefore neither the sum nor the max, and depends on the overlap between the two centers' proximity catchments.
