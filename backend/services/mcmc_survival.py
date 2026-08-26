@@ -184,6 +184,96 @@ def _frac_signal_prior_params(organ: str, metric: str) -> tuple[float, float]:
     return mean * _FRAC_PRIOR_CONCENTRATION, (1.0 - mean) * _FRAC_PRIOR_CONCENTRATION
 
 
+def load_panel_data(organ: str) -> dict[str, Any]:
+    """Center x release log wait-factor panel from srtr-trends-centers.json
+    (#358). Factors are each release's center median over that release's
+    cross-center median (the same construction as run-panel-variance.py)."""
+    import json as _json
+    trends_path = DATA_DIR / "srtr-trends-centers.json"
+    centers_raw = _json.loads(trends_path.read_text())["centers"]
+
+    by_year: dict[float, dict[str, float]] = {}
+    for code, organs in centers_raw.items():
+        s = organs.get(organ)
+        if not s:
+            continue
+        for yr, med in zip(s.get("years", []), s.get("median_wait_months", [])):
+            if med is not None and med > 0:
+                by_year.setdefault(yr, {})[code] = float(med)
+    nat = {yr: float(np.median(list(v.values())))
+           for yr, v in by_year.items() if len(v) >= 15}
+
+    rows: list[tuple[str, float, float]] = []
+    for yr, vals in by_year.items():
+        ref = nat.get(yr)
+        if not ref or ref <= 0:
+            continue
+        for code, med in vals.items():
+            rows.append((code, yr, float(np.log(med / ref))))
+    # keep centers with enough replicates
+    from collections import Counter
+    counts = Counter(code for code, _, _ in rows)
+    keep = {c for c, n in counts.items() if n >= 8}
+    rows = [r for r in rows if r[0] in keep]
+
+    centers = sorted({r[0] for r in rows})
+    releases = sorted({r[1] for r in rows})
+    c_map = {c: i for i, c in enumerate(centers)}
+    r_map = {y: j for j, y in enumerate(releases)}
+    return {
+        "organ": organ,
+        "obs": np.array([v for _, _, v in rows]),
+        "center_idx": np.array([c_map[c] for c, _, _ in rows]),
+        "release_idx": np.array([r_map[y] for _, y, _ in rows]),
+        "n_centers": len(centers),
+        "n_releases": len(releases),
+        "centers": centers,
+        "releases": [str(y) for y in releases],
+    }
+
+
+def build_panel_model(panel: dict[str, Any]) -> pm.Model:
+    """Crossed random-effects panel model (#358 phase 1):
+
+        obs_{c,t} ~ N(mu + center_c + release_t, sigma_obs)
+
+    With replicate observations per center, sigma_center / sigma_release /
+    sigma_obs are all IDENTIFIED from data — the single-release model's
+    prior-driven signal split (MCMC-09, #317) becomes a posterior here.
+    Non-centered parameterization for the two random effects (many groups,
+    individually weak likelihoods — the regime where non-centering wins).
+    """
+    with pm.Model() as model:
+        mu = pm.Normal("mu", mu=0.0, sigma=0.5)
+        sigma_center = pm.HalfNormal("sigma_center", sigma=0.5)
+        sigma_release = pm.HalfNormal("sigma_release", sigma=0.2)
+        sigma_obs = pm.HalfNormal("sigma_obs", sigma=0.3)
+
+        # SUM-TO-ZERO effects: in a crossed design, mu trades off against
+        # the mean of each random effect (only mu + center_c + release_t is
+        # identified), which shows up as a non-converging mu (R-hat 1.18 in
+        # the unconstrained form). ZeroSumNormal removes that ridge, making
+        # mu the grand mean and each effect a deviation from it.
+        center_effect = pm.ZeroSumNormal("center_effect", sigma=sigma_center,
+                                         shape=panel["n_centers"])
+        release_effect = pm.ZeroSumNormal("release_effect",
+                                          sigma=sigma_release,
+                                          shape=panel["n_releases"])
+
+        pm.Normal(
+            "obs_panel",
+            mu=mu + center_effect[panel["center_idx"]]
+               + release_effect[panel["release_idx"]],
+            sigma=sigma_obs,
+            observed=panel["obs"],
+        )
+        pm.Deterministic(
+            "frac_signal_panel",
+            sigma_center**2 / (sigma_center**2 + sigma_obs**2),
+        )
+    return model
+
+
 def build_organ_model(data: dict[str, Any]) -> pm.Model:
     """
     Build a PyMC hierarchical model for a single organ.
