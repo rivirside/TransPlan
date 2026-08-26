@@ -58,7 +58,7 @@ def include_v1_routers(app):
     Called from main.py after the unprefixed routers are mounted.
     This re-mounts each router with a prefix and rate-limiting dependency.
     """
-    from routers import centers, equity, health, sensitivity, simulate, spatial, trends, what_if
+    from routers import centers, equity, health, multi_listing, rank_stability, sensitivity, simulate, spatial, trends, what_if
 
     # Mount the meta endpoint
     app.include_router(router, tags=["meta"])
@@ -75,6 +75,8 @@ def include_v1_routers(app):
     app.include_router(sensitivity.router, prefix="/api/v1", tags=["v1-simulation"], dependencies=sim_deps)
     app.include_router(equity.router, prefix="/api/v1", tags=["v1-simulation"], dependencies=sim_deps)
     app.include_router(what_if.router, prefix="/api/v1", tags=["v1-simulation"], dependencies=sim_deps)
+    app.include_router(rank_stability.router, prefix="/api/v1", tags=["v1-simulation"], dependencies=sim_deps)
+    app.include_router(multi_listing.router, prefix="/api/v1", tags=["v1-simulation"], dependencies=sim_deps)
 
     # Spatial endpoints — medium rate limit
     spatial_deps = [Depends(rate_limit("spatial"))]

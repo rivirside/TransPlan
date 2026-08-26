@@ -226,6 +226,8 @@ _register(PolicyScenario(
         "may affect graft quality).",
         "This scenario applies to kidney only. Liver uses a different allocation "
         "framework (acuity circles, MELD).",
+    
+        "Our own dispersion analysis over 15 SRTR releases (docs/cas-dispersion-report.md, #349) found NO step in cross-center dispersion beyond the secular convergence trend at any allocation-policy boundary — consistent with redistribution between centers rather than a net national effect. Treat the size-class magnitudes as literature-derived direction, not validated effect sizes.",
     ],
 ))
 
@@ -264,6 +266,8 @@ _register(PolicyScenario(
         "Actual per-city impact will depend on final weight calibration.",
         "This scenario models the steady-state effect. Transition period "
         "may show different patterns.",
+    
+        "Our own dispersion analysis over 15 SRTR releases (docs/cas-dispersion-report.md, #349) found NO step in cross-center dispersion beyond the secular convergence trend at any allocation-policy boundary — consistent with redistribution between centers rather than a net national effect. Treat the size-class magnitudes as literature-derived direction, not validated effect sizes.",
     ],
 ))
 

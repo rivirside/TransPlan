@@ -18,6 +18,7 @@ class TierConfig:
     max_equity_iterations: int
     max_sensitivity_iterations: int
     max_whatif_iterations: int
+    max_rank_stability_boot: int
     max_spatial_resolution: int
     # Validation tool caps
     max_validation_iterations: int
@@ -43,6 +44,7 @@ WEB_TIER = TierConfig(
     max_equity_iterations=200,
     max_sensitivity_iterations=500,
     max_whatif_iterations=500,
+    max_rank_stability_boot=500,
     max_spatial_resolution=30,
     max_validation_iterations=300,
     max_validation_sweep_steps=6,
@@ -64,6 +66,7 @@ LOCAL_TIER = TierConfig(
     max_equity_iterations=5000,
     max_sensitivity_iterations=5000,
     max_whatif_iterations=2000,
+    max_rank_stability_boot=2000,
     max_spatial_resolution=100,
     max_validation_iterations=1000,
     max_validation_sweep_steps=10,
