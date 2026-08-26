@@ -62,6 +62,12 @@
                                 <input type="number" id="meld" min="6" max="40" placeholder="6–40 (optional)">
                             </div>
 
+                            <div class="form-group">
+                                <label for="monthsWaiting">Time Already Waiting (months)</label>
+                                <input type="number" id="monthsWaiting" min="0" max="360" step="1" placeholder="0 (optional)">
+                                <small class="field-help">Kidney: months since dialysis start (or eGFR &le; 20) &mdash; this time travels with you. Other organs: months since listing. Estimates become conditional on the time you have already served.</small>
+                            </div>
+
                             <div class="form-group conditional-field" id="cas-group" data-organ="lung" style="display:none;">
                                 <label for="cas">CAS Score</label>
                                 <input type="number" id="cas" min="0" max="100" step="0.1" placeholder="0–100 (optional)">

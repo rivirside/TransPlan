@@ -36,6 +36,15 @@ class PatientProfile(BaseModel):
                     "since March 2023). Mapped to an effective LAS for the "
                     "LAS-era multiplier tables — see "
                     "distributions.cas_to_effective_las (#303)")
+    # Accrued waiting time (#329): kidney time backdates to dialysis start
+    # (or eGFR <= 20) and TRAVELS with the patient; other organs count from
+    # listing. Conditions the wait distribution on time already served:
+    # T_remaining ~ (T - t0 | T > t0). None/0 = starting fresh.
+    months_waiting: Optional[float] = Field(
+        None, ge=0, le=360,
+        description="Months of qualified waiting time already accrued "
+                    "(kidney: since dialysis start or eGFR<=20; other organs: "
+                    "since listing). Conditions the wait model on time served.")
     # Relocation comparison
     home_center: Optional[str] = Field(None, description="Patient's current transplant listing center (city name)")
     # Organ-specific donor availability adjustment

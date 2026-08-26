@@ -54,6 +54,10 @@
     if (formData.organ === 'lung' && formData.cas) {
       profile.cas = parseFloat(formData.cas);
     }
+    // #329: accrued waiting time (kidney: since dialysis start; travels)
+    if (formData.monthsWaiting) {
+      profile.months_waiting = parseFloat(formData.monthsWaiting);
+    }
 
     // Relocation comparison
     if (formData.homeCenter) profile.home_center = formData.homeCenter;
