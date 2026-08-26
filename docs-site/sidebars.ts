@@ -48,6 +48,7 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Validation',
       items: [
+        'validation/model-card',
         'validation/sensitivity-analysis',
         'validation/srtr-comparison',
       ],
