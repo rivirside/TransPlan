@@ -283,13 +283,12 @@
 
             <div class="eq-controls">
                 <h4>Equity Settings</h4>
-                <div class="eq-slider-group">
-                    <label>
-                        Iterations per profile
-                        <span class="eq-val" id="equityItersVal">200</span>
-                    </label>
-                    <input type="range" id="equityIters" min="50" max="5000" value="200" step="50">
-                </div>
+                <p class="eq-note" id="equityExactNote" style="margin:0.35rem 0 0.6rem">
+                    This analysis is <strong>exact</strong>, not sampled: every
+                    demographic profile is evaluated in closed form (#216), so
+                    there is no iteration count to trade off and no run-to-run
+                    variation. Results are identical every time.
+                </p>
                 <div class="eq-slider-group">
                     <label>
                         Max centers
@@ -297,6 +296,7 @@
                     </label>
                     <input type="range" id="equityMaxCenters" min="5" max="248" value="30" step="1">
                 </div>
+
 
                 <div class="eq-tier-row">
                     <span class="tier-badge" id="eqTierBadge">Web</span>
@@ -449,8 +449,6 @@
         if (window.SimTierPanel) SimTierPanel.init();
 
         // ── DOM refs ──
-        var itersSlider = document.getElementById('equityIters');
-        var itersVal = document.getElementById('equityItersVal');
         var maxCentersSlider = document.getElementById('equityMaxCenters');
         var maxCentersVal = document.getElementById('equityMaxCentersVal');
         var runBtn = document.getElementById('eqRunBtn');
@@ -460,7 +458,6 @@
         var resultsEl = document.getElementById('eqResults');
 
         // ── Slider value displays ──
-        itersSlider.addEventListener('input', function () { itersVal.textContent = this.value; });
         maxCentersSlider.addEventListener('input', function () { maxCentersVal.textContent = this.value; });
 
         // ── Tier config ──
@@ -503,7 +500,6 @@
                 badge.textContent = _tierConfig.name === 'local' ? 'Local' : 'Web';
                 badge.className = 'tier-badge tier-' + _tierConfig.name;
             }
-            _capSlider('equityIters', 'equityItersVal', caps.max_equity_iterations);
             _capSlider('equityMaxCenters', 'equityMaxCentersVal', caps.max_equity_centers);
         }
 
@@ -527,6 +523,11 @@
         var formContainer = document.getElementById('patient-form-container');
         formContainer.addEventListener('change', checkFormReady);
         formContainer.addEventListener('input', checkFormReady);
+        // populateFromURL() runs above, BEFORE these listeners exist, so a
+        // profile arriving by link never triggered them and the run button
+        // stayed disabled on a fully populated form. Evaluate readiness once
+        // now that the handler is wired.
+        checkFormReady();
 
         // ── Sorting state ──
         var _sortCol = 'gini';
@@ -621,7 +622,6 @@
 
         async function runAnalysis() {
             var formData = TransPlanPatientForm.collectFormData();
-            var iters = parseInt(itersSlider.value);
             var maxCenters = parseInt(maxCentersSlider.value);
 
             // Show loading, hide others
@@ -632,7 +632,8 @@
             runBtn.disabled = true;
 
             try {
-                var result = await TransPlanAPI.equityAnalysis(formData, iters, maxCenters);
+                var result = await TransPlanAPI.equityAnalysis(
+                    formData, null, maxCenters);
 
                 loadingEl.className = 'eq-loading';
 

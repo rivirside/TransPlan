@@ -377,6 +377,8 @@
                 </div>
                 <input type="range" id="sensIters" min="100" max="5000" value="500" step="100">
             </div>
+            <div class="sens-slider-group" id="sensSeedControl" style="margin-top:0.6rem">
+            </div>
 
             <!-- Run button -->
             <button type="button" class="sens-run-btn" id="sensRunBtn" disabled>Run Sensitivity Analysis</button>
@@ -447,6 +449,7 @@
     <script src="donation-banner.js"></script>
     <script src="session.js"></script>
     <script src="api-client.js"></script>
+    <script src="shared/seed-control.js"></script>
     <script src="simulator/tier-panel.js"></script>
     <script src="components/patient-form.js"></script>
     <script src="probability-charts.js"></script>
@@ -458,6 +461,8 @@
         var allCenters = [];
         var tierConfig = null;
         var isRunning = false;
+
+        if (window.TransPlanSeed) TransPlanSeed.inject('sensSeedControl');
 
         // ── DOM refs ──
         var centerFilter = document.getElementById('centerFilter');
@@ -598,6 +603,12 @@
                     center_code: centerCode,
                     iterations: iterations
                 };
+                // #350: sensitivity IS stochastic (verified: same seed gives
+                // identical impacts, no seed gives different ones), so a seed
+                // control here is meaningful — unlike equity, which is exact.
+                var seed = window.TransPlanSeed
+                    ? TransPlanSeed.getSeed('sensSeedControl') : null;
+                if (seed !== null) body.seed = seed;
 
                 var response = await fetch(apiBase + '/sensitivity', {
                     method: 'POST',
@@ -612,6 +623,9 @@
                 }
 
                 var result = await response.json();
+                if (window.TransPlanSeed) {
+                    TransPlanSeed.setUsedSeed('sensSeedControl', result.seed_used);
+                }
                 renderResults(result);
                 setStatus('');
             } catch (err) {
