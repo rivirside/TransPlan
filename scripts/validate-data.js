@@ -178,6 +178,27 @@ if (tiers) {
     if (nk < 190) addError(`srtr-tiers-centers.json: only ${nk} kidney centers (expected >= 190)`);
 }
 
+// 6a5. Pediatric per-center data (#335) — never-shrink floors + the unit
+// trap guard (rates are per person-year, not percentages)
+const peds = validateJSON('pediatric-centers.json');
+if (peds) {
+    const nk = Object.keys(peds.kidney?.centers || {}).length;
+    if (nk < 95) addError(`pediatric-centers.json: only ${nk} kidney programs (expected >= 95)`);
+    for (const organ of ['kidney', 'liver', 'heart', 'lung']) {
+        const block = peds[organ];
+        if (!block) continue;
+        for (const [code, rec] of Object.entries(block.centers || {})) {
+            if (rec.transplant_rate >= 10) {
+                addError(`pediatric-centers.json: ${organ}/${code} rate ${rec.transplant_rate} — rates are per PERSON-YEAR, a value >=10 means a units error or missing exposure floor`);
+            }
+        }
+        const cal = block.calibration;
+        if (cal && !(cal.k > 0.2 && cal.k < 5 && cal.median_abs_error < 0.15)) {
+            addError(`pediatric-centers.json: ${organ} calibration implausible: ${JSON.stringify(cal)}`);
+        }
+    }
+}
+
 // 6b. SRTR-derived model files — every organ block must be present (ERROR,
 // not warning: the 2026-08-05 workflow run wrote organ-less shells over
 // these because data/srtr-raw/ is absent in CI; see parse-srtr-reports.py
