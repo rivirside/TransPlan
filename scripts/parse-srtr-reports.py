@@ -262,13 +262,13 @@ def parse_wait_times(mapping: dict) -> dict:
     result = {
         "_meta": {
             "source": "SRTR PSR National Center-Level Summary Data (January 2025 release)",
-            "method": "Log-normal fit from center-level P25/P50/P75 wait time percentiles (Table B10)",
+            "method": "Log-normal fit from center-level P25/P50/P75 wait time percentiles (Table B10): mu=ln(median), sigma via the IQR method ln(P75/P25)/(2*0.6745) in scripts/parse-srtr-reports.py:fit_lognormal. NOTE (#256): sigma is CLAMPED to [0.3, 1.2]; the identical log_sigma=1.2 across kidney/liver/heart/intestine are long-wait organs hitting that ceiling (their true IQR-implied sigma exceeds 1.2), NOT a placeholder. The 1.2 ceiling likely understates dispersion (hence the right tail / long-wait probabilities) for these organs and should be re-evaluated against the raw percentiles.",
             "references": [
                 "https://www.srtr.org/reports/program-specific-reports/",
                 "SRTR PSR Technical Methods: https://www.srtr.org/about-the-data/technical-methods-for-the-program-specific-reports/",
             ],
             "fetchedAt": now,
-            "notes": "Empirical center-level data from SRTR. Blood type and clinical multipliers retained from literature-derived estimates (Table B10 does not stratify by blood type).",
+            "notes": "Empirical center-level data from SRTR. Blood type and clinical multipliers retained from literature-derived estimates (Table B10 does not stratify by blood type). (#293: the legacy 22-city block was retired 2026-08-25 \u2014 per-center data lives in the *-centers.json files.)",
         }
     }
 
@@ -344,7 +344,7 @@ def parse_outcomes(mapping: dict) -> dict:
                 "https://www.srtr.org/reports/program-specific-reports/",
             ],
             "fetchedAt": now,
-            "notes": "Center-level rates from SRTR Table B7. Urgency and clinical multipliers retained from literature estimates.",
+            "notes": "Center-level rates from SRTR Table B7. Urgency and clinical multipliers retained from literature estimates. (#293: the legacy 22-city block was retired 2026-08-25 \u2014 per-center data lives in the *-centers.json files.)",
         }
     }
 
@@ -488,7 +488,7 @@ def parse_post_transplant_outcomes(mapping: dict) -> dict:
                 "https://www.srtr.org/reports/program-specific-reports/",
             ],
             "fetchedAt": now,
-            "notes": "Risk-adjusted Bayesian hierarchical estimates. Performance ratings derived from 1-year hazard ratio 95% credible intervals vs expected.",
+            "notes": "Risk-adjusted Bayesian hierarchical estimates. Performance ratings derived from 1-year hazard ratio 95% credible intervals vs expected. (#293: the legacy 22-city block was retired 2026-08-25 \u2014 per-center data lives in the *-centers.json files.)",
         }
     }
 
