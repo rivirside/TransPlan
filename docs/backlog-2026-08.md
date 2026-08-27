@@ -94,7 +94,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | # | Item | Issue | Status |
 |---|------|-------|--------|
 | D1 | Retire algorithm.js, DEFAULTS, CITIES, checkCityCoverage, classic mode | #293 | ✅ CLOSED 2026-08-25 (fetcher CITIES → #285) |
-| D2 | Dead frontend: charts.js, url-sharing.js, donation-banner.js | #260 | charts/url-sharing already gone; banner blocked on #179 |
+| D2 | Dead frontend: charts.js, url-sharing.js, donation-banner.js | #260 | partial — charts.js and url-sharing.js are already ABSENT; donation-banner.js is deliberately dormant pending #179 (line 11 returns immediately) yet still fetched by 14 pages |
 | D3 | Old pages already deleted; 17 broken links to them FIXED 2026-08-25 | #293 | ✅ |
 | D4 | _FALLBACK_CITIES + unused CITIES imports | #293 | ✅ 2026-08-25 |
 | D5 | Close #206 (done — CLOSED 2026-08-24), prune stale golden tests as files retire | #206 ✅ | ✅ 2026-08-24 — #206 closed|
@@ -138,8 +138,8 @@ get sourced or refit. Register updated per item.
 | J1 | 22-city docs sweep (L-071) + status.md staleness + docs-site algorithm.js claim | #305 | ✅ 2026-08-25 |
 | J2 | Inference-mode availability docs | #232 | |
 | J3 | Equity disclaimers hardcoded | #235 | |
-| J4 | BBN docstrings claim pgmpy | #258 | |
-| J5 | Refactors: patient_dict dedup, slim routers | #262 ✅ / #264 ✅ | ✅ #262 and #264 both closed|
+| J4 | BBN docstrings claim pgmpy | #258 | ✅ 2026-08-27 — docstrings were already correct; the real defect was two user-facing strings blaming pgmpy on ImportError (#258 stays open only if more is wanted) |
+| J5 | Refactors: patient_dict dedup, slim routers | #262 ✅ / #264 ✅ | ✅ #262 and #264 both closed |
 
 ## Parked (cannot do solo)
 
