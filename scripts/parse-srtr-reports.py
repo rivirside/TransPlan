@@ -18,7 +18,11 @@ import os
 import sys
 from datetime import datetime, timezone
 
+import statistics
+
 import xlrd
+
+import eb_shrinkage
 
 # ---------- paths ----------
 
@@ -930,6 +934,7 @@ def parse_all_centers_outcomes() -> dict:
         }
     }
     center_adjustments = {}
+    shrinkage_meta = {}
 
     for organ, code in ORGAN_CODES.items():
         excel_path = os.path.join(RAW_DIR, f"csrs_final_tables_2511_{code}.xls")
@@ -953,15 +958,60 @@ def parse_all_centers_outcomes() -> dict:
         ) / 100.0
 
         all_rows = _get_all_center_rows(sheet, ctr_cols)
-        count = 0
+
+        # --- Pass 1: raw, UNCLAMPED ratios plus each center's cohort size ---
+        # #268/L-086: a factor from a 3-patient cohort is noise, lands at an
+        # extreme, and the clamp below pins it to the most favourable value —
+        # so the center ranks near the top of the recommendation list. Every
+        # center with n <= 10 was pinned to a bound. Shrink toward the organ
+        # mean in proportion to cohort size, BEFORE clamping; shrinking after
+        # is useless because the clamp has already replaced the estimate.
+        raw = {}
         for ctr_code, ctr_data in all_rows.items():
             ctr_mortality = (ctr_data.get("died_waitlist") or 0) / 100.0
             ctr_delisting = sum(
                 (ctr_data.get(k) or 0) for k in ["removed_worsened", "removed_improved", "removed_refused", "removed_other"]
             ) / 100.0
+            raw[ctr_code] = {
+                "mort": (ctr_mortality / nat_mortality) if nat_mortality > 0 else 1.0,
+                "delist": (ctr_delisting / nat_delisting) if nat_delisting > 0 else 1.0,
+                "mort_rate": ctr_mortality,
+                "delist_rate": ctr_delisting,
+                "n": ctr_data.get("n") or 0,
+            }
 
-            mort_factor = round(max(0.3, min((ctr_mortality / nat_mortality) if nat_mortality > 0 else 1.0, 3.0)), 2)
-            delist_factor = round(max(0.3, min((ctr_delisting / nat_delisting) if nat_delisting > 0 else 1.0, 3.0)), 2)
+        # --- Estimate shrinkage strength from THIS organ's data ---
+        # Derived by method of moments, not chosen. estimate_k declines when
+        # the model does not hold (too few centers, no spread in cohort size,
+        # or no recoverable between-center signal) — pancreas and intestine
+        # hit that for real, and are then left unshrunk rather than flattened.
+        ns = [r["n"] for r in raw.values()]
+        if organ not in eb_shrinkage.SHRINKABLE_ORGANS:
+            # Measured to degrade calibration, or not estimable — see the
+            # allowlist in eb_shrinkage.py for the numbers.
+            k_mort = k_delist = None
+        else:
+            k_mort = eb_shrinkage.estimate_k(
+                [r["mort_rate"] for r in raw.values()], ns, nat_mortality)
+            k_delist = eb_shrinkage.estimate_k(
+                [r["delist_rate"] for r in raw.values()], ns, nat_delisting)
+        med_n = statistics.median([n for n in ns if n]) if any(ns) else 0
+        shrinkage_meta[organ] = {
+            "prior_strength_mortality": round(k_mort, 1) if k_mort else None,
+            "prior_strength_delisting": round(k_delist, 1) if k_delist else None,
+            # the interpretable form: what a median-sized center retains
+            "median_cohort": med_n,
+            "median_weight_mortality": round(eb_shrinkage.implied_weight(k_mort, med_n), 3) if k_mort else 1.0,
+            "median_weight_delisting": round(eb_shrinkage.implied_weight(k_delist, med_n), 3) if k_delist else 1.0,
+            "shrunk": bool(k_mort or k_delist),
+        }
+
+        # --- Pass 2: shrink, then clamp ---
+        count = 0
+        for ctr_code, r in raw.items():
+            n = r["n"]
+            mort_factor = round(max(0.3, min(eb_shrinkage.shrink(r["mort"], n, k_mort), 3.0)), 2)
+            delist_factor = round(max(0.3, min(eb_shrinkage.shrink(r["delist"], n, k_delist), 3.0)), 2)
 
             if ctr_code not in center_adjustments:
                 center_adjustments[ctr_code] = {}
@@ -970,10 +1020,19 @@ def parse_all_centers_outcomes() -> dict:
                 "delisting_factor": delist_factor,
             }
             count += 1
-        print(f"  {organ}: {count} centers with competing risk factors")
+        ks = shrinkage_meta[organ]
+        note = (f"shrunk: median center keeps {ks['median_weight_mortality']:.0%} "
+                f"mortality / {ks['median_weight_delisting']:.0%} delisting"
+                if ks["shrunk"] else "NOT shrunk — prior strength not estimable")
+        print(f"  {organ}: {count} centers with competing risk factors [{note}]")
 
     result["center_adjustments"] = center_adjustments
     result["_meta"]["totalCenters"] = len(center_adjustments)
+    result["_meta"]["shrinkage"] = shrinkage_meta
+    result["_meta"]["method"] += (
+        "; per-center factors shrunk toward the organ mean by empirical Bayes "
+        "before clamping (#268/L-086), strength estimated by method of moments "
+        "per organ — see _meta.shrinkage")
     return result
 
 
