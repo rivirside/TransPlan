@@ -171,9 +171,35 @@ Snapshot Aug 26, 2026. **Closed in #370** with evidence: #335 (pediatric mode), 
 - **#207:** MCMC 248-center refit (BBN #206 done)
 - **#236/#237/#238, #275:** BBN latents / temporal validation / BBN hybrid / volume data (#274 closed by measurement)
 - **#107:** Face validity review with transplant faculty
-- **Model limitations:** see `docs/limitations.md` — 86 entries. Highest-consequence: **L-086** (centers with 3-patient cohorts rank above centers with 700), **L-085** (blood type produces a literally identical center ranking), **L-084** (a quarter of the score is a constant that cannot reorder), L-082 (the headline ranking turns on the weight *ordering*), L-079 (BBN/MCMC have no pediatric wait model), L-081 (delisting multipliers have the wrong sign for 4 organs), L-080 (pancreas median reconstructed, now disclosed), L-076/L-077 (pediatric derivation + small cohorts), L-078 (PELD), L-083 (lung's top center is a near-tie)
+- **Model limitations:** see `docs/limitations.md` — 86 entries. Highest-consequence: **L-085** (blood type cannot change which center is recommended — the ABO fix was measured and rejected, #405), **L-084** (a quarter of the score is a constant that cannot reorder), **L-086** (small-cohort clamping — FIXED for kidney in #402, still open for the other five), L-082 (the ranking turns on the weight *ordering*), L-079, L-081, L-080, L-076/L-077, L-078, L-083 (lung's top is a near-tie — now surfaced in the UI, #403)
 
 **Data-pipeline lesson (2026-08-05 incident):** the SRTR workflow once overwrote three model files with organ-less shells because `data/srtr-raw/` is absent in CI. Every generated data file must have a never-shrink guard (`_write_guarded` in parse-srtr-reports.py, dead-data guards in fetch-cost-of-living.js, organ-block checks in validate-data.js).
+
+**Aug 27 (second wave) — the approved plan ran end to end.** Phases 0-4 of
+`~/.claude/plans/clever-purring-sedgewick.md`. What shipped, and what did not:
+
+| phase | outcome |
+|---|---|
+| **1a #268** | EB shrinkage before the clamp. Kidney centers pinned to a bound **60 → 0**; tiny cohorts in the top 10 **4 → 1**. **Kidney only** — heart (−0.0342) and liver (−0.0119) *degraded* calibration, measured in a controlled all-organ comparison |
+| **1b L-083** | The table now says "N centers could be ranked #1" (lung 3, heart 7, liver 7, kidney 10) |
+| **1c #224** | Layout passes at 375px with 233 centers. Tap targets below WCAG AA **31/48 → 1/51**; sliders 153×**6** → 24 |
+| **2 #390/#394** | ABO-by-center term built, gated, and **rejected** — premise unsupported, term degraded agreement |
+| **3 #250** | 51 pieces of inline JS removed, then a **strict CSP with no `script-src 'unsafe-inline'`**; all 8 CDN resources pinned + SRI |
+| **4** | #301 closed, #236/#275 retitled, #259/#260 dispositioned |
+
+**Gates lie in specific ways — check they can see your change.** Three times
+this wave a green gate was meaningless: `run-center-calibration.py` defaults to
+`--organ lung`, so five of six organs were never recomputed; a committed
+baseline predated a same-day merge and conflated two changes; and the
+calibration metric correlates p24 from the Monte Carlo path, so it is
+*structurally blind* to any scoring-path change (forcing the ABO factor to its
+bound moved p24 by exactly 0.000000). Before trusting "no degradation",
+perturb the input to its bound and confirm the metric moves at all.
+
+**Static analysis cannot find CSS-referenced resources.** The first strict CSP
+blocked every Leaflet map marker, because `leaflet.css` references its icons
+from inside the stylesheet — no HTML mentions them, so a scan of the markup
+reported the policy complete. Visible to a user, invisible to the test suite.
 
 **Measure before you build.** Six of the modeling issues closed on Aug 26 were resolved by measuring the concern rather than implementing the requested fix, and in two cases the requested fix would have made the model *worse* (#274's clamp raise, #376's median substitution). Before implementing an issue that proposes a specific change to a constant, sweep it and check the change actually helps. Every such measurement ships with a test that fails if the finding stops holding, so the conclusion can be re-opened by evidence rather than inherited on authority. The reverse also applies: a constant recorded as a mere provenance nit (SCORE-01) turned out to drive the headline output.
 
