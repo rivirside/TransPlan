@@ -1,0 +1,387 @@
+{
+  "organs": {
+    "kidney": {
+      "organ": "kidney",
+      "n_centers": 233,
+      "categories": {
+        "medicalCompatibility": {
+          "weight": 0.25,
+          "between_center_sd": 2.842170943040401e-14,
+          "inert": true,
+          "constant_value": 92.8,
+          "rank_driving_share": 0.0
+        },
+        "waitTime": {
+          "weight": 0.2,
+          "between_center_sd": 30.10933198785835,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.5056
+        },
+        "donorAvailability": {
+          "weight": 0.18,
+          "between_center_sd": 8.84175884739884,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.1336
+        },
+        "hospitalQuality": {
+          "weight": 0.15,
+          "between_center_sd": 16.843055158255765,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.2121
+        },
+        "geographic": {
+          "weight": 0.1,
+          "between_center_sd": 7.176355309051019,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0603
+        },
+        "healthDemographics": {
+          "weight": 0.07,
+          "between_center_sd": 9.967881389589829,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0586
+        },
+        "policy": {
+          "weight": 0.03,
+          "between_center_sd": 7.931537165431899,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.02
+        },
+        "socioeconomic": {
+          "weight": 0.02,
+          "between_center_sd": 5.809592729303599,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0098
+        }
+      },
+      "inert_weight_mass": 0.25
+    },
+    "liver": {
+      "organ": "liver",
+      "n_centers": 148,
+      "categories": {
+        "medicalCompatibility": {
+          "weight": 0.25,
+          "between_center_sd": 1.4210854715202004e-14,
+          "inert": true,
+          "constant_value": 92.8,
+          "rank_driving_share": 0.0
+        },
+        "waitTime": {
+          "weight": 0.2,
+          "between_center_sd": 32.42317392482399,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.5287
+        },
+        "donorAvailability": {
+          "weight": 0.18,
+          "between_center_sd": 8.374009186617858,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.1229
+        },
+        "hospitalQuality": {
+          "weight": 0.15,
+          "between_center_sd": 17.197007228440867,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.2103
+        },
+        "geographic": {
+          "weight": 0.1,
+          "between_center_sd": 6.848539590419886,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0558
+        },
+        "healthDemographics": {
+          "weight": 0.07,
+          "between_center_sd": 9.289294953356805,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.053
+        },
+        "policy": {
+          "weight": 0.03,
+          "between_center_sd": 8.115762153060844,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0199
+        },
+        "socioeconomic": {
+          "weight": 0.02,
+          "between_center_sd": 5.7698430122216475,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0094
+        }
+      },
+      "inert_weight_mass": 0.25
+    },
+    "heart": {
+      "organ": "heart",
+      "n_centers": 149,
+      "categories": {
+        "medicalCompatibility": {
+          "weight": 0.25,
+          "between_center_sd": 1.4210854715202004e-14,
+          "inert": true,
+          "constant_value": 92.8,
+          "rank_driving_share": 0.0
+        },
+        "waitTime": {
+          "weight": 0.2,
+          "between_center_sd": 27.4034095441824,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.5233
+        },
+        "donorAvailability": {
+          "weight": 0.18,
+          "between_center_sd": 5.973044565765629,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.1027
+        },
+        "hospitalQuality": {
+          "weight": 0.15,
+          "between_center_sd": 14.999863819329878,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.2148
+        },
+        "geographic": {
+          "weight": 0.1,
+          "between_center_sd": 6.906284457693956,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0659
+        },
+        "healthDemographics": {
+          "weight": 0.07,
+          "between_center_sd": 8.853343589658333,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0592
+        },
+        "policy": {
+          "weight": 0.03,
+          "between_center_sd": 8.079377383415938,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0231
+        },
+        "socioeconomic": {
+          "weight": 0.02,
+          "between_center_sd": 5.704200531014983,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0109
+        }
+      },
+      "inert_weight_mass": 0.25
+    },
+    "lung": {
+      "organ": "lung",
+      "n_centers": 74,
+      "categories": {
+        "medicalCompatibility": {
+          "weight": 0.25,
+          "between_center_sd": 1.4210854715202004e-14,
+          "inert": true,
+          "constant_value": 92.8,
+          "rank_driving_share": 0.0
+        },
+        "waitTime": {
+          "weight": 0.2,
+          "between_center_sd": 11.361478429809651,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.3138
+        },
+        "donorAvailability": {
+          "weight": 0.18,
+          "between_center_sd": 5.925061757467409,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.1473
+        },
+        "hospitalQuality": {
+          "weight": 0.15,
+          "between_center_sd": 16.033014298001245,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.3321
+        },
+        "geographic": {
+          "weight": 0.1,
+          "between_center_sd": 6.880968025227806,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.095
+        },
+        "healthDemographics": {
+          "weight": 0.07,
+          "between_center_sd": 6.831301758137886,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.066
+        },
+        "policy": {
+          "weight": 0.03,
+          "between_center_sd": 7.476344481622617,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.031
+        },
+        "socioeconomic": {
+          "weight": 0.02,
+          "between_center_sd": 5.353534908047894,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0148
+        }
+      },
+      "inert_weight_mass": 0.25
+    },
+    "pancreas": {
+      "organ": "pancreas",
+      "n_centers": 99,
+      "categories": {
+        "medicalCompatibility": {
+          "weight": 0.25,
+          "between_center_sd": 4.263256414560601e-14,
+          "inert": true,
+          "constant_value": 92.8,
+          "rank_driving_share": 0.0
+        },
+        "waitTime": {
+          "weight": 0.2,
+          "between_center_sd": 23.951013333256437,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.544
+        },
+        "donorAvailability": {
+          "weight": 0.18,
+          "between_center_sd": 6.108683548226928,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.1249
+        },
+        "hospitalQuality": {
+          "weight": 0.15,
+          "between_center_sd": 8.318720459950981,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.1417
+        },
+        "geographic": {
+          "weight": 0.1,
+          "between_center_sd": 7.011462622107755,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0796
+        },
+        "healthDemographics": {
+          "weight": 0.07,
+          "between_center_sd": 9.079725556536511,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0722
+        },
+        "policy": {
+          "weight": 0.03,
+          "between_center_sd": 7.452218300356188,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0254
+        },
+        "socioeconomic": {
+          "weight": 0.02,
+          "between_center_sd": 5.351571967012161,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0122
+        }
+      },
+      "inert_weight_mass": 0.25
+    },
+    "intestine": {
+      "organ": "intestine",
+      "n_centers": 21,
+      "categories": {
+        "medicalCompatibility": {
+          "weight": 0.25,
+          "between_center_sd": 1.4210854715202004e-14,
+          "inert": true,
+          "constant_value": 92.8,
+          "rank_driving_share": 0.0
+        },
+        "waitTime": {
+          "weight": 0.2,
+          "between_center_sd": 28.075461966383568,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.5797
+        },
+        "donorAvailability": {
+          "weight": 0.18,
+          "between_center_sd": 6.041571779691194,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.1123
+        },
+        "hospitalQuality": {
+          "weight": 0.15,
+          "between_center_sd": 11.722176978128932,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.1815
+        },
+        "geographic": {
+          "weight": 0.1,
+          "between_center_sd": 6.198357620225588,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.064
+        },
+        "healthDemographics": {
+          "weight": 0.07,
+          "between_center_sd": 5.347239523487044,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0386
+        },
+        "policy": {
+          "weight": 0.03,
+          "between_center_sd": 5.159145282442768,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.016
+        },
+        "socioeconomic": {
+          "weight": 0.02,
+          "between_center_sd": 3.8497872250300453,
+          "inert": false,
+          "constant_value": null,
+          "rank_driving_share": 0.0079
+        }
+      },
+      "inert_weight_mass": 0.25
+    }
+  },
+  "_meta": {
+    "generated": "2026-08-27T01:52:04Z",
+    "script": "scripts/run-category-variance.py",
+    "metric": "weight x between-center SD, normalised across categories"
+  }
+}

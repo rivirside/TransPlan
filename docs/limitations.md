@@ -654,6 +654,50 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-084: A quarter of the composite score is a constant that cannot affect the ranking
+- **Severity:** HIGH
+- **Status:** OPEN (documented 2026-08-26, `docs/category-variance-report.md`)
+- **Category:** Model Structure / Presentation
+- **What:** `medicalCompatibility` carries the **largest weight in the model (0.25)** and is **identical for every center**. `_medical_compatibility()` (`backend/services/scoring.py:86`) takes only the patient profile — its own docstring says *"Pure patient-profile scoring — no geographic data needed"* — so it is center-invariant by construction. Measured across all six organs, its between-center SD is 0.0 (2.8e-14, float noise; one distinct value, e.g. 92.8 for the kidney reference patient at all 233 centers).
+- **Why it's a limitation:** a weight can only move the ranking through a sub-score that *varies* between centers. This one contributes the same constant to every total, so a quarter of the advertised weighting is inert. Three consequences:
+  1. **The weight slider for the highest-weighted category does not work.** Changing it from 0.25 to 0.0 leaves the ranking identical up to rounding (ρ 0.99995; the 51 of 233 positions that move are near-ties reshuffled by `total` being rounded to 1 dp, not a real re-ranking). A user who decides medical compatibility matters most to them, and drags the slider up, gets the same answer.
+  2. **The displayed weights misdescribe the ranking.** What actually drives it is `weight × between-center SD`:
+
+| organ | waitTime | hospitalQuality | donorAvailability | everything else | medicalCompatibility |
+|---|---|---|---|---|---|
+| kidney | 50.6% | 21.2% | 13.4% | 14.9% | **0.0%** |
+| liver | 52.9% | 21.0% | 12.3% | 13.8% | **0.0%** |
+| heart | 52.3% | 21.5% | 10.3% | 15.9% | **0.0%** |
+| lung | 31.4% | 33.2% | 14.7% | 20.7% | **0.0%** |
+| pancreas | 54.4% | 14.2% | 12.5% | 18.9% | **0.0%** |
+| intestine | 58.0% | 18.1% | 11.2% | 12.7% | **0.0%** |
+
+  3. **It compresses the visible score range,** making centers look more alike than the model says they are. For the kidney reference patient the constant adds 23.2 points to every center; the displayed spread is 57.8–85.3 (27.5 points) where the rank-relevant spread is 46.2–82.8 (36.6 points).
+- **This also explains L-082 and L-083.** The ordinal-simplex study found the weight *magnitudes* nearly inert partly because the largest one sits on a constant and the ranking is carried by `waitTime`. And lung's undetermined top (L-083) is exactly the organ where `waitTime` (31.4%) and `hospitalQuality` (33.2%) are near-tied for dominance instead of `waitTime` winning outright — so which one the sampled weights favour decides the leader.
+- **What this does NOT say:** that medical compatibility is irrelevant to a transplant candidate, or that the sub-score is wrong. It is a real property of the patient and belongs in a patient-level match score. The defect is that it is presented as a *center* comparison input and given the largest weight there.
+- **What would help:** (1) disclose what actually drives the ranking rather than only the weight vector — the `rank_driving_share` table above is cheap to surface; (2) decide whether the sub-score *should* be center-specific (center ABO distribution, CPRA handling, size matching and acceptance thresholds all differ — that is a modelling question needing data, not a relabelling); (3) until then, stop implying the slider affects the ranking.
+- **Files:** `backend/services/scoring.py:86` (`_medical_compatibility`), `scripts/run-category-variance.py`, `docs-site/static/data/category-variance.json`, register row SCORE-01
+
+### L-083: For lung, the top-ranked center is a near-tie among eight programs
+- **Severity:** MEDIUM
+- **Status:** OPEN (documented 2026-08-26, `docs/ordinal-weight-robustness-report.md`)
+- **Category:** Presentation
+- **What:** sampling the weight magnitudes over everything the shipped category ordering permits (see L-082), the center that ranks #1 changes constantly for lung and not at all for kidney or heart:
+
+| organ | shipped top center | share of draws it leads | distinct centers that lead |
+|---|---|---|---|
+| kidney | OHCC | 100% | 1 |
+| heart | COUC | 100% | 1 |
+| liver | FLUF | 98% | 3 |
+| intestine | OHCC | 86% | 5 |
+| pancreas | ILUI | 65% | 4 |
+| lung | INIM | **25%** | **8** |
+
+- **Why it's a limitation:** overall rank correlation stays at ρ 0.99 for lung throughout, so the aggregate stability statistics the project reports look reassuring while the specific claim a user actually reads — "this is your best center" — is not supportable there. A high ρ and a determinate top are different properties, and only the first is currently measured anywhere.
+- **What this does NOT say:** that INIM is the wrong answer for lung. It remains both the modal choice and the rank-order-centroid choice; it is simply not distinguishable from seven others on this evidence. Pancreas (65%, 4 centers) is a milder version.
+- **What would help:** surface it where the claim is made. The tie-group / rank-interval machinery from #313 already exists for exactly this and lung is the case that most needs it; the top-N presentation should degrade to "these N centers are indistinguishable" when the leader's share is low.
+- **Files:** `scripts/run-ordinal-weight-robustness.py`, `docs-site/static/data/ordinal-weight-robustness.json`, `docs/ordinal-weight-robustness-report.md`
+
 ### L-082: The headline center ranking depends materially on eight uncited weights
 - **Severity:** HIGH
 - **Status:** OPEN (documented 2026-08-26, SCORE-01)
@@ -675,6 +719,16 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Partially mitigated (2026-08-26, #386):** (1) is now shipped. `POST /weight-range` re-scores every center under the app's own four published presets and the results table annotates each row with its rank span, so the dependence is visible at the point of use rather than only in this document. On kidney the median center's span is 34 positions (max 107), while the top of the ranking is genuinely stable — which is the useful distinction a candidate needs.
 
   **This does not close the limitation.** Four presets are a lower bound on the disagreement, not an interval: they are four points chosen by the same authors as the shipped weights, so they under-sample the space that produced the 0.624 worst-case above. (2) — a principled weight-uncertainty interval on the composite score — remains open, and the score ranking still carries no interval of its own.
+
+- **Sharpened (2026-08-26, `docs/ordinal-weight-robustness-report.md`):** the eight weights encode two separable claims — an **ordering** (medical compatibility above travel above local socioeconomics) and **magnitudes** (`.25` rather than `.30`). Only the magnitudes are uncited. Holding the ordering fixed and sampling uniformly from the ordered simplex `{w₁≥…≥w₈, Σ=1}` — which needs no spread parameter, and whose sampler is verified against the closed-form order statistics — gives **worst-case ρ 0.905 across all six organs**, against 0.624 above.
+
+  **So the uncited magnitudes are not what this limitation caught.** The 0.624 comes from *reordering* the categories, i.e. from a genuinely different patient preference, which the presets and sliders already expose and which is not an error. Corroborating: the rank-order centroid, derived from the ordering alone, agrees with the shipped weights at ρ 0.9899–0.9973 and picks the same top center for all six organs.
+
+  **Caveat — part of that result is an artifact, see L-084.** The first slot in the ordering receives the largest share of sampled mass by construction, and it is `medicalCompatibility`, which is *identical at every center*. Every draw therefore spends its biggest component on a constant, so the sampling is systematically less potent than it looks. The honest form of the finding is narrower: *given the shipped ordering **and the current sub-scores**, the uncited magnitudes do not materially move the ranking.* If `medicalCompatibility` is made center-specific (#390), this must be re-run before the conclusion carries over.
+
+  This retargets rather than closes the row: **the ordering is now the uncited assumption that matters**, and justifying it is the SCORE-01 clinical question. Severity stays HIGH because the headline output still depends on an unjustified judgement — just a different one than recorded above.
+
+- **Related finding — see L-083:** high ρ does not mean the *top* is determined. For lung, 8 different centers take first place across the draws while ρ holds at 0.99.
 - **Files:** `backend/services/scoring.py` (`DEFAULT_WEIGHTS`), `backend/services/weight_range.py`, `docs/scoring-weight-sensitivity-report.md`, register row SCORE-01
 
 ### L-078: PELD is mapped onto MELD's priority thresholds without a published equivalence
