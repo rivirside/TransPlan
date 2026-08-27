@@ -1,0 +1,206 @@
+{
+ "comparisons": [
+  {
+   "organ": "kidney",
+   "weighting": "equal (no view on importance)",
+   "defensible": true,
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.9241,
+   "top10_overlap": 6,
+   "top1_same": false
+  },
+  {
+   "organ": "kidney",
+   "weighting": "wait-time first",
+   "defensible": true,
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.7965,
+   "top10_overlap": 3,
+   "top1_same": true
+  },
+  {
+   "organ": "kidney",
+   "weighting": "program-quality first",
+   "defensible": true,
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.6239,
+   "top10_overlap": 4,
+   "top1_same": true
+  },
+  {
+   "organ": "kidney",
+   "weighting": "medical-compatibility first",
+   "defensible": true,
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.924,
+   "top10_overlap": 6,
+   "top1_same": false
+  },
+  {
+   "organ": "kidney",
+   "weighting": "reversed order (stress test)",
+   "defensible": false,
+   "n_centers": 233,
+   "spearman_vs_shipped": 0.4914,
+   "top10_overlap": 4,
+   "top1_same": false
+  },
+  {
+   "organ": "liver",
+   "weighting": "equal (no view on importance)",
+   "defensible": true,
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.9326,
+   "top10_overlap": 7,
+   "top1_same": false
+  },
+  {
+   "organ": "liver",
+   "weighting": "wait-time first",
+   "defensible": true,
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.8848,
+   "top10_overlap": 5,
+   "top1_same": false
+  },
+  {
+   "organ": "liver",
+   "weighting": "program-quality first",
+   "defensible": true,
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.6707,
+   "top10_overlap": 5,
+   "top1_same": true
+  },
+  {
+   "organ": "liver",
+   "weighting": "medical-compatibility first",
+   "defensible": true,
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.9325,
+   "top10_overlap": 7,
+   "top1_same": false
+  },
+  {
+   "organ": "liver",
+   "weighting": "reversed order (stress test)",
+   "defensible": false,
+   "n_centers": 148,
+   "spearman_vs_shipped": 0.5036,
+   "top10_overlap": 4,
+   "top1_same": false
+  },
+  {
+   "organ": "heart",
+   "weighting": "equal (no view on importance)",
+   "defensible": true,
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.9573,
+   "top10_overlap": 8,
+   "top1_same": false
+  },
+  {
+   "organ": "heart",
+   "weighting": "wait-time first",
+   "defensible": true,
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.9561,
+   "top10_overlap": 4,
+   "top1_same": false
+  },
+  {
+   "organ": "heart",
+   "weighting": "program-quality first",
+   "defensible": true,
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.8495,
+   "top10_overlap": 6,
+   "top1_same": false
+  },
+  {
+   "organ": "heart",
+   "weighting": "medical-compatibility first",
+   "defensible": true,
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.958,
+   "top10_overlap": 8,
+   "top1_same": false
+  },
+  {
+   "organ": "heart",
+   "weighting": "reversed order (stress test)",
+   "defensible": false,
+   "n_centers": 149,
+   "spearman_vs_shipped": 0.678,
+   "top10_overlap": 6,
+   "top1_same": false
+  },
+  {
+   "organ": "lung",
+   "weighting": "equal (no view on importance)",
+   "defensible": true,
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.9476,
+   "top10_overlap": 6,
+   "top1_same": false
+  },
+  {
+   "organ": "lung",
+   "weighting": "wait-time first",
+   "defensible": true,
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.9476,
+   "top10_overlap": 8,
+   "top1_same": false
+  },
+  {
+   "organ": "lung",
+   "weighting": "program-quality first",
+   "defensible": true,
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.82,
+   "top10_overlap": 5,
+   "top1_same": false
+  },
+  {
+   "organ": "lung",
+   "weighting": "medical-compatibility first",
+   "defensible": true,
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.9502,
+   "top10_overlap": 6,
+   "top1_same": false
+  },
+  {
+   "organ": "lung",
+   "weighting": "reversed order (stress test)",
+   "defensible": false,
+   "n_centers": 74,
+   "spearman_vs_shipped": 0.6147,
+   "top10_overlap": 3,
+   "top1_same": false
+  }
+ ],
+ "summary": {
+  "worst_spearman_defensible": 0.6239,
+  "worst_top10_overlap_defensible": 3,
+  "top1_changes_defensible": 13,
+  "n_defensible_comparisons": 16
+ },
+ "shipped_weights": {
+  "medicalCompatibility": 0.25,
+  "waitTime": 0.2,
+  "donorAvailability": 0.18,
+  "hospitalQuality": 0.15,
+  "geographic": 0.1,
+  "healthDemographics": 0.07,
+  "policy": 0.03,
+  "socioeconomic": 0.02
+ },
+ "_meta": {
+  "generated": "2026-08-26T23:57:19Z",
+  "script": "scripts/run-scoring-weight-sensitivity.py",
+  "question": "SCORE-01: the 8 category weights are uncited. The existing sweep perturbs one by +/-20%. Would a DIFFERENT REASONABLE weighting change the ranking?",
+  "note": "'reversed order' is a stress test, not a defensible alternative, and is excluded from the headline figures."
+ }
+}
