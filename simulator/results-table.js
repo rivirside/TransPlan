@@ -56,6 +56,18 @@
   // and generally larger source of uncertainty than _rankIntervals, which
   // bootstraps the data while holding the weights fixed.
   var _weightRanges = null;
+  // L-083: how many centers could actually be #1.
+  //
+  // Derived from the per-center rank intervals already fetched for #313 —
+  // no extra request. The endpoint's own `tie_groups` were tried first and
+  // are unusable for this: their overlap test is transitive (A overlaps B,
+  // B overlaps C => one group), so the leading group is EVERY center for
+  // every organ measured — 74/74 lung, 233/233 kidney, 149/149 heart. "The
+  // top 233 centers are indistinguishable" is true in that chaining sense
+  // and useless as a statement.
+  //
+  // Counting intervals that include rank 1 is non-transitive and answers the
+  // question a reader actually has: lung 3, heart 7, liver 7, kidney 10.
   var _sortAsc = true;
   var _expandedCode = null;    // currently expanded row center code
   var _selectedCodes = [];     // compare selection (max 3)
@@ -92,6 +104,29 @@
 
     // Clear container safely
     _container.textContent = '';
+
+    // L-083: when more than one center's interval reaches rank 1, "your best
+    // center" is not a supportable claim and the table must say so. Ties
+    // further down are already conveyed per-row by the intervals themselves.
+    var contenders = [];
+    if (_rankIntervals) {
+      _results.forEach(function (r) {
+        var iv = _rankIntervals[r.code];
+        if (iv && iv.rank_lo === 1) contenders.push(r.name || r.code);
+      });
+    }
+    if (contenders.length > 1) {
+      var shown = contenders.slice(0, 6);
+      var note = _createElement('div', 'rank-tie-note');
+      note.textContent =
+        contenders.length + ' centers could be ranked #1 on this evidence — ' +
+        shown.join(', ') +
+        (contenders.length > shown.length
+          ? ' and ' + (contenders.length - shown.length) + ' more' : '') +
+        '. Their rank intervals all reach first place, so the ordering among ' +
+        'them is not meaningful; treat the top of this list as a group.';
+      _container.appendChild(note);
+    }
 
     // Build wrapper
     var wrapper = _createElement('div', 'results-table-wrapper');

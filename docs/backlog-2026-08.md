@@ -61,7 +61,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | F3 | Patient-specific competing-risk split (L-072) | #238 | ✅ 2026-08-26 — #238 closed|
 | F4 | log_sigma clamp ceiling 1.2 (SURV-13/DATA-07) | #274 | ✅ 2026-08-26 — measured, not built: raising the ceiling degrades calibration on every assessable organ (kidney 0.8882→0.8843). DATA-07 heuristic_clamp→data_derived|
 | F5 | Clamp-bound cluster: 538+ values on bounds (DATA-24/25) | #294 | ✅ 2026-08-26 — measured: worst ρ 0.973 across the ±20% sweep (passes) |
-| F6 | Hierarchical partial pooling (needs F7) | #268 | ✅ 2026-08-27 — EB shrinkage before the clamp, KIDNEY ONLY (pinned 60→0). #268 stays open until this lands. heart/liver excluded by measurement (degrades calibration −0.0342/−0.0119, also on n≥10); lung/pancreas/intestine not estimable|
+| F6 | Hierarchical partial pooling (needs F7) | #268 | ✅ 2026-08-27 — #402: EB shrinkage before the clamp, KIDNEY ONLY (pinned 60→0, top-10 tiny cohorts 4→1). heart/liver excluded by measurement (degrades calibration −0.0342/−0.0119, also on n≥10); lung/pancreas/intestine not estimable|
 | F7 | Per-center transplant volume data | #275 | |
 | F8 | Kriging/GP interpolation with prediction variance | #266 | ✅ 2026-08-26 (#370 exposed kriging in Explorer w/ per-point GP variance + extrapolation flag; projection clause measured-and-rejected, EQSP-34) |
 | F9 | 2SFCA + travel-time isochrones | #267 | demand side unblocked 2026-08-26 (county population, #336); drive-time half blocked on a self-hosted OSRM build |
