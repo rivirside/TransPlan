@@ -290,6 +290,11 @@ body {
   color: var(--warm-text, #1a1a1a);
   cursor: pointer;
   padding: var(--space-1);
+  /* #224: was 30x34 — the primary mobile navigation control, below the
+     44x44 guideline. It only renders below 768px, so this cannot affect
+     desktop density. */
+  min-width: 44px;
+  min-height: 44px;
 }
 .nav-toggle svg {
   width: 22px;
@@ -297,7 +302,7 @@ body {
 }
 
 @media (max-width: 768px) {
-  .nav-toggle { display: block; }
+  .nav-toggle { display: flex; align-items: center; justify-content: center; }
   .nav-links {
     display: none;
     position: absolute;
@@ -792,9 +797,45 @@ body {
 
 .weight-slider {
   width: 100%;
-  height: 6px;
+  /* #224: the element box was 6px tall, which is what hit-testing uses — the
+     hardest control on the page to hit on touch. The box is now 24px (WCAG
+     2.5.8 AA) while the visible track stays 6px via the track pseudo-elements
+     below, so nothing looks different. */
+  height: 24px;
   cursor: pointer;
   accent-color: var(--color-primary-700);
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.weight-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border, #d1d5db);
+}
+.weight-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border, #d1d5db);
+}
+.weight-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -5px;          /* centre the thumb on the 6px track */
+  border-radius: 50%;
+  background: var(--color-primary-700, #8a4b2a);
+  cursor: pointer;
+}
+.weight-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-primary-700, #8a4b2a);
+  cursor: pointer;
 }
 
 .weight-value {
@@ -1949,6 +1990,8 @@ body {
 }
 .results-pagination-info { margin-right: auto; }
 .results-pagination-btn {
+  /* #224: measured 59x26 — clears WCAG AA (24) but is tight for touch. */
+  min-height: 32px;
   padding: 0.3rem 0.7rem;
   border: 1px solid var(--border, #d1d5db);
   border-radius: var(--radius-sm, 4px);
@@ -6744,6 +6787,8 @@ body {
   flex: 1;
   min-width: 80px;
   accent-color: var(--color-primary, #c97c4a);
+  /* #224: measured 153x16 — under the 24px AA floor for touch. */
+  min-height: 24px;
 }
 
 .setting-select {
@@ -7367,4 +7412,47 @@ body {
   line-height: 1.5;
   color: var(--text-1, inherit);
   border-radius: 0 4px 4px 0;
+}
+
+
+/* #224: touch-target floor.
+   Measured at 375x812 with a full 233-center result set: 31 of 48 interactive
+   elements were below the WCAG 2.5.8 AA minimum of 24x24 — footer navigation
+   links at 335x11, checkboxes at 34x18, and the weight sliders at 153x6.
+   Scoped to coarse pointers so desktop density is untouched; the sliders and
+   the mobile-only nav toggle are handled unconditionally above because their
+   fixes are invisible on desktop.
+
+   One target is deliberately left under the floor: the "measured here" link
+   inside the scoring-weights note. WCAG 2.5.8 exempts targets in a sentence
+   whose size is constrained by surrounding line-height, and enlarging it
+   would break the paragraph's text flow. */
+@media (pointer: coarse) {
+  /* The site-brand link is a standalone header control, not inline prose,
+     so WCAG 2.5.8's inline exemption does not cover it. */
+  .nav-brand {
+    min-height: 24px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .footer-cols a,
+  .footer-cta-link,
+  .footer-links a {
+    display: inline-block;
+    min-height: 24px;
+    line-height: 24px;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-width: 24px;
+    min-height: 24px;
+  }
+
+  .val-tab,
+  .tab-btn,
+  .method-btn {
+    min-height: 32px;
+  }
 }
