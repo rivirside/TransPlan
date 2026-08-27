@@ -49,11 +49,15 @@ def run_simulation(
         if inference_mode == "bayesian":
             try:
                 from services.bayesian_network import simulate_bbn
-            except ImportError:
+            except ImportError as exc:
+                # The engine is bbn_lite (numpy), NOT pgmpy — naming pgmpy here
+                # sent operators after a 2GB dependency the project removed
+                # on purpose (#258). Report what actually failed.
+                logger.exception("bayesian engine import failed")
                 raise HTTPException(
                     status_code=503,
-                    detail="Bayesian inference unavailable (missing pgmpy dependency)",
-                )
+                    detail=f"Bayesian inference unavailable: {exc}",
+                ) from exc
             patient.bbn_granularity = bbn_granularity
             return simulate_bbn(patient)
         if inference_mode == "mcmc":

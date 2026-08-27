@@ -193,7 +193,10 @@ def cross_engine(request: CrossEngineRequest) -> CrossEngineResult:
             available=True,
         ))
     except ImportError:
-        engines.append(EngineComparison(engine="bayesian", top5=[], top10=[], available=False, note="pgmpy not installed"))
+        logger.exception("cross-engine: bayesian engine unavailable")
+        engines.append(EngineComparison(engine="bayesian", top5=[], top10=[],
+                                        available=False,
+                                        note="bayesian engine unavailable — see server logs"))
     except Exception:
         logger.exception("cross-engine: bayesian failed")
         engines.append(EngineComparison(engine="bayesian", top5=[], top10=[],
