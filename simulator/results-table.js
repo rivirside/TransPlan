@@ -804,12 +804,18 @@
     var legendItems = [
       ['risk-transplant', 'Transplant', cr.p_transplant_24mo || 0],
       ['risk-waiting',    'Waiting',    cr.p_still_waiting_24mo || 0],
-      ['risk-delisted',   'Delisted',   cr.p_delisting_24mo || 0],
+      // F16: this bundles SRTR REMDET (worsened) + REMREC (IMPROVED) +
+      // REFTX (refused). "Delisted" told a candidate that all of it was a
+      // bad outcome, when part of it is "you got better".
+      ['risk-delisted',   'Removed (other)', cr.p_delisting_24mo || 0],
       ['risk-mortality',  'Mortality',  cr.p_mortality_24mo || 0]
     ];
     legendItems.forEach(function (item) {
       var span = _createElement('span', item[0]);
       span.textContent = item[1] + ' ' + _formatPct(item[2]);
+      if (item[0] === 'risk-delisted') {
+        span.title = 'Removed from the waitlist without a transplant — condition worsened, condition improved, or transplant refused. SRTR reports these three together (REMDET + REMREC + REFTX), and they are not all bad outcomes.';
+      }
       legend.appendChild(span);
     });
     frag.appendChild(legend);

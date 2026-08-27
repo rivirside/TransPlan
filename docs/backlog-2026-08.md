@@ -71,7 +71,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | F13 | Donor-supply discretization probabilities | #213 | ✅ 2026-08-26 — measured: swung 90/9/1→50/35/15, worst ρ 0.9987; not load-bearing. BBN-01 medium→low|
 | F14 | CPT empirical grounding + citations | #214 / #233 | |
 | F15 | BBN guards: BBN-17 fallback, BBN-22 pediatric clamp, atol gate | #298 | ✅ 2026-08-26 — #298 closed (BBN-22 pediatric clamp retired via #370 with measured per-organ multipliers) |
-| F16 | REMREC → "removed without transplant, other causes" relabel | (inline) | |
+| F16 | REMREC → "removed without transplant, other causes" relabel | (inline) | ✅ 2026-08-27 — UI said "Delisted" for a bundle that includes REMREC (condition IMPROVED). Now "Removed (other)" with a tooltip naming all three causes, in the table legend, the chart and the CSV export|
 | F17 | L-064 allocation-circle competition proxy | #299 | partial — normalizers MEASURED and corrected (kidney 15→25.6; score averaged 1.71 not 1.0); 500nm 2.5x ratio measured sound and kept. Proxy itself still crude — issue stays open|
 | F18 | Long-term: #135 spatial econometrics, #142 equilibrium, L-066 surface | parked | |
 
