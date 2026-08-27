@@ -302,7 +302,33 @@ async function main() {
     const output = {
         _meta: {
             fetchedAt: new Date().toISOString(),
-            source: `Organ recovery rates: PMC10329409 Table 2 (2023). State proportions: CDC ${TARGET_YEAR} mortality data (data.cdc.gov bi63-dtpu + xkb8-kh2a) with donor-eligibility calibration.`,
+            // #302: fetchedAt says when this script last RAN, which for a
+            // frozen upstream tells you nothing about how old the data is.
+            // bi63-dtpu (NCHS Leading Causes) is a CLOSED series ending 2017 —
+            // verified against the live API, max(year) = 2017 — so re-running
+            // weekly cannot make it newer. Record the data year separately,
+            // per variable, because the two sources are 9 years apart.
+            vintage: Number(TARGET_YEAR),
+            vintageBySource: {
+                'bi63-dtpu': {
+                    year: Number(TARGET_YEAR),
+                    variables: ['trauma', 'cardiovascular', 'stroke'],
+                    atSourceCeiling: Number(TARGET_YEAR) <= 2017,
+                    note: 'NCHS Leading Causes of Death 1999-2017 — series ended; '
+                        + 'CDC publishes no newer REST-accessible state-level '
+                        + 'INJURY counts (the weekly provisional sets muzy-jte6 / '
+                        + '3yf8-kanr carry heart and stroke but no external causes, '
+                        + 'and trauma is the largest donor category at weight '
+                        + `${DONOR_WEIGHTS.trauma}). CDC WONDER/WISQARS have it `
+                        + 'behind no public REST API.',
+                },
+                'xkb8-kh2a': {
+                    variables: ['drug_intox'],
+                    note: 'VSRR provisional overdose counts — updated continuously, '
+                        + 'so this variable is current even when the block above is not.',
+                },
+            },
+            source: `Organ recovery rates: PMC10329409 Table 2 (2023). State proportions: CDC ${TARGET_YEAR} mortality data for trauma/cardiovascular/stroke (data.cdc.gov bi63-dtpu, a closed 1999-2017 series) plus current VSRR overdose counts (xkb8-kh2a), with donor-eligibility calibration.`,
             notes: 'Intestine rates from OPTN 2023 OTPD ratio (intestine/pancreas=0.104) with COD-specific clinical adjustments (see GitHub #16). ' +
                    'Anoxia-NOS recovery rates estimated from PMC10329409 OR 0.848 vs trauma (see GitHub #14); state shares from CDC drowning rate patterns. ' +
                    'Proportions represent share of potential brain-dead donors by cause among donor-eligible deaths. ' +
