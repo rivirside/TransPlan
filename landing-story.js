@@ -205,6 +205,23 @@
     var allLayers = [layerNeutral, layerWait, layerTraffic, layerDonorType, layerRegistration, layerMethods, layerScore, layerExplore];
     var totalSteps = 8;
 
+    // #250: the step buttons carried inline onclick="goStep(N)" attributes,
+    // which force script-src 'unsafe-inline' and defeat most of a CSP. One
+    // delegated listener replaces all 15 and keeps the markup declarative.
+    document.addEventListener('click', function (e) {
+        var stepBtn = e.target.closest && e.target.closest('[data-go-step]');
+        if (stepBtn) {
+            var n = parseInt(stepBtn.getAttribute('data-go-step'), 10);
+            if (!isNaN(n)) window.goStep(n);
+            return;
+        }
+        var scroller = e.target.closest && e.target.closest('[data-scroll-to]');
+        if (scroller) {
+            var target = document.querySelector(scroller.getAttribute('data-scroll-to'));
+            if (target) target.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
     // goStep function
     window.goStep = function(n) {
       var steps = document.querySelectorAll('.narr-step');

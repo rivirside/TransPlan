@@ -621,6 +621,15 @@
 
   function init() {
     try {
+      // #250: the form carried onsubmit="return false;" inline, which forces
+      // script-src 'unsafe-inline'. Scoring and simulation are driven by the
+      // two buttons, so a native submit (Enter in a text field) must not
+      // reload the page and lose the entered profile.
+      var simForm = document.getElementById('sim-form');
+      if (simForm) {
+        simForm.addEventListener('submit', function (e) { e.preventDefault(); });
+      }
+
       // Tier panel (fetches /tier, applies caps)
       if (window.SimTierPanel) {
         window.SimTierPanel.init();

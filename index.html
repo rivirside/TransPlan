@@ -87,7 +87,7 @@
                     <div class="data-source">Center data from <a href="https://www.srtr.org" target="_blank" rel="noopener"><strong>SRTR</strong></a> (Scientific Registry of Transplant Recipients)</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" disabled>Back</button>
-                        <button class="step-btn primary" onclick="goStep(1)">Next</button>
+                        <button class="step-btn primary" data-go-step="1">Next</button>
                         <span class="step-counter">1 / 8</span>
                     </div>
                 </div>
@@ -101,8 +101,8 @@
                     <p>Each center is colored from <span style="color:#2d9e5c;font-weight:600;">green</span> (shorter waits) to <span style="color:#e05252;font-weight:600;">red</span> (longer waits). The gradient is not random. It mirrors regional organ supply, accumulated waitlist pressure, and decades of uneven policy.</p>
                     <div class="data-source">Wait data from <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener"><strong>OPTN</strong></a> (Organ Procurement and Transplantation Network)</div>
                     <div class="step-nav">
-                        <button class="step-btn ghost" onclick="goStep(0)">Back</button>
-                        <button class="step-btn primary" onclick="goStep(2)">Next</button>
+                        <button class="step-btn ghost" data-go-step="0">Back</button>
+                        <button class="step-btn primary" data-go-step="2">Next</button>
                         <span class="step-counter">2 / 8</span>
                     </div>
                 </div>
@@ -116,8 +116,8 @@
                     <p>A center's proximity to active organ procurement corridors is a real logistical advantage. Distance from supply means more declined offers, longer <a href="https://optn.transplant.hrsa.gov/policies-bylaws/policies/" target="_blank" rel="noopener">cold ischemia times</a>, and lower transplant rates for patients at that program.</p>
                     <div class="data-source">Fatality data from <a href="https://www.nhtsa.gov" target="_blank" rel="noopener"><strong>NHTSA</strong></a> via <a href="https://wisqars.cdc.gov" target="_blank" rel="noopener"><strong>CDC WISQARS</strong></a></div>
                     <div class="step-nav">
-                        <button class="step-btn ghost" onclick="goStep(1)">Back</button>
-                        <button class="step-btn primary" onclick="goStep(3)">Next</button>
+                        <button class="step-btn ghost" data-go-step="1">Back</button>
+                        <button class="step-btn primary" data-go-step="3">Next</button>
                         <span class="step-counter">3 / 8</span>
                     </div>
                 </div>
@@ -131,8 +131,8 @@
                     <div class="highlight">We model this by <a href="docs-site/build/architecture/data-pipeline" target="_blank" rel="noopener">weighting organ-specific donor type rates per region</a>, not just raw fatality counts, so a center's score reflects the actual supply landscape for each organ type.</div>
                     <div class="data-source">Donor type data from <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener"><strong>OPTN</strong></a> &amp; <a href="https://www.srtr.org" target="_blank" rel="noopener"><strong>SRTR</strong></a> program-specific reports</div>
                     <div class="step-nav">
-                        <button class="step-btn ghost" onclick="goStep(2)">Back</button>
-                        <button class="step-btn primary" onclick="goStep(4)">Next</button>
+                        <button class="step-btn ghost" data-go-step="2">Back</button>
+                        <button class="step-btn primary" data-go-step="4">Next</button>
                         <span class="step-counter">4 / 8</span>
                     </div>
                 </div>
@@ -146,8 +146,8 @@
                     <p>When you layer supply patterns, registration rates, hospital volume, and wait times together, the picture of why where you list matters begins to sharpen into something unavoidable.</p>
                     <div class="data-source">Registration data from <a href="https://www.organdonor.gov" target="_blank" rel="noopener"><strong>HRSA</strong></a> / <a href="https://www.donatelife.net" target="_blank" rel="noopener"><strong>Donate Life America</strong></a></div>
                     <div class="step-nav">
-                        <button class="step-btn ghost" onclick="goStep(3)">Back</button>
-                        <button class="step-btn primary" onclick="goStep(5)">Next</button>
+                        <button class="step-btn ghost" data-go-step="3">Back</button>
+                        <button class="step-btn primary" data-go-step="5">Next</button>
                         <span class="step-counter">5 / 8</span>
                     </div>
                 </div>
@@ -160,8 +160,8 @@
                     <p>A 48-profile demographic matrix runs each center across blood types, age brackets, and sex to evaluate equity. We then compute a <a href="docs-site/build/theory/scoring-methodology" target="_blank" rel="noopener">Gini coefficient</a> per center, a standard measure of distributional inequity, to identify programs where certain patient profiles are systematically disadvantaged relative to others at the same institution.</p>
                     <div class="highlight"><a href="scenarios.html">What-if scenarios</a> let researchers adjust donor rates, OPO performance, and wait-time multipliers to model how <a href="https://unos.org" target="_blank" rel="noopener">UNOS</a> policy changes would shift transplant probabilities in real time.</div>
                     <div class="step-nav">
-                        <button class="step-btn ghost" onclick="goStep(4)">Back</button>
-                        <button class="step-btn primary" onclick="goStep(6)">Next</button>
+                        <button class="step-btn ghost" data-go-step="4">Back</button>
+                        <button class="step-btn primary" data-go-step="6">Next</button>
                         <span class="step-counter">6 / 8</span>
                     </div>
                 </div>
@@ -174,8 +174,8 @@
                     <p>The weights are not fixed. They adapt based on organ type, blood type, urgency tier, and clinical parameters. A heart patient's score weights heavily toward donor quality and center volume. A kidney patient's may weight more toward wait-time probability and equity. Larger, brighter markers on this map indicate higher composite scores for a default kidney profile.</p>
                     <div class="highlight">This is the kind of multi-factor analysis that well-resourced patients pay transplant consultants thousands of dollars to perform. We made it free and <a href="https://github.com/rivirside/TransPlan" target="_blank" rel="noopener">open source</a>.</div>
                     <div class="step-nav">
-                        <button class="step-btn ghost" onclick="goStep(5)">Back</button>
-                        <button class="step-btn primary" onclick="goStep(7)">Next</button>
+                        <button class="step-btn ghost" data-go-step="5">Back</button>
+                        <button class="step-btn primary" data-go-step="7">Next</button>
                         <span class="step-counter">7 / 8</span>
                     </div>
                 </div>
@@ -188,8 +188,8 @@
                     <p>For researchers, clinicians, and policy advocates, the <a href="data.html">Data Explorer</a> exposes every layer of this model as a toggleable map overlay with real values. Run what-if policy scenarios: what happens to national wait times if OPO performance improves in the South? How does a donor registration drive in a low-registration state affect equity? Export any layer as <a href="docs-site/build/api-reference/simulate" target="_blank" rel="noopener">CSV or JSON</a> for independent analysis.</p>
                     <div class="highlight">Free. Open source. No login required. Data refreshed weekly from 8 federal sources: <a href="https://www.srtr.org" target="_blank" rel="noopener">SRTR</a>, <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener">OPTN</a>, <a href="https://www.cdc.gov" target="_blank" rel="noopener">CDC</a>, <a href="https://www.medicare.gov/care-compare" target="_blank" rel="noopener">CMS</a>, <a href="https://aqs.epa.gov" target="_blank" rel="noopener">EPA</a>, <a href="https://www.bls.gov" target="_blank" rel="noopener">BLS</a>, <a href="https://www.nhtsa.gov" target="_blank" rel="noopener">NHTSA</a>, <a href="https://www.organdonor.gov" target="_blank" rel="noopener">HRSA</a>.</div>
                     <div class="step-nav">
-                        <button class="step-btn ghost" onclick="goStep(6)">Back</button>
-                        <button class="step-btn primary" onclick="document.querySelector('.post-story-cta').scrollIntoView({behavior:'smooth'})">Launch Simulator</button>
+                        <button class="step-btn ghost" data-go-step="6">Back</button>
+                        <button class="step-btn primary" data-scroll-to=".post-story-cta">Launch Simulator</button>
                         <span class="step-counter">8 / 8</span>
                     </div>
                 </div>
