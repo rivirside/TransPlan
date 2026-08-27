@@ -224,6 +224,41 @@
    * The endpoint has existed since #254 with NO frontend caller, so its
    * output was unreachable from the app.
    */
+  /**
+   * POST /weight-range — how much each center's rank moves across the app's
+   * own scoring-weight presets (#386 / L-082).
+   *
+   * Separate from rankStability on purpose: that one bootstraps the DATA and
+   * ranks by p24, holding the weights fixed. This one varies the weights,
+   * which L-082 measured to be the larger source of movement in the score
+   * ranking the table actually sorts by.
+   */
+  async function weightRange(formData) {
+    var base = getBaseUrl();
+    var controller = new AbortController();
+    // Four scoring passes; the first is slow because the spatial surfaces
+    // build lazily, so this gets a generous timeout.
+    var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS * 3);
+    try {
+      var response = await fetch(base + '/weight-range', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ patient: normalizeFormData(formData) }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (!response.ok) {
+        console.warn('TransPlan weight-range error:', response.status);
+        return null;
+      }
+      return await response.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') console.warn('TransPlan weight-range timeout');
+      return null;
+    }
+  }
+
   async function biasAudit(formData, maxCenters, seed) {
     var base = getBaseUrl();
     var controller = new AbortController();
@@ -761,6 +796,7 @@
     multiListing: multiListing,
     equityAnalysis: equityAnalysis,
     biasAudit: biasAudit,
+    weightRange: weightRange,
     whatIf: whatIf,
     policyScenarios: policyScenarios,
     policyScenario: policyScenario,

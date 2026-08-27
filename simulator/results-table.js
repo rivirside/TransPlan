@@ -52,6 +52,10 @@
   // "US" to avoid reading "rank 1" against "108-149" as a contradiction.
   var _rankIntervals = null;
   var _rankIntervalsNational = false;
+  // #386/L-082: rank span across the app's own weighting presets. A DIFFERENT
+  // and generally larger source of uncertainty than _rankIntervals, which
+  // bootstraps the data while holding the weights fixed.
+  var _weightRanges = null;
   var _sortAsc = true;
   var _expandedCode = null;    // currently expanded row center code
   var _selectedCodes = [];     // compare selection (max 3)
@@ -419,6 +423,19 @@
               iv.rank_lo + '\u2013' + iv.rank_hi;
             ivSpan.title = '90% NATIONAL rank interval given this center\'s observed SRTR cohort size \u2014 centers with overlapping intervals are statistically tied';
             td.appendChild(ivSpan);
+          }
+          var wr = _weightRanges && _weightRanges[row.code];
+          if (wr && wr.rank_max > wr.rank_min) {
+            var wrSpan = _createElement('span', 'rank-weight-range');
+            wrSpan.style.cssText = 'display:block;font-size:0.68rem;color:var(--warm-accent,#c97c4a);font-weight:normal;white-space:nowrap;';
+            wrSpan.textContent = 'w ' + wr.rank_min + '\u2013' + wr.rank_max;
+            wrSpan.title = 'Rank range across the four scoring-weight presets ' +
+              'this tool offers (Balanced, Clinical Focus, Speed Priority, ' +
+              'Quality of Life). This reflects how much the ordering depends ' +
+              'on which weighting you choose \u2014 a judgement about what ' +
+              'matters to you, not a measurement error. It is usually wider ' +
+              'than the sampling interval above, which holds the weights fixed.';
+            td.appendChild(wrSpan);
           }
           break;
 
@@ -899,6 +916,10 @@
     setRankIntervals: function (byCode, opts) {
       _rankIntervals = byCode || null;
       _rankIntervalsNational = !!(opts && opts.national);
+    },
+
+    setWeightRanges: function (byCode) {
+      _weightRanges = byCode || null;
     }
   };
 

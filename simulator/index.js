@@ -518,6 +518,24 @@
         renderMultiListingNote(null);
       }
 
+      // #386/L-082: annotate ranks with the span across the app's own weight
+      // presets. Background for the same reason as the bootstrap intervals
+      // below — it costs four extra scoring passes and the table should not
+      // wait for it.
+      if (window.TransPlanAPI.weightRange && window.SimResultsTable.setWeightRanges) {
+        window.TransPlanAPI.weightRange(formData)
+          .then(function (wr) {
+            if (!wr || !wr.centers) return;
+            var byCode = {};
+            wr.centers.forEach(function (c) {
+              byCode[c.center_code] = { rank_min: c.rank_min, rank_max: c.rank_max };
+            });
+            window.SimResultsTable.setWeightRanges(byCode);
+            refreshTable(false);
+          })
+          .catch(function (e) { console.warn('weight-range failed:', e.message); });
+      }
+
       // #313/#322: annotate ranks with bootstrap intervals (background —
       // the table renders immediately and gains intervals when they arrive)
       if (window.TransPlanAPI.rankStability && window.SimResultsTable.setRankIntervals) {
