@@ -376,12 +376,7 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"
             integrity="sha384-eXVCORTRlv4FUUgS/xmOyr66XBVraen8ATNLMESp92FKXLAMiKkerixTiBvXriZr" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" integrity="sha384-NrKB+u6Ts6AtkIhwPixiKTzgSKNblyhlk0Sohlgar9UHUBzai/sgnNNWWd291xqt" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-        window.TransPlanCDN = {
-            leaflet: typeof L !== 'undefined' && typeof L.map === 'function',
-            chartjs: typeof Chart !== 'undefined'
-        };
-    </script>
+    <script src="pages/simulator.page.js"></script>
 
     <!-- Core data / algorithm (needed for scoring weights) -->
     <script src="scoring-constants.js"></script>
@@ -407,9 +402,7 @@
     <script src="simulator/index.js"></script>
 
     <!-- Vercel Analytics -->
-    <script>
-        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    </script>
+    <script src="pages/vercel-analytics-stub.js"></script>
     <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

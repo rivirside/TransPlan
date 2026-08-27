@@ -293,34 +293,12 @@
 
     <div id="footer-placeholder"></div>
 
-    <script>
-    // Open the targeted FAQ entry when arriving at (or clicking to) a #fragment.
-    // Anchors point at the <details> element itself, which browsers do not auto-expand.
-    (function() {
-        'use strict';
-        function openFromHash() {
-            var hash = window.location.hash;
-            if (!hash || hash.length < 2) return;
-            var el = document.getElementById(hash.slice(1));
-            if (!el || el.tagName.toLowerCase() !== 'details') return;
-            el.open = true;
-            el.scrollIntoView({ block: 'start' });
-        }
-        window.addEventListener('hashchange', openFromHash);
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', openFromHash);
-        } else {
-            openFromHash();
-        }
-    })();
-    </script>
+    <script src="pages/faq.page.js"></script>
     <script src="components/site-chrome.js?v=8"></script>
     <script src="donation-banner.js"></script>
     <script src="session.js"></script>
     <!-- Vercel Analytics -->
-    <script>
-      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    </script>
+    <script src="pages/vercel-analytics-stub.js"></script>
     <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

@@ -406,119 +406,14 @@
     <div id="footer-placeholder"></div>
 
     <script src="components/site-chrome.js?v=8"></script>
-    <script>
-    // Editorial carousel
-    (function() {
-      var carousel = document.querySelector('.hero-pull-carousel');
-      if (!carousel) return;
-      var stack = carousel.querySelector('.pull-stack');
-      var cards = Array.from(carousel.querySelectorAll('.pull-card'));
-      var dots = Array.from(carousel.querySelectorAll('.pull-dot'));
-      var total = cards.length;
-      var current = 0;
-      var animating = false;
-      var DURATION = 360;
-
-      function sizeCards() {
-        cards.forEach(function(c) { c.style.height = 'auto'; });
-        var maxH = Math.max.apply(null, cards.map(function(c) { return c.scrollHeight; }));
-        cards.forEach(function(c) { c.style.height = maxH + 'px'; });
-        stack.style.height = (maxH + 36) + 'px';
-      }
-
-      function updateLayers() {
-        cards.forEach(function(c) { c.style.transition = 'none'; });
-        void stack.offsetWidth;
-        cards.forEach(function(card, i) {
-          var layer = (i - current + total) % total;
-          card.setAttribute('data-layer', Math.min(layer, 3));
-          card.style.removeProperty('transform');
-          card.style.removeProperty('opacity');
-          card.style.removeProperty('z-index');
-          card.style.removeProperty('pointer-events');
-        });
-        void stack.offsetWidth;
-        cards.forEach(function(c) { c.style.removeProperty('transition'); });
-        dots.forEach(function(dot, i) { dot.classList.toggle('active', i === current); });
-      }
-
-      function go(idx, dir) {
-        if (animating) return;
-        var newIdx = (idx + total) % total;
-        if (newIdx === current) return;
-        animating = true;
-        stack.style.overflow = 'hidden';
-        var outCard = cards[current];
-        var inCard = cards[newIdx];
-        var slideIn = dir === 'next' ? '105%' : '-105%';
-        var slideOut = dir === 'next' ? '-105%' : '105%';
-        inCard.style.transition = 'none';
-        inCard.style.transform = 'translateX(' + slideIn + ')';
-        inCard.style.opacity = '1';
-        inCard.style.zIndex = '5';
-        inCard.style.pointerEvents = 'none';
-        void inCard.offsetWidth;
-        var t = 'transform ' + DURATION + 'ms cubic-bezier(0.4,0,0.2,1)';
-        inCard.style.transition = t;
-        inCard.style.transform = 'translateX(0)';
-        outCard.style.transition = t;
-        outCard.style.transform = 'translateX(' + slideOut + ')';
-        outCard.style.zIndex = '4';
-        current = newIdx;
-        dots.forEach(function(dot, i) { dot.classList.toggle('active', i === current); });
-        setTimeout(function() {
-          stack.style.overflow = '';
-          animating = false;
-          updateLayers();
-        }, DURATION + 30);
-      }
-
-      carousel.querySelector('.carousel-prev').addEventListener('click', function() { go(current - 1, 'prev'); });
-      carousel.querySelector('.carousel-next').addEventListener('click', function() { go(current + 1, 'next'); });
-      dots.forEach(function(dot, i) {
-        dot.addEventListener('click', function() { go(i, i > current ? 'next' : 'prev'); });
-      });
-
-      var tx = 0;
-      carousel.addEventListener('touchstart', function(e) { tx = e.touches[0].clientX; }, { passive: true });
-      carousel.addEventListener('touchend', function(e) {
-        var dx = tx - e.changedTouches[0].clientX;
-        if (Math.abs(dx) > 40) go(dx > 0 ? current + 1 : current - 1, dx > 0 ? 'next' : 'prev');
-      });
-
-      updateLayers();
-      sizeCards();
-      window.addEventListener('resize', sizeCards);
-    })();
-    </script>
+    <script src="pages/index.page.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="landing-story.js"></script>
-    <script>
-    // Methods accordion — auto-close on open
-    (function() {
-      document.querySelectorAll('.acc-trigger').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var item = btn.closest('.acc-item');
-          var body = item.querySelector('.acc-body');
-          var isOpen = btn.getAttribute('aria-expanded') === 'true';
-          document.querySelectorAll('.acc-item').forEach(function(i) {
-            i.querySelector('.acc-trigger').setAttribute('aria-expanded', 'false');
-            i.querySelector('.acc-body').hidden = true;
-          });
-          if (!isOpen) {
-            btn.setAttribute('aria-expanded', 'true');
-            body.hidden = false;
-          }
-        });
-      });
-    })();
-    </script>
+    <script src="pages/index.page2.js"></script>
     <script src="donation-banner.js"></script>
     <script src="session.js"></script>
     <!-- Vercel Analytics -->
-    <script>
-      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    </script>
+    <script src="pages/vercel-analytics-stub.js"></script>
     <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
