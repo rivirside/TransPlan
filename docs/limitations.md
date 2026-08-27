@@ -662,6 +662,27 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-086: Centers with 3-patient cohorts are ranked above centers with 700
+- **Severity:** HIGH
+- **Status:** OPEN (documented 2026-08-27, #268 / #294)
+- **Category:** Statistical Validity / Presentation
+- **What:** per-center `mortality_factor` / `delisting_factor` are applied at face value regardless of how many patients they were estimated from. Because a tiny cohort produces an extreme rate estimate, and the factor is then clamped to the range 0.3–3.0, **every center with a cohort of 10 or fewer ends up pinned to a clamp bound**:
+
+| organ | at lower bound 0.3 | at upper bound 3.0 | % of all centers pinned | centers with n≤10 on a bound |
+|---|---|---|---|---|
+| kidney | 60 | 2 | 27% | **11/11 (100%)** |
+| liver | 39 | 8 | 32% | **12/12 (100%)** |
+| heart | 64 | 19 | 56% | **20/20 (100%)** |
+
+  A center pinned to 0.3 — the most favourable value available — then ranks near the top of the list. Applying empirical-Bayes shrinkage drops four centers out of kidney's top 10 with cohorts of **3, 5, 8 and 9**, promoting centers with **437, 706, 200 and 29**. Median cohort dropped 6, median added 318.
+
+- **Why it's a limitation:** this is the recommendation a patient reads. A program appearing in the top 10 because three of its patients did well is not a finding about that program, and nothing in the interface signals the cohort size behind it.
+- **The factors are demonstrably noise-driven at low volume:** deviation from 1.0 correlates *negatively* with cohort size for kidney (−0.344), liver (−0.340), heart (−0.288) and lung (−0.349), and small-n centers scatter more than large-n ones. Pancreas inverts (+0.427), but its median cohort is 3, so that split carries no information — it should not be shrunk on this evidence.
+- **Not visible in the usual aggregate check.** Shrinkage moves mean p24 by ≤0.005 and leaves rank correlation at 0.987–0.999, which reads as "nothing changes", while kidney's top-10 membership changes by 40%. This is the third instance of the same lesson in this project (L-082's weights, L-083's lung near-tie): **a high rank correlation is not evidence of a stable top**, and any sweep reporting only ρ can miss the thing users see.
+- **This qualifies #294's "passes" verdict.** That sweep perturbed the clamp bound by ±20% and reported worst ρ 0.973. It tested sensitivity to the bound's *value*, not the interaction between the clamp and *cohort size*, and aggregate ρ cannot show a top-10 reshuffle.
+- **What would help:** empirical-Bayes shrinkage toward the organ mean, with strength `k` estimated from the data rather than chosen — `Var(f) = tau² + c/n` solved on a small-n/large-n split gives k = 18.4 (kidney), 32.4 (liver), 22.4 (heart), 10.6 (lung). **Shrinkage must be applied before the clamp**, or the clamp re-pins the centers it is meant to rescue. Failing that, disclose the cohort size next to any center whose factor rests on a small n.
+- **Files:** `data/competing-risks-centers.json`, `backend/services/competing_risks.py` (`_center_adjustment`), `data/srtr-observed-rates.json` (the cohort sizes, already shipped)
+
 ### L-085: Blood type cannot change which center is recommended
 - **Severity:** HIGH
 - **Status:** OPEN (documented 2026-08-26, `docs/patient-sensitivity-report.md`)
