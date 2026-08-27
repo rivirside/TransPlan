@@ -138,6 +138,10 @@
     {
       "source": "/bias-audit",
       "destination": "/api/index"
+    },
+    {
+      "source": "/weight-range",
+      "destination": "/api/index"
     }
   ],
   "installCommand": "echo 'skip root npm install (dev-only deps; #343)'"
