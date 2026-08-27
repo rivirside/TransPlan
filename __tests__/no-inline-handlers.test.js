@@ -99,3 +99,50 @@ test('the landing stepper is wired declaratively', () => {
   expect(js).toMatch(/data-go-step/);
   expect(js).toMatch(/data-scroll-to/);
 });
+
+// ── inline <script> blocks (#250, the other half of the CSP blocker) ────────
+
+test('no HTML file contains an executable inline <script> block', () => {
+  // 26 of these existed: 15 copies of the Vercel analytics stub, plus 11
+  // page bodies totalling ~128KB. Together with the inline handlers they are
+  // what forces script-src 'unsafe-inline'.
+  //
+  // Non-executable blocks (JSON-LD and similar) are exempt — a CSP does not
+  // care about them.
+  const offenders = [];
+  for (const f of htmlFiles()) {
+    const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
+    const re = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
+    let m;
+    while ((m = re.exec(src)) !== null) {
+      const attrs = m[1], body = m[2];
+      if (/src=/i.test(attrs) || !body.trim()) continue;
+      if (/type=["'](?!text\/javascript|application\/javascript)/i.test(attrs)) continue;
+      offenders.push(`${f}: ${body.trim().slice(0, 60)}`);
+    }
+  }
+  expect(offenders).toEqual([]);
+});
+
+test('the analytics stub is shared, not copy-pasted per page', () => {
+  const stub = path.join(ROOT, 'pages', 'vercel-analytics-stub.js');
+  expect(fs.existsSync(stub)).toBe(true);
+  const users = htmlFiles().filter(f =>
+    fs.readFileSync(path.join(ROOT, f), 'utf8').includes('vercel-analytics-stub.js'));
+  expect(users.length).toBeGreaterThanOrEqual(15);
+});
+
+test('every referenced page-script exists and holds real code', () => {
+  // A header comment with no body would mean the extraction silently dropped
+  // the page's logic while still looking wired up.
+  for (const f of htmlFiles()) {
+    const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
+    for (const m of src.matchAll(/<script[^>]*src="(pages\/[^"]+)"/g)) {
+      const p = path.join(ROOT, m[1]);
+      expect(fs.existsSync(p)).toBe(true);
+      const body = fs.readFileSync(p, 'utf8');
+      const code = body.includes('*/') ? body.split('*/').slice(1).join('*/') : body;
+      expect(code.trim().length).toBeGreaterThan(10);
+    }
+  }
+});
