@@ -663,8 +663,12 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
 ### L-086: Centers with 3-patient cohorts are ranked above centers with 700
-- **Severity:** HIGH
-- **Status:** OPEN (documented 2026-08-27, #268 / #294)
+- **Severity:** MEDIUM (was HIGH — largely fixed 2026-08-27, see below)
+- **Status:** PARTIALLY FIXED (documented 2026-08-27, #268 / #294)
+- **Fixed for KIDNEY ONLY (#268).** Empirical-Bayes shrinkage now runs **before** the clamp in `scripts/parse-srtr-reports.py`, with prior strength estimated from the counts. Kidney centers pinned to a clamp bound went **60 → 0**, all 11 with n≤10 came off the bounds, and kidney's top 10 now holds **one** tiny-cohort center instead of four — KYKC (n=3), VACH (n=5), MIDV (n=8) and UTPC (n=9) are out; NYUC (n=437) and AZMC (n=706) are in.
+- **NOT fixed for the other five, and that is a measured result rather than a scoping choice.** In a controlled comparison — same code, only the factor data differing, all six organs recomputed in **both** arms — shrinkage *degraded* Spearman against observed SRTR transplant rates for **heart (−0.0342)** and **liver (−0.0119)**. It degraded them on the n≥10 subset too (−0.0222, −0.0103), so this is a genuine loss among well-measured centers, not the metric rewarding reproduction of small-cohort noise. Lung (73 centers), pancreas (80) and intestine (17) are not estimable at all. Those five retain the defect below — liver 12/12, heart 20/20, lung 12/12 centers still pinned — and `backend/tests/test_small_cohort_factors.py::test_excluded_organs_are_still_pinned` holds that line so the fix cannot be read as a clean sweep.
+- **Why kidney still matters most:** 232 centers and roughly 17,000 transplants a year, the largest population the tool serves.
+- **The remaining kidney case:** TXDC (n=9) still reaches the top 10. Shrinkage bounds how much a small cohort's *risk factor* can distort the ranking; it does not stop a center ranking well on the other components.
 - **Category:** Statistical Validity / Presentation
 - **What:** per-center `mortality_factor` / `delisting_factor` are applied at face value regardless of how many patients they were estimated from. Because a tiny cohort produces an extreme rate estimate, and the factor is then clamped to the range 0.3–3.0, **every center with a cohort of 10 or fewer ends up pinned to a clamp bound**:
 

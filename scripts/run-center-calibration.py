@@ -34,6 +34,8 @@ Usage:
 """
 import argparse
 import json
+
+from artifact_meta import stamped_meta
 import sys
 from pathlib import Path
 
@@ -222,6 +224,16 @@ def main():
         print(f"  Spearman rho (predicted wait vs observed tx-rate): "
               f"{b['rho']}  (p={_fmt_p(b['p_value'])})  [expect -]")
         out = JSON_OUT_DIR / f"center-calibration-{organ}.json"
+        # Stamp the artifact. #328 backfilled these because this generator
+        # never stamped its own output; regenerating then silently dropped the
+        # backfilled _meta and tripped validate-data. Stamping here closes the
+        # loop so a re-run no longer degrades the artifact.
+        res["_meta"] = stamped_meta(
+            script="scripts/run-center-calibration.py",
+            organ=organ,
+            n_iterations=res.get("n_iterations"),
+            seed=res.get("seed"),
+        )
         out.write_text(json.dumps(res, indent=2))
         print(f"  wrote {out.relative_to(REPO_ROOT)}")
 
