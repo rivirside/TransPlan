@@ -11,6 +11,7 @@ Rates sourced from data/competing-risks.json (OPTN/SRTR 2023 Annual Data Report)
 """
 import json
 import logging
+import math
 import threading
 from pathlib import Path
 
@@ -117,6 +118,85 @@ def get_patient_mortality_multiplier(
     return float(age_mult * urg_mult * meld_mult)
 
 
+def _probability_to_hazard(p: float) -> float:
+    """Annual event probability -> annual hazard rate: lambda = -ln(1 - p).
+
+    The shipped base values are probabilities (the fraction of a cohort dying
+    or being delisted within a year), not rates. `12 / p` is the right
+    conversion for a rate and the wrong one for a probability.
+    """
+    if p <= 0.0:
+        return 0.0
+    if p >= 1.0:
+        # A base probability of 1 is a data error, not a modelling choice; the
+        # caller's zero-rate path already logs and handles degenerate inputs.
+        return float("inf")
+    return -math.log(1.0 - p)
+
+
+def _hazard_to_probability(lam: float) -> float:
+    """Annual hazard rate -> annual event probability, always in [0, 1)."""
+    if lam <= 0.0:
+        return 0.0
+    return 1.0 - math.exp(-lam)
+
+
+def _mortality_multiplier(organ_data: dict, organ: str, urgency: int,
+                          meld: int | None, center_code: str) -> float:
+    """The combined hazard ratio applied to an organ's base mortality."""
+    urg_mult = organ_data.get("urgency_mortality_multipliers", {}).get(str(urgency), 1.0)
+
+    meld_mult = 1.0
+    if organ == "liver" and meld is not None:
+        meld_mult = _get_range_multiplier(meld, organ_data.get("meld_mortality_multipliers", {}))
+
+    # Location adjustment — center-code only (#293: 22-city fallback retired;
+    # no code -> neutral 1.0, surfaced via data_quality provenance)
+    city_mult = 1.0
+    if center_code:
+        city_mult = _center_adjustment(center_code, organ).get("mortality_factor", 1.0)
+
+    return urg_mult * meld_mult * city_mult
+
+
+def get_annual_mortality_hazard(
+    organ: str,
+    city: str = "",
+    urgency: int = 2,
+    meld: int | None = None,
+    center_code: str = "",
+) -> float:
+    """Annual waitlist-mortality HAZARD for this patient at this center (#259).
+
+    The multipliers are applied here rather than to the probability, because a
+    mortality "multiplier" is a hazard ratio in the literature these values
+    come from. Multiplying probabilities instead produced 1.1734 for liver at
+    MELD 40 / urgency 4 — not a probability at all.
+
+    This is what the simulation should consume: an exponential draw needs a
+    rate, and `rate_to_exponential_scale` divides 12 by whatever it is handed.
+    """
+    _ensure_loaded()
+    organ_data = _RISKS.get(organ)
+    if organ_data is None:
+        return _probability_to_hazard(0.08)  # fallback, as a hazard
+    lam0 = _probability_to_hazard(organ_data["annual_mortality_rate"])
+    return lam0 * _mortality_multiplier(organ_data, organ, urgency, meld, center_code)
+
+
+def get_annual_delisting_hazard(organ: str, city: str = "", center_code: str = "") -> float:
+    """Annual delisting HAZARD for this center (#259). See the mortality twin."""
+    _ensure_loaded()
+    organ_data = _RISKS.get(organ)
+    if organ_data is None:
+        return _probability_to_hazard(0.05)
+    lam0 = _probability_to_hazard(organ_data["annual_delisting_rate"])
+    city_mult = 1.0
+    if center_code:
+        city_mult = _center_adjustment(center_code, organ).get("delisting_factor", 1.0)
+    return lam0 * city_mult
+
+
 def get_annual_mortality_rate(
     organ: str,
     city: str = "",
@@ -157,7 +237,8 @@ def get_annual_mortality_rate(
         adj = _center_adjustment(center_code, organ)
         city_mult = adj.get("mortality_factor", 1.0)
 
-    return base * urg_mult * meld_mult * city_mult
+    return _hazard_to_probability(
+        _probability_to_hazard(base) * urg_mult * meld_mult * city_mult)
 
 
 def get_annual_delisting_rate(organ: str, city: str = "", center_code: str = "") -> float:
@@ -177,7 +258,7 @@ def get_annual_delisting_rate(organ: str, city: str = "", center_code: str = "")
         adj = _center_adjustment(center_code, organ)
         city_mult = adj.get("delisting_factor", 1.0)
 
-    return base * city_mult
+    return _hazard_to_probability(_probability_to_hazard(base) * city_mult)
 
 
 def get_organ_risks(organ: str) -> dict | None:
