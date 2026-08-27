@@ -36,7 +36,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | B5 | what_if.py city validation; travel-subsidy iterates 22 | #285 | ✅ 2026-08-25 |
 | B6 | MCMC city-level hierarchy (classic trace default) | #207 | ✅ full traces fitted; classic retires w/ #293 |
 | B7 | BBN "classic" 22-city mode selectable in web tier | #293 | ✅ removed from tiers/UI 2026-08-25 |
-| B8 | Silent 1.0-multiplier fallbacks in distributions/competing_risks | see G1 | visible via #300 on /simulate |
+| B8 | Silent 1.0-multiplier fallbacks in distributions/competing_risks | #227 / #228 | ✅ 2026-08-27 — per-row † marker; /score gained per-center `data_quality` and now renders its summary at all (computed since #219, never displayed) |
 | B9 | api-client.js sensitivity() 'Nashville' default | fix inline w/ A | ✅ 2026-08-24 |
 
 ## Phase E — Validation harness (before model work)

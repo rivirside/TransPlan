@@ -207,6 +207,16 @@ class CenterScore(BaseModel):
                     "hospitalQuality, geographic, healthDemographics, policy, socioeconomic"
     )
     rank: int = Field(..., ge=1)
+    data_quality: Optional[list[str]] = Field(
+        None,
+        description="Degraded-input tags for THIS center (#227), scoping-"
+                    "matched to what scoring actually reads: e.g. "
+                    "'wait_time_national_default', 'no_observed_outcomes', "
+                    "'acceptance_rate_national_default'. None/empty = every "
+                    "scoring input for this center is center-level. The "
+                    "response-level data_quality says how many centers are "
+                    "degraded; this says which."
+    )
 
 
 class ScoringResult(BaseModel):

@@ -39,6 +39,26 @@
     socioeconomic:        'Socioeconomic'
   };
 
+  /**
+   * #227/#228: plain-language names for the per-center degraded-input tags.
+   *
+   * ONLY row-level tags belong here. Organ-wide tags (a reconstructed
+   * national median, an uncalibrated pediatric model) are true of every row
+   * at once, so a badge on all of them would distinguish nothing — those have
+   * their own dedicated notes above the table. backend/tests/
+   * test_per_center_provenance.py pins this map against
+   * provenance.ROW_LEVEL_TAGS, and separately pins that the omitted tags
+   * really are center-invariant.
+   */
+  var DQ_LABELS = {
+    wait_time_national_default: 'wait times',
+    competing_risks_national_default: 'waitlist outcome risks',
+    no_observed_outcomes: 'observed transplant outcomes',
+    acceptance_rate_national_default: 'organ offer acceptance',
+    no_trend_series: 'year-over-year trends',
+    pediatric_small_cohort: 'pediatric cohort size'
+  };
+
   // ── Module state ───────────────────────────────────────────────────────────
 
   var _container = null;
@@ -226,6 +246,10 @@
       var sim = simLookup[sc.code] || simLookup[sc.name] || null;
       return {
         code:     sc.code,
+        // Union of both engines' tags (#227): scoring reports what the SCORE
+        // rests on, simulation what the probabilities rest on, and the two
+        // families barely overlap. A row shows whichever applies to it.
+        dataQuality: _unionTags(sc.data_quality, sim && sim.data_quality),
         name:     sc.name,
         state:    sc.state,
         stateAbbr: sc.state_abbr || '',
@@ -246,6 +270,43 @@
         trends:        sim ? sim.trends : null
       };
     });
+  }
+
+  /** Merge two tag arrays, dropping duplicates and anything unlabelable. */
+  function _unionTags(a, b) {
+    var out = [];
+    [a, b].forEach(function (list) {
+      if (!list || !list.length) return;
+      list.forEach(function (tag) {
+        // Unknown or organ-wide tags are skipped, not rendered raw: a badge
+        // reading "wait_median_reconstructed" would be worse than none.
+        if (!DQ_LABELS[tag]) return;
+        if (out.indexOf(tag) === -1) out.push(tag);
+      });
+    });
+    return out;
+  }
+
+  /**
+   * Build the per-row provenance marker (#227/#228).
+   *
+   * The aggregate note above the table already says HOW MANY centers use
+   * national defaults. For intestine that is 16 of 21, which tells a reader
+   * nothing about the ten rows they are actually reading. This says which.
+   */
+  function _buildDataQualityFlag(tags) {
+    var flag = _createElement('span', 'rt-dq-flag');
+    flag.textContent = '†';   // dagger
+    var names = tags.map(function (t) { return DQ_LABELS[t]; });
+    var what = names.length === 1
+      ? names[0]
+      : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+    var msg = 'Not center-specific: this center has no published SRTR data ' +
+      'for ' + what + ', so the national average is used instead. Its ' +
+      'position here rests partly on that substitute.';
+    flag.title = msg;
+    flag.setAttribute('aria-label', msg);
+    return flag;
   }
 
   // ── Column helpers ─────────────────────────────────────────────────────────
@@ -477,6 +538,9 @@
         case 'center':
           td.className = 'city-cell';
           td.textContent = row.name;
+          if (row.dataQuality && row.dataQuality.length) {
+            td.appendChild(_buildDataQualityFlag(row.dataQuality));
+          }
           var stateSpan = _createElement('span', 'city-state');
           stateSpan.textContent = row.stateAbbr || row.state;
           td.appendChild(stateSpan);

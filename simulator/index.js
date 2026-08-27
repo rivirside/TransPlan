@@ -236,9 +236,23 @@
       vintageText = ' Source: ' + vintage.srtr_source +
         ' (reflects that release\'s cohorts, not real-time allocation).';
     }
-    var degraded = dq.centers_total - (dq.fully_center_level || 0);
-    if (degraded === 0) {
+    // #227: count only what the table can actually mark. The older
+    // centers_total - fully_center_level also counts organ-wide tags (a
+    // reconstructed national median applies to every pancreas center at
+    // once), which have their own note — using it here would have promised
+    // "99 of 99 centers are marked †" against 38 daggers.
+    var degraded = (dq.row_level_degraded != null)
+      ? dq.row_level_degraded
+      : dq.centers_total - (dq.fully_center_level || 0);
+    var allCenterLevel = (dq.fully_center_level || 0) === dq.centers_total;
+    if (allCenterLevel) {
       el.textContent = 'Data: center-level SRTR inputs for all ' + dq.centers_total + ' centers.' + vintageText;
+    } else if (degraded === 0) {
+      // Nothing to mark per row, but not "all center-level" either: what
+      // remains is organ-wide and disclosed by its own note. Saying "all"
+      // here would overclaim.
+      el.textContent = 'Data: center-level SRTR inputs for all ' + dq.centers_total +
+        ' centers, subject to the organ-level caveats noted here.' + vintageText;
     } else {
       // Render every family the backend reports (#340: extensible — new tag
       // families appear here without a frontend change)
@@ -256,8 +270,12 @@
           parts.push(bad + ' ' + (labels[key] || key.replace(/_/g, ' ')));
         }
       });
+      // #227: the count alone cannot be traced to a row — for intestine it is
+      // 16 of 21, which says nothing about the ten rows being read. The
+      // per-row dagger names the affected centers; this is its key.
       el.textContent = 'Data note: ' + degraded + ' of ' + dq.centers_total +
-        ' centers use partial national-default inputs (' + parts.join(', ') + ').' + vintageText;
+        ' centers use partial national-default inputs (' + parts.join(', ') +
+        '). Those centers are marked † in the table.' + vintageText;
     }
     el.style.display = '';
   }
@@ -453,6 +471,10 @@
         return;
       }
 
+      // /score has returned a provenance summary since #219, but only the
+      // simulate path ever rendered it — so the button most people press
+      // first computed the disclosure and discarded it (#227).
+      renderDataQualityNote(result.data_quality, result.data_vintage);
       refreshTable(false);
       refreshMap();
       renderContinueButtons(formData);

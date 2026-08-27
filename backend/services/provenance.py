@@ -47,6 +47,23 @@ FAMILIES = {
 
 ALL_TAGS = list(FAMILIES)
 
+# Tags whose detector ignores center_code — they are properties of the ORGAN,
+# so every center in a run carries them or none does. Surfaces that mark
+# individual rows must skip these: a badge on all 99 pancreas rows says
+# nothing about which row differs, and both already have their own dedicated
+# note (#227/#228). test_provenance_row_tags pins the center-invariance so a
+# future detector cannot quietly join this set by becoming per-center.
+ORGAN_LEVEL_TAGS = (TAG_MEDIAN_RECONSTRUCTED, TAG_PEDIATRIC_UNCALIBRATED)
+
+# The complement: tags that can differ from one center to the next, and are
+# therefore worth marking per row.
+ROW_LEVEL_TAGS = tuple(t for t in ALL_TAGS if t not in ORGAN_LEVEL_TAGS)
+
+# Competing risks and trend series are not scoring inputs (#219). Shared by
+# scoring_tags and scoring_summary so the per-row tags and the summary they
+# roll up into cannot disagree about what counts.
+SCORING_EXCLUDE = (TAG_RISK, TAG_TRENDS)
+
 
 def _check_wait(data, organ: str, code: str) -> bool:
     wt = data.center_wait_times.get("center_wait_time_factors", {}).get(code, {})
@@ -167,6 +184,15 @@ def summarize(tag_lists: list[list[str]], exclude: tuple[str, ...] = ()) -> dict
     relevant = [t for t in ALL_TAGS if t not in exclude]
     out["fully_center_level"] = sum(
         1 for t in tag_lists if not any(tag in t for tag in relevant))
+    # How many centers a per-row marker can actually point at (#227). This is
+    # NOT centers_total - fully_center_level: that difference also counts the
+    # organ-wide tags, which are true of every center at once and are
+    # disclosed by their own note instead. For pancreas the two differ 99 vs
+    # 38, so a headline built from the difference would promise 99 daggers
+    # and render 38.
+    row_relevant = [t for t in ROW_LEVEL_TAGS if t not in exclude]
+    out["row_level_degraded"] = sum(
+        1 for t in tag_lists if any(tag in t for tag in row_relevant))
     return out
 
 
@@ -178,13 +204,34 @@ def summarize_cities(city_results: list, exclude: tuple[str, ...] = ()) -> dict 
     return summarize([c.data_quality or [] for c in city_results], exclude=exclude)
 
 
+def scoring_tags(organ: str, center_codes: list[str]) -> list[list[str]]:
+    """Per-center degraded-input tags for /score, in the order given (#227).
+
+    The response-level summary says "6 of 233 centers use national defaults"
+    but not WHICH — so a reader cannot tell whether the degraded center is the
+    one ranked first or the one ranked 200th. Measured 2026-08-27: for pancreas
+    that is 10 of the top 10, and for intestine 6 of the top 10.
+    """
+    return [[t for t in center_data_quality(organ, code)
+             if t not in SCORING_EXCLUDE]
+            for code in center_codes]
+
+
 def scoring_summary(organ: str, center_codes: list[str],
-                    spatial_layers_unavailable: list[str] | None = None) -> dict | None:
+                    spatial_layers_unavailable: list[str] | None = None,
+                    tag_lists: list[list[str]] | None = None) -> dict | None:
     """Summary for /score (#219): competing risks and trend series are not
-    scoring inputs, and scoring adds the spatial-layer fallback list."""
+    scoring inputs, and scoring adds the spatial-layer fallback list.
+
+    Callers that already built the per-center tags (the router needs them for
+    CenterScore.data_quality) pass them in rather than paying for a second
+    248-center sweep. Pre-filtered lists are fine: `summarize` skips excluded
+    families either way.
+    """
     if not center_codes:
         return None
-    tag_lists = [center_data_quality(organ, code) for code in center_codes]
-    out = summarize(tag_lists, exclude=(TAG_RISK, TAG_TRENDS))
+    if tag_lists is None:
+        tag_lists = [center_data_quality(organ, code) for code in center_codes]
+    out = summarize(tag_lists, exclude=SCORING_EXCLUDE)
     out["spatial_layers_unavailable"] = spatial_layers_unavailable or []
     return out
