@@ -672,7 +672,10 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Not covered by the uncertainty already reported:** the rank intervals (#313) bootstrap the *probability* estimates and rank by `p24` — a different quantity from the composite score, and an interval that varies the data while holding the weights fixed. **The score ranking carries no interval at all.**
 - **What this does NOT say:** that the shipped weights are wrong. There is no ground truth — "which center is best for me" is a preference, not a fact, and a weighted composite is a reasonable way to express one. Sourcing the magnitudes would help but cannot resolve it: no literature fixes how one candidate should trade program quality against travel distance.
 - **What would help:** (1) make the dependence visible — the weights are already user-adjustable, so the ranking should say it reflects a particular weighting and ideally show how much it moves under others; (2) report a weight-uncertainty interval alongside the sampling one. Neither is "pick better numbers".
-- **Files:** `backend/services/scoring.py` (`DEFAULT_WEIGHTS`), `docs/scoring-weight-sensitivity-report.md`, register row SCORE-01
+- **Partially mitigated (2026-08-26, #386):** (1) is now shipped. `POST /weight-range` re-scores every center under the app's own four published presets and the results table annotates each row with its rank span, so the dependence is visible at the point of use rather than only in this document. On kidney the median center's span is 34 positions (max 107), while the top of the ranking is genuinely stable — which is the useful distinction a candidate needs.
+
+  **This does not close the limitation.** Four presets are a lower bound on the disagreement, not an interval: they are four points chosen by the same authors as the shipped weights, so they under-sample the space that produced the 0.624 worst-case above. (2) — a principled weight-uncertainty interval on the composite score — remains open, and the score ranking still carries no interval of its own.
+- **Files:** `backend/services/scoring.py` (`DEFAULT_WEIGHTS`), `backend/services/weight_range.py`, `docs/scoring-weight-sensitivity-report.md`, register row SCORE-01
 
 ### L-078: PELD is mapped onto MELD's priority thresholds without a published equivalence
 - **Severity:** MEDIUM
