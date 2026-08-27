@@ -1,5 +1,6 @@
 """Tests for services/monte_carlo.py — Monte Carlo simulation engine."""
 import inspect
+import math
 
 import numpy as np
 import pytest
@@ -189,23 +190,103 @@ class TestClinicalSanity:
 # -- Stability tests --
 
 class TestStability:
-    def test_two_runs_within_tolerance(self, data, kidney_o_plus):
-        """Two runs with same inputs should produce results within 15% (relative) or 0.03 (absolute)."""
-        result_a = simulate(kidney_o_plus, n_iterations=2000)
-        result_b = simulate(kidney_o_plus, n_iterations=2000)
+    """Two independent runs must agree within Monte Carlo sampling noise (#391).
 
-        # Compare 24mo probability for each center
+    The tolerance is DERIVED from that noise rather than hand-set.
+    `p_transplant_24mo` is a proportion over `n_iterations` draws, so the
+    difference of two independent estimates has
+
+        SE = sqrt(2 * p * (1 - p) / n)
+
+    That form was verified, not assumed: over 20 independent runs x 233
+    centers, the empirical SD divided by the binomial SD is 0.995 on average
+    (median 0.992), with a tail to 1.35 — so the noise is binomial and a
+    modest inflation covers the tail.
+
+    `Z = 4.6` is a Bonferroni bound: ~233 centers are checked per run, so
+    holding the family-wise false-failure rate near 1e-3 needs a per-center
+    alpha of ~4.3e-6.
+
+    The previous version asserted two hand-set constants (20% relative OR 0.05
+    absolute) and its docstring claimed a third pair (15% / 0.03). It sat
+    directly on top of the data — the typical worst-case difference across
+    centers is 0.0445 against a 0.05 tolerance, with p95 at 0.0515, already
+    over — so it passed or failed depending on whatever global RNG state the
+    preceding tests happened to leave.
+    """
+
+    Z = 4.6
+    DISPERSION = 1.35
+
+    @classmethod
+    def tolerance(cls, p: float, n: int) -> float:
+        return cls.Z * cls.DISPERSION * math.sqrt(2.0 * p * (1.0 - p) / n)
+
+    def test_two_runs_within_tolerance(self, data, kidney_o_plus):
+        """Two independent runs agree within sampling noise.
+
+        Seeded so the outcome does not depend on collection order — but with
+        two DIFFERENT seeds, so this still compares genuinely independent runs
+        rather than degenerating into an assertion of determinism.
+        """
+        n = 2000
+        result_a = simulate(kidney_o_plus, n_iterations=n, seed=20260827)
+        result_b = simulate(kidney_o_plus, n_iterations=n, seed=20260828)
+
         probs_a = {c.center_code: c.p_transplant_24mo for c in result_a.cities}
         probs_b = {c.center_code: c.p_transplant_24mo for c in result_b.cities}
 
-        for code in probs_a:
-            if code not in probs_b:
+        assert probs_a != probs_b, (
+            "the two runs are identical — the seeds are no longer independent, "
+            "so this asserts determinism rather than stability"
+        )
+
+        for code, a in probs_a.items():
+            b = probs_b.get(code)
+            if b is None or a <= 0.10:
                 continue
-            a, b = probs_a[code], probs_b[code]
-            if a > 0.10:  # skip low probabilities (high relative noise at small P)
-                assert abs(a - b) / a < 0.20 or abs(a - b) < 0.05, (
-                    f"{code}: {a:.4f} vs {b:.4f} — unstable"
-                )
+            tol = self.tolerance(a, n)
+            assert abs(a - b) <= tol, (
+                f"{code}: {a:.4f} vs {b:.4f} — differ by {abs(a - b):.4f}, "
+                f"beyond the {tol:.4f} sampling-noise bound at p={a:.3f}, n={n}"
+            )
+
+    def test_tolerance_is_the_binomial_form(self):
+        """The tolerance must stay derived, not drift back to a hand-set number."""
+        n, p = 2000, 0.4
+        expected = self.Z * self.DISPERSION * math.sqrt(2.0 * p * (1 - p) / n)
+        assert self.tolerance(p, n) == pytest.approx(expected)
+        # It must scale with 1/sqrt(n): four times the draws, half the bound.
+        assert self.tolerance(p, 4 * n) == pytest.approx(self.tolerance(p, n) / 2)
+
+    def test_tolerance_is_neither_vacuous_nor_razor_thin(self):
+        """Both failure modes of a hand-set tolerance, pinned.
+
+        The rule this replaced sat at ~89% of its own bound in the typical
+        case (p95 already over it), which is why it flaked. A bound that is
+        merely generous would be the opposite defect — it would pass anything.
+        Measured across 25 arbitrary seed pairs, the worst observed difference
+        is 61% of this bound.
+        """
+        n = 2000
+        # Wide enough to leave headroom over real sampling noise...
+        assert self.tolerance(0.5, n) > 4 * math.sqrt(2 * 0.5 * 0.5 / n)
+        # ...but still a small probability difference, not a blank cheque.
+        assert self.tolerance(0.5, n) < 0.15
+        assert self.tolerance(0.12, n) < 0.08
+
+    def test_tolerance_would_reject_a_genuinely_noisy_run(self):
+        """Toothiness check, done analytically so it costs nothing.
+
+        A 60-iteration run has ~5.8x the sampling SD of a 2000-iteration one,
+        so its typical deviation must exceed the n=2000 bound — otherwise this
+        assertion could never fail and the stability test would be decoration.
+        Confirmed empirically too: comparing a 2000-iteration run against a
+        60-iteration one flags 27 centers.
+        """
+        p = 0.4
+        sd_small = math.sqrt(p * (1 - p) / 60)
+        assert 2 * sd_small > self.tolerance(p, 2000)
 
     def test_more_iterations_tighter_ci(self, data, kidney_o_plus):
         """More iterations should produce a tighter confidence interval."""
