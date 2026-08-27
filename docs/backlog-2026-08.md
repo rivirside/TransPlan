@@ -57,15 +57,15 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | # | Item | Issue | Status |
 |---|------|-------|--------|
 | F1 | MCMC 248-center refit | #207 | ✅ 2026-08-25 |
-| F2 | Continuous BBN latents (replace terciles) | #236 | |
+| F2 | Continuous BBN latents (replace terciles) | #236 | ✅ 2026-08-27 — accuracy case closed by measurement (all three latents inert; MortalityRisk is off the p24 path entirely). #236 retitled and stays open for the code-simplicity case only|
 | F3 | Patient-specific competing-risk split (L-072) | #238 | ✅ 2026-08-26 — #238 closed|
 | F4 | log_sigma clamp ceiling 1.2 (SURV-13/DATA-07) | #274 | ✅ 2026-08-26 — measured, not built: raising the ceiling degrades calibration on every assessable organ (kidney 0.8882→0.8843). DATA-07 heuristic_clamp→data_derived|
 | F5 | Clamp-bound cluster: 538+ values on bounds (DATA-24/25) | #294 | ✅ 2026-08-26 — measured: worst ρ 0.973 across the ±20% sweep (passes) |
 | F6 | Hierarchical partial pooling (needs F7) | #268 | ✅ 2026-08-27 — #402: EB shrinkage before the clamp, KIDNEY ONLY (pinned 60→0, top-10 tiny cohorts 4→1). heart/liver excluded by measurement (degrades calibration −0.0342/−0.0119, also on n≥10); lung/pancreas/intestine not estimable|
-| F7 | Per-center transplant volume data | #275 | |
+| F7 | Per-center transplant volume data | #275 | ✅ 2026-08-27 — premise was wrong: per-center cohort sizes already ship in srtr-observed-rates.json, and #268 shipped on that data (#402). #275 retitled and stays open for #267's capacity term, which is blocked on drive times (#323)|
 | F8 | Kriging/GP interpolation with prediction variance | #266 | ✅ 2026-08-26 (#370 exposed kriging in Explorer w/ per-point GP variance + extrapolation flag; projection clause measured-and-rejected, EQSP-34) |
 | F9 | 2SFCA + travel-time isochrones | #267 | demand side unblocked 2026-08-26 (county population, #336); drive-time half blocked on a self-hosted OSRM build |
-| F10 | Exponential hazard / probability-as-rate (SURV-01/25) | #259 | partial — probability-as-rate FIXED (multipliers now applied in hazard space; also fixed liver p=1.1734 > 1). Weibull half NOT done and #259's shape>1 is contradicted by #297: hazard FALLS with time for 4 of 6 organs |
+| F10 | Exponential hazard / probability-as-rate (SURV-01/25) | #259 | ✅ 2026-08-27 — probability-as-rate FIXED in hazard space (#397), also fixing liver p=1.1734>1. #259 stays open for the Weibull half, which must be per-organ with the shape FITTED — #297 measured the hazard falling for 4 of 6 organs |
 | F11 | CPT-parameter MC credible intervals | #296 | |
 | F12 | BBN Step 6: regress ds/wait-delist multipliers from data | #297 | ✅ 2026-08-26 — measured: hazard FALLS with waiting time for 4 of 6 organs, so the shipped multipliers have the wrong sign, not magnitude (L-081). Replacement tracked as #380|
 | F13 | Donor-supply discretization probabilities | #213 | ✅ 2026-08-26 — measured: swung 90/9/1→50/35/15, worst ρ 0.9987; not load-bearing. BBN-01 medium→low|
@@ -106,11 +106,11 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | G1 | `data_quality` provenance field in API responses (visible fallbacks) | #300 (refs #212/#227/#228) | ✅ 2026-08-25 (simulate/what-if/sensitivity + UI); #212/#227/#228 stay open for the remaining fallback sites |
 | G2 | Inconsistent fallback patterns / error handling | #219 / #220 | ✅ major fixes + /score provenance + spatial/tier consistency; residue documented on issues |
 | G3 | Synthetic-baseline guard (GEN-13/14/15) | #300 | ✅ #300 closed; covered by _write_guarded + validate-data organ-block errors |
-| G4 | OPO-level cause-of-death proportions | #301 | |
+| G4 | OPO-level cause-of-death proportions | #301 | ✅ 2026-08-27 — #301 closed by measurement: even 10× amplification leaves top-10 at 9/10, and 60 OPOs vs 51 states cannot deliver it|
 | G5 | Data vintage refresh (CDC 2017, donor reg 2018) | #302 | |
 | G6 | LAS → CAS migration (lung allocation, 2023) | #303 | ✅ 2026-08-26 — `cas` field ships and is exposed in the simulator and the shared patient form (#370); LAS retained as documented legacy |
 | G7 | Tier caps on /score, /score/explain | #249 | ✅ 2026-08-25 |
-| G8 | Security headers + exact pins | #250 | |
+| G8 | Security headers + exact pins | #250 | ✅ 2026-08-27 — headers done (#406/#407/#408/#409): strict CSP with no script-src 'unsafe-inline', Permissions-Policy, all 8 CDN resources pinned + SRI. #250 stays open for the Python requirements.txt pins only|
 | G9 | Circular import bbn_parameterizer ↔ bayesian_network (L-070) | #298 | ✅ 2026-08-26 — #298 closed|
 
 ## Phase H — Assumption justification (triaged by E2 sweep)
