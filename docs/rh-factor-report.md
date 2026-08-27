@@ -2,7 +2,8 @@
 
 **Date:** 2026-08-27
 **Trigger:** #180, "Find My Centers: add Rh factor (positive/negative) to blood type input"
-**Verdict:** the request is already implemented, and its premise is inverted — the model does not under-use Rh, it over-uses it, via an unsourced hand-set constant.
+**Verdict:** the request is already implemented, and its premise is inverted — the model did not under-use Rh, it over-used it, via an unsourced hand-set constant.
+**Status:** measured and disclosed in #414; **fixed in #413** (2026-08-27). The tense below is left as written at the time of measurement; see the closing section for what changed.
 
 ---
 
@@ -114,3 +115,53 @@ The clean implementation is to canonicalize blood type to its ABO group **once, 
 Keep all eight options in the UI. Patients know their full blood type, and being told plainly that Rh does not affect organ allocation is more useful than being asked for it and silently penalized for the answer.
 
 Tracked as **L-088**; the removal is filed separately because it changes patient-visible estimates across six organs and three inference engines.
+
+---
+
+## What actually shipped (#413)
+
+Blood type is canonicalized to its ABO group at every model lookup, through
+`backend/services/blood_type.py::model_key`. Five call sites changed: the wait
+multipliers, the compatibility score, the `?explain=true` provenance view, the
+BBN CPT axis, and the MCMC fitted-effect index.
+
+The eight-entry tables remain on disk. They are the record of what was there,
+and if Rh-stratified evidence ever appears the revert is one line. Nothing
+reads their Rh half.
+
+**Rh-positive numbers are unchanged.** The fix removes a penalty rather than
+adding one, so no candidate's estimate got worse: kidney `O-` moves from 38.36
+back to 35.62 months, `O+` stays at 35.62.
+
+The BBN axis deliberately keeps 8 levels — the CPT shape is part of the fitted
+network — so the collapse shows up in the values, not the dimensions.
+
+**The failure mode worth guarding was the opposite one.** Making Rh inert by
+accidentally making blood type inert would satisfy every "O+ equals O-"
+assertion while destroying the model. Every test is therefore paired: `O+ ==
+O-` *and* `O != AB`, at the multiplier, score, Monte Carlo and BBN levels.
+Over-collapsing `model_key` to a single group fails 12 of them.
+
+### One second-order effect, measured rather than waved through
+
+The BBN golden baseline moved, which is surprising because all three of its
+reference patients are Rh-**positive**. The cause is a real coupling: the
+DonorSupply terciles are computed over `scores[organ, :, :].flatten()` — the
+whole blood-type x region grid — so removing four fabricated rows changes the
+distribution the 33.3/66.7 percentiles are drawn from, and cells sitting near
+a boundary get reclassified.
+
+Measured before the baseline was regenerated:
+
+| snapshot | centers with changed p24 | max abs delta | top-5 |
+|---|---|---|---|
+| kidney (state, full) | 0 / 233 | — | unchanged |
+| liver (state) | 0 / 148 | — | unchanged |
+| liver (full) | 73 / 148 | 0.0328 | rank 5: MACH -> AZMC |
+| lung (state) | 4 / 74 | 0.0031 | unchanged |
+| lung (full) | 4 / 74 | 0.0071 | rank 5: MNUM -> AZSJ |
+
+Threshold effects are discontinuous, which is why kidney does not move at all
+and liver moves for half its centers. The effect is a consequence of the
+tercile design (#59), not of the Rh change per se — the Rh change is simply
+the first thing to alter the composition of that grid.

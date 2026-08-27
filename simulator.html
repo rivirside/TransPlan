@@ -98,6 +98,10 @@
                                     <option value="AB+">AB+</option>
                                     <option value="AB-">AB-</option>
                                 </select>
+                                <!-- #413/L-088: without this, O+ and O- returning
+                                     identical numbers reads as a bug rather than
+                                     as the model being correct. -->
+                                <small class="field-help">Only the ABO group (O, A, B, AB) affects these estimates. US organ allocation is matched on ABO; Rh factor is not used, so O+ and O&#8722; give the same result.</small>
                             </div>
 
                             <div class="form-group">

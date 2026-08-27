@@ -21,6 +21,7 @@ import logging
 
 import numpy as np
 
+from services.blood_type import model_key
 from services.data_loader import get_data
 
 logger = logging.getLogger(__name__)
@@ -272,7 +273,9 @@ def build_donor_supply_cpt(regions=None, n_regions=None, center_map=None,
         bt_mults = organ_data.get("blood_type_multipliers", {})
 
         for j, bt in enumerate(BLOOD_TYPES):
-            bt_mult = bt_mults.get(bt, 1.0)
+            # #413/L-088: the axis keeps 8 levels (the CPT shape is part of
+            # the fitted network), but O+ and O- now resolve to one value.
+            bt_mult = bt_mults.get(model_key(bt), 1.0)
             # Invert: higher bt_mult = longer wait = lower supply
             bt_factor = 1.0 / bt_mult if bt_mult > 0 else 1.0
 
@@ -382,7 +385,8 @@ def build_wait_category_cpt(regions=None, n_regions=None, center_map=None,
         sigma = organ_data.get("log_sigma", 1.0)
         bt_mults = organ_data.get("blood_type_multipliers", {})
 
-        bt_arr = np.array([bt_mults.get(bt, 1.0) for bt in BLOOD_TYPES])  # (n_b,)
+        bt_arr = np.array([bt_mults.get(model_key(bt), 1.0)  # (n_b,) #413
+                           for bt in BLOOD_TYPES])
         region_arr = np.empty(n_r)
         for k, region in enumerate(regions):
             region_arr[k] = _region_factor(region, organ, granularity, center_map, "wait_time_factor")

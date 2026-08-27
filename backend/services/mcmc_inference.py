@@ -28,6 +28,7 @@ import scipy.stats
 
 from config import COPULA_THETA, DATA_DIR, ORGAN_COPULA_THETA, SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY
 from models.schemas import CityProbability, PatientProfile, SimulationResult
+from services.blood_type import model_key
 from services.copula import draw_correlated_competing_risks
 from services.mcmc_survival import (
     BLOOD_TYPES,
@@ -282,7 +283,11 @@ def simulate_mcmc(
     center_city_map = get_center_to_region_map(actual_g)
 
     # Map blood type and urgency to indices
-    bt_idx = BLOOD_TYPES.index(patient.blood_type) if patient.blood_type in BLOOD_TYPES else 2  # A+ fallback
+    # #413/L-088: an Rh-negative patient takes their ABO group's fitted
+    # effect, so O- and O+ share one posterior rather than two that differ
+    # only by an unsourced offset in the data they were fitted from.
+    _bt = model_key(patient.blood_type)
+    bt_idx = BLOOD_TYPES.index(_bt) if _bt in BLOOD_TYPES else 2  # A+ fallback
     urg_idx = URGENCY_LEVELS.index(patient.urgency) if patient.urgency in URGENCY_LEVELS else 1  # urgency 2 fallback
 
     # Clinical multiplier (deterministic, not in hierarchical model)
