@@ -235,7 +235,7 @@
             borderWidth: 0
           },
           {
-            label: 'Delisted',
+            label: 'Removed (other)',
             data: delistingData,
             backgroundColor: RISK_COLORS.delisting,
             borderWidth: 0

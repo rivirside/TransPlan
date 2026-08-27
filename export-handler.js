@@ -89,7 +89,7 @@
       'Rank', 'City', 'State',
       'P(Transplant 6mo)', 'P(Transplant 12mo)', 'P(Transplant 24mo)', 'P(Transplant 36mo)',
       'Median Wait (months)', 'CI 95% Low', 'CI 95% High',
-      'P(Transplant)', 'P(Mortality)', 'P(Delisting)', 'P(Still Waiting)',
+      'P(Transplant)', 'P(Mortality)', 'P(Removed other)', 'P(Still Waiting)',
       '1yr Graft Survival', '1yr Patient Survival', 'Overall Success', 'Performance Rating',
       'Trend Direction'
     ];

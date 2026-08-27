@@ -611,8 +611,14 @@ def _observed_vector_12mo(organ: str, region: str, center_map: dict) -> tuple[np
 
     Q6 note: "removed-other" = SRTR REMDET (worsened) + REMREC (improved) +
     REFTX (refused). All three are genuine non-transplant exits, so they belong
-    in the competing-risks denominator; the UI labels this state "removed
-    without transplant (other causes)" rather than implying it is all negative.
+    in the competing-risks denominator.
+
+    The UI labels this "Removed (other)", with a tooltip naming all three
+    causes (F16). It said "Delisted" until 2026-08-27 — which told a candidate
+    the whole probability was a bad outcome when part of it is "your condition
+    improved". This docstring asserted the relabel had happened before it
+    actually had; the field name stays `delisting` because it is an API
+    contract, but nothing a user reads says that any more.
     """
     from services.data_loader import get_data
     data = get_data()
