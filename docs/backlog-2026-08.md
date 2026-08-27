@@ -48,9 +48,9 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | E3 | Decile calibration (T-calibration): predicted vs observed mortality | #295 | ✅ 2026-08-25 |
 | E4 | Cross-iteration model comparison | #137 | |
 | E5 | MCMC calibration via run-center-calibration after #207 | #207 | ✅ ρ 0.64–0.80 (docs/mcmc-248-refit-report.md) |
-| E6 | Reframe MCMC as calibrated-uncertainty, not validation (L-061) | #257 | ✅ docs/UI reframed 2026-08-25 |
-| E7 | Close #269 COMET-Lung (infeasible, documented) | #269 ✅ CLOSED | |
-| E8 | MCMC-09/27 framing fixes | #257 | ✅ (validation.html header) |
+| E6 | Reframe MCMC as calibrated-uncertainty, not validation (L-061) | #257 | ✅ docs/UI reframed 2026-08-25 (#257 stays open for the remaining statistical-validity items) |
+| E7 | Close #269 COMET-Lung (infeasible, documented) | #269 ✅ CLOSED | ✅ 2026-08-26 — #269 closed: COMET is population-level and does not rank centers, so SRTR per-center calibration is the substitute|
+| E8 | MCMC-09/27 framing fixes | #257 | ✅ (validation.html header) — #257 stays open for the rest of the MCMC-09/27 framing set |
 
 ## Phase F — Model improvements (judged by Phase E numbers)
 
@@ -58,19 +58,19 @@ robustness (G), assumption triage (H), features (I), docs (J).
 |---|------|-------|--------|
 | F1 | MCMC 248-center refit | #207 | ✅ 2026-08-25 |
 | F2 | Continuous BBN latents (replace terciles) | #236 | |
-| F3 | Patient-specific competing-risk split (L-072) | #238 | |
-| F4 | log_sigma clamp ceiling 1.2 (SURV-13/DATA-07) | #274 | |
-| F5 | Clamp-bound cluster: 538+ values on bounds (DATA-24/25) | #294 | measured: ρ 0.973 worst (passes) |
+| F3 | Patient-specific competing-risk split (L-072) | #238 | ✅ 2026-08-26 — #238 closed|
+| F4 | log_sigma clamp ceiling 1.2 (SURV-13/DATA-07) | #274 | ✅ 2026-08-26 — measured, not built: raising the ceiling degrades calibration on every assessable organ (kidney 0.8882→0.8843). DATA-07 heuristic_clamp→data_derived|
+| F5 | Clamp-bound cluster: 538+ values on bounds (DATA-24/25) | #294 | ✅ 2026-08-26 — measured: worst ρ 0.973 across the ±20% sweep (passes) |
 | F6 | Hierarchical partial pooling (needs F7) | #268 | |
 | F7 | Per-center transplant volume data | #275 | |
 | F8 | Kriging/GP interpolation with prediction variance | #266 | ✅ 2026-08-26 (#370 exposed kriging in Explorer w/ per-point GP variance + extrapolation flag; projection clause measured-and-rejected, EQSP-34) |
 | F9 | 2SFCA + travel-time isochrones | #267 | demand side unblocked 2026-08-26 (county population, #336); drive-time half blocked on a self-hosted OSRM build |
 | F10 | Exponential hazard / probability-as-rate (SURV-01/25) | #259 | |
 | F11 | CPT-parameter MC credible intervals | #296 | |
-| F12 | BBN Step 6: regress ds/wait-delist multipliers from data | #297 | |
-| F13 | Donor-supply discretization probabilities | #213 | |
+| F12 | BBN Step 6: regress ds/wait-delist multipliers from data | #297 | ✅ 2026-08-26 — measured: hazard FALLS with waiting time for 4 of 6 organs, so the shipped multipliers have the wrong sign, not magnitude (L-081). Replacement tracked as #380|
+| F13 | Donor-supply discretization probabilities | #213 | ✅ 2026-08-26 — measured: swung 90/9/1→50/35/15, worst ρ 0.9987; not load-bearing. BBN-01 medium→low|
 | F14 | CPT empirical grounding + citations | #214 / #233 | |
-| F15 | BBN guards: BBN-17 fallback, BBN-22 pediatric clamp, atol gate | #298 | partial — BBN-22 pediatric clamp retired 2026-08-26 (#370, measured per-organ multipliers); BBN-17 fallback + atol gate still open |
+| F15 | BBN guards: BBN-17 fallback, BBN-22 pediatric clamp, atol gate | #298 | ✅ 2026-08-26 — #298 closed (BBN-22 pediatric clamp retired via #370 with measured per-organ multipliers) |
 | F16 | REMREC → "removed without transplant, other causes" relabel | (inline) | |
 | F17 | L-064 allocation-circle competition proxy | #299 | |
 | F18 | Long-term: #135 spatial econometrics, #142 equilibrium, L-066 surface | parked | |
@@ -83,9 +83,9 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | C2 | hospital-quality.json → SRTR per-center volumes (was 22-city + hash-fabricated) | #291 | ✅ 2026-08-25 |
 | C3 | traffic-fatalities.json → FARS | = B3 | ✅ |
 | C4 | donor-registration.json → per-center SRTR living-donor data | #292 | ✅ 2026-08-25 |
-| C5 | City fallback blocks (health-demographics, air-quality) | #285 | fetchers keep them as spatial fallback; retire with dense-only migration |
+| C5 | City fallback blocks (health-demographics, air-quality) | #285 | ✅ #285 closed; fetchers keep the city blocks only as spatial fallback |
 | C6 | Retire city_* SRTR blocks | #293 | ✅ 2026-08-25 |
-| C7 | Delete cost-of-living legacy cities block | #293 | |
+| C7 | Delete cost-of-living legacy cities block | #293 | ✅ 2026-08-25 — #293 closed with the 22-city frontend retirement|
 | C8 | Per-center trends from srtr-observed-rates-historical | = B1 | ✅ 2026-08-25 |
 | C9 | srtr-center-mapping.json: API/loader consumers retired; file stays (feeds srtr-historical generation) | #293 | ✅ 2026-08-25 |
 
@@ -97,21 +97,21 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | D2 | Dead frontend: charts.js, url-sharing.js, donation-banner.js | #260 | charts/url-sharing already gone; banner blocked on #179 |
 | D3 | Old pages already deleted; 17 broken links to them FIXED 2026-08-25 | #293 | ✅ |
 | D4 | _FALLBACK_CITIES + unused CITIES imports | #293 | ✅ 2026-08-25 |
-| D5 | Close #206 (done — CLOSED 2026-08-24), prune stale golden tests as files retire | #206 ✅ | |
+| D5 | Close #206 (done — CLOSED 2026-08-24), prune stale golden tests as files retire | #206 ✅ | ✅ 2026-08-24 — #206 closed|
 
 ## Phase G — Data quality / robustness / security
 
 | # | Item | Issue | Status |
 |---|------|-------|--------|
-| G1 | `data_quality` provenance field in API responses (visible fallbacks) | #300 (refs #212/#227/#228) | ✅ 2026-08-25 (simulate/what-if/sensitivity + UI) |
+| G1 | `data_quality` provenance field in API responses (visible fallbacks) | #300 (refs #212/#227/#228) | ✅ 2026-08-25 (simulate/what-if/sensitivity + UI); #212/#227/#228 stay open for the remaining fallback sites |
 | G2 | Inconsistent fallback patterns / error handling | #219 / #220 | ✅ major fixes + /score provenance + spatial/tier consistency; residue documented on issues |
-| G3 | Synthetic-baseline guard (GEN-13/14/15) | #300 | covered by _write_guarded + validate-data organ-block errors |
+| G3 | Synthetic-baseline guard (GEN-13/14/15) | #300 | ✅ #300 closed; covered by _write_guarded + validate-data organ-block errors |
 | G4 | OPO-level cause-of-death proportions | #301 | |
 | G5 | Data vintage refresh (CDC 2017, donor reg 2018) | #302 | |
 | G6 | LAS → CAS migration (lung allocation, 2023) | #303 | ✅ 2026-08-26 — `cas` field ships and is exposed in the simulator and the shared patient form (#370); LAS retained as documented legacy |
 | G7 | Tier caps on /score, /score/explain | #249 | ✅ 2026-08-25 |
 | G8 | Security headers + exact pins | #250 | |
-| G9 | Circular import bbn_parameterizer ↔ bayesian_network (L-070) | #298 | |
+| G9 | Circular import bbn_parameterizer ↔ bayesian_network (L-070) | #298 | ✅ 2026-08-26 — #298 closed|
 
 ## Phase H — Assumption justification (triaged by E2 sweep)
 
@@ -139,7 +139,7 @@ get sourced or refit. Register updated per item.
 | J2 | Inference-mode availability docs | #232 | |
 | J3 | Equity disclaimers hardcoded | #235 | |
 | J4 | BBN docstrings claim pgmpy | #258 | |
-| J5 | Refactors: patient_dict dedup, slim routers | #262 ✅ / #264 ✅ | |
+| J5 | Refactors: patient_dict dedup, slim routers | #262 ✅ / #264 ✅ | ✅ #262 and #264 both closed|
 
 ## Parked (cannot do solo)
 
