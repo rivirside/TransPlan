@@ -72,7 +72,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | F14 | CPT empirical grounding + citations | #214 / #233 | |
 | F15 | BBN guards: BBN-17 fallback, BBN-22 pediatric clamp, atol gate | #298 | partial — BBN-22 pediatric clamp retired 2026-08-26 (#370, measured per-organ multipliers); BBN-17 fallback + atol gate still open |
 | F16 | REMREC → "removed without transplant, other causes" relabel | (inline) | |
-| F17 | L-064 allocation-circle competition proxy | #299 | |
+| F17 | L-064 allocation-circle competition proxy | #299 | partial — normalizers MEASURED and corrected (kidney 15→25.6; score averaged 1.71 not 1.0); 500nm 2.5x ratio measured sound and kept. Proxy itself still crude — issue stays open|
 | F18 | Long-term: #135 spatial econometrics, #142 equilibrium, L-066 surface | parked | |
 
 ## Phase C — City-keyed data replacement (never-shrink guards on every file)

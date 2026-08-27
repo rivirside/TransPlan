@@ -71,6 +71,33 @@ def centers_within_radius(
     return results
 
 
+# Population-weighted mean number of centers within 250nm of a US resident,
+# measured from data/health-demographics-counties.json centroids weighted by
+# data/county-population.json (#299 / L-064). Dividing the local count by this
+# makes the competition score average ~1.0, which is what the score claims to
+# do.
+#
+# These replace round numbers whose comment asserted "average US metro has ~15
+# kidney centers within 250nm". The real figure is 25.6, so the score averaged
+# 1.71 rather than 1.0, and every organ was understated by 24-72%. They are
+# recomputed and pinned by backend/tests/test_competition_normalizers.py, so a
+# change in center geography fails a test rather than silently skewing the
+# score.
+AVG_CENTERS_250NM = {
+    "kidney": 25.6,
+    "liver": 15.7,
+    "heart": 16.2,
+    "lung": 8.6,
+    "pancreas": 11.7,
+    "intestine": 2.5,
+}
+
+# Centers within 500nm run ~2.4x the 250nm count. Unlike the figures above,
+# this round number was MEASURED to be sound (actual 2.38-2.51 across organs),
+# so it is kept rather than churned.
+CIRCLE_500_RATIO = 2.5
+
+
 def allocation_circles(lat: float, lon: float, organ: str = "kidney") -> dict:
     """
     Compute UNOS allocation circle analysis for a location.
@@ -88,11 +115,10 @@ def allocation_circles(lat: float, lon: float, organ: str = "kidney") -> dict:
     within_250 = centers_within_radius(lat, lon, CIRCLE_250NM, organ)
     within_500 = centers_within_radius(lat, lon, CIRCLE_500NM, organ)
 
-    # Competition score: more centers = more competition for donors
-    # Normalized so mean US location ≈ 1.0
-    # Average US metro has ~15 kidney centers within 250nm
-    _avg_centers_250 = {"kidney": 15, "liver": 10, "heart": 10, "lung": 5, "pancreas": 7, "intestine": 2}
-    avg = _avg_centers_250.get(organ, 10)
+    # Competition score: more centers = more competition for donors.
+    # Normalized so the mean US location scores ~1.0 — see AVG_CENTERS_250NM,
+    # which is measured rather than assumed (#299).
+    avg = AVG_CENTERS_250NM.get(organ, 10)
     competition_250 = len(within_250) / avg if avg > 0 else 1.0
 
     # Nearest center distance
@@ -107,7 +133,7 @@ def allocation_circles(lat: float, lon: float, organ: str = "kidney") -> dict:
         },
         "circle_500nm": {
             "center_count": len(within_500),
-            "competition_score": round(len(within_500) / (avg * 2.5) if avg > 0 else 1.0, 2),
+            "competition_score": round(len(within_500) / (avg * CIRCLE_500_RATIO) if avg > 0 else 1.0, 2),
         },
         "nearest_center": {
             "code": nearest["code"],
