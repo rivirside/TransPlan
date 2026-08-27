@@ -65,7 +65,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | F7 | Per-center transplant volume data | #275 | |
 | F8 | Kriging/GP interpolation with prediction variance | #266 | ✅ 2026-08-26 (#370 exposed kriging in Explorer w/ per-point GP variance + extrapolation flag; projection clause measured-and-rejected, EQSP-34) |
 | F9 | 2SFCA + travel-time isochrones | #267 | demand side unblocked 2026-08-26 (county population, #336); drive-time half blocked on a self-hosted OSRM build |
-| F10 | Exponential hazard / probability-as-rate (SURV-01/25) | #259 | |
+| F10 | Exponential hazard / probability-as-rate (SURV-01/25) | #259 | partial — probability-as-rate FIXED (multipliers now applied in hazard space; also fixed liver p=1.1734 > 1). Weibull half NOT done and #259's shape>1 is contradicted by #297: hazard FALLS with time for 4 of 6 organs |
 | F11 | CPT-parameter MC credible intervals | #296 | |
 | F12 | BBN Step 6: regress ds/wait-delist multipliers from data | #297 | |
 | F13 | Donor-supply discretization probabilities | #213 | |

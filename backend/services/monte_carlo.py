@@ -23,7 +23,12 @@ import numpy as np
 
 from config import COPULA_THETA, ORGAN_COPULA_THETA, SIMULATION_ITERATIONS, SUPPLY_WAIT_ELASTICITY
 from models.schemas import CityProbability, PatientProfile, SimulationResult
-from services.competing_risks import get_annual_mortality_rate, get_annual_delisting_rate
+from services.competing_risks import (
+    get_annual_mortality_rate,
+    get_annual_delisting_rate,
+    get_annual_mortality_hazard,
+    get_annual_delisting_hazard,
+)
 from services.copula import draw_correlated_competing_risks
 from services.data_loader import get_data
 from services.distributions import get_lognorm_params, get_wait_time_distribution
@@ -486,12 +491,17 @@ def simulate(
             transplant_times = transplant_times / effective_mult
 
         # --- Draw mortality & delisting times ---
-        annual_mort = get_annual_mortality_rate(
+        # HAZARDS, not probabilities (#259): the exponential draw below needs a
+        # rate, and `rate_to_exponential_scale` divides 12 by whatever it gets.
+        # Passing the annual probability treated `p` as if it were `lambda`,
+        # and the multipliers were applied in probability space — which
+        # produced 1.1734 for liver at MELD 40.
+        annual_mort = get_annual_mortality_hazard(
             organ=patient.organ, center_code=code, city=display_city,
             urgency=patient.urgency, meld=patient.meld,
         )
 
-        annual_delist = get_annual_delisting_rate(
+        annual_delist = get_annual_delisting_hazard(
             organ=patient.organ, center_code=code, city=display_city,
         )
 
@@ -505,7 +515,7 @@ def simulate(
                     SCORE_DRIFT_CAPS.get("meld", 40),
                 )
                 avg_meld = (patient.meld + eff_meld) / 2.0
-                mort_at_drift = get_annual_mortality_rate(
+                mort_at_drift = get_annual_mortality_hazard(
                     organ="liver", center_code=code, city=display_city,
                     urgency=patient.urgency, meld=int(avg_meld),
                 )
