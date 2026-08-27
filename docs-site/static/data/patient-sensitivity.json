@@ -86,6 +86,16 @@
             "same_top_center": false
           }
         }
+      },
+      "cross_patient": {
+        "n_patients": 108,
+        "n_centers": 233,
+        "distinct_rankings": 15,
+        "distinct_top_centers": 2,
+        "pairwise_spearman_min": 0.7421,
+        "pairwise_spearman_median": 0.8147,
+        "top10_overlap_median": 7.0,
+        "top10_overlap_min": 2
       }
     },
     "liver": {
@@ -172,6 +182,16 @@
             "same_top_center": true
           }
         }
+      },
+      "cross_patient": {
+        "n_patients": 36,
+        "n_centers": 148,
+        "distinct_rankings": 9,
+        "distinct_top_centers": 1,
+        "pairwise_spearman_min": 0.7594,
+        "pairwise_spearman_median": 0.9314,
+        "top10_overlap_median": 9.0,
+        "top10_overlap_min": 7
       }
     },
     "heart": {
@@ -245,6 +265,16 @@
             "same_top_center": true
           }
         }
+      },
+      "cross_patient": {
+        "n_patients": 36,
+        "n_centers": 149,
+        "distinct_rankings": 9,
+        "distinct_top_centers": 1,
+        "pairwise_spearman_min": 0.9729,
+        "pairwise_spearman_median": 0.9853,
+        "top10_overlap_median": 9.0,
+        "top10_overlap_min": 8
       }
     },
     "lung": {
@@ -333,11 +363,21 @@
             "same_top_center": true
           }
         }
+      },
+      "cross_patient": {
+        "n_patients": 36,
+        "n_centers": 74,
+        "distinct_rankings": 6,
+        "distinct_top_centers": 3,
+        "pairwise_spearman_min": 0.9469,
+        "pairwise_spearman_median": 0.9997,
+        "top10_overlap_median": 10.0,
+        "top10_overlap_min": 7
       }
     }
   },
   "_meta": {
-    "generated": "2026-08-27T03:33:47Z",
+    "generated": "2026-08-27T04:00:43Z",
     "script": "scripts/run-patient-sensitivity.py",
     "method": "one-attribute-at-a-time over its realistic range; reports which sub-scores are reached and whether the center order changes",
     "with_simulation": true

@@ -145,3 +145,51 @@ def test_the_two_engines_disagree_about_cpra(report):
     assert sim_rho - scoring_rho > 0.15, (
         f"the scoring/simulation gap on cPRA has closed (scoring {scoring_rho}, "
         f"simulation {sim_rho}) — good news, and L-085 should say so")
+
+
+# ── The counterweight: the ranking IS patient-dependent, but coarsely ───────
+
+def _cross(report, organ):
+    cp = report.get(organ, {}).get("cross_patient")
+    if not cp:
+        pytest.skip("artifact predates the cross-patient measurement")
+    return cp
+
+
+def test_kidney_rankings_genuinely_differ_between_patients(report):
+    """Guards against OVERSTATING L-085.
+
+    The one-at-a-time sweep shows blood type does nothing, but it cannot show
+    that everyone gets the same list — and reading it that way would be wrong
+    for kidney, where cPRA does real work. If this ever tightens toward 1.0,
+    the limitation's framing has to change with it.
+    """
+    cp = _cross(report, "kidney")
+    assert cp["pairwise_spearman_median"] < 0.95, (
+        f"kidney rankings across patients are now near-identical "
+        f"(median rho {cp['pairwise_spearman_median']}) — L-085 currently says "
+        "the opposite for kidney and must be rewritten")
+    assert cp["top10_overlap_min"] <= 5
+
+
+def test_personalisation_is_coarse(report):
+    """The other half: many patients, few distinct answers.
+
+    Follows from only two or three inputs reordering anything, each through a
+    single sub-score. A large jump here would mean the model gained a real
+    patient-by-center interaction.
+    """
+    cp = _cross(report, "kidney")
+    assert cp["distinct_rankings"] < cp["n_patients"] / 4, (
+        f"{cp['distinct_rankings']} distinct rankings from {cp['n_patients']} "
+        "patients is no longer coarse — recheck L-085")
+
+
+def test_lung_is_effectively_one_ranking_for_everyone(report):
+    """And its several 'top' centers are L-083's near-tie, not personalisation."""
+    cp = _cross(report, "lung")
+    assert cp["pairwise_spearman_median"] > 0.99
+    assert cp["top10_overlap_median"] >= 9
+    assert cp["distinct_top_centers"] > 1, (
+        "lung now has a single stable leader across patients — that would "
+        "resolve L-083 as well, so recheck both")

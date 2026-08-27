@@ -99,6 +99,40 @@ Monte Carlo path is separate and behaves differently.
 
 Both are required form fields.
 
+## The correction: the ranking *is* patient-dependent, but coarsely
+
+A one-at-a-time sweep can say which inputs matter. It cannot say
+whether the product is, in aggregate, serving one list to everybody —
+and concluding that from the table above would overstate it. So this
+walks a grid of realistic patients and counts the distinct rankings
+that actually come out.
+
+| organ | patients in grid | distinct rankings | distinct #1 centers | median pairwise ρ | median top-10 overlap |
+|---|---|---|---|---|---|
+| kidney | 108 | **15** | 2 | 0.8147 | 7/10 |
+| liver | 36 | 9 | 1 | 0.9314 | 9/10 |
+| heart | 36 | 9 | 1 | 0.9853 | 9/10 |
+| lung | 36 | 6 | 3 | **0.9997** | 10/10 |
+
+**Kidney genuinely personalises.** Median pairwise ρ of 0.81 between
+two real candidates, with top-10 overlap dropping to 2/10 at the
+extremes, is a substantial difference — cPRA is doing real work. Any
+reading of this report as "everyone gets the same list" is wrong for
+kidney.
+
+**Lung essentially does not.** At ρ 0.9997 and 10/10 top-10 overlap,
+36 different lung candidates receive what is effectively one ranking.
+Its 3 distinct top centers are not personalisation but the near-tie of
+L-083 — the leader flips between indistinguishable programs rather
+than in response to the patient.
+
+**But the personalisation is coarse everywhere.** 108 realistic kidney
+candidates produce only **15** distinct rankings, and 36 lung
+candidates produce 6. That follows directly from the finding above:
+only two or three inputs reorder anything, and each reaches the
+ranking through a single sub-score. The output is not one list, but it
+is a small menu of lists rather than a per-patient result.
+
 ## The inconsistency this exposes
 
 Only the organ-specific severity and sensitisation measures change

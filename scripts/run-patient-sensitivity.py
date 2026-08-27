@@ -135,6 +135,60 @@ def _simulate_pair(base, attr, lo, hi, iterations):
     }
 
 
+def cross_patient(organ: str) -> dict:
+    """How many DIFFERENT rankings does the whole patient space produce?
+
+    The one-at-a-time sweep above can only say which inputs matter. It cannot
+    say whether the product is, in aggregate, serving one list to everybody —
+    and concluding that from the sweep alone would overstate it. So this walks
+    a grid of realistic patients and counts the distinct rankings that result.
+
+    The answer is the useful correction: the ranking IS patient-dependent, via
+    the inputs that do reorder, but only coarsely.
+    """
+    import itertools
+
+    grids = {
+        "kidney": {"blood_type": ["O-", "O+", "A+", "AB+"], "age": [20, 45, 70],
+                   "urgency": [1, 2, 3], "cpra": [0, 50, 99]},
+        "liver": {"blood_type": ["O-", "O+", "A+", "AB+"], "age": [20, 45, 70],
+                  "meld": [10, 22, 38]},
+        "heart": {"blood_type": ["O-", "O+", "A+", "AB+"], "age": [20, 45, 70],
+                  "urgency": [1, 2, 3]},
+        "lung": {"blood_type": ["O-", "O+", "A+", "AB+"], "age": [20, 45, 70],
+                 "las": [30.0, 50.0, 80.0]},
+    }
+    grid_spec = grids.get(organ)
+    if not grid_spec:
+        return {}
+
+    base = dict(BASE, organ=organ)
+    keys = list(grid_spec)
+    patients = [dict(base, **dict(zip(keys, combo)))
+                for combo in itertools.product(*(grid_spec[k] for k in keys))]
+
+    orders = [_order(_rows(p)) for p in patients]
+    n = len(orders[0])
+
+    pairs = [_spearman(a, b) for a, b in itertools.combinations(orders, 2)]
+    top10 = [set(o[:10]) for o in orders]
+    overlaps = [len(a & b) for a, b in itertools.combinations(top10, 2)]
+    tops = {}
+    for o in orders:
+        tops[o[0]] = tops.get(o[0], 0) + 1
+
+    return {
+        "n_patients": len(patients),
+        "n_centers": n,
+        "distinct_rankings": len({tuple(o) for o in orders}),
+        "distinct_top_centers": len(tops),
+        "pairwise_spearman_min": round(float(np.min(pairs)), 4),
+        "pairwise_spearman_median": round(float(np.median(pairs)), 4),
+        "top10_overlap_median": float(np.median(overlaps)),
+        "top10_overlap_min": int(np.min(overlaps)),
+    }
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--with-simulation", action="store_true")
@@ -145,6 +199,8 @@ def main() -> None:
     load_all()
     results = [analyze_organ(o, args.with_simulation, args.iterations)
                for o in args.organs]
+    for r in results:
+        r["cross_patient"] = cross_patient(r["organ"])
 
     out = REPO / "docs-site" / "static" / "data" / "patient-sensitivity.json"
     out.write_text(json.dumps({
@@ -165,6 +221,13 @@ def main() -> None:
             reached = ", ".join(e["categories_reached"]) or "(nothing)"
             print(f"{attr:<12} {reached[:27]:<28} {e['spearman']:>9.5f} "
                   f"{str(e['identical_order']):>11}")
+        cp = r.get("cross_patient") or {}
+        if cp:
+            print(f"  across {cp['n_patients']} realistic patients: "
+                  f"{cp['distinct_rankings']} distinct rankings, "
+                  f"{cp['distinct_top_centers']} distinct #1 centers, "
+                  f"pairwise rho median {cp['pairwise_spearman_median']}, "
+                  f"top-10 overlap median {cp['top10_overlap_median']}/10")
     print(f"\nwrote {out.relative_to(REPO)}")
 
 
