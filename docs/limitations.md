@@ -654,6 +654,26 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-082: The headline center ranking depends materially on eight uncited weights
+- **Severity:** HIGH
+- **Status:** OPEN (documented 2026-08-26, SCORE-01)
+- **Category:** Clinical Assumption / Presentation
+- **What:** Every center score is a weighted sum of eight categories (`medicalCompatibility` 0.25, `waitTime` 0.20, `donorAvailability` 0.18, `hospitalQuality` 0.15, `geographic` 0.10, `healthDemographics` 0.07, `policy` 0.03, `socioeconomic` 0.02). The register records these magnitudes as `uncited`. The results table sorts by score by default, so this is the headline output.
+- **Why it's a limitation:** the existing assumption sweep perturbs one category by ±20% and finds the ranking stable — but that tests robustness to a *nudge*, not dependence on *whose judgement produced the numbers*. Measured against defensible alternative weightings (a candidate prioritising speed of access; one prioritising program outcomes; one with no view at all):
+
+| | |
+|---|---|
+| worst Spearman vs shipped | **0.624** |
+| worst top-10 overlap | **3/10** |
+| **top-ranked center changes in** | **13 of 16 comparisons** |
+
+  A candidate reading "the best center for me" gets a different answer under most defensible weightings. For contrast, every other constant measured this way in this project is inert — the BBN discretization split holds at ρ 0.9987 swung from near-deterministic to barely informative, and removing the donor-supply effect entirely leaves ρ 0.9957.
+
+- **Not covered by the uncertainty already reported:** the rank intervals (#313) bootstrap the *probability* estimates and rank by `p24` — a different quantity from the composite score, and an interval that varies the data while holding the weights fixed. **The score ranking carries no interval at all.**
+- **What this does NOT say:** that the shipped weights are wrong. There is no ground truth — "which center is best for me" is a preference, not a fact, and a weighted composite is a reasonable way to express one. Sourcing the magnitudes would help but cannot resolve it: no literature fixes how one candidate should trade program quality against travel distance.
+- **What would help:** (1) make the dependence visible — the weights are already user-adjustable, so the ranking should say it reflects a particular weighting and ideally show how much it moves under others; (2) report a weight-uncertainty interval alongside the sampling one. Neither is "pick better numbers".
+- **Files:** `backend/services/scoring.py` (`DEFAULT_WEIGHTS`), `docs/scoring-weight-sensitivity-report.md`, register row SCORE-01
+
 ### L-078: PELD is mapped onto MELD's priority thresholds without a published equivalence
 - **Severity:** MEDIUM
 - **Status:** OPEN (documented 2026-08-26, #335)

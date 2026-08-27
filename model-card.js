@@ -332,6 +332,38 @@
       ['Artifact', 'Last run', 'Date source'], rows);
   }
 
+  function renderWeights(doc) {
+    var defensible = (doc.comparisons || []).filter(function (c) { return c.defensible; });
+    table(document.getElementById('mc-weights-table'),
+      ['Organ', 'Alternative weighting', 'rho vs shipped', 'Top-10 overlap', 'Same #1?'],
+      defensible.map(function (c) {
+        var cls = c.spearman_vs_shipped < 0.8 ? 'mc-fail'
+                : c.spearman_vs_shipped < 0.95 ? 'mc-warn' : 'mc-pass';
+        return [
+          titleCase(c.organ),
+          c.weighting,
+          { text: num(c.spearman_vs_shipped, 3), cls: cls, num: 'num' },
+          { text: c.top10_overlap + '/10', num: 'num' },
+          { text: c.top1_same ? 'yes' : 'no', cls: c.top1_same ? null : 'mc-fail' }
+        ];
+      }));
+
+    var s = doc.summary || {};
+    document.getElementById('mc-weights-takeaway').textContent =
+      'These weights ARE load-bearing, which makes them the exception on this ' +
+      'page. Across defensible alternatives the worst rank correlation is ' +
+      num(s.worst_spearman_defensible, 3) + ', top-10 overlap falls to ' +
+      s.worst_top10_overlap_defensible + '/10, and the top-ranked center ' +
+      'changes in ' + s.top1_changes_defensible + ' of ' +
+      s.n_defensible_comparisons + ' comparisons. Every other constant checked ' +
+      'this way barely moves anything. This does not mean the shipped weights ' +
+      'are wrong - "best center for me" is a preference, not a fact - but it ' +
+      'does mean the ranking reflects one particular judgement, and the rank ' +
+      'intervals shown elsewhere do not cover that: they vary the data while ' +
+      'holding the weights fixed.';
+    setMeta('mc-weights-meta', doc);
+  }
+
   var LIMITATIONS = [
     'Estimates describe the SRTR release they were built from, not real-time ' +
       'allocation. Interval coverage decays the further ahead you read them.',
@@ -346,6 +378,11 @@
       'a center’s name (L-077).',
     'No patient-level clinical trajectory is modeled: a candidate does not get ' +
       'sicker or better while waiting, beyond the competing-risk hazards.',
+    'The headline ranking depends materially on eight category weights with no ' +
+      'published source: under defensible alternative weightings the ' +
+      'top-ranked center changes in 13 of 16 comparisons (L-082). Adjust them ' +
+      'to match your own priorities rather than treating the default order as ' +
+      'an answer.',
     'This is a research and education tool. It is not a clinical decision aid and ' +
       'has not been reviewed by transplant faculty for face validity (#107).'
   ];
@@ -389,7 +426,8 @@
       section('coverage-audit', 'mc-coverage', renderCoverage),
       section('sbc', 'mc-sbc', renderSbc),
       section('pediatric-calibration', 'mc-pediatric', renderPediatric),
-      section('panel-fit', 'mc-panel', renderPanel)
+      section('panel-fit', 'mc-panel', renderPanel),
+      section('scoring-weight-sensitivity', 'mc-weights', renderWeights)
     ];
 
     // Center calibration is one file per organ.
