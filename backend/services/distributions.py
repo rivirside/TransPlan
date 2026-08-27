@@ -197,7 +197,11 @@ def get_wait_time_params(
         return 0.8, 24.0
     median = organ_params["national_median_months"]
     sigma = organ_params["log_sigma"]
-    bt_mult = organ_params.get("blood_type_multipliers", {}).get(blood_type, 1.0)
+    # #413/L-088: ABO group only. The tables' Rh entries are a hand-set
+    # constant and allocation does not use Rh.
+    from services.blood_type import model_key
+    bt_mult = organ_params.get("blood_type_multipliers", {}).get(
+        model_key(blood_type), 1.0)
     city_mult = 1.0
     if center_code:
         from services.data_loader import get_data

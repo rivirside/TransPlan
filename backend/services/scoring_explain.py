@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from services.blood_type import abo_group, model_key
 from services.data_loader import get_data
 from services.scoring import (
     BASE_WAIT_TIMES,
@@ -66,12 +67,18 @@ def _lookup_table(rows: list[tuple], matched_label: str | None = None) -> list[d
 def explain_medical_compatibility(patient: dict) -> tuple[float, list[dict]]:
     components = []
 
+    # Must mirror scoring._medical_compatibility exactly — this is the audit
+    # view of that calculation, and a provenance trail that disagrees with the
+    # number it explains is worse than none.
     bt_scores = {
         "O-": 70, "O+": 85, "A-": 88, "A+": 95,
         "B-": 82, "B+": 90, "AB-": 92, "AB+": 100,
     }
     bt = patient["blood_type"]
-    bt_val = bt_scores.get(bt, 85)
+    # #413/L-088: score the ABO group. The Rh rows remain in the table above
+    # as the record of what was there, but nothing reads them.
+    bt_key = model_key(bt)
+    bt_val = bt_scores.get(bt_key, 85)
     components.append(_component(
         f"Blood type ({bt})",
         bt_val, 0.40,
@@ -79,24 +86,28 @@ def explain_medical_compatibility(patient: dict) -> tuple[float, list[dict]]:
         raw_input=bt,
         details={
             "summary": (
-                "Each ABO/Rh type is assigned a score that proxies donor compatibility breadth. "
-                "Universal recipients (AB+) score highest because they accept any blood type; "
-                "universal donors (O-) score lowest because they receive the most competition."
+                "Each ABO group is assigned a score that proxies donor compatibility breadth. "
+                "Universal recipients (AB) score highest because they accept any blood type; "
+                "universal donors (O) score lowest because they receive the most competition. "
+                "Rh factor is NOT used: US solid-organ allocation is matched on ABO only, so "
+                "O+ and O- score identically here."
             ),
+            # Derived from bt_scores rather than retyped, so the audit view
+            # cannot drift from the values actually used.
             "lookup_table": _lookup_table([
-                ("O-",  70, "Universal donor; highest waitlist competition"),
-                ("O+",  85, None),
-                ("A-",  88, None),
-                ("B-",  82, None),
-                ("B+",  90, None),
-                ("A+",  95, None),
-                ("AB-", 92, None),
-                ("AB+", 100, "Universal recipient; accepts any donor"),
-            ], matched_label=bt),
+                (g, bt_scores[f"{g}+"], note)
+                for g, note in (
+                    ("O", "Universal donor; highest waitlist competition"),
+                    ("A", None), ("B", None),
+                    ("AB", "Universal recipient; accepts any donor"),
+                )
+            ], matched_label=abo_group(bt) or bt),
             "notes": (
                 "Note: this scoring uses blood type as a compatibility proxy. Actual transplant "
                 "matching also involves HLA crossmatching and antibody screening (cPRA), which "
-                "are handled separately in the wait-time category for kidney patients."
+                "are handled separately in the wait-time category for kidney patients. "
+                "Rh factor does not affect organ allocation and does not affect this score "
+                "(see docs/rh-factor-report.md)."
             ),
         },
     ))

@@ -10,6 +10,12 @@ someone later derives Rh multipliers from a real source, the structural
 signature will change and these fail — which is the point: they should be
 re-examined then, not silently satisfied.
 
+**#413 landed the fix at the lookup, not in the tables.** The eight-entry
+tables are still on disk — they are the record of what was there, and the
+revert is one line if Rh-stratified evidence appears — so the structural
+tests below still describe the files. What changed is that nothing reads the
+Rh half any more, which `test_rh_is_inert.py` covers.
+
 Full measurement: docs/rh-factor-report.md
 """
 import json
@@ -92,23 +98,27 @@ def test_the_two_rh_conventions_disagree():
 
     Two independent hand-set conventions for one claimed phenomenon is
     stronger evidence of hand-setting than either alone, so it is pinned.
+
+    Reads the score table directly rather than calling the scorer: since #413
+    the scorer no longer consults the Rh rows, so going through it would
+    measure the fix instead of the evidence for it.
     """
-    from services.scoring import _medical_compatibility
-
-    def score_for(bt):
-        return _medical_compatibility(
-            {"organ": "kidney", "blood_type": bt, "age": 50, "sex": "male",
-             "urgency": 2})
-
-    gaps = {g: round(score_for(f"{g}+") - score_for(f"{g}-"), 3) for g in GROUPS}
+    src = (Path(__file__).resolve().parents[1]
+           / "services" / "scoring.py").read_text()
+    start = src.index("bt_scores = {")
+    body = src[start:src.index("}", start)]
+    table = {m.group(1): int(m.group(2))
+             for m in re.finditer(r'"(\w+[+-])":\s*(\d+)', body)}
+    assert len(table) == 8, f"expected 8 score-table entries, got {table}"
+    gaps = {g: table[f"{g}+"] - table[f"{g}-"] for g in GROUPS}
     # Assert the SPREAD, not merely "more than one distinct value". A first
     # version of this checked distinctness and passed against gaps of
     # 8/7/8/8 — technically non-uniform, but no longer evidence of anything.
     # The claim is that O is penalized twice as hard as A for no stated
     # reason: raw gaps 15 (O) vs 7 (A), scaled by the 40% sub-weight.
     spread = max(gaps.values()) - min(gaps.values())
-    assert spread >= 2.5, (
+    assert spread >= 6, (
         f"the scoring Rh gaps have converged (spread {spread}, {gaps}) — they "
-        "used to run 7 (A) to 15 (O) raw. Two conventions that now agree is "
-        "weaker evidence of hand-setting; re-check L-088"
+        "ran 7 (A) to 15 (O). Two conventions that now agree is weaker "
+        "evidence of hand-setting; re-check L-088"
     )

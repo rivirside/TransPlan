@@ -92,7 +92,11 @@ def _medical_compatibility(patient: dict) -> float:
         "O-": 70, "O+": 85, "A-": 88, "A+": 95,
         "B-": 82, "B+": 90, "AB-": 92, "AB+": 100,
     }
-    score += bt_scores.get(patient["blood_type"], 85) * 0.40
+    # #413/L-088: look up the ABO group, not the ABO+Rh string. This table's
+    # Rh gaps (15/7/8/8) are a second hand-set convention that disagrees with
+    # the wait multipliers' flat offset, and neither has a source.
+    from services.blood_type import model_key
+    score += bt_scores.get(model_key(patient["blood_type"]), 85) * 0.40
 
     # Age (25%)
     age = patient["age"]

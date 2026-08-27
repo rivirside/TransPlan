@@ -24,10 +24,24 @@ class TestMedicalCompatibility:
         score = _medical_compatibility(p)
         assert score >= 95
 
-    def test_o_minus_lowest_blood_type(self):
-        p = {"blood_type": "O-", "age": 40, "sex": "male", "organ": "kidney"}
-        score = _medical_compatibility(p)
-        assert score < 90
+    def test_o_scores_lowest_of_the_abo_groups(self):
+        """O has the broadest donor pool to compete against, so it scores
+        lowest. Was test_o_minus_lowest_blood_type until #413: Rh no longer
+        affects the score, so pinning the O- value specifically would have
+        been pinning the defect (L-088)."""
+        scores = {g: _medical_compatibility(
+            {"blood_type": f"{g}+", "age": 40, "sex": "male", "organ": "kidney"})
+            for g in ("O", "A", "B", "AB")}
+        assert scores["O"] == min(scores.values())
+        assert scores["AB"] == max(scores.values())
+
+    def test_rh_does_not_change_the_compatibility_score(self):
+        """#413/L-088 — allocation is ABO-matched. Full coverage in
+        tests/test_rh_is_inert.py; this keeps the claim visible where the
+        blood-type scoring is tested."""
+        base = {"age": 40, "sex": "male", "organ": "kidney"}
+        assert (_medical_compatibility({**base, "blood_type": "O-"})
+                == _medical_compatibility({**base, "blood_type": "O+"}))
 
     def test_pediatric_age_bonus(self):
         child = {"blood_type": "A+", "age": 10, "sex": "male", "organ": "kidney"}
