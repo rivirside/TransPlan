@@ -147,6 +147,22 @@ Snapshot Aug 26, 2026. **Closed in #370** with evidence: #335 (pediatric mode), 
 
 **The one that was NOT inert — and it is the headline output.** SCORE-01's eight scoring weights: under *defensible* alternative weightings the worst rank correlation is **0.624**, top-10 overlap falls to **3/10**, and **the top-ranked center changes in 13 of 16 comparisons**. The existing ±20% single-category sweep missed this because it tests robustness to a nudge, not dependence on whose judgement set the numbers. Now L-082 (HIGH), a model-card section, and a note in the simulator's weights panel. #386 tracks the harder fix: the score ranking has **no** uncertainty interval, and the #313 intervals rank by `p24` while holding weights fixed — so they omit the largest source.
 
+**Aug 27 — pulling that thread found what the ranking is really made of.** Closing #386 (`/weight-range`, rank span across the app's four presets) led to a chain where each measurement exposed the next, and the result reframes L-082 rather than confirming it:
+
+| finding | evidence |
+|---|---|
+| **L-082 was about the ORDERING, not the magnitudes** | holding the category order fixed and sampling the ordered simplex — no spread parameter, sampler verified against the closed-form order statistics — gives worst ρ **0.905**, vs 0.624 when categories are *reordered*. Reordering is a genuine preference the presets already expose |
+| **L-084: a quarter of the score cannot reorder anything** | `medicalCompatibility` carries the **largest** weight (0.25) and is identical at every center (SD 2.8e-14) — `_medical_compatibility()` takes only the patient profile. `waitTime` actually carries ~half the rank-driving variation |
+| **the null above is partly an artifact** | the inert term sits in the slot that absorbs the most sampled mass, so the sampling is less potent than it looks. Both reports and L-082 carry this caveat rather than claiming a clean null |
+| **L-083 explained, not just observed** | lung's undetermined top is the one organ where no category dominates (hospitalQuality 33.2% vs waitTime 31.4%). Symptom and mechanism agree |
+| **L-085: blood type produces a literally identical ranking** | it reaches exactly one sub-score — the inert one. O− and AB+ give the *same list* for every organ, while simulation correctly shifts p24 by **+0.2524**. Magnitudes personalised, ranking not |
+| **the defect is the asymmetry** | cPRA reorders at ρ 0.760, blood type at ρ 1.000 — two immunological access constraints treated differently with nothing documenting why (#394) |
+| **the two engines disagree** | kidney cPRA: scoring ρ 0.760, simulation ρ 0.996, both shown in the same table |
+
+`weight x between-center SD` (what the ranking is *made of*) and per-input reachability are cheap diagnostics worth running early — see `scripts/run-category-variance.py` and `scripts/run-patient-sensitivity.py`. Open: **#390** (should the sub-score be center-specific? a measurement, not a relabelling), **#394**.
+
+**Also fixed by measuring rather than assuming (#391):** `test_two_runs_within_tolerance` was filed as an unseeded flake; measurement showed the premise was too kind — it ran at ~89% of its own hand-set tolerance with p95 already over it. Now derived from the binomial SE, *verified* not assumed (empirical/binomial SD 0.995), Bonferroni-corrected across 233 centers, and validated in both directions (0/25 seed pairs fail at 61% margin; still flags 27 centers when genuinely unstable).
+
 **Blocked on environment, not effort:** #323 (drive-time matrix) needs a self-hosted OSRM build — Docker daemon plus a ~10GB US OSM extract and hours of preprocessing. #267 (2SFCA) waits on it; its demand side is unblocked now that county population exists. `scripts/run-coverage-gaps.py` is written so swapping the distance function is the only change required.
 
 **Still open from before:**
@@ -155,7 +171,7 @@ Snapshot Aug 26, 2026. **Closed in #370** with evidence: #335 (pediatric mode), 
 - **#207:** MCMC 248-center refit (BBN #206 done)
 - **#236/#237/#238, #275:** BBN latents / temporal validation / BBN hybrid / volume data (#274 closed by measurement)
 - **#107:** Face validity review with transplant faculty
-- **Model limitations:** see `docs/limitations.md` — 82 entries. Highest-consequence: **L-082** (the headline ranking turns on eight uncited weights), L-079 (BBN/MCMC have no pediatric wait model), L-081 (delisting multipliers have the wrong sign for 4 organs), L-080 (pancreas median reconstructed, now disclosed), L-076/L-077 (pediatric derivation + small cohorts), L-078 (PELD)
+- **Model limitations:** see `docs/limitations.md` — 85 entries. Highest-consequence: **L-085** (blood type produces a literally identical center ranking), **L-084** (a quarter of the score is a constant that cannot reorder), L-082 (the headline ranking turns on the weight *ordering*), L-079 (BBN/MCMC have no pediatric wait model), L-081 (delisting multipliers have the wrong sign for 4 organs), L-080 (pancreas median reconstructed, now disclosed), L-076/L-077 (pediatric derivation + small cohorts), L-078 (PELD), L-083 (lung's top center is a near-tie)
 
 **Data-pipeline lesson (2026-08-05 incident):** the SRTR workflow once overwrote three model files with organ-less shells because `data/srtr-raw/` is absent in CI. Every generated data file must have a never-shrink guard (`_write_guarded` in parse-srtr-reports.py, dead-data guards in fetch-cost-of-living.js, organ-block checks in validate-data.js).
 

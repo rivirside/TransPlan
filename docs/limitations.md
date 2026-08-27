@@ -654,6 +654,40 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-085: Blood type cannot change which center is recommended
+- **Severity:** HIGH
+- **Status:** OPEN (documented 2026-08-26, `docs/patient-sensitivity-report.md`)
+- **Category:** Model Structure / Presentation
+- **What:** sweeping one patient attribute at a time across its realistic range, blood type reaches **exactly one** sub-score — `medicalCompatibility` — which is the sub-score that is identical at every center (L-084). The O− and AB+ orderings are not merely similar but **literally the same list**, for every organ:
+
+| organ | attribute | sub-scores reached | ρ | order identical |
+|---|---|---|---|---|
+| kidney | blood_type | `medicalCompatibility` | **1.00000** | **yes** |
+| kidney | cpra | `waitTime` | 0.760 | no |
+| liver | blood_type | `medicalCompatibility` | **1.00000** | **yes** |
+| liver | meld | `waitTime` | 0.760 | no |
+| heart | blood_type | `medicalCompatibility` | **1.00000** | **yes** |
+| lung | blood_type | `medicalCompatibility` | **1.00000** | **yes** |
+| lung | las | `waitTime` | 0.947 | no |
+
+- **Magnitudes are personalised; the ranking is not.** In the Monte Carlo path, sweeping kidney blood type O−→AB+ moves the mean 24-month probability by **+0.2524** — a large and correct effect — while the center ordering moves by ρ 0.99875. Blood type changes a candidate's numbers a great deal and their recommended center not at all.
+- **The two engines also disagree about how much the patient matters.** For kidney cPRA the scoring path reports ρ 0.760 and the simulation path ρ 0.996 — a large disagreement on the same question, with both shown to users in the same table. Blood type is what they agree on, and they agree it changes nothing.
+- **Also reaching nothing:** `sex` reaches no scoring sub-score for kidney or liver and only the inert `medicalCompatibility` for heart and lung; in simulation it moves kidney p24 by +0.0265 and **liver, heart and lung by exactly 0.0000**. So for liver, heart and lung it is a required field that changes no output at all. `urgency` reaches nothing for liver and lung, which are MELD- and LAS-driven.
+- **Important counterweight — the ranking IS patient-dependent, but coarsely.** A one-at-a-time sweep cannot establish that everyone gets the same list, and concluding that would overstate this row. Walking a grid of realistic patients:
+
+| organ | patients | distinct rankings | distinct #1 | median pairwise ρ | median top-10 overlap |
+|---|---|---|---|---|---|
+| kidney | 108 | **15** | 2 | 0.8147 | 7/10 |
+| liver | 36 | 9 | 1 | 0.9314 | 9/10 |
+| heart | 36 | 9 | 1 | 0.9853 | 9/10 |
+| lung | 36 | 6 | 3 | **0.9997** | 10/10 |
+
+  Kidney genuinely personalises (median ρ 0.81 between two real candidates, top-10 overlap down to 2/10) — cPRA does real work. Lung essentially does not (ρ 0.9997, 10/10 overlap); its 3 distinct leaders are L-083's near-tie, not personalisation. But 108 kidney candidates yielding only **15** distinct rankings shows the personalisation is coarse: a small menu of lists rather than a per-patient result, which follows from only two or three inputs reordering anything.
+- **Why it's a limitation:** the inconsistency, not the invariance. cPRA reorders centers substantially (ρ 0.760) while blood type reorders nothing (ρ 1.000). Both are immunological constraints on donor-pool access, and both plainly interact with a center — a program's sensitised-patient protocol matters for a high-cPRA candidate, and a center's ABO-specific donor pool matters for an O candidate. One has a center interaction and the other has none, with no documented reason. That reads as an artifact of where each attribute was wired rather than a modelling position.
+- **What this does NOT say:** that the ranking *should* turn on blood type. Much of what makes a center good is a property of the center, and it is reasonable that the best center for one candidate is often the best for another. The defect is that this is undisclosed — a candidate entering their blood type reasonably infers it personalises the recommendation.
+- **What would help:** (1) state plainly which inputs affect the ranking and which affect only the numbers; (2) stop requiring inputs that reach nothing, or say they are recorded for other purposes; (3) resolve the cPRA/blood-type asymmetry, which requires deciding whether ABO-specific center effects belong in the model — a measurement (#390), not a relabelling.
+- **Files:** `scripts/run-patient-sensitivity.py`, `docs-site/static/data/patient-sensitivity.json`, `backend/services/scoring.py` (`_medical_compatibility`, `_wait_time_score`)
+
 ### L-084: A quarter of the composite score is a constant that cannot affect the ranking
 - **Severity:** HIGH
 - **Status:** OPEN (documented 2026-08-26, `docs/category-variance-report.md`)
