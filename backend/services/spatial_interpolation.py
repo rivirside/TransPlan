@@ -7,6 +7,7 @@ interpolation over city-level data to estimate values at arbitrary coordinates.
 Phase 6B issue #127.
 """
 import logging
+import warnings
 from functools import lru_cache
 
 import numpy as np
@@ -55,6 +56,7 @@ def _extract_layer_points(layer_name: str) -> tuple[np.ndarray, np.ndarray] | No
         (coords, values) where coords is (N, 2) array of [lat, lon]
         and values is (N,) array. Returns None if insufficient data.
     """
+    global _climate_degraded
     data = get_data()
     points = []
     values = []
@@ -136,6 +138,7 @@ def _extract_layer_points(layer_name: str) -> tuple[np.ndarray, np.ndarray] | No
         # manual scores only as fallback when the center file is absent
         center_scores = data.center_climate.get("centers", {})
         if center_scores:
+            _climate_degraded = False
             all_centers = data.all_centers.get("centers", {})
             for code, val in center_scores.items():
                 c = all_centers.get(code, {})
@@ -144,6 +147,19 @@ def _extract_layer_points(layer_name: str) -> tuple[np.ndarray, np.ndarray] | No
                     points.append((lat, lon))
                     values.append(float(val))
         else:
+            _climate_degraded = True
+            warnings.warn(
+                "climate-scores-centers.json is missing or empty — the climate "
+                "layer has fallen back to the legacy 22-city manual scores. "
+                "Every geographic score is now interpolated from 23 points "
+                "instead of 248. Restore the per-center file; see #285.",
+                UserWarning, stacklevel=2,
+            )
+            logger.error(
+                "CLIMATE SURFACE DEGRADED: falling back to %d legacy city "
+                "scores because per-center climate data is unavailable",
+                len(data.climate_scores),
+            )
             for city, val in data.climate_scores.items():
                 if city in _CITY_COORDS and isinstance(val, (int, float)):
                     points.append(_CITY_COORDS[city])
@@ -362,6 +378,20 @@ class SpatialSurface:
 
 
 # Surface cache — avoid rebuilding on every request
+# #285/#302: the climate layer falls back to 23 hardcoded cities when the
+# per-center file is missing. That is a real safety net, but a SILENT
+# reversion to 22-city data is the exact failure the 2026-08-05 incident
+# produced (generated files overwritten with empty shells, nothing noticed),
+# and 22-city results are what #285 exists to eliminate. So the fallback stays
+# and announces itself.
+_climate_degraded = False
+
+
+def climate_surface_is_degraded() -> bool:
+    """True if the climate surface was last built from the legacy city list."""
+    return _climate_degraded
+
+
 _surface_cache: dict[str, SpatialSurface] = {}
 
 

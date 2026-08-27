@@ -358,7 +358,10 @@ def _geographic(lat: float, lon: float, center: dict | None = None) -> float:
     col_score = max(0, min(100, 100 - ((col - 80) / 40) * 100))
     score += col_score * 0.40
 
-    # Climate (35%) — interpolated from 22-city climate scores, fallback 70
+    # Climate (35%) — interpolated from the 248 per-center NASA POWER scores
+    # (#289). The legacy 22-city manual scores remain only as a fallback for a
+    # missing per-center file, and that fallback now warns loudly rather than
+    # degrading silently (#302); fallback 70 if no surface at all.
     climate = _interpolate("climate", lat, lon, fallback=70.0)
     score += max(0, min(100, climate)) * 0.35
 
