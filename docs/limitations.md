@@ -473,6 +473,14 @@ Each limitation has a severity, status, and category. When we fix one, change st
 - **Status:** OPEN
 - **Details:** The allocation circle model counts transplant centers within 250nm/500nm radii as a proxy for competition and donor pool access. The real UNOS allocation system is far more complex — it considers patient priority scores, organ acceptance rates, OPO boundaries, center listing practices, and match-run mechanics. The competition score is normalized against rough averages (e.g., ~15 kidney centers within 250nm for an average US metro) that are not empirically validated.
 - **Impact:** Distance score provides directional guidance (dense vs. sparse transplant geography) but should not be interpreted as a precise allocation prediction.
+- **Normalizers measured and corrected (2026-08-27, #299):** the "rough averages" were not merely unvalidated, they were **wrong**, and checkably so from data already in the repo. Population-weighting the county centroids against county population gives a mean of **25.6** kidney centers within 250nm, not the ~15 the code asserted — so the score averaged **1.71** where its own comment claimed ~1.0. Every organ was understated by 24–72% (kidney 15→25.6, liver 10→15.7, heart 10→16.2, lung 5→8.6, pancreas 7→11.7, intestine 2→2.5).
+
+  Correcting them raises the composite by ~3 points but barely moves the ordering (Spearman ≥ 0.9935, top-20 overlap 18–20/20), so this is a truth-in-labelling fix rather than a results change.
+
+  The 500nm normalizer (2.5× the 250nm figure) was measured on the same footing and is **sound** — actual ratio 2.38–2.51 — so it was kept rather than churned.
+
+  The constants now live at module scope as `AVG_CENTERS_250NM` and are **recomputed and pinned** by `backend/tests/test_competition_normalizers.py`, which fails if they drift from the data. Being function-local round numbers is a large part of why they escaped notice for so long.
+- **Still open:** the deeper objection stands — a center count is a crude proxy for competition regardless of how well it is normalized, because it ignores priority scores, acceptance rates, OPO boundaries and match-run mechanics.
 - **File:** `backend/services/allocation_geography.py` → `allocation_circles()`, `distance_score()`
 - **Mitigation:** Document as directional proxy. Could improve with OPO-level data (#122) and center-specific acceptance rate data.
 
