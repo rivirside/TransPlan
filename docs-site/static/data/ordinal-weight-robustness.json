@@ -1,0 +1,101 @@
+{
+  "organs": {
+    "kidney": {
+      "organ": "kidney",
+      "n_centers": 233,
+      "n_samples": 200,
+      "shipped_top_center": "OHCC",
+      "shipped_top_center_share": 1.0,
+      "distinct_top_centers": 1,
+      "rho_vs_shipped_min": 0.9089,
+      "rho_vs_shipped_median": 0.9893,
+      "roc_rho_vs_shipped": 0.9899,
+      "roc_top_center": "OHCC",
+      "median_90pct_rank_width": 21.0,
+      "max_90pct_rank_width": 72.05,
+      "top10_median_90pct_width": 9.5
+    },
+    "liver": {
+      "organ": "liver",
+      "n_centers": 148,
+      "n_samples": 200,
+      "shipped_top_center": "FLUF",
+      "shipped_top_center_share": 0.98,
+      "distinct_top_centers": 3,
+      "rho_vs_shipped_min": 0.9295,
+      "rho_vs_shipped_median": 0.9929,
+      "roc_rho_vs_shipped": 0.9944,
+      "roc_top_center": "FLUF",
+      "median_90pct_rank_width": 12.0,
+      "max_90pct_rank_width": 42.0,
+      "top10_median_90pct_width": 4.5249999999999915
+    },
+    "heart": {
+      "organ": "heart",
+      "n_centers": 149,
+      "n_samples": 200,
+      "shipped_top_center": "COUC",
+      "shipped_top_center_share": 1.0,
+      "distinct_top_centers": 1,
+      "rho_vs_shipped_min": 0.9648,
+      "rho_vs_shipped_median": 0.9963,
+      "roc_rho_vs_shipped": 0.9973,
+      "roc_top_center": "COUC",
+      "median_90pct_rank_width": 10.0,
+      "max_90pct_rank_width": 30.0,
+      "top10_median_90pct_width": 4.0
+    },
+    "lung": {
+      "organ": "lung",
+      "n_centers": 74,
+      "n_samples": 200,
+      "shipped_top_center": "INIM",
+      "shipped_top_center_share": 0.25,
+      "distinct_top_centers": 8,
+      "rho_vs_shipped_min": 0.9355,
+      "rho_vs_shipped_median": 0.9898,
+      "roc_rho_vs_shipped": 0.9924,
+      "roc_top_center": "INIM",
+      "median_90pct_rank_width": 8.0,
+      "max_90pct_rank_width": 23.049999999999983,
+      "top10_median_90pct_width": 9.0
+    },
+    "pancreas": {
+      "organ": "pancreas",
+      "n_centers": 99,
+      "n_samples": 200,
+      "shipped_top_center": "ILUI",
+      "shipped_top_center_share": 0.65,
+      "distinct_top_centers": 4,
+      "rho_vs_shipped_min": 0.9723,
+      "rho_vs_shipped_median": 0.9937,
+      "roc_rho_vs_shipped": 0.9955,
+      "roc_top_center": "ILUI",
+      "median_90pct_rank_width": 7.0,
+      "max_90pct_rank_width": 24.0,
+      "top10_median_90pct_width": 7.0249999999999915
+    },
+    "intestine": {
+      "organ": "intestine",
+      "n_centers": 21,
+      "n_samples": 200,
+      "shipped_top_center": "OHCC",
+      "shipped_top_center_share": 0.855,
+      "distinct_top_centers": 5,
+      "rho_vs_shipped_min": 0.9052,
+      "rho_vs_shipped_median": 0.9935,
+      "roc_rho_vs_shipped": 0.9948,
+      "roc_top_center": "OHCC",
+      "median_90pct_rank_width": 2.0,
+      "max_90pct_rank_width": 6.049999999999999,
+      "top10_median_90pct_width": 4.0
+    }
+  },
+  "_meta": {
+    "generated": "2026-08-27T01:52:42Z",
+    "script": "scripts/run-ordinal-weight-robustness.py",
+    "seed": 20260826,
+    "samples": 200,
+    "method": "uniform on the ordered simplex w1>=...>=w8, sum=1 (Dirichlet(1,...,1) sorted descending); no spread parameter"
+  }
+}

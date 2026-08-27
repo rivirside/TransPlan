@@ -364,6 +364,72 @@
     setMeta('mc-weights-meta', doc);
   }
 
+  // The categories worth naming individually; the rest are folded into
+  // "everything else" so the table stays readable at six organs.
+  var COMPOSITION_CATS = ['waitTime', 'hospitalQuality', 'donorAvailability',
+                          'medicalCompatibility'];
+
+  function renderComposition(doc) {
+    var organs = organsIn(doc);
+    var inertCats = {};
+
+    var rows = organs.map(function (o) {
+      var cats = ((doc.organs || {})[o] || {}).categories || {};
+      var named = 0;
+      var cells = [titleCase(o)];
+
+      COMPOSITION_CATS.forEach(function (c) {
+        var entry = cats[c] || {};
+        var share = entry.rank_driving_share;
+        named += (typeof share === 'number') ? share : 0;
+        if (entry.inert) inertCats[c] = true;
+        cells.push({
+          text: (typeof share === 'number') ? pct(share, 1) : '—',
+          // An inert category is the finding, not a warning about the data.
+          cls: entry.inert ? 'mc-fail' : null,
+          num: 'num'
+        });
+      });
+
+      cells.push({ text: pct(Math.max(0, 1 - named), 1), num: 'num' });
+      return cells;
+    });
+
+    table(document.getElementById('mc-composition-table'),
+      ['Organ', 'Wait time', 'Hospital quality', 'Donor availability',
+       'Medical compatibility', 'Everything else'],
+      rows);
+
+    var inertNames = Object.keys(inertCats);
+    var takeaway;
+    if (inertNames.length) {
+      var mass = 0;
+      organs.forEach(function (o) {
+        var m = ((doc.organs || {})[o] || {}).inert_weight_mass;
+        if (typeof m === 'number') mass = Math.max(mass, m);
+      });
+      takeaway =
+        'Medical compatibility carries the largest weight in the model (0.25) ' +
+        'and is identical at every center - the sub-score reads only the ' +
+        'patient profile, so no center can differ. It therefore drives 0% of ' +
+        'the ranking, and ' + pct(mass, 0) + ' of the advertised weighting is ' +
+        'inert: moving that slider does not change the order. What actually ' +
+        'orders the list is wait time, which carries roughly half the ' +
+        'rank-driving variation for every organ except lung. Lung is the ' +
+        'exception - hospital quality edges wait time there - which is why ' +
+        'lung is also the organ whose top-ranked center is a near-tie rather ' +
+        'than a determinate answer. This is a known limitation (L-084), shown ' +
+        'here rather than left implicit.';
+    } else {
+      takeaway =
+        'Every category now varies between centers, so the displayed weights ' +
+        'and the rank-driving shares describe the same thing. If this replaced ' +
+        'a previously inert category, L-084 should be closed.';
+    }
+    document.getElementById('mc-composition-takeaway').textContent = takeaway;
+    setMeta('mc-composition-meta', doc);
+  }
+
   var LIMITATIONS = [
     'Estimates describe the SRTR release they were built from, not real-time ' +
       'allocation. Interval coverage decays the further ahead you read them.',
@@ -427,7 +493,8 @@
       section('sbc', 'mc-sbc', renderSbc),
       section('pediatric-calibration', 'mc-pediatric', renderPediatric),
       section('panel-fit', 'mc-panel', renderPanel),
-      section('scoring-weight-sensitivity', 'mc-weights', renderWeights)
+      section('scoring-weight-sensitivity', 'mc-weights', renderWeights),
+      section('category-variance', 'mc-composition', renderComposition)
     ];
 
     // Center calibration is one file per organ.
@@ -449,8 +516,9 @@
     // in the freshness table, so the page accounts for everything published.
     var EXTRA = ['assumption-sweep', 'cas-dispersion', 'clinical-backtest-results',
                  'decile-calibration', 'panel-variance', 'pediatric-inversion',
-                 'sensitivity-results', 'srtr-comparison-results',
-                 'temporal-forecast', 'temporal-validation'];
+                 'ordinal-weight-robustness', 'sensitivity-results',
+                 'srtr-comparison-results', 'temporal-forecast',
+                 'temporal-validation'];
     jobs.push(Promise.all(EXTRA.map(function (n) {
       return load(n).then(function (d) { track(n + '.json', d); })
         .catch(function () { /* absent artifacts simply do not appear */ });
