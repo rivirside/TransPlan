@@ -430,6 +430,77 @@
     setMeta('mc-composition-meta', doc);
   }
 
+  var ATTR_LABELS = {
+    blood_type: 'Blood type',
+    age: 'Age',
+    sex: 'Sex',
+    urgency: 'Urgency',
+    cpra: 'cPRA (sensitisation)',
+    meld: 'MELD score',
+    las: 'LAS score'
+  };
+
+  function renderPatientSensitivity(doc) {
+    var organs = organsIn(doc);
+    var rows = [];
+    var anyInert = false;
+
+    organs.forEach(function (o) {
+      var attrs = ((doc.organs || {})[o] || {}).attributes || {};
+      Object.keys(attrs).forEach(function (key) {
+        var e = attrs[key];
+        var sim = e.simulation || {};
+
+        // "Changes your numbers" is the simulation shift where available;
+        // absent that, whether it reaches any sub-score at all.
+        var movesNumbers;
+        if (typeof sim.mean_p24_shift === 'number') {
+          movesNumbers = Math.abs(sim.mean_p24_shift) >= 0.005;
+        } else {
+          movesNumbers = !e.reaches_nothing;
+        }
+
+        // Reordering claims are only meaningful above rounding churn: a
+        // sub-score that is identical at every center can still reshuffle
+        // near-ties when the displayed total is rounded.
+        var reorders = !e.identical_order && e.spearman < 0.999;
+        if (!reorders) anyInert = true;
+
+        rows.push([
+          titleCase(o),
+          ATTR_LABELS[key] || key,
+          { text: movesNumbers ? 'yes' : 'no',
+            cls: movesNumbers ? null : 'mc-fail' },
+          { text: reorders ? 'yes' : 'no',
+            cls: reorders ? null : 'mc-fail' },
+          // 4 dp so an exact 1.0000 (blood type genuinely cannot reorder) is
+          // distinguishable from 0.9999 (rounding churn among near-ties).
+          { text: num(e.spearman, 4), num: 'num' }
+        ]);
+      });
+    });
+
+    table(document.getElementById('mc-patient-table'),
+      ['Organ', 'Your answer', 'Changes your numbers', 'Changes which center is best',
+       'Rank correlation'],
+      rows);
+
+    document.getElementById('mc-patient-takeaway').textContent = anyInert
+      ? 'Blood type is the clearest case. It changes your predicted chances a '
+        + 'great deal - an AB+ kidney candidate averages about 25 percentage '
+        + 'points higher at 24 months than an O- one - and it does not change '
+        + 'the order of the centers at all. The two lists are identical, not '
+        + 'merely similar. The inputs that do change the order are the '
+        + 'organ-specific severity and sensitisation measures: cPRA for '
+        + 'kidney, MELD for liver, LAS for lung. That asymmetry is not a '
+        + 'considered position - cPRA and blood type are both constraints on '
+        + 'which donors can reach you - and it is tracked as a known '
+        + 'limitation (L-085) rather than presented as intended behaviour.'
+      : 'Every input now affects both the numbers and the ordering, so L-085 '
+        + 'should be closed.';
+    setMeta('mc-patient-meta', doc);
+  }
+
   var LIMITATIONS = [
     'Estimates describe the SRTR release they were built from, not real-time ' +
       'allocation. Interval coverage decays the further ahead you read them.',
@@ -494,7 +565,8 @@
       section('pediatric-calibration', 'mc-pediatric', renderPediatric),
       section('panel-fit', 'mc-panel', renderPanel),
       section('scoring-weight-sensitivity', 'mc-weights', renderWeights),
-      section('category-variance', 'mc-composition', renderComposition)
+      section('category-variance', 'mc-composition', renderComposition),
+      section('patient-sensitivity', 'mc-patient', renderPatientSensitivity)
     ];
 
     // Center calibration is one file per organ.
