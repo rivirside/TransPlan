@@ -117,6 +117,57 @@
     return row;
   }
 
+  // ==================== INERT-CATEGORY DISCLOSURE (L-084) ====================
+
+  // A weight can only reorder centers through a sub-score that VARIES between
+  // them. `medicalCompatibility` reads only the patient profile, so it is the
+  // same everywhere and its slider cannot change the ranking however far it is
+  // dragged — despite carrying the largest default weight (0.25).
+  //
+  // Read from the published measurement rather than hardcoded, so that if the
+  // sub-score is ever made center-specific (#390) and the artifact is
+  // regenerated, this note disappears on its own instead of becoming a lie.
+  var VARIANCE_ARTIFACT = 'docs-site/static/data/category-variance.json';
+
+  function annotateInertCategories() {
+    fetch(VARIANCE_ARTIFACT, { cache: 'no-cache' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (doc) {
+        if (!doc || !doc.organs) return;
+        var organs = Object.keys(doc.organs);
+        if (!organs.length) return;
+
+        // Only flag a category inert if it is inert for EVERY organ. The
+        // weights panel is not organ-scoped, so a category that mattered for
+        // even one organ must not be labelled dead.
+        CATEGORY_KEYS.forEach(function (key) {
+          var inertEverywhere = organs.every(function (o) {
+            var cats = (doc.organs[o] || {}).categories || {};
+            return cats[key] && cats[key].inert === true;
+          });
+          if (!inertEverywhere) return;
+
+          var row = document.querySelector('.weight-slider-row[data-key="' + key + '"]');
+          if (!row || row.querySelector('.weight-inert-note')) return;
+
+          var note = document.createElement('span');
+          note.className = 'weight-inert-note';
+          note.textContent = 'Same at every center — does not affect ranking';
+          note.title =
+            'This score depends only on your own profile, so it is identical '
+            + 'at every center and adds the same amount to each one. Changing '
+            + 'this weight changes the scores shown, but not the order they '
+            + 'are in. (Centers scoring within a rounding step of each other '
+            + 'can still swap places — that is display rounding, not a real '
+            + 'difference between them.) See the model card for what does '
+            + 'drive the ranking.';
+          row.appendChild(note);
+          row.classList.add('weight-row-inert');
+        });
+      })
+      .catch(function () { /* disclosure is additive; absence must not break the panel */ });
+  }
+
   function initWeightSliders() {
     var container = document.getElementById('weightsSliders');
     if (!container) return;
@@ -137,6 +188,8 @@
         setPreset(presetSelect.value);
       });
     }
+
+    annotateInertCategories();
   }
 
   // ==================== NORMALIZATION ====================

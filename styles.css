@@ -826,6 +826,25 @@ body {
   opacity: 1;
 }
 
+/* L-084: a category whose sub-score is identical at every center cannot
+   reorder the list, however its weight is set. The row stays interactive —
+   the weight still changes the displayed score — but says so plainly.
+   Spans the full grid width so it does not land in a column slot. */
+.weight-inert-note {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  line-height: 1.3;
+  font-style: italic;
+  color: var(--text-2);
+  opacity: 0.85;
+  padding: 0 0 2px 0;
+  cursor: help;
+}
+
+.weight-row-inert .weight-slider {
+  opacity: 0.55;
+}
+
 @media (max-width: 600px) {
   .weight-slider-row {
     grid-template-columns: 110px 1fr 36px 24px;
