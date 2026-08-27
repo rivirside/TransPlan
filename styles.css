@@ -2070,6 +2070,16 @@ body {
   font-weight: 600;
   color: var(--text-1);
 }
+/* #227/#228: this center's ranking rests partly on national averages rather
+   than its own SRTR data. Deliberately quiet — it qualifies a row, it does
+   not condemn it, and for pancreas it would otherwise shout on 10 of 10. */
+.results-table .city-cell .rt-dq-flag {
+  font-weight: 400;
+  font-size: var(--fs-xs);
+  color: var(--warm-accent, #c97c4a);
+  margin-left: 3px;
+  cursor: help;
+}
 .results-table .city-cell .city-state {
   font-weight: 400;
   font-size: var(--fs-xs);

@@ -662,6 +662,17 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-087: Centers missing SRTR data are still ranked, using national averages in place of it
+- **Severity:** MEDIUM
+- **Status:** DISCLOSED, NOT FIXED (documented 2026-08-27, #227 / #228)
+- **Category:** Data / Presentation
+- **What:** when a center has no published SRTR figure for an input, the engines substitute the national average (a 1.0 multiplier) and rank the center anyway. Measured across all 724 (center, organ) pairs the registry offers: **11** have no center wait-time factor and **35** no competing-risk factors. On the scoring path, degraded centers occupy **10 of the top 10** for pancreas and **6 of 10** for intestine; kidney, liver, heart and lung top-10s are clean.
+- **Why it's a limitation:** a national average is not a neutral placeholder. It is a *typical* value, so a center with no data is scored as an average center rather than as an unknown one — and for an organ whose distribution is wide, "average" can outrank most real centers. The substitution is also concentrated in the two organs with the fewest programs, where a reader has least other evidence.
+- **What shipped instead of a fix:** the affected rows are now marked `†` with the specific substituted input named, and `/score` returns per-center `data_quality` (#227). The reader can see which recommendation rests on a substitute. That is disclosure, not correction: the ranking still places these centers on borrowed data.
+- **Why not shrink toward "unknown":** the honest alternative is to widen the uncertainty for these centers rather than move the point estimate, but the score ranking carries **no** uncertainty interval at all today (#386 / L-082), so there is nothing to widen. Sequencing matters here — a penalty applied to the point estimate would be a second uncited judgement of exactly the kind L-082 documents.
+- **How to close:** #386's ranking intervals, with missing inputs contributing width rather than a central value; or exclude centers with no organ-level data from the ranking and list them separately as "no published data".
+- **Files:** `backend/services/provenance.py`, `backend/routers/score.py`, `simulator/results-table.js` (`DQ_LABELS`, `_buildDataQualityFlag`), `backend/services/distributions.py:205`, `backend/services/competing_risks.py` (`_center_adjustment`)
+
 ### L-086: Centers with 3-patient cohorts are ranked above centers with 700
 - **Severity:** MEDIUM (was HIGH — largely fixed 2026-08-27, see below)
 - **Status:** PARTIALLY FIXED (documented 2026-08-27, #268 / #294)
