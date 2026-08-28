@@ -197,6 +197,40 @@ def fetch_one_release(code: str, organs: list[str], from_zip: bool) -> dict:
     return out
 
 
+def merge_with_existing(fresh: dict, fetched: list, path=None) -> dict:
+    """Carry forward organs this run did not fetch.
+
+    A --organ run builds its output from the selected organs alone. Writing
+    that straight out replaces the calibration ground truth with a file
+    covering one organ, and calibration reports a missing organ by skipping
+    every center in it rather than by failing. Fifteen modules read this file.
+
+    A run that fetched EVERY organ is authoritative and is passed through
+    untouched, so an organ the release genuinely dropped can still be dropped.
+    """
+    path = OUT_PATH if path is None else path
+    if set(fetched) >= set(ORGAN_CODES):
+        return fresh
+    if not path.exists():
+        return fresh
+    try:
+        existing = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return fresh
+
+    merged = dict(fresh)
+    carried = []
+    for organ, block in existing.items():
+        if organ == "_meta" or organ in fresh:
+            continue
+        merged[organ] = block
+        carried.append(organ)
+    if carried:
+        merged.setdefault("_meta", {})["carriedForward"] = sorted(carried)
+        print(f"  carried forward (not fetched this run): {', '.join(sorted(carried))}")
+    return merged
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--organ", choices=list(ORGAN_CODES), help="One organ (default: all)")
@@ -216,6 +250,7 @@ def main():
         }}
         print(f"Current release {CURRENT_CODE}:")
         out.update(fetch_one_release(CURRENT_CODE, organs, from_zip=False))
+        out = merge_with_existing(out, organs)
         OUT_PATH.write_text(json.dumps(out, indent=2))
         print(f"\nWrote {OUT_PATH.relative_to(REPO_ROOT)}")
         return
