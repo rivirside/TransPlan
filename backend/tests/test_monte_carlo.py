@@ -288,17 +288,37 @@ class TestStability:
         sd_small = math.sqrt(p * (1 - p) / 60)
         assert 2 * sd_small > self.tolerance(p, 2000)
 
-    def test_more_iterations_tighter_ci(self, data, kidney_o_plus):
-        """More iterations should produce a tighter confidence interval."""
-        result_200 = simulate(kidney_o_plus, n_iterations=200)
-        result_2000 = simulate(kidney_o_plus, n_iterations=2000)
+    def test_more_iterations_tighten_the_SIMULATION_half_of_the_ci(self, data):
+        """More iterations tighten the interval only where simulation error
+        dominates it.
 
-        ci_200 = result_200.cities[0].confidence_interval_95
-        ci_2000 = result_2000.cities[0].confidence_interval_95
+        Rewritten for #296. The old version was unseeded, read `cities[0]`
+        (whose identity moves between runs), and asserted a strict inequality
+        on a quantity that barely changes -- so it passed by luck and failed
+        the next run. It also encoded the pre-#296 belief that this interval
+        is pure sampling error; since the data-uncertainty term was added,
+        a sparse center's band is dominated by how little data exists and
+        does NOT shrink when you spend more CPU. That is the point of the
+        change, and `test_ci_carries_data_uncertainty.py` asserts it.
 
-        width_200 = ci_200[1] - ci_200[0]
-        width_2000 = ci_2000[1] - ci_2000[0]
-        assert width_2000 < width_200, "More iterations should tighten CI"
+        So: pick a HIGH-volume center, where the data term is small, seed both
+        runs, and check the simulation half still behaves.
+        """
+        obs = data.srtr_observed_rates["kidney"]["centers"]
+        dense = max(obs.items(), key=lambda kv: kv[1].get("n") or 0)[0]
+
+        patient = PatientProfile(organ="kidney", blood_type="O+", age=45,
+                                 sex="male", urgency=2, cpra=0)
+        def width(n_iter):
+            res = simulate(patient, n_iterations=n_iter, seed=17)
+            city = next(c for c in res.cities if c.center_code == dense)
+            return city.confidence_interval_95[1] - city.confidence_interval_95[0]
+
+        assert width(2000) < width(200), (
+            f"at {dense}, the best-measured kidney center, more iterations "
+            "did not tighten the interval -- the simulation term is not "
+            "responding at all"
+        )
 
 
 # -- All organs produce results --

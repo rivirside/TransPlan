@@ -662,6 +662,17 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-094: The drift-detection tool recorded zeros for the outcome vector it was built to watch
+- **Severity:** MEDIUM (fixed) — a validation tool that could not fail
+- **Status:** **FIXED 2026-08-27** (#137)
+- **Category:** Tooling
+- **What:** `scripts/snapshot-model-outputs.py` (built for #137) read `competing_risks["p_transplant"]`, but the keys carry a `_24mo` suffix. Every snapshot ever taken recorded **0/0/0** for the 24-month outcome vector. Two snapshots full of zeros compare equal, so the tool built to detect model drift was structurally blind to competing-risk drift — it would have reported "unchanged" through any shift in mortality or removal.
+- **Compounding it:** the snapshots were wired to nothing. No CI job, no npm script, no test, no doc reference. Drift was captured and never measured, so the zeros were never looked at.
+- **And no seed.** The stochastic engines ran unseeded, so run-to-run noise alone moved every profile and changed the top-ranked center in **15 of 24 engine runs**. Any real change was indistinguishable from noise. Seeded, a known change (Rh, #413) shows as **6** moved runs with the right profile and engine selectivity.
+- **The same bug appeared three times, at three layers.** After fixing the extractor, the new comparator reported `max_abs_delta_competing_risk: 0.0` when two snapshots used different key names — "could not compare" rendered as "measured, unchanged". After fixing that, the renderer still printed *"No drift: every compared engine run is identical"* for exactly that case. Each was caught by the test written for the layer below. **A zero that means "not measured" is the recurring hazard here; it must be `None` and it must be said out loud.**
+- **Validated against a known change:** two snapshots differing only in whether Rh is live move `liver/O-` (the only Rh-negative reference profile) on all three engines, and move three Rh-*positive* profiles on the **BBN alone** — the DonorSupply tercile coupling documented in L-088, rediscovered independently on precisely the engine its mechanism predicts.
+- **Files:** `scripts/snapshot-model-outputs.py`, `backend/tests/test_snapshot_comparison.py`
+
 ### L-093: The Monte Carlo "95% CI" was simulation error, and shrank when you spent more CPU
 - **Severity:** HIGH when live; now FIXED
 - **Status:** **FIXED 2026-08-27** (#296)

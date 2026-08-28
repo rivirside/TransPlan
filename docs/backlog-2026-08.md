@@ -46,7 +46,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | E1 | Per-release Table B10 parse → fit-on-N/predict-N+k forecast test | #237 | ✅ 2026-08-24 |
 | E2 | Assumption sensitivity sweep (T6): ±20% perturbation, rank stability | #294 | ✅ 2026-08-25 |
 | E3 | Decile calibration (T-calibration): predicted vs observed mortality | #295 | ✅ 2026-08-25 |
-| E4 | Cross-iteration model comparison | #137 | |
+| E4 | Cross-iteration model comparison | #137 | ✅ 2026-08-27 — snapshot half already existed but was wired to NOTHING and recorded 0/0/0 for competing risks (L-094); also unseeded, so noise moved every profile. Fixed + built the comparison half (`--compare`), validated against a known change (Rh #413) |
 | E5 | MCMC calibration via run-center-calibration after #207 | #207 | ✅ ρ 0.64–0.80 (docs/mcmc-248-refit-report.md) |
 | E6 | Reframe MCMC as calibrated-uncertainty, not validation (L-061) | #257 | ✅ docs/UI reframed 2026-08-25 (#257 stays open for the remaining statistical-validity items) |
 | E7 | Close #269 COMET-Lung (infeasible, documented) | #269 ✅ CLOSED | ✅ 2026-08-26 — #269 closed: COMET is population-level and does not rank centers, so SRTR per-center calibration is the substitute|
