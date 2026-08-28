@@ -8,7 +8,7 @@
  * fixed. The generalisation was not: nothing checks whether any other
  * `@media` block's selectors still resolve.
  *
- * Auditing all 21 blocks found **55 of 196 selectors dead (28%)**, clustered
+ * Auditing all 21 blocks found **59 of 196 selectors dead (30%)**, clustered
  * exactly where features were removed — `.what-if-*` (5/5), `.landing-*`
  * (26/49 in one block), `.data-header` (a page that no longer exists).
  *
@@ -30,13 +30,15 @@ const ROOT = path.join(__dirname, '..');
  * Measured 2026-08-28 by this file's own detector. Lower it when rules are
  * cleaned up; never raise it.
  *
- * It must equal the CURRENT count exactly, not an approximation. The first
- * version used 58 (from a standalone audit script whose detector differed
- * slightly) against an actual 55, and the three selectors of slack meant
- * adding a dead rule passed. A ratchet with slack is not a ratchet — caught
- * by negative-testing it.
+ * It must equal the CURRENT count exactly, not an approximation. Two
+ * corrections got it here. First it was 58, from a standalone audit script
+ * whose detector differed slightly, against an actual 55 — three selectors
+ * of slack, so adding a dead rule still passed; a ratchet with slack is not
+ * a ratchet. Then CI reported 56 where local reported 55, because the JS
+ * scan walked the whole repo and saw locally-built output. Scoping the scan
+ * to the shipped modules makes it deterministic, and the honest count is 59.
  */
-const BASELINE_DEAD = 55;
+const BASELINE_DEAD = 59;
 
 function collectPresentTokens() {
   const present = new Set();
@@ -52,18 +54,31 @@ function collectPresentTokens() {
   return present;
 }
 
-/** Classes created at runtime never appear in the HTML, so scan the JS too. */
+/**
+ * Classes created at runtime never appear in the HTML, so scan the JS too --
+ * but only the JS that actually ships to a browser.
+ *
+ * The first version walked the whole repo. That made the count
+ * ENVIRONMENT-DEPENDENT: locally it saw `docs-site/build/` and other
+ * generated output, found one more token, and reported 55 where CI reported
+ * 56. A baseline that differs between machines is not a baseline. Scoped to
+ * the shipped frontend modules, which is also the semantically right answer:
+ * a selector is alive if the shipped markup or the shipped browser code
+ * references it.
+ */
+const JS_ROOTS = ['.', 'simulator', 'shared', 'explorer', 'components', 'pages'];
+
 function collectJsSource() {
   const out = [];
-  const walk = (dir) => {
+  for (const rel of JS_ROOTS) {
+    const dir = path.join(ROOT, rel);
+    if (!fs.existsSync(dir)) continue;
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue;
-      const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) walk(full);
-      else if (entry.name.endsWith('.js')) out.push(fs.readFileSync(full, 'utf8'));
+      if (entry.isFile() && entry.name.endsWith('.js')) {
+        out.push(fs.readFileSync(path.join(dir, entry.name), 'utf8'));
+      }
     }
-  };
-  walk(ROOT);
+  }
   return out.join('\n');
 }
 
