@@ -316,6 +316,36 @@ def _pediatric_dist(patient, code: str, peds_block: dict, adult_dist):
     return scipy.stats.lognorm(s=s, loc=loc, scale=median)
 
 
+
+def _widen_for_data_uncertainty(ci: tuple[float, float], p24: float,
+                                organ: str, center_code: str) -> tuple[float, float]:
+    """Add data-sampling uncertainty to a simulation-error interval (#296).
+
+    The two are independent — one is how precisely we ran the simulation, the
+    other how precisely the inputs are known — so their half-widths combine in
+    quadrature rather than adding.
+
+    Deliberately delegates to the BBN's `_data_uncertainty_ci` instead of
+    reimplementing it: both engines populate the same `confidence_interval_95`
+    field, and two different notions of uncertainty behind one field name is
+    the defect this fixes, not a thing to duplicate.
+    """
+    import math
+    from services.bayesian_network import _data_uncertainty_ci
+
+    sim_half = max(0.0, (ci[1] - ci[0]) / 2.0)
+    n_obs = 0
+    if center_code:
+        try:
+            rec = get_data().observed_outcome(organ, center_code)
+            n_obs = int(rec.get("n") or 0) if rec else 0
+        except (RuntimeError, AttributeError, TypeError, ValueError):
+            n_obs = 0
+    data_half = _data_uncertainty_ci(p24, n_obs, organ=organ)
+    half = math.hypot(sim_half, data_half)
+    return (max(0.0, p24 - half), min(1.0, p24 + half))
+
+
 def simulate(
     patient: PatientProfile,
     n_iterations: int | None = None,
@@ -565,7 +595,21 @@ def simulate(
         p_24 = p_transplant_within(24)
         p_36 = p_transplant_within(36)
 
+        # #296: the bootstrap alone is SIMULATION error — it resamples our own
+        # draws, so it shrinks as 1/sqrt(iterations) and knows nothing about
+        # how well the underlying rates are measured. Shipped behaviour was
+        # indefensible next to the field's name: a center whose statistics
+        # rest on 2 patients got CI width 0.0252 and one resting on 833 got
+        # 0.0254, and cranking iterations 500->5000 narrowed the band from
+        # 0.076 to 0.026 without anyone learning anything.
+        #
+        # Combine in quadrature with the same data-sampling term the BBN has
+        # used since #226 (binomial SE at the center's observed cohort,
+        # inflated by #311's 1.25). Independent sources, so quadrature; and
+        # reusing the BBN's function keeps the two engines' intervals
+        # meaning the same thing.
         ci_95 = _bootstrap_ci(outcomes, event=0, threshold_months=event_times, time_horizon=24, rng=rng)
+        ci_95 = _widen_for_data_uncertainty(ci_95, p_24, patient.organ, code)
 
         transplanted_mask = outcomes == 0
         if np.any(transplanted_mask):

@@ -662,6 +662,25 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-093: The Monte Carlo "95% CI" was simulation error, and shrank when you spent more CPU
+- **Severity:** HIGH when live; now FIXED
+- **Status:** **FIXED 2026-08-27** (#296)
+- **Category:** Statistical Validity / Presentation
+- **What:** `confidence_interval_95` on the default engine came from bootstrapping the engine's *own simulated outcomes*. It measured how precisely we ran the simulation, not how well the inputs are known. Measured before the fix:
+
+| center | SRTR cohort | reported CI width |
+|---|---|---|
+| NJBI | **2 patients** | 0.0252 |
+| TXHS | **833 patients** | 0.0254 |
+
+  Across all 233 kidney centers the width spanned only 0.0156–0.0296, and that variation is p(1−p) curvature, not data quality. Raising iterations 500 → 5000 narrowed the band **0.076 → 0.026**.
+- **Why it's serious:** a candidate was told a two-patient center's estimate was as precise as an 833-patient one, and the tool offered to make both look *more* precise by spending CPU. Meanwhile the BBN's identically-named field has meant data-sampling uncertainty since #226 and correctly widens for sparse centers — **two engines, one field name, opposite meanings**, and the misleading one was the default.
+- **Fixed:** the simulation-error half-width is combined in quadrature with the BBN's existing `_data_uncertainty_ci` (binomial SE at the center's observed cohort, #311's 1.25 inflation). Independent sources, so quadrature rather than addition — the goal is honesty, not merely a wider band. Delegating to the BBN's function rather than reimplementing it is deliberate: two notions behind one field name is the defect. Now NJBI 0.684 / TXHS 0.082, a 13× spread driven by data quality where it was 1.9× driven by curvature, and 10× the iterations barely moves the sparse center.
+- **What #296 actually proposed does NOT help.** It asked for Dirichlet CPT sampling as "the only method yielding a true posterior". Built and measured: the posterior is already implicit (the shipped CPT is its Dirichlet-multinomial mean), and the resulting credible interval is **narrower** than the binomial band already shipped — kidney 0.95×, liver 0.79×, heart 0.78×, lung 0.59×. Implementing it would have *reduced* disclosed uncertainty. Same shape as #274 and #376.
+- **Still unmeasured:** WaitCategory-*timing* uncertainty is propagated by neither engine. #226's docstring flagged it and this work did not close it; #296 stays open for that piece specifically.
+- **A note on how it survived:** widening this field broke **zero** tests out of 1427. Nothing pinned the CI's behaviour, only that it bracketed the estimate — which is why a field that ignored cohort size entirely could ship and stay.
+- **Files:** `backend/services/monte_carlo.py` (`_widen_for_data_uncertainty`), `backend/services/bayesian_network.py` (`_data_uncertainty_ci`), `backend/tests/test_ci_carries_data_uncertainty.py`
+
 ### L-092: The print stylesheet went stale in the rebuild and dropped the medical disclaimer
 - **Severity:** MEDIUM (fixed) — a printed page for a care team carried no disclaimer
 - **Status:** **FIXED 2026-08-27** (#197)
