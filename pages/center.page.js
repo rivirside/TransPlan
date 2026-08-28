@@ -249,15 +249,38 @@
                 addRow('\u2706', phoneLink);
             }
             if (contact.website) {
+                // #162: a bare hostname tells a patient nothing about what is
+                // on the other end. Label it, but do NOT promise a team page:
+                // 167 of the 248 URLs are a bare hospital root, not a
+                // transplant-program page, so "meet the team" would send two
+                // thirds of readers to a homepage.
+                var siteWrap = document.createElement('span');
                 var siteLink = document.createElement('a');
                 siteLink.href = contact.website;
                 siteLink.target = '_blank';
                 siteLink.rel = 'noopener noreferrer';
+                siteLink.textContent = 'Program website';
+                siteWrap.appendChild(siteLink);
+                var host = document.createElement('span');
+                host.className = 'contact-host';
                 try {
-                    siteLink.textContent = new URL(contact.website).hostname.replace(/^www\./, '');
-                } catch (e) { siteLink.textContent = contact.website; }
-                addRow('\u25A1', siteLink);
+                    host.textContent = ' ' + new URL(contact.website).hostname.replace(/^www\./, '');
+                } catch (e) { host.textContent = ' ' + contact.website; }
+                siteWrap.appendChild(host);
+                addRow('\u25A1', siteWrap);
             }
+
+            // #162: patients ask who they would be working with. Each program
+            // publishes its own staff list; this tool deliberately does not
+            // mirror one, because a scraped roster goes stale as people move
+            // on and a stale name is worse than none.
+            var teamHint = document.createElement('p');
+            teamHint.className = 'contact-team-hint';
+            teamHint.textContent = 'Surgeons, coordinators and other staff are '
+                + 'listed on the program\u2019s own site \u2014 this tool does '
+                + 'not keep a directory, so nothing here goes out of date when '
+                + 'someone moves on.';
+            rows.appendChild(teamHint);
 
             left.appendChild(rows);
 
