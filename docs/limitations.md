@@ -674,6 +674,18 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-095: The BBN's displayed waitlist mortality rests entirely on an uncited hazard-shape assumption
+- **Severity:** MEDIUM
+- **Status:** OPEN — measured and scoped 2026-08-28 (#233 / BBN-19), not changed
+- **Category:** Statistical Model
+- **What:** SRTR publishes 12-month competing-risk outcomes; the BBN reports at 24 months. `_extend_12_to_24` bridges that with a **constant cause-specific hazard** assumption, S(24) = S(12)². It is uncited.
+- **Its scope is narrower and sharper than the register assumed.** It **cannot** affect the headline transplant probability — not weakly, but algebraically: the extension scales `tx`/`death`/`removed` by a common factor, and `p_24` derives from them only through the ratio `q = (death+delist)/(tx+death+delist)`, so the factor cancels exactly. Max |Δp24| across 32 comparisons is **0.0004**; forcing α=1.0 moves the CompetingOutcome CPT by **0.25** while p24 moves by **exactly 0.000000**.
+- **What it does control:** the entire mortality/removal/waiting split. Sweeping S(24)=S(12)^α over α ∈ [1,3] moves mean kidney 24-month mortality **0.0219 → 0.0935** and removal **0.0235 → 0.1022** — mean mortality spans **0.41×–1.76×** of the shipped value. That is a 4× lever on a figure shown to patients.
+- **And the project's own data suggests the shipped value is wrong in a known direction.** #297 measured the interval removal hazard within a single cohort and found it **falls** with time on the list for liver, heart, lung and intestine (depletion of susceptibles). A declining second-year hazard means α < 2, so the shipped α = 2.0 **overstates** terminal outcomes. At α = 1.5 the displayed kidney waitlist mortality would be **0.036 rather than 0.053**.
+- **Why it is not fixed here:** the correct α is organ-specific; #297's figures are interval hazards within one cohort rather than a fitted second-year hazard; and any substitution has to clear the calibration gate. Filed rather than guessed — the same discipline that rejected #274's clamp raise and #376's median substitution.
+- **A near-miss worth recording:** the first version of this sweep measured p24 alone and reported a flawless null — worst Spearman 1.00000, top-10 identical 32/32 — which reads as "the assumption doesn't matter". The truth was that the metric was structurally blind to it. Forcing α to an extreme and confirming the CPT moved while p24 did not is what separated "no effect" from "cannot see the effect". Both properties are now pinned, so the sweep cannot silently go vacuous.
+- **Files:** `backend/services/bbn_parameterizer.py` (`_extend_12_to_24`), `backend/services/bayesian_network.py` (`_combine_outcomes`), `scripts/run-horizon-extension-sweep.py`, `backend/tests/test_horizon_extension_scope.py`
+
 ### L-094: The drift-detection tool recorded zeros for the outcome vector it was built to watch
 - **Severity:** MEDIUM (fixed) — a validation tool that could not fail
 - **Status:** **FIXED 2026-08-27** (#137)
