@@ -674,6 +674,17 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-096: Two BBN nodes are computed on every inference and discarded
+- **Severity:** LOW (no wrong output) — recorded because it misdirects justification effort
+- **Status:** DOCUMENTED 2026-08-28 (#233), deliberately not removed
+- **Category:** Tooling / Model structure
+- **What:** `_query_city` returns four marginals. `simulate_bbn` reads exactly two — `competing_outcome` and `wait_category`. **`graft_survival` and `compound_success` are computed every inference and thrown away.** The user-facing compound-success figure comes from `services/outcomes.py`, which reads `post-transplant-outcomes.json` directly and never consults the network.
+- **Measured, not inferred:** forcing `_GRAFT_POOR_MARGIN` from 3.0 to 50.0 (every center "poor"), replacing the GraftSurvival CPT with an all-poor degenerate, and collapsing the CompoundSuccess CPT to always-success each leave the response **byte-identical**.
+- **Why it matters despite producing no wrong number:** four register rows (BBN-02, BBN-12, BBN-14, BBN-15) sit in the "needs justification" queue for constants that **cannot reach a reader**. The register's 129-unjustified / 57-high-risk counts and its priority shortlist therefore point some attention at numbers where a citation would be ceremony. Same family as L-084 (a quarter of the score is a constant that cannot reorder) and BBN-19 (a hazard-shape assumption that cannot affect p24) — inert machinery that reads as substance.
+- **Not removed, deliberately:** the two nodes cost **1.4–2.5%** of CPT build time (6.4 ms of 447 ms at full granularity) and 1.5% of CPT cells, so there is no performance case; and deleting them would foreclose surfacing BBN-native graft reasoning, which is a reasonable future feature.
+- **Alarmed instead:** `backend/tests/test_bbn_graft_nodes_unreachable.py` fails the moment the production path reads either dead marginal — at which point the four constants become live and need the justification the register is holding. It carries its own vacuity guard (perturbing a node known to drive p24 must move the response), because every other assertion in it is of the form "changing X changes nothing".
+- **Files:** `backend/services/bayesian_network.py` (`_query_city`, `simulate_bbn`), `backend/services/bbn_parameterizer.py` (`build_graft_survival_cpt`, `build_compound_success_cpt`), `backend/services/outcomes.py`
+
 ### L-095: The BBN's displayed waitlist mortality rests entirely on an uncited hazard-shape assumption
 - **Severity:** MEDIUM
 - **Status:** OPEN — measured and scoped 2026-08-28 (#233 / BBN-19), not changed
