@@ -97,3 +97,47 @@ def test_an_organ_with_no_nearby_program_degrades_honestly(data):
     out = opo_competition(*PLACES["billings_mt"], "intestine")
     assert out["centers_in_opo"] >= 0
     assert out["competition_score"] is None or out["competition_score"] > 0
+
+
+# ── the composite consumes it (#299) ────────────────────────────────────────
+
+def test_the_distance_score_uses_the_opo_measure(data):
+    """A component measured NOT to predict has no business driving 35% of a
+    displayed score. The composite now sources competition from the OPO."""
+    from services.allocation_geography import distance_score
+    for lat, lon in PLACES.values():
+        out = distance_score(lat, lon, "kidney")
+        assert out["competition_basis"] == "opo", out["competition_basis"]
+        assert out["opo_competition"]["competition_score"] is not None
+        # The circle figure is retained for comparison, not discarded.
+        assert "circle_competition_score" in out
+
+
+def test_a_sparse_location_no_longer_scores_as_competition_free(data):
+    """Billings has no center within 250 nm, so the circle called it ZERO
+    competition -- a perfect 100 on that component -- while the patient is
+    listed into an OPO with eight competing kidney programs.
+
+    This is the concrete failure the OPO measure exists to fix, so it is
+    pinned rather than left to the correlation tables.
+    """
+    from services.allocation_geography import distance_score
+    out = distance_score(*PLACES["billings_mt"], "kidney")
+    assert out["circle_competition_score"] == 0.0, (
+        "Billings now has a center within 250 nm; pick another sparse "
+        "location or this test no longer demonstrates anything"
+    )
+    assert out["competition"] < 90, (
+        f"competition scored {out['competition']} at a location the circle "
+        "measure calls competition-free -- the OPO basis is not being used"
+    )
+    assert out["opo_competition"]["centers_in_opo"] >= 2
+
+
+def test_the_circle_fallback_still_exists_for_unreachable_organs(data):
+    """If an organ has no program whose OPO can be resolved, the composite
+    must still produce a number rather than raising."""
+    from services.allocation_geography import distance_score
+    out = distance_score(*PLACES["honolulu"], "intestine")
+    assert out["composite"] is not None
+    assert out["competition_basis"] in ("opo", "circle_250nm")

@@ -246,9 +246,22 @@ def distance_score(lat: float, lon: float, organ: str = "kidney") -> dict:
     else:
         proximity_score = 0
 
-    # Factor 2: Competition (fewer competing centers = better for wait times)
-    # Inverse of competition score, scaled 0-100
-    comp = circles["circle_250nm"]["competition_score"]
+    # Factor 2: Competition (fewer competing centers = better for wait times).
+    #
+    # #299: this used the 250nm circle count, which was MEASURED not to
+    # predict observed SRTR transplant rates (16 tests, nothing below
+    # p 0.178). Counting centers in the same OPO does -- kidney rho -0.188
+    # (p 0.005), lung -0.361 (p 0.004) -- so the composite uses that instead.
+    #
+    # The circle measure is kept in the response for comparison, but a
+    # component known not to predict has no business driving 35% of a score.
+    # Billings MT is the clearest case: no center within 250nm, so the circle
+    # calls it zero competition, while the patient is in fact listed into an
+    # OPO with eight competing kidney programs.
+    opo = opo_competition(lat, lon, organ)
+    comp = opo.get("competition_score")
+    if comp is None:                       # no reachable program for the organ
+        comp = circles["circle_250nm"]["competition_score"]
     competition_score = 100 / (1 + comp * 0.5)  # Lower competition = higher score
 
     # Factor 3: Donor pool access (more centers in 500nm = larger donor pool)
@@ -268,6 +281,9 @@ def distance_score(lat: float, lon: float, organ: str = "kidney") -> dict:
         "composite": round(composite, 1),
         "proximity": round(proximity_score, 1),
         "competition": round(competition_score, 1),
+        "competition_basis": "opo" if opo.get("competition_score") is not None else "circle_250nm",
+        "opo_competition": opo,
+        "circle_competition_score": circles["circle_250nm"]["competition_score"],
         "donor_pool": round(donor_pool_score, 1),
         "nearest_center": nearest,
         "centers_250nm": circles["circle_250nm"]["center_count"],

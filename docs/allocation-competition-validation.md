@@ -150,11 +150,36 @@ there is in fact listed into an OPO with eight competing kidney programs.
 "Nothing nearby" and "no competition" are not the same statement, and the
 circle measure cannot tell them apart.
 
-**The Explorer tile has not been switched over.** The score card has no
-`.score-grid` CSS rule anywhere in the stylesheet, so its layout comes from
-somewhere that would need tracing before a fifth tile or a relabelled fourth
-one could be trusted — and `distance_score`'s composite still consumes the
-circle figure, so changing the tile alone would leave the two inconsistent.
-The caveat now names the better measure and says the tile has not moved yet.
-That is a smaller claim than the measurement supports, deliberately: it is the
-half that can be verified tonight.
+**The Explorer tile is switched over, and getting there found a worse bug.**
+
+An earlier draft of this section said the score card had "no `.score-grid`
+CSS rule anywhere in the stylesheet" and used that to defer the change. That
+was wrong: the rule exists, in an inline `<style>` block in `explorer.html`,
+which a `--include="*.css"` grep does not reach. The layout is an ordinary
+two-column grid and was never an obstacle.
+
+Checking it properly surfaced the real problem. `explorer/spatial-analysis.js`
+read `composite_score`, `proximity_score`, `competition_score` and
+`donor_pool_score`; `distance_score()` has always returned `composite`,
+`proximity`, `competition`, `donor_pool`. **All four tiles rendered `--`,
+permanently.** Silent, because the fallback *is* `--`: a card that never
+populated is indistinguishable from one waiting for input.
+
+I nearly missed it because the values in the screenshot I had checked the
+layout against were ones I injected by hand to photograph the tiles.
+
+Fixed, and `backend/tests/test_distance_score_contract.py` now checks both
+sides of the binding against the live response — the field names the card
+reads, that the API returns them, and that they are numeric.
+
+`distance_score` now sources competition from the OPO measure
+(`competition_basis: "opo"`, with the circle figure retained for comparison),
+because a component measured not to predict has no business driving 35% of a
+displayed score. Billings is the case that shows what changed: its circle
+score of 0.00 gave it a **perfect 100** on that component; it now scores 51.0.
+
+**Verification gap, stated plainly:** the end-to-end path — click the map, see
+the card populate — could not be exercised, because Leaflet will not lay out
+in a hidden browser pane and the map stayed 0 px wide. What is verified is
+the served file, the API response shape and values, and a contract test that
+fails when the binding is reverted. Someone should click it once.

@@ -94,10 +94,14 @@ def test_the_explorer_disclosure_is_present():
     html = (REPO / "explorer.html").read_text(encoding="utf-8")
     assert "score-card-note" in html
     assert "do not affect the center rankings" in html
-    assert "no detectable relationship" in html
-    # #299: the caveat must also name the measure that DOES predict, or it
-    # reads as "competition is unmeasurable" when it is merely un-swapped.
-    assert "opo_competition" in html
+    # Substring, not the whole phrase: the caveat emphasises the "no" with
+    # <em>, so matching the literal sentence would break on formatting.
+    assert "detectable relationship" in html
+    # #299: the caveat must name BOTH -- which measure the tile now shows
+    # (OPO) and which one does not predict (the circle) -- or a reader cannot
+    # tell whether the number in front of them is the good one.
+    assert "OPO" in html
+    assert "250&nbsp;nm" in html or "250 nm" in html
     # Deliberately NOT linking to the validation doc: the docs site builds to
     # routes like /architecture/overview, so a raw .md path from the app root
     # 404s. A caveat that sends the reader nowhere is worse than one that
