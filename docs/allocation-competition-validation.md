@@ -178,8 +178,17 @@ because a component measured not to predict has no business driving 35% of a
 displayed score. Billings is the case that shows what changed: its circle
 score of 0.00 gave it a **perfect 100** on that component; it now scores 51.0.
 
-**Verification gap, stated plainly:** the end-to-end path — click the map, see
-the card populate — could not be exercised, because Leaflet will not lay out
-in a hidden browser pane and the map stayed 0 px wide. What is verified is
-the served file, the API response shape and values, and a contract test that
-fails when the binding is reverted. Someone should click it once.
+**Verified end to end.** Fronting the browser pane and clicking the map
+populates the card for the first time:
+
+> Composite **45.7** · Proximity **45.5** · Competition (OPO) **51.0** · Donor Pool **38.6**
+
+Two false signals on the way there, both in the verification rather than the
+code, and both worth knowing about for the next person:
+
+- The map reported 0 px wide. There are **two** `.leaflet-container` elements
+  — the hidden Data Layers map and the Spatial Analysis one — and
+  `querySelector` returns the first. Index `[1]` is the live map.
+- Checking whether the server had the fix returned the *buggy* file, because
+  `fetch()` uses the HTTP cache by default. `{cache: 'no-store'}` shows the
+  truth. For a moment this looked like the fix had not landed when it had.
