@@ -77,12 +77,48 @@ Twelve tests, none significant, and the candidate-weighted version is **no bette
 
 **One caveat on the outcome variable**, stated because it bounds the conclusion: SRTR's transplant rate is transplants per patient-year waiting. If regional competition is fully absorbed into how long each center's own listed patients wait, a per-center rate may be a weak instrument for detecting it. That would not rescue the shipped proxy — it would mean this question needs a different outcome (waiting-time percentiles, or offer-level data) rather than a different competition measure.
 
-## What would actually validate it
+## The geometry was the problem — OPO catchments do predict
 
-Two of the three ingredients previously proposed still stand; the third has been ruled out:
+Having ruled out the unit, the remaining suspect was the catchment shape. `data/opo-mapping.json` already maps all 248 centers to their OPO (HRSA county-to-OPO plus FCC geocoding), so this is testable without new data.
 
-- ~~candidates listed per center~~ — **tested above, no better than counting centers**
-- offer-acceptance behaviour per center (Table B11 OARR ships already, #320) — untested
-- OPO boundaries rather than circles, since allocation is not radially symmetric — the geometry, not the unit, is now the leading suspect
+Replacing "centers within 250 nm" with "centers in the same OPO":
 
-#299 stays open, but with the candidate-count avenue closed rather than merely unexplored.
+| organ | n | circle | p | **OPO centers** | p | OPO candidates | p | UNOS region | p |
+|---|---|---|---|---|---|---|---|---|---|
+| kidney | 218 | −0.0512 | 0.452 | **−0.1853** | **0.006** | −0.1664 | 0.014 | −0.0151 | 0.825 |
+| liver | 135 | −0.1166 | 0.178 | **−0.1882** | **0.029** | −0.1209 | 0.162 | −0.1432 | 0.098 |
+| lung | 61 | −0.0162 | 0.901 | −0.2384 | 0.064 | −0.2408 | 0.062 | +0.0172 | 0.896 |
+| heart | 130 | −0.1189 | 0.178 | −0.0142 | 0.872 | +0.0347 | 0.695 | −0.1048 | 0.235 |
+
+**UNOS region is the control.** It is a coarser grouping of the same centers, and it predicts nothing — so this is not "any grouping works", it is specifically the allocation unit.
+
+### It is not a size confound
+
+The obvious objection is that large OPOs simply contain large centers. Partial Spearman controlling for the center's own observed cohort:
+
+| organ | raw | partial | OPO size vs own cohort |
+|---|---|---|---|
+| kidney | −0.1853 (p 0.006) | **−0.1881 (p 0.005)** | −0.1022 (p 0.133) |
+| liver | −0.1882 (p 0.029) | −0.1809 (p 0.036) | −0.0597 (p 0.491) |
+| lung | −0.2384 (p 0.064) | **−0.3612 (p 0.004)** | +0.2504 (p 0.052) |
+| heart | −0.0142 (p 0.872) | −0.0818 (p 0.355) | +0.0819 (p 0.355) |
+
+The effect survives for kidney and liver and **strengthens for lung** — there, OPO size correlates positively with a center's own cohort, which was masking the competition signal.
+
+### Multiple comparisons, stated honestly
+
+The pre-specified hypothesis was "OPO geometry beats circle geometry", tested once per organ — four tests, so Bonferroni α = 0.0125. **Kidney (0.005) and lung (0.004) survive; liver (0.036) does not.** All four partials are negative, as the mechanism predicts.
+
+The earlier circle and candidate work was 16 tests with nothing below 0.178, so the contrast is not a threshold artifact.
+
+### How much this explains
+
+ρ ≈ −0.19 is roughly 3.5% of rank variance. **A real effect, and a small one.** It justifies building an OPO-based competition term; it does not justify presenting one as a strong determinant of a patient's odds.
+
+## Where this leaves the ingredients
+
+- ~~candidates listed per center~~ — ruled out; no better than counting centers
+- **OPO boundaries rather than circles — CONFIRMED as the missing piece**
+- offer-acceptance behaviour per center (Table B11 OARR, #320) — still untested, and now the most promising remaining addition
+
+#299 stays open, but for the first time with a measured signal to build on rather than a null to explain.
