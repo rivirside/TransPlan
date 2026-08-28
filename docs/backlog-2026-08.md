@@ -127,7 +127,7 @@ get sourced or refit. Register updated per item.
 | I1 | User-defined center sets (L-067) | #304 | ✅ CLOSED 2026-08-25 (backend + UI + share URLs) |
 | I2 | Rh factor input | #180 | ✅ 2026-08-27 — already shipped (all 8 types); measurement inverted the premise: the model OVER-applies Rh (L-088). Removal filed as #413 |
 | I3 | Mobile responsiveness w/ large results | #224 | ✅ 2026-08-27 — tested at 375×812 with 233 centers: layout passes (no overflow, table fits, pagination works). Tap targets below-AA 31/48 → 1/51; sliders 6px→24px hit box with the thin track preserved; nav toggle 30×34→44×44. #224 stays open until this lands; the one remaining target is WCAG's documented inline exemption|
-| I4 | Print button scope / methodology linking | #197 / #198 | |
+| I4 | Print button scope / methodology linking | #197 / #198 | ✅ 2026-08-27 — both premises stale after the Phase 2 rebuild, but #197 uncovered a real defect: the print stylesheet was **20/24 selectors dead** and the medical disclaimer (`.results-section::after`) never rendered. Rewritten + guarded. #198 resolved structurally (link in sidebar, results paginated) |
 | I5 | Physician directory | #162 | |
 | I6 | v2 viz (glyphs, patterned choropleths, what-if sliders) | #181–183 | |
 
