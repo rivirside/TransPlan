@@ -217,3 +217,12 @@ Durable parts, since fixing nine files is not the point:
 with its own detector check so it cannot pass vacuously) and
 `tests/data-file-coverage.test.js` (every file in data/ validated or exempt,
 exemptions capped and reasoned).
+
+**Swept clean (recorded so the sweep is not repeated).** "Defined but never
+called" now has two known instances — `snapshot-model-outputs.py` (wired to no
+CI, no test, no doc) and `unparsed_rows()` above — so every guard-named
+function in `scripts/`, `backend/services/` and `backend/routers/` was checked
+for call sites. No further instances: the five `_check_*` in `provenance.py`
+are dict-dispatched at `provenance.py:102-106`, and the two router functions
+are FastAPI endpoints reached through decorators. A name-based search reports
+all seven as uncalled, which is worth knowing before trusting one.
