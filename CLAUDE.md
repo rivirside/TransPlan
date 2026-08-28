@@ -136,6 +136,24 @@ See `docs/landscape/` for 7 tool profiles (SRTR, KPSAM/LSAM/TSAM, COMET, LivSim,
 
 ## Open Issues
 
+Snapshot **Aug 28, 2026** — 58 open. **Closed Aug 27-28** (13 PRs, #411-#423): #227/#228 (per-center provenance), #180 + #413 (Rh), #302-partial, #232 (inference-mode docs), #235 (equity disclaimers), #197/#198 (print + methodology), #137 (drift comparison), #296-partial, #299-partial, #233-partial.
+
+**The pattern in that sweep is worth carrying forward.** Of twelve items picked up, **nine had a materially wrong premise**, and in three the requested change would have made the tool worse:
+
+| item | asked for | measured |
+|---|---|---|
+| #180 | add an Rh input | already present, and the model *over*-applied Rh by ~3 months of kidney wait |
+| #296 | Dirichlet credible intervals | **narrower** than the shipped binomial band — would have reduced disclosed uncertainty |
+| #235 | externalise disclaimers to config | would move claims *further* from the code that makes them true |
+| #299 | validate or downgrade the proxy's weight | it has **no weight** — scoring never imports it |
+| #233 | add literature citations | the constant needed *scope*: it cannot affect p24 at all, but is a 4x lever on displayed mortality |
+
+**Four defects reached real users, and none were what the issue described:** a printout for a care team carried **no medical disclaimer** (dead `::after` selector after the rebuild); Rh-negative candidates saw **+2.74 months** of kidney wait from a hand-set constant; a center with a **2-patient** cohort got the same confidence interval as one with 833; and rows ranked on national averages carried no indication.
+
+**The recurring failure mode: things that cannot fail read as coverage.** The print stylesheet's dead selectors, the snapshot tool's 0/0/0 competing risks, the CI that ignored cohort size, two stale equity disclaimers — all green, all inert. Twice the same bug was reproduced *in the fix for it* (the comparator and then the renderer both reported 0 for "could not compare"). **A zero meaning "not measured" must be `None`, and must be said out loud.**
+
+**Corollary, learned the hard way twice:** before believing a null result, force the input to an extreme and confirm the metric moves. BBN-19's first sweep reported worst Spearman 1.00000 across 32 comparisons — a flawless null produced by a metric that was *algebraically* blind to the thing being swept.
+
 Snapshot Aug 26, 2026. **Closed in #370** with evidence: #335 (pediatric mode), #328 (model card + docs-site routing), #350 (parameter audit), #336 (county trauma), #337 (waitlist-composition equity weights), #113 (coverage gaps).
 
 **Opened by that work:**
@@ -180,7 +198,7 @@ Snapshot Aug 26, 2026. **Closed in #370** with evidence: #335 (pediatric mode), 
 - **#207:** MCMC 248-center refit (BBN #206 done)
 - **#236/#237/#238, #275:** BBN latents / temporal validation / BBN hybrid / volume data (#274 closed by measurement)
 - **#107:** Face validity review with transplant faculty
-- **Model limitations:** see `docs/limitations.md` — 95 entries. Newest: **L-095** (the BBN's displayed waitlist mortality rests entirely on an uncited hazard-shape assumption; it cannot affect p24 at all — #233). (L-064 revalidated 2026-08-27: the competition proxy does not predict observed rates and has no weight to downgrade, #299). Newest: **L-094** (the drift-detection tool recorded zeros for the vector it watched, and had no seed — fixed, #137), **L-093** (the Monte Carlo "95% CI" was simulation error and shrank with iterations — fixed, #296), **L-092** (print stylesheet 20/24 dead after the rebuild; the medical disclaimer never printed — fixed, #197), **L-091** (equity disclaimers asserted unverified facts; two had gone stale — fixed, #235), **L-089** (2018 donor-registration data decides the top-ranked center, #302) and **L-090** (the freshness check measured script runs, not data age — fixed), **L-088** (Rh-negative candidates are penalized by the model though allocation is ABO-only — measured from #180, `docs/rh-factor-report.md`), **L-087** (centers missing SRTR data are ranked on national averages — now marked `†` per row, #411/B8, but still ranked). Highest-consequence: **L-085** (blood type cannot change which center is recommended — the ABO fix was measured and rejected, #405), **L-084** (a quarter of the score is a constant that cannot reorder), **L-086** (small-cohort clamping — FIXED for kidney in #402, still open for the other five), L-082 (the ranking turns on the weight *ordering*), L-079, L-081, L-080, L-076/L-077, L-078, L-083 (lung's top is a near-tie — now surfaced in the UI, #403)
+- **Model limitations:** see `docs/limitations.md` — 95 entries. **Highest-consequence open:** **L-095** (the BBN's displayed waitlist mortality is a 4x lever on an uncited hazard-shape constant, and #297 suggests the shipped value overstates it — #233), **L-089** (2018 donor-registration data decides the top-ranked center; no machine-readable source, #302), **L-087** (centers missing SRTR data are ranked on national averages — marked `†` per row since #412, but still ranked), **L-085** (blood type cannot change which center is recommended — the ABO fix was measured and rejected, #405), **L-084** (a quarter of the score is a constant that cannot reorder), **L-086** (small-cohort clamping — FIXED for kidney in #402, open for the other five), L-082 (the ranking turns on the weight *ordering*), L-079, L-081, L-080, L-078, L-076/L-077, L-083. **Fixed Aug 27-28:** L-088 (Rh penalty removed, #415), L-090 (freshness measured script runs not data age, #416), L-091 (equity disclaimers unverified; two had gone stale, #418), L-092 (print stylesheet 20/24 dead — the medical disclaimer never printed, #419), L-093 (the Monte Carlo "95% CI" was simulation error and shrank with iterations, #420), L-094 (the drift detector recorded zeros for the vector it watched, #421).
 
 **Data-pipeline lesson (2026-08-05 incident):** the SRTR workflow once overwrote three model files with organ-less shells because `data/srtr-raw/` is absent in CI. Every generated data file must have a never-shrink guard (`_write_guarded` in parse-srtr-reports.py, dead-data guards in fetch-cost-of-living.js, organ-block checks in validate-data.js).
 
