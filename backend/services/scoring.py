@@ -312,11 +312,11 @@ def _hospital_quality(center_code: str, organ: str, patient: dict) -> float:
     score += volume_score * 0.40
 
     # Performance rating from SRTR (25%)
-    rating = outcomes.get("performance_rating", "as_expected")
+    rating = outcomes.get("performance_rating", "insufficient_data")
     rating_scores = {
         "better_than_expected": 100,
         "as_expected": 80,
-        "lower_than_expected": 55,
+        "worse_than_expected": 55,
         "insufficient_data": 70,
     }
     score += rating_scores.get(rating, 70) * 0.25

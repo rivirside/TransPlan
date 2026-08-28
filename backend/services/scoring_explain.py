@@ -502,11 +502,11 @@ def explain_hospital_quality(center_code: str, organ: str, patient: dict) -> tup
         },
     ))
 
-    rating = outcomes.get("performance_rating", "as_expected")
+    rating = outcomes.get("performance_rating", "insufficient_data")
     rating_scores = {
         "better_than_expected": 100,
         "as_expected": 80,
-        "lower_than_expected": 55,
+        "worse_than_expected": 55,
         "insufficient_data": 70,
     }
     rating_val = rating_scores.get(rating, 70)
@@ -525,7 +525,7 @@ def explain_hospital_quality(center_code: str, organ: str, patient: dict) -> tup
                 ("better_than_expected", 100, "Outperforms national benchmark"),
                 ("as_expected",          80,  "Within expected range (most centers)"),
                 ("insufficient_data",    70,  "Newer or smaller program"),
-                ("lower_than_expected",  55,  "Underperforms benchmark"),
+                ("worse_than_expected",  55,  "Underperforms benchmark"),
             ], matched_label=rating),
             "notes": "Ratings come directly from SRTR's biannual program-specific reports.",
         },
