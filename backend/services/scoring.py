@@ -9,6 +9,7 @@ interpolated to center coordinates via the spatial RBF engine.
 import logging
 import math
 from dataclasses import dataclass
+import statistics
 from functools import lru_cache
 
 from services.data_loader import get_data
@@ -242,6 +243,36 @@ def _cod_multiplier(state: str, organ: str) -> float | None:
     return state_score / nat_avg if nat_avg > 0 else None
 
 
+@lru_cache(maxsize=8)
+def living_donor_fallback(organ: str) -> float:
+    """Score for a center with no living-donor record.
+
+    Derived from the shipped data, not hand-set, so a refresh cannot leave it
+    stranded at a percentile nobody re-checked.
+
+    The previous flat 75 sat at the 81st percentile of measured kidney centers
+    and the **91st** of liver ones, so 92 of 148 liver centers -- 62% -- were
+    scored better than nine tenths of the centers actually measured, purely
+    for having no data.
+
+    The median is the "no information, assume typical" position. Zero is
+    arguable and was NOT chosen: all missing centers are absent from SRTR
+    Table D1 entirely rather than carrying an unreadable cell, but SRTR does
+    list some centers AT zero, so absence and reported-zero are not evidently
+    the same thing. Scoring absence as 0 would assert that, and it changes the
+    top-ranked liver center. #451 tracks that data question.
+
+    Organs with no living donation at all (heart, lung, pancreas, intestine)
+    keep the neutral 75: the component is uninformative for them, so it must
+    neither reward nor penalise.
+    """
+    scores = [v for v in get_data().living_donors.get("scores", {})
+              .get(organ, {}).values() if isinstance(v, (int, float))]
+    if not scores:
+        return 75.0
+    return float(statistics.median(scores))
+
+
 def _donor_availability(state: str, organ: str, patient: dict, lat: float = 0.0, lon: float = 0.0, code: str = "") -> float:
     """State-level donor availability scoring."""
     data = get_data()
@@ -277,7 +308,7 @@ def _donor_availability(state: str, organ: str, patient: dict, lat: float = 0.0,
     # 22-city livingDonorProgramStrength lookup matched city names as
     # substrings of STATE names, which never hit — this component was a
     # constant 75 for every center.)
-    living_score = 75.0
+    living_score = living_donor_fallback(organ)
     if organ in ("kidney", "liver") and code:
         s = data.living_donors.get("scores", {}).get(organ, {}).get(code)
         if isinstance(s, (int, float)):

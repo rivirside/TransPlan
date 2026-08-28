@@ -21,6 +21,7 @@ from services.scoring import (
     _cod_multiplier,
     _interpolate,
     _wait_time_multiplier,
+    living_donor_fallback,
 )
 
 
@@ -427,7 +428,10 @@ def explain_donor_availability(
     ))
 
     # Per-center SRTR Table D1 living-donor counts (#292); kidney/liver only
-    living_score = 75.0
+    # Must come from scoring.living_donor_fallback, not a second copy of the
+    # number: test_explain_matches_production_liver caught exactly that drift
+    # when the fallback changed here but not there (#451).
+    living_score = living_donor_fallback(organ)
     living_source = "neutral national value (living donation exists only for kidney/liver)"
     if organ in ("kidney", "liver") and center_code:
         s = data.living_donors.get("scores", {}).get(organ, {}).get(center_code)
@@ -437,7 +441,12 @@ def explain_donor_availability(
             living_source = (f"data/living-donor-centers.json: {n} living donors/yr "
                              f"(SRTR Table D1), log-normalized → {s}")
         else:
-            living_source = "data/living-donor-centers.json: center not in Table D1 — national avg (75)"
+            # The old text called 75 the "national avg". It was not: the means
+            # are 55.3 (kidney) and 42.5 (liver), so 75 sat at the 81st and
+            # 91st percentiles. Say what the substitute actually is.
+            living_source = (
+                f"data/living-donor-centers.json: center not in SRTR Table D1 — "
+                f"substituted with the median measured center ({living_score:g})")
     components.append(_component(
         "Living donor program strength",
         living_score, 0.28,

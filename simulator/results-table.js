@@ -61,13 +61,30 @@
     // waitlist rates (srtr-observed-rates), this is post-transplant volume
     // and graft survival. A center missing it is scored as having performed
     // zero transplants, so the row needs to say so.
-    no_post_transplant_outcomes: 'post-transplant volume and survival'
+    no_post_transplant_outcomes: 'post-transplant volume and survival',
+    living_donor_volume_substituted: 'living-donor volume'
   };
 
-  // Tags whose fallback is a ZERO, not a national average. The distinction is
-  // the whole point of the marker: "we used the national average" is a claim
-  // about missing data, "we counted it as zero" is a claim about the center.
-  var ZERO_SUBSTITUTE_TAGS = ['no_post_transplant_outcomes'];
+  // What was actually substituted, per tag.
+  //
+  // The marker used to end every clause with "so the national average is used
+  // instead". That was true of the tags it was written for and became false
+  // twice as new ones arrived: post-transplant outcomes substitute a ZERO
+  // (#447), and living-donor volume substitutes the MEDIAN measured center
+  // — neither is a national average. A generic sentence is wrong by
+  // default for anything added later, so each tag now states its own
+  // substitute and an unlisted tag falls back to the vaguer, still-true
+  // "a substitute value is used".
+  var DQ_SUBSTITUTE = {
+    wait_time_national_default: 'the national average is used instead',
+    competing_risks_national_default: 'the national average is used instead',
+    no_observed_outcomes: 'the national average is used instead',
+    acceptance_rate_national_default: 'the national average is used instead',
+    no_trend_series: 'the national average is used instead',
+    pediatric_small_cohort: 'the national average is used instead',
+    no_post_transplant_outcomes: 'the model counts it as zero rather than estimating',
+    living_donor_volume_substituted: 'the median measured center is used instead'
+  };
 
   // ── Module state ───────────────────────────────────────────────────────────
 
@@ -312,29 +329,27 @@
 
   function _buildDataQualityFlag(tags) {
     var flag = _createElement('span', 'rt-dq-flag');
-    flag.textContent = '†';   // dagger
+    flag.textContent = '\u2020';   // dagger
 
-    // Not every substitute is a national average, and saying so when it isn't
-    // is worse than saying nothing — "the national average is used" reads as
-    // reassurance. For post-transplant outcomes the model substitutes ZERO
-    // volume, which is a much stronger claim about the center (#447/L-099).
-    // Split the tags by what actually happens to them.
-    var zeroed = [], averaged = [];
+    // Group the tags by what was actually substituted, so each clause states
+    // the truth for the fields it covers rather than one sentence covering
+    // all of them approximately.
+    var order = [], byPhrase = {};
     tags.forEach(function (t) {
       if (!DQ_LABELS[t]) return;
-      (ZERO_SUBSTITUTE_TAGS.indexOf(t) === -1 ? averaged : zeroed).push(DQ_LABELS[t]);
+      var phrase = DQ_SUBSTITUTE[t] || 'a substitute value is used';
+      if (!byPhrase[phrase]) { byPhrase[phrase] = []; order.push(phrase); }
+      byPhrase[phrase].push(DQ_LABELS[t]);
+    });
+    if (!order.length) return flag;
+
+    var n = 0;
+    var parts = order.map(function (phrase) {
+      var names = byPhrase[phrase];
+      n += names.length;
+      return 'has no published SRTR data for ' + _join(names) + ', so ' + phrase;
     });
 
-    var parts = [];
-    if (averaged.length) {
-      parts.push('has no published SRTR data for ' + _join(averaged) +
-                 ', so the national average is used instead');
-    }
-    if (zeroed.length) {
-      parts.push('has no published SRTR ' + _join(zeroed) +
-                 ', which the model counts as zero rather than estimating');
-    }
-    var n = averaged.length + zeroed.length;
     var msg = 'Not center-specific: this center ' + parts.join('; and it ') +
       '. Its position here rests partly on ' +
       (n === 1 ? 'that substitute' : 'those substitutes') + '.';
