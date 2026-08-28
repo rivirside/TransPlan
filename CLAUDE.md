@@ -235,6 +235,21 @@ Durable parts, since fixing the files is not the point: `tests/data-file-floors.
 
 **Two failure modes only the browser found**, with the backend correct and green: `results-table.js` silently drops any tag missing from `DQ_LABELS`, so all 91 rows were tagged and *nothing rendered*; and the tooltip then said "the national average is used instead" where the model actually substitutes **zero**. **A fallback message wrong in the reassuring direction is worse than none** — "national average" sounds like an estimate, "counted as zero" is a claim about the center. Drive the DOM and read the rendered text; and note that a test helper which re-derives un-exported logic is checking its own copy (collapsing a branch in the shipped code left one green).
 
+**Both paths are now swept for absent-data fallbacks (#453, #454) — don't redo it.** Every site, with its verdict, is pinned in `backend/tests/test_scoring_fallbacks_swept.py`:
+
+| path | site | verdict |
+|---|---|---|
+| scoring | `_hospital_quality` rating key | **BUG** #446 |
+| scoring | `_hospital_quality` `n_1yr = 0` | **BUG** #448 |
+| scoring | `_donor_availability` living-donor 75 | **BUG** #452 |
+| scoring | `score_center` `lat/lon = (0,0)` | latent, guarded #450 |
+| scoring | `_interpolate` (8 layers), `_policy`, `_socioeconomic`, `_cod_multiplier` | clean |
+| simulation | blood-type multipliers (48/48), organ risk table (6/6), BBN per-center factors | clean |
+
+The BBN entry is a **cross-check, not a count**: the centers where it takes its `1.0` default must be exactly the set the provenance tags mark, or that engine substitutes undisclosed. They match.
+
+**Two traps that cost real time here.** `_DISTRIBUTIONS` and `_RISKS` are lazily initialised module globals — reading them straight after `load_all()` returns `None` and makes every organ look absent. And a negative test must hit the site the test actually reaches: one patched one of four `_RISKS.get(organ)` lines and passed cleanly.
+
 **Check your expectation before calling something a bug.** That last one took three wrong expectations first: `TAG_OUTCOMES` reads `srtr-observed-rates.json`, not the similarly-named `post-transplant-outcomes-centers.json`, and the acceptance tag is absent because acceptance modelling is off by default. Each wrong source made correct machinery look broken — in both directions.
 
 **Aug 27 (second wave) — the approved plan ran end to end.** Phases 0-4 of
