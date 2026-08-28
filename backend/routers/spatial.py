@@ -14,7 +14,11 @@ import logging
 
 from fastapi import APIRouter, HTTPException, Query
 
-from services.allocation_geography import allocation_circles, distance_score
+from services.allocation_geography import (
+    allocation_circles,
+    distance_score,
+    opo_competition,
+)
 from services.spatial_interpolation import available_layers, get_surface, interpolate_at
 
 logger = logging.getLogger(__name__)
@@ -119,9 +123,17 @@ def query_allocation_circles(
     lon: float = Query(..., ge=-125.0, le=-66.0, description="Longitude"),
     organ: str = Query(default="kidney", description="Organ type"),
 ):
-    """UNOS allocation circle analysis at a coordinate."""
+    """UNOS allocation circle analysis at a coordinate.
+
+    Carries the OPO-based competition measure alongside the circle one
+    (#299): the circle count shows no relationship with observed SRTR
+    transplant rates, while counting centers in the same OPO does. Both are
+    returned so the difference is visible rather than swapped silently.
+    """
     _validate_organ(organ)
-    return allocation_circles(lat, lon, organ)
+    out = allocation_circles(lat, lon, organ)
+    out["opo_competition"] = opo_competition(lat, lon, organ)
+    return out
 
 
 @router.get("/distance-score")

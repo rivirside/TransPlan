@@ -122,3 +122,39 @@ The earlier circle and candidate work was 16 tests with nothing below 0.178, so 
 - offer-acceptance behaviour per center (Table B11 OARR, #320) — still untested, and now the most promising remaining addition
 
 #299 stays open, but for the first time with a measured signal to build on rather than a null to explain.
+
+---
+
+## Shipped: the measure, not yet the display
+
+`opo_competition(lat, lon, organ)` is implemented and returned by
+`GET /spatial/allocation-circles` alongside the circle figure, so the two are
+visible side by side rather than swapped silently.
+
+A location has no OPO of its own — the shipped mapping is county-based and
+runtime geocoding is unavailable — so the query point inherits the OPO of its
+**nearest center performing the organ**: the OPO whose match run a patient
+listing there would actually enter.
+
+What that changes, concretely:
+
+| location | circle (250 nm) | OPO |
+|---|---|---|
+| Manhattan | 55 centers, score 2.15 | LiveOnNY, 11 centers, score 2.64 |
+| Chicago | 38 centers, score 1.48 | Gift of Hope, 10 centers, score 2.40 |
+| **Billings, MT** | **0 centers, score 0.00** | **LifeSource, 8 centers, score 1.92** |
+
+Billings is the case that shows why the circle fails. It reports **zero
+competition** — there is no transplant center within 250 nm — when the patient
+there is in fact listed into an OPO with eight competing kidney programs.
+"Nothing nearby" and "no competition" are not the same statement, and the
+circle measure cannot tell them apart.
+
+**The Explorer tile has not been switched over.** The score card has no
+`.score-grid` CSS rule anywhere in the stylesheet, so its layout comes from
+somewhere that would need tracing before a fifth tile or a relabelled fourth
+one could be trusted — and `distance_score`'s composite still consumes the
+circle figure, so changing the tile alone would leave the two inconsistent.
+The caveat now names the better measure and says the tile has not moved yet.
+That is a smaller claim than the measurement supports, deliberately: it is the
+half that can be verified tonight.
