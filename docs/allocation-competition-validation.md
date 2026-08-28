@@ -60,12 +60,29 @@ The note deliberately does **not** link here. The docs site builds to routes lik
 
 `backend/tests/test_competition_proxy_scope.py` pins the "affects nothing" half — if the proxy is ever wired into the scoring path, that claim becomes false and the test fails. A disclosure that silently stops being true is worse than none.
 
+## The recommended upgrade was tested, and it fails too
+
+The first version of this report said a center count is the wrong unit and that a defensible measure would need **candidates listed per center** rather than centers per radius. That recommendation is now tested and **not supported**.
+
+SRTR's `Tables B8-B9 Counts Center` sheet carries per-center candidate counts (`TPC_ALL_NC`; 234 kidney centers, 105,857 candidates — the same source #405 used, and candidates rather than recipients, so not circular). Summing them over each center's 250 nm circle gives a competition measure denominated in the people actually competing:
+
+| organ | n | centers in circle | p | **candidates in circle** | p | candidates per center | p |
+|---|---|---|---|---|---|---|---|
+| kidney | 218 | −0.0512 | 0.452 | **−0.0649** | 0.340 | −0.0325 | 0.633 |
+| liver | 135 | −0.1166 | 0.178 | **−0.1036** | 0.232 | −0.0013 | 0.988 |
+| heart | 130 | −0.1189 | 0.178 | **−0.1041** | 0.238 | +0.0806 | 0.362 |
+| lung | 61 | −0.0162 | 0.901 | **−0.0304** | 0.816 | −0.0783 | 0.549 |
+
+Twelve tests, none significant, and the candidate-weighted version is **no better than the center count it was supposed to improve on**. So the shortfall is not the unit.
+
+**One caveat on the outcome variable**, stated because it bounds the conclusion: SRTR's transplant rate is transplants per patient-year waiting. If regional competition is fully absorbed into how long each center's own listed patients wait, a per-center rate may be a weak instrument for detecting it. That would not rescue the shipped proxy — it would mean this question needs a different outcome (waiting-time percentiles, or offer-level data) rather than a different competition measure.
+
 ## What would actually validate it
 
-A center count is the wrong unit. A defensible competition measure would need the quantities the match run uses:
+Two of the three ingredients previously proposed still stand; the third has been ruled out:
 
-- candidates listed per center, not centers per radius (waitlist composition ships already, #337)
-- offer-acceptance behaviour per center (Table B11 OARR ships already, #320)
-- OPO boundaries rather than circles, since allocation is not radially symmetric
+- ~~candidates listed per center~~ — **tested above, no better than counting centers**
+- offer-acceptance behaviour per center (Table B11 OARR ships already, #320) — untested
+- OPO boundaries rather than circles, since allocation is not radially symmetric — the geometry, not the unit, is now the leading suspect
 
-Those exist in the repo. Assembling them is a modelling project, not a normalizer fix, and #299 stays open for it rather than being closed on a null result.
+#299 stays open, but with the candidate-count avenue closed rather than merely unexplored.
