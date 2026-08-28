@@ -220,6 +220,21 @@ Snapshot Aug 26, 2026. **Closed in #370** with evidence: #335 (pediatric mode), 
 
 Durable parts, since fixing the files is not the point: `tests/data-file-floors.test.js` (every per-center container floored *by name*, with its own detector check so it cannot pass vacuously), `tests/data-file-coverage.test.js` (every file in `data/` validated or exempt, exemptions capped and reasoned), and `backend/tests/test_row_disclosure_matches_data.py` (every national substitute a patient sees is marked, checked against the source files rather than the engine's own tags — 0 undisclosed, 0 spurious).
 
+**Aug 28 (second half) — the same question asked of the SCORING path (#446, #448).** "What protects the data this runs on?" has a sibling: *what does the code do when the data is absent?* Two defects in one function, both patient-facing, neither pinned by any of the 1542 tests:
+
+| | |
+|---|---|
+| `_hospital_quality` looked up SRTR's rating in a table keyed `lower_than_expected`; the parser emits `worse_than_expected` | **22 centers SRTR flagged as statistically underperforming were never penalised** — they took the default 70, above the intended 55. One lung center ranked **#3** |
+| `scoring_explain` rendered users a row labelled "Underperforms benchmark" on that same dead key | the UI documented a penalty the model could not apply |
+| a center with **no** outcomes record was scored as though SRTR rated it `as_expected` | SRTR publishes `insufficient_data` for exactly this, and 154 records already carry it |
+| `n_1yr` defaults to **0** — 40% of the category — for 91 center-organ pairs (33% of pancreas, 43% of intestine), all scoring exactly 46.8 | undisclosed: `TAG_OUTCOMES` reads `srtr-observed-rates.json`, a *different* file |
+
+**The zero was measured and deliberately kept.** Centers missing post-transplant outcomes have a median waitlist cohort of **17 vs 166** (kidney), **9 vs 92** (liver) — SRTR suppresses small programs, so the zero is directionally right and a national-median substitute would promote genuinely tiny programs ~90 category places. Fixed by disclosure, per #274/#376.
+
+**A rescoring of 113 center-organ records broke zero tests.** That is the finding, not the relief.
+
+**Two failure modes only the browser found**, with the backend correct and green: `results-table.js` silently drops any tag missing from `DQ_LABELS`, so all 91 rows were tagged and *nothing rendered*; and the tooltip then said "the national average is used instead" where the model actually substitutes **zero**. **A fallback message wrong in the reassuring direction is worse than none** — "national average" sounds like an estimate, "counted as zero" is a claim about the center. Drive the DOM and read the rendered text; and note that a test helper which re-derives un-exported logic is checking its own copy (collapsing a branch in the shipped code left one green).
+
 **Check your expectation before calling something a bug.** That last one took three wrong expectations first: `TAG_OUTCOMES` reads `srtr-observed-rates.json`, not the similarly-named `post-transplant-outcomes-centers.json`, and the acceptance tag is absent because acceptance modelling is off by default. Each wrong source made correct machinery look broken — in both directions.
 
 **Aug 27 (second wave) — the approved plan ran end to end.** Phases 0-4 of
