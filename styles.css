@@ -4437,6 +4437,19 @@ body {
 }
 .score-card-note a { color: inherit; text-decoration: underline; }
 
+/* #162: the contact card's website row. The label carries the meaning; the
+   hostname stays visible so the destination is not a mystery. */
+.contact-value .contact-host {
+  color: var(--text-3, #7a7468);
+  font-size: var(--fs-xs, 0.72rem);
+}
+.contact-team-hint {
+  margin: var(--space-3, 0.75rem) 0 0 0;
+  font-size: var(--fs-xs, 0.72rem);
+  line-height: 1.45;
+  color: var(--text-3, #7a7468);
+}
+
 /* --- Print Styles --- */
 /*
    #197: rewritten 2026-08-27. The Phase 2 simulator rebuild renamed the
