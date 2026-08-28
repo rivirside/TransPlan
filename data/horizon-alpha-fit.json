@@ -1,0 +1,127 @@
+{
+  "_meta": {
+    "generated": "2026-08-28T06:37:12Z",
+    "description": "Fitted 12->24 month horizon exponent from SRTR C6/C12/C18 (#233 / L-095)",
+    "script": "scripts/run-horizon-alpha-fit.py",
+    "method": "alpha solves S(24)=S(12)**alpha with S(24) extrapolated from the observed 12-18 hazard",
+    "caveat": "18-24 is unobserved. Since the hazard falls at every observed step, holding it flat across 18-24 likely still OVERSTATES terminal outcomes, so these alphas are probably conservative (true alpha lower)."
+  },
+  "hazard_falling_for": [
+    "kidney",
+    "liver",
+    "heart",
+    "lung",
+    "intestine"
+  ],
+  "alpha_below_shipped_for": [
+    "kidney",
+    "liver",
+    "heart",
+    "lung",
+    "intestine"
+  ],
+  "results": [
+    {
+      "organ": "kidney",
+      "survival": {
+        "6": 0.7148,
+        "12": 0.5709,
+        "18": 0.4692
+      },
+      "interval_hazards": {
+        "0-6": 0.056,
+        "6-12": 0.0375,
+        "12-18": 0.0327
+      },
+      "hazard_monotonically_falling": true,
+      "implied_s24": 0.3856,
+      "implied_alpha": 1.7,
+      "shipped_alpha": 2.0
+    },
+    {
+      "organ": "liver",
+      "survival": {
+        "6": 0.3383,
+        "12": 0.18,
+        "18": 0.1172
+      },
+      "interval_hazards": {
+        "0-6": 0.1806,
+        "6-12": 0.1052,
+        "12-18": 0.0714
+      },
+      "hazard_monotonically_falling": true,
+      "implied_s24": 0.0764,
+      "implied_alpha": 1.5,
+      "shipped_alpha": 2.0
+    },
+    {
+      "organ": "heart",
+      "survival": {
+        "6": 0.2579,
+        "12": 0.1691,
+        "18": 0.1312
+      },
+      "interval_hazards": {
+        "0-6": 0.2258,
+        "6-12": 0.0704,
+        "12-18": 0.0423
+      },
+      "hazard_monotonically_falling": true,
+      "implied_s24": 0.1018,
+      "implied_alpha": 1.286,
+      "shipped_alpha": 2.0
+    },
+    {
+      "organ": "lung",
+      "survival": {
+        "6": 0.1494,
+        "12": 0.0641,
+        "18": 0.0322
+      },
+      "interval_hazards": {
+        "0-6": 0.3168,
+        "6-12": 0.141,
+        "12-18": 0.1148
+      },
+      "hazard_monotonically_falling": true,
+      "implied_s24": 0.0162,
+      "implied_alpha": 1.501,
+      "shipped_alpha": 2.0
+    },
+    {
+      "organ": "pancreas",
+      "survival": {
+        "6": 0.7833,
+        "12": 0.6254,
+        "18": 0.4861
+      },
+      "interval_hazards": {
+        "0-6": 0.0407,
+        "6-12": 0.0375,
+        "12-18": 0.042
+      },
+      "hazard_monotonically_falling": false,
+      "implied_s24": 0.3778,
+      "implied_alpha": 2.074,
+      "shipped_alpha": 2.0
+    },
+    {
+      "organ": "intestine",
+      "survival": {
+        "6": 0.5704,
+        "12": 0.363,
+        "18": 0.2741
+      },
+      "interval_hazards": {
+        "0-6": 0.0936,
+        "6-12": 0.0753,
+        "12-18": 0.0468
+      },
+      "hazard_monotonically_falling": true,
+      "implied_s24": 0.207,
+      "implied_alpha": 1.554,
+      "shipped_alpha": 2.0
+    }
+  ]
+}
