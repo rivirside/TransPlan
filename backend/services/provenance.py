@@ -29,6 +29,17 @@ TAG_PEDIATRIC_UNCALIBRATED = "pediatric_wait_uncalibrated"
 # this the reconstructed figure is indistinguishable from the five organs
 # whose medians SRTR does publish and which are stored verbatim.
 TAG_MEDIAN_RECONSTRUCTED = "wait_median_reconstructed"
+# #447/L-099: post-transplant-outcomes-centers.json has no record for this
+# center-organ. Distinct from TAG_OUTCOMES, which tracks srtr-observed-rates
+# — a different file, so the two are not interchangeable and neither implies
+# the other. This one matters because _hospital_quality reads n_1yr from it
+# and defaults to ZERO, which drives 40% of that category: the center is
+# ranked as though it performed no transplants. 91 center-organ pairs,
+# including 33% of pancreas and 43% of intestine. The zero is directionally
+# defensible (SRTR suppresses small programs, and these centers have a median
+# waitlist cohort of 17 against 166), so this discloses rather than changes
+# it.
+TAG_PT_OUTCOMES = "no_post_transplant_outcomes"
 
 # tag -> (summary family key, center-level count label, degraded count label)
 FAMILIES = {
@@ -43,6 +54,7 @@ FAMILIES = {
     # line on an adult response.
     TAG_PEDIATRIC_UNCALIBRATED: ("pediatric_wait_model", "modeled", "adult_fallback"),
     TAG_MEDIAN_RECONSTRUCTED: ("wait_median", "published", "reconstructed"),
+    TAG_PT_OUTCOMES: ("post_transplant_outcomes", "available", "missing"),
 }
 
 ALL_TAGS = list(FAMILIES)
@@ -80,6 +92,12 @@ def _check_outcomes(data, organ: str, code: str) -> bool:
     return data.observed_outcome(organ, code) is None
 
 
+def _check_pt_outcomes(data, organ: str, code: str) -> bool:
+    # Truthiness, not presence: the volume path reads n_1yr out of this dict
+    # and an empty record behaves exactly like an absent one.
+    return not data.center_outcomes.get("center_outcomes", {}).get(code, {}).get(organ)
+
+
 def _check_acceptance(data, organ: str, code: str) -> bool:
     # #320: the observed OARR (Table B11) is the preferred center-level
     # source; the volume-proxy composite is the fallback
@@ -103,6 +121,7 @@ _DETECTORS = {
     TAG_RISK: _check_risk,
     TAG_OUTCOMES: _check_outcomes,
     TAG_ACCEPTANCE: _check_acceptance,
+    TAG_PT_OUTCOMES: _check_pt_outcomes,
     TAG_TRENDS: _check_trends,
 }
 

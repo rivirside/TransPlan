@@ -738,7 +738,7 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 ### L-099: Missing post-transplant outcomes are undisclosed, and scored as zero volume
 
 - **Severity:** MEDIUM
-- **Status:** OPEN — #447. Measured 2026-08-28 alongside #446; the rating half was fixed there, this half was not
+- **Status:** RESOLVED by disclosure 2026-08-28 (#447). The zero is unchanged and still drives the score; it is now marked per row and the marker says "counts as zero", not "national average"
 - **Category:** Data Coverage / Disclosure
 - **What:** `_hospital_quality` reads `post-transplant-outcomes-centers.json`. A center-organ with no record falls back to `outcomes.get("n_1yr", 0)` — **zero volume** — which drives 40% of that category.
 - **How many:** 91 center-organ pairs. kidney 15/233, liver 10/148, heart 23/149, lung 1/74, **pancreas 33/99 (33%)**, **intestine 9/21 (43%)**.
