@@ -226,6 +226,45 @@ if (cod) {
                        'cause-of-death-by-region.json (organRecoveryRates)', 6);
 }
 
+// 6a1b. Center-level SRTR files — never-shrink floors (#444 follow-up).
+// These are the files data_loader actually loads and the model runs on, and
+// until now NOTHING protected them: parse-srtr-reports.py wrote all four with
+// a bare open(), and validate-data.js had floors on the small legacy 22-city
+// aggregates beside them but none on these. The write guard is the first line;
+// this is the second, and it is the one that runs in CI on every push.
+for (const [file, container, floor] of [
+    ['competing-risks-centers.json', 'center_adjustments', 200],
+    ['wait-time-distributions-centers.json', 'center_wait_time_factors', 200],
+    ['post-transplant-outcomes-centers.json', 'center_outcomes', 200],
+]) {
+    const d = validateJSON(file);
+    if (d) {
+        if (!d[container]) {
+            addError(`${file}: container '${container}' missing`);
+        } else {
+            checkCoverageFloor(d[container], `${file} (${container})`, floor);
+        }
+    }
+}
+
+// srtr-historical.json's coverage dimension is RELEASES, not centers: a parse
+// run without srtr-raw/historical/ still appends the current release, so it
+// yields a structurally valid 1-release file. An entry-count floor cannot see
+// that — the 22 city blocks survive intact while 14 years of history vanish.
+const srtrHist = validateJSON('srtr-historical.json');
+if (srtrHist) {
+    const releases = (srtrHist._meta || {}).releases;
+    if (!Array.isArray(releases) || releases.length < 10) {
+        addError(`srtr-historical.json: only ${Array.isArray(releases) ? releases.length : 0} `
+               + `SRTR releases (never-shrink floor: 10) — the trend line shown for every `
+               + `center is built from these`);
+    }
+    if (((srtrHist._meta || {}).source || '').includes('Synthetic')) {
+        addError('srtr-historical.json: source is SYNTHETIC — every center trend is fabricated. '
+               + 'Restore from git; scripts/generate-srtr-historical.py must not have run.');
+    }
+}
+
 // 6a2. Manual age-multiplier blocks in competing-risks.json (ERROR: the #104
 // rewrite silently dropped these, killing the BBN age edge + MCMC inference
 // age modulation — never again)
