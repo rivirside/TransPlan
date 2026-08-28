@@ -129,7 +129,7 @@ get sourced or refit. Register updated per item.
 | I3 | Mobile responsiveness w/ large results | #224 | ✅ 2026-08-27 — tested at 375×812 with 233 centers: layout passes (no overflow, table fits, pagination works). Tap targets below-AA 31/48 → 1/51; sliders 6px→24px hit box with the thin track preserved; nav toggle 30×34→44×44. #224 stays open until this lands; the one remaining target is WCAG's documented inline exemption|
 | I4 | Print button scope / methodology linking | #197 / #198 | ✅ 2026-08-27 — both premises stale after the Phase 2 rebuild, but #197 uncovered a real defect: the print stylesheet was **20/24 selectors dead** and the medical disclaimer (`.results-section::after`) never rendered. Rewritten + guarded. #198 resolved structurally (link in sidebar, results paginated) |
 | I5 | Physician directory | #162 | partial — the patient need is served: every center's `website` URL is now labelled "Program website" with a line saying staff are listed there and this tool keeps no directory. The DIRECTORY itself stays open deliberately — no structured source, a scraped roster goes stale, and compiling named clinicians across 248 institutions is an aggregation decision for the owner, not a scraping task |
-| I6 | v2 viz (glyphs, patterned choropleths, what-if sliders) | #181–183 | |
+| I6 | v2 viz (glyphs, patterned choropleths, what-if sliders) | #181–183 | partial — #183's premise CORRECTED (what-if scenarios already exist on scenarios.html; the real defect was a 404 on the landing page's researcher CTA, fixed #439). #181's spec is stale: targets the removed `data.html` and two of its three UI anchors are gone — flagged, needs re-scoping against explorer.html before build. #182 ports cleanly, untouched |
 
 ## Phase J — Documentation
 
