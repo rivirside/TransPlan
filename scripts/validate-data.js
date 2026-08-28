@@ -249,6 +249,67 @@ for (const [file, container, floor] of [
     }
 }
 
+// 6a0. Center coordinates must be plausible, and in the state they claim.
+//
+// scoring.py resolves a center's position with `center.get("lat", 0)`, so a
+// geocoding failure does not raise — it places the hospital at (0, 0) in the
+// Gulf of Guinea and scores every distance and spatial layer from there. All
+// 248 currently geocode fine, so this guards a latent hazard rather than a
+// live bug: srtr-all-centers.json is written by THREE scripts
+// (extract-center-list, geocode-centers, verify-geocoding), 133 of its
+// entries are plain unverified `nominatim`, and until #445 it had no floor of
+// any kind. The entry-count floor added there cannot see a coordinate that
+// moved.
+//
+// State boxes are derived from health-demographics-counties.json (3144
+// counties carrying lat/lon AND state) rather than hand-written, so there are
+// no invented constants and the reference comes from a different pipeline
+// than center geocoding. Verified against three real failure modes: zeroed
+// coordinates, a Texas center placed in Maine, and a flipped longitude sign —
+// all three caught, with no false positives on the shipped data.
+const centersForGeo = validateJSON('srtr-all-centers.json');
+const countiesForGeo = validateJSON('health-demographics-counties.json');
+if (centersForGeo && countiesForGeo) {
+    const boxes = {};
+    for (const c of Object.values(countiesForGeo.counties || {})) {
+        if (!c || !c.state || typeof c.lat !== 'number' || typeof c.lon !== 'number') continue;
+        const b = boxes[c.state] || (boxes[c.state] = [90, -90, 180, -180]);
+        b[0] = Math.min(b[0], c.lat); b[1] = Math.max(b[1], c.lat);
+        b[2] = Math.min(b[2], c.lon); b[3] = Math.max(b[3], c.lon);
+    }
+    if (Object.keys(boxes).length < 45) {
+        addError(`center geocoding check: only ${Object.keys(boxes).length} state boxes `
+               + `derived from health-demographics-counties.json (expected >=45) — `
+               + `the check below would pass without testing anything`);
+    }
+    // County centroids are not state borders, so allow ~55km of slack.
+    const MARGIN = 0.5;
+    for (const [code, c] of Object.entries(centersForGeo.centers || {})) {
+        if (typeof c.lat !== 'number' || typeof c.lon !== 'number' || !c.lat || !c.lon) {
+            addError(`srtr-all-centers.json: ${code} (${c.name || '?'}) has no usable `
+                   + `coordinates (lat=${c.lat}, lon=${c.lon}) — scoring would place it `
+                   + `at (0,0) and rank it from there`);
+            continue;
+        }
+        if (c.lat < 17 || c.lat > 72 || c.lon < -180 || c.lon > -64) {
+            addError(`srtr-all-centers.json: ${code} at (${c.lat}, ${c.lon}) is outside `
+                   + `US/AK/HI/PR bounds`);
+            continue;
+        }
+        // Puerto Rico has no rows in the county file; the bounds check above
+        // is all such a center gets. Skipping silently rather than inventing
+        // a bounding box for it.
+        const b = boxes[c.state_abbr];
+        if (!b) continue;
+        if (c.lat < b[0] - MARGIN || c.lat > b[1] + MARGIN ||
+            c.lon < b[2] - MARGIN || c.lon > b[3] + MARGIN) {
+            addError(`srtr-all-centers.json: ${code} (${c.name || '?'}) claims `
+                   + `${c.state_abbr} but (${c.lat}, ${c.lon}) falls outside that state — `
+                   + `check scripts/geocode-centers.py`);
+        }
+    }
+}
+
 // 6a1-pre. The last of the unfloored files. Nine of data/'s 38 JSON files
 // were never mentioned in this validator at all; these are the ones the
 // sweep showed reach production or the frontend, plus two analysis inputs
