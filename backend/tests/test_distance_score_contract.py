@@ -126,3 +126,38 @@ def test_circle_centers_carry_coordinates(data):
     assert "c.lat && c.lon" in src, (
         "the marker guard changed; re-check whether coordinates are still needed"
     )
+
+
+# ── the rest of the frontend was swept; it is clean (#183) ─────────────────
+
+def test_the_other_frontend_api_consumers_read_fields_that_exist(data):
+    """Completes the sweep that found the two bugs above.
+
+    Every frontend file that fetches was checked for the same class of defect
+    — reading a response field the producer never returns. Only
+    `spatial-analysis.js` had it, twice. The rest are correct, and this pins
+    them so the sweep does not have to be repeated from scratch:
+
+      centers-page.js   -> GET /centers .centers, and the static fallback
+      landing-story.js  -> data/srtr-all-centers.json .centers
+
+    (`data-layers.js`, `model-card.js`, `weight-config.js` and
+    `tier-panel.js` read no top-level response fields by this pattern.)
+    """
+    import json as _json
+
+    all_centers = _json.loads(
+        (REPO / "data" / "srtr-all-centers.json").read_text(encoding="utf-8"))
+    assert "centers" in all_centers and len(all_centers["centers"]) > 200, (
+        "landing-story.js and centers-page.js's fallback both read .centers "
+        "from this file"
+    )
+
+    from routers.centers import list_centers  # the /centers handler
+    assert callable(list_centers)
+
+    for name, src in (
+        ("centers-page.js", (REPO / "centers-page.js").read_text(encoding="utf-8")),
+        ("landing-story.js", (REPO / "landing-story.js").read_text(encoding="utf-8")),
+    ):
+        assert ".centers" in src, f"{name} no longer reads .centers; re-run the sweep"

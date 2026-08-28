@@ -697,6 +697,21 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-098: Three Explorer features looked like working UI and displayed nothing
+- **Severity:** MEDIUM (fixed) — one of them stated a false measurement rather than a blank
+- **Status:** **FIXED 2026-08-28** (#433, #440)
+- **Category:** Presentation / Tooling
+- **What:** the Explorer's Spatial Analysis tab had **three independent dead features**, all rendering as ordinary UI:
+  1. **Distance Score card** — the JS read `composite_score` / `proximity_score` / `competition_score` / `donor_pool_score`; the API has always returned `composite` / `proximity` / `competition` / `donor_pool`. All four tiles showed `--`, permanently.
+  2. **Allocation-circle counts** — the JS read `circles_250nm` / `circles_500nm`; the API returns them singular. Every tooltip reported **"0 centers"** regardless of location. Manhattan has 55 within 250 nm.
+  3. **Circle center markers** — the marker loop guards on `c.lat && c.lon`, and the API's `centers` array carried only code, name and distance. No markers could ever draw, and fixing (2) alone would not have changed that.
+- **Why it survived:** every one degrades through a *plausible-looking* fallback rather than an error. `'--'` reads as "waiting for input"; `|| 0` reads as a measurement. Nothing logged, nothing threw, and the page looked populated.
+- **The worst of the three is (2)**, because a blank admits ignorance and a zero asserts a fact. A user in a dense metro was told there were no transplant centers near them.
+- **How I nearly missed (1):** I screenshotted the card to check its layout and read the values as evidence it worked. They were values I had injected by hand moments earlier for the photograph.
+- **Fixed and swept.** Every frontend file that fetches was then checked for the same class of defect; only `spatial-analysis.js` had it. `backend/tests/test_distance_score_contract.py` pins both sides of each binding against the live response and records the sweep so it need not be repeated.
+- **Generalises:** this is the same shape as L-092 (print stylesheet) and #260 (the donation banner) — **a reference left dangling by a rename, silent because the fallback produces something that looks like data.** `|| 0`, `|| {}` and `'--'` are the tells. Worth asking after any rename: what now points at nothing, and what does it show when it does?
+- **Files:** `explorer/spatial-analysis.js`, `backend/services/allocation_geography.py`, `backend/tests/test_distance_score_contract.py`
+
 ### L-097: The reported interval propagates no uncertainty about the wait-time spread
 - **Severity:** MEDIUM
 - **Status:** OPEN — measured and disclosed 2026-08-28 (#296 / #226), deliberately not folded in
