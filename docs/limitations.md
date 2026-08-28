@@ -503,7 +503,18 @@ Each limitation has a severity, status, and category. When we fix one, change st
 
   Twelve tests, none significant, and the candidate-weighted measure is **no better than the center count it was meant to improve on**. So the shortfall is not the unit. The leading remaining suspect is the geometry — allocation is a match run over OPO boundaries, not a radially symmetric circle.
 - **Caveat that bounds the conclusion:** SRTR's transplant rate is transplants per patient-year waiting. If regional competition is fully absorbed into how long each center's own listed patients wait, a per-center rate is a weak instrument for detecting it. That would not rescue the shipped proxy; it would mean the question needs a different *outcome* (wait-time percentiles, offer-level data) rather than a different competition measure.
-- **Still open:** #299 remains open, but with the candidate-count avenue closed by measurement rather than merely unexplored.
+- **The geometry was the problem, and OPO catchments DO predict (2026-08-28).** `data/opo-mapping.json` already maps all 248 centers to their OPO. Replacing "centers within 250 nm" with "centers in the same OPO", and controlling for the center's own cohort size:
+
+| organ | circle | **OPO (partial, controls volume)** | UNOS region |
+|---|---|---|---|
+| kidney | −0.051 (p 0.45) | **−0.188 (p 0.005)** | −0.015 (p 0.83) |
+| liver | −0.117 (p 0.18) | −0.181 (p 0.036) | −0.143 (p 0.10) |
+| lung | −0.016 (p 0.90) | **−0.361 (p 0.004)** | +0.017 (p 0.90) |
+| heart | −0.119 (p 0.18) | −0.082 (p 0.36) | −0.105 (p 0.24) |
+
+  **UNOS region is the control** — a coarser grouping of the same centers that predicts nothing, so this is specifically the allocation unit rather than any grouping. Lung's effect *strengthens* under the partial because OPO size correlates positively with its own cohort, masking it. Four organ-level tests of one pre-specified hypothesis, Bonferroni α = 0.0125: **kidney and lung survive, liver does not**, all four negative as the mechanism predicts.
+- **Size, stated honestly:** ρ ≈ −0.19 is about 3.5% of rank variance. A real effect and a small one — enough to justify building an OPO-based term, not enough to present competition as a strong determinant of a patient's odds.
+- **Still open:** #299 remains open, but for the first time with a measured signal to build on. The shipped circle proxy should be replaced by an OPO-based measure (and its Explorer caveat rewritten); per-center offer acceptance (#320) is the most promising untested addition.
 - **File:** `backend/services/allocation_geography.py` → `allocation_circles()`, `distance_score()`
 - **Mitigation:** Document as directional proxy. Could improve with OPO-level data (#122) and center-specific acceptance rate data.
 
