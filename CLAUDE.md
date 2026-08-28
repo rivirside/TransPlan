@@ -36,7 +36,7 @@ All 8 rebuild phases (0-7) are done. The structural overhaul that started March 
 2. **#208 audit** — remaining sub-issues (BBN CPT empirical grounding #213/#214 deepening). Closed this session: #216 (equity now closed-form, full 248 centers), #217 (innerHTML XSS).
 3. **#237** temporal validation — done as out-of-sample persistence + model concordance (`docs/temporal-validation-report.md`); full fit-on-N/predict-N+k forecast is the remaining follow-up. **#236** continuous BBN latents, **#238** revisit BBN hybrid.
 4. **Papers** — owner-driven; do NOT work on `papers/` (rigor/usability/validation work is pre-approved instead)
-5. **Old page cleanup** — `find-centers.html`, `wait-estimator.html`, `data.html`, `spatial.html` still on disk
+5. **Old page cleanup — DONE.** `find-centers.html`, `wait-estimator.html`, `data.html` and `spatial.html` are all absent as of 2026-08-28 (verified). What they left behind is CSS: 55 of 196 `@media` selectors reference removed markup, ratcheted by `__tests__/media-selector-rot.test.js` so the rot cannot grow
 
 ## Architecture
 
