@@ -117,6 +117,15 @@ cd backend && ../.venv/bin/python -m pytest -q  # without activating venv
 npm test                                  # 44 Jest tests (from repo root)
 ```
 
+## Inference Modes
+
+`docs/inference-modes.md` — which engine runs where and what each needs.
+Availability is **three-way**, not two: web (monte_carlo + bayesian), a fresh
+local clone (same — the 285MB MCMC traces are gitignored), and local after
+`scripts/fit-mcmc-model.py --all` (~15-30 min). The BBN uses the in-house
+`bbn_lite.py`, **not pgmpy**. Pinned against `tier_config.py` by
+`backend/tests/test_inference_mode_docs.py`.
+
 ## Landscape & Benchmarking
 
 See `docs/landscape/` for 7 tool profiles (SRTR, KPSAM/LSAM/TSAM, COMET, LivSim, TransplantCenterSearch, statistical packages) and the comparison matrix. Benchmarking plan: COMET-Lung rank comparison is Priority 1.
