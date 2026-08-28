@@ -735,6 +735,19 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Alarmed instead:** `backend/tests/test_bbn_graft_nodes_unreachable.py` fails the moment the production path reads either dead marginal — at which point the four constants become live and need the justification the register is holding. It carries its own vacuity guard (perturbing a node known to drive p24 must move the response), because every other assertion in it is of the form "changing X changes nothing".
 - **Files:** `backend/services/bayesian_network.py` (`_query_city`, `simulate_bbn`), `backend/services/bbn_parameterizer.py` (`build_graft_survival_cpt`, `build_compound_success_cpt`), `backend/services/outcomes.py`
 
+### L-099: Missing post-transplant outcomes are undisclosed, and scored as zero volume
+
+- **Severity:** MEDIUM
+- **Status:** OPEN — #447. Measured 2026-08-28 alongside #446; the rating half was fixed there, this half was not
+- **Category:** Data Coverage / Disclosure
+- **What:** `_hospital_quality` reads `post-transplant-outcomes-centers.json`. A center-organ with no record falls back to `outcomes.get("n_1yr", 0)` — **zero volume** — which drives 40% of that category.
+- **How many:** 91 center-organ pairs. kidney 15/233, liver 10/148, heart 23/149, lung 1/74, **pancreas 33/99 (33%)**, **intestine 9/21 (43%)**.
+- **Every one scores exactly 46.8** on hospital quality, against a peer mean of 55.7–72.6. Composite rank effect is organ-dependent: heart centers sit a median **121st vs 64th of 149**; kidney and pancreas show no difference, because the category's 15% weight is swamped elsewhere. For intestine, **3 of the top 10** are centers scored this way.
+- **The zero is directionally DEFENSIBLE, which is why it was not changed.** SRTR suppresses small programs, and these are small: median waitlist cohort **17 vs 166** for kidney, **9 vs 92** for liver, **16 vs 34** for heart. Substituting a national median volume would promote genuinely tiny programs by ~90 category places for kidney. Measured before proposing a change, per the #274/#376 precedent where the requested fix made the model worse.
+- **The actual defect is disclosure.** Nothing in `provenance.py` tags this source. `TAG_OUTCOMES` reads `srtr-observed-rates.json`, a *different* file — so `test_row_disclosure_matches_data.py` reports 0 undisclosed substitutions and is correct about the three sources it covers, while this fourth one is unmarked. A patient sees a heart program ranked 121st with no indication that its quality score rests on absent data recorded as "zero transplants".
+- **Not the same as L-087.** L-087 is about centers ranked on *national averages*; this is a center ranked on a *zero*, which is a stronger claim than an average and is not disclosed at all.
+- **Fix shape:** a row-level provenance tag for this source, so the existing dagger covers it. The score need not move.
+
 ### L-095: The BBN's displayed waitlist mortality rests entirely on an uncited hazard-shape assumption
 - **Severity:** MEDIUM
 - **Status:** OPEN — measured and scoped 2026-08-28 (#233 / BBN-19), not changed
