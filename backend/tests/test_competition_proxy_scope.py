@@ -95,6 +95,9 @@ def test_the_explorer_disclosure_is_present():
     assert "score-card-note" in html
     assert "do not affect the center rankings" in html
     assert "no detectable relationship" in html
+    # #299: the caveat must also name the measure that DOES predict, or it
+    # reads as "competition is unmeasurable" when it is merely un-swapped.
+    assert "opo_competition" in html
     # Deliberately NOT linking to the validation doc: the docs site builds to
     # routes like /architecture/overview, so a raw .md path from the app root
     # 404s. A caveat that sends the reader nowhere is worse than one that

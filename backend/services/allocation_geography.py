@@ -145,6 +145,85 @@ def allocation_circles(lat: float, lon: float, organ: str = "kidney") -> dict:
     }
 
 
+# ──────────────────────────────────────────────────────────────────────
+# OPO-based competition (#299)
+#
+# The circle measure above does not predict observed transplant rates -- 16
+# tests, nothing below p 0.178, and counting the CANDIDATES inside the circle
+# is no better. Counting centers in the same OPO does: kidney rho -0.188
+# (p 0.005), lung -0.361 (p 0.004), controlling for the center's own cohort
+# and surviving Bonferroni across the four organ-level tests. UNOS region, a
+# coarser grouping of the same centers, predicts nothing -- which is what
+# makes this the allocation unit rather than any grouping.
+#
+# Small, though: about 3.5% of rank variance. A better number, not a strong
+# one. See docs/allocation-competition-validation.md.
+# ──────────────────────────────────────────────────────────────────────
+
+_OPO_MAP: dict | None = None
+
+
+def _opo_data() -> dict:
+    """Lazy-load data/opo-mapping.json (248 centers -> OPO, via HRSA)."""
+    global _OPO_MAP
+    if _OPO_MAP is None:
+        import json
+        from pathlib import Path
+        path = Path(__file__).resolve().parents[2] / "data" / "opo-mapping.json"
+        _OPO_MAP = json.loads(path.read_text(encoding="utf-8"))
+    return _OPO_MAP
+
+
+def opo_competition(lat: float, lon: float, organ: str = "kidney") -> dict:
+    """Competition faced at a location, counted over its OPO rather than a circle.
+
+    A location has no OPO of its own -- the shipped mapping is county-based
+    and runtime geocoding is not available -- so the query point inherits the
+    OPO of its nearest center performing the organ. That is the OPO whose
+    match run a patient listing there would enter.
+
+    `competition_score` is normalised so a typical location scores ~1.0, the
+    same convention as the circle score, and is None when the organ has no
+    reachable program (rather than dividing by zero and returning a number
+    that looks measured).
+    """
+    mapping = _opo_data()
+    center_opo = mapping.get("centerOpoMap", {})
+
+    organ_centers = [c for c in _get_center_coords() if organ in c["organs"]]
+    if not organ_centers:
+        return {"opo": None, "nearest_center": None, "centers_in_opo": 0,
+                "competition_score": None, "organ": organ}
+
+    nearest = min(
+        organ_centers,
+        key=lambda c: haversine_distance_nm(lat, lon, c["lat"], c["lon"]),
+    )
+    opo = center_opo.get(nearest["code"])
+    if not opo:
+        return {"opo": None, "nearest_center": nearest["code"],
+                "centers_in_opo": 0, "competition_score": None, "organ": organ}
+
+    in_opo = [c for c in organ_centers if center_opo.get(c["code"]) == opo]
+
+    # Normalise against the mean centers-per-OPO for this organ, so the score
+    # is comparable across organs with very different program counts.
+    opos_used = {center_opo.get(c["code"]) for c in organ_centers}
+    opos_used.discard(None)
+    mean_per_opo = len(organ_centers) / len(opos_used) if opos_used else 0.0
+
+    score = (len(in_opo) / mean_per_opo) if mean_per_opo > 0 else None
+    return {
+        "opo": opo,
+        "opo_name": (mapping.get("opos", {}).get(opo) or {}).get("name"),
+        "nearest_center": nearest["code"],
+        "centers_in_opo": len(in_opo),
+        "mean_centers_per_opo": round(mean_per_opo, 2),
+        "competition_score": round(score, 2) if score is not None else None,
+        "organ": organ,
+    }
+
+
 def distance_score(lat: float, lon: float, organ: str = "kidney") -> dict:
     """
     Compute a composite distance/geography score for a location.
