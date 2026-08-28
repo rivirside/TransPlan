@@ -63,6 +63,77 @@ function checkStaleness(data, filename) {
     }
 }
 
+/**
+ * #302: how old is the DATA, as opposed to how recently we ran a script?
+ *
+ * checkStaleness above reads _meta.fetchedAt, which answers the wrong
+ * question in both directions. Measured 2026-08-27 on the shipped files:
+ *
+ *   cause-of-death-by-region.json  fetched 3 days ago  -> no warning,
+ *                                  carrying CDC 2017 data
+ *   donor-registration.json        "161 days old"      -> the data is
+ *                                  from 2018, understated ~18x
+ *
+ * A file re-fetched weekly from a frozen upstream looks perpetually fresh.
+ *
+ * `atSourceCeiling` is the other half. A dataset at its publisher's ceiling
+ * is not neglect and there is no action to take, so flagging it identically
+ * to a refreshable file trains people to ignore the warnings that matter.
+ * The ceiling must be RE-VERIFIED, not asserted: `ceilingCheckedOn` records
+ * when someone last confirmed the upstream had published nothing newer, and
+ * this warns once that claim goes stale.
+ */
+const VINTAGE_EXPECTATIONS = {
+    'cause-of-death-by-region.json': {
+        maxAgeYears: 3,
+        atSourceCeiling: true,
+        ceilingCheckedOn: '2026-08-27',
+        why: 'NCHS bi63-dtpu is a closed 1999-2017 series; verified max(year)=2017 '
+           + 'against the live API. No REST-accessible replacement carries '
+           + 'state-level injury counts.',
+    },
+    'donor-registration.json': {
+        maxAgeYears: 3,
+        atSourceCeiling: false,
+        why: 'Donate Life America publishes annually; the shipped values are 2018. '
+           + 'Load-bearing: flattening state registration rates to the national '
+           + 'mean leaves rho 0.9665 but changes the TOP-RANKED center and 6 of '
+           + 'the top 10 (#302).',
+    },
+};
+
+function checkVintage(data, filename) {
+    const spec = VINTAGE_EXPECTATIONS[filename];
+    if (!spec) return;
+
+    const vintage = data?._meta?.vintage;
+    if (typeof vintage !== 'number') {
+        addWarning(`${filename}: no _meta.vintage — cannot tell how old the DATA is, `
+                 + `only when it was last fetched`);
+        return;
+    }
+
+    const age = new Date().getUTCFullYear() - vintage;
+    if (age <= spec.maxAgeYears) return;
+
+    if (spec.atSourceCeiling) {
+        // Not neglect — but the claim has a shelf life of its own.
+        const checked = Date.parse(spec.ceilingCheckedOn || '');
+        const daysSince = (Date.now() - checked) / 86400000;
+        if (!Number.isFinite(daysSince)) {
+            addWarning(`${filename}: atSourceCeiling asserted with no ceilingCheckedOn date`);
+        } else if (daysSince > 365) {
+            addWarning(`${filename}: data is from ${vintage} and the "no newer release" `
+                     + `claim was last verified ${Math.round(daysSince)} days ago — `
+                     + `re-check the upstream. ${spec.why}`);
+        }
+        return;
+    }
+
+    addWarning(`${filename}: data is from ${vintage} (${age} years old, max ${spec.maxAgeYears}) `
+             + `— refreshable, not at a source ceiling. ${spec.why}`);
+}
+
 function checkCoverageFloor(obj, filename, floor) {
     // Never-shrink guard (2026-08-05 incident class): a fetch that merges a
     // near-empty API result must FAIL validation, not pass vacuously.
@@ -135,10 +206,24 @@ if (costOfLiving) {
 const donor = validateJSON('donor-registration.json');
 if (donor) {
     checkStaleness(donor, 'donor-registration.json');
+    checkVintage(donor, 'donor-registration.json');
     checkCoverageFloor(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)', 20);
+    checkCoverageFloor(donor.stateRegistrationRates, 'donor-registration.json (stateRegistrationRates)', 50);
     if (donor.livingDonorProgramStrength) {
         checkValueRange(donor.livingDonorProgramStrength, 'donor-registration.json (livingDonorProgramStrength)', 0, 100);
     }
+}
+
+// 6b. Cause of Death by Region (#302: was not validated at all — no staleness
+// check and no never-shrink floor, on an input that feeds donor availability)
+const cod = validateJSON('cause-of-death-by-region.json');
+if (cod) {
+    checkStaleness(cod, 'cause-of-death-by-region.json');
+    checkVintage(cod, 'cause-of-death-by-region.json');
+    checkCoverageFloor(cod.stateCauseOfDeathProportions,
+                       'cause-of-death-by-region.json (stateCauseOfDeathProportions)', 51);
+    checkCoverageFloor(cod.organRecoveryRates,
+                       'cause-of-death-by-region.json (organRecoveryRates)', 6);
 }
 
 // 6a2. Manual age-multiplier blocks in competing-risks.json (ERROR: the #104

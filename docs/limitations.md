@@ -662,6 +662,27 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-089: Donor registration rates are from 2018 and they decide the top-ranked center
+- **Severity:** MEDIUM-HIGH (a load-bearing input, eight years stale, with no machine-readable replacement)
+- **Status:** OPEN — measured and disclosed 2026-08-27 (#302, backlog G5)
+- **Category:** Data
+- **What:** `data/donor-registration.json` carries Donate Life America's 2018 state designation rates (from their 2019 annual report). It feeds `_donor_availability` in the scoring path.
+- **Why it matters — it is not housekeeping.** Flattening `stateRegistrationRates` to the national mean leaves Spearman **ρ 0.9665**, which reads as "barely matters", while **6 of the top 10 change and the top-ranked center changes** (OHCC → NYUC for kidney/O+/50/male). This is the fourth instance of the same lesson in this project (L-082, L-083, L-086): **a high rank correlation is not evidence of a stable top.**
+- **Why it has not been refreshed:** there is no machine-readable national source. DLA publishes the National Donor Designation Report Card as a PDF; `data.cdc.gov`'s catalog has only a single-state registry (New York, by zip code). Refreshing means transcribing 51 values by hand, and doing that carelessly into an input that decides the headline recommendation is worse than a clearly-labeled 2018 figure.
+- **How to close:** transcribe the current DLA report card with a checked total, or find a machine-readable equivalent. Until then the vintage is disclosed and `validate-data.js` warns with the data's real age.
+- **Files:** `data/donor-registration.json`, `backend/services/scoring.py:251` (`_donor_availability`), `scripts/validate-data.js` (`checkVintage`)
+
+### L-090: The freshness check measured when a script last ran, not how old the data is
+- **Severity:** LOW (fixed) — recorded because the failure mode generalizes
+- **Status:** **FIXED 2026-08-27** (#302)
+- **Category:** Tooling / Data governance
+- **What:** `checkStaleness` read `_meta.fetchedAt`. That answers "when did we last run the fetch", which for a frozen upstream is uninformative and for a manual file understates the problem by years. Measured on the shipped files: `cause-of-death-by-region.json` was fetched 3 days ago and drew **no warning** while carrying CDC **2017** data, and `donor-registration.json` was flagged as "161 days old" when its data is from **2018** — understated roughly 18×.
+- **Why it's a limitation:** a file re-fetched weekly from a closed dataset looks perpetually fresh. The check was structurally unable to see the thing it existed to catch.
+- **Fix:** `checkVintage()` reads `_meta.vintage` and reports the DATA's age. It also distinguishes a dataset at its **publisher's ceiling** from a refreshable one — flagging both identically trains people to ignore the warnings that matter. Because "there is nothing newer" is itself a claim with a shelf life, `ceilingCheckedOn` records when it was last verified against the upstream, and the check warns once that verification is over a year old.
+- **Verified ceiling (2026-08-27):** NCHS `bi63-dtpu` returns `max(year) = 2017` from the live API — a closed 1999–2017 series. The weekly provisional replacements (`muzy-jte6`, `3yf8-kanr`) carry heart and stroke but **no external-cause/injury counts**, and trauma is the largest donor category (weight 0.31), so migrating would trade the dominant variable for recency. CDC WONDER/WISQARS expose no public REST API.
+- **Also fixed:** `cause-of-death-by-region.json` had no validation at all — no staleness check and no never-shrink floor, on an input feeding donor availability. It now has both (51 states, 6 organs).
+- **Files:** `scripts/validate-data.js` (`checkVintage`, `VINTAGE_EXPECTATIONS`), `scripts/fetch-cod-data.js` (`_meta.vintageBySource`)
+
 ### L-088: Rh-negative candidates were penalized by the model, and organ allocation does not use Rh
 - **Severity:** HIGH when live; now FIXED
 - **Status:** **FIXED 2026-08-27 (#413)** — measured from #180, see `docs/rh-factor-report.md`. Blood type is canonicalized to its ABO group at every model lookup (`backend/services/blood_type.py::model_key`), so `O+` and `O-` produce identical wait distributions, scores, BBN CPT rows and MCMC effects. The eight-entry tables stay on disk as the record of what was there; nothing reads their Rh half. Rh-positive numbers are unchanged — the fix removes a penalty, it does not add one.

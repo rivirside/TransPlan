@@ -107,7 +107,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | G2 | Inconsistent fallback patterns / error handling | #219 / #220 | ✅ major fixes + /score provenance + spatial/tier consistency; residue documented on issues |
 | G3 | Synthetic-baseline guard (GEN-13/14/15) | #300 | ✅ #300 closed; covered by _write_guarded + validate-data organ-block errors |
 | G4 | OPO-level cause-of-death proportions | #301 | ✅ 2026-08-27 — #301 closed by measurement: even 10× amplification leaves top-10 at 9/10, and 60 OPOs vs 51 states cannot deliver it|
-| G5 | Data vintage refresh (CDC 2017, donor reg 2018) | #302 | |
+| G5 | Data vintage refresh (CDC 2017, donor reg 2018) | #302 | partial — MEASURED: CDC 2017 is the source's own ceiling (bi63-dtpu is a closed 1999–2017 series, verified live; no REST replacement carries injury counts), so nothing to refresh. Donor reg 2018 IS refreshable and is load-bearing (changes the top-ranked center, L-089) but has no machine-readable source — #302 stays open for the manual transcription. Freshness check now measures data age, not script runs (L-090) |
 | G6 | LAS → CAS migration (lung allocation, 2023) | #303 | ✅ 2026-08-26 — `cas` field ships and is exposed in the simulator and the shared patient form (#370); LAS retained as documented legacy |
 | G7 | Tier caps on /score, /score/explain | #249 | ✅ 2026-08-25 |
 | G8 | Security headers + exact pins | #250 | ✅ 2026-08-27 — headers done (#406/#407/#408/#409): strict CSP with no script-src 'unsafe-inline', Permissions-Policy, all 8 CDN resources pinned + SRI. #250 stays open for the Python requirements.txt pins only|
