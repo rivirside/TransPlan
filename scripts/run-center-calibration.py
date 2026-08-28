@@ -34,6 +34,8 @@ Usage:
 """
 import argparse
 import json
+import re
+from datetime import datetime, timezone
 
 from artifact_meta import stamped_meta
 import sys
@@ -52,6 +54,10 @@ from services.monte_carlo import simulate  # noqa: E402
 OBSERVED_PATH = REPO_ROOT / "data" / "srtr-observed-rates.json"
 JSON_OUT_DIR = REPO_ROOT / "docs-site" / "static" / "data"
 REPORT_PATH = REPO_ROOT / "docs" / "center-calibration-report.md"
+
+# Canonical row order for the report; also the set of names the merge
+# recogniser will carry over from a previous run.
+ORGANS = ["kidney", "liver", "heart", "lung", "pancreas", "intestine"]
 
 N_ITERATIONS = 2000
 SEED = 42
@@ -105,6 +111,36 @@ def calibrate(organ: str) -> dict:
         })
 
     matched = len(rows)
+
+    # The join above skips any center absent from the observed file, so a
+    # truncated ground truth does not fail here — it silently narrows the
+    # cohort and still yields a respectable-looking rho. `matched` was
+    # reported and asserted nowhere. Floors are ~85% of the coverage each
+    # organ actually has, so a genuine release drift passes and a collapse
+    # does not.
+    _MIN_MATCHED = {"kidney": 190, "liver": 120, "heart": 120,
+                    "lung": 60, "pancreas": 65, "intestine": 12}
+    # No default. A permissive fallback (say 10) would mean an organ omitted
+    # from this table is effectively unguarded while still appearing to be
+    # covered — and it would swallow the negative test for its own absence,
+    # which is how the omission would stay invisible.
+    if organ not in _MIN_MATCHED:
+        raise SystemExit(
+            f"No matched-center floor defined for '{organ}'. Add one to "
+            f"_MIN_MATCHED in {Path(__file__).name} — an organ without a floor "
+            f"is calibrated against however much ground truth happens to exist."
+        )
+    floor = _MIN_MATCHED[organ]
+    if matched < floor:
+        raise SystemExit(
+            f"REFUSING to report {organ} calibration: only {matched} centers matched "
+            f"the observed data (floor: {floor}).\n"
+            f"  A correlation over {matched} centers is not the quantity this gate "
+            f"exists to measure.\n"
+            f"  Check data/srtr-observed-rates.json — re-run "
+            f"scripts/fetch-srtr-observed-rates.py if it is truncated."
+        )
+
     pred_p12 = [r["predicted_p12"] for r in rows]
     pred_wait = [r["predicted_median_wait"] for r in rows]
     obs_tx = [r["observed_tx_rate"] for r in rows]
@@ -170,16 +206,53 @@ def write_report(results: list[dict]):
         "",
         "## Results",
         "",
-        "| Organ | Centers | ρ (p12 vs tx-rate) | p | ρ (wait vs tx-rate) | p |",
-        "|-------|---------|--------------------|---|---------------------|---|",
+        "| Organ | Centers | ρ (p12 vs tx-rate) | p | ρ (wait vs tx-rate) | p | Computed |",
+        "|-------|---------|--------------------|---|---------------------|---|----------|",
     ]
+
+    # Merge with what is already in the report instead of replacing it.
+    #
+    # This script takes --organ and defaults to lung, but wrote the report from
+    # only the organs of the current run — so `--organ kidney` silently DELETED
+    # the other five rows from a committed validation document, and the result
+    # still read as a complete report for the organ you ran. CLAUDE.md records
+    # the softer version of this ("five of six organs were never recomputed");
+    # the rows were not merely stale, they were gone.
+    #
+    # Merging alone would trade a visible deletion for an invisible staleness,
+    # so each row carries the date it was computed and rows from older runs are
+    # marked. A reader can then see which numbers this run actually re-derived.
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    rows: dict[str, str] = {}
+    if REPORT_PATH.exists():
+        for line in REPORT_PATH.read_text().splitlines():
+            m = re.match(r"^\|\s*([a-z]+)(†?)\s*\|", line)
+            if m and m.group(1) in ORGANS:
+                cells = [c.strip() for c in line.strip().strip("|").split("|")]
+                if not cells[0].endswith("†"):
+                    cells[0] += "†"
+                # Rows written before this column existed are one cell short;
+                # a ragged row renders with a silently missing date rather
+                # than an obviously absent one.
+                while len(cells) < 7:
+                    cells.append("—")
+                rows[m.group(1)] = "| " + " | ".join(cells[:7]) + " |"
+
     for r in results:
         s = r["stats"]
         a, b = s["spearman_p12_vs_txrate"], s["spearman_wait_vs_txrate"]
-        lines.append(
+        rows[r["organ"]] = (
             f"| {r['organ']} | {r['matched_centers']} | "
-            f"{a['rho']} | {_fmt_p(a['p_value'])} | {b['rho']} | {_fmt_p(b['p_value'])} |"
+            f"{a['rho']} | {_fmt_p(a['p_value'])} | {b['rho']} | {_fmt_p(b['p_value'])} "
+            f"| {today} |"
         )
+
+    for organ in ORGANS:
+        if organ in rows:
+            lines.append(rows[organ])
+    if any("†" in rows.get(o, "") for o in ORGANS):
+        lines += ["", "† carried over from an earlier run — not recomputed by the run that "
+                  "last wrote this file. Re-run with `--organ all` to refresh every row."]
     lines += [
         "",
         "- **ρ (p12 vs tx-rate)** should be **positive**: centers predicted to transplant "

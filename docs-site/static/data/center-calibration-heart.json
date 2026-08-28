@@ -1202,7 +1202,7 @@
     }
   ],
   "_meta": {
-    "generated": "2026-08-27T16:10:21Z",
+    "generated": "2026-08-28T15:42:41Z",
     "script": "scripts/run-center-calibration.py",
     "organ": "heart",
     "n_iterations": 2000,

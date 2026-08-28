@@ -12,14 +12,14 @@ Whether the centers TransPlan predicts as fast-access actually have high observe
 
 ## Results
 
-| Organ | Centers | ρ (p12 vs tx-rate) | p | ρ (wait vs tx-rate) | p |
-|-------|---------|--------------------|---|---------------------|---|
-| kidney | 229 | 0.8956 | <0.001 | -0.8846 | <0.001 |
-| liver | 146 | 0.7283 | <0.001 | -0.6619 | <0.001 |
-| heart | 146 | 0.7528 | <0.001 | -0.6514 | <0.001 |
-| lung | 73 | 0.6808 | <0.001 | -0.582 | <0.001 |
-| pancreas | 78 | 0.4719 | <0.001 | -0.4343 | <0.001 |
-| intestine | 17 | 0.6154 | 0.009 | -0.592 | 0.012 |
+| Organ | Centers | ρ (p12 vs tx-rate) | p | ρ (wait vs tx-rate) | p | Computed |
+|-------|---------|--------------------|---|---------------------|---|----------|
+| kidney | 229 | 0.8956 | <0.001 | -0.8846 | <0.001 | 2026-08-28 |
+| liver | 146 | 0.7283 | <0.001 | -0.6619 | <0.001 | 2026-08-28 |
+| heart | 146 | 0.7528 | <0.001 | -0.6514 | <0.001 | 2026-08-28 |
+| lung | 73 | 0.6808 | <0.001 | -0.582 | <0.001 | 2026-08-28 |
+| pancreas | 78 | 0.4719 | <0.001 | -0.4343 | <0.001 | 2026-08-28 |
+| intestine | 17 | 0.6154 | 0.009 | -0.592 | 0.012 | 2026-08-28 |
 
 - **ρ (p12 vs tx-rate)** should be **positive**: centers predicted to transplant sooner should have higher observed transplant rates.
 - **ρ (wait vs tx-rate)** should be **negative**: centers predicted to have longer waits should have lower observed transplant rates.

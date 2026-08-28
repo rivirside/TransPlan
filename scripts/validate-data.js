@@ -249,6 +249,43 @@ for (const [file, container, floor] of [
     }
 }
 
+// 6a1a-0. srtr-observed-rates.json — the calibration GROUND TRUTH, and the
+// one file where a silent shrink is worse than a crash.
+//
+// run-center-calibration.py joins predictions against it with
+// `obs = observed.get(code); if not obs: continue` — a center missing here is
+// skipped, not flagged. So a truncated file does not fail calibration; it
+// makes calibration agree with itself over a handful of centers and report a
+// perfectly respectable rho. `matched_centers` is printed in the report and
+// asserted nowhere. Fifteen modules read this file, including data_loader and
+// bbn_parameterizer in production.
+//
+// This is the "gates lie in specific ways" case from CLAUDE.md, one level
+// down: not a gate blind to the change, but a gate whose reference data can
+// quietly shrink underneath it.
+const observedRates = validateJSON('srtr-observed-rates.json');
+if (observedRates) {
+    for (const [organ, floor] of [
+        ['kidney', 200], ['liver', 130], ['heart', 130],
+        ['lung', 65], ['pancreas', 70], ['intestine', 14],
+    ]) {
+        const block = observedRates[organ];
+        if (!block || !block.centers) {
+            addError(`srtr-observed-rates.json: organ '${organ}' missing its centers block `
+                   + `— calibration for it would silently match zero centers`);
+            continue;
+        }
+        checkCoverageFloor(block.centers, `srtr-observed-rates.json (${organ}.centers)`, floor);
+        const rated = Object.values(block.centers)
+            .filter(c => c && c.transplant_rate !== null && c.transplant_rate !== undefined).length;
+        if (rated < floor) {
+            addError(`srtr-observed-rates.json: only ${rated} ${organ} centers carry a `
+                   + `transplant_rate (floor: ${floor}) — the rest are skipped by the join, `
+                   + `so calibration would quietly run on a subset`);
+        }
+    }
+}
+
 // 6a1a-ii. The rest of what the sweep turned up. Two partial-coverage cases,
 // which are the more instructive ones: opo-mapping.json had a floor on none
 // of its five containers, and srtr-tiers-centers.json was floored on kidney
