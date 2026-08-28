@@ -81,3 +81,48 @@ def test_competition_is_sourced_from_the_opo_measure(response):
     assert response["competition_basis"] == "opo"
     html = (REPO / "explorer.html").read_text(encoding="utf-8")
     assert "Competition (OPO)" in html
+
+
+# ── the allocation-circles consumer had the same bug (#183) ─────────────────
+
+CIRCLE_JS = REPO / "explorer" / "spatial-analysis.js"
+
+
+def test_the_circle_tooltips_read_the_field_the_api_returns(data):
+    """Second instance of the same defect, found by generalising the first.
+
+    The JS read `circles_250nm` / `circles_500nm` (plural) for fields the API
+    has always called `circle_250nm` / `circle_500nm`. With `|| 0` behind
+    them, every tooltip reported "0 centers" regardless of location —
+    Manhattan has 55 within 250 nm. Worse than the blank tile in the Distance
+    Score card, because zero reads as a measurement rather than as missing.
+    """
+    from services.allocation_geography import allocation_circles
+    src = CIRCLE_JS.read_text(encoding="utf-8")
+    resp = allocation_circles(40.758, -73.9855, "kidney")
+
+    assert "data.circles_250nm" not in src, "the plural (wrong) name is back"
+    assert "data.circles_500nm" not in src
+    for field in ("circle_250nm", "circle_500nm"):
+        assert f"data.{field}" in src, f"the JS no longer reads {field}"
+        assert field in resp, f"the API no longer returns {field}"
+        assert resp[field]["center_count"] > 0, (
+            "Manhattan should have centers in range; if not, this test's "
+            "premise is gone"
+        )
+
+
+def test_circle_centers_carry_coordinates(data):
+    """The marker loop guards on `c.lat && c.lon`, so without coordinates it
+    silently drew nothing even once the field names were right."""
+    from services.allocation_geography import allocation_circles
+    centers = allocation_circles(40.758, -73.9855, "kidney")["circle_250nm"]["centers"]
+    assert centers, "no centers returned for Manhattan"
+    for c in centers:
+        assert isinstance(c.get("lat"), (int, float)), f"{c.get('code')} has no lat"
+        assert isinstance(c.get("lon"), (int, float)), f"{c.get('code')} has no lon"
+
+    src = CIRCLE_JS.read_text(encoding="utf-8")
+    assert "c.lat && c.lon" in src, (
+        "the marker guard changed; re-check whether coordinates are still needed"
+    )
