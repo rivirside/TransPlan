@@ -127,7 +127,12 @@ def allocation_circles(lat: float, lon: float, organ: str = "kidney") -> dict:
     return {
         "circle_250nm": {
             "center_count": len(within_250),
-            "centers": [{"code": c["code"], "name": c["name"], "distance_nm": c["distance_nm"]}
+            # lat/lon included because the Explorer plots these as markers
+            # inside the drawn circle; without them the marker loop's
+            # `if (c.lat && c.lon)` silently drew nothing (#183).
+            "centers": [{"code": c["code"], "name": c["name"],
+                         "distance_nm": c["distance_nm"],
+                         "lat": c["lat"], "lon": c["lon"]}
                         for c in within_250[:10]],  # Top 10 nearest
             "competition_score": round(competition_250, 2),
         },

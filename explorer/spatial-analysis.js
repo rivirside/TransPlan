@@ -456,7 +456,11 @@
           opacity: 0.8
         }).addTo(map);
 
-        var count250 = (data.circles_250nm || {}).center_count || 0;
+        // #183: these read circles_* (plural) for fields the API has always
+        // called circle_* (singular), so `|| 0` made every tooltip say
+        // "0 centers" regardless of location — Manhattan reports 55. Worse
+        // than a blank: zero reads as a measurement.
+        var count250 = (data.circle_250nm || {}).center_count || 0;
         circle250.bindTooltip('250nm: ' + count250 + ' centers', { permanent: false });
         allocCircles.push(circle250);
 
@@ -470,13 +474,13 @@
           dashArray: '5,5'
         }).addTo(map);
 
-        var count500 = (data.circles_500nm || {}).center_count || 0;
+        var count500 = (data.circle_500nm || {}).center_count || 0;
         circle500.bindTooltip('500nm: ' + count500 + ' centers', { permanent: false });
         allocCircles.push(circle500);
 
         // Add markers for centers within circles
-        var centers250 = (data.circles_250nm || {}).centers || [];
-        var centers500 = (data.circles_500nm || {}).centers || [];
+        var centers250 = (data.circle_250nm || {}).centers || [];
+        var centers500 = (data.circle_500nm || {}).centers || [];
         var allCenters = centers250.concat(centers500);
 
         // Remove old center markers
