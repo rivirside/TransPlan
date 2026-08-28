@@ -94,7 +94,7 @@ robustness (G), assumption triage (H), features (I), docs (J).
 | # | Item | Issue | Status |
 |---|------|-------|--------|
 | D1 | Retire algorithm.js, DEFAULTS, CITIES, checkCityCoverage, classic mode | #293 | ✅ CLOSED 2026-08-25 (fetcher CITIES → #285) |
-| D2 | Dead frontend: charts.js, url-sharing.js, donation-banner.js | #260 | partial — charts.js and url-sharing.js are already ABSENT; donation-banner.js is deliberately dormant pending #179 (line 11 returns immediately) yet still fetched by 14 pages |
+| D2 | Dead frontend: charts.js, url-sharing.js, donation-banner.js | #260 | ✅ 2026-08-28 — charts.js and url-sharing.js were already ABSENT; donation-banner.js returns on line 11 yet 14 pages fetched its 5.4KB to run nothing. Tags removed. NOT blocked on #179 after all — only the banner FEATURE was. Paired invariant test fails if the early return is deleted without re-adding the tags, or vice versa |
 | D3 | Old pages already deleted; 17 broken links to them FIXED 2026-08-25 | #293 | ✅ |
 | D4 | _FALLBACK_CITIES + unused CITIES imports | #293 | ✅ 2026-08-25 |
 | D5 | Close #206 (done — CLOSED 2026-08-24), prune stale golden tests as files retire | #206 ✅ | ✅ 2026-08-24 — #206 closed|
