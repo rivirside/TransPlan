@@ -492,7 +492,18 @@ Each limitation has a severity, status, and category. When we fix one, change st
   Seven of eight comparisons run negative — weakly consistent with the mechanism — but one hit at p<0.05 across eight tests is chance (≈0.4 expected) and does not survive Bonferroni. Supply-normalizing by population within the circle does not rescue it. Same shape as #405's ABO result: right direction, no signal.
 - **"Downgrade its weight" turned out to be inapplicable: it has no weight.** `scoring.py` never imports `allocation_geography`. The only consumers are `GET /spatial/allocation-circles` and `/spatial/distance-score`, rendered on the Explorer's Spatial Analysis tab. No ranking, probability, wait estimate or competing-risk figure depends on it — so it cannot skew a recommendation, but a bare number labelled "Competition" beside a "Composite" score reads as a validated finding about a patient's odds.
 - **Handled by disclosure at the numbers**, not in a doc: the score card now says the figures describe the map, not the reader's odds, and affect nothing else in the tool. `backend/tests/test_competition_proxy_scope.py` fails if the proxy is ever wired into the scoring path, because that would make the disclosure false.
-- **Still open:** the deeper objection stands — a center count is a crude proxy for competition regardless of how well it is normalized. A defensible measure needs candidates listed per center (#337 ships it), per-center offer acceptance (#320 ships it) and OPO boundaries rather than circles. That is a modelling project, so #299 stays open rather than closing on a null result.
+- **The proposed upgrade was tested too, and it also fails (2026-08-28).** The obvious objection to a center count is that it counts the wrong thing. SRTR's `Tables B8-B9 Counts Center` carries per-center candidate counts (`TPC_ALL_NC`, 234 kidney centers / 105,857 candidates — candidates rather than recipients, so not circular). Summing them over each 250 nm circle:
+
+| organ | centers-in-circle ρ | **candidates-in-circle** ρ | candidates-per-center ρ |
+|---|---|---|---|
+| kidney | −0.0512 (p 0.45) | **−0.0649** (p 0.34) | −0.0325 (p 0.63) |
+| liver | −0.1166 (p 0.18) | **−0.1036** (p 0.23) | −0.0013 (p 0.99) |
+| heart | −0.1189 (p 0.18) | **−0.1041** (p 0.24) | +0.0806 (p 0.36) |
+| lung | −0.0162 (p 0.90) | **−0.0304** (p 0.82) | −0.0783 (p 0.55) |
+
+  Twelve tests, none significant, and the candidate-weighted measure is **no better than the center count it was meant to improve on**. So the shortfall is not the unit. The leading remaining suspect is the geometry — allocation is a match run over OPO boundaries, not a radially symmetric circle.
+- **Caveat that bounds the conclusion:** SRTR's transplant rate is transplants per patient-year waiting. If regional competition is fully absorbed into how long each center's own listed patients wait, a per-center rate is a weak instrument for detecting it. That would not rescue the shipped proxy; it would mean the question needs a different *outcome* (wait-time percentiles, offer-level data) rather than a different competition measure.
+- **Still open:** #299 remains open, but with the candidate-count avenue closed by measurement rather than merely unexplored.
 - **File:** `backend/services/allocation_geography.py` → `allocation_circles()`, `distance_score()`
 - **Mitigation:** Document as directional proxy. Could improve with OPO-level data (#122) and center-specific acceptance rate data.
 
