@@ -618,7 +618,7 @@
     }
   ],
   "_meta": {
-    "generated": "2026-08-27T16:10:22Z",
+    "generated": "2026-08-28T15:42:42Z",
     "script": "scripts/run-center-calibration.py",
     "organ": "lung",
     "n_iterations": 2000,

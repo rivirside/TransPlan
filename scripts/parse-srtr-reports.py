@@ -1173,14 +1173,56 @@ def _write_guarded(path: str, new_data: dict) -> None:
         for key in _data_keys(existing) & _data_keys(new_data):
             old_v, new_v = existing[key], new_data[key]
             if isinstance(old_v, dict) and isinstance(new_v, dict):
-                if len({k for k in old_v if not k.startswith("_")}) > 0 and \
-                   len({k for k in new_v if not k.startswith("_")}) == 0:
+                n_old = len({k for k in old_v if not k.startswith("_")})
+                n_new = len({k for k in new_v if not k.startswith("_")})
+                if n_old > 0 and n_new == 0:
                     problems.append(f"section '{key}' would become empty")
+                # Partial shrink. The emptiness check above cannot see this,
+                # and for the center-level files it is the ONLY dimension that
+                # moves: their top level is _meta plus one container of 248
+                # center codes, so organ blocks and section names are both
+                # unchanged while the contents collapse (#444 follow-up).
+                #
+                # No tolerance band, matching the organ-block rule directly
+                # above: ANY shrink refuses. A percentage would have to be
+                # invented — the archive's workbooks can't be parsed for real
+                # churn without reworking the release-pinned reader — and a
+                # threshold nobody can source is the kind of constant this
+                # project keeps having to justify later. A genuine release
+                # that retires a center is handled by --allow-shrink, which
+                # makes the loss a decision someone recorded rather than a
+                # silent write.
+                elif n_new < n_old:
+                    lost = sorted({k for k in old_v if not k.startswith("_")} -
+                                  {k for k in new_v if not k.startswith("_")})
+                    problems.append(
+                        f"section '{key}' would shrink {n_old} → {n_new} "
+                        f"entries (dropping {', '.join(lost[:8])}"
+                        f"{f' and {len(lost) - 8} more' if len(lost) > 8 else ''})"
+                    )
+        # srtr-historical's coverage lives in _meta, not in a data section:
+        # the parse always appends the current release, so a run with
+        # srtr-raw/historical/ absent produces a *truthy* 1-release dict that
+        # would otherwise overwrite all 15.
+        old_rel = existing.get("_meta", {}).get("releases")
+        new_rel = new_data.get("_meta", {}).get("releases")
+        if isinstance(old_rel, list) and isinstance(new_rel, list) and \
+                len(new_rel) < len(old_rel):
+            problems.append(
+                f"SRTR releases would shrink {len(old_rel)} → {len(new_rel)}"
+            )
+        if problems and "--allow-shrink" in sys.argv:
+            print(f"  Allowing shrink on {path} (--allow-shrink):")
+            for p in problems:
+                print(f"    - {p}")
+            problems = []
         if problems:
             print(f"  REFUSING to write {path} (degraded parse):")
             for p in problems:
                 print(f"    - {p}")
             print("    Existing file kept. Ensure data/srtr-raw/ has the current release Excels.")
+            print("    If the loss is real (a center genuinely left the SRTR report),")
+            print("    re-run with --allow-shrink to record it deliberately.")
             return
     with open(path, "w") as f:
         json.dump(new_data, f, indent=2)
@@ -1209,10 +1251,7 @@ def main():
         print("\n=== Parsing Historical Trends (Phase 4 M3) ===")
         historical_data = parse_historical_trends(mapping)
         if historical_data:
-            with open(HISTORICAL_OUT, "w") as f:
-                json.dump(historical_data, f, indent=2)
-                f.write("\n")
-            print(f"Wrote {HISTORICAL_OUT}")
+            _write_guarded(HISTORICAL_OUT, historical_data)
     else:
         print("\n  Skipping historical trends (no historical data in srtr-raw/historical/)")
         print("  Run: python scripts/fetch-srtr-excel.py --historical to download")
@@ -1230,24 +1269,15 @@ def main():
     if "--all-centers" in sys.argv or "--all" in sys.argv:
         print("\n=== Phase 6A: Parsing ALL Center Wait Times (Table B10) ===")
         centers_wait = parse_all_centers_wait_times()
-        with open(CENTERS_WAIT_OUT, "w") as f:
-            json.dump(centers_wait, f, indent=2)
-            f.write("\n")
-        print(f"Wrote {CENTERS_WAIT_OUT} ({centers_wait['_meta']['totalCenters']} centers)")
+        _write_guarded(CENTERS_WAIT_OUT, centers_wait)
 
         print("\n=== Phase 6A: Parsing ALL Center Competing Risks (Table B7) ===")
         centers_competing = parse_all_centers_outcomes()
-        with open(CENTERS_COMPETING_OUT, "w") as f:
-            json.dump(centers_competing, f, indent=2)
-            f.write("\n")
-        print(f"Wrote {CENTERS_COMPETING_OUT} ({centers_competing['_meta']['totalCenters']} centers)")
+        _write_guarded(CENTERS_COMPETING_OUT, centers_competing)
 
         print("\n=== Phase 6A: Parsing ALL Center Post-Transplant Outcomes ===")
         centers_outcomes = parse_all_centers_post_transplant()
-        with open(CENTERS_OUTCOMES_OUT, "w") as f:
-            json.dump(centers_outcomes, f, indent=2)
-            f.write("\n")
-        print(f"Wrote {CENTERS_OUTCOMES_OUT} ({centers_outcomes['_meta']['totalCenters']} centers)")
+        _write_guarded(CENTERS_OUTCOMES_OUT, centers_outcomes)
 
     # Summary
     n_organs = len([k for k in wait_data if not k.startswith("_")])

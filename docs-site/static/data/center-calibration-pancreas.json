@@ -658,7 +658,7 @@
     }
   ],
   "_meta": {
-    "generated": "2026-08-27T16:10:23Z",
+    "generated": "2026-08-28T15:42:43Z",
     "script": "scripts/run-center-calibration.py",
     "organ": "pancreas",
     "n_iterations": 2000,

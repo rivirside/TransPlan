@@ -45,7 +45,7 @@ NO_ISSUE = re.compile(r"^\s*(\(inline\)|parked|see\s|—|-)?\s*$", re.I)
 # fall through the row regex, because a silent skip is exactly the failure this
 # module exists to prevent: the first version of the guard below quietly
 # ignored all 10 of these rows and reported success.
-EXEMPT_PREFIXES = ("K",)
+EXEMPT_PREFIXES = ("K", "DG")
 
 
 def unparsed_rows(text: str) -> list[str]:
@@ -165,10 +165,28 @@ def main() -> int:
         print(f"missing {BACKLOG.relative_to(REPO)}", file=sys.stderr)
         return 1
 
-    rows = parse_rows(BACKLOG.read_text())
+    text = BACKLOG.read_text()
+    rows = parse_rows(text)
     if not rows:
         print("parsed 0 backlog rows — the table format changed and this "
               "check would silently pass forever", file=sys.stderr)
+        return 1
+
+    # The non-empty check above only catches a TOTAL format break. A change
+    # affecting some rows leaves the count high while dropping exactly the
+    # rows it broke, which could be the stale ones. unparsed_rows() was
+    # written for that and then never called.
+    unparsed = unparsed_rows(text)
+    if unparsed:
+        print(f"{len(unparsed)} backlog rows did not parse — they are invisible "
+              f"to the staleness check below:", file=sys.stderr)
+        for line in unparsed[:10]:
+            print(f"  - {line}", file=sys.stderr)
+        if len(unparsed) > 10:
+            print(f"  ... and {len(unparsed) - 10} more", file=sys.stderr)
+        print("  Rows must be '| <Letter><digits> | item | issue | status |'. "
+              "A table that is deliberately not issue-tracked needs its prefix "
+              "in EXEMPT_PREFIXES.", file=sys.stderr)
         return 1
 
     if args.refresh:

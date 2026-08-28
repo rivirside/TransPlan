@@ -176,3 +176,53 @@ Known deferred (documented, not blocking merge): shared srtr_xls_utils module
 for the parser/forecast script duplication; centralized provenance assembly
 layer; test suites pin live-data center codes (fixture hardening); state
 population table dedup (fetch-trauma vs fetch-traffic).
+
+## Phase DG — Data-protection sweep (2026-08-28)
+
+Not from the original sweep. Started as one register row (GEN-13, "synthetic
+generator") and became a chain: each fix exposed the next layer, because the
+question *"what protects the data this thing runs on?"* kept having a new
+answer one level up. PRs #444, #445.
+
+The 2026-08-05 incident rule ("every generated data file needs a never-shrink
+guard") was **honoured** — K8 above added floors for the city-keyed weekly
+files. What it missed is that a guard can be real, correct, and pointed at
+something that no longer matters.
+
+| # | Finding | Fix |
+|---|---------|-----|
+| DG1 | `generate-srtr-historical.py` wrote **synthetic** 22-city data over a **real** 15-release extraction, unconditionally, invoked by nothing | provenance guard + `--force` (#444) |
+| DG2 | `_write_guarded` covered the three legacy 22-city aggregates (2–4K) and **none** of the four center-level files (20–278K) the model runs on | all four routed through the guard |
+| DG3 | The guard could not have seen it anyway — it counts organ blocks at *top level*, and those files keep organs below a container of center codes (248 → 3 passes) | entry-count check + `--allow-shrink` |
+| DG4 | `srtr-all-centers.json`, the master center list, appeared in validation only as the **denominator** of another file's check | own floor |
+| DG5 | `srtr-tiers-centers.json` floored on **kidney alone**; five organs unchecked | per-organ floors |
+| DG6 | `srtr-observed-rates.json` — the calibration **ground truth**, read by 15 modules — had no floor, and the join silently skips unmatched centers | floors + `matched_centers` refusal |
+| DG7 | `run-center-calibration.py --organ kidney` **deleted** the other five organs from the committed report | merge + dagger + date |
+| DG8 | `fetch-srtr-observed-rates.py --organ kidney` replaced all six organs in the ground truth with one | `merge_with_existing()` |
+| DG9 | 9 of data/'s 38 JSON files were never mentioned in `validate-data.js` | floored, or exempt with a recorded reason |
+
+**Two moves worth reusing.** Ask what protects the data a gate measures
+*against*, not just its output. And sweep for the **pattern**, not the
+instance: "takes a subset argument, writes a whole shared artifact" found DG7
+and DG8 together.
+
+**A permissive default is how a missing entry stays invisible.** The
+matched-center floor table first had `.get(organ, 10)`; deleting lung's floor
+left the suite green, because the fallback still caught the negative test's
+truncation. Removing the default made the omission fail. Prefer "no entry =
+error" over "no entry = lenient default" in any coverage table.
+
+Durable parts, since fixing nine files is not the point:
+`tests/data-file-floors.test.js` (every per-center container floored by name,
+with its own detector check so it cannot pass vacuously) and
+`tests/data-file-coverage.test.js` (every file in data/ validated or exempt,
+exemptions capped and reasoned).
+
+**Swept clean (recorded so the sweep is not repeated).** "Defined but never
+called" now has two known instances — `snapshot-model-outputs.py` (wired to no
+CI, no test, no doc) and `unparsed_rows()` above — so every guard-named
+function in `scripts/`, `backend/services/` and `backend/routers/` was checked
+for call sites. No further instances: the five `_check_*` in `provenance.py`
+are dict-dispatched at `provenance.py:102-106`, and the two router functions
+are FastAPI endpoints reached through decorators. A name-based search reports
+all seven as uncalled, which is worth knowing before trusting one.

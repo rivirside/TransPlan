@@ -226,6 +226,198 @@ if (cod) {
                        'cause-of-death-by-region.json (organRecoveryRates)', 6);
 }
 
+// 6a1a. The remaining unfloored per-center files (#444 follow-up sweep).
+// Each is written by a script with no write guard, and srtr-all-centers.json
+// is written by THREE (extract-center-list, geocode-centers,
+// verify-geocoding). It is the master center list; before this it appeared in
+// validation only as the *denominator* of the trauma-scores check, so a
+// shrink was caught incidentally, by a different file's assertion, and only
+// while that other file stayed intact. That is coverage by coincidence.
+for (const [file, container, floor] of [
+    ['srtr-all-centers.json', 'centers', 200],
+    ['opo-mapping.json', 'centerOpoMap', 200],
+    ['acceptance-rates-centers.json', 'center_acceptance_factors', 180],
+    ['center-contacts.json', 'contacts', 200],
+]) {
+    const d = validateJSON(file);
+    if (d) {
+        if (!d[container]) {
+            addError(`${file}: container '${container}' missing`);
+        } else {
+            checkCoverageFloor(d[container], `${file} (${container})`, floor);
+        }
+    }
+}
+
+// 6a1-pre. The last of the unfloored files. Nine of data/'s 38 JSON files
+// were never mentioned in this validator at all; these are the ones the
+// sweep showed reach production or the frontend, plus two analysis inputs
+// whose loss would silently weaken a validation rather than break it.
+for (const [file, container, floor, why] of [
+    ['health-demographics-counties.json', 'counties', 3000,
+     'county health layer — read by 2 backend modules and 4 frontend files'],
+    ['air-quality-monitors.json', 'monitors', 2000,
+     'environmental layer for the spatial tab'],
+    ['cbsa-centroids.json', 'cbsas', 350,
+     'metro centroids — the spatial join falls back to nothing without them'],
+    ['srtr-observed-rates-historical.json', 'releases', 10,
+     'the temporal-validation input; a short series still fits a trend'],
+]) {
+    const d = validateJSON(file);
+    if (d) {
+        if (!d[container]) {
+            addError(`${file}: container '${container}' missing (${why})`);
+        } else {
+            checkCoverageFloor(d[container], `${file} (${container})`, floor);
+        }
+    }
+}
+
+// srtr-center-mapping.json drives the city-level parse in
+// parse-srtr-reports.py. It is legacy (22 cities, retiring under #285) but it
+// is still an INPUT, and losing it would degrade a parse rather than fail it.
+const centerMapping = validateJSON('srtr-center-mapping.json');
+if (centerMapping) {
+    const n = Object.keys(centerMapping.cities || {}).length;
+    if (n < 20) {
+        addError(`srtr-center-mapping.json: only ${n} cities (floor: 20) — `
+               + `parse-srtr-reports.py maps centers to cities through this`);
+    }
+}
+
+// Deliberately NOT floored: horizon-alpha-fit.json and
+// horizon-extension-sweep.json. Both are analysis OUTPUTS, not inputs — a
+// sweep that legitimately explores a smaller grid would trip a floor, so one
+// here would fail honest work and get raised until it meant nothing. The
+// distinction worth keeping: floor what the model READS, not what it writes.
+
+// offer-acceptance-panel.json is keyed by organ, not center, so the
+// center-code detector in tests/data-file-floors.test.js does not see it.
+const panel = validateJSON('offer-acceptance-panel.json');
+if (panel) {
+    const n = Object.keys(panel.panel || {}).length;
+    if (n < 5) {
+        addError(`offer-acceptance-panel.json: only ${n} organs in the panel (floor: 5)`);
+    }
+}
+
+// 6a1a-0. srtr-observed-rates.json — the calibration GROUND TRUTH, and the
+// one file where a silent shrink is worse than a crash.
+//
+// run-center-calibration.py joins predictions against it with
+// `obs = observed.get(code); if not obs: continue` — a center missing here is
+// skipped, not flagged. So a truncated file does not fail calibration; it
+// makes calibration agree with itself over a handful of centers and report a
+// perfectly respectable rho. `matched_centers` is printed in the report and
+// asserted nowhere. Fifteen modules read this file, including data_loader and
+// bbn_parameterizer in production.
+//
+// This is the "gates lie in specific ways" case from CLAUDE.md, one level
+// down: not a gate blind to the change, but a gate whose reference data can
+// quietly shrink underneath it.
+const observedRates = validateJSON('srtr-observed-rates.json');
+if (observedRates) {
+    for (const [organ, floor] of [
+        ['kidney', 200], ['liver', 130], ['heart', 130],
+        ['lung', 65], ['pancreas', 70], ['intestine', 14],
+    ]) {
+        const block = observedRates[organ];
+        if (!block || !block.centers) {
+            addError(`srtr-observed-rates.json: organ '${organ}' missing its centers block `
+                   + `— calibration for it would silently match zero centers`);
+            continue;
+        }
+        checkCoverageFloor(block.centers, `srtr-observed-rates.json (${organ}.centers)`, floor);
+        const rated = Object.values(block.centers)
+            .filter(c => c && c.transplant_rate !== null && c.transplant_rate !== undefined).length;
+        if (rated < floor) {
+            addError(`srtr-observed-rates.json: only ${rated} ${organ} centers carry a `
+                   + `transplant_rate (floor: ${floor}) — the rest are skipped by the join, `
+                   + `so calibration would quietly run on a subset`);
+        }
+    }
+}
+
+// 6a1a-ii. The rest of what the sweep turned up. Two partial-coverage cases,
+// which are the more instructive ones: opo-mapping.json had a floor on none
+// of its five containers, and srtr-tiers-centers.json was floored on kidney
+// alone (#320) while its five other organs went unchecked — a floor on one
+// organ reads, at a glance, as a floor on the file.
+//
+// Floors sit near 90% of current coverage, rounded down. They exist to catch
+// a collapse, not to freeze the data: SRTR organ coverage genuinely drifts by
+// a few centers per release, and a floor set at exactly today's count would
+// fail the next legitimate refresh and get raised without being read.
+for (const [file, container, floor] of [
+    ['center-cbsa-map.json', 'centers', 200],
+    ['opo-mapping.json', 'opos', 50],
+    ['opo-mapping.json', 'centerOpoDetails', 200],
+    ['opo-mapping.json', 'opoCenterCounts', 50],
+    ['opo-mapping.json', 'countyToOpo', 3000],
+]) {
+    const d = validateJSON(file);
+    if (d) {
+        if (!d[container]) {
+            addError(`${file}: container '${container}' missing`);
+        } else {
+            checkCoverageFloor(d[container], `${file} (${container})`, floor);
+        }
+    }
+}
+
+const srtrTiers = validateJSON('srtr-tiers-centers.json');
+if (srtrTiers) {
+    for (const [organ, floor] of [
+        ['kidney', 210], ['liver', 130], ['heart', 130],
+        ['lung', 65], ['pancreas', 95], ['intestine', 15],
+    ]) {
+        if (!srtrTiers[organ]) {
+            addError(`srtr-tiers-centers.json: organ block '${organ}' missing`);
+        } else {
+            checkCoverageFloor(srtrTiers[organ], `srtr-tiers-centers.json (${organ})`, floor);
+        }
+    }
+}
+
+// 6a1b. Center-level SRTR files — never-shrink floors (#444 follow-up).
+// These are the files data_loader actually loads and the model runs on, and
+// until now NOTHING protected them: parse-srtr-reports.py wrote all four with
+// a bare open(), and validate-data.js had floors on the small legacy 22-city
+// aggregates beside them but none on these. The write guard is the first line;
+// this is the second, and it is the one that runs in CI on every push.
+for (const [file, container, floor] of [
+    ['competing-risks-centers.json', 'center_adjustments', 200],
+    ['wait-time-distributions-centers.json', 'center_wait_time_factors', 200],
+    ['post-transplant-outcomes-centers.json', 'center_outcomes', 200],
+]) {
+    const d = validateJSON(file);
+    if (d) {
+        if (!d[container]) {
+            addError(`${file}: container '${container}' missing`);
+        } else {
+            checkCoverageFloor(d[container], `${file} (${container})`, floor);
+        }
+    }
+}
+
+// srtr-historical.json's coverage dimension is RELEASES, not centers: a parse
+// run without srtr-raw/historical/ still appends the current release, so it
+// yields a structurally valid 1-release file. An entry-count floor cannot see
+// that — the 22 city blocks survive intact while 14 years of history vanish.
+const srtrHist = validateJSON('srtr-historical.json');
+if (srtrHist) {
+    const releases = (srtrHist._meta || {}).releases;
+    if (!Array.isArray(releases) || releases.length < 10) {
+        addError(`srtr-historical.json: only ${Array.isArray(releases) ? releases.length : 0} `
+               + `SRTR releases (never-shrink floor: 10) — the trend line shown for every `
+               + `center is built from these`);
+    }
+    if (((srtrHist._meta || {}).source || '').includes('Synthetic')) {
+        addError('srtr-historical.json: source is SYNTHETIC — every center trend is fabricated. '
+               + 'Restore from git; scripts/generate-srtr-historical.py must not have run.');
+    }
+}
+
 // 6a2. Manual age-multiplier blocks in competing-risks.json (ERROR: the #104
 // rewrite silently dropped these, killing the BBN age edge + MCMC inference
 // age modulation — never again)
