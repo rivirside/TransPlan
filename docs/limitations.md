@@ -674,6 +674,18 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-097: The reported interval propagates no uncertainty about the wait-time spread
+- **Severity:** MEDIUM
+- **Status:** OPEN — measured and disclosed 2026-08-28 (#296 / #226), deliberately not folded in
+- **Category:** Statistical Validity
+- **What:** wait times are lognormal fitted from SRTR percentiles, with σ clamped to **[0.3, 1.2]**. Recomputing the same strategy chain unclamped from the shipped workbooks: kidney **2.529**, intestine 2.121, liver/heart 1.509, pancreas 2.247 (reconstruction branch). **Five of six organs are clamped**, and kidney — the largest population the tool serves — uses less than half the spread its own percentiles imply.
+- **Measured cost:** moving σ across [shipped, raw] shifts mean p24 by **0.0968** for kidney, which is **0.56× the width of the interval the app reports**; pancreas 0.1544 (0.32×), intestine 0.0804, liver 0.0338, heart 0.0369. Lung is the control — its σ is effectively unclamped, and the induced spread is **0.0002**, which is what makes the other rows believable.
+- **The precise claim:** the interval *does* move when σ moves, because `_data_uncertainty_ci` uses √(p(1−p)/n) and σ shifts p24 — 99 of 233 kidney widths changed by >0.02 across the band. That is the interval tracking the point estimate's **curvature**. What it does not do is account for uncertainty **about** σ: no width in the app is wider because σ is unknown. (A first draft of this entry overstated it as "does not move with σ"; the test written for it caught that.)
+- **Why it is not folded in:** #274 measured that raising the clamp **degrades** calibration on every assessable organ, so the raw σ is not the truth with the clamp as an approximation — it is what the percentiles imply and the outcomes contradict. A band whose endpoints differ in credibility is not a sampling distribution, and converting it to a variance needs a prior over σ. Inventing one to widen a "95% CI" would be its own overclaim.
+- **Net effect:** since #420 the interval honestly covers simulation error plus data-sampling uncertainty at the center's cohort. It still **understates total uncertainty**, most for kidney, by an amount now quantified rather than hand-waved.
+- **How to close:** a defensible prior over σ (or a σ fitted jointly against calibration rather than clamped), then propagate. That is a modelling project.
+- **Files:** `scripts/srtr_xls_utils.py` (`sigma_from_percentiles`, `SIGMA_CLAMP`), `backend/services/bayesian_network.py` (`_data_uncertainty_ci`), `backend/services/monte_carlo.py` (`_widen_for_data_uncertainty`), `docs/timing-uncertainty-report.md`
+
 ### L-096: Two BBN nodes are computed on every inference and discarded
 - **Severity:** LOW (no wrong output) — recorded because it misdirects justification effort
 - **Status:** DOCUMENTED 2026-08-28 (#233), deliberately not removed
