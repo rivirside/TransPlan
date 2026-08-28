@@ -480,7 +480,19 @@ Each limitation has a severity, status, and category. When we fix one, change st
   The 500nm normalizer (2.5× the 250nm figure) was measured on the same footing and is **sound** — actual ratio 2.38–2.51 — so it was kept rather than churned.
 
   The constants now live at module scope as `AVG_CENTERS_250NM` and are **recomputed and pinned** by `backend/tests/test_competition_normalizers.py`, which fails if they drift from the data. Being function-local round numbers is a large part of why they escaped notice for so long.
-- **Still open:** the deeper objection stands — a center count is a crude proxy for competition regardless of how well it is normalized, because it ignores priority scores, acceptance rates, OPO boundaries and match-run mechanics.
+- **Validated against observed outcomes and found not to predict them (2026-08-27, #299).** SRTR publishes each center's observed transplant rate, so the proxy's claim is directly falsifiable. Correlating a center's competition count against its own observed rate, restricted to cohorts of n>=10:
+
+| organ | n | ρ(centers, rate) | p | ρ(centers/million, rate) | p |
+|---|---|---|---|---|---|
+| kidney | 217 | −0.0593 | 0.384 | −0.0545 | 0.425 |
+| liver | 134 | −0.1107 | 0.203 | −0.1182 | 0.174 |
+| heart | 130 | −0.1189 | 0.178 | −0.1783 | **0.042** |
+| lung | 61 | −0.0162 | 0.901 | +0.0365 | 0.780 |
+
+  Seven of eight comparisons run negative — weakly consistent with the mechanism — but one hit at p<0.05 across eight tests is chance (≈0.4 expected) and does not survive Bonferroni. Supply-normalizing by population within the circle does not rescue it. Same shape as #405's ABO result: right direction, no signal.
+- **"Downgrade its weight" turned out to be inapplicable: it has no weight.** `scoring.py` never imports `allocation_geography`. The only consumers are `GET /spatial/allocation-circles` and `/spatial/distance-score`, rendered on the Explorer's Spatial Analysis tab. No ranking, probability, wait estimate or competing-risk figure depends on it — so it cannot skew a recommendation, but a bare number labelled "Competition" beside a "Composite" score reads as a validated finding about a patient's odds.
+- **Handled by disclosure at the numbers**, not in a doc: the score card now says the figures describe the map, not the reader's odds, and affect nothing else in the tool. `backend/tests/test_competition_proxy_scope.py` fails if the proxy is ever wired into the scoring path, because that would make the disclosure false.
+- **Still open:** the deeper objection stands — a center count is a crude proxy for competition regardless of how well it is normalized. A defensible measure needs candidates listed per center (#337 ships it), per-center offer acceptance (#320 ships it) and OPO boundaries rather than circles. That is a modelling project, so #299 stays open rather than closing on a null result.
 - **File:** `backend/services/allocation_geography.py` → `allocation_circles()`, `distance_score()`
 - **Mitigation:** Document as directional proxy. Could improve with OPO-level data (#122) and center-specific acceptance rate data.
 
