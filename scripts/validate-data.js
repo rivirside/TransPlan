@@ -249,6 +249,58 @@ for (const [file, container, floor] of [
     }
 }
 
+// 6a1-pre. The last of the unfloored files. Nine of data/'s 38 JSON files
+// were never mentioned in this validator at all; these are the ones the
+// sweep showed reach production or the frontend, plus two analysis inputs
+// whose loss would silently weaken a validation rather than break it.
+for (const [file, container, floor, why] of [
+    ['health-demographics-counties.json', 'counties', 3000,
+     'county health layer — read by 2 backend modules and 4 frontend files'],
+    ['air-quality-monitors.json', 'monitors', 2000,
+     'environmental layer for the spatial tab'],
+    ['cbsa-centroids.json', 'cbsas', 350,
+     'metro centroids — the spatial join falls back to nothing without them'],
+    ['srtr-observed-rates-historical.json', 'releases', 10,
+     'the temporal-validation input; a short series still fits a trend'],
+]) {
+    const d = validateJSON(file);
+    if (d) {
+        if (!d[container]) {
+            addError(`${file}: container '${container}' missing (${why})`);
+        } else {
+            checkCoverageFloor(d[container], `${file} (${container})`, floor);
+        }
+    }
+}
+
+// srtr-center-mapping.json drives the city-level parse in
+// parse-srtr-reports.py. It is legacy (22 cities, retiring under #285) but it
+// is still an INPUT, and losing it would degrade a parse rather than fail it.
+const centerMapping = validateJSON('srtr-center-mapping.json');
+if (centerMapping) {
+    const n = Object.keys(centerMapping.cities || {}).length;
+    if (n < 20) {
+        addError(`srtr-center-mapping.json: only ${n} cities (floor: 20) — `
+               + `parse-srtr-reports.py maps centers to cities through this`);
+    }
+}
+
+// Deliberately NOT floored: horizon-alpha-fit.json and
+// horizon-extension-sweep.json. Both are analysis OUTPUTS, not inputs — a
+// sweep that legitimately explores a smaller grid would trip a floor, so one
+// here would fail honest work and get raised until it meant nothing. The
+// distinction worth keeping: floor what the model READS, not what it writes.
+
+// offer-acceptance-panel.json is keyed by organ, not center, so the
+// center-code detector in tests/data-file-floors.test.js does not see it.
+const panel = validateJSON('offer-acceptance-panel.json');
+if (panel) {
+    const n = Object.keys(panel.panel || {}).length;
+    if (n < 5) {
+        addError(`offer-acceptance-panel.json: only ${n} organs in the panel (floor: 5)`);
+    }
+}
+
 // 6a1a-0. srtr-observed-rates.json — the calibration GROUND TRUTH, and the
 // one file where a silent shrink is worse than a crash.
 //
