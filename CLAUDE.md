@@ -204,6 +204,24 @@ Snapshot Aug 26, 2026. **Closed in #370** with evidence: #335 (pediatric mode), 
 
 **Data-pipeline lesson (2026-08-05 incident):** the SRTR workflow once overwrote three model files with organ-less shells because `data/srtr-raw/` is absent in CI. Every generated data file must have a never-shrink guard (`_write_guarded` in parse-srtr-reports.py, dead-data guards in fetch-cost-of-living.js, organ-block checks in validate-data.js).
 
+**Aug 28 — that rule was followed, and still missed almost everything (#444, #445).** A guard can be real, correct, and pointed at something that no longer matters. Asking *"what protects the data this thing runs on?"* produced a chain where every answer was one level up:
+
+| | |
+|---|---|
+| `_write_guarded` covered the three legacy 22-city aggregates (2–4K) and **none** of the four center-level files (20–278K) the model runs on | the guard predates Phase 6A |
+| it could not have seen them anyway — it counts organ blocks at *top level*, and those files keep organs below a container of 248 center codes | **248 → 3 passes clean** |
+| `srtr-all-centers.json`, the master center list, appeared in validation only as the **denominator** of another file's check | coverage by coincidence |
+| `srtr-tiers-centers.json` was floored on **kidney alone** | a floor on one organ reads as a floor on the file |
+| `srtr-observed-rates.json` — the calibration **ground truth**, read by 15 modules — had no floor, and the join silently skips unmatched centers | a truncated ground truth makes calibration agree with itself and report a healthy ρ |
+| `run-center-calibration.py --organ kidney` **deleted** the other five organs from the committed report | not stale — gone |
+| `unparsed_rows()` in check-backlog.py, whose docstring names this exact hazard, was **never called** | |
+
+**Three habits that did the work.** Ask what protects the data a gate measures *against*, not its output. Sweep for the **pattern** — "takes a subset argument, writes a whole shared artifact" found the calibration report *and* the fetcher for its ground truth. And prefer **"no entry = error"** over a lenient default in any coverage table: the matched-center floor first had `.get(organ, 10)`, and deleting lung's floor left the suite green because the fallback swallowed the negative test for its own absence.
+
+Durable parts, since fixing the files is not the point: `tests/data-file-floors.test.js` (every per-center container floored *by name*, with its own detector check so it cannot pass vacuously), `tests/data-file-coverage.test.js` (every file in `data/` validated or exempt, exemptions capped and reasoned), and `backend/tests/test_row_disclosure_matches_data.py` (every national substitute a patient sees is marked, checked against the source files rather than the engine's own tags — 0 undisclosed, 0 spurious).
+
+**Check your expectation before calling something a bug.** That last one took three wrong expectations first: `TAG_OUTCOMES` reads `srtr-observed-rates.json`, not the similarly-named `post-transplant-outcomes-centers.json`, and the acceptance tag is absent because acceptance modelling is off by default. Each wrong source made correct machinery look broken — in both directions.
+
 **Aug 27 (second wave) — the approved plan ran end to end.** Phases 0-4 of
 `~/.claude/plans/clever-purring-sedgewick.md`. What shipped, and what did not:
 
