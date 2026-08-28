@@ -138,6 +138,8 @@ See `docs/landscape/` for 7 tool profiles (SRTR, KPSAM/LSAM/TSAM, COMET, LivSim,
 
 Snapshot **Aug 28, 2026** — 58 open. **Closed Aug 27-28** (13 PRs, #411-#423): #227/#228 (per-center provenance), #180 + #413 (Rh), #302-partial, #232 (inference-mode docs), #235 (equity disclaimers), #197/#198 (print + methodology), #137 (drift comparison), #296-partial, #299-partial, #233-partial.
 
+**Pre-rebuild issues: verify the target before trusting the content.** Four issues this sweep described pages or lists that the Phase 3 merge removed — #180 (`find-centers.html`), #183 and #181 (`data.html`), #162 (the 22-city list). Each was filed before the rebuild and read as current. All 58 open issues were scanned on 2026-08-28 for references to removed pages; **only #181 remains**, and it is flagged in-thread. Worth re-running that scan after any future page merge rather than discovering it one issue at a time.
+
 **The pattern in that sweep is worth carrying forward.** Of twelve items picked up, **nine had a materially wrong premise**, and in three the requested change would have made the tool worse:
 
 | item | asked for | measured |
