@@ -119,7 +119,7 @@ The earlier circle and candidate work was 16 tests with nothing below 0.178, so 
 
 - ~~candidates listed per center~~ — ruled out; no better than counting centers
 - **OPO boundaries rather than circles — CONFIRMED as the missing piece**
-- offer-acceptance behaviour per center (Table B11 OARR, #320) — still untested, and now the most promising remaining addition
+- offer-acceptance behaviour per center (Table B11 OARR, #320) — **tested; adds nothing.** See below.
 
 #299 stays open, but for the first time with a measured signal to build on rather than a null to explain.
 
@@ -192,3 +192,42 @@ code, and both worth knowing about for the next person:
 - Checking whether the server had the fix returned the *buggy* file, because
   `fetch()` uses the HTTP cache by default. `{cache: 'no-store'}` shows the
   truth. For a moment this looked like the fix had not landed when it had.
+
+---
+
+## Acceptance-weighting the OPO count adds nothing
+
+I called per-center offer acceptance "the most promising remaining addition".
+Tested, it is not an addition at all.
+
+The circular version — a center's *own* acceptance against its own transplant
+rate — is included as a **control**, because it should be strongly positive if
+the OARR data means what it claims:
+
+| organ | n | own OAR (control) | p | rivals' mean OAR | p | rivals' OAR-weighted count | p |
+|---|---|---|---|---|---|---|---|
+| kidney | 204 | **+0.4192** | <0.0001 | −0.0747 | 0.289 | −0.1916 | 0.006 |
+| liver | 119 | **+0.3596** | 0.0001 | −0.1510 | 0.101 | −0.1826 | 0.047 |
+| heart | 123 | **+0.4262** | <0.0001 | +0.0760 | 0.403 | −0.0854 | 0.348 |
+| lung | 43 | **+0.4232** | 0.0047 | +0.2227 | 0.151 | −0.2880 | 0.061 |
+
+The control lands hard positive on every organ, so the data is sound and the
+method reads it correctly.
+
+The substantive question — whether **rivals'** aggressiveness depresses a
+center's access — is answered no. Rivals' mean OAR predicts nothing anywhere.
+And the OAR-weighted rival count is indistinguishable from the plain count
+already shipped: kidney **−0.1916 weighted vs −0.1881 unweighted**, liver
+−0.1826 vs −0.1809. The count carries the signal; the weighting is decoration.
+
+Worth stating why the strong control is *not* a finding to act on. A center
+that accepts more offers transplants more people — that is close to a
+tautology, and offer acceptance already feeds the simulation as an
+acceptance-thinning input (#320). It is not a competition measure.
+
+**Three recommendations of mine have now been tested and failed**: candidates
+per center (#429), acceptance weighting (here), and — from the other
+direction — the claim that a center count is the wrong *unit* when it was the
+wrong *shape*. The OPO catchment is the one that survived. That ratio is
+worth remembering when reading the "what would actually validate it" section
+of any report, including this one.
