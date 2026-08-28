@@ -1,13 +1,26 @@
 /**
  * Donation/support banner — dismissible, localStorage-persisted.
- * Include this script on any page to show a bottom banner asking for support.
+ *
+ * NOT CURRENTLY LOADED BY ANY PAGE (#260). The banner is disabled pending
+ * #179, which needs a donation account the project does not have yet, and the
+ * early `return` below made it a no-op. Fourteen pages were still fetching
+ * 5.4 KB to run nothing, so the <script> tags were removed.
+ *
+ * To re-enable when #179 lands, BOTH steps are required:
+ *   1. delete the `return` on the line marked below, and
+ *   2. add `<script src="donation-banner.js"></script>` back to the pages
+ *      that should show it.
+ *
+ * Doing only one is the failure this pairing guards against, and
+ * __tests__/donation-banner-invariant.test.js fails on either half alone.
  */
 (function() {
     'use strict';
     var STORAGE_KEY = 'transplan-donation-dismissed';
     var DISMISS_DAYS = 30; // Re-show after 30 days
 
-    // Banner disabled — return immediately
+    // Banner disabled — return immediately. See the header: removing this
+    // without re-adding the <script> tags leaves the feature silently off.
     return;
 
     // Check if dismissed
