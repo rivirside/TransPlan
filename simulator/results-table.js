@@ -56,8 +56,18 @@
     no_observed_outcomes: 'observed transplant outcomes',
     acceptance_rate_national_default: 'organ offer acceptance',
     no_trend_series: 'year-over-year trends',
-    pediatric_small_cohort: 'pediatric cohort size'
+    pediatric_small_cohort: 'pediatric cohort size',
+    // #447/L-099. Distinct from no_observed_outcomes above: that one is the
+    // waitlist rates (srtr-observed-rates), this is post-transplant volume
+    // and graft survival. A center missing it is scored as having performed
+    // zero transplants, so the row needs to say so.
+    no_post_transplant_outcomes: 'post-transplant volume and survival'
   };
+
+  // Tags whose fallback is a ZERO, not a national average. The distinction is
+  // the whole point of the marker: "we used the national average" is a claim
+  // about missing data, "we counted it as zero" is a claim about the center.
+  var ZERO_SUBSTITUTE_TAGS = ['no_post_transplant_outcomes'];
 
   // ── Module state ───────────────────────────────────────────────────────────
 
@@ -294,16 +304,40 @@
    * national defaults. For intestine that is 16 of 21, which tells a reader
    * nothing about the ten rows they are actually reading. This says which.
    */
+  function _join(names) {
+    return names.length === 1
+      ? names[0]
+      : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+  }
+
   function _buildDataQualityFlag(tags) {
     var flag = _createElement('span', 'rt-dq-flag');
     flag.textContent = '†';   // dagger
-    var names = tags.map(function (t) { return DQ_LABELS[t]; });
-    var what = names.length === 1
-      ? names[0]
-      : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
-    var msg = 'Not center-specific: this center has no published SRTR data ' +
-      'for ' + what + ', so the national average is used instead. Its ' +
-      'position here rests partly on that substitute.';
+
+    // Not every substitute is a national average, and saying so when it isn't
+    // is worse than saying nothing — "the national average is used" reads as
+    // reassurance. For post-transplant outcomes the model substitutes ZERO
+    // volume, which is a much stronger claim about the center (#447/L-099).
+    // Split the tags by what actually happens to them.
+    var zeroed = [], averaged = [];
+    tags.forEach(function (t) {
+      if (!DQ_LABELS[t]) return;
+      (ZERO_SUBSTITUTE_TAGS.indexOf(t) === -1 ? averaged : zeroed).push(DQ_LABELS[t]);
+    });
+
+    var parts = [];
+    if (averaged.length) {
+      parts.push('has no published SRTR data for ' + _join(averaged) +
+                 ', so the national average is used instead');
+    }
+    if (zeroed.length) {
+      parts.push('has no published SRTR ' + _join(zeroed) +
+                 ', which the model counts as zero rather than estimating');
+    }
+    var n = averaged.length + zeroed.length;
+    var msg = 'Not center-specific: this center ' + parts.join('; and it ') +
+      '. Its position here rests partly on ' +
+      (n === 1 ? 'that substitute' : 'those substitutes') + '.';
     flag.title = msg;
     flag.setAttribute('aria-label', msg);
     return flag;

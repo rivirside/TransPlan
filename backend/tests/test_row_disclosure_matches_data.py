@@ -52,10 +52,22 @@ def sources():
     comp = _load("competing-risks-centers.json", "center_adjustments")
     obs = json.loads(
         (REPO / "data" / "srtr-observed-rates.json").read_text(encoding="utf-8"))
+    # #447/L-099: the fourth source. Absent from this map until 2026-08-28,
+    # which is why the file below could report "0 undisclosed" while 91
+    # center-organ pairs were scored on a zero with no marker. A disclosure
+    # test is only as complete as its list of sources, so each entry names
+    # the file it reads.
+    pt = _load("post-transplant-outcomes-centers.json", "center_outcomes")
     return {
+        # wait-time-distributions-centers.json
         pv.TAG_WAIT: lambda o, c: o in wait.get(c, {}),
+        # competing-risks-centers.json
         pv.TAG_RISK: lambda o, c: o in comp.get(c, {}),
+        # srtr-observed-rates.json  (NOT post-transplant-outcomes-centers.json)
         pv.TAG_OUTCOMES: lambda o, c: c in obs.get(o, {}).get("centers", {}),
+        # post-transplant-outcomes-centers.json — drives 40% of hospital
+        # quality via n_1yr, defaulting to 0 when the record is absent.
+        pv.TAG_PT_OUTCOMES: lambda o, c: bool(pt.get(c, {}).get(o)),
     }
 
 
