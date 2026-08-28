@@ -524,14 +524,17 @@
         return r.json();
       })
       .then(function (data) {
-        el('scoreComposite').textContent =
-          data.composite_score !== undefined ? data.composite_score.toFixed(1) : '--';
-        el('scoreProximity').textContent =
-          data.proximity_score !== undefined ? data.proximity_score.toFixed(1) : '--';
-        el('scoreCompetition').textContent =
-          data.competition_score !== undefined ? data.competition_score.toFixed(1) : '--';
-        el('scoreDonorPool').textContent =
-          data.donor_pool_score !== undefined ? data.donor_pool_score.toFixed(1) : '--';
+        // #299: these read *_score for fields the API has always called
+        // composite / proximity / competition / donor_pool, so every tile
+        // rendered '--' permanently. Silent, because the fallback IS '--' --
+        // a card that never populated looked like a card waiting for input.
+        var num = function (v) {
+          return typeof v === 'number' ? v.toFixed(1) : '--';
+        };
+        el('scoreComposite').textContent = num(data.composite);
+        el('scoreProximity').textContent = num(data.proximity);
+        el('scoreCompetition').textContent = num(data.competition);
+        el('scoreDonorPool').textContent = num(data.donor_pool);
         scoreCard.classList.add('visible');
       })
       .catch(function () {
