@@ -22,7 +22,9 @@ Usage:
 import json
 import random
 import math
+import argparse
 import os
+import sys
 from datetime import datetime, timezone
 
 # Reproducible seed for deterministic output
@@ -343,6 +345,16 @@ def generate_national() -> dict:
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        description="Generate SYNTHETIC historical SRTR series (seed data).")
+    parser.add_argument(
+        "--force", action="store_true",
+        help="Overwrite data/srtr-historical.json even when it holds REAL "
+             "SRTR data. Without this the script refuses, because the shipped "
+             "file is a real per-year extraction across 15 releases and its "
+             "trends are shown for every center.")
+    args = parser.parse_args()
+
     data = {
         "_meta": {
             "source": "Synthetic seed data derived from SRTR PSR center-level reports (2019-2025)",
@@ -380,6 +392,42 @@ def main():
         "data",
         "srtr-historical.json",
     )
+
+    # Refuse to clobber real data (#302-class hazard, found 2026-08-28).
+    #
+    # The shipped data/srtr-historical.json is REAL: per-year extraction from
+    # Tables B10/B7/C-series across 15 SRTR releases (1811-2511). This script
+    # writes synthetic series to the same path, unconditionally, and is
+    # invoked by nothing -- so a well-meaning `python scripts/
+    # generate-srtr-historical.py` would silently replace real history with
+    # fabricated numbers, and trends.py feeds those straight into the `trends`
+    # field of every simulation response.
+    #
+    # A never-shrink COUNT guard cannot catch this: both files carry the same
+    # 22 keys. The distinguishing property is provenance, so that is what is
+    # checked.
+    if os.path.exists(out_path) and not args.force:
+        try:
+            with open(out_path) as f:
+                existing = json.load(f)
+            meta = existing.get("_meta", {})
+            if meta.get("releases") or "Synthetic" not in meta.get("source", ""):
+                print(
+                    f"REFUSING to overwrite {out_path}: it holds REAL SRTR data\n"
+                    f"  source:   {meta.get('source', '(none)')[:70]}\n"
+                    f"  releases: {len(meta.get('releases', []))}\n"
+                    "This script writes SYNTHETIC series. Overwriting would put\n"
+                    "fabricated numbers into the trends shown for every center.\n"
+                    "Pass --force only if you genuinely intend to replace real\n"
+                    "history with synthetic seed data.",
+                    file=sys.stderr,
+                )
+                return 1
+        except (OSError, ValueError) as exc:
+            print(f"Could not read {out_path} to check provenance: {exc}",
+                  file=sys.stderr)
+            return 1
+
     with open(out_path, "w") as f:
         json.dump(data, f, indent=2)
     print(f"Wrote {out_path}")
@@ -399,4 +447,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main() or 0)
