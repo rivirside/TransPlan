@@ -662,6 +662,18 @@ The shipped values have the **wrong sign** for liver, heart, lung and intestine.
 - **Mitigating context:** since #211 the `CompetingOutcome` node drives outcomes directly from observed rates, so `DelistingRisk` is a secondary queryable summary rather than the primary path to reported probabilities. That limits the blast radius; it does not make the node correct.
 - **Files:** `backend/services/bbn_parameterizer.py` (`build_delisting_risk_cpt`), `docs/delisting-hazard-report.md`, register row BBN-04
 
+### L-091: Equity disclaimers asserted facts about the model that nothing verified
+- **Severity:** LOW (fixed) — recorded because two of them had already gone stale, silently
+- **Status:** **FIXED 2026-08-27** (#235)
+- **Category:** Tooling / Disclosure
+- **What:** the seven mandatory equity disclaimers make precise claims — cell counts, which weighting each metric uses, that p24 is closed-form. Nothing checked any of them against the code, and two had drifted:
+  - *"Weighted metrics use the OBSERVED per-organ waitlist composition"* was **false of the between/within blood-type decomposition**, which was still on general-population prevalence. #337 moved the headline weighted Gini and missed this one. It matters in the direction #337 cared about: kidney type B is **1.49× over-represented** on the waitlist (B− 1.61×) and faces among the longest waits, so the decomposition understated exactly the disparity it exists to measure. Fixed; kidney between-blood-type Gini 0.0682 → 0.0660, within 0.2779 → 0.2830.
+  - The rare-group claim *"overstates rare groups (AB− is 0.6% of the population)"* stopped describing the actual distortion once **#413** made Rh inert — AB− is no longer a distinct cell.
+- **Why it's a limitation:** an unverified disclaimer decays into a false statement shown to every user of the equity tool, and it decays *silently* — nothing fails.
+- **Fix:** `backend/tests/test_equity_disclaimers.py` pins each factual claim to the code: the 48-cell arithmetic against the three dimension lists, "24 distinct" against the actual duplicate count, the Rh-pair identity, the weighted-metrics claim (by checking the decomposition responds to the organ), the type-B ratio against the shipped weights, and the closed-form claim against `iterations_per_profile == 0`.
+- **On #235's proposal:** the issue asked to externalize these strings to a config file for easier updating. Declined — they are not copy but claims about the model, each tied to a specific decision (#216 closed form, #337 weights, DATA-46's Rh split, #413). Moving them to a data file would put them *further* from the code they describe and make them editable without the review that keeps them true. The problem was never where they lived.
+- **Files:** `backend/services/equity.py` (`EQUITY_DISCLAIMERS`, `_abo_decomposition`), `backend/tests/test_equity_disclaimers.py`
+
 ### L-089: Donor registration rates are from 2018 and they decide the top-ranked center
 - **Severity:** MEDIUM-HIGH (a load-bearing input, eight years stale, with no machine-readable replacement)
 - **Status:** OPEN — measured and disclosed 2026-08-27 (#302, backlog G5)

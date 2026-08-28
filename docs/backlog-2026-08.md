@@ -137,7 +137,7 @@ get sourced or refit. Register updated per item.
 |---|------|-------|--------|
 | J1 | 22-city docs sweep (L-071) + status.md staleness + docs-site algorithm.js claim | #305 | ✅ 2026-08-25 |
 | J2 | Inference-mode availability docs | #232 | ✅ 2026-08-27 — `docs/inference-modes.md`; availability is THREE-way (web / fresh clone / after fitting), not two: traces are 285MB and gitignored. Pinned against tier_config by a test |
-| J3 | Equity disclaimers hardcoded | #235 | |
+| J3 | Equity disclaimers hardcoded | #235 | ✅ 2026-08-27 — config-file refactor DECLINED with reasons; the real defect was that the claims were unverified and two had gone stale (L-091). Now pinned by tests; also fixed the between/within decomposition still using general-population weights |
 | J4 | BBN docstrings claim pgmpy | #258 | ✅ 2026-08-27 — docstrings were already correct; the real defect was two user-facing strings blaming pgmpy on ImportError (#258 stays open only if more is wanted) |
 | J5 | Refactors: patient_dict dedup, slim routers | #262 ✅ / #264 ✅ | ✅ #262 and #264 both closed |
 

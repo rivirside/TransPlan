@@ -55,6 +55,13 @@ SEXES = ["male", "female"]
 
 EQUITY_DISCLAIMERS = [
     (
+        "The 48 cells span 8 ABO+Rh labels, but only 24 are distinct: US organ "
+        "allocation is matched on ABO and the model does not use Rh factor "
+        "(#413), so O+ and O- — and each other +/- pair — return identical "
+        "values by construction. The paired rows are shown rather than merged "
+        "so the absence of an Rh effect is visible instead of implied."
+    ),
+    (
         "This equity simulation varies blood type, age, and sex while holding "
         "clinical parameters fixed. It does not model race, ethnicity, "
         "socioeconomic status, or insurance type."
@@ -84,14 +91,14 @@ EQUITY_DISCLAIMERS = [
         "materially affect the Gini disparity metric."
     ),
     (
-        "The unweighted Gini treats all 48 demographic cells equally, which "
-        "overstates rare groups (AB- is 0.6% of the population). Weighted "
-        "metrics use the OBSERVED per-organ waitlist composition from SRTR "
-        "Tables B8-B9, not general-population prevalence — the latter "
-        "understates type B, which is over-represented on the kidney waitlist. "
-        "SRTR reports ABO without Rh, so each group is split by the US Rh "
-        "share; that split is uniform across groups and so cannot shift "
-        "between-group comparisons. Centers are equal-weighted because "
+        "The unweighted Gini treats all 48 demographic cells equally. Weighted "
+        "metrics — including the between/within blood-type decomposition — use "
+        "the OBSERVED per-organ waitlist composition from SRTR Tables B8-B9, "
+        "not general-population prevalence: the latter understates type B, "
+        "which is 1.5x over-represented on the kidney waitlist and faces among "
+        "the longest waits. SRTR reports ABO without Rh, so each group is split "
+        "by the US Rh share; that split is uniform across groups and so cannot "
+        "shift between-group comparisons. Centers are equal-weighted because "
         "per-center waitlist volume is not yet modeled."
     ),
     (
@@ -201,13 +208,26 @@ def _profile_weight(blood_type: str, age_bracket: str, sex: str,
     )
 
 
-def _abo_decomposition(results: list[dict]) -> tuple[float, float]:
+def _abo_decomposition(results: list[dict], organ: str | None = None) -> tuple[float, float]:
     """Split inequality into ABO-biology vs non-ABO components (#254).
 
     between = weighted Gini of the blood-type weighted-mean p24s (what ABO
     matching alone produces); within = prevalence-weighted mean of the
     weighted Gini across cells inside each blood type (everything else).
+
+    #235: this used BLOOD_TYPE_PREVALENCE unconditionally while the headline
+    weighted Gini had already moved to the observed waitlist composition
+    (#337), so one "weighted" number was general-population weighted and the
+    other was not — and a disclaimer told users all of them used the observed
+    composition. The gap is not cosmetic: kidney type B is 1.49x
+    over-represented on the waitlist (B- 1.61x), and B faces among the longest
+    waits, so general-population weights understate exactly the disparity this
+    decomposition exists to measure. That is #337's own argument, applied to
+    the metric it missed.
     """
+    weights = (waitlist_weights(organ).get("blood_type") if organ else None) \
+        or BLOOD_TYPE_PREVALENCE
+
     by_bt: dict[str, tuple[list, list]] = defaultdict(lambda: ([], []))
     for r in results:
         vals, wts = by_bt[r["blood_type"]]
@@ -217,7 +237,7 @@ def _abo_decomposition(results: list[dict]) -> tuple[float, float]:
     bt_means, bt_weights, within_ginis = [], [], []
     for bt, (vals, wts) in by_bt.items():
         vals, wts = np.array(vals), np.array(wts)
-        prevalence = BLOOD_TYPE_PREVALENCE.get(bt, 0.0)
+        prevalence = weights.get(bt, 0.0)
         if np.sum(wts) > 0:
             bt_means.append(float(np.average(vals, weights=wts)))
             bt_weights.append(prevalence)
@@ -483,7 +503,7 @@ def _compute_equity_core(
 
         gini = _gini(p24_vals)
         gini_w = _gini_weighted(p24_vals, weights)
-        gini_between_bt, gini_within_bt = _abo_decomposition(results)
+        gini_between_bt, gini_within_bt = _abo_decomposition(results, patient.organ)
         p24_range = (float(np.min(p24_vals)), float(np.max(p24_vals)))
         wait_range = (float(np.min(wait_vals)), float(np.max(wait_vals)))
 
@@ -523,7 +543,7 @@ def _compute_equity_core(
     # Centers are equal-weighted in the overall metrics (per-center waitlist
     # volume is not yet available — #275); cells are population-weighted.
     overall_gini_w = _gini_weighted(np.array(all_p24_values), np.array(all_weights))
-    overall_between_bt, overall_within_bt = _abo_decomposition(all_results)
+    overall_between_bt, overall_within_bt = _abo_decomposition(all_results, patient.organ)
 
     elapsed = time.perf_counter() - start
     logger.info(
