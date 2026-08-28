@@ -40,6 +40,11 @@ TAG_MEDIAN_RECONSTRUCTED = "wait_median_reconstructed"
 # waitlist cohort of 17 against 166), so this discloses rather than changes
 # it.
 TAG_PT_OUTCOMES = "no_post_transplant_outcomes"
+# SRTR Table D1 lists no living-donor count for this center-organ, so
+# 28% of its donor-availability score is a substituted value. Kidney and liver
+# only -- the other four organs have no living donation, so the component is
+# uninformative for them and a marker would be noise on every row.
+TAG_LIVING_DONOR = "living_donor_volume_substituted"
 
 # tag -> (summary family key, center-level count label, degraded count label)
 FAMILIES = {
@@ -55,6 +60,7 @@ FAMILIES = {
     TAG_PEDIATRIC_UNCALIBRATED: ("pediatric_wait_model", "modeled", "adult_fallback"),
     TAG_MEDIAN_RECONSTRUCTED: ("wait_median", "published", "reconstructed"),
     TAG_PT_OUTCOMES: ("post_transplant_outcomes", "available", "missing"),
+    TAG_LIVING_DONOR: ("living_donor_volume", "center_level", "substituted"),
 }
 
 ALL_TAGS = list(FAMILIES)
@@ -98,6 +104,15 @@ def _check_pt_outcomes(data, organ: str, code: str) -> bool:
     return not data.center_outcomes.get("center_outcomes", {}).get(code, {}).get(organ)
 
 
+def _check_living_donor(data, organ: str, code: str) -> bool:
+    # Only kidney and liver have living donation; for the rest the component
+    # carries a neutral value by design, which is not a substitution.
+    if organ not in ("kidney", "liver"):
+        return False
+    s = data.living_donors.get("scores", {}).get(organ, {}).get(code)
+    return not isinstance(s, (int, float))
+
+
 def _check_acceptance(data, organ: str, code: str) -> bool:
     # #320: the observed OARR (Table B11) is the preferred center-level
     # source; the volume-proxy composite is the fallback
@@ -122,6 +137,7 @@ _DETECTORS = {
     TAG_OUTCOMES: _check_outcomes,
     TAG_ACCEPTANCE: _check_acceptance,
     TAG_PT_OUTCOMES: _check_pt_outcomes,
+    TAG_LIVING_DONOR: _check_living_donor,
     TAG_TRENDS: _check_trends,
 }
 
