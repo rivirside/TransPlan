@@ -226,6 +226,70 @@ if (cod) {
                        'cause-of-death-by-region.json (organRecoveryRates)', 6);
 }
 
+// 6a1a. The remaining unfloored per-center files (#444 follow-up sweep).
+// Each is written by a script with no write guard, and srtr-all-centers.json
+// is written by THREE (extract-center-list, geocode-centers,
+// verify-geocoding). It is the master center list; before this it appeared in
+// validation only as the *denominator* of the trauma-scores check, so a
+// shrink was caught incidentally, by a different file's assertion, and only
+// while that other file stayed intact. That is coverage by coincidence.
+for (const [file, container, floor] of [
+    ['srtr-all-centers.json', 'centers', 200],
+    ['opo-mapping.json', 'centerOpoMap', 200],
+    ['acceptance-rates-centers.json', 'center_acceptance_factors', 180],
+    ['center-contacts.json', 'contacts', 200],
+]) {
+    const d = validateJSON(file);
+    if (d) {
+        if (!d[container]) {
+            addError(`${file}: container '${container}' missing`);
+        } else {
+            checkCoverageFloor(d[container], `${file} (${container})`, floor);
+        }
+    }
+}
+
+// 6a1a-ii. The rest of what the sweep turned up. Two partial-coverage cases,
+// which are the more instructive ones: opo-mapping.json had a floor on none
+// of its five containers, and srtr-tiers-centers.json was floored on kidney
+// alone (#320) while its five other organs went unchecked — a floor on one
+// organ reads, at a glance, as a floor on the file.
+//
+// Floors sit near 90% of current coverage, rounded down. They exist to catch
+// a collapse, not to freeze the data: SRTR organ coverage genuinely drifts by
+// a few centers per release, and a floor set at exactly today's count would
+// fail the next legitimate refresh and get raised without being read.
+for (const [file, container, floor] of [
+    ['center-cbsa-map.json', 'centers', 200],
+    ['opo-mapping.json', 'opos', 50],
+    ['opo-mapping.json', 'centerOpoDetails', 200],
+    ['opo-mapping.json', 'opoCenterCounts', 50],
+    ['opo-mapping.json', 'countyToOpo', 3000],
+]) {
+    const d = validateJSON(file);
+    if (d) {
+        if (!d[container]) {
+            addError(`${file}: container '${container}' missing`);
+        } else {
+            checkCoverageFloor(d[container], `${file} (${container})`, floor);
+        }
+    }
+}
+
+const srtrTiers = validateJSON('srtr-tiers-centers.json');
+if (srtrTiers) {
+    for (const [organ, floor] of [
+        ['kidney', 210], ['liver', 130], ['heart', 130],
+        ['lung', 65], ['pancreas', 95], ['intestine', 15],
+    ]) {
+        if (!srtrTiers[organ]) {
+            addError(`srtr-tiers-centers.json: organ block '${organ}' missing`);
+        } else {
+            checkCoverageFloor(srtrTiers[organ], `srtr-tiers-centers.json (${organ})`, floor);
+        }
+    }
+}
+
 // 6a1b. Center-level SRTR files — never-shrink floors (#444 follow-up).
 // These are the files data_loader actually loads and the model runs on, and
 // until now NOTHING protected them: parse-srtr-reports.py wrote all four with
