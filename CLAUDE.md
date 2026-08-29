@@ -28,7 +28,7 @@ All 8 rebuild phases (0-7) are done. The structural overhaul that started March 
 **Done in the June 2026 session** (see `docs/bbn-rebuild-plan.md`, `docs/limitations.md`):
 - **#206 BBN 248-center rebuild — DONE.** CompetingOutcome now grounded in observed SRTR Table B7 rates (not magic numbers); hybrid p24 (WaitCategory timing × observed competing-loss drain) keeps blood-type sensitivity. Closed #209, #210, #211, #226; advanced #214. Full build 11.5s→0.39s (vectorized). Known trade-off tracked: L-072 / #238 (competing-risk split is center-average, not patient-specific).
 - **Security/stats audit:** closed #215 (CORS), #218 (X-Forwarded-For), #225 (Gini validation), #229 (zero-rate fallback).
-- **Validation:** SRTR per-center calibration (`scripts/run-center-calibration.py`) — Spearman ρ 0.70–0.89. COMET-Lung comparison found infeasible (COMET is population-level, doesn't rank centers) — SRTR calibration is the substitute. Historical SRTR data (2018–2025) retrieved + archived (`data/srtr-archive/`).
+- **Validation:** SRTR per-center calibration (`scripts/run-center-calibration.py`) — Spearman ρ 0.47–0.90 (kidney 0.90, heart 0.75, liver 0.73, lung 0.68, intestine 0.62, pancreas 0.47). COMET-Lung comparison found infeasible (COMET is population-level, doesn't rank centers) — SRTR calibration is the substitute. Historical SRTR data (2018–2025) retrieved + archived (`data/srtr-archive/`).
 - **CI:** green again (was red since March — `netCDF4` missing + SHUTDOWN_TOKEN bug).
 
 **Still open:**
