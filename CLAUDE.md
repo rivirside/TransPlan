@@ -269,6 +269,27 @@ The BBN entry is a **cross-check, not a count**: the centers where it takes its 
 
 **Three cautions from doing it.** A `findall` with a *capturing* group returns the group, not the match — one check scanned ~10-character spans and passed while testing nothing. A claim-check can be too broad: banning "procurement corridor" outright would have forced a bad edit to a true sentence about transplant logistics, so the check now requires a model verb. And `innerText` omits collapsed accordions and un-navigated steps — use `textContent`, and fetch with `{cache:'no-store'}`, or the page reports your own fix missing.
 
+**Aug 28-29 — the accessibility pass (#463, #465, #466, #467).** #224 had fixed tap targets; nothing else had been measured. Four legs, all patient-facing, on a tool whose users skew older and unwell:
+
+| leg | found | |
+|---|---|---|
+| **Names** (#463) | **45 controls with no accessible name** — 34 on validation.html alone | a `<label>` with no `for` that doesn't wrap its control is *visually* a label and not one; `placeholder` is not a name |
+| **Contrast** (#465) | `--text-muted` at **2.26–2.56:1** everywhere, AA needs 4.5 | including **the medical disclaimer at 2.26:1 and 8px** |
+| **Focus** (#466) | **59 of 80 controls and ~70 of 73 buttons** had no visible keyboard focus | three `outline:none` rules on sliders removed even the browser default |
+| **Bypass** (#467) | no skip link at all; 4 pages had **no main landmark**; none had an id | SC 2.4.1 is Level **A** — above everything else here |
+
+**The disclaimer failed to reach users twice, in two media, for unrelated reasons.** Its *print* version was a dead `::after` (L-092, fixed Aug 27); its *screen* version was 2.26:1. Worth remembering when a single element carries the legal/ethical weight: check every medium it renders in.
+
+**Fixes that look right and do nothing** were the recurring shape here, so each fix pins the mechanism, not the current state:
+- a skip link with no `tabindex="-1"` on its target changes the hash and scrolls, but **leaves focus in the nav** — it looks like it works while doing nothing. Verified by driving it: `document.activeElement` was BODY before, MAIN after.
+- a skip link styled `display:none` is **not focusable** — present and unreachable.
+- `--neutral-400` is also a *border* colour; "fixing" contrast by darkening it would have restyled every border. `--text-muted` got its own measured value instead.
+- the `.form-group` controls that *were* covered had a **1.05–1.20:1 ring and a 1.27:1 border shift** — nominally styled, effectively invisible.
+
+**Three measurement traps, all of which produced confident wrong readings.** A scripted `.focus()` does **not** set `:focus-visible` (keyboard-only), so an early probe reported a working rule as absent. `innerText` omits collapsed accordions and un-navigated steps. And the browser cached `styles.css`/`site-chrome.js` through most of this work — verify from the served file (`curl`, or `fetch(..., {cache:'no-store'})`), and prefer tests that read the CSS source, which cannot be defeated that way.
+
+Remaining and filed rather than guessed at (#464): `.val-tab` and `.footer-cta-link` contrast, 7–9px type sizes, and dark mode's 19 failures (worst `.nav-brand-text` at **1.03**). Those need colour and type decisions with wider blast radius than one token.
+
 **Check your expectation before calling something a bug.** That last one took three wrong expectations first: `TAG_OUTCOMES` reads `srtr-observed-rates.json`, not the similarly-named `post-transplant-outcomes-centers.json`, and the acceptance tag is absent because acceptance modelling is off by default. Each wrong source made correct machinery look broken — in both directions.
 
 **Aug 27 (second wave) — the approved plan ran end to end.** Phases 0-4 of
