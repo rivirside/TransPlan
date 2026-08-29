@@ -1,7 +1,9 @@
 /**
  * TransPlan — Dark Mode Toggle
  *
- * Detects prefers-color-scheme, persists to localStorage, adds toggle to nav.
+ * Default is LIGHT. prefers-color-scheme is NOT consulted on load -- only
+ * a stored choice turns dark on. The OS preference is honoured for
+ * mid-session CHANGES, which is inconsistent with that; see #464.
  * Apply before paint to avoid flash of wrong theme.
  */
 (function () {
@@ -12,8 +14,10 @@
 
   // --- Determine initial state (before DOM ready) ---
   var stored = localStorage.getItem(STORAGE_KEY); // 'true', 'false', or null
-  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  // Default to light mode — user must explicitly toggle to dark
+  // Default to light mode — user must explicitly toggle to dark.
+  // (prefers-color-scheme is deliberately not read here. It used to be
+  // assigned to an unused `prefersDark` variable, which made the file
+  // look like it auto-detected when it does not.)
   var isDark = stored === 'true';
 
   // Apply immediately to prevent flash
