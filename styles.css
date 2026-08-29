@@ -7516,3 +7516,65 @@ body {
     min-height: 32px;
   }
 }
+
+/* ===================================================================
+   FOCUS VISIBLE  (WCAG 2.1 SC 2.4.7)
+   Measured 2026-08-28: only .submit-btn and .btn-secondary had any
+   :focus-visible styling, and one :focus rule (.form-group input/select)
+   reached anything else -- leaving 59 of 80 form controls and ~70 of 73
+   buttons with no visible keyboard focus at all. Three outline:none rules
+   on input[type="range"] removed even the browser default, so the
+   simulator's weight sliders showed nothing when tabbed to.
+
+   :focus-visible matches KEYBOARD focus only, so this is invisible to mouse
+   users -- which is why the default was suppressed originally. Existing
+   higher-specificity focus styles still win where they exist.
+   =================================================================== */
+:root {
+  /* 7.01-7.94:1 on the four page surfaces; dark ring 7.73-9.51:1 on the
+     dark surfaces. SC 1.4.11 needs 3:1 for non-text. Measured, not estimated
+     -- the first draft of this comment said 4.42 and was wrong. */
+  --focus-ring: #6b4a2f;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* .form-group input:focus (0,2,1) beats a bare input:focus-visible (0,1,1),
+   and what it supplies is not enough: the box-shadow ring is #f9e8d9 at
+   1.05-1.20:1 against the page (invisible), and the border only shifts
+   #a8a198 -> #c97c4a, a 1.27:1 change where SC 1.4.11 wants 3:1 for a
+   perceivable state change. Match that specificity so these controls get the
+   same measured ring as everything else. The box-shadow stays; it is
+   decorative rather than the indicator. */
+.form-group input:focus-visible,
+.form-group select:focus-visible,
+.form-group textarea:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Range inputs strip the default outline in their BASE state in three
+   places, at specificities above the list above. Match that reach so a
+   focused slider is not the one control still invisible. */
+input[type="range"]:focus-visible,
+.weight-slider:focus-visible,
+.setting-slider:focus-visible,
+.what-if-slider-group input[type="range"]:focus-visible,
+.data-opacity-slider:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+[data-dark="true"] {
+  --focus-ring: #e0b080;
+}
