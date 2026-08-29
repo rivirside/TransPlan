@@ -7578,3 +7578,30 @@ input[type="range"]:focus-visible,
 [data-dark="true"] {
   --focus-ring: #e0b080;
 }
+
+/* ===================================================================
+   SKIP LINK  (WCAG 2.1 SC 2.4.1, Level A)
+   Off-screen rather than display:none -- a hidden link is not focusable,
+   so it would exist without being reachable, which is the failure mode
+   this pattern is most often shipped with.
+   =================================================================== */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 1000;
+  padding: 0.6rem 1rem;
+  background: var(--bg, #faf9f7);
+  color: var(--text-1, #1a1a1a);
+  border: 2px solid var(--focus-ring, #6b4a2f);
+  border-radius: 0 0 4px 0;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  left: 0;
+  outline: 2px solid var(--focus-ring, #6b4a2f);
+  outline-offset: 2px;
+}
