@@ -156,7 +156,7 @@
                 <div class="narr-step" data-step="5">
                     <div class="step-number">The Methods</div>
                     <h2><a href="docs-site/build/architecture/overview" target="_blank" rel="noopener">Monte Carlo simulation</a> with competing risks.</h2>
-                    <p>For each of the 248 centers, we run 1,000 simulation iterations modeling the probability of receiving a transplant at 6, 12, 24, and 36 months. Each iteration draws on <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener"><strong>OPTN</strong></a> historical offer and acceptance rates and organ-specific donor flow by region. Critically, each iteration accounts for <em>competing risks</em>: the chance of transplant, the chance of dying while waiting, and the chance of removal for other medical reasons.</p>
+                    <p>For each of the 248 centers, we run 1,000 simulation iterations modeling the probability of receiving a transplant at 6, 12, 24, and 36 months. Each iteration draws on SRTR wait-time distributions and organ-specific donor flow by region; <a href="https://optn.transplant.hrsa.gov" target="_blank" rel="noopener"><strong>OPTN</strong></a>-derived offer-acceptance modelling is available as an advanced option and is off by default. Critically, every iteration accounts for <em>competing risks</em>: the chance of transplant, the chance of dying while waiting, and the chance of removal for other medical reasons.</p>
                     <p>A 48-profile demographic matrix runs each center across blood types, age brackets, and sex to evaluate equity. We then compute a <a href="docs-site/build/theory/scoring-methodology" target="_blank" rel="noopener">Gini coefficient</a> per center, a standard measure of distributional inequity, to identify programs where certain patient profiles are systematically disadvantaged relative to others at the same institution.</p>
                     <div class="highlight"><a href="scenarios.html">What-if scenarios</a> let researchers adjust donor rates, OPO performance, and wait-time multipliers to model how <a href="https://unos.org" target="_blank" rel="noopener">UNOS</a> policy changes would shift transplant probabilities in real time.</div>
                     <div class="step-nav">
@@ -171,7 +171,7 @@
                     <div class="step-number">The Composite</div>
                     <h2>50+ variables. 8 weighted categories. One score.</h2>
                     <p>transplant.today synthesizes all of these layers into a composite suitability score for each center and organ type. The score draws on medical compatibility, wait-time probability, donor supply quality, hospital outcomes (<a href="https://www.medicare.gov/care-compare" target="_blank" rel="noopener"><strong>CMS</strong></a>), logistical access, chronic disease burden (<a href="https://www.cdc.gov/places" target="_blank" rel="noopener"><strong>CDC PLACES</strong></a>), air quality (<a href="https://aqs.epa.gov" target="_blank" rel="noopener"><strong>EPA AQS</strong></a>), and socioeconomic support (<a href="https://www.bls.gov" target="_blank" rel="noopener"><strong>BLS</strong></a>).</p>
-                    <p>The weights are not fixed. They adapt based on organ type, blood type, urgency tier, and clinical parameters. A heart patient's score weights heavily toward donor quality and center volume. A kidney patient's may weight more toward wait-time probability and equity. Larger, brighter markers on this map indicate higher composite scores for a default kidney profile.</p>
+                    <p>The weights are yours to set. The simulator ships with one default weighting for every patient, and a panel that lets you change it — because which categories matter is a judgement about your own priorities, not something the data settles. It is also the single largest source of uncertainty in the ranking: under defensible alternative weightings the top-ranked center changes in 13 of 16 comparisons. Larger, brighter markers on this map indicate higher composite scores for a default kidney profile.</p>
                     <div class="highlight">This is the kind of multi-factor analysis that well-resourced patients pay transplant consultants thousands of dollars to perform. We made it free and <a href="https://github.com/rivirside/TransPlan" target="_blank" rel="noopener">open source</a>.</div>
                     <div class="step-nav">
                         <button class="step-btn ghost" data-go-step="5">Back</button>
@@ -277,7 +277,7 @@
                             <span class="acc-icon" aria-hidden="true"></span>
                         </button>
                         <div class="acc-body" hidden>
-                            <p>1,000 iterations per center using competing risks: transplant, mortality, and waitlist removal. Simulates 6 to 36-month patient horizons across organ types. Each run samples from real SRTR distributions, accounting for variation in donor supply, patient acuity, and center-level acceptance rates.</p>
+                            <p>1,000 iterations per center using competing risks: transplant, mortality, and waitlist removal. Simulates 6 to 36-month patient horizons across organ types. Each run samples from real SRTR distributions, accounting for variation in donor supply and patient acuity. Center-level offer-acceptance modelling is an advanced option, off by default.</p>
                             <a href="docs-site/build/architecture/overview" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
                         </div>
                     </div>
@@ -316,7 +316,7 @@
                             <span class="acc-icon" aria-hidden="true"></span>
                         </button>
                         <div class="acc-body" hidden>
-                            <p>Every organ has distinct supply dynamics, ischemia windows, and allocation rules. Hearts survive 4 to 6 hours outside the body; kidneys, up to 36. We parameterize these differences — including DBD vs. DCD donor type rates, geographic procurement corridors, and center-level acceptance patterns — separately for kidney, liver, heart, lung, and pancreas transplantation.</p>
+                            <p>Every organ has distinct supply dynamics, ischemia windows, and allocation rules. Hearts survive 4 to 6 hours outside the body; kidneys, up to 36. We parameterize what the published data supports, separately for kidney, liver, heart, lung, pancreas and intestine: wait-time distributions, competing-risk hazards, blood-type and clinical multipliers (MELD, LAS, cPRA), and per-center adjustments. Donor-type mix and cold-ischemia effects are <em>not</em> in the baseline model — DCD utilisation appears only as a <a href="scenarios.html">policy scenario</a> you can run against it.</p>
                             <a href="docs-site/build/architecture/overview" class="acc-link" target="_blank" rel="noopener">Read methodology →</a>
                         </div>
                     </div>
