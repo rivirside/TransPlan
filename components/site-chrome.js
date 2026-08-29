@@ -12,6 +12,11 @@
 
   // --------------- NAV ---------------
   var navHTML =
+    // WCAG 2.4.1 (Bypass Blocks, Level A). Injected here rather than written
+    // into each page so a new page cannot get the nav without the means to
+    // skip it. Must come BEFORE the nav to be first in the tab order --
+    // centers.html has 37 nav buttons ahead of its content.
+    '<a class="skip-link" href="#main-content">Skip to main content</a>' +
     '<nav class="site-nav" aria-label="Site navigation">' +
       '<div class="nav-inner">' +
         '<a href="/" class="nav-brand">' +
