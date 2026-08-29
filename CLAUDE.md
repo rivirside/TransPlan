@@ -52,15 +52,19 @@ simulator/             Modular JS (IIFE pattern, no build step)
   form-helpers.js      Home center dropdown, slider wiring
   results.js           Orchestrator (runScoring, runSimulation)
   results-table.js     Sortable table renderer
-shared/                Cross-page utilities
-  api-client.js        All API calls (TransPlanAPI namespace)
-  export-handler.js    PDF/CSV/JSON/RunArtifact export
-  data-loader.js       Runtime JSON loader
+shared/                Cross-page utilities (only these three live here)
   continue-buttons.js  Inter-tool linking buttons
   geo-utils.js         Haversine, geocoding
-  weight-config.js     Scoring weight sliders
+  seed-control.js      Seed input + reproducibility control
 components/
   site-chrome.js       Nav + footer (injected into all pages)
+  patient-form.js      Shared patient-profile form
+api-client.js          All API calls (TransPlanAPI namespace) — ROOT, not shared/
+export-handler.js      PDF/CSV/JSON/RunArtifact export — ROOT
+weight-config.js       Scoring weight sliders — ROOT
+                       (there is no shared/data-loader.js; each consumer
+                       fetches its own JSON — explorer/data-layers.js,
+                       model-card.js, weight-config.js)
 centers-page.js        Centers tabbed page (Find/Browse/Estimate)
 explorer/              Explorer tabbed page (Data Layers/Spatial Analysis)
   index.js             Entry point + tab switching
