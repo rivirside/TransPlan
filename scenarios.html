@@ -329,7 +329,7 @@
                 <!-- Center picker -->
                 <div class="sidebar-section center-picker">
                     <h3>Transplant Center</h3>
-                    <select id="centerSelect" disabled>
+                    <select id="centerSelect" aria-label="Transplant center" disabled>
                         <option value="">Select organ first...</option>
                     </select>
                     <div class="center-hint" id="centerHint">Select an organ above to load centers</div>
@@ -347,15 +347,15 @@
                     <!-- Custom What-If controls -->
                     <div class="scenario-panel active" id="panel-whatif">
                         <div class="control-group" style="margin-top: var(--space-3);">
-                            <label>Donor Rate Multiplier <span class="slider-val" id="donorMultVal">1.0x</span></label>
+                            <label for="donorMultSlider">Donor Rate Multiplier <span class="slider-val" id="donorMultVal">1.0x</span></label>
                             <input type="range" id="donorMultSlider" min="0.5" max="2.0" step="0.1" value="1.0">
                         </div>
                         <div class="control-group">
-                            <label>Wait Time Multiplier <span class="slider-val" id="waitMultVal">1.0x</span></label>
+                            <label for="waitMultSlider">Wait Time Multiplier <span class="slider-val" id="waitMultVal">1.0x</span></label>
                             <input type="range" id="waitMultSlider" min="0.5" max="2.0" step="0.1" value="1.0">
                         </div>
                         <div class="control-group">
-                            <label>Iterations <span class="slider-val" id="whatifIterVal">500</span></label>
+                            <label for="whatifIterSlider">Iterations <span class="slider-val" id="whatifIterVal">500</span></label>
                             <input type="range" id="whatifIterSlider" min="100" max="2000" step="100" value="500">
                         </div>
                         <button type="button" class="run-btn" id="runWhatIf" disabled>Run What-If</button>
@@ -364,14 +364,14 @@
                     <!-- Policy Scenario controls -->
                     <div class="scenario-panel" id="panel-policy">
                         <div class="control-group" style="margin-top: var(--space-3);">
-                            <label>Policy Scenario</label>
+                            <label for="policySelect">Policy Scenario</label>
                             <select id="policySelect" disabled>
                                 <option value="">Select organ first...</option>
                             </select>
                             <div class="scenario-desc" id="policyDesc"></div>
                         </div>
                         <div class="control-group">
-                            <label>Iterations <span class="slider-val" id="policyIterVal">500</span></label>
+                            <label for="policyIterSlider">Iterations <span class="slider-val" id="policyIterVal">500</span></label>
                             <input type="range" id="policyIterSlider" min="100" max="2000" step="100" value="500">
                         </div>
                         <button type="button" class="run-btn" id="runPolicy" disabled>Run Policy Scenario</button>
@@ -380,7 +380,7 @@
                     <!-- Travel Subsidy controls -->
                     <div class="scenario-panel" id="panel-subsidy">
                         <div class="control-group" style="margin-top: var(--space-3);">
-                            <label>Iterations <span class="slider-val" id="subsidyIterVal">500</span></label>
+                            <label for="subsidyIterSlider">Iterations <span class="slider-val" id="subsidyIterVal">500</span></label>
                             <input type="range" id="subsidyIterSlider" min="100" max="2000" step="100" value="500">
                         </div>
                         <button type="button" class="run-btn" id="runSubsidy" disabled>Run Analysis</button>

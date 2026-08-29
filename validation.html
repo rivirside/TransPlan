@@ -331,7 +331,7 @@
                 <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Run Monte Carlo, Bayesian Network, and (when available) MCMC on the same patient profile. Ranks are compared with Spearman ρ and top-5 Jaccard overlap. <strong>Note:</strong> BBN and MCMC are experimental — CPT values are not yet empirically grounded.</p>
                 <div class="val-form-row" id="ce-form-row">
                     <div class="val-form-group">
-                        <label>Organ</label>
+                        <label for="ce-organ">Organ</label>
                         <select id="ce-organ">
                             <option value="kidney">Kidney</option>
                             <option value="liver">Liver</option>
@@ -342,7 +342,7 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Blood Type</label>
+                        <label for="ce-bt">Blood Type</label>
                         <select id="ce-bt">
                             <option value="O+">O+</option><option value="O-">O-</option>
                             <option value="A+">A+</option><option value="A-">A-</option>
@@ -351,25 +351,25 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Age</label>
+                        <label for="ce-age">Age</label>
                         <input type="number" id="ce-age" value="45" min="1" max="99" style="width:70px">
                     </div>
                     <div class="val-form-group">
-                        <label>Sex</label>
+                        <label for="ce-sex">Sex</label>
                         <select id="ce-sex">
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Urgency</label>
+                        <label for="ce-urgency">Urgency</label>
                         <select id="ce-urgency">
                             <option value="1">1</option><option value="2" selected>2</option>
                             <option value="3">3</option><option value="4">4</option>
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Iterations</label>
+                        <label for="ce-iter">Iterations</label>
                         <input type="number" id="ce-iter" value="300" min="100" max="2000" style="width:80px">
                     </div>
                     <button class="val-run-btn" id="ce-run-btn">Run Comparison</button>
@@ -390,7 +390,7 @@
                 <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Sweep a model parameter across its full range and measure how stable city rankings are (Spearman ρ between adjacent steps).</p>
                 <div class="val-form-row">
                     <div class="val-form-group">
-                        <label>Organ</label>
+                        <label for="ms-organ">Organ</label>
                         <select id="ms-organ">
                             <option value="kidney">Kidney</option>
                             <option value="liver">Liver</option>
@@ -401,7 +401,7 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Blood Type</label>
+                        <label for="ms-bt">Blood Type</label>
                         <select id="ms-bt">
                             <option value="O+">O+</option><option value="O-">O-</option>
                             <option value="A+">A+</option><option value="A-">A-</option>
@@ -410,7 +410,7 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Parameter</label>
+                        <label for="ms-param">Parameter</label>
                         <select id="ms-param">
                             <option value="copula_theta">Copula θ</option>
                             <option value="elasticity">Elasticity</option>
@@ -422,11 +422,11 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Steps</label>
+                        <label for="ms-steps">Steps</label>
                         <input type="number" id="ms-steps" value="6" min="3" max="10" style="width:60px">
                     </div>
                     <div class="val-form-group">
-                        <label>Base Iter.</label>
+                        <label for="ms-iter">Base Iter.</label>
                         <input type="number" id="ms-iter" value="200" min="100" max="1000" style="width:80px">
                     </div>
                     <button class="val-run-btn" id="ms-run-btn">Run Sweep</button>
@@ -451,7 +451,7 @@
                 <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Tornado chart: how much does each clinical parameter (cPRA, MELD, LAS, urgency) shift the 24-month transplant probability at a given center?</p>
                 <div class="val-form-row">
                     <div class="val-form-group">
-                        <label>Organ</label>
+                        <label for="cs-organ">Organ</label>
                         <select id="cs-organ">
                             <option value="kidney">Kidney</option>
                             <option value="liver">Liver</option>
@@ -462,7 +462,7 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Blood Type</label>
+                        <label for="cs-bt">Blood Type</label>
                         <select id="cs-bt">
                             <option value="O+">O+</option><option value="O-">O-</option>
                             <option value="A+">A+</option><option value="A-">A-</option>
@@ -471,18 +471,18 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Age</label>
+                        <label for="cs-age">Age</label>
                         <input type="number" id="cs-age" value="45" min="1" max="99" style="width:70px">
                     </div>
                     <div class="val-form-group">
-                        <label>Sex</label>
+                        <label for="cs-sex">Sex</label>
                         <select id="cs-sex">
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Urgency</label>
+                        <label for="cs-urgency">Urgency</label>
                         <select id="cs-urgency">
                             <option value="1">1 &mdash; Routine</option>
                             <option value="2" selected>2 &mdash; Moderate</option>
@@ -491,13 +491,13 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Center</label>
+                        <label for="cs-center">Center</label>
                         <select id="cs-center" style="width:220px">
                             <option value="">Loading centers...</option>
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Iterations</label>
+                        <label for="cs-iter">Iterations</label>
                         <input type="number" id="cs-iter" value="300" min="100" max="1000" style="width:80px">
                     </div>
                     <button class="val-run-btn" id="cs-run-btn">Run Sensitivity</button>
@@ -521,7 +521,7 @@
                 <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Self-consistency check: compares the Monte Carlo sampler's probabilities against the analytical expectation of the <em>same</em> SRTR-derived parameters. A low Brier score confirms the sampler is unbiased — it is <strong>not</strong> external calibration against observed patient outcomes (that would need held-out cohort data).</p>
                 <div class="val-form-row">
                     <div class="val-form-group">
-                        <label>Organ</label>
+                        <label for="cal-organ">Organ</label>
                         <select id="cal-organ">
                             <option value="kidney">Kidney</option>
                             <option value="liver">Liver</option>
@@ -532,7 +532,7 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Blood Type</label>
+                        <label for="cal-bt">Blood Type</label>
                         <select id="cal-bt">
                             <option value="O+">O+</option><option value="O-">O-</option>
                             <option value="A+">A+</option><option value="A-">A-</option>
@@ -541,11 +541,11 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Age</label>
+                        <label for="cal-age">Age</label>
                         <input type="number" id="cal-age" value="45" min="1" max="99" style="width:70px">
                     </div>
                     <div class="val-form-group">
-                        <label>Iterations</label>
+                        <label for="cal-iter">Iterations</label>
                         <input type="number" id="cal-iter" value="300" min="100" max="1000" style="width:80px">
                     </div>
                     <button class="val-run-btn" id="cal-run-btn">Run Calibration</button>
@@ -566,7 +566,7 @@
                 <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Train on years up to Y, test on year Y+1 (Spearman ρ of rankings). <strong>Caveat:</strong> when historical data is limited this falls back to a synthetic check that perturbs the model's own trend assumptions — near-tautological, a stability signal rather than a true out-of-sample forecast.</p>
                 <div class="val-form-row">
                     <div class="val-form-group">
-                        <label>Organ</label>
+                        <label for="tv-organ">Organ</label>
                         <select id="tv-organ">
                             <option value="kidney">Kidney</option>
                             <option value="liver">Liver</option>
@@ -577,7 +577,7 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Blood Type</label>
+                        <label for="tv-bt">Blood Type</label>
                         <select id="tv-bt">
                             <option value="O+">O+</option><option value="O-">O-</option>
                             <option value="A+">A+</option><option value="A-">A-</option>
@@ -586,19 +586,19 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Train Start</label>
+                        <label for="tv-train-start">Train Start</label>
                         <input type="number" id="tv-train-start" value="2019" min="2015" max="2023" style="width:80px">
                     </div>
                     <div class="val-form-group">
-                        <label>Train End</label>
+                        <label for="tv-train-end">Train End</label>
                         <input type="number" id="tv-train-end" value="2022" min="2016" max="2024" style="width:80px">
                     </div>
                     <div class="val-form-group">
-                        <label>Test End</label>
+                        <label for="tv-test-end">Test End</label>
                         <input type="number" id="tv-test-end" value="2024" min="2017" max="2025" style="width:80px">
                     </div>
                     <div class="val-form-group">
-                        <label>Iterations</label>
+                        <label for="tv-iter">Iterations</label>
                         <input type="number" id="tv-iter" value="200" min="100" max="1000" style="width:80px">
                     </div>
                     <button class="val-run-btn" id="tv-run-btn">Run Validation</button>
@@ -623,7 +623,7 @@
                 <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">R-hat (Gelman-Rubin) and ESS diagnostics for MCMC traces. Requires local install with <code>scripts/fit-mcmc-model.py</code>.</p>
                 <div class="val-form-row">
                     <div class="val-form-group">
-                        <label>Organ</label>
+                        <label for="cv-organ">Organ</label>
                         <select id="cv-organ">
                             <option value="kidney">Kidney</option>
                             <option value="liver">Liver</option>
@@ -651,7 +651,7 @@
                 <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Canonical deterministic run for regression testing. Results should be identical across deployments for the same model version.</p>
                 <div class="val-form-row">
                     <div class="val-form-group">
-                        <label>Organ</label>
+                        <label for="ref-organ">Organ</label>
                         <select id="ref-organ">
                             <option value="kidney">Kidney</option>
                             <option value="liver">Liver</option>
@@ -681,7 +681,7 @@
                 <p style="margin:0 0 0.75rem;font-size:0.85rem;color:var(--text-muted,#6b7280)">Compare how acceptance modeling, score drift, and trend projection affect center rankings and transplant probabilities. Runs 4 simulations with the same seed.</p>
                 <div class="val-form-row">
                     <div class="val-form-group">
-                        <label>Organ</label>
+                        <label for="ec-organ">Organ</label>
                         <select id="ec-organ">
                             <option value="kidney">Kidney</option>
                             <option value="liver" selected>Liver</option>
@@ -692,7 +692,7 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>Blood Type</label>
+                        <label for="ec-bt">Blood Type</label>
                         <select id="ec-bt">
                             <option value="O+">O+</option>
                             <option value="O-">O-</option>
@@ -705,11 +705,11 @@
                         </select>
                     </div>
                     <div class="val-form-group">
-                        <label>MELD (liver)</label>
+                        <label for="ec-meld">MELD (liver)</label>
                         <input type="number" id="ec-meld" value="14" min="6" max="40" style="width:60px">
                     </div>
                     <div class="val-form-group">
-                        <label>Iterations</label>
+                        <label for="ec-iter">Iterations</label>
                         <input type="number" id="ec-iter" value="500" min="100" max="2000" style="width:70px">
                     </div>
                     <button class="val-run-btn" id="ec-run-btn">Run Comparison</button>
