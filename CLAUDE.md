@@ -250,6 +250,25 @@ The BBN entry is a **cross-check, not a count**: the centers where it takes its 
 
 **Two traps that cost real time here.** `_DISTRIBUTIONS` and `_RISKS` are lazily initialised module globals — reading them straight after `load_all()` returns `None` and makes every organ look absent. And a negative test must hit the site the test actually reaches: one patched one of four `_RISKS.get(organ)` lines and passed cleanly.
 
+**Aug 28 — the user-facing claims were swept too (#458, #459), and half the landing page was wrong.** `test_equity_disclaimers.py` (#235) established that disclaimers are *claims about the model*, not copy, and must be pinned to it. Nobody had extended that past equity. Every page was checked against the code:
+
+| page | verdict |
+|---|---|
+| **index.html** | **4 false capability claims + 3 false source attributions** |
+| **faq.html** | refresh list named two agencies supplying nothing; live-fetch and CAS→LAS claims **true** |
+| **explorer.html** | CMS and BLS **data-source cards for sources that do not exist**; OPTN card overstated |
+| **model-card.html** | "every number is read live… cannot drift" — **true** |
+| **validation.html** | **true, and notably careful** ("internal-consistency diagnostics… not whether predictions match real patient outcomes") |
+| **simulator.html** | CAS→LAS "documented approximation" — **true** (OPTN/SRTR 2023 ADR Table LU 7, register DATA-41) |
+
+**The worst one contradicted a measurement we had already made.** *"The weights … adapt based on organ type, blood type, urgency tier"* — `DEFAULT_WEIGHTS` is one constant dict, and L-085 had already **measured** that blood type cannot change which center is recommended. The page promised exactly the personalisation the model was proven not to do.
+
+**Crediting an agency that supplied nothing is worse than a vague overstatement** — a reader deciding whether to trust the tool counts the sources. CMS appeared in five places with no fetch script, no workflow and no data file; "BLS cost of living" was BEA's Regional Price Parities under the wrong agency's name; Census and BEA supplied data and were credited nowhere.
+
+**Both checks derive truth from the code/data** (`_meta.source`, `DEFAULT_WEIGHTS`, `model_acceptance`'s default), so a genuine addition needs no test edit and a removal fails loudly.
+
+**Three cautions from doing it.** A `findall` with a *capturing* group returns the group, not the match — one check scanned ~10-character spans and passed while testing nothing. A claim-check can be too broad: banning "procurement corridor" outright would have forced a bad edit to a true sentence about transplant logistics, so the check now requires a model verb. And `innerText` omits collapsed accordions and un-navigated steps — use `textContent`, and fetch with `{cache:'no-store'}`, or the page reports your own fix missing.
+
 **Check your expectation before calling something a bug.** That last one took three wrong expectations first: `TAG_OUTCOMES` reads `srtr-observed-rates.json`, not the similarly-named `post-transplant-outcomes-centers.json`, and the acceptance tag is absent because acceptance modelling is off by default. Each wrong source made correct machinery look broken — in both directions.
 
 **Aug 27 (second wave) — the approved plan ran end to end.** Phases 0-4 of
