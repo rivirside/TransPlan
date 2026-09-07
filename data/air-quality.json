@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetchedAt": "2026-08-31T12:29:10.828Z",
+    "fetchedAt": "2026-09-07T11:24:02.870Z",
     "source": "EPA AQS API (ozone + PM2.5)"
   },
   "Pittsburgh": 78,
@@ -22,5 +22,7 @@
   "Houston": 74,
   "Portland": 83,
   "Seattle": 83,
-  "Los Angeles": 73
+  "Los Angeles": 73,
+  "San Francisco": 82,
+  "Palo Alto": 79
 }
