@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetchedAt": "2026-11-02T14:38:51.331Z",
+    "fetchedAt": "2026-11-09T15:00:38.233Z",
     "source": "EPA AQS API (2787 monitors, ozone + PM2.5, all states)"
   },
   "monitors": [
@@ -7958,7 +7958,7 @@
       "aqi": 43,
       "pollutant": "ozone",
       "state": "Ohio",
-      "value": 0.0469
+      "value": 0.0468
     },
     {
       "lat": 41.361835,
@@ -13169,7 +13169,7 @@
       "aqi": 35,
       "pollutant": "pm25",
       "state": "California",
-      "value": 6.2725
+      "value": 6.2762
     },
     {
       "lat": 37.814781,
@@ -13178,7 +13178,7 @@
       "aqi": 41,
       "pollutant": "pm25",
       "state": "California",
-      "value": 7.3501
+      "value": 7.3308
     },
     {
       "lat": 37.793624,
@@ -13187,7 +13187,7 @@
       "aqi": 43,
       "pollutant": "pm25",
       "state": "California",
-      "value": 7.7874
+      "value": 7.804
     },
     {
       "lat": 37.864767,
@@ -13196,7 +13196,7 @@
       "aqi": 52,
       "pollutant": "pm25",
       "state": "California",
-      "value": 9.4742
+      "value": 9.4988
     },
     {
       "lat": 37.701222,
@@ -13205,7 +13205,7 @@
       "aqi": 31,
       "pollutant": "pm25",
       "state": "California",
-      "value": 5.4947
+      "value": 5.5023
     },
     {
       "lat": 37.68975,
@@ -13214,7 +13214,7 @@
       "aqi": 36,
       "pollutant": "pm25",
       "state": "California",
-      "value": 6.4282
+      "value": 6.4302
     },
     {
       "lat": 37.936013,
@@ -13241,7 +13241,7 @@
       "aqi": 48,
       "pollutant": "pm25",
       "state": "California",
-      "value": 8.5729
+      "value": 8.573
     },
     {
       "lat": 37.97231,
@@ -13268,16 +13268,16 @@
       "aqi": 30,
       "pollutant": "pm25",
       "state": "California",
-      "value": 5.3507
+      "value": 5.407
     },
     {
       "lat": 36.999571,
       "lon": -121.574684,
       "score": 84,
-      "aqi": 32,
+      "aqi": 33,
       "pollutant": "pm25",
       "state": "California",
-      "value": 5.7739
+      "value": 5.9801
     },
     {
       "lat": 37.348497,
@@ -13295,7 +13295,7 @@
       "aqi": 51,
       "pollutant": "pm25",
       "state": "California",
-      "value": 9.3432
+      "value": 9.32
     },
     {
       "lat": 37.338135,
@@ -13304,7 +13304,7 @@
       "aqi": 43,
       "pollutant": "pm25",
       "state": "California",
-      "value": 7.8182
+      "value": 7.8085
     },
     {
       "lat": 38.102507,
@@ -13319,19 +13319,19 @@
       "lat": 38.102507,
       "lon": -122.237976,
       "score": 83,
-      "aqi": 34,
+      "aqi": 35,
       "pollutant": "pm25",
       "state": "California",
-      "value": 6.1821
+      "value": 6.2141
     },
     {
       "lat": 38.403765,
       "lon": -122.818294,
-      "score": 90,
-      "aqi": 21,
+      "score": 89,
+      "aqi": 22,
       "pollutant": "pm25",
       "state": "California",
-      "value": 3.8645
+      "value": 3.8781
     },
     {
       "lat": 39.15047,
@@ -15167,7 +15167,7 @@
       "aqi": 0,
       "pollutant": "pm25",
       "state": "Illinois",
-      "value": 9.0745
+      "value": 9.0581
     },
     {
       "lat": 41.965485,
@@ -15311,7 +15311,7 @@
       "aqi": 51,
       "pollutant": "pm25",
       "state": "Illinois",
-      "value": 9.3001
+      "value": 9.2769
     },
     {
       "lat": 42.060285,
@@ -15356,7 +15356,7 @@
       "aqi": 0,
       "pollutant": "pm25",
       "state": "Illinois",
-      "value": 9.0309
+      "value": 9.0066
     },
     {
       "lat": 41.526885,
